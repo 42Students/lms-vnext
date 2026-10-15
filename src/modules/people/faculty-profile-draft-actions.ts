@@ -72,3 +72,11 @@ export function facultyProfilePublicLinkIssue(
  }
  return null;
 }
+
+/** Skill edits must satisfy the complete profile schema before crossing the write boundary. */
+export function facultyProfileSkillsIssue(
+ rows:readonly FacultyProfileDocument["skills"][number][],
+):string|null{
+ const parsed=facultyProfileDocumentSchema.safeParse({skills:rows});
+ return parsed.success?null:(parsed.error.issues[0]?.message??"Review Skills.");
+}

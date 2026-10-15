@@ -4,7 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
-import {restoreFacultySkills,removeFacultySkillDraft} from "@/modules/people/faculty-profile-draft-actions";
+import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
 export function FacultyProfileSkills({initial,pending,onSave}:{
  initial:FacultyProfileDocument["skills"];pending:boolean;
@@ -12,13 +12,14 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
 }){
  const [rows,setRows]=useState<Skill[]>(initial);
  const [changed,setChanged]=useState(false);
+ const skillsIssue=facultyProfileSkillsIssue(rows);
  useFacultyProfileUnsavedWarning(changed);
  function edit(id:string,field:"skill"|"proficiency",value:string){
   setRows(current=>current.map(row=>row.id===id?{...row,[field]:value}:row));setChanged(true);
  }
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(changed&&!pending)void onSave("skills",rows);
+  if(changed&&!pending&&!skillsIssue)void onSave("skills",rows);
  }
  return <form id={facultyProfileAnchor("skills")} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6"
    aria-label="Skills" onSubmit={submit}>
@@ -52,7 +53,8 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
      if(!window.confirm("Discard unsaved skill edits and restore saved skills?"))return;
      setRows(restoreFacultySkills(initial));setChanged(false);
     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard unsaved skill edits</button>:null}
-   <button type="submit" disabled={pending||!changed||rows.some(row=>!row.skill.trim())}
+   {changed&&skillsIssue?<p role="alert" className="text-sm text-error">Review Skills: {skillsIssue}</p>:null}
+   <button type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
     {pending?"Saving…":"Save skills"}
    </button>
