@@ -126,3 +126,9 @@ export function collegeContactFilterMessage(error:unknown):string {
    return "A contact filter is invalid. No contacts were loaded.";
  }
 }
+
+/** Honest first/last ordinal for scoped Contact result pages. */
+export function collegeContactsPageRange(page:number,pageSize:number,total:number):{first:number;last:number}{
+ if(total<=0)return {first:0,last:0};
+ return {first:Math.min(total,(page-1)*pageSize+1),last:Math.min(total,page*pageSize)};
+}
