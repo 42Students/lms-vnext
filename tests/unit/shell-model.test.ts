@@ -500,32 +500,15 @@ describe("authenticated shell model", () => {
     expect(navHrefs).toContain("/teacher/courses");
   });
 
-  it("adds Drive Day only for a learner with a current coordinator assignment", () => {
-    const navigation = getShellNavigation(
-      context(["LEARNER"]),
-      {
-        projectsEnabled: true,
-        placementsEnabled: false,
-        driveDayEnabled: true,
-      },
-    );
-
-    expect(
-      navigation.map((item) => item.label),
-    ).toEqual([
-      "Courses",
-      "Quizzes",
-      "Assignments",
-      "Class Schedule",
-      "Attendance",
-      "Projects",
-      "Notifications",
-      "Profile",
-      "Drive Day",
+  it("does not add a non-legacy Drive Day row to the learner sidebar",()=>{
+    const navigation=getShellNavigation(context(["LEARNER"]),{
+      projectsEnabled:true,placementsEnabled:false,driveDayEnabled:true,
+    });
+    expect(navigation.map(item=>item.label)).toEqual([
+      "Courses","Quizzes","Assignments","Class Schedule","Attendance",
+      "Projects","Notifications","Profile",
     ]);
-    expect(
-      navigation.at(-1)?.href,
-    ).toBe("/tpo/drive-day");
+    expect(navigation.map(item=>item.href)).not.toContain("/tpo/drive-day");
   });
 
 });

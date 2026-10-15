@@ -20,9 +20,7 @@ export default async function LearnerAttendancePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="Attendance"
-        description="Your marked attendance, unmarked sessions and College threshold across active Courses."
       />
       <div className="flex flex-wrap justify-end gap-3">
         <Link href="/learn/attendance/calendar"

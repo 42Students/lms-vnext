@@ -18,7 +18,7 @@ export default function LearnerAssessmentsError({
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Try again</Button>
         <Link href="/learn/courses" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
-          Back to Courses
+          Back to courses
         </Link>
       </div>
     </div>

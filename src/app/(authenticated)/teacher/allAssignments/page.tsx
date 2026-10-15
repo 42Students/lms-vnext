@@ -17,9 +17,7 @@ export default async function FacultyAllAssignmentsPage() {
         </Link>
       </div>
       <PageHeader
-        eyebrow="Faculty"
         title="My Assignments"
-        description="Track class assignments, late-submission state and private grading across your authorized teaching Sections."
       />
       <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="ASSIGNMENT" />
     </div>

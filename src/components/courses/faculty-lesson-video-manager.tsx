@@ -10,7 +10,7 @@ import {
 } from "@/modules/storage/ui-models";
 import {
   facultyVideoMayPreview, facultyVideoMayPublish, facultyVideoMayReplace,
-  facultyVideoOrderPatch, facultyVideoPublishAction, managedVideoAfterAction,
+  facultyVideoReorderPlan, facultyVideoPublishAction, managedVideoAfterAction,
   parseManagedVideos, type ManagedVideo,
 } from "@/modules/courses/faculty-video-storage-model";
 import { storageApiError } from "@/modules/courses/learner-storage-ui-model";
@@ -66,9 +66,15 @@ export function FacultyLessonVideoManager({
     controllerRef.current=controller;
     setBusy(true);setActiveName(name);setProgress(0);setError(null);setInfo(null);
     void (async()=>{
-      try{await action(controller.signal);await list(controller.signal);}
+      try{await action(controller.signal);}
       catch(cause){if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:"Could not update lesson video.");}
-      finally{locked.current=false;controllerRef.current=null;setBusy(false);setActiveName(null);setProgress(0);}
+      finally{
+        if(!controller.signal.aborted){
+          try{await list(controller.signal);}
+          catch{setError(current=>current??"Could not refresh lesson videos.");}
+        }
+        locked.current=false;controllerRef.current=null;setBusy(false);setActiveName(null);setProgress(0);
+      }
     })();
   }
   async function request(path:string,method:"POST"|"PATCH"|"DELETE",body:unknown,signal:AbortSignal){
@@ -129,14 +135,17 @@ export function FacultyLessonVideoManager({
       const key=`video-asset/${video.id}`;
       const current=await lessonContents(signal);
       const existing=current.find(item=>item.contentType==="VIDEO"&&item.storageKey===key);
-      let contentId=existing?.id??video.lessonContentId;
-      let currentStatus=existing?.status;
+      const linked=video.lessonContentId?current.find(item=>item.id===video.lessonContentId):null;
+      if(video.lessonContentId && (!linked||linked.contentType!=="VIDEO"||linked.storageKey!==key))
+        throw new Error("The linked lesson content differs. Reload before changing publication.");
+      let contentId=existing?.id??linked?.id;
+      let currentStatus=existing?.status??linked?.status;
       if(!contentId){
         const created=await request("/api/courses/lesson-contents","POST",{
           lessonId,deliveryId,title:video.title,sequence:nextContentSequence,
           contentType:"VIDEO",storageKey:key,durationSeconds:video.durationSeconds,
         },signal) as {content?:{id?:string;status?:string}};
-        contentId=created.content?.id ?? null;
+        contentId=created.content?.id;
         currentStatus=created.content?.status;
       }
       if(!contentId)throw new Error("Video content was not created. Refresh before trying again.");
@@ -148,6 +157,16 @@ export function FacultyLessonVideoManager({
       }
       setInfo("Video linked to the lesson content. Publish the video to make it available to eligible learners.");
       router.refresh();
+    });
+  }
+  function reorder(video:ManagedVideo,delta:-1|1){
+    const plan=facultyVideoReorderPlan(video,delta,videos);
+    if(!plan){setError("Video order is unavailable. Refresh the lesson.");return;}
+    run(async signal=>{
+      for(const step of plan){
+        const payload=await request(`/api/courses/videos/${encodeURIComponent(step.id)}`,"PATCH",{sequence:step.sequence},signal);
+        managedVideoAfterAction(payload,step.id,lessonId);
+      }
     });
   }
   function saveDuration(video:ManagedVideo){
@@ -185,6 +204,7 @@ export function FacultyLessonVideoManager({
     <ol className="space-y-3">
       {videos.map((video,index)=>{
         const state=videoProcessingDescriptor(video.processingStatus);
+        const canEdit=video.deliveryId===deliveryId;
         return <li key={video.id} className="space-y-3 rounded-lg border border-border bg-surface-subtle p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="min-w-0 break-words text-sm font-semibold text-foreground">{video.title} · {formatFileSize(video.sizeBytes)}</p>
@@ -198,27 +218,27 @@ export function FacultyLessonVideoManager({
               onClick={()=>setPreviewId(previous=>previous===video.id?null:video.id)}>
               Preview
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||!facultyVideoMayPublish(video)&&video.publishStatus!=="PUBLISHED"&&video.publishStatus!=="ARCHIVED"}
+            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||(video.publishStatus==="DRAFT"&&(!facultyVideoMayPublish(video)||!video.lessonContentId))}
               onClick={()=>change(video,{publishStatus:facultyVideoPublishAction(video)})}>
               {video.publishStatus==="PUBLISHED"?"Unpublish":video.publishStatus==="ARCHIVED"?"Restore draft":"Publish"}
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||video.publishStatus==="ARCHIVED"||video.processingStatus!=="READY"}
+            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||video.publishStatus==="ARCHIVED"||video.processingStatus!=="READY"}
               onClick={()=>change(video,{visibleToStudents:!video.visibleToStudents})}>
               {video.visibleToStudents?"Hide from learners":"Show to learners"}
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||index===0}
-              onClick={()=>{const sequence=facultyVideoOrderPatch(video,-1,videos);if(sequence!==null)change(video,{sequence});}}>
+            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||index===0}
+              onClick={()=>reorder(video,-1)}>
               Move up
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||index===videos.length-1}
-              onClick={()=>{const sequence=facultyVideoOrderPatch(video,1,videos);if(sequence!==null)change(video,{sequence});}}>
+            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||index===videos.length-1}
+              onClick={()=>reorder(video,1)}>
               Move down
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy||video.processingStatus!=="READY"}
+            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||video.processingStatus!=="READY"}
               onClick={()=>linkContent(video)}>
               {video.lessonContentId?"Publish lesson content":"Add to lesson"}
             </Button>
-            <Button size="sm" variant="secondary" type="button" disabled={busy}
+            <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit}
               onClick={()=>{if(window.confirm("Delete this video?"))run(async signal=>{
                 await request(`/api/courses/videos/${encodeURIComponent(video.id)}`,"DELETE",undefined,signal);
                 router.refresh();
@@ -228,12 +248,12 @@ export function FacultyLessonVideoManager({
           </div>
           <div className="flex flex-wrap gap-3">
             <label className="text-xs font-semibold text-body">Replace video
-              <input type="file" className="mt-1 block min-h-11 max-w-full text-xs" disabled={busy||!facultyVideoMayReplace(video)}
+              <input type="file" className="mt-1 block min-h-11 max-w-full text-xs" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
                 accept={acceptAttributeFor("lesson-video")}
                 onChange={event=>{const next=event.target.files?.[0];if(next&&window.confirm("Replace this video?"))upload(video,next);event.currentTarget.value="";}}/>
             </label>
             <label className="text-xs font-semibold text-body">Thumbnail
-              <input type="file" className="mt-1 block min-h-11 max-w-full text-xs" disabled={busy}
+              <input type="file" className="mt-1 block min-h-11 max-w-full text-xs" disabled={busy||!canEdit}
                 accept={acceptAttributeFor("lesson-video-thumbnail")}
                 onChange={event=>{thumbnail(video,event.target.files?.[0]??null);event.currentTarget.value="";}}/>
               <span className="block text-xs text-muted-foreground">{video.thumbnailStatus==="READY"?"Thumbnail ready":video.thumbnailStatus==="UPLOADING"?"Checking thumbnail":"No thumbnail"}</span>
@@ -242,9 +262,10 @@ export function FacultyLessonVideoManager({
               <Input type="number" className="mt-1 w-28" min={1} max={86400}
                 value={durationDraft[video.id]??String(video.durationSeconds??"")}
                 onChange={event=>setDurationDraft(draft=>({...draft,[video.id]:event.target.value}))}/>
-              <Button size="sm" variant="secondary" type="button" disabled={busy} onClick={()=>saveDuration(video)}>Save duration</Button>
+              <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>
             </label>
           </div>
+          {!canEdit?<p role="status" className="text-xs text-muted-foreground">Shared video · read only in this Section.</p>:null}
           {previewId===video.id?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
           {video.lessonContentId?<p className="text-xs text-muted-foreground">Linked to lesson content</p>:null}
           {video.processingStatus==="PROCESSING"?<p role="status" className="text-xs text-muted-foreground">Checking file. Playback and publishing are not available yet.</p>:null}

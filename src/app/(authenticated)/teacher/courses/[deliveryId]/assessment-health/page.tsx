@@ -26,7 +26,7 @@ export default async function FacultyCourseAssessmentHealthPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid Section report filters</h1>
-    <Link href="/teacher/courses" className="text-primary-text underline">Back to Courses</Link>
+    <Link href="/teacher/courses" className="text-primary-text underline">Back to courses</Link>
   </section>;
   const context = await getCurrentRequestContext();
   const data = await getFacultyCourseAssessmentHealth(context,parsed.data);

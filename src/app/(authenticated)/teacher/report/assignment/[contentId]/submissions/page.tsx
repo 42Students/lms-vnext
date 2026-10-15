@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { FacultySubmissionFileReview } from "@/components/courses/faculty-submission-file-review";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
@@ -115,6 +116,7 @@ export default async function FacultyAssignmentSubmissionsPage({
                 ? row.pointsAwarded+"/"+report.assignment.maxPoints:"Not graded"}
               {" · "}{row.gradePublished?"Published":"Private"}
             </p>
+            {row.submissionType==="FILE"?<FacultySubmissionFileReview submissionId={row.id}/>:null}
             <p className="mt-1 text-xs text-muted-foreground">
               Submitted {new Intl.DateTimeFormat("en-IN",{
                 dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",

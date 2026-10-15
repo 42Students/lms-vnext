@@ -78,7 +78,7 @@ export function LearnerTopbarTools() {
               setOpen(false);
             }
           }}
-          placeholder="Search Courses"
+          placeholder="Search Courses (e.g., Java, Data Structures, CS...)"
           className="min-h-10 w-52 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] lg:w-72"
           autoComplete="off"
         />
