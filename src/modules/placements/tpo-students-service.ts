@@ -335,14 +335,14 @@ export async function getTpoStudentsIntelligence(
   const afterCollegeAvailable = await placementTableExists("placement_tpo_after_college");
   const afterCollegeRows = afterCollegeAvailable && learners.length
     ? await db.select({membershipId:placementTpoAfterCollege.learnerMembershipId,
-        outcome:placementTpoAfterCollege.outcome})
+        outcome:placementTpoAfterCollege.outcome,updatedAt:placementTpoAfterCollege.updatedAt})
        .from(placementTpoAfterCollege)
        .where(and(eq(placementTpoAfterCollege.collegeId,college.id),
          inArray(placementTpoAfterCollege.learnerMembershipId,learners.map(row=>row.membershipId))))
     : [];
   const afterCollegeByMember = new Map(afterCollegeRows.flatMap(row=>{
     const parsed=afterCollegeOutcomeSchema.safeParse(row.outcome);
-    return parsed.success?[[row.membershipId,parsed.data] as const]:[];
+    return parsed.success?[[row.membershipId,{outcome:parsed.data,updatedAt:row.updatedAt.toISOString()}] as const]:[];
   }));
 
   const emptySummary =
@@ -818,7 +818,8 @@ export async function getTpoStudentsIntelligence(
           learner.membershipId,
         ) ?? 0,
       ambiguousSection,
-      afterCollegeOutcome: afterCollegeByMember.get(learner.membershipId)??null,
+      afterCollegeOutcome: afterCollegeByMember.get(learner.membershipId)?.outcome??null,
+      afterCollegeUpdatedAt: afterCollegeByMember.get(learner.membershipId)?.updatedAt??null,
     };
 
     return deriveTpoStudent(source, now);
