@@ -15,6 +15,7 @@ import {learnerApplicationStageCounts} from "@/modules/placements/learner-applic
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
 import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
 import {learnerApplicationPage} from "@/modules/placements/learner-application-pagination-model";
+import {learnerApplicationSelectionMissing} from "@/modules/placements/learner-application-selection-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
@@ -163,6 +164,13 @@ export function LearnerApplicationsBrowse({
 
   return (
     <div className="space-y-5">
+      {learnerApplicationSelectionMissing(items,url.applicationId) ? (
+        <div role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+          The linked application is not available in your current learner history.
+          <button type="button" onClick={()=>updateQuery({applicationId:null})}
+            className="ml-2 min-h-11 font-semibold text-primary-text underline">Return to application list</button>
+        </div>
+      ) : null}
       {withdrawNotice ? (
         <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-foreground">
           {withdrawNotice}
