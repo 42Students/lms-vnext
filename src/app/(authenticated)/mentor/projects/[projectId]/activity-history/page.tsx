@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   mentorProjectActivityHref,mentorProjectActivityQuerySchema,
+  mentorProjectActivityMobileLayout,mentorProjectActivityMobileFilters,
 } from "@/modules/projects/mentor-project-activity-model";
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
@@ -28,7 +29,7 @@ export default async function MentorProjectActivityHistoryPage({
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectActivityHistory(context,parsed.data);
-  return <div className="space-y-6">
+  return <div className={mentorProjectActivityMobileLayout}>
     <PageHeader eyebrow="Mentor · Project Activity" title="Recorded project activity"
       description={data.title+" · Events linked to this assigned project."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
@@ -41,7 +42,7 @@ export default async function MentorProjectActivityHistoryPage({
       </section> : <>
       <form method="get"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className={mentorProjectActivityMobileFilters}>
         <label className="grid gap-1 text-sm font-semibold text-body">Event importance
           <select name="importance" defaultValue={data.query.importance}
             className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
@@ -108,7 +109,7 @@ export default async function MentorProjectActivityHistoryPage({
       {data.items.length===0 ? <EmptyState title="No recorded project activity"
         description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred." />
         : <ol className="grid gap-3">{data.items.map(event=>
-          <li key={event.id} className="rounded-xl border border-border bg-surface p-4">
+          <li key={event.id} className="min-w-0 break-words rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm font-semibold text-foreground">{event.label}</p>
               <span className="text-xs text-body">{event.importance}</span>
