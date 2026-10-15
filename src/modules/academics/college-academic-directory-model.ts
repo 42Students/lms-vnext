@@ -19,9 +19,11 @@ export const collegeSemesterDirectoryBaseSchema = z.object({
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
 }).strict();
 
-export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number }>>(schema:T) {
+export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number; creditState?: "ALL"|"CONFIGURED"|"UNSET" }>>(schema:T) {
   return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
-    {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"});
+    {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"})
+    .refine(q => q.creditState !== "UNSET" || (q.minimumCredits === undefined && q.maximumCredits === undefined),
+      {path:["creditState"],message:"Unconfigured semester credits cannot be combined with credit bounds"});
 }
 
 export const collegeSemesterDirectorySchema = withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema);

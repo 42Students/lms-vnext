@@ -178,4 +178,10 @@ describe("College Admin semester and batch read models", () => {
   if(!bad.success)expect(bad.error.issues[0]?.message).toContain("A missing progression record cannot match a recorded academic year");
   expect(collegeBatchDirectorySchema.safeParse({progression:"RECORDED",yearStart:2026}).success).toBe(true);
  });
+ it("rejects unconfigured semester credits combined with numeric credit bounds",()=>{
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"UNSET",minimumCredits:0}).success).toBe(false);
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"UNSET",maximumCredits:6}).success).toBe(false);
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"UNSET"}).success).toBe(true);
+  expect(collegeSemesterDirectorySchema.safeParse({creditState:"CONFIGURED",minimumCredits:6}).success).toBe(true);
+ });
 });
