@@ -10,6 +10,7 @@ import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryFilterMessage,
+  collegeRoleDirectoryHasActiveFilters,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
@@ -305,11 +306,15 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>
         {result.items.length === 0 ? (
-          <p className="p-6 text-sm text-body">
-            {result.total === 0
-              ? "No matching role memberships were found in this college. Academic records may still exist outside this role-specific view."
-              : "There are no records on this page. Select an earlier page."}
-          </p>
+          <div role="status" className="space-y-3 p-6 text-sm text-body">
+            <p>{result.total === 0
+              ? collegeRoleDirectoryHasActiveFilters(kind,result.filter)
+                ? "No memberships match these directory filters."
+                : "No role memberships are recorded in this college."
+              : "There are no records on this page. Select an earlier page."}</p>
+            {collegeRoleDirectoryHasActiveFilters(kind,result.filter) ?
+              <Link href={path} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear roster filters</Link> : null}
+          </div>
         ) : (
           <table className="w-full min-w-[45rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
