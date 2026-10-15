@@ -57,9 +57,10 @@ export class TpoCrmError extends Error {
 }
 
 /** Mirrors legacy contact normalization; no raw invitation tokens are stored. */
-function normalizePhone(value: string | undefined): string | null {
+function normalizePhone(value: string | null | undefined): string | null {
   if (!value) return null;
   const digits = value.replace(/\D/g, "");
+  if (!digits) return null;
   return digits.length > 10 ? digits.slice(-10) : digits;
 }
 
@@ -127,7 +128,8 @@ export async function createTpoLead(
   // Insert and durable staff-attributed audit either both commit, or
   // both roll back. DB unique constraints remain the race-safe duplicate
   // authority (not the optional preflight duplicate check in the UI).
-  const lead = await getDb().transaction(async (tx) => {
+  try {
+    const lead = await getDb().transaction(async (tx) => {
     const [created] = await tx
       .insert(placementTpoLeads)
       .values({
@@ -153,7 +155,21 @@ export async function createTpoLead(
     });
     return created;
   });
-  return tpoLeadView(lead);
+    return tpoLeadView(lead);
+  } catch (error) {
+    // Convert only the known contact-constraint violation to a safe client
+    // validation error; never turn arbitrary database errors into success.
+    for (let cause: unknown = error, depth = 0;
+      depth < 4 && cause && typeof cause === "object"; depth++) {
+      const pgError = cause as { code?: unknown; constraint?: unknown; cause?: unknown };
+      if (pgError.code === "23514" && (
+        pgError.constraint === "placement_tpo_leads_contact_ck" ||
+        pgError.constraint === "placement_tpo_leads_phone_digits_ck"
+      )) throw new TpoCrmError("TPO_CRM_CONTACT_REQUIRED");
+      cause = pgError.cause;
+    }
+    throw error;
+  }
 }
 
 export async function listTpoLeadActivities(
@@ -415,6 +431,7 @@ export async function checkTpoLeadContact(
   const normalized = isEmail
     ? input.contact.toLowerCase()
     : normalizePhone(input.contact);
+  if (!normalized) return null;
   const [existing] = await getDb()
     .select()
     .from(placementTpoLeads)
@@ -499,6 +516,12 @@ export async function updateTpoLead(
       const pgError = cause as {
         code?: unknown; constraint?: unknown; cause?: unknown;
       };
+      if (pgError.code === "23514" && (
+        pgError.constraint === "placement_tpo_leads_contact_ck" ||
+        pgError.constraint === "placement_tpo_leads_phone_digits_ck"
+      )) {
+        throw new TpoCrmError("TPO_CRM_CONTACT_REQUIRED");
+      }
       if (pgError.code === "23505" && (
         pgError.constraint === "placement_tpo_leads_college_email_uq" ||
         pgError.constraint === "placement_tpo_leads_college_phone_uq"
