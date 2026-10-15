@@ -12,13 +12,14 @@ import {matchesWaitingSince} from "./queue-waiting-since";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationCsv} from "./queue-export";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
+import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import {VerificationQueueLimitError} from "./staff-queue-service";
 
 const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
-export async function exportCollegeVerificationCsv(context:RequestContext,raw:unknown){
+export async function exportCollegeVerificationCsv(context:RequestContext,raw:unknown,superAdminCollegeId?:string){
  const filter=verificationQueueFilters.parse(raw);
- const scope=await requireCollegeVerificationActor(context);
+ const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const rows=await getDb().select({
   membershipId:collegeMemberships.id,learnerName:users.displayName,

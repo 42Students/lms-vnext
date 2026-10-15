@@ -112,11 +112,26 @@ export default async function CollegesPage() {
       <Link href="/admin/tenants" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Search tenant directory →
       </Link>
-      <DataTable
-        columns={columns}
-        rows={colleges}
-        getRowKey={(college) => college.id}
-      />
+      <div className="grid min-w-0 gap-3 lg:hidden" aria-label="College onboarding cards">
+        {colleges.map(college=>(
+          <article key={college.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+            <h2 className="break-words text-base font-semibold text-foreground">{college.name}</h2>
+            <p className="mt-1 break-words text-xs text-muted-foreground">{college.code}</p>
+            <p className="mt-2 break-words text-sm text-body">{[college.city,college.state,college.country].filter(Boolean).join(", ")||"Location not recorded"}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Tenant setup</Link>
+              <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Readiness</Link>
+              <CollegeEditDialog college={college}/>
+              <CollegeArchiveButton collegeId={college.id} name={college.name}/>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="hidden min-w-0 lg:block">
+        <DataTable columns={columns} rows={colleges} getRowKey={(college)=>college.id}/>
+      </div>
     </div>
   );
 }

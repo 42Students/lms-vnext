@@ -1,6 +1,8 @@
 import { sql } from "drizzle-orm";
 import {
+  check,
   index,
+  integer,
   jsonb,
   pgTable,
   timestamp,
@@ -40,6 +42,13 @@ export const facultyProfiles = pgTable(
     ),
     employmentType: varchar("employment_type", { length: 128 }),
     academicTitle: varchar("academic_title", { length: 128 }),
+    profileDocument: jsonb("profile_document")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default(sql`'{}'::jsonb`),
+    profileDocumentVersion: integer("profile_document_version")
+      .notNull()
+      .default(0),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -50,6 +59,10 @@ export const facultyProfiles = pgTable(
   (table) => [
     index("faculty_profiles_primary_department_idx").on(
       table.primaryDepartmentId,
+    ),
+    check(
+      "faculty_profiles_document_version_nonnegative",
+      sql`${table.profileDocumentVersion} >= 0`,
     ),
   ],
 );

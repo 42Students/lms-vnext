@@ -137,6 +137,10 @@ Legacy contract:
 **W06 College Admin directory implementation (2026-10-10):** the existing College Admin `/college/departments` page now reuses `DepartmentDirectory`, matching the Super Admin search, CSV export, refresh, ten-row pagination and Programs/Courses/Faculty dependency counts. The `/college` layout enforces an active COLLEGE_ADMIN membership; server list uses only the active membership collegeId and the `department.read` service permission check. Each usage lookup is made only on IDs returned by that authorized query. Failed usage lookups show unknown (—), not 0. Legacy `/college-admin/departments` URL/bookmark is not yet aliased; browser behavior is not yet verified. Authored code does not advance this page to DONE.
 
 ## Page: Programs
+**Legacy duration-years editing PARTIAL (2026-10-15):** The College Admin edit dialog now accepts half-year increments, converts back to persisted terms for the unchanged validated endpoint, and compares normalized values for the unsaved-change prompt. Other admin roles retain terms-first editing. UI/browser acceptance open.
+
+**Legacy duration-years form PARTIAL (2026-10-15):** College Admin create and list now use explicit years with half-year increments, converted exactly to registered integer terms for the existing scoped write service. Validation rejects fractions not representable as terms; no schema changes. Existing edit dialog still terms-first; browser acceptance open.
+
 **Legacy:** `/college-admin/programs`
 
 **Write-side PARTIAL (2026-10-14):** `/college/programs` now uses strict Zod College Admin mutation contracts for create/edit/archive, with current-college ownership, `can()`/`requirePermission()`, isSameOriginRequest on all mutation routes, program-row locks, same-transaction activity audit entries and case-insensitive name/code conflicts. Archive confirmation is required in UI and server body; current/historical cohort, enrollment and curriculum term dependencies all block archive. Edits preserve immutable department and deny lowering duration below authored semester or recorded batch progression. Loading/error/empty states and search/CSV remain. Isolated PostgreSQL success/cross-college/denial tests authored, pending execution here. Legacy duration-years input, blocker detail view and browser acceptance remain open. Dirty program edits now require explicit discard confirmation.
@@ -545,6 +549,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 **Student visibility CSV column PARTIAL (2026-10-15):** Capped Video and Resource metadata export now explicitly labels the persisted Visible-to-students boolean as Yes/No instead of inferring visibility from publication. Metadata never includes private media keys or URLs. Formula-safe export unit assertions authored; runtime/browser verification open.
 
+**Batch-specific content metadata PARTIAL (2026-10-15):** Video/Resource aggregate filters now match an exact persisted cohort code through the already college-checked offering ancestry, preserve batch code in pagination and safe CSV, and reject excessive selector lengths. A disposable-PG own/missing-batch fixture authored; browser acceptance open.
+
 **Owning-offering lifecycle filter PARTIAL (2026-10-15):** RESOURCE metadata now supports a separate offering ACTIVE/ARCHIVED selector, server-enforced inside the own-college ancestry joins before pagination and capped download. Own/missing lifecycle fixture authored; private notes and storage keys still omitted. Browser/DB execution open.
 
 **Resource metadata CSV PARTIAL (2026-10-15):** Own-college RESOURCE authoring metadata can be exported with matching search/status/course/scope filters and 1,000-row cap, spreadsheet-formula neutralization and truncation disclosure. Private text notes, URLs, keys and meeting links are not returned. Tenant and wrong-role PG fixture assertions authored; executed/browser parity remains open.
@@ -591,6 +597,14 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Assignments
+**College-owned academic-period assessment filter PARTIAL (2026-10-15):** Both Assignment and Quiz aggregates now join a registered academic period in the signed-in college and optionally filter by exact period code, before pagination and activity counts. URL/model plus positive/negative disposable-PostgreSQL evidence authored; browser/runtime verification pending.
+
+**375px assessment cards PARTIAL (2026-10-15):** Both College Admin assessment catalogues now render stacked min-width-safe cards for narrow viewports, preserving lesson/offering link, scope, due timestamp, points and recorded submissions/attempts, while the desktop table remains. No global horizontal table overflow is required on mobile; browser/accessibility acceptance pending.
+
+**Missing assessment deadline triage PARTIAL (2026-10-15):** College Admin Assignment and Quiz directories now isolate persisted NULL deadlines from configured due timestamps before the record cap. Strict Zod, pagination and own-college PostgreSQL fixture coverage added; no due date is inferred. Browser acceptance pending.
+
+**Exact course-code aggregate filter PARTIAL (2026-10-15):** College Admin quizzes and assignments accept an exact persisted course code before paginated totals with a URL-preserved filter and strict validation. The database fixture tests positive/negative matches in the existing college-owned assessment ancestry. Browser/runtime acceptance open.
+
 **Legacy:** `/college-admin/assignments`
 
 **Read-first aggregate PARTIAL:** `/college/assignments` lists persisted college-owned assignments, with title/status filters, due dates, lesson/course context, submission-row counts, an offering deep link, loading/error/empty states and no assignment or file-storage mutations. Legacy authoring/edit/delete, report and browser parity remain unchecked.
@@ -604,6 +618,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Quizzes
+**Past/upcoming due windows PARTIAL (2026-10-15):** Both assessment directories apply database timestamps before pagination (strictly before versus at/after now), excluding missing due timestamps. Typed query tests authored; independent PostgreSQL and browser execution pending.
+
+**Persisted quiz result-publication triage PARTIAL (2026-10-15):** College Admin quiz listing now filters by actual `results_published`, shows the state separately from quiz publication, and preserves the result selector in pagination. The Assignment endpoint rejects quiz-only result filters. Isolated PostgreSQL and strict-model fixtures authored; browser acceptance pending.
+
+**Shared versus section-specific assessment scope PARTIAL (2026-10-15):** The quizzes and assignments aggregates now distinguish actual NULL versus non-NULL delivery associations before page totals; URL state and strictly typed filter options are preserved. Disposable PostgreSQL own-college scope fixtures authored; browser acceptance pending.
+
 **Legacy:** `/college-admin/quizzes`
 
 **Read-first aggregate PARTIAL:** `/college/quizzes` lists persisted college-owned quizzes, with title/status filters, due dates, lesson/course context, attempt-row counts, an offering deep link, loading/error/empty states and no quiz-answer disclosure. Legacy authoring/edit/question/results management and browser parity remain unchecked.
@@ -641,39 +661,23 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 **Scoped Contact detail route PARTIAL (2026-10-15, chat-9):** Each Contacts card links to `/college/contacts/[membershipId]` for a read-only public detail anchored to a persisted current-college COLLEGE_ADMIN membership. Foreign IDs return identical not-found, and learner/dual-role email and all phone numbers stay masked. Positive, foreign and wrong-role isolated PG cases authored; execution/375px browser and exact legacy card metadata remain open.
 
-
 **Invalid Contacts date-window rejection PARTIAL (2026-10-15, chat-9):** Reverse IST joined-from/through intervals now fail closed in both page and export parsing and cannot silently return empty results. Service rechecks even for programmatic callers. Unit scenarios authored; browser/PG execution pending.
-
 
 **Contact joined-through filter PARTIAL (2026-10-15, chat-9):** The read-only contact tabs support inclusive IST end-day filtering, persisted in URLs and exports with a next-midnight exclusive DB bound. Cross-college isolation and privacy masks are unchanged; runtime/browser acceptance pending.
 
-
 **Contacts joined-from IST filter PARTIAL (2026-10-15, chat-9):** Contacts can limit memberships to a validated inclusive local calendar day lower bound, converted to Asia/Kolkata midnight and applied in college-scoped SQL before count/paging/CSV. Browser and real-DB acceptance remain open.
-
 
 **Contact name-initial selector PARTIAL (2026-10-15, chat-9):** Native A–Z initials select filters persisted display names before total/paging/export, scoped to the current college and combined with role/status/search. Prefix is a single validated alphabetic character, not a user-supplied SQL pattern. PG/browser checks outstanding.
 
-
 **Mixed-role Contacts triage PARTIAL (2026-10-15, chat-9):** A role-audience control distinguishes Faculty-only, Learner-only and dual Faculty+Learner memberships in a single current-college SQL filter. Dual-role learner contact fields remain masked even on Faculty tab and exports; no recipient privilege is inferred. Real database/browser acceptance pending.
-
 
 **Reverse-name Contacts sorting PARTIAL (2026-10-15, chat-9):** Contacts All/Faculty/Student tabs now support case-insensitive Z–A persisted-name order with deterministic UUID ties and identical ordering for export. Query schema and UI tests authored; database/browser evidence pending.
 
-
 **Longest-serving Contacts order PARTIAL (2026-10-15, chat-9):** A typed OLDEST order pages by persisted join time then membership UUID, avoiding page churn on identical timestamps. Corresponding URL, UI and export filters preserve order. DB/browser execution pending.
-
 
 **Contacts platform-account filter PARTIAL (2026-10-15, chat-9):** College contacts can independently filter registered ACTIVE/DISABLED user accounts and ACTIVE/SUSPENDED/ENDED college memberships; server SQL applies both before count/paging/CSV. Tenant authorization and student masks remain unchanged. Isolated runtime and browser checks outstanding.
 
-
 **Contacts page-size selector PARTIAL (2026-10-15, chat-9):** Contact tabs support strict 10/25/50 server-side page sizes and URL-preserved pagination, while the CSV retains a fixed 25-row service batch and independent 1,000-row cap. Unit contract authored; real DB/browser acceptance remains open.
-
-
-**Read-only College Contacts workspace PARTIAL (2026-10-15, chat-9):** New `/college/contacts` has distinct server-filtered All Contacts, Faculty Contacts and Student Contacts tabs, rather than pretending `/college/people` membership mutations clone the legacy contact directory. The underlying PostgreSQL read uses persisted College Admin membership/role checks, strictly derives the college from that actor, de-duplicates dual-role people by membership, filters name or authorized staff email and membership lifecycle, supports name/newest sort with 25-row server paging, and recovers from out-of-range pages. Student and dual-role learner contacts are masked in cards and exports; phone is masked for all roles. Student email search is intentionally disabled to prevent masked-address enumeration; this privacy deviation needs a need-to-know product review before claiming exact legacy parity.
-
-**Contacts operations PARTIAL:** Source-specific Faculty/Student detail links use already scoped role detail routes. The separate `/college/people` page remains the role/lifecycle management surface and now links to Contacts; the College Admin overview links to Contacts and Profile Verification. Export is a read-only, college-scoped GET, strictly parsed with duplicate-key rejection, 1,000-row cap, formula-safe CSV and explicit truncation metadata. Narrow mobile cards, status/search/sort forms, loading/invalid/error/retry states and stable pagination are authored. Pure model/unit tests and a disposable-Postgres in-test fixture covering own-college, foreign-college, wrong-role and masked CSV reads have been authored but **not executed here**.
-
-**Contacts acceptance remaining:** Legacy contact-card metadata/pictures, accurate read-only contact recipient semantics, need-to-know authorized contact reveal, possible dedicated Mentor contacts, browser accessibility at 375px, real PostgreSQL fixture execution, CI/typecheck, 1,000-row cap/truncation browser validation and source-to-target comparison. The existing People membership-management and legacy People Contacts family remains PARTIAL, not DONE. No role-permission additions, migrations, or planning matrix edits were made.
 
 ## Page: Faculty
 **Faculty history teaching-role drilldown PARTIAL (2026-10-15):** The Faculty detail history can filter registered PRIMARY, CO_TEACHER or TA assignments in conjunction with active/ended lifecycle before its 100-row cap, while separately retaining all-time totals. Strict no-forged-college model and own-college PG fixture tests authored; runtime/browser acceptance pending.
@@ -1095,6 +1099,12 @@ College Admin can act inside TPO in the legacy product.
 **Status: PARTIAL / tests authored, not executed.**
 
 
+**Read-only College Contacts workspace PARTIAL (2026-10-15, chat-9):** New `/college/contacts` has distinct server-filtered All Contacts, Faculty Contacts and Student Contacts tabs, rather than pretending `/college/people` membership mutations clone the legacy contact directory. The underlying PostgreSQL read uses persisted College Admin membership/role checks, strictly derives the college from that actor, de-duplicates dual-role people by membership, filters name or authorized staff email and membership lifecycle, supports name/newest sort with 25-row server paging, and recovers from out-of-range pages. Student and dual-role learner contacts are masked in cards and exports; phone is masked for all roles. Student email search is intentionally disabled to prevent masked-address enumeration; this privacy deviation needs a need-to-know product review before claiming exact legacy parity.
+
+**Contacts operations PARTIAL:** Source-specific Faculty/Student detail links use already scoped role detail routes. The separate `/college/people` page remains the role/lifecycle management surface and now links to Contacts; the College Admin overview links to Contacts and Profile Verification. Export is a read-only, college-scoped GET, strictly parsed with duplicate-key rejection, 1,000-row cap, formula-safe CSV and explicit truncation metadata. Narrow mobile cards, status/search/sort forms, loading/invalid/error/retry states and stable pagination are authored. Pure model/unit tests and a disposable-Postgres in-test fixture covering own-college, foreign-college, wrong-role and masked CSV reads have been authored but **not executed here**.
+
+**Contacts acceptance remaining:** Legacy contact-card metadata/pictures, accurate read-only contact recipient semantics, need-to-know authorized contact reveal, possible dedicated Mentor contacts, browser accessibility at 375px, real PostgreSQL fixture execution, CI/typecheck, 1,000-row cap/truncation browser validation and source-to-target comparison. The existing People membership-management and legacy People Contacts family remains PARTIAL, not DONE. No role-permission additions, migrations, or planning matrix edits were made.
+
 ### W06 Activity Log date-boundary correction — 2026-10-10
 
 Legacy College Admin audit is college-scoped and calendar-driven; vNext already improves the old first-page-only audit feed with keyset paging and grouped meaningful events. W06 found a date-only correctness bug in vNext: browser `<input type="date">` values such as `2026-10-10` were coerced as UTC midnight, so the `To` filter could exclude almost the entire selected day for India users. The shared activity query now interprets date-only From/To as **00:00:00.000–23:59:59.999 Asia/Kolkata**, while preserving explicitly offset ISO datetimes and rejecting timezone-ambiguous datetimes. The page labels the calendar filters as IST.
@@ -1134,3 +1144,9 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `college-admin/das
 **College offering lifecycle PARTIAL (2026-10-14):** College Admin `/college/courses` now includes archived offerings in the list, while create selectors and delivery aggregation exclude archived rows. Confirmed archive reuses the existing transactional delivery guard and immutable audit; restore validates own-college ancestry, current parent statuses and active offering uniqueness, locks and writes audit transactionally. New origin-protected route, Zod/role checks and unit/PG success/foreign/stale tests authored. Browser/PG execution remains pending; no DONE row change.
 
 **Attendance corrections read PARTIAL (2026-10-14):** `/college/attendance/corrections` now displays authorized current college policy, labels saved versus default policy, and lists persisted scheduled sessions for a strict 1–31-day IST window with recorded attendance marking status and existing Faculty correction-window calculation. It explicitly does not infer actual correction requests or totals because a dedicated migrated request-history table is unavailable. Gated PostgreSQL own/foreign/role checks, pure-model unit tests and error/loading/mobile states authored; independent CI/browser verification pending.
+
+## 2026-10-15 source reconciliation against main ea1172d2
+
+The current main/lane comparison and safe integration targets are recorded in the final reconciliation section of `docs/planning/account-surface-parity.md`; it is a source snapshot, not another tracker or runtime acceptance. Existing checkbox evidence is preserved. No required page/family becomes closed from this review.
+
+Thirty of chat-3's 43 comparison paths already match main byte-for-byte, including visibility producer/API/control/export, content directories/overview and profile work. Its residual includes program-directory/academic actions, assessment aggregate routes/component/model/service/tests and parity prose. Do not rebuild the 30 integrated paths or repeat the migration. College verification and class-to-team workspace creation also exist on main; their section-8 inventory is now PARTIAL, with full PG/concurrency/browser/cross-role gates still open. Chat-9's remaining Contacts export/privacy/navigation batch is different from main but 29 commits behind at the refreshed snapshot; preserve main's verification and ESLint fixes during reconciliation. No academic/people parent contract is certified by file identity alone.

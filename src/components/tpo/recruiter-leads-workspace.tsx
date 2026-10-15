@@ -275,6 +275,8 @@ export function RecruiterLeadsWorkspace({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
+          <Link href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</Link>
           <Link href="/tpo/follow-ups" className={buttonStyle}>
             Follow-ups Due
           </Link>

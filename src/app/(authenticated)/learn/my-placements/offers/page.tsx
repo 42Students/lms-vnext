@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { PageHeader } from "@/components/ui/page-header";
@@ -30,6 +31,9 @@ export default async function LearnerOffersPage({
     getOwnLearnerOfferBrowse(context,view),listOwnPlacementRequests(context),
   ]);
   const snapshotNowIso = new Date().toISOString();
+  const expiringSoon = learnerOffersExpiringSoon(offers.items.map(row => ({
+    status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
+  })), Date.parse(snapshotNowIso));
 
   return (
     <div className="space-y-6">
@@ -59,6 +63,11 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      {expiringSoon > 0 ? (
+        <div role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
+          <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
+        </div>
+      ) : null}
       {offers.items.length === 0 ? (
         <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">
