@@ -45,7 +45,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { learnerWithdrawalReasonSchema } from "./learner-withdrawal-model";
-import { evaluatePlacementEligibility, isPlacementJobTargetCohort } from "./eligibility-service";
+import { evaluatePlacementEligibility, isPlacementJobTargetCohort, placementApplyEligibilityDenial } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
@@ -632,16 +632,8 @@ export async function applyToPlacementJob(
       job.id,
     );
 
-  if (eligibility.status === "INELIGIBLE") {
-    throw new PlacementsServiceError(
-      "PLACEMENT_APPLICATION_INELIGIBLE",
-    );
-  }
-  if (eligibility.status === "NEEDS_DATA") {
-    throw new PlacementsServiceError(
-      "PLACEMENT_APPLICATION_NEEDS_DATA",
-    );
-  }
+  const preflightDenial = placementApplyEligibilityDenial(eligibility.status);
+  if (preflightDenial) throw new PlacementsServiceError(preflightDenial);
 
   const created = await getDb().transaction(
     async (tx) => {
@@ -735,13 +727,11 @@ export async function applyToPlacementJob(
       const liveEligibility = await evaluatePlacementEligibility(
         context,
         job.id,
+        undefined,
+        tx,
       );
-      if (liveEligibility.status === "INELIGIBLE") {
-        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
-      }
-      if (liveEligibility.status === "NEEDS_DATA") {
-        throw new PlacementsServiceError("PLACEMENT_APPLICATION_NEEDS_DATA");
-      }
+      const liveDenial = placementApplyEligibilityDenial(liveEligibility.status);
+      if (liveDenial) throw new PlacementsServiceError(liveDenial);
 
       // The manager's coordinator assignment writer takes the same job-row
       // lock. A learner cannot become both applicant and coordinator for one
