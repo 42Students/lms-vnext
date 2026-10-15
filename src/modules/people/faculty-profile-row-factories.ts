@@ -18,3 +18,10 @@ export function newFacultyCertification():FacultyProfileDocument["certifications
  return {id:crypto.randomUUID(),authority:"",name:"",certificationDate:"",
   validityDate:"",certificateLink:"",certificateDocumentId:null,description:""};
 }
+
+export function newFacultyExperience():FacultyProfileDocument["experiences"][number]{
+ return {id:crypto.randomUUID(),organization:"",designation:"",description:"",
+  from:"",to:"",experienceType:"",location:"",
+  experienceCertificateDocumentId:null,offerLetterDocumentId:null,
+  isPaid:false,salary:""};
+}
