@@ -5,16 +5,18 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
+import {hrSentProposalHistoryHref} from "@/modules/placements/hr-drive-proposal-history-links";
 
 export default async function RecruiterDriveProposalHistory({
  searchParams,
-}:{searchParams:Promise<{collegeId?:string|string[];page?:string|string[]}>}){
+}:{searchParams:Promise<{collegeId?:string|string[];page?:string|string[];q?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
  const id=Array.isArray(raw.collegeId)?raw.collegeId[0]:raw.collegeId;
  const rawPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
- const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id,page:rawPage});
+ const q=Array.isArray(raw.q)?raw.q[0]:raw.q;
+ const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id,page:rawPage,q});
  if(!input.success)notFound();
  const data=await listHrDriveProposals(context,input.data);
  return <main className="space-y-5">
@@ -30,6 +32,15 @@ export default async function RecruiterDriveProposalHistory({
     className="block rounded-md border border-border p-3 text-primary-text"
     href={"/hr/drives/proposals?collegeId="+grant.collegeId}>{grant.collegeName}</Link>)}
   </section>:data.status==="NO_ACCESS"?<p role="status">No active recruiter college access.</p>:<>
+   <form action="/hr/drives/proposals" method="get" className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
+    <input type="hidden" name="collegeId" value={data.collegeId??""}/>
+    <label className="min-w-48 flex-1 text-sm text-body">Search by role title
+     <input name="q" maxLength={100} defaultValue={input.data.q}
+       className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+       placeholder="Role title"/>
+    </label>
+    <button type="submit" className="self-end min-h-11 rounded-md border border-border px-4 text-primary-text">Search</button>
+   </form>
    <p role="status" className="text-sm text-body">
     {data.total} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
@@ -53,9 +64,9 @@ export default async function RecruiterDriveProposalHistory({
     No persisted drive proposals for this college. Draft a proposal to start a discussion.
    </p>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">
-    {data.page>1?<Link href={"/hr/drives/proposals?collegeId="+encodeURIComponent(data.collegeId!)+"&page="+(data.page-1)}
+    {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,page:data.page-1})}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newer proposals</Link>:null}
-    {data.page<data.pages?<Link href={"/hr/drives/proposals?collegeId="+encodeURIComponent(data.collegeId!)+"&page="+(data.page+1)}
+    {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,page:data.page+1})}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older proposals</Link>:null}
    </nav>
   </>}
