@@ -1102,3 +1102,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Audit Findings account-role filter (PARTIAL):** The real DB10 board and CSV export now share persisted `account_role` filtering, with strict role enums and cursor-state retention; the underlying service constrains the SQL page before fetching. Unit validation tests authored; integration and browser acceptance pending.
+
+
+**2026-10-15 chat-6 Audit Findings persisted resolution (PARTIAL):** A strict resolution filter distinguishes SQL NULL (UNRESOLVED) from each DB10 resolution enum; the same predicate applies before pagination/export and survives bookmark/cursor navigation. Unit tests authored; database evidence pending.

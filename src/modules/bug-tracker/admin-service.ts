@@ -4,6 +4,7 @@ import {
   desc,
   eq,
   gt,
+  isNull,
   lt,
   or,
   sql,
@@ -140,6 +141,8 @@ export async function listBugTrackerIssuesForAdmin(
   if (input.status) conditions.push(eq(db10BugReports.status, input.status));
   if (input.severity) conditions.push(eq(db10BugReports.severity, input.severity));
   if (input.accountRole) conditions.push(eq(db10BugReports.accountRole, input.accountRole));
+  if (input.resolution === "UNRESOLVED") conditions.push(isNull(db10BugReports.resolution));
+  else if (input.resolution) conditions.push(eq(db10BugReports.resolution, input.resolution));
   if (input.environment) {
     conditions.push(eq(db10BugReports.environment, input.environment));
   }
