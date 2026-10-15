@@ -938,3 +938,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 student rule SET endpoint — PARTIAL:** Introduced same-origin, strict-payload PUT for an unlocked Projects/Electives membership override. Service checks Super Admin, selected-college resource permissions, persisted active learner role and global-user lifecycle, blocks a resolved broader lock, and writes the rule plus actor/tenant-scoped audit event in one transaction. Placements member edits and locked writes are rejected. Unit/disposable PG tests authored, not executed; browser UI, full row serialization/concurrency and real PG validation remain open.
+
+
+**2026-10-15 chat-6 student INHERIT mutation — PARTIAL:** Server write contract now explicitly supports removing an existing Projects/Electives membership rule, distinct from writing an Off value. Missing rule is a no-op without invented audit, while actual removal writes tenant-scoped audit metadata in the same transaction. Strict discriminated Zod denies mixed actions. Tests authored, unexecuted; client editing and concurrency gates remain open.
