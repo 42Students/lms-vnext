@@ -44,4 +44,9 @@ describe("college lessons CSV",()=>{
    expect(lessonsCsvHref(lessonsCsvSchema.parse({periodStatus:"PLANNED"}))).toContain("periodStatus=PLANNED");
  });
 
+ it("lessons CSV keeps courseStatus validated",()=>{
+   expect(lessonsCsvSchema.safeParse({courseStatus:"INVALID"}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
+ });
+
 });
