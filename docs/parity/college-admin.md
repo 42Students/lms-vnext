@@ -25,6 +25,8 @@ Contacts now show an honest page range, page-local Faculty/Learner/dual-role bre
 
 **Announcements personal inbox unread filter PARTIAL (2026-10-15):** College Admin notices can filter unread, own-recipient *registered* notifications within the signed-in college before the 50-row cap. Toggle preserves the deleted-announcement selector. The draft college-wide DB10 announcement table remains gated and no broadcast sending is claimed. Pure model and isolated PG own/foreign/wrong-role tests authored; runtime/browser acceptance open.
 
+**Phase 2 exact College Admin sidebar copy (source fix, acceptance pending):** The college-only sidebar now uses the ten verbatim legacy menu labels in source order from `docs/audit/legacy-copy-A.md` (Dashboard, Activity Log, Academic Setup, Courses & Content, People, Profile verification, Placements, Placement cell, Projects, Profile) and routes to existing grouped landing pages. Mixed-role additive navigation remains. Unit navigation contract authored, 375px browser/cross-role acceptance outstanding.
+
 ## Page: Profile Verification (legacy /college-admin/verification)
 
 **Phase 2 UPDATE_PENDING withdrawal (staged only; DB gate BLOCKED):** An optimistic-version, learner-owned withdrawal planner restores the prior verified snapshot and emits a distinct WITHDRAWN audit action. The current registered PostgreSQL `profile_verification_events_action_ck` rejects WITHDRAWN, so no public route/UI is enabled. Orchestrator must register `docs/proposed-migrations/profile-verification-withdraw-action.sql`, replay on disposable PostgreSQL and review role/version tests before this action can be surfaced. Source tests authored, not executed.

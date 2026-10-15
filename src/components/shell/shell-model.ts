@@ -271,44 +271,18 @@ const recruiterItems: ShellNavItem[] = [
   },
 ];
 
-const collegeAdminItems: ShellNavItem[] = [
-  { label: "My College", href: "/college", shortLabel: "C" },
-  { label: "College Contact", href: "/college/college-profile", shortLabel: "C" },
-  { label: "Departments", href: "/college/departments", shortLabel: "D" },
-  { label: "Academics", href: "/college/academics", shortLabel: "A" },
-  { label: "Semesters", href: "/college/semesters", shortLabel: "S" },
-  { label: "Batches", href: "/college/batches", shortLabel: "B" },
-  { label: "Batch Promotion Preview", href: "/college/batch-promotion", shortLabel: "P" },
-  { label: "Classes", href: "/college/classes", shortLabel: "C" },
-  { label: "Electives", href: "/college/electives", shortLabel: "E" },
-  { label: "Semester Courses", href: "/college/semester-courses", shortLabel: "S" },
-  { label: "Faculty Assignment", href: "/college/faculty-assignment", shortLabel: "F" },
-  { label: "Lecture Halls", href: "/college/lecture-halls", shortLabel: "L" },
-  { label: "Attendance", href: "/college/attendance", shortLabel: "T" },
-  { label: "Attendance by Department", href: "/college/attendance/departments", shortLabel: "A" },
-  { label: "Courses", href: "/college/courses", shortLabel: "C" },
-  { label: "Lessons", href: "/college/lessons", shortLabel: "L" },
-  { label: "Videos", href: "/college/videos", shortLabel: "V" },
-  { label: "Resources", href: "/college/resources", shortLabel: "R" },
-  { label: "Course Progress", href: "/college/course-progress", shortLabel: "P" },
-  { label: "Assignments", href: "/college/assignments", shortLabel: "A" },
-  { label: "Quizzes", href: "/college/quizzes", shortLabel: "Q" },
-  { label: "Projects", href: "/college/projects", shortLabel: "P" },
-  { label: "Placements", href: "/college/placements", shortLabel: "P" },
-  { label: "Placement Evidence", href: "/college/placements/readiness-by-department", shortLabel: "R" },
-  {
-    label: "Placement Calendar",
-    href: "/college/placements/calendar",
-    shortLabel: "C",
-    icon: "/assets/images/common/calender.svg",
-  },
-  { label: "People", href: "/college/people", shortLabel: "P" },
-  { label: "Faculty", href: "/college/faculty", shortLabel: "F" },
-  { label: "Students", href: "/college/students", shortLabel: "S" },
-  { label: "Domains", href: "/college/domains", shortLabel: "D" },
+/** Legacy college sidebar, source: docs/audit/legacy-copy-A.md lists.js L192–212. */
+export const collegeAdminItems: ShellNavItem[] = [
+  { label: "Dashboard", href: "/college", shortLabel: "D" },
   { label: "Activity Log", href: "/college/activity", shortLabel: "A" },
-  { label: "Activity", href: "/activity", shortLabel: "A" },
-  { label: "My Profile", href: "/college/profile", shortLabel: "P" },
+  { label: "Academic Setup", href: "/college/departments", shortLabel: "A" },
+  { label: "Courses & Content", href: "/college/courses", shortLabel: "C" },
+  { label: "People", href: "/college/people", shortLabel: "P" },
+  { label: "Profile verification", href: "/college/verification", shortLabel: "V" },
+  { label: "Placements", href: "/college/placements", shortLabel: "P" },
+  { label: "Placement cell", href: "/tpo/home", shortLabel: "P" },
+  { label: "Projects", href: "/college/projects/workspaces", shortLabel: "P" },
+  { label: "Profile", href: "/college/profile", shortLabel: "P" },
 ];
 
 function pushUnique(
@@ -432,7 +406,20 @@ export function getShellNavigation(
     return mentorItems;
   }
 
-  const items: ShellNavItem[] = [dashboard];
+  // A College Admin-only account uses the legacy grouped ten-item sidebar,
+  // rather than exposing every vNext internal route as a separate menu item.
+  if (
+    context.membership &&
+    context.membership.roles.length === 1 &&
+    hasMembershipRole(context, "COLLEGE_ADMIN") &&
+    !hasActiveRecruiter(context)
+  ) {
+    return collegeAdminItems;
+  }
+
+  const items: ShellNavItem[] = hasMembershipRole(context, "COLLEGE_ADMIN")
+    ? []
+    : [dashboard];
 
   if (hasActiveRecruiter(context)) {
     pushUnique(items, recruiterItems);
