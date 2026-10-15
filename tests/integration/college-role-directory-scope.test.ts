@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
+import { exportCollegeRoleDirectoryCsv } from "@/modules/people/college-role-directory-export-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -227,6 +228,26 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{teachingRole:"TA"}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("filters exact current-college learner programs before pagination",async()=>{
+    const all=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
+    for(const program of all.programOptions.slice(0,2)){
+      const subset=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{programId:program.id});
+      expect(subset.total).toBeLessThanOrEqual(all.total);
+    }
+    expect((await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{programId:SEED_IDS.collegeB})).total).toBe(0);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"FACULTY",{programId:SEED_IDS.collegeB})).rejects.toThrow("FACULTY_PROGRAM_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{programId:SEED_IDS.collegeB})).rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("filters current Student class placement only from the active own-college section",async()=>{
+    const all=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
+    for(const section of all.sectionOptions.slice(0,2)){
+      const subset=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{sectionId:section.id});
+      expect(subset.total).toBeLessThanOrEqual(all.total);
+    }
+    expect((await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{sectionId:SEED_IDS.collegeB})).total).toBe(0);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"FACULTY",{sectionId:SEED_IDS.collegeB})).rejects.toThrow("FACULTY_SECTION_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{sectionId:SEED_IDS.collegeB})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("filters active student batch membership under own-college ancestry",async()=>{
     const unfiltered=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
     for(const option of unfiltered.cohortOptions.slice(0,3)){
@@ -317,4 +338,15 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     expect(result.total).toBe(0);
     expect(result.items).toEqual([]);
   });
+  it("exports only authorized Student directory records under the same strict roster filters",async()=>{
+    const result=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{programId:SEED_IDS.collegeB});
+    const exported=await exportCollegeRoleDirectoryCsv(collegeAdmin,"LEARNER",{programId:SEED_IDS.collegeB});
+    expect(result.total).toBe(0);
+    expect(exported.exported).toBe(0);
+    expect(exported.csv).not.toContain(SEED_IDS.learnerCollegeAMembership);
+    await expect(exportCollegeRoleDirectoryCsv(facultyInCollegeB,"LEARNER",{})).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
 });
+
+// Filtered role CSV reuses the same scoped reader, rather than a generic unfiltered people export.
