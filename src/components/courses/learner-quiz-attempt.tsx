@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
+import { learnerQuizReviewRows } from "@/modules/courses/learner-quiz-review-model";
 import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
 import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -88,6 +89,7 @@ export function LearnerQuizAttempt() {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [step, setStep] = useState(0);
+  const [showReview,setShowReview]=useState(false);
   const [nowMs, setNowMs] = useState(0);
   const [review, setReview] = useState(reviewRequested);
   const [loading, setLoading] = useState(true);
@@ -145,6 +147,7 @@ export function LearnerQuizAttempt() {
       );
       setAnswers(scopedDraft.answers);
       setStep(scopedDraft.step);
+      setShowReview(false);
       setReview(mustReview);
       setNowMs(loadedAtMs);
       setQuiz(quizBody.quiz);
@@ -181,6 +184,7 @@ export function LearnerQuizAttempt() {
   const questions = quiz?.questions ?? [];
   const current = questions[step] ?? null;
   const answerProgress=learnerQuizAnswerProgress(questions,answers);
+  const reviewRows=learnerQuizReviewRows(questions,answers);
   const latestAttempt = attempts.at(-1) ?? null;
   const answerMap = useMemo(
     () => new Map((latestAttempt?.answers ?? []).map((answer) => [answer.questionId, answer])),
@@ -449,6 +453,32 @@ export function LearnerQuizAttempt() {
               ) : null}
             </>
           ) : null}
+          <div className="mt-6">
+            <button type="button" aria-expanded={showReview}
+              onClick={()=>setShowReview(value=>!value)}
+              className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">
+              {showReview ? "Hide answer review" : "Review answers before submitting"}
+            </button>
+            {showReview ? (
+              <section aria-label="Your quiz answer review" className="mt-3 rounded-xl border border-border bg-surface-subtle p-4">
+                <p className="text-sm text-body">Review your responses. These are not grading results.</p>
+                <ol className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {reviewRows.map((item,index)=>(
+                    <li key={item.questionId}>
+                      <button type="button" onClick={()=>{setStep(index);setShowReview(false);}}
+                        className="flex min-h-11 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 text-left text-sm text-primary-text">
+                        <span>Question {index+1}</span>
+                        <span>{item.answered ? item.selectedCount+" selected" : "Unanswered"}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+                <Button disabled={submitting} onClick={()=>void submit()}>
+                  {submitting?"Submitting…":"Submit reviewed attempt"}
+                </Button>
+              </section>
+            ) : null}
+          </div>
           {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
           <div className="mt-7 flex flex-wrap justify-between gap-2">
             <Button variant="secondary" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>

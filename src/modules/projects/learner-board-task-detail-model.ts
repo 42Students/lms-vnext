@@ -3,7 +3,7 @@ import { z } from "zod";
 const taskIdSchema=z.string().uuid();
 type TaskIdentity={id:string};
 export type LearnerTaskBoardUrlFilters = {
-  taskSearch:string;priority:string;status?:string;sprintId:string;releaseId:string;
+  taskSearch:string;priority:string;status?:string;sprintId:string;releaseId:string;taskSort?:string;
 };
 export function findOwnLearnerBoardTask<T extends TaskIdentity>(
   tasks: readonly T[], input: unknown,
@@ -18,6 +18,7 @@ export function learnerBoardTaskHref(
   for(const [key,value] of [
     ["taskSearch",filters.taskSearch],["priority",filters.priority],
     ["taskStatus",filters.status ?? ""],["sprintId",filters.sprintId],["releaseId",filters.releaseId],
+    ["taskSort",filters.taskSort && filters.taskSort!=="DEFAULT" ? filters.taskSort : ""],
   ] as const) if(value) params.set(key,value);
   if(taskId && taskIdSchema.safeParse(taskId).success)params.set("taskId",taskId);
   return "/learn/projects/"+encodeURIComponent(projectId)+"?"+params.toString();

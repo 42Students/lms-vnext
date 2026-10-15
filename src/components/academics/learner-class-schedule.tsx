@@ -4,9 +4,12 @@ import Link from "next/link";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
 import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
 import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-schedule-search-model";
+import { filterLearnerScheduleByKind, type LearnerScheduleKind } from "@/modules/academics/learner-schedule-kind-filter-model";
+import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-schedule-upcoming-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -248,6 +251,13 @@ export function LearnerClassSchedule({
   );
   const [sectionId, setSectionId] = useState("");
   const [sessionSearch,setSessionSearch]=useState("");
+  const [sessionKind,setSessionKind]=useState<LearnerScheduleKind>("ALL");
+  const [upcomingOnly,setUpcomingOnly]=useState(false);
+  const [filterNowMs,setFilterNowMs]=useState(()=>Date.now());
+  useEffect(()=>{
+    const id=window.setInterval(()=>setFilterNowMs(Date.now()),60_000);
+    return ()=>window.clearInterval(id);
+  },[]);
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
     useState(() =>
       initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
@@ -255,11 +265,11 @@ export function LearnerClassSchedule({
 
   const filteredEvents = useMemo(
     () =>
-      filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
+      filterLearnerScheduleUpcoming(filterLearnerScheduleByKind(filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
         events,
         selectedDeliveryIds,
-      ), sectionId),sessionSearch),
-    [events, selectedDeliveryIds, sectionId,sessionSearch],
+      ), sectionId),sessionSearch),sessionKind),upcomingOnly,filterNowMs),
+    [events, selectedDeliveryIds, sectionId,sessionSearch,sessionKind,upcomingOnly,filterNowMs],
   );
   const days = useMemo(
     () => calendarDays(anchor, view),
@@ -439,6 +449,21 @@ export function LearnerClassSchedule({
               className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">
               Clear search
             </button> : null}
+            <label className="min-w-44 text-xs font-semibold text-body">Session kind
+              <select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
+                className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground">
+                <option value="ALL">All sessions</option>
+                <option value="COURSE">Course classes only</option>
+                <option value="SECTION">General section events</option>
+              </select>
+            </label>
+            <button type="button" aria-pressed={upcomingOnly}
+              onClick={()=>setUpcomingOnly(value=>!value)}
+              className={upcomingOnly
+                ? "min-h-11 rounded-lg border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text"
+                : "min-h-11 rounded-lg border border-border px-3 text-sm font-semibold text-body"}>
+              Upcoming sessions only
+            </button>
             <span role="status" className="w-full text-xs text-muted-foreground">
               {filteredEvents.length} matching authorized sessions
             </span>

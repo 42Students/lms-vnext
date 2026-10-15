@@ -18,7 +18,9 @@ import { assignmentOverviewState } from "@/modules/courses/learner-assignment-di
 import {learnerAssignmentMobileState} from "@/modules/courses/learner-assignment-mobile-model";
 import {learnerQuizMobileState} from "@/modules/courses/learner-quiz-mobile-model";
 import { learnerAssessmentMatchesSearch } from "@/modules/courses/learner-assessment-search-model";
+import { learnerAssessmentCourseCounts } from "@/modules/courses/learner-assessment-course-counts-model";
 import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type LearnerAssessmentStateFilter } from "@/modules/courses/learner-assessment-state-filter-model";
+import { learnerAssessmentActionCounts } from "@/modules/courses/learner-assessment-action-counts-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
 type CourseChoice = {
@@ -168,6 +170,9 @@ export function LearnerAssessmentOverview({
     currentPage * PAGE_SIZE,
   );
 
+  const countsByCourse=useMemo(()=>learnerAssessmentCourseCounts(items),[items]);
+  const actionCounts=learnerAssessmentActionCounts(items,currentNowMs);
+
   const completed = items.filter((item) =>
     item.kind === "ASSIGNMENT"
       ? Boolean(item.submittedAt)
@@ -204,7 +209,7 @@ export function LearnerAssessmentOverview({
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Metric
           label={
             kind === "ASSIGNMENT"
@@ -217,6 +222,8 @@ export function LearnerAssessmentOverview({
           label="Courses"
           value={courses.length}
         />
+        <Metric label="Needs action" value={actionCounts.pending} />
+        <Metric label="Overdue / missed" value={actionCounts.overdue} />
         <Metric
           label={
             kind === "ASSIGNMENT"
@@ -254,7 +261,7 @@ export function LearnerAssessmentOverview({
                 key={course.id}
                 value={course.id}
               >
-                {course.name} · {course.code}
+                {course.name} · {course.code} ({countsByCourse.get(course.id)??0})
               </option>
             ))}
           </Select>
@@ -283,6 +290,10 @@ export function LearnerAssessmentOverview({
         </label>
       </div>
 
+      <p role="status" className="text-sm text-muted-foreground">
+        Showing {filtered.length} of {items.length} published {kind==="ASSIGNMENT"?"assignments":"quizzes"} after your filters.
+        {filtered.length>PAGE_SIZE?" Page "+currentPage+" of "+totalPages+".":""}
+      </p>
       {filtered.length === 0 ? (
         <EmptyState
           title="No matching assessments"
