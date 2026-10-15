@@ -58,6 +58,20 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
     [share],
    );
    expect(events.rows[0]?.count).toBe("1");
+   // The composite share/college FK must stop forged cross-tenant audit events.
+   await client.query("SAVEPOINT cross_tenant_view");
+   await expect(client.query(
+    "insert into placement_company_applicant_share_views(share_id,college_id,event_kind) values($1,$2,'VIEW')",
+    [share,SEED_IDS.collegeB],
+   )).rejects.toMatchObject({code:"23503"});
+   await client.query("ROLLBACK TO SAVEPOINT cross_tenant_view");
+   // Audit writes must preserve the immutable event-kind vocabulary.
+   await client.query("SAVEPOINT invalid_kind");
+   await expect(client.query(
+    "insert into placement_company_applicant_share_views(share_id,college_id,event_kind) values($1,$2,'PRINT')",
+    [share,SEED_IDS.collegeA],
+   )).rejects.toMatchObject({code:"23514"});
+   await client.query("ROLLBACK TO SAVEPOINT invalid_kind");
    await client.query("SAVEPOINT foreign_tenant");
    await expect(client.query(
     "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,$5,clock_timestamp()+interval '1 day')",
