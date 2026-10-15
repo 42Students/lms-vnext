@@ -1430,3 +1430,23 @@ regression is authored against the existing P6B final-delivery fixture and
 asserts versions, reviewer decisions and private-data exclusion, but **has
 not executed** in this session. CI, tenant-negative, browser/legacy and all
 clone-family acceptance remain open; no tracker DONE change is implied.
+
+
+## 2026-10-15 chat-11 — bulk-actions handoff and Mentor safety pass (PARTIAL)
+
+The TPO bulk engine now connects the Students roster and drive-applicant pipeline to
+current-page selection, a five-minute actor-and-version-bound server preview, generic
+non-PII preview labels, and explicit same-origin POST confirmation through existing
+college-scoped audited single-record writers. Direct service calls also enforce the
+DB09 flag. Selection identity, changed-page preview invalidation, permission/DB
+errors and responsive controls have regression tests authored. The existing TPO
+integration suite includes scoped audit, replay and foreign-Mentor negatives.
+**No passing execution of the current revision is established:** the matrix row
+must remain PARTIAL pending Vitest, disposable DB, keyboard/mobile and independent
+acceptance. This temporary TPO work was explicitly assigned to chat-11; chat-9
+owns its separately implemented grid/column panel.
+
+Mentor Project history now includes deleted/completed/readiness lifecycle events,
+small-screen-safe history/review filters, and a full filter reset including page size.
+Those improvements are source-level parity only; browser and persisted PostgreSQL
+validation remain OPEN. No official tracker task was marked DONE.
