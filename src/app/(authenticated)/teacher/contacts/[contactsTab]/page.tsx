@@ -72,7 +72,7 @@ export default async function FacultyContactsPage({
     <div className="space-y-6">
       <PageHeader
         eyebrow="Faculty"
-        title="Contacts"
+        title={selected.label}
         description="Public directory of active college names, roles and recorded departments only."
       />
 

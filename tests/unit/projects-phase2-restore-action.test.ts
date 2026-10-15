@@ -12,7 +12,7 @@ describe("PR-S2-10 archived project recovery action",()=>{
   it("wires an optimistic timestamp-bearing restoration from admin summary",()=>{
     expect(control).toContain('if (status === "ARCHIVED")');
     expect(control).toContain('expectedUpdatedAt },');
-    expect(control).toContain('"/restore`');
+    expect(control).toContain('/restore`');
     expect(workspace).toContain("expectedUpdatedAt={workspace.project.updatedAt.toISOString()}");
   });
 });

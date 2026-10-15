@@ -156,7 +156,7 @@ test.describe("Core tenant browser acceptance", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Platform overview",
+        name: "Overview",
       }),
     ).toBeVisible();
 
@@ -231,7 +231,7 @@ test.describe("Core tenant browser acceptance", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Platform overview",
+        name: "Overview",
       }),
     ).toBeVisible();
 
@@ -455,12 +455,12 @@ test.describe("Core tenant browser acceptance", () => {
     await page.goto("/dashboard");
     await expect(
       page.getByRole("button", {
-        name: "Sign out",
+        name: "Logout",
       }),
     ).toBeVisible();
     await page
       .getByRole("button", {
-        name: "Sign out",
+        name: "Logout",
       })
       .click();
 
@@ -544,7 +544,7 @@ test.describe("Core tenant browser acceptance", () => {
 
     await page.goto("/dashboard");
     const switcher = page.getByLabel(
-      "Active college membership",
+      "Switch workspace",
     );
     await expect(switcher).toHaveValue(
       SEED_IDS.facultyCollegeAMembership,
@@ -592,7 +592,7 @@ test.describe("Core tenant browser acceptance", () => {
     );
     await page
       .getByLabel(
-        "Active college membership",
+        "Switch workspace",
       )
       .selectOption(
         SEED_IDS.facultyCollegeAMembership,

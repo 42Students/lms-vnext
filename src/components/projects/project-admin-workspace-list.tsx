@@ -135,6 +135,7 @@ export function ProjectAdminWorkspaceList({
               projectId={item.id}
               projectTitle={item.title}
               status={item.status}
+              expectedUpdatedAt={item.updatedAt.toISOString()}
             />
           </div>
         </article>

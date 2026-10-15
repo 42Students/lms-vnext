@@ -40,9 +40,11 @@ import {
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
+import { parsePlacementCascadeId } from "./placement-cascade-policy";
 import {
   canReleaseAnotherHeldOffer,
   minimumOfferResponseDeadline,
+  isPlacementOfferResponseExpired,
 } from "./offer-college-rules-policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
@@ -292,6 +294,16 @@ export async function issuePlacementOffer(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // A cancellation locks this job first, then revokes pending offers.
+    // Issuance must take the same lock order and only target open drives.
+    const [liveJob] = await tx.select({
+      status: placementJobs.status, archivedAt: placementJobs.archivedAt,
+    }).from(placementJobs).where(eq(placementJobs.id, current.job.id))
+      .for("share").limit(1);
+    if (!liveJob || liveJob.status !== "PUBLISHED" ||
+        liveJob.archivedAt !== null) {
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+    }
     // Per-learner serialization for cross-drive releases, in the same
     // membership-before-application order used by learner withdrawal.
     const [member] = await tx.select({
@@ -588,9 +600,7 @@ export async function actOnPlacementOffer(
 
   if (
     input.action !== "WITHDRAW" &&
-    current.offer.expiresAt &&
-    now.getTime() >
-      current.offer.expiresAt.getTime()
+    isPlacementOfferResponseExpired(current.offer.expiresAt, now)
   ) {
     throw new PlacementsServiceError(
       "PLACEMENT_OFFER_EXPIRED",
@@ -637,9 +647,7 @@ export async function actOnPlacementOffer(
 
     if (
       input.action !== "WITHDRAW" &&
-      offer.expiresAt &&
-      now.getTime() >
-        offer.expiresAt.getTime()
+      isPlacementOfferResponseExpired(offer.expiresAt, now)
     ) {
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_EXPIRED",
@@ -648,7 +656,14 @@ export async function actOnPlacementOffer(
 
     if (input.action === "ACCEPT") {
       if (offer.status === "ACCEPTED") {
-        return offer;
+        // A retried response returns the same durable cascade identifier.
+        const [acceptedHistory] = await tx.select({
+          reason: placementOfferStatusHistory.reason,
+        }).from(placementOfferStatusHistory).where(and(
+          eq(placementOfferStatusHistory.offerId, offer.id),
+          eq(placementOfferStatusHistory.toStatus, "ACCEPTED"),
+        )).orderBy(desc(placementOfferStatusHistory.createdAt)).limit(1);
+        return { ...offer, cascadeId: parsePlacementCascadeId(acceptedHistory?.reason) };
       }
       if (offer.status !== "ISSUED") {
         throw new PlacementsServiceError(
@@ -685,6 +700,7 @@ export async function actOnPlacementOffer(
         );
       }
 
+      const cascadeId = randomUUID();
       await tx
         .insert(
           placementOfferStatusHistory,
@@ -695,6 +711,7 @@ export async function actOnPlacementOffer(
           toStatus: "ACCEPTED",
           actorUserId:
             context.user.id,
+          reason: `cascade:${cascadeId}`,
         });
 
       await tx
@@ -709,7 +726,6 @@ export async function actOnPlacementOffer(
       // P-S1-06: accepting one placement offer atomically declines other
       // pending offers and withdraws other live applications. A durable
       // cascade id ties together all compensatable status histories.
-      const cascadeId = randomUUID();
       const otherOffers = await tx
         .select({
           id: placementOffers.id,
@@ -801,7 +817,7 @@ export async function actOnPlacementOffer(
         },
       );
 
-      return updated;
+      return { ...updated, cascadeId };
     }
 
     if (input.action === "DECLINE") {

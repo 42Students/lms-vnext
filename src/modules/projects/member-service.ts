@@ -457,6 +457,8 @@ export async function reassignProjectPrimaryMentor(
             membershipId:
               mentorMembershipId,
             role: "MENTOR",
+            roleKind: "MENTOR",
+            canMutate: true,
             isPrimary: true,
             roleLabel: normalizedRoleLabel,
             createdByUserId: context.user.id,
@@ -667,6 +669,8 @@ export async function addProjectMember(
         projectId: scope.project.id,
         membershipId: input.membershipId,
         role: input.role,
+        roleKind: input.role === "MENTOR" ? "MENTOR" : "LEARNER",
+        canMutate: true,
         isPrimary: input.isPrimary,
         roleLabel: input.roleLabel ?? null,
         createdByUserId: context.user.id,

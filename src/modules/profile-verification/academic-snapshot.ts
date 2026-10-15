@@ -20,6 +20,12 @@ function comparableEndYear(raw: string): number {
 export function parseAcademicSnapshot(snapshot: SafeSnapshot): RawEntry[] {
   if (!Array.isArray(snapshot.education)) throw new VerificationStateError("INVALID_SNAPSHOT");
   const latest = new Map<AcademicLevel, RawEntry>();
+  // When the snapshot carries scanned private marksheet links, publish only
+  // documented grades. Optional unbacked marks cannot drive eligibility.
+  const hasDocumentRefs = snapshot.education.some(value =>
+    value !== null && typeof value === "object" && !Array.isArray(value) &&
+    typeof (value as Record<string, unknown>).marksheetDocumentId === "string"
+  );
   for (const obj of snapshot.education) {
     if (!obj || typeof obj !== "object" || Array.isArray(obj)) {
       throw new VerificationStateError("INVALID_SNAPSHOT");
@@ -30,6 +36,7 @@ export function parseAcademicSnapshot(snapshot: SafeSnapshot): RawEntry[] {
     }
     const level = educationLevel(raw.educationType);
     if (!level || raw.grade.trim() === "") continue;
+    if (hasDocumentRefs && typeof raw.marksheetDocumentId !== "string") continue;
     if (typeof raw.gradingType !== "string" || typeof raw.max !== "string") {
       throw new VerificationStateError("INVALID_SNAPSHOT");
     }

@@ -53,7 +53,7 @@ export function MembershipSwitcher({
   return (
     <div className="w-44 min-w-0 sm:w-60">
       <label className="sr-only" htmlFor="membership-switcher">
-        Active college membership
+        Switch workspace
       </label>
       <Select
         id="membership-switcher"
@@ -62,7 +62,7 @@ export function MembershipSwitcher({
         onChange={(event) => switchMembership(event.target.value)}
         className="min-h-10 py-0"
       >
-        <option value="">Select college</option>
+        <option value="">Switch workspace</option>
         {activeChoices.map((membership) => (
           <option key={membership.id} value={membership.id}>
             {membership.collegeName} · {membership.roles.join(", ")}

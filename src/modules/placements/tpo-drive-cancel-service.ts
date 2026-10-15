@@ -7,6 +7,7 @@ import {
   placementJobRounds,
   placementJobs,
   placementOffers,
+  placementOfferStatusHistory,
   placementSeasons,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -20,6 +21,7 @@ import {
 } from "./tpo-job-write-base";
 import {
   evaluateTpoDriveCancellation,
+  isIssuedOfferCancelable,
   tpoDriveCancelSchema,
   type TpoDriveCancelImpact,
 } from "./tpo-drive-cancel-model";
@@ -180,6 +182,37 @@ export async function cancelTpoDriveWithPreview(
       });
     if (!saved) throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
     const now = new Date();
+    // P-S2-12: stop live ISSUED offers in the same transaction as closure.
+    // The registered offer schema permits WITHDRAWN; CANCELLED job status
+    // requires a separate orchestrator-owned migration.
+    const issued = await tx.select({
+      id: placementOffers.id, status: placementOffers.status,
+    }).from(placementOffers)
+      .innerJoin(placementApplications,
+        eq(placementApplications.id, placementOffers.applicationId))
+      .where(and(
+        eq(placementApplications.jobId, jobId),
+        eq(placementOffers.status, "ISSUED"),
+      )).for("update");
+    const cancelledAt = new Date();
+    for (const entry of issued) {
+      if (!isIssuedOfferCancelable(entry.status)) continue;
+      const [stopped] = await tx.update(placementOffers).set({
+        status: "WITHDRAWN",
+        withdrawnAt: cancelledAt,
+        withdrawnByUserId: context.user.id,
+        updatedAt: cancelledAt,
+      }).where(and(
+        eq(placementOffers.id, entry.id),
+        eq(placementOffers.status, "ISSUED"),
+      )).returning({ id: placementOffers.id });
+      if (!stopped) throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+      await tx.insert(placementOfferStatusHistory).values({
+        offerId: stopped.id, fromStatus: "ISSUED", toStatus: "WITHDRAWN",
+        actorUserId: context.user.id,
+        reason: input.reason,
+      });
+    }
     const cancelledRounds = await tx
       .update(placementJobRounds)
       .set({ status: "CANCELLED", cancelledAt: now, updatedAt: now })
@@ -213,6 +246,7 @@ export async function cancelTpoDriveWithPreview(
         toStatus: saved.status,
         impact: current,
         roundsCancelled: cancelledRounds.length,
+        issuedOffersWithdrawn: issued.length,
         previewVersion: input.expectedUpdatedAt,
         updatedAt: saved.updatedAt.toISOString(),
       },
@@ -222,6 +256,7 @@ export async function cancelTpoDriveWithPreview(
       status: saved.status,
       updatedAt: saved.updatedAt.toISOString(),
       roundsCancelled: cancelledRounds.length,
+      issuedOffersWithdrawn: issued.length,
       impact: current,
     };
   });

@@ -56,6 +56,12 @@ describe("P-S1-05 college held-offer uplift gate", () => {
     })).toBe(true);
   });
 
+  it("does not treat zero-valued held CTC as a provable uplift", () => {
+    expect(canAddPlacementHeldOffer({
+      ...defaults, heldOffers: [offer(0)], nextAnnualCtcInr: 0,
+    })).toBe(false);
+  });
+
   it("uses the dream exemption but rejects unknown CTC at capacity", () => {
     expect(canAddPlacementHeldOffer({
       ...defaults,
