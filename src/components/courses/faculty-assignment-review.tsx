@@ -175,6 +175,7 @@ function SubmissionGradeCard({
     )) {
       return;
     }
+    if(!beginFacultyManualGradeOperation(operationInFlight))return;
     setPublishing(true);
 
     try {
@@ -217,6 +218,7 @@ function SubmissionGradeCard({
         "Could not publish this grade. Check your connection and try again.",
       );
     } finally {
+      operationInFlight.current=false;
       setPublishing(false);
     }
   }
