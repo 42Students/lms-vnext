@@ -41,7 +41,7 @@ PHASE 8  Courses / learning                    ACTIVE
 PHASE 9  Projects                              DONE
 PHASE 10 Placements / TPO / HR                 ACTIVE
 PHASE 11 Activity / notifications / analytics  DONE
-PHASE 12 AI capabilities                       FOUNDATION ACTIVE / VERTEX-BLOCKED
+PHASE 12 AI capabilities                       DROPPED (owner decision 12)
 PHASE 13 Legacy account/page parity             ACTIVE — RELEASE GATE
 PHASE 14 Production cutover / retirement       PENDING
 ```
@@ -963,42 +963,7 @@ Do not add a separate analytics database early.
 
 # 15. Phase 12 — AI capabilities
 
-## Status
-FOUNDATION ACTIVE. Provider abstraction, prompt versioning, structured telemetry, explicit authorized domain tools and deterministic evaluation cases are implemented. The Vertex adapter and model-quality evaluation remain blocked on the real GCP project/model configuration.
-
-## Goal
-Use AI as domain tooling, not a generic chatbot.
-
-## Architecture
-
-```text
-src/ai/
-  provider
-  tools
-  prompts
-  evaluation
-```
-
-Vertex AI should be replaceable through an app-level abstraction.
-
-## Domain tool pattern
-
-Examples:
-- getAtRiskStudents
-- getBlockedProjects
-- getPendingEvaluations
-- getPlacementPipeline
-- getStudentsMissingEligibilityData
-
-AI should call explicit domain services/tools, not unrestricted SQL.
-
-## Requirements before shipping AI
-- deterministic underlying data model
-- authorization applied to tool calls
-- prompt/version tracking
-- evaluation test set
-- latency/cost observability
-- no cross-college leakage
+DROPPED — owner decision 12 (2026-10-15). No AI features, Vertex AI or AI grading are part of vNext; `src/ai` was removed.
 
 ---
 
