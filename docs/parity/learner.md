@@ -1418,3 +1418,43 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / Course Attendance current-month navigation (L4 PARTIAL):** learners can return to the server-derived IST current month from historical attendance without losing the own Course delivery or mutating attendance. Unit regression authored; mobile/browser acceptance open.
 
 **Chat-7 follow-up / latest quiz-attempt review (L8 PARTIAL):** the standalone quiz review selects the largest persisted attempt number, not whatever array element happens to be last, preventing stale reordering from showing earlier results. Pure regression authored; PG/browser acceptance pending.
+
+**2026-10-15 chat-7 next round (L2-011 FIXED source, acceptance open):** Course Home no longer reports a no-deadline incomplete Course as 'Course work complete'. It distinguishes real persisted `itemsCompleted` from `itemsTotal`; no item status is guessed. Focused regression authored, browser/PostgreSQL acceptance pending.
+
+**L2-016 (source fix, unverified):** Course Home upcoming quiz actions exclude persisted missed/completed quizzes, validate actual finite due instants and retain only the authorized next-14-day window. Pure regression authored; producer/consumer and browser acceptance open.
+
+**L1 next-due attention (source FIXED, proof open):** missed/completed quizzes and invalid timestamps no longer leak into actionable Course-card due dates. No new read or mutation. Pure regressions authored; runtime/browser verification pending.
+
+**L5 discussion post duplicate guard (source FIXED, proof open):** a synchronous per-mounted-composer lock now prevents double-Enter/double-click races before React applies posting state; read-only/historical composer never starts a POST. Central server permissions unchanged. Regression authored, browser/PG execution pending.
+
+**L5 discussion delivery-change isolation (source FIXED, proof open):** authorized delivery changes remount the discussion component, clearing the prior college-course's client messages, paging cursors and unsent reply state. Full read authorization remains in the server route. Unit test authored; cross-course browser replay and privacy acceptance pending.
+
+**L8 review availability (source FIXED, proof open):** if a published quiz has no currently available question details but its own previously submitted attempt exists, the review preserves the saved-attempt explanation rather than saying the learner never started a quiz. No grades or answers are invented. Pure regression authored; browser/DB verification pending.
+
+**L4 Attendance record badge parity (source FIXED, proof open):** medical/excused statuses no longer display the same error styling as explicitly absent sessions; late remains warning and unrecognized values are neutral. Persisted counts and policy are unchanged. Focused unit test authored; browser/legacy comparison pending.
+
+**L11 Profile remove guard (source FIXED, proof open):** removing a saved career-profile entry requires explicit confirmation and a still-existing saved ID, preventing silent data loss and no-op section overwrites. This is a documented safety correction. Unit regression authored; browser and PostgreSQL acceptance open.
+
+**L2 next-action headline truth (source FIXED, acceptance open):** Course Home now displays `In progress` for uncompleted tracked items without an upcoming timestamp and `Attention` for missed items; `All clear` requires an actual completed denominator. No inferred grades or deadlines. Unit regressions authored; browser and producer verification pending.
+
+**L5 discussion create capability fail-closed (source FIXED, proof open):** the composer stays read-only until a successful same-delivery GET explicitly returns `canPost: true`; missing/failed capability responses cannot default to permission. POST still independently enforces same-origin and persisted membership. Unit test authored; historical/browser denial acceptance pending.
+
+**Chat-7 follow-up / L5 pinned discussion visibility (FIXED source; unverified):** the already-authorized GET response now includes the server's delivery-scoped highlighted pinned message even when outside the newest 60-message page. No extra data read, cache remains private/no-store. Regression authored; DB/browser oracle verification pending.
+
+**Chat-7 follow-up / L5 discussion composer parity (FIXED source; unverified):** the same exported 3,900-character limit now governs the server's Zod boundary and the learner's visible input cap, counter, and Post validation. Overlimit/blank payloads fail closed; authorizations unchanged. Boundary tests authored; execution/browser pending.
+
+**Chat-7 follow-up / L5 polling response order (FIXED source; unverified):** Discussion GET responses now carry a local request generation; stale/failed older requests cannot overwrite a newer authorized feed, permission flag, or error state. This is per-component only; no cross-delivery cache. Unit regression authored; browser network-throttling proof pending.
+
+**Chat-7 follow-up / L5 discussion history request gate (PARTIAL):** a synchronous in-flight guard prevents duplicate `Load earlier` clicks from replaying the same cursor, releases after errors for retry, and latest refresh now clears the initial skeleton even if the first slow request was superseded by polling. Pure regression authored; browser concurrency and PostgreSQL evidence outstanding.
+
+**Chat-7 follow-up / L6-L7 aggregate attention course scope (PARTIAL):** selecting an already-authorized Course now scopes the visible total, submitted/attempted, Needs action, Due soon, Overdue, and Results counters to that Course; All courses retains global totals. No extra data read or authorization change. Regression authored; mobile/browser evidence pending.
+
+**Chat-7 follow-up / L2 Course Home mixed outcomes (PARTIAL):** when a missed quiz coexists with a real next authorized task, the learner sees a `Continue learning` completion summary, not a false `No remaining actionable items` conclusion. The stored missed quiz remains disclosed; no expiry policy changed. Unit regression authored; live state and browser proof open.
+
+**Chat-7 follow-up / L11 saved Profile collection mutation controls (PARTIAL):** Add/Edit/Delete are disabled during an existing profile or contact save, and the handlers check the same guard before destructive mutation to limit stale full-section overwrites. Confirmation remains required. Unit model authored; concurrency/browser/PG proof pending.
+
+**Chat-7 follow-up / L3-006/037 Learning Path item deep-link navigation (PARTIAL):** focused modal keys now incorporate authorized lesson/item and focus state, so in-app navigation between deep-linked items remounts the correct dialog instead of preserving a stale useState(initiallyOpen) modal. No additional content reads or permission changes. Unit model authored; Escape/focus/browser proof pending.
+
+**Chat-7 follow-up / L6-L7 created-date sorting (PARTIAL):** invalid published-creation timestamps now sort after all valid dates, including historical pre-1970 entries, rather than masquerading as a legitimate 1970 timestamp. The authoritative assessment list remains scoped at service load. Unit regression authored; live list/browser proof pending.
+
+**Chat-7 follow-up / L8 quiz question-index answer integrity (PARTIAL):** the question-index accessible label and answered badge now count only option IDs still present in that learner-authorized question, matching answer-progress policy. Stale/deleted option IDs are not represented as answered. Pure unit regression authored; browser/PG proof pending.

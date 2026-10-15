@@ -5,7 +5,8 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listCollegeVerificationQueue} from "@/modules/verification/staff-queue-service";
-import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions} from "@/modules/verification/filter-options-service";
+import {exportCollegeVerificationCsv} from "@/modules/verification/staff-export-service";
+import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions,listVerificationProgramOptions} from "@/modules/verification/filter-options-service";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {reviewCollegeVerificationBulk} from "@/modules/verification/staff-bulk-review-service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
@@ -131,6 +132,59 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
  it("does not leak foreign-college verification details or permit cross-college review",async()=>{
   await expect(reviewProfileVerification(admin,{...ownBody,learnerMembershipId:ids.foreignMember},
    createProfileVerificationRepository())).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("applies exact membership filter before paging without disclosing foreign requests",async()=>{
+  const own=await listCollegeVerificationQueue(admin,{membershipId:ids.ownMember});
+  expect(own.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
+  expect(own.rows.some(row=>row.learnerMembershipId===ids.foreignMember)).toBe(false);
+  const other=await listCollegeVerificationQueue(admin,{membershipId:ids.foreignMember});
+  expect(other.total).toBe(0);
+  await expect(listCollegeVerificationQueue(wrongRole,{membershipId:ids.ownMember})).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("shares IST lower-date and first-submission filters between current-college queue and export",async()=>{
+  const past=await listCollegeVerificationQueue(admin,{membershipId:ids.ownMember,submittedFrom:"2020-01-01",waitingState:"SUBMITTED"});
+  expect(past.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
+  const future=await listCollegeVerificationQueue(admin,{membershipId:ids.ownMember,submittedFrom:"2099-01-01",waitingState:"SUBMITTED"});
+  expect(future.total).toBe(0);
+  const csv=await exportCollegeVerificationCsv(admin,{membershipId:ids.ownMember,submittedFrom:"2020-01-01",waitingState:"SUBMITTED"});
+  expect(csv.csv).toContain("Verification Own College");
+  expect(csv.csv).not.toContain("Verification Foreign College");
+  await expect(exportCollegeVerificationCsv(wrongRole,{membershipId:ids.ownMember,waitingState:"SUBMITTED"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("applies kind before paging and preserves current-college protection",async()=>{
+  const identity=await listCollegeVerificationQueue(admin,{kind:"IDENTITY"});
+  expect(identity.rows.every(row=>row.section==="IDENTITY")).toBe(true);
+  const education=await listCollegeVerificationQueue(admin,{kind:"EDUCATION"});
+  expect(education.rows.every(row=>row.section==="EDUCATION")).toBe(true);
+  expect(identity.rows.some(row=>row.learnerMembershipId===ids.foreignMember)).toBe(false);
+  await expect(listCollegeVerificationQueue(wrongRole,{kind:"IDENTITY"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("rejects foreign programs and enforces persisted-admin scoped selectors",async()=>{
+  const options=await listVerificationProgramOptions(admin);
+  expect(options.items.length).toBeLessThanOrEqual(200);
+  expect(options.items.every(item=>item.id&&item.label)).toBe(true);
+  const foreign=await listCollegeVerificationQueue(admin,{programId:SEED_IDS.collegeB});
+  expect(foreign.total).toBe(0);
+  await expect(listVerificationProgramOptions(wrongRole)).rejects.toBeInstanceOf(AuthorizationError);
+  await expect(listCollegeVerificationQueue(wrongRole,{programId:SEED_IDS.collegeB})).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("isolates unassigned learner verification requests and preserves matching CSV selection",async()=>{
+  const unassigned=await listCollegeVerificationQueue(admin,{enrollment:"NONE",membershipId:ids.ownMember});
+  expect(unassigned.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
+  const assigned=await listCollegeVerificationQueue(admin,{enrollment:"ACTIVE",membershipId:ids.ownMember});
+  expect(assigned.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(false);
+  const csv=await exportCollegeVerificationCsv(admin,{enrollment:"NONE",membershipId:ids.ownMember});
+  expect(csv.csv).toContain("Verification Own College");
+  expect(csv.csv).not.toContain("Verification Foreign College");
+  await expect(exportCollegeVerificationCsv(wrongRole,{enrollment:"NONE"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("uses current waiting-age and scoped ID filters without selecting foreign records",async()=>{
+  const recent=await listCollegeVerificationQueue(admin,{ageBand:"WITHIN_48_HOURS",membershipId:ids.ownMember});
+  expect(recent.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
+  expect(recent.rows.every(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")).toBe(true);
+  const old=await listCollegeVerificationQueue(admin,{ageBand:"OVER_SEVEN_DAYS",membershipId:ids.ownMember});
+  expect(old.total).toBe(0);
+  await expect(listCollegeVerificationQueue(wrongRole,{ageBand:"WITHIN_48_HOURS"})).rejects.toBeInstanceOf(AuthorizationError);
  });
  it("bulk command rejects forged roles and reports foreign rows without leaking data",async()=>{
   const foreignInput={confirm:true,action:"SEND_BACK",reason:"Please provide legible evidence",
