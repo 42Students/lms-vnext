@@ -1108,3 +1108,43 @@ Mentor Meetings, Team, Reports, Task Review, Delivery Review or Notifications
 PARTIAL rows. Section 8 contains no independent Mentor-specific MISSING
 route to implement; College Admin bulk reassign Mentor remains admin-owned,
 not a Mentor write.
+
+
+## 2026-10-15 chat-11 standing-brief round — Team coverage, Sprint progress and final-review history (PARTIAL)
+
+Merged current main before implementation. Ten separate feature commits were pushed in
+the assigned Mentor/Projects lane; all involved routes remain PARTIAL pending acceptance.
+
+- **Team coverage:** primary-versus-supporting *current Mentor assignment* facet;
+  multi-Mentor team flag from persisted active same-college project memberships;
+  fewest/most active learners first, before server pagination. These are
+  measured team counts, not inferred staffing levels. The existing team
+  service still authorizes through central projects.read and a live persisted
+  member/role grant.
+- **Delivery review history:** optional exact assigned Project UUID, positive
+  stored submission version, ascending/descending recorded decision time,
+  last-seven/last-thirty day windows. Project selectors fail closed if not
+  currently assigned; filters apply to the registered joined decision query
+  before SQL count, ordering, and pagination. Only non-sensitive decision,
+  version and timestamp metadata is returned; no learner identities, raw
+  feedback or claim that the current Mentor personally authored a decision.
+- **Sprint progress:** optional exact Project UUID, persisted task attention
+  (BLOCKED or IN_REVIEW), and active-Sprint-first ordering. An authorized
+  Project list supplies selector choices; the non-archived Mentor scope,
+  release/project linkage, status, search, and task filters are enforced by
+  the existing PostgreSQL query before pagination. The same filters/order
+  are forwarded into the existing capped, formula-safe CSV download. No
+  attempt was made to infer missing Sprint dates/goals.
+
+Zod input, scoped SQL readers, existing React pages, focused unit assertions and
+new isolated-PostgreSQL integration fixture assertions were authored. One
+backwards-compatible model/test repair preserves older team-coverage call-site
+types with missing optional filter facets. No new tables, registered migrations,
+POST/PATCH/PUT/DELETE route handlers, permissions or team-member mutation paths
+were introduced. Master account matrix and sole DATABASE tracker untouched.
+
+**Unexecuted acceptance:** no Node typecheck, ESLint, Vitest, disposable
+PostgreSQL, browser/375px or legacy-oracle side-by-side run was available
+in this connector-only source session. Full Team/Overview/Delivery/Sprints
+source-legacy interaction fidelity, upstream producers and browser/mobile
+acceptance remain open. No DONE surface/task/phase claim is made.
