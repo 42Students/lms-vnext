@@ -10,6 +10,7 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
  mappingState?:"ALL"|"MAPPED"|"UNMAPPED";
  expectedEndState?:"ALL"|"SET"|"UNSET";
  academicYearState?:"ALL"|"RECORDED"|"UNRECORDED";
+ activeLearnerState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
  activeClassState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
  startOnOrAfter?:string;
  startOnOrBefore?:string;
@@ -33,6 +34,7 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
  if(kind==="BATCHES"&&query.startOnOrAfter)p.set("startOnOrAfter",query.startOnOrAfter);
  if(kind==="BATCHES"&&query.startOnOrBefore)p.set("startOnOrBefore",query.startOnOrBefore);
  if(kind==="BATCHES"&&query.activeClassState&&query.activeClassState!=="ALL")p.set("activeClassState",query.activeClassState);
+ if(kind==="BATCHES"&&query.activeLearnerState&&query.activeLearnerState!=="ALL")p.set("activeLearnerState",query.activeLearnerState);
  return "/api/academics/college-academic-export/"+(kind==="SEMESTERS"?"semesters":"batches")+
   (p.size?"?"+p.toString():"");
 }

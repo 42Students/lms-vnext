@@ -69,5 +69,10 @@ describe("college semester CSV",()=>{
    expect(academicExportHref("BATCHES",{q:"",status:"ALL",activeClassState:"NONE_ACTIVE"})).toContain("activeClassState=NONE_ACTIVE");
  });
 
+ it("activeLearnerState stays constrained in batch CSV",()=>{
+   expect(batchCsvSchema.safeParse({activeLearnerState:"INFERRED"}).success).toBe(false);
+   expect(academicExportHref("BATCHES",{q:"",status:"ALL",activeLearnerState:"NONE_ACTIVE"})).toContain("activeLearnerState=NONE_ACTIVE");
+ });
+
 });
 

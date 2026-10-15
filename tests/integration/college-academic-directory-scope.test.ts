@@ -313,4 +313,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(foreign.items).toEqual([]);
   });
 
+  it("activeLearnerState filters only registered learner enrollments in the owning college",async()=>{
+    const [matching,empty,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,activeLearnerState:"NONE_ACTIVE"}),
+      listCollegeBatches(adminA,{q:label,activeLearnerState:"HAS_ACTIVE"}),
+      listCollegeBatches(adminB,{q:label,activeLearnerState:"NONE_ACTIVE"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(empty.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
