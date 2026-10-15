@@ -36,6 +36,7 @@ export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
   activityState:z.enum(["ALL","RECORDED","UNRECORDED"]).default("ALL"),
   completionEvidence:z.enum(["ALL","COMPLETED_CONTENT","NO_COMPLETED_CONTENT"]).default("ALL"),
   learningPathPresence:z.enum(["ALL","HAS_PATH","NO_PATH"]).default("ALL"),
+  publishedPathPresence:z.enum(["ALL","HAS_PUBLISHED_PATH","NO_PUBLISHED_PATH"]).default("ALL"),
   offeringType:z.enum(["ALL","CORE","ELECTIVE"]).optional(),
 });
 export type CollegeProgressQuery=z.infer<typeof collegeProgressQuerySchema>;
@@ -49,6 +50,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if(kind==="PROGRESS"&&"activityState" in query&&query.activityState!=="ALL")params.set("activityState",query.activityState);
   if(kind==="PROGRESS"&&"completionEvidence" in query&&query.completionEvidence!=="ALL")params.set("completionEvidence",query.completionEvidence);
   if(kind==="PROGRESS"&&"learningPathPresence" in query&&query.learningPathPresence!=="ALL")params.set("learningPathPresence",query.learningPathPresence);
+  if(kind==="PROGRESS"&&"publishedPathPresence" in query&&query.publishedPathPresence!=="ALL")params.set("publishedPathPresence",query.publishedPathPresence);
   if (kind === "PROGRESS" && "offeringType" in query && query.offeringType && query.offeringType !== "ALL") params.set("offeringType",query.offeringType);
   if ("courseCode" in query && query.courseCode) params.set("courseCode",query.courseCode);
   if ("programCode" in query && query.programCode) params.set("programCode",query.programCode);
