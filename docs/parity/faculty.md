@@ -1446,3 +1446,27 @@ Quiz CREATE and EDIT now validate title, instructions, bounded integer attempt c
 
 ## 2026-10-15 Round 5 Contacts Zod 4 default typing repair — PARTIAL
 Contacts selector defaults now use input-side Zod prefault values before numeric transforms, so the parser still returns numeric page/size without a mismatched output-default type. Unit/default and browser verification pending.
+
+## 2026-10-15 R6 Faculty Course page strict decimal selectors — PARTIAL
+The Course list now accepts only bounded positive integer page selectors (or ordinary URL decimal strings), rejecting duplicate array values, booleans, exponent notation and leading-zero aliases that Zod number coercion would silently admit. Existing validated query links are unchanged. Unit regressions authored; executed page/PG acceptance pending.
+
+## 2026-10-15 R6 Faculty Course invalid-filter recovery — PARTIAL
+Unknown/duplicated/malformed Course filters now show an explicit reset action rather than allowing a generic Zod exception or silently loading a widened Section list. Only the pure query parser is used for recovery; valid requests still traverse the same persisted Faculty teaching reader. Unit tests authored; browser verification open.
+
+## 2026-10-15 R6 Faculty Quiz write-denial messages — PARTIAL
+A pure model now translates typed stale-version, attempt, lifecycle, deadline and no-op failures into actionable feedback while deliberately giving the same message for missing and foreign teaching scope. Unit tests authored; UI integration and browser acceptance remain pending.
+
+## 2026-10-15 R6 Faculty Quiz write-error UI integration — PARTIAL
+The confirmed Quiz editor now uses the typed, non-leaking denial-message model at the actual POST response handler. A stale version prompts reload, while immutable/expired/no-change states display distinct guidance without exposing server errors. Unit coverage for the model is included; browser execution still pending.
+
+## 2026-10-15 R6 Faculty Quiz failed-load retry — PARTIAL
+When a selected Quiz's question-bank fetch fails, the Faculty editor now exposes an explicit retry that reloads only that Quiz within its original delivery-scoped API, and disables retry while loading. Failed drafts remain non-editable/non-publishable until their bank is retrieved. Pure retry-state tests authored; real browser/network failure acceptance remains pending.
+
+## 2026-10-15 R6 Faculty Quiz unsaved-draft publish fence — PARTIAL
+The editor now marks metadata and question edits as unsaved and refuses PUBLISH until the current draft has been saved. This prevents a confirm/publish request from silently publishing an older stored question bank while unsaved changes remain on screen. A clean loaded DRAFT is still publishable; pure tests cover dirty/failed/immutable states. PostgreSQL and browser acceptance pending.
+
+## 2026-10-15 R6 Faculty Quiz persisted version reconciliation — PARTIAL
+The Quiz editor now consumes the authoritative `{quiz}` response after successful CREATE/EDIT/PUBLISH/CLOSE/ARCHIVE, preserves the exact persisted `updatedAt`, status and generated ID, and overrides stale server-rendered dropdown records. It does not invent next versions or permit a second write using the pre-save optimistic token. Pure parsing/reconciliation tests authored; authenticated multi-action browser and PG acceptance pending.
+
+## 2026-10-15 R6 Faculty Contacts detail return context — PARTIAL
+Public Contact cards now preserve only validated directory search, page and page-size selectors in their details link, and the Back to Contacts action restores the same filtered directory. Duplicate, foreign or malformed query fields are discarded instead of being propagated. No private contact fields or role claims are included in URLs. Pure URL tests authored; browser acceptance pending.

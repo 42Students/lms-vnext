@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {parseFacultyContactsQuery} from "@/modules/courses/faculty-contacts-filter-model";
+import {facultyContactDirectoryQuery} from "@/modules/courses/faculty-contact-detail-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   FacultyContactsPagination,
@@ -167,6 +168,7 @@ export default async function FacultyContactsPage({
         items={result.items}
         showRoles={selected.value === "ALL"}
         detailBaseHref={baseHref}
+        detailQuery={facultyContactDirectoryQuery({q:result.search,page:String(result.page),pageSize:String(result.pageSize)})}
       />
       <FacultyContactsPagination
         page={result.page}

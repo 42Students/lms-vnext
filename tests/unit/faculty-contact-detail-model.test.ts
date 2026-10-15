@@ -4,7 +4,7 @@ import {
   facultyContactDetailHref,
   facultyContactDetailParamsSchema,
   facultyContactRoleLabel,
-  facultyContactTabMatches,facultyContactDetailHidden,
+  facultyContactTabMatches,facultyContactDirectoryQuery,facultyContactDetailHidden,
 } from "@/modules/courses/faculty-contact-detail-model";
 
 const id = "40000000-0000-4000-8000-000000000004";
@@ -36,6 +36,13 @@ describe("Faculty contact detail model", () => {
     expect(facultyContactDetailHidden(new CoursesServiceError("MEMBERSHIP_NOT_FOUND"))).toBe(true);
     expect(facultyContactDetailHidden(new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED"))).toBe(true);
     expect(facultyContactDetailHidden(new Error("Database offline"))).toBe(false);
+  });
+  it("preserves only validated directory filters in public detail back links",()=>{
+    expect(facultyContactDirectoryQuery({q:" C++ ",page:"2",pageSize:"20"}))
+      .toBe("?q=C%2B%2B&page=2&pageSize=20");
+    expect(facultyContactDirectoryQuery({})).toBe("");
+    expect(facultyContactDirectoryQuery({collegeId:id})).toBe("");
+    expect(facultyContactDirectoryQuery({page:["1","2"]})).toBe("");
   });
   it("keeps only validated IDs in detail links", () => {
     expect(facultyContactDetailHref("students", id))
