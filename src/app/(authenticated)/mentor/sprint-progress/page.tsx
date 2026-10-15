@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-sprint-progress-model";
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 
-type Params = { projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
+type Params = { taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -22,6 +22,7 @@ export default async function MentorSprintProgressPage({
   const parsed = mentorSprintProgressQuerySchema.safeParse({
     state: first(raw.state) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
+    taskAttention:first(raw.taskAttention) ?? undefined,
     release: first(raw.release) ?? undefined,
     search: first(raw.search) ?? undefined,
     page: first(raw.page) ?? undefined,
@@ -61,6 +62,11 @@ export default async function MentorSprintProgressPage({
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Registered task attention
+          <select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option>
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Release status
           <select name="release" defaultValue={data.query.release}
             className="min-h-10 rounded-md border border-border bg-background px-3">
@@ -77,7 +83,7 @@ export default async function MentorSprintProgressPage({
         <Link href={"/api/mentor/sprint-progress/export?"+
           new URLSearchParams({
             state:data.query.state,release:data.query.release,search:data.query.search,
-            projectId:data.query.projectId??"",
+            projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
           }).toString()}
           download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export filtered sprint CSV (max 100)
