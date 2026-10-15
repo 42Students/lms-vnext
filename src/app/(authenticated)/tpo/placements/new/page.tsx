@@ -17,6 +17,9 @@ export default async function TpoNewPlacementPage() {
       <Link href="/tpo/placements/new/draft" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text">
         Quick draft: Step 1 →
       </Link>
+      <Link href="/tpo/placements/recorded-outside" className="ml-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Record a drive that happened outside LMS
+      </Link>
       <PlacementJobCreateWorkspace
         context={context}
         collegeId={context.membership.collegeId}

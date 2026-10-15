@@ -138,27 +138,31 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.membershipId, collegeMemberships.id),
       eq(sectionEnrollments.status, "ACTIVE"),
     )));
-  const belongsToSection = filter.sectionId ? exists(db.select({enrollmentId:sectionEnrollments.id})
-    .from(sectionEnrollments).innerJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),eq(learnerProgramEnrollments.status,"ACTIVE")))
-    .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,learnerProgramEnrollments.cohortId),eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
-    .innerJoin(cohorts,and(eq(cohorts.id,sections.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
-    .innerJoin(programs,eq(programs.id,cohorts.programId))
-    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
-    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(sectionEnrollments.sectionId,filter.sectionId),eq(sectionEnrollments.status,"ACTIVE")))) : undefined;
-  const belongsToProgram = filter.programId ? exists(db.select({enrollmentId:learnerProgramEnrollments.id})
-    .from(learnerProgramEnrollments).innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
-    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
-    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.programId,filter.programId),eq(learnerProgramEnrollments.status,"ACTIVE")))) : undefined;
-  const belongsToCohort = filter.cohortId ? exists(db.select({enrollmentId:learnerProgramEnrollments.id})
-    .from(learnerProgramEnrollments)
-    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
-    .innerJoin(programs,eq(programs.id,cohorts.programId))
-    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
-    .where(and(
-      eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
-      eq(learnerProgramEnrollments.cohortId,filter.cohortId),
-      eq(learnerProgramEnrollments.status,"ACTIVE"),
-    ))) : undefined;
+  // Every selected academic dimension must belong to one active learner enrollment.
+  const belongsToPlacement=(filter.programId||filter.cohortId||filter.sectionId)?exists(
+    db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+     .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
+     .innerJoin(programs,eq(programs.id,cohorts.programId))
+     .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+     .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+       eq(learnerProgramEnrollments.status,"ACTIVE"),
+       filter.programId?eq(programs.id,filter.programId):undefined,
+       filter.cohortId?eq(cohorts.id,filter.cohortId):undefined,
+       filter.sectionId||filter.classPresence!=="ALL"?(
+         filter.classPresence==="NONE"?not(exists(
+           db.select({id:sectionEnrollments.id}).from(sectionEnrollments)
+            .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),
+              eq(sections.cohortId,cohorts.id),eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
+            .where(and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),eq(sectionEnrollments.status,"ACTIVE")))
+         )):exists(
+           db.select({id:sectionEnrollments.id}).from(sectionEnrollments)
+            .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),
+              eq(sections.cohortId,cohorts.id),eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
+            .where(and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),eq(sectionEnrollments.status,"ACTIVE"),
+              filter.sectionId?eq(sections.id,filter.sectionId):undefined))
+         )
+       ):undefined))
+  ):undefined;
   const hasRoll = exists(db.select({ memberId: learnerProfiles.membershipId })
     .from(learnerProfiles).where(and(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
@@ -257,10 +261,8 @@ export async function listCollegeRoleDirectory(
       kind === "LEARNER" && filter.registrationPresence !== "ALL"
         ? (filter.registrationPresence === "PRESENT" ? hasRegistration : not(hasRegistration)) : undefined,
       kind === "FACULTY" ? matchesEmployment : undefined,
-      kind === "LEARNER" ? belongsToCohort : undefined,
-      kind === "LEARNER" ? belongsToProgram : undefined,
-      kind === "LEARNER" ? belongsToSection : undefined,
-      kind === "LEARNER" && filter.classPresence !== "ALL"
+      kind === "LEARNER" ? belongsToPlacement : undefined,
+      kind === "LEARNER" && !belongsToPlacement && filter.classPresence !== "ALL"
         ? (filter.classPresence === "ASSIGNED" ? assignedClass : not(assignedClass)) : undefined,
       kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
         filter.enrollment === "ACTIVE" ? activeEnrollment : not(activeEnrollment),
