@@ -204,3 +204,8 @@ export function facultyMoveQuizQuestion<T>(rows:readonly T[],from:number,to:numb
  const next=[...rows];const [entry]=next.splice(from,1);next.splice(to,0,entry!);
  return next;
 }
+
+/** Move one answer option without changing the selected correctness flags. */
+export function facultyMoveQuizOption<T>(options:readonly T[],from:number,to:number):T[]{
+ return facultyMoveQuizQuestion(options,from,to);
+}
