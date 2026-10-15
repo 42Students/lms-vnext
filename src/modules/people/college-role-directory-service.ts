@@ -247,8 +247,8 @@ export async function listCollegeRoleDirectory(
           filter.sort === "OLDEST" ? asc(query.joinedAt) : asc(query.name),
         asc(query.membershipId),
       )
-      .limit(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE)
-      .offset((filter.page - 1) * COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
+      .limit(filter.pageSize)
+      .offset((filter.page - 1) * filter.pageSize),
   ]);
   const ids = baseRows.map((item) => item.membershipId);
   const academic = kind === "LEARNER" && ids.length
@@ -362,7 +362,7 @@ export async function listCollegeRoleDirectory(
     cohortOptionsTruncated:cohortRows.length>200,
     departmentOptions:departmentRows.slice(0,200),
     departmentOptionsTruncated:departmentRows.length>200,
-    pageSize: COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,
-    totalPages: Math.max(1, Math.ceil(total / COLLEGE_ROLE_DIRECTORY_PAGE_SIZE)),
+    pageSize: filter.pageSize,
+    totalPages: Math.max(1, Math.ceil(total / filter.pageSize)),
   };
 }
