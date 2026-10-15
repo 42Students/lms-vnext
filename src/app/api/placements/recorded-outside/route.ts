@@ -10,14 +10,14 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  if(!form)return NextResponse.json({error:"INVALID_FORM"},{status:400});
- const payload={
-  collegeId:form.get("collegeId"),
-  companyRelationshipId:form.get("companyRelationshipId"),
-  title:form.get("title"),occurredAt:parseIstLocalSlot(form.get("occurredAt")),
-  externalReferenceUrl:form.get("externalReferenceUrl")||undefined,
-  notes:form.get("notes")||undefined,
- };
  try{
+  const payload={
+   collegeId:form.get("collegeId"),
+   companyRelationshipId:form.get("companyRelationshipId"),
+   title:form.get("title"),occurredAt:parseIstLocalSlot(form.get("occurredAt")),
+   externalReferenceUrl:form.get("externalReferenceUrl")||undefined,
+   notes:form.get("notes")||undefined,
+  };
   const saved=await recordOutsideDrive(await getCurrentRequestContext(),payload);
   return NextResponse.redirect(new URL((saved.role==="TPO"?"/tpo/placements/recorded-outside":"/hr/drives/recorded-outside")+"?saved="+saved.id,request.url),303);
  }catch(error){
