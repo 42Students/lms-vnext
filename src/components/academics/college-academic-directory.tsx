@@ -129,6 +129,90 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
+          {data.kind === "SEMESTERS" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Credits availability
+              <select name="creditState" defaultValue={data.query.creditState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All terms</option>
+                <option value="CONFIGURED">Credits configured</option>
+                <option value="UNSET">No configured credits</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "SEMESTERS" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Semester parent program lifecycle
+              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All programs</option>
+                <option value="ACTIVE">Active programs</option>
+                <option value="ARCHIVED">Archived programs</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "SEMESTERS" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Semester curriculum mapping presence
+              <select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All terms</option>
+                <option value="MAPPED">Has mapped courses</option>
+                <option value="UNMAPPED">No mapped courses</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch planned end period evidence
+              <select name="expectedEndState" defaultValue={data.query.expectedEndState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All batches</option>
+                <option value="SET">End period recorded</option>
+                <option value="UNSET">No end period recorded</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch recorded academic year evidence
+              <select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All batches</option>
+                <option value="RECORDED">Year recorded</option>
+                <option value="UNRECORDED">No recorded year</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Parent program lifecycle
+              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All parent programs</option>
+                <option value="ACTIVE">Active</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch start on or after
+              <input type="date" name="startOnOrAfter" defaultValue={data.query.startOnOrAfter ?? ""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch start on or before
+              <input type="date" name="startOnOrBefore" defaultValue={data.query.startOnOrBefore ?? ""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch active class evidence
+              <select name="activeClassState" defaultValue={data.query.activeClassState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All batches</option>
+                <option value="HAS_ACTIVE">Has active classes</option>
+                <option value="NONE_ACTIVE">No active classes</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch active learner evidence
+              <select name="activeLearnerState" defaultValue={data.query.activeLearnerState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All batches</option>
+                <option value="HAS_ACTIVE">Has active learner enrollments</option>
+                <option value="NONE_ACTIVE">No active learner enrollments</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter
