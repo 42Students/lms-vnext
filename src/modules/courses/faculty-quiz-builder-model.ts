@@ -131,7 +131,7 @@ export function facultyQuizDraftLoadAllowsAction(
  failed:boolean,status:string|undefined,
  action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE",
 ):boolean {
- return !(failed&&status==="DRAFT"&&(action==="EDIT"||action==="PUBLISH"));
+ return !(failed&&(status==="DRAFT"||status===undefined)&&(action==="EDIT"||action==="PUBLISH"));
 }
 
 /** Validate the complete editable Quiz metadata before asking for confirmation. */

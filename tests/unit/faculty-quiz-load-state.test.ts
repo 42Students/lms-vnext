@@ -11,3 +11,11 @@ describe("Faculty Quiz failed question fetch",()=>{
   expect(facultyQuizDraftLoadAllowsAction(true,undefined,"CREATE")).toBe(true);
  });
 });
+
+
+describe("Faculty Quiz unknown-status fail closed", () => {
+ it("never permits editing or publishing when draft load failed before status arrives", () => {
+  expect(facultyQuizDraftLoadAllowsAction(true, undefined, "EDIT")).toBe(false);
+  expect(facultyQuizDraftLoadAllowsAction(true, undefined, "PUBLISH")).toBe(false);
+ });
+});
