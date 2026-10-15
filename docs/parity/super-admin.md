@@ -1180,3 +1180,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Domains no-selection authorization fence — PARTIAL:** Before showing the choose-college informational empty state, the Super Admin domains route now requires central `admin-scope.select`, so an unauthorized signed-in user cannot enumerate the existence or expected shape of this administration surface. Exact college lookups still require the domains service guard. Unit role and page contract authored; browser evidence open.
+
+
+**2026-10-15 chat-6 Settings invalid-filter early return — PARTIAL:** Validate strict `q`/`section` URL before any settings inventory database read while retaining the central Super Admin authorization fence before returning an error. Invalid params no longer cause avoidable selected-college policy queries; unit route contract authored, browser execution open.
