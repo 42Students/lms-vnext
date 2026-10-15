@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import { describePrimaryDomainSwitch } from "@/modules/tenant-domains/admin-confirmation-model";
+import { describePrimaryDomainSwitch, canConfirmPrimaryDomainDelete } from "@/modules/tenant-domains/admin-confirmation-model";
 
 export type TenantDomainClientRow = {
   id: string;
@@ -46,6 +46,7 @@ export function TenantDomainManager({
   const router = useRouter();
   const { showToast } = useToast();
   const [host, setHost] = useState("");
+  const [deleteHostConfirmation, setDeleteHostConfirmation] = useState("");
   const [primaryTarget, setPrimaryTarget] = useState<TenantDomainClientRow | null>(null);
   const [deleteTarget, setDeleteTarget] =
     useState<TenantDomainClientRow | null>(null);
@@ -142,6 +143,7 @@ export function TenantDomainManager({
 
       if (action === "delete") {
         setDeleteTarget(null);
+        setDeleteHostConfirmation("");
       }
       if (action === "primary") {
         setPrimaryTarget(null);
@@ -372,14 +374,15 @@ export function TenantDomainManager({
       <ConfirmDialog
         open={Boolean(deleteTarget)}
         onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
+          if (!open) { setDeleteTarget(null); setDeleteHostConfirmation(""); }
         }}
         title={
           deleteTarget
             ? `Delete ${deleteTarget.host}?`
             : "Delete domain?"
         }
-        description="Deleting a tenant-domain mapping stops it from resolving this college. DNS records are not changed automatically."
+        description={deleteTarget?.isPrimary ? "Deleting the PRIMARY tenant host can make college login unreachable. Enter its exact hostname to confirm. DNS is not edited." : "Deleting a tenant-domain mapping stops it from resolving this college. DNS records are not changed automatically."}
+        confirmDisabled={Boolean(deleteTarget?.isPrimary && !canConfirmPrimaryDomainDelete(deleteTarget.host, deleteHostConfirmation))}
         confirmLabel="Delete domain"
         pending={
           deleteTarget
@@ -388,11 +391,17 @@ export function TenantDomainManager({
             : false
         }
         onConfirm={() => {
-          if (deleteTarget) {
+          if (deleteTarget && (!deleteTarget.isPrimary || canConfirmPrimaryDomainDelete(deleteTarget.host, deleteHostConfirmation))) {
             void runAction(deleteTarget, "delete");
           }
         }}
-      />
+      >
+        {deleteTarget?.isPrimary ? <label className="grid gap-2 text-sm font-semibold text-body">Type the full primary hostname
+          <input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
+            onChange={event => setDeleteHostConfirmation(event.target.value)}
+            className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-foreground" />
+        </label> : null}
+      </ConfirmDialog>
     </div>
   );
 }

@@ -842,3 +842,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Tenant Domains primary confirmation (PARTIAL):** Selecting a newly verified primary host now opens explicit confirmation showing previous and next host, login routing and DNS consequences before invoking the existing same-origin authorized mutation. No DNS edit is claimed; pure-model tests authored but not executed. Redirect/browser acceptance and host-switch race remain open.
+
+
+**2026-10-15 chat-6 primary domain deletion (PARTIAL):** UI now requires exact typed primary hostname and disables destructive confirmation until it matches. Ordinary non-primary deletion retains its existing dialog. The DELETE endpoint still requires server-side stale-primary/typed-confirmation enforcement and browser race tests, so this is NOT a security-certified endpoint. Pure checks authored, unexecuted.
