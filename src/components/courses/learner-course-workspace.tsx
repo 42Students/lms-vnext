@@ -2,6 +2,7 @@ import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empt
 import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
 import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
 import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
+import { learnerSafeExternalContentHref } from "@/modules/courses/learner-external-content-link-model";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
@@ -282,9 +283,9 @@ function ContentCard({
           }
           readOnly={readOnly}
         />
-      ) : content.externalUrl ? (
+      ) : learnerSafeExternalContentHref(content.externalUrl) ? (
         <a
-          href={content.externalUrl}
+          href={learnerSafeExternalContentHref(content.externalUrl)!}
           target="_blank"
           rel="noreferrer"
           className="mt-4 inline-flex min-h-9 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
@@ -295,6 +296,10 @@ function ContentCard({
               ? "Open resource ↗"
               : "Open content ↗"}
         </a>
+      ) : content.externalUrl ? (
+        <p role="status" className="mt-4 text-xs font-semibold text-warning">
+          The authored external link is unavailable or unsafe to open.
+        </p>
       ) : content.type === "RESOURCE" &&
       content.storageKey ? (
         <div className="mt-4 flex flex-wrap gap-2">
