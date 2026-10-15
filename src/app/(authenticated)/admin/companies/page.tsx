@@ -14,7 +14,7 @@ export default async function SuperAdminCompaniesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, status: params.status, trust: params.trust, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId,
+    q: params.q, status: params.status, companyStatus: params.companyStatus, trust: params.trust, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId,
   });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
@@ -30,7 +30,7 @@ export default async function SuperAdminCompaniesPage({
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies"
       description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
-    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-[1fr_auto_auto_auto_auto]">
+    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-[1fr_auto_auto_auto_auto_auto]">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
         <input name="q" defaultValue={data.query.q} placeholder="Search companies"
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -39,6 +39,12 @@ export default async function SuperAdminCompaniesPage({
         <select name="status" defaultValue={data.query.status}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Company status
+        <select name="companyStatus" defaultValue={data.query.companyStatus} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="MATCH">Match relationship filter</option><option value="ACTIVE">Active company</option>
+          <option value="ARCHIVED">Archived company</option><option value="ALL">Any company status</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Trust state
@@ -101,7 +107,7 @@ export default async function SuperAdminCompaniesPage({
     </div> : <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
-      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
+      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,companyStatus:data.query.companyStatus,trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
       {data.query.page < data.totalPages ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,trust:data.query.trust,page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
     </nav>
     <Link href="/admin/placements" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Placement operations</Link>

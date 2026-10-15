@@ -875,3 +875,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 locked-membership queue (PARTIAL):** College-scoped active learner finder can filter exact persisted locked membership overrides, not simply inherited locks. Query and link enums stay strict; scalar SQL `exists` filters both totals and pages. Author-only unit and disposable PG fixture, not executed; edits/drawer and browser tests remain open.
+
+
+**2026-10-15 chat-6 Company status separation (PARTIAL):** Company and college-relationship lifecycle filters can now be inspected independently; default MATCH retains previous status behavior. One status cannot silently stand in for the other; typed query, page links and PostgreSQL predicates match. Source tests authored but not executed; archive lifecycle/browser parity remains open.

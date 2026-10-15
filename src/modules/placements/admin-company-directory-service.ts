@@ -26,7 +26,10 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   if (query.trust !== "ALL") filters.push(eq(placementCompanyRelationships.isTrusted, query.trust === "TRUSTED"));
   if (query.status !== "ALL") {
     filters.push(eq(placementCompanyRelationships.status, query.status));
-    filters.push(eq(placementCompanies.status, query.status));
+  }
+  const effectiveCompanyStatus = query.companyStatus === "MATCH" ? query.status : query.companyStatus;
+  if (effectiveCompanyStatus !== "ALL") {
+    filters.push(eq(placementCompanies.status, effectiveCompanyStatus));
   }
   if (query.q) {
     // SQL wildcard characters in user searches are literal, not scope selectors.
