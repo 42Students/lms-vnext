@@ -13,6 +13,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   cohorts,
   collegeMemberships,
+  colleges,
   departments,
   learnerProgramEnrollments,
   membershipRoles,
@@ -29,6 +30,9 @@ import {
   placementEligibilityOverrides,
   placementJobs,
   placementJobEligibilityPolicies,
+  placementCollegeRules,
+  placementOffers,
+  placementBatchRegistrations,
   placementJobRoleOptions,
   programs,
   sectionEnrollments,
@@ -41,10 +45,15 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { learnerWithdrawalReasonSchema } from "./learner-withdrawal-model";
-import { evaluatePlacementEligibility } from "./eligibility-service";
+import { evaluatePlacementEligibility, isPlacementJobTargetCohort } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
+import { isPlacementLearnerDebarred } from "./debarment-service";
+import { placementBatchLifecycles } from "@/db/schema/placement-batches";
+import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
+import { canAddPlacementHeldOffer } from "./held-offer-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 import {
@@ -317,6 +326,8 @@ async function lockLearnerApplicationGateInputs(
     .from(placementCandidateAcademicEvidence)
     .where(eq(placementCandidateAcademicEvidence.membershipId, membershipId))
     .for("share");
+
+  return { programId: enrollment.programId, cohortId: enrollment.cohortId };
 }
 
 async function resolveApplicationRoleOption(
@@ -555,6 +566,10 @@ export async function applyToPlacementJob(
   // Legacy V188: do not let per-job INCLUDE override the college switch or
   // student/class/batch placement participation decision.
   await requireLearnerPlacementAccess(context);
+  if (!(await getOwnPlacementParticipationAccess(context)).canSelfApply ||
+      await isPlacementLearnerDebarred(job.collegeId, membership.id)) {
+    throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+  }
 
   if (job.status !== "PUBLISHED" || job.archivedAt !== null) {
     throw new PlacementsServiceError(
@@ -652,7 +667,7 @@ export async function applyToPlacementJob(
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_DEADLINE_PASSED");
       }
 
-      await lockLearnerApplicationGateInputs(
+      const enrollment = await lockLearnerApplicationGateInputs(
         tx,
         context,
         job.id,
@@ -668,6 +683,52 @@ export async function applyToPlacementJob(
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
 
+      // P-S1-03: a manual per-learner INCLUDE override cannot bypass
+      // a drive restricted to other programs or cohorts.
+      const [targetPolicy] = await tx.select({
+        allowedProgramIds: placementJobEligibilityPolicies.allowedProgramIds,
+        allowedCohortIds: placementJobEligibilityPolicies.allowedCohortIds,
+      }).from(placementJobEligibilityPolicies)
+        .where(eq(placementJobEligibilityPolicies.jobId, job.id))
+        .for("share").limit(1);
+      if (!isPlacementJobTargetCohort(targetPolicy, enrollment)) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+      // Serialize with batch finish and creation, which first take the
+      // parent college FOR UPDATE lock in batch-participation-service.
+      await tx.select({ id: colleges.id }).from(colleges)
+        .where(eq(colleges.id, job.collegeId)).for("share").limit(1);
+      const [batch] = await tx.select({
+        finishedAt: placementBatchLifecycles.finishedAt,
+      }).from(placementBatchLifecycles).where(and(
+        eq(placementBatchLifecycles.collegeId, job.collegeId),
+        eq(placementBatchLifecycles.cohortId, enrollment.cohortId),
+      )).for("share").limit(1);
+      if (batch?.finishedAt) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+      // DB08 registration changes take the parent college FOR UPDATE lock.
+      // Having that lock already makes this a commit-boundary consent check,
+      // rather than relying on the earlier uncoupled learner listing.
+      const [registration] = await tx.select({
+        choice: placementBatchRegistrations.choice,
+      }).from(placementBatchRegistrations).where(and(
+        eq(placementBatchRegistrations.collegeId, job.collegeId),
+        eq(placementBatchRegistrations.cohortId, enrollment.cohortId),
+        eq(placementBatchRegistrations.membershipId, membership.id),
+      )).for("share").limit(1);
+      const registrationState = resolveSelfApplyRegistrationChoice(
+        registration?.choice === "PLACEMENTS" ? { choice: "PLACEMENTS" } :
+        registration ? { choice: "NOT_INTERESTED" } : null,
+      );
+      if (registrationState !== "CAN_APPLY") {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+      // Debarment creation/lift also locks the college parent FOR UPDATE;
+      // after our share lock it cannot change until this apply commits.
+      if (await isPlacementLearnerDebarred(job.collegeId, membership.id)) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
       // Re-run both the paid/inherited placement gate and the job-specific
       // policy after the ordering locks above. The pre-transaction checks are
       // fail-fast only; this live result is the one persisted with application.
@@ -701,6 +762,7 @@ export async function applyToPlacementJob(
         id: placementJobRoleOptions.id,
         status: placementJobRoleOptions.status,
         jobId: placementJobRoleOptions.jobId,
+        minimumAnnualCtcInr: placementJobRoleOptions.minimumAnnualCtcInr,
       }).from(placementJobRoleOptions)
         .where(eq(placementJobRoleOptions.id, roleOption.id))
         .for("update").limit(1);
@@ -711,6 +773,36 @@ export async function applyToPlacementJob(
       if (resolveApplicationChannel(liveJob.applicationMode, input) !== channel ||
           (channel === "EXTERNAL" && !liveJob.externalApplicationUrl)) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_CHANNEL_INVALID");
+      }
+
+      // P-S1-05: check official held offers under the same learner's
+      // membership lock acquired above. NULL CTC is not an uplift bypass.
+      const [rules] = await tx.select({
+        maxHeldOffers: placementCollegeRules.maxHeldOffers,
+        upliftPct: placementCollegeRules.upliftPct,
+      }).from(placementCollegeRules)
+        .where(eq(placementCollegeRules.collegeId, job.collegeId))
+        .for("share").limit(1);
+      const heldOffers = await tx.select({
+        kind: placementOffers.kind,
+        status: placementOffers.status,
+        annualCtcInr: placementOffers.annualCtcInr,
+      }).from(placementOffers)
+        .innerJoin(placementApplications, eq(
+          placementApplications.id, placementOffers.applicationId,
+        )).where(eq(placementApplications.membershipId, membership.id))
+        .for("share");
+      if (!canAddPlacementHeldOffer({
+        maxHeldOffers: rules?.maxHeldOffers ?? 1,
+        upliftPct: rules?.upliftPct ?? 40,
+        nextAnnualCtcInr: liveRole.minimumAnnualCtcInr ??
+          job.minimumAnnualCtcInr,
+        // No registered isDream job column yet; never guess that a job
+        // qualifies for an exemption.
+        isDream: false,
+        heldOffers,
+      })) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
 
       const [application] = await tx

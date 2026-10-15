@@ -4,6 +4,7 @@ import {
   isDebarmentActive,
   PLACEMENT_REGISTRATION_CONSENT_VERSION,
   resolveRegistrationWindow,
+  resolveSelfApplyRegistrationChoice,
 } from "@/modules/placements/batch-registration-policy";
 
 const now = new Date("2026-10-10T09:00:00.000Z");
@@ -98,5 +99,25 @@ describe("DB08-B duration and counted-drive debarment parity", () => {
     expect(isDebarmentActive({
       ...base, liftedAt: new Date("2026-10-09"),
     }, "2026-10-10")).toBe(false);
+  });
+});
+
+
+describe("P-S1-04 registration choice gates for self-apply", () => {
+  it("requires a first registration instead of silently consenting", () => {
+    expect(resolveSelfApplyRegistrationChoice(null)).toBe("REGISTER_FIRST");
+    expect(resolveSelfApplyRegistrationChoice(undefined)).toBe("REGISTER_FIRST");
+  });
+
+  it("blocks all non-placement choices while preserving their decision", () => {
+    for (const choice of [
+      "HIGHER_STUDIES", "NOT_INTERESTED", "ENTREPRENEURSHIP", "COMPETITIVE_EXAMS",
+    ] as const) {
+      expect(resolveSelfApplyRegistrationChoice({ choice })).toBe("CHOSE_OTHER");
+    }
+  });
+
+  it("permits explicit placement registration", () => {
+    expect(resolveSelfApplyRegistrationChoice({ choice: "PLACEMENTS" })).toBe("CAN_APPLY");
   });
 });
