@@ -1,7 +1,9 @@
 import {
   and,
+  asc,
   desc,
   eq,
+  inArray,
   isNull,
   ne,
   sql,
@@ -641,4 +643,40 @@ export async function acknowledgeRecruiterThread(
       )).returning({id: placementTpoMessages.id});
     return {acknowledged: rows.length};
   });
+}
+
+/** Atomic recruiter-only acknowledgement of at most 20 visible private threads. */
+export const recruiterBulkAcknowledgeSchema = z.array(threadIdSchema).min(1).max(20)
+  .refine(ids => new Set(ids).size === ids.length, "DUPLICATE_THREAD_IDS");
+
+export async function acknowledgeRecruiterThreads(context:RequestContext,rawIds:unknown) {
+ const ids=recruiterBulkAcknowledgeSchema.parse(rawIds);
+ if(context.recruiter?.status!=="ACTIVE" || context.recruiter.userId!==context.user.id)
+  throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx=>{
+  const threads=await tx.select({
+   id:placementTpoMessageThreads.id,
+   collegeId:placementTpoMessageThreads.collegeId,
+   recruiterUserId:placementTpoMessageThreads.recruiterUserId,
+   jobId:placementTpoMessageThreads.jobId,
+  }).from(placementTpoMessageThreads)
+   .where(inArray(placementTpoMessageThreads.id,ids))
+   .orderBy(asc(placementTpoMessageThreads.id)).for("update");
+  if(threads.length!==ids.length || threads.some(t=>t.recruiterUserId!==context.user.id))
+   throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  for(const thread of threads) {
+   const grant=await loadActiveRecruiterGrant(tx,context.user.id,thread.collegeId,true);
+   if(!grant)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+   if(thread.jobId)await assertJobForThread(
+    tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
+   );
+  }
+  const changed=await tx.update(placementTpoMessages).set({readAt:new Date()})
+   .where(and(
+    inArray(placementTpoMessages.threadId,ids),
+    eq(placementTpoMessages.senderType,"TPO"),
+    isNull(placementTpoMessages.readAt),
+   )).returning({id:placementTpoMessages.id});
+  return {threads:threads.length,acknowledged:changed.length};
+ });
 }
