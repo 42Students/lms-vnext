@@ -494,6 +494,9 @@ export const projectMembers = pgTable(
         onDelete: "restrict",
       }),
     role: varchar("role", { length: 16 }).notNull(),
+    /** PR-S2-08: fine-grained kind; read-only kinds can never mutate. */
+    roleKind: varchar("role_kind", { length: 24 }).notNull(),
+    canMutate: boolean("can_mutate").notNull(),
     isPrimary: boolean("is_primary")
       .notNull()
       .default(false),
@@ -543,6 +546,14 @@ export const projectMembers = pgTable(
     check(
       "project_members_role_ck",
       sql`${table.role} in ('LEARNER', 'MENTOR')`,
+    ),
+    check(
+      "project_members_role_kind_ck",
+      sql`${table.roleKind} in ('LEARNER','MENTOR','CO_MENTOR','OBSERVER','REVIEWER','QA')`,
+    ),
+    check(
+      "project_members_readonly_role_ck",
+      sql`${table.roleKind} not in ('OBSERVER','REVIEWER','QA') or ${table.canMutate} = false`,
     ),
     check(
       "project_members_primary_role_ck",
