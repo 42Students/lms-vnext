@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
 import { listPlacementJobs } from "@/modules/placements/job-service";
+import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
 import { can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -313,11 +314,12 @@ export default async function TpoStudentsPage({
             return (
               <Link
                 key={state}
-                href={studentsHref({
-                  journeyState: state,
+                href={studentsHref(tpoJourneyDrillFilters({
+                  branchId:query.branchId,
+                  search:query.search,
                   columns:first(raw.columns)?.slice(0,800),
-                  pageSize: query.pageSize,
-                })}
+                  pageSize:query.pageSize,
+                },state))}
                 aria-current={selected ? "page" : undefined}
                 className={
                   "rounded-lg border p-4 transition hover:border-primary hover:bg-primary-subtle " +
@@ -416,11 +418,12 @@ export default async function TpoStudentsPage({
                   >
                     <td className="px-4 py-3">
                       <Link
-                        href={studentsHref({
-                          branchId: branch.branchId,
+                        href={studentsHref(tpoBranchDrillFilters({
+                          journeyState:query.journeyState,
+                          search:query.search,
                           columns:first(raw.columns)?.slice(0,800),
-                          pageSize: query.pageSize,
-                        })}
+                          pageSize:query.pageSize,
+                        },branch.branchId))}
                         className="font-semibold text-primary-text hover:underline"
                       >
                         {branch.branchName}
