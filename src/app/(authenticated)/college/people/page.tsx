@@ -8,13 +8,12 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PEOPLE_PAGE_SIZE, peoplePageState } from "@/modules/admin-ui/people-pagination";
-import { collegePeopleDirectoryHref, collegePeopleDirectoryFilterSchema } from "@/modules/people/college-people-directory-model";
+import { collegePeopleDirectoryHref, parseCollegePeopleDirectorySearchParams, type CollegePeopleDirectoryFilter } from "@/modules/people/college-people-directory-model";
 import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import type { PersonMembershipView } from "@/modules/people/service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
-const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
 
 const columns: DataTableColumn<PersonMembershipView>[] = [
   { key: "person", header: "Person", cell: person => (
@@ -43,14 +42,13 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
 
 export default async function CollegePeoplePage({ searchParams }: { searchParams: Promise<Search> }) {
   const raw = await searchParams;
-  const parsed = collegePeopleDirectoryFilterSchema.safeParse({
-    q: first(raw.q), role: first(raw.role), status: first(raw.status), page: first(raw.page),
-  });
+  let filter:CollegePeopleDirectoryFilter|null=null;
+  try{filter=parseCollegePeopleDirectorySearchParams(raw);}catch{filter=null;}
   const context = await getCurrentRequestContext();
   const membership = context.membership;
   if (!membership) redirect("/dashboard");
 
-  if (!parsed.success) {
+  if (!filter) {
     return <div className="space-y-5">
       <PageHeader eyebrow="College Admin" title="People" />
       <ErrorState title="Invalid directory filters"
@@ -58,7 +56,6 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
         action={<Link href="/college/people" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>;
   }
-  const filter = parsed.data;
   const people = await listCollegePeopleWithRuntime(context, {
     collegeId: membership.collegeId,
     limit: PEOPLE_PAGE_SIZE, offset: (filter.page - 1) * PEOPLE_PAGE_SIZE,
