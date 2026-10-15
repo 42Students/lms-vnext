@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const facultyQuizAttemptsQuerySchema = z.object({
   quizId:z.string().uuid(),deliveryId:z.string().uuid(),
-  page:z.coerce.number().int().min(1).max(10000).default(1),
+  page:z.union([
+    z.number().int(),
+    z.string().regex(/^[1-9]\d{0,3}$|^10000$/).transform(Number),
+  ]).pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
 
 export const facultyQuizAttemptSearchSchema = facultyQuizAttemptsQuerySchema.omit({quizId:true});
