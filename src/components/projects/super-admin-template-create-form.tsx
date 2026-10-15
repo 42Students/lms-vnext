@@ -7,7 +7,7 @@ import {projectMutation} from "@/components/projects/project-api";
 
 export function SuperAdminTemplateCreateForm(){
  const router=useRouter();
- const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:"",sprintDescription:"",taskDescription:"",overviewDescription:""});
+ const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:"",sprintDescription:"",taskDescription:"",overviewDescription:"",resourceTitle:"",resourceUrl:""});
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const edit=(key:keyof typeof values,value:string)=>setValues(old=>({...old,[key]:value}));
@@ -68,6 +68,16 @@ export function SuperAdminTemplateCreateForm(){
   <label className="grid gap-1 text-sm font-semibold text-body">Overview description (optional)
    <textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
+  <fieldset className="min-w-0 space-y-3 rounded-lg border border-border p-3">
+   <legend className="px-2 text-sm font-semibold text-body">Starting resource link (optional)</legend>
+   <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>
+   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Resource title
+    <input maxLength={200} disabled={saving} value={values.resourceTitle} onChange={event=>edit("resourceTitle",event.target.value)} className="min-h-11 min-w-0 rounded-md border border-border bg-background px-3 text-foreground"/>
+   </label>
+   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Resource URL
+    <input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="min-h-11 min-w-0 rounded-md border border-border bg-background px-3 text-foreground"/>
+   </label>
+  </fieldset>
   {error?<p role="alert" className="break-words text-sm text-error-text">{error}</p>:null}
   <div className="flex flex-wrap justify-end gap-3">
    <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Cancel</Link>

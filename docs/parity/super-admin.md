@@ -827,3 +827,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 New Template 7 (PARTIAL):** Overview description now persists independently of the existing template summary and goal. No migration or permissions changed. Tests authored but not run; the richer legacy editor, PG and browser gate remain open.
+
+
+**2026-10-15 chat-6 New Template 8 (PARTIAL):** Initial template resource creation accepts one title+HTTP(S) URL pair, enforces both-or-neither and the canonical resource blueprint schema, and never invents a file upload. Unit tests cover valid and unsafe schemes; authored, not executed. Full multi-resource management, file uploads and PG/browser parity remain open.
