@@ -9,14 +9,15 @@ import {hrSentProposalHistoryHref} from "@/modules/placements/hr-drive-proposal-
 
 export default async function RecruiterDriveProposalHistory({
  searchParams,
-}:{searchParams:Promise<{collegeId?:string|string[];page?:string|string[];q?:string|string[]}>}){
+}:{searchParams:Promise<{collegeId?:string|string[];page?:string|string[];q?:string|string[];sort?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
  const id=Array.isArray(raw.collegeId)?raw.collegeId[0]:raw.collegeId;
  const rawPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const q=Array.isArray(raw.q)?raw.q[0]:raw.q;
- const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id,page:rawPage,q});
+ const sort=Array.isArray(raw.sort)?raw.sort[0]:raw.sort;
+ const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id,page:rawPage,q,sort});
  if(!input.success)notFound();
  const data=await listHrDriveProposals(context,input.data);
  return <main className="space-y-5">
@@ -38,6 +39,13 @@ export default async function RecruiterDriveProposalHistory({
      <input name="q" maxLength={100} defaultValue={input.data.q}
        className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"
        placeholder="Role title"/>
+    </label>
+    <label className="text-sm text-body">Order
+      <select name="sort" defaultValue={input.data.sort}
+        className="mt-1 block min-h-11 rounded-md border border-border bg-surface px-3">
+        <option value="LATEST">Most recent</option>
+        <option value="OLDEST">Oldest first</option>
+      </select>
     </label>
     <button type="submit" className="self-end min-h-11 rounded-md border border-border px-4 text-primary-text">Search</button>
    </form>
@@ -64,9 +72,9 @@ export default async function RecruiterDriveProposalHistory({
     No persisted drive proposals for this college. Draft a proposal to start a discussion.
    </p>}
    <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">
-    {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,page:data.page-1})}
+    {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newer proposals</Link>:null}
-    {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,page:data.page+1})}
+    {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older proposals</Link>:null}
    </nav>
   </>}
