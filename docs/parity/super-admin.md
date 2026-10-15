@@ -1072,3 +1072,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 immutable tracker activity readability (PARTIAL):** The finding detail no longer drops retest notes when the same audit record has from/to values; it renders transition, note, and non-secret actor attribution separately. Pure tests authored; browser history acceptance pending.
+
+
+**2026-10-15 chat-6 DB10 private response caching (PARTIAL):** Authenticated announcement-admin and tracker list/detail JSON endpoints now send explicit private, no-store headers to prevent accidental intermediary persistence of tenant-scoped notice and issue data. Unit source regression authored; HTTP runtime headers still require verification.

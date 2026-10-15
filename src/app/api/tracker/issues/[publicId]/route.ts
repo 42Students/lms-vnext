@@ -20,7 +20,7 @@ export async function GET(
     const context = await getCurrentRequestContext();
     const { publicId } = await params;
     const issue = await getBugTrackerIssueForAdmin(context, publicId);
-    return NextResponse.json(issue);
+    return NextResponse.json(issue, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
     return bugTrackerApiError(error);
   }
