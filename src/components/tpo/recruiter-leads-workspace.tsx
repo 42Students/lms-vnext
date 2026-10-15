@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
@@ -87,6 +88,7 @@ export function RecruiterLeadsWorkspace({
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState<(typeof STAGES)[number]>("ALL");
+  const [need, setNeed] = useState<EngageNeed>("ALL");
   const [view, setView] = useState<"table" | "board" | "companies">(initialView);
   const [companies, setCompanies] = useState<CompanySummary[]>([]);
   const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
@@ -179,12 +181,14 @@ export function RecruiterLeadsWorkspace({
     };
   }, [view, loadCompanies]);
 
+  const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const visible = useMemo(() => rows.filter(lead => {
+    if (!matchesEngageNeed(lead,need)) return false;
     if (stage !== "ALL" && lead.manualStage !== stage) return false;
     const terms = [lead.name, lead.emailNorm, lead.phoneNorm, lead.companyName]
       .filter(Boolean).join(" ").toLowerCase();
     return terms.includes(query.trim().toLowerCase());
-  }), [rows, stage, query]);
+  }), [rows, stage, query, need]);
 
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
@@ -265,7 +269,7 @@ export function RecruiterLeadsWorkspace({
     <section className="space-y-5" aria-label="Recruiter leads">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Recruiter Leads</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Engage · Recruiters</h1>
           <p className="text-sm text-muted-foreground">
             Track employer contacts, outreach and follow-ups for your college.
           </p>
@@ -292,6 +296,24 @@ export function RecruiterLeadsWorkspace({
         </div>
       ) : (
         <>
+          <section aria-label="Needs doing" className="space-y-2 rounded-lg border border-border bg-surface p-4">
+            <h2 className="text-sm font-semibold text-foreground">Needs doing</h2>
+            <div className="flex flex-wrap gap-2">
+              {([
+                ["ALL","All contacts",needCounts.all],
+                ["UNASSIGNED","Unassigned",needCounts.unassigned],
+                ["NOT_CONTACTED","Not contacted",needCounts.notContacted],
+              ] as const).map(([key,label,count])=><button key={key} type="button"
+                aria-pressed={need===key} onClick={()=>setNeed(key)}
+                className={need===key?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}>
+                  {label} ({count})
+                </button>)}
+              <Link href="/tpo/follow-ups" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
+                Follow-ups due
+              </Link>
+            </div>
+            <p className="text-xs text-muted-foreground">Counts use recorded ownership and contact stage; quiet/no-next-step signals require activity history and are not inferred.</p>
+          </section>
           <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
             <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
@@ -458,7 +480,7 @@ export function RecruiterLeadsWorkspace({
               value={form.companyName} onChange={e => field("companyName", e.target.value)} /></label>
             <label className="block text-sm">Designation<input className={inputStyle + " mt-1"} maxLength={100}
               value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
-            <label className="block text-sm">Found through
+            <label className="block text-sm">Where did you find them?
               <select className={inputStyle + " mt-1"} value={form.source}
                 onChange={e => field("source", e.target.value)}>
                 <option value="">Added by hand</option>
