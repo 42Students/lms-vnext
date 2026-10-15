@@ -34,7 +34,14 @@ export default async function BatchRegistrations({params,searchParams}:{
     <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary">Filter</button>
    </form>
    {data.limited?<p role="status" className="rounded border border-border p-3 text-sm">Limited to the first 500 active learners. Filter totals and CSV describe this sample only.</p>:null}
-   <p className="text-sm text-muted-foreground">{data.total} matching students in {data.sampleSize} sampled records. Page {data.filters.page}.</p>
+   <div className="flex flex-wrap items-center justify-between gap-2">
+    <p className="text-sm text-muted-foreground">{data.total} matching students in {data.sampleSize} sampled records. Page {data.filters.page}.</p>
+    <a href={"/api/placements/tpo/batches/"+batchId+"/registrations/export?"+new URLSearchParams({
+     q:data.filters.q,choice:data.filters.choice,page:String(data.filters.page),
+    }).toString()} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">
+     Export this 25-row page CSV
+    </a>
+   </div>
    {data.items.length===0?<p role="status">No matching students.</p>:
     <ul className="space-y-2">{data.items.map(row=><li key={row.membershipId} className="min-w-0 rounded border border-border p-3 text-sm">
      <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{row.name}</strong>
