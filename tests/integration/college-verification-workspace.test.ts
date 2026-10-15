@@ -54,8 +54,8 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
      [ids.ownUser,ids.ownMember,ids.ownRole,ids.ownRecord],
      [ids.foreignUser,ids.foreignMember,ids.foreignRole,ids.foreignRecord],
     ]){
-     await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1::uuid)",[record]);
-     await pool.query("DELETE FROM activity_events WHERE subject_id=$1::uuid",[record]);
+     await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1::text)",[record]);
+     await pool.query("DELETE FROM activity_events WHERE subject_id=$1::text",[record]);
      await pool.query("DELETE FROM profile_verification_events WHERE verification_id=$1::uuid",[record]);
      await pool.query("DELETE FROM profile_verifications WHERE id=$1::uuid",[record]);
      await pool.query("DELETE FROM membership_roles WHERE id=$1::uuid",[role]);
@@ -80,7 +80,7 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
  it("commits a send-back event and learner in-app notification, rejecting replay",async()=>{
   const saved=await reviewProfileVerification(admin,ownBody,createProfileVerificationRepository());
   expect(saved).toMatchObject({status:"SENT_BACK",version:2});
-  const audit=await pool!.query("SELECT id FROM activity_events WHERE subject_id=$1::uuid",[ids.ownRecord]);
+  const audit=await pool!.query("SELECT id FROM activity_events WHERE subject_id=$1::text",[ids.ownRecord]);
   expect(audit.rows).toHaveLength(1);
   const notifications=await pool!.query("SELECT id FROM in_app_notifications WHERE event_id=$1::uuid",[audit.rows[0].id]);
   expect(notifications.rows).toHaveLength(1);
