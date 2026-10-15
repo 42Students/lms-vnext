@@ -4,7 +4,7 @@ export const LESSONS_EXPORT_CAP=1000;
 export const lessonsCsvSchema=collegeLessonQuerySchema.omit({page:true});
 export {exportParams};
 export function lessonsCsvHref(q:{
- q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";offeringStatus:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;cohortCode?:string;periodCode?:string;pathStatus?:"ALL"|"DRAFT"|"PUBLISHED"|"ARCHIVED";
+ q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";offeringStatus:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;cohortCode?:string;periodCode?:string;pathStatus?:"ALL"|"DRAFT"|"PUBLISHED"|"ARCHIVED";offeringType?:"ALL"|"CORE"|"ELECTIVE";departmentName?:string;contentPresence?:"ALL"|"HAS_CONTENT"|"EMPTY";
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
@@ -15,6 +15,9 @@ export function lessonsCsvHref(q:{
  if(q.status!=="ACTIVE")p.set("status",q.status);
  if(q.offeringStatus!=="ALL")p.set("offeringStatus",q.offeringStatus);
  if(q.pathStatus && q.pathStatus!=="ALL")p.set("pathStatus",q.pathStatus);
+ if(q.offeringType&&q.offeringType!=="ALL")p.set("offeringType",q.offeringType);
+ if(q.departmentName)p.set("departmentName",q.departmentName);
+ if(q.contentPresence&&q.contentPresence!=="ALL")p.set("contentPresence",q.contentPresence);
  return "/api/academics/college-lessons-export"+(p.size?"?"+p.toString():"");
 }
 export function renderLessonsCsv(rows:readonly {

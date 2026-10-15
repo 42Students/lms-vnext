@@ -54,6 +54,39 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Academic period code (exact)
+            <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Learning path status
+            <select name="pathStatus" defaultValue={data.query.pathStatus??"ALL"}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learning paths</option>
+              <option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Course department name
+            <input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Course offering type
+            <select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All offering types</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Owning lesson state
+            <select name="lessonStatus" defaultValue={data.query.lessonStatus??"ALL"}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All lessons</option><option value="ACTIVE">Active lesson</option><option value="ARCHIVED">Archived lesson</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
