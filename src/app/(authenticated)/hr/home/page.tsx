@@ -164,7 +164,21 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Waiting</h2>
-      <p className="mt-2 text-sm text-body">Drive request approvals, messages and placement-cell responses are not connected to a recruiter-visible persisted workflow yet. No waiting counts are inferred from published jobs.</p>
+      <p className="mt-2 text-sm text-body">These conversations were last updated by you. A reply might still be needed; no pending approval or reply is inferred.</p>
+      {conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {conversationSignals.waiting.map(row=><li key={row.id}>
+          <Link href={row.href} className="block rounded-md border border-border p-4 text-sm text-primary-text">
+            {row.label} · Last message from you
+          </Link>
+        </li>)}
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+        No recruiter-last-sent conversations on the visible inbox page.
+      </p>}
+      {conversationSignals?.limitedToCurrentPage?<Link
+        href={"/hr/conversations?collegeId="+encodeURIComponent(selectedId)}
+        className="mt-3 inline-flex min-h-11 items-center text-sm text-primary-text">
+        View all conversations
+      </Link>:null}
     </section>
     <div className="flex flex-wrap gap-4 text-sm"><Link className="text-primary-text" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
       <Link className="text-primary-text" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
