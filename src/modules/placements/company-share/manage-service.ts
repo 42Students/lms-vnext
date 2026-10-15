@@ -1,6 +1,7 @@
 import "server-only";
 import { and, count, desc, eq, gt, inArray, isNotNull, isNull, lte } from "drizzle-orm";
 import { projectCompanyShareAudit } from "./audit-history-model";
+import {tpoCompanyAuditKindSchema} from "./audit-kind-model";
 import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, placementJobs, users } from "@/db/schema";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -109,7 +110,8 @@ export async function revokeTpoCompanyApplicantShare(context: RequestContext, ra
 }
 
 /** Recent scoped access history; no token hash, visitor address, or PII is selected. */
-export async function listTpoCompanyShareAudit(context:RequestContext,rawJobId:unknown){
+export async function listTpoCompanyShareAudit(context:RequestContext,rawJobId:unknown,rawKind:unknown="ALL"){
+ const kind=tpoCompanyAuditKindSchema.parse(rawKind);
  const jobId=companyShareIssueSchema.shape.jobId.parse(rawJobId);
  const college=await tpoJob(context,jobId);
  if(!await companyShareTablesReady())return {ready:false,entries:[],limited:false};
@@ -117,7 +119,8 @@ export async function listTpoCompanyShareAudit(context:RequestContext,rawJobId:u
   shareId:views.shareId,eventKind:views.eventKind,occurredAt:views.occurredAt,
  }).from(views).innerJoin(shares,and(
   eq(shares.id,views.shareId),eq(shares.collegeId,views.collegeId),
- )).where(and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId)))
+ )).where(and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId),
+  kind==="ALL"?undefined:eq(views.eventKind,kind)))
   .orderBy(desc(views.occurredAt),desc(views.id)).limit(101);
  return {ready:true,entries:projectCompanyShareAudit(rows.slice(0,100)),
   limited:rows.length>100};
