@@ -65,7 +65,7 @@ export default async function MentorSprintProgressPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Registered task attention
           <select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-10 rounded-md border border-border bg-background px-3">
-            <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
+            <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Release status

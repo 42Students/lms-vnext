@@ -1183,3 +1183,8 @@ The authorized current assigned-Mentor Sprint progress UI and its existing cappe
 ## 2026-10-15 chat-11 — todo-task-attention Sprint attention (PARTIAL)
 
 The authorized current assigned-Mentor Sprint progress UI and its existing capped metadata CSV now select sprints with recorded to do tasks using registered project_tasks, server-side Zod and the same college/project authorization. The predicate is applied in SQL before count and paging, and zero-task Sprints do not claim 100% completion. Focused model unit authored, independent database/TypeScript/lint/browser/legacy verification still OPEN.
+
+
+## 2026-10-15 chat-11 — done-task-attention Sprint attention (PARTIAL)
+
+The authorized current assigned-Mentor Sprint progress UI and its existing capped metadata CSV now select sprints with recorded done tasks using registered project_tasks, server-side Zod and the same college/project authorization. The predicate is applied in SQL before count and paging, and zero-task Sprints do not claim 100% completion. Focused model unit authored, independent database/TypeScript/lint/browser/legacy verification still OPEN.
