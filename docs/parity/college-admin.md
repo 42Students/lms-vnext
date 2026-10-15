@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Seven-day overdue attention triage PARTIAL (chat-9):** Queue and CSV now filter only SUBMITTED/UPDATE_PENDING entries older than seven complete days using a single per-request server clock and pure shared domain attention rules. Sent-back/verified records never appear as overdue. Unit and gated tenant-denial coverage authored, pending execution/browser proof.
+
 **Changed verified details triage PARTIAL (chat-9):** Added a queue-wide UPDATE_PENDING attention filter, across visible tabs and shared CSV, honoring the underlying verified-details state rather than guessing from a snapshot diff. Pure acceptance cases and role/tenant tests authored; executed PostgreSQL/mobile/browser and notification delivery checks open.
 
 **Missing-marksheet attention triage PARTIAL (chat-9):** Added typed, server-side EDUCATION missing-marksheet selector shared with same-scope capped CSV, evaluated before 25-row pagination and with full-view counts. Unit positive/negative and gated PostgreSQL denial fixtures authored; real runtime/375px/browser acceptance open.

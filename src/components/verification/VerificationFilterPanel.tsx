@@ -31,7 +31,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
      </select></label>
     <label className="min-w-0 text-sm">Needs a closer look
      <select value={fields.attention} onChange={e=>change("attention",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
-      <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option><option value="VERIFIED_DETAILS_CHANGED">Updated verified details</option>
+      <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option><option value="VERIFIED_DETAILS_CHANGED">Updated verified details</option><option value="WAITING_OVER_WEEK">Waiting over a week</option>
      </select>
     </label>
     <label className="min-w-0 text-sm">Waiting since (submitted on/before)
