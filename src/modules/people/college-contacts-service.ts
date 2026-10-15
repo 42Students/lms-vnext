@@ -7,7 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
 import {collegeContactAcademicScope} from "./college-contacts-academic-scope";
-import {collegeContactsQuerySchema,contactDateWindowValid,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
+import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
 
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
@@ -16,6 +16,7 @@ export type CollegeContactRow={
 export async function listCollegeContacts(context:RequestContext,raw:unknown){
  const filter=collegeContactsQuerySchema.parse(raw);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
+ if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
  const claim=context.membership;
  if(!claim||claim.status!=="ACTIVE"||!claim.roles.includes("COLLEGE_ADMIN"))
   throw new AuthorizationError("people.manage");
@@ -47,6 +48,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.profile==="PROFILED"?or(and(learner,academic.learnerProfile),and(faculty,academic.facultyProfile)):filter.profile==="UNPROFILED"?or(and(learner,not(academic.learnerProfile)),and(faculty,not(academic.facultyProfile))):undefined,
    filter.enrollment==="ACTIVE"?and(learner,academic.activeEnrollment):filter.enrollment==="NONE"?and(learner,not(academic.activeEnrollment)):undefined,
    filter.teaching==="ASSIGNED"?and(faculty,academic.activeTeaching):filter.teaching==="NONE"?and(faculty,not(academic.activeTeaching)):undefined,
+   filter.teachingRole!=="ALL"?and(faculty,academic.teachingInRole(filter.teachingRole)):undefined,
    filter.rollPresence==="PRESENT"?and(learner,academic.hasRoll):filter.rollPresence==="MISSING"?and(learner,not(academic.hasRoll)):undefined,
    filter.registrationPresence==="PRESENT"?and(learner,academic.hasRegistration):filter.registrationPresence==="MISSING"?and(learner,not(academic.hasRegistration)):undefined,
    filter.titlePresence==="PRESENT"?and(faculty,academic.hasAcademicTitle):filter.titlePresence==="MISSING"?and(faculty,not(academic.hasAcademicTitle)):undefined,
