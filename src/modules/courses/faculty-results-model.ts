@@ -7,7 +7,7 @@ export const facultyResultsQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
   page: z.union([z.number().int().min(1).max(10000), z.string().regex(/^[1-9]\d{0,4}$/).transform(Number).pipe(z.number().max(10000))]).default(1),
   sort:z.enum(["DUE_DESC","DUE_ASC","TITLE"]).default("DUE_DESC"),
-  pageSize:z.coerce.number().int().refine(value=>value===5||value===10).default(5),
+  pageSize:z.union([z.literal(5),z.literal(10),z.enum(["5","10"]).transform(Number)]).default(5),
   due:z.enum(["ALL","OVERDUE","UPCOMING","UNDATED"]).default("ALL"),
 }).strict();
 
