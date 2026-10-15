@@ -14,6 +14,7 @@ import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-re
 import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
 import {classTeamCreationFeedback} from "@/modules/projects/class-team-create-feedback-model";
 import {mayBeginClassTeamCreation} from "@/modules/projects/class-team-create-once-model";
+import {canEditClassTeamPlanner} from "@/modules/projects/class-team-edit-guard-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
 type ClassChoice = { id:string;name:string;code:string };
@@ -79,10 +80,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     }
   },[roster,mode,order,size,seed]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
+  const plannerEditable=canEditClassTeamPlanner(pending,rosterLoading);
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
   const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length,Boolean(error));
   async function create() {
-    if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced)))return;
+    if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     createInFlight.current=true;
     setPending(true);setError("");setNotice("");
     try {
@@ -117,30 +119,30 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
         </Select>
       </label>
       <label className="block space-y-1 text-sm font-medium">Workspace title
-        <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
+        <Input value={title} disabled={!plannerEditable} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
       </label>
       <label className="block space-y-1 text-sm font-medium">Base slug
-        <Input value={slug} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
+        <Input value={slug} disabled={!plannerEditable} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
       <label className="block space-y-1 text-sm font-medium">Add students as
-        <Select value={mode} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS")}>
+        <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS")}>
           <option value="TEAMS">Split class into teams</option>
           <option value="WHOLE_CLASS">Add a whole class</option>
         </Select>
       </label>
       {mode==="TEAMS"?<>
         <label className="block space-y-1 text-sm font-medium">Preferred team size
-          <Input type="number" min={1} max={100} value={size} onChange={e=>setSize(Number(e.target.value))} />
+          <Input type="number" min={1} max={100} value={size} disabled={!plannerEditable} onChange={e=>setSize(Number(e.target.value))} />
         </label>
         <label className="block space-y-1 text-sm font-medium">Grouping order
-          <Select value={order} onChange={e=>setOrder(e.target.value as "ROLL"|"SHUFFLE")}>
+          <Select value={order} disabled={!plannerEditable} onChange={e=>setOrder(e.target.value as "ROLL"|"SHUFFLE")}>
             <option value="ROLL">Roll number</option>
             <option value="SHUFFLE">Seeded shuffle</option>
           </Select>
         </label>
         {order==="SHUFFLE"?<label className="block space-y-1 text-sm font-medium">Shuffle seed
-          <Input value={seed} onChange={e=>setSeed(e.target.value)} maxLength={128}/>
+          <Input value={seed} disabled={!plannerEditable} onChange={e=>setSeed(e.target.value)} maxLength={128}/>
         </label>:null}
       </>:null}
     </div>
@@ -159,7 +161,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
           return <li key={id} className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
             {groups.length>1?<label className="min-w-24 text-xs">Team
-              <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} value={index} onChange={event=>{
+              <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} disabled={!plannerEditable} value={index} onChange={event=>{
                 try{const updated=moveMemberBalanced(groups,id,Number(event.target.value));setGroups(updated);setError("");}
                 catch(e){setError(e instanceof Error?e.message:"Cannot move learner");}
               }}>
@@ -167,7 +169,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
               </Select>
             </label>:null}
             {groups.length>1?<label className="min-w-24 text-xs">Swap with
-              <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} value="" onChange={event=>{
+              <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} disabled={!plannerEditable} value="" onChange={event=>{
                 const other=groups[Number(event.target.value)]?.membershipIds[0];
                 if(!other)return;
                 try{setGroups(swapClassTeamMembers(groups,id,other));setError("");}
