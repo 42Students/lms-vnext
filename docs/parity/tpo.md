@@ -2023,3 +2023,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 2026-10-15 / Drive Day attention sort — PARTIAL:** The TPO live, college-scoped 20-round snapshot offers validated original schedule order or descending pending/no-show counts, with deterministic name/ID ties and no client-mutated source data. Browser and real-PostgreSQL parity remain open.
 
 **Chat-2 global Requests / 2026-10-15 — PARTIAL:** `/tpo/requests` now displays a dedicated TPO-only, college-authorized pending decision inbox with status/search/page controls and existing confirmed same-origin transactional Approve/Reject actions. The writer remains the already-established request endpoint; no outbound sends. Missing legacy company-level change requests, browser/PG tests and large-list SQL pagination still block complete parity.
+
+**Chat-2 request-kind view — PARTIAL:** The global queue filters persisted application withdrawal, round reschedule, and offer-extension requests before pagination, with a strict URL allowlist. This still excludes unmigrated company request types.

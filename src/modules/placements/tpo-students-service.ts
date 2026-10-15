@@ -90,6 +90,7 @@ export const tpoStudentRequestsQuerySchema = z
         "CANCELLED",
       ])
       .optional(),
+    requestType: z.enum(["APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"]).optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
@@ -1004,6 +1005,7 @@ export async function listTpoStudentRequests(
     ) {
       return false;
     }
+    if(input.requestType&&row.requestType!==input.requestType)return false;
 
     if (!search) return true;
 
