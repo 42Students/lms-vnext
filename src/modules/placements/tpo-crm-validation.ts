@@ -2,9 +2,22 @@ import { z } from "zod";
 
 const id = z.string().uuid();
 const email = z.string().trim().toLowerCase().pipe(z.email().max(150));
-const phone = z.string().trim()
-  .min(7).max(30)
-  .regex(/^\+?[0-9() .-]+$/, "Enter a phone number");
+/**
+ * T-S2-02: normalize before applying the legacy 8–10 digit rule.
+ * Empty input means no phone; create/update must then require another contact.
+ */
+export const normalizedTpoLeadPhoneSchema = z.string().trim()
+  .max(30)
+  .regex(/^\+?[0-9() .-]*$/, "Enter a phone number")
+  .transform((value) => {
+    const digits = value.replace(/\D/g, "");
+    if (!digits) return null;
+    return digits.length > 10 ? digits.slice(-10) : digits;
+  })
+  .refine((value) => value === null || (value.length >= 8 && value.length <= 10), {
+    message: "Enter a phone number",
+  });
+const phone = normalizedTpoLeadPhoneSchema;
 
 export const tpoCrmCollegeIdSchema = id;
 export const tpoCrmLeadIdSchema = id;
@@ -97,7 +110,8 @@ export const checkTpoLeadContactSchema = z.object({
   contact: z.string().trim().min(1).max(150),
 }).strict().refine(value => {
   if (value.contact.includes("@")) return email.safeParse(value.contact).success;
-  return phone.safeParse(value.contact).success;
+  const parsed = phone.safeParse(value.contact);
+  return parsed.success && parsed.data !== null;
 }, { message: "Provide a valid email address or phone number" });
 
 export type UpdateTpoLeadInput = z.input<typeof updateTpoLeadSchema>;
