@@ -6,7 +6,7 @@ import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
   facultySubmissionListHref,facultySubmissionListPage,
-  facultySubmissionListQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
+  facultySubmissionReportPageQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
 } from "@/modules/courses/faculty-assignment-submissions-model";
 
 type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[]};
@@ -16,7 +16,7 @@ export default async function FacultyAssignmentSubmissionsPage({
 }:{params:Promise<{contentId:string}>;searchParams:Promise<Params>}) {
   const [{contentId},raw]=await Promise.all([params,searchParams]);
   const search=facultySubmissionReportSearchSchema.safeParse(raw);
-  const parsed=facultySubmissionListQuerySchema.safeParse({
+  const parsed=facultySubmissionReportPageQuerySchema.safeParse({
     assignmentId:contentId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
