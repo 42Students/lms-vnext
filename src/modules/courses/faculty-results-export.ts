@@ -9,6 +9,9 @@ export function facultyResultsCsvCell(value:string|number|null):string{
  const safe=/^\s*[=+@-]/.test(text)?"'"+text:text;
  return '"'+safe.replaceAll('"','""')+'"';
 }
+export function facultyResultExportAverage(value:number|null):string{
+ return value===null || !Number.isFinite(value) || value<0 || value>100 ? "Unknown" : String(value);
+}
 export function facultyResultsPageCsv(rows:readonly FacultyExportRow[]):string{
  if(rows.length>10)throw new Error("RESULT_CSV_PAGE_TOO_LARGE");
  const lines=[["Type","Status","Assessment","Course","Section","Eligible","Responded","Missing","Response rate (%)","Average graded score (%)"]];
@@ -16,7 +19,7 @@ export function facultyResultsPageCsv(rows:readonly FacultyExportRow[]):string{
   lines.push([row.kind,row.status,row.title,row.courseName,row.sectionName,
    String(row.eligible),String(row.responded),String(row.pending),
    String(facultyRecordedResponseRate(row.eligible,row.responded)??"Unknown"),
-   String(row.averagePercent??"Unknown")]);
+   facultyResultExportAverage(row.averagePercent)]);
  }
  return "\uFEFF"+lines.map(line=>line.map(facultyResultsCsvCell).join(",")).join("\r\n")+"\r\n";
 }
