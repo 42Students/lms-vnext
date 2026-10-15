@@ -399,6 +399,10 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
           </div>
 
+          <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Inspect membership overrides and locks →
+          </Link>
           <section className="min-w-0 rounded-xl border border-border bg-surface p-5" aria-label="Student overrides and locks">
             <h3 className="text-base font-semibold text-foreground">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
