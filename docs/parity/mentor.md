@@ -1484,3 +1484,10 @@ parity checkbox is changed here.
 ## 2026-10-15 chat-11 — class-team and Mentor progress hardening (PARTIAL)
 
 The class-team creation preview now rejects duplicate learner IDs, visually duplicate Unicode team names, over-capacity rosters and formula-like CSV cells; it exposes missing class/template prerequisites, a refresh path after roster drift and client-side slug validation. The Mentor project ordering now treats invalid completion values as unmeasured, retaining archived-last and deterministic ties. Mentor review export truncation counts are finite and bounded. All are source-authored with focused Vitest cases. They are NOT release-certified: isolated PostgreSQL writes/denials, TS/lint/full unit, browser 375px, frozen-legacy comparison and original tracker gates remain open.
+
+
+## 2026-10-15 chat-11 — Project resource-file UI contract (PARTIAL)
+
+Added pure Projects-side contracts and focused unit tests for strict metadata-only per-project/per-resource file lists, bounded status/search/page filters, verification-gated status badges, an upload state machine, backend-provided type/size/quota preflight, revision-bound delete confirmation, server-granted Project-scope UI affordances, differentiated empty/error/denied/storage-unavailable states, and mobile-first accessible layout tokens. No object keys, signed URLs or credentials enter these presentation contracts.
+
+The future storage integration must supply authenticated same-college list/intent/finalize/download/delete APIs, persisted Project access, malware/readiness statuses, concurrency versions, audit and error normalization. These models are not wired to a file backend and do NOT enable actual upload, delete or download. The Mentor resources directory now rejects repeated conflicting page and export query keys. No changes were made to src/modules/storage, registered schema, migrations or AI features. Unit tests are source-authored but not executed in this round; PostgreSQL, permission-denial, browser/mobile and exact legacy acceptance remain OPEN.

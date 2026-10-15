@@ -1,13 +1,13 @@
 export type ResourceFileViewer="ADMIN"|"MENTOR"|"LEARNER"|"NONE";
 export type ResourceFileAction="LIST"|"DOWNLOAD"|"UPLOAD"|"DELETE";
-/** Presentation-only policy. Must be recomputed by the server with persisted college/project membership. */
+/** Presentation-only policy. projectAccessGranted comes from the server's persisted Project access check, not a client role claim. */
 export type ResourceFileUiScope={
- viewer:ResourceFileViewer;assignedToProject:boolean;moduleEnabled:boolean;
+ viewer:ResourceFileViewer;projectAccessGranted:boolean;moduleEnabled:boolean;
  collegeMatches:boolean;projectStatus:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";
  resourceActive:boolean;storageReady:boolean;fileVerified:boolean;
 };
 export function resourceFileUiAllowed(s:ResourceFileUiScope,action:ResourceFileAction){
- if(!s.moduleEnabled||!s.collegeMatches||!s.assignedToProject||
+ if(!s.moduleEnabled||!s.collegeMatches||!s.projectAccessGranted||
     s.viewer==="NONE"||!s.resourceActive)return false;
  if(action==="LIST")return true;
  if(action==="DOWNLOAD")return s.storageReady&&s.fileVerified;
