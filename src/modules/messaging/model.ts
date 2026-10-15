@@ -11,7 +11,7 @@ export const outboundSendSchema = z.object({
 });
 export type OutboundSendRequest = z.infer<typeof outboundSendSchema>;
 export type OutboundStatus = z.infer<typeof outboundStatusSchema>;
-export type SuppressionReason = "nonprod-not-allowlisted" | "unsubscribed" | "rate-limited" | "daily-cap" | "invalid-recipient";
+export type SuppressionReason = "nonprod-not-allowlisted" | "unsubscribed" | "rate-limited" | "daily-cap" | "invalid-recipient" | "duplicate-in-batch";
 export type OutboundDecision = { status: "QUEUED" } | { status: "SUPPRESSED"; reason: SuppressionReason };
 export type DeliveryPolicy = {
   appEnv: string | undefined;

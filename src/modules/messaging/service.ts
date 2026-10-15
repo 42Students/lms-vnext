@@ -30,6 +30,7 @@ export async function deliverBatch(args: {
 }): Promise<DeliveryRecord[]> {
   if (args.requests.length > 500) throw new Error("OUTBOUND_BATCH_CAP_EXCEEDED");
   const records: DeliveryRecord[] = [];
+  const seenRecipientPurpose = new Set<string>();
   for (const raw of args.requests) {
     const request = outboundSendSchema.parse(raw);
     const policy = await args.policyFor(request);
@@ -41,14 +42,22 @@ export async function deliverBatch(args: {
     ) ? initial : {status:"SUPPRESSED" as const, reason:"nonprod-not-allowlisted" as const};
     const recipientKey = await args.recipientKeyFor(request);
     if (!/^[0-9a-f]{64}$/.test(recipientKey)) throw new Error("INVALID_RECIPIENT_KEY");
+    // Never dispatch the same keyed recipient twice for the same purpose in one batch.
+    // Use only the opaque key, never contact details, in the deduplication set.
+    const dedupeKey = request.channel + ":" + recipientKey + ":" + request.purpose;
+    const duplicate = seenRecipientPurpose.has(dedupeKey);
+    seenRecipientPurpose.add(dedupeKey);
+    const finalDecision = duplicate
+      ? {status: "SUPPRESSED" as const, reason: "duplicate-in-batch" as const}
+      : decision;
     const record: DeliveryRecord = {
       batchId: args.batchId,
       channel: request.channel,
       recipientKey,
       templateKey: request.templateKey,
       purpose: request.purpose,
-      status: decision.status,
-      reason: decision.status === "SUPPRESSED" ? decision.reason : null,
+      status: finalDecision.status,
+      reason: finalDecision.status === "SUPPRESSED" ? finalDecision.reason : null,
     };
     // Persist suppression or queue BEFORE contacting an external provider.
     await args.repository.insert(record);

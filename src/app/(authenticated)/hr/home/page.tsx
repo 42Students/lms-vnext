@@ -15,6 +15,9 @@ import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-se
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
+import { listHrConversations } from "@/modules/placements/hr-conversation-inbox-service";
+import { hrTodayConversationSignals } from "@/modules/placements/hr-today-conversation-model";
+import { hrConversationsHref } from "@/modules/placements/hr-conversation-urls-model";
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
 import { buildRecruiterActionQueue } from "@/modules/placements/hr-today-action-queue-model";
 import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
@@ -60,22 +63,30 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayWeek(now);
-  const [jobs, calendar, inbox] = await Promise.all([
+  const [jobs, calendar, inbox, conversations] = await Promise.all([
     listOwnRecruiterPlacementJobs(context),
     listRecruiterCalendarEvents(context, week),
     listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),
+    listHrConversations(context,{collegeId:selectedId,page:1}),
   ]);
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
   const unreadAction=hrTodayUnreadAction({...inbox,collegeId:selectedId});
+  const conversationSignals = conversations.status==="READY"
+    ? hrTodayConversationSignals(conversations.items,conversations.total)
+    : null;
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,unread:unreadAction?.value??0});
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
     {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
+    ...(conversationSignals && conversationSignals.unreadInPage>0 ? [{
+      label:"Unread conversations (first page)",value:conversationSignals.unreadInPage,
+      url:hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1}),
+    }] : []),
     ...(unreadAction ? [unreadAction] : []),
   ];
   return <div className="space-y-6">
@@ -152,9 +163,44 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           </span>
         </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
+    <section aria-label="Unread placement-cell conversations"
+      className="rounded-xl border border-border bg-surface p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-semibold text-foreground">Replies to read</h2>
+        <Link href={hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1})}
+          className="text-sm text-primary-text">View unread conversations</Link>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Only employer-owned threads from your selected college. No message bodies appear on Today.
+      </p>
+      {conversationSignals?.unread.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {conversationSignals.unread.map(row=><li key={row.id}>
+          <Link href={row.href} className="block rounded-md border border-border p-4">
+            <span className="block break-words font-semibold text-primary-text">{row.label}</span>
+            <span className="mt-1 block text-sm text-body">{row.unread} unread placement-cell messages</span>
+          </Link>
+        </li>)}
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+        No unread placement-cell conversations on this inbox page.
+      </p>}
+    </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Waiting</h2>
-      <p className="mt-2 text-sm text-body">Drive request approvals, messages and placement-cell responses are not connected to a recruiter-visible persisted workflow yet. No waiting counts are inferred from published jobs.</p>
+      <p className="mt-2 text-sm text-body">These conversations were last updated by you. A reply might still be needed; no pending approval or reply is inferred.</p>
+      {conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {conversationSignals.waiting.map(row=><li key={row.id}>
+          <Link href={row.href} className="block rounded-md border border-border p-4 text-sm text-primary-text">
+            {row.label} · Last message from you
+          </Link>
+        </li>)}
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+        No recruiter-last-sent conversations on the visible inbox page.
+      </p>}
+      {conversationSignals?.limitedToCurrentPage?<Link
+        href={"/hr/conversations?collegeId="+encodeURIComponent(selectedId)}
+        className="mt-3 inline-flex min-h-11 items-center text-sm text-primary-text">
+        View all conversations
+      </Link>:null}
     </section>
     <div className="flex flex-wrap gap-4 text-sm"><Link className="text-primary-text" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
       <Link className="text-primary-text" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
