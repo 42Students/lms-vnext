@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
+import { isLearnerAssignmentHttpsLink } from "@/modules/courses/learner-assignment-link-model";
 
 type SubmissionType = "TEXT" | "LINK" | "FILE";
 
@@ -59,16 +60,9 @@ export function AssignmentSubmissionControl({
     }
 
     if (submissionType === "LINK") {
-      try {
-        const url = new URL(
-          submissionUrl.trim(),
-        );
-        if (url.protocol !== "https:") {
-          throw new Error("https required");
-        }
-      } catch {
+      if (!isLearnerAssignmentHttpsLink(submissionUrl)) {
         setError(
-          "Enter a valid HTTPS submission link.",
+          "Enter an HTTPS submission link without embedded credentials.",
         );
         flight.current.end();
         return;
