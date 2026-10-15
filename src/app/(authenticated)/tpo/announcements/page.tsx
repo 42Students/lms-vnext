@@ -66,6 +66,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <label className="grid gap-1 text-sm font-semibold">Message
      <textarea name="message" required maxLength={10000} rows={5} className="rounded-md border border-border bg-surface p-3" />
     </label>
+    <label className="grid gap-1 text-sm">Send at (IST, optional)
+      <input type="datetime-local" name="sendAt" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+    </label>
+    <label className="grid gap-1 text-sm">Show until (IST, optional)
+      <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+    </label>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
     <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Publish college notice</button>
    </form>
