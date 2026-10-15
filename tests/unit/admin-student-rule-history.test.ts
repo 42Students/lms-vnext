@@ -18,4 +18,11 @@ describe("Super Admin student rule audit projection",()=>{
   const query=Object.fromEntries(new URL(url,"https://example.com").searchParams);
   expect(studentRuleHistoryCursorSchema.safeParse(query).success).toBe(true);
  });
+ it("preserves typed audit module across older cursor links",()=>{
+  const id="92b172ff-3817-44bf-9b48-e9afab2e93d0";
+  const url=studentRuleHistoryHref(id,id,{beforeOccurredAt:new Date("2026-10-14T10:30:00Z"),beforeId:id},"electives");
+  const query=Object.fromEntries(new URL(url,"https://example.com").searchParams);
+  expect(studentRuleHistoryCursorSchema.parse(query).module).toBe("electives");
+  expect(studentRuleHistoryCursorSchema.safeParse({module:"placements"}).success).toBe(false);
+ });
 });
