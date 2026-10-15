@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {announcementCreateSchema} from "@/modules/announcements/validation";
+import {announcementCreateSchema,announcementUpdateSchema} from "@/modules/announcements/validation";
 import {requirePlatformPublishConsent,platformAnnouncementPublicationSummary} from "@/modules/announcements/super-admin-publish-consent-model";
 describe("Super Admin DB10 announcement publication consent",()=>{
  it("requires explicit confirmation for the Super Admin actor",()=>{
@@ -14,5 +14,10 @@ describe("Super Admin DB10 announcement publication consent",()=>{
  });
  it("shows the exact target and timing before approval",()=>{
   expect(platformAnnouncementPublicationSummary({receiverType:"COLLEGE",receiverLabel:"Engineering",title:"Update",scheduledAt:null,expiresAt:null,isPinned:true})).toContain("Pinned: Yes");
+ });
+ it("guards Super Admin edit publication fields with explicit approval",()=>{
+
+  expect(announcementUpdateSchema.safeParse({expectedVersion:1,message:"Revised",publishConsent:true}).success).toBe(true);
+  expect(announcementUpdateSchema.safeParse({expectedVersion:1,message:"Revised",publishConsent:false}).success).toBe(false);
  });
 });
