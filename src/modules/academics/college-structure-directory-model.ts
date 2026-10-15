@@ -41,6 +41,7 @@ export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapaci
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
+  descriptionPresence: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
   periodLifecycle: z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
   semesterThrough: z.coerce.number().int().min(1).max(24).optional(),
   semesterFrom: z.coerce.number().int().min(1).max(24).optional(),
@@ -71,7 +72,7 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "programCode", "departmentCode", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "periodLifecycle", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "programCode", "departmentCode", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "periodLifecycle", "descriptionPresence", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "periodStartsOnOrAfter" || key === "periodEndsOnOrBefore" || key === "departmentCode" || key === "slotName" || key === "programCode" || key === "departmentCode" || key === "minimumRequiredPicks" || key === "maximumAllowedPicks" || key === "semesterFrom" || key === "semesterThrough" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
@@ -128,6 +129,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (kind === "ELECTIVES" && "semesterFrom" in query && query.semesterFrom !== undefined) params.set("semesterFrom", String(query.semesterFrom));
   if (kind === "ELECTIVES" && "semesterThrough" in query && query.semesterThrough !== undefined) params.set("semesterThrough", String(query.semesterThrough));
   if (kind === "ELECTIVES" && "periodLifecycle" in query && query.periodLifecycle !== "ALL") params.set("periodLifecycle", query.periodLifecycle);
+  if (kind === "ELECTIVES" && "descriptionPresence" in query && query.descriptionPresence !== "ALL") params.set("descriptionPresence", query.descriptionPresence);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }

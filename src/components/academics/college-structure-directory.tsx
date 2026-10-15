@@ -321,6 +321,13 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               </select>
             </label>
           ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Elective description availability
+              <select name="descriptionPresence" defaultValue={data.query.descriptionPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">Any description state</option><option value="RECORDED">Field is recorded</option><option value="MISSING">Field is missing</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
