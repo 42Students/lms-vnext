@@ -33,6 +33,7 @@ export default async function CollegeVerificationPage({searchParams}:{
   if(value!==undefined&&value!==null)query[key]=String(value);
  }
  return <CollegeVerificationPanel rows={data.rows} counts={data.counts}
+  tpoCanVerify={data.tpoCanVerify}
   activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
   page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>;
 }
