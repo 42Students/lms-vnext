@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
+import {restoreFacultySkills} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
 export function FacultyProfileSkills({initial,pending,onSave}:{
  initial:FacultyProfileDocument["skills"];pending:boolean;
@@ -43,6 +44,10 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     onClick={()=>{setRows(current=>[...current,{id:crypto.randomUUID(),skill:"",proficiency:""}]);setChanged(true);}}>
     Add skill
    </button>
+   {changed?<button type="button" disabled={pending} onClick={()=>{
+     if(!window.confirm("Discard unsaved skill edits and restore saved skills?"))return;
+     setRows(restoreFacultySkills(initial));setChanged(false);
+    }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard unsaved skill edits</button>:null}
    <button type="submit" disabled={pending||!changed||rows.some(row=>!row.skill.trim())}
     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
     {pending?"Saving…":"Save skills"}
