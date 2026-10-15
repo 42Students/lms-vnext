@@ -53,6 +53,10 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
  </section>:null}
  <section aria-label="Registration decisions" className="min-w-0 space-y-3 rounded-lg border border-border p-4">
   <h2 className="font-semibold">Registration choices</h2>
+  <p className="text-sm">Registration window: {registrations.invitation.stage.replaceAll("_"," ").toLowerCase()}</p>
+  {registrations.invitation.deadline?<p className="text-xs text-muted-foreground">Deadline (absolute time): {registrations.invitation.deadline}</p>:null}
+  {registrations.invitation.markedAt?<p className="text-xs text-muted-foreground">
+   Invitation marked: {registrations.invitation.markedAt}. This is not a delivery receipt.</p>:null}
   {!registrations.available?<p role="status" className="text-sm">Registration storage is unavailable; no counts are inferred.</p>:
    <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
     {[

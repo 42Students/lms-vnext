@@ -7,9 +7,14 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {summarizeTpoBatchRegistrations,tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
+import {getTpoInvitationReadiness} from "./tpo-batch-invitation-readiness-model";
 /** Active college learners in this cohort only; never count transferred or inactive registrations. */
 export async function getTpoBatchRegistrationSummary(context:RequestContext,batchId:string){
- const {batch,collegeId}=await getTpoBatch(context,batchId);
+ const {batch,collegeId,lifecycle}=await getTpoBatch(context,batchId);
+ const invitation=getTpoInvitationReadiness(lifecycle?{
+  invitedAt:lifecycle.invitedAt,finishedAt:lifecycle.finishedAt,
+  deadline:lifecycle.registrationDeadline,
+ }:null,new Date());
  const db=getDb();
  const [total]=await db.select({n:countDistinct(learnerProgramEnrollments.membershipId)})
   .from(learnerProgramEnrollments)
@@ -19,7 +24,7 @@ export async function getTpoBatchRegistrationSummary(context:RequestContext,batc
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
   .where(and(eq(learnerProgramEnrollments.cohortId,batch.id),eq(learnerProgramEnrollments.status,"ACTIVE")));
  const available=await placementTableExists("placement_batch_registrations");
- if(!available)return {batch,...summarizeTpoBatchRegistrations(total?.n??0,[],false)};
+ if(!available)return {batch,invitation,...summarizeTpoBatchRegistrations(total?.n??0,[],false)};
  const groups=await db.select({choice:placementBatchRegistrations.choice,
    n:countDistinct(placementBatchRegistrations.membershipId)})
   .from(placementBatchRegistrations)
@@ -39,5 +44,5 @@ export async function getTpoBatchRegistrationSummary(context:RequestContext,batc
   const valid=tpoRegistrationChoiceSchema.safeParse(g.choice);
   return valid.success?[{choice:valid.data,count:g.n}]:[];
  });
- return {batch,...summarizeTpoBatchRegistrations(total?.n??0,counts,true)};
+ return {batch,invitation,...summarizeTpoBatchRegistrations(total?.n??0,counts,true)};
 }
