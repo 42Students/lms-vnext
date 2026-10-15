@@ -14,6 +14,7 @@ export function TpoVerificationSwitch(){
   }catch(e){setError(e instanceof Error?e.message:"Unable to load setting");}
   finally{setBusy(false);}
  }
+ // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount / reset-on-input synchronisation
  useEffect(()=>{void load();},[]);
  async function save(value:boolean){
   setBusy(true);setError("");

@@ -7,6 +7,7 @@ export function VerificationFilterPanel({query,onApply}:{query:Record<string,str
  const selected=():Fields=>({marksheets:query.marksheets??"ANY",waitingSince:query.waitingSince??"",
   sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
+ // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount / reset-on-input synchronisation
  useEffect(()=>{setFields(selected());},[query.marksheets,query.waitingSince,query.sectionId,query.batchId,query.branchId]);
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
  function apply(value:Fields){
