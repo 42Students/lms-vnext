@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cx } from "@/lib/class-names";
 import type { ShellNavItem } from "./shell-model";
+import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-tabs-model";
 
 const TPO_SECTION_LABELS = {
   operate: "Operate",
@@ -48,10 +49,14 @@ export function SidebarNav({
         const tpoSection = tpoSectionLabel(item);
         const showTpoSection = tpoSection &&
           (index === 0 || item.group !== previousGroup);
+        const superAdminGroup=pathname.startsWith("/admin/")
+          ?superAdminLegacyGroupForPath(pathname):null;
         const active =
           pathname === item.href ||
           (item.href !== "/dashboard" &&
-            pathname.startsWith(`${item.href}/`));
+            pathname.startsWith(`${item.href}/`)) ||
+          (superAdminGroup!==null&&superAdminGroup.title===item.label) ||
+          (item.label==="Projects"&&pathname.startsWith("/admin/projects/"));
 
         return (
           <Fragment key={item.href}>
