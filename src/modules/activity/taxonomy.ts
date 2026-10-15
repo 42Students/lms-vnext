@@ -32,6 +32,7 @@ export const ACTIVITY_EVENT_TYPES = {
   IDENTITY_LEARNER_PROFILE_SECTION_UPDATED: "identity.learner_profile_section.updated",
   IDENTITY_LEARNER_CONTACT_UPDATED: "identity.learner_contact.updated",
   IDENTITY_MENTOR_NOTIFICATION_ACKNOWLEDGED: "identity.mentor_notification.acknowledged",
+  IDENTITY_TPO_NOTIFICATION_ACKNOWLEDGED: "identity.tpo_notification.acknowledged",
   IDENTITY_MEMBERSHIP_SUSPENDED:
     "identity.membership.suspended",
   IDENTITY_MEMBERSHIP_REACTIVATED:
