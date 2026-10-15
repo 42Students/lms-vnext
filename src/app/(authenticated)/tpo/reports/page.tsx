@@ -11,12 +11,13 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
-import {filterTpoReportGallery,tpoReportGallerySearchSchema} from "@/modules/placements/tpo-report-gallery-filter-model";
+import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema} from "@/modules/placements/tpo-report-gallery-filter-model";
 
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
   q?: string | string[];
+  group?: string | string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -36,7 +37,8 @@ export default async function TpoReportsPage({
 
   const query = await searchParams;
   const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
-  if(!parsedSearch.success)return <section role="alert"
+  const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
+  if(!parsedSearch.success||!parsedGroup.success)return <section role="alert"
     className="rounded-xl border border-border bg-surface p-6">
     <h1 className="font-semibold text-foreground">Invalid report search</h1>
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
@@ -153,7 +155,7 @@ export default async function TpoReportsPage({
     },
   ];
 
-  const visibleGroups=filterTpoReportGallery(groups,parsedSearch.data);
+  const visibleGroups=filterTpoReportGallery(groups,parsedSearch.data,parsedGroup.data);
   return (
     <div className="space-y-6">
       <PageHeader
@@ -191,6 +193,14 @@ export default async function TpoReportsPage({
             placeholder="Report name or purpose"
             className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
         </label>
+        <label className="grid gap-2 text-sm font-semibold text-body">Report category
+          <select name="group" defaultValue={parsedGroup.data}
+            className="min-h-11 rounded border border-border bg-surface px-3">
+            {tpoReportGalleryGroupSchema.options.map(group=><option key={group} value={group}>
+              {group==="ALL"?"All report categories":group}
+            </option>)}
+          </select>
+        </label>
         <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Search</button>
         <Link href={reportHref("/tpo/reports",workspace)}
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
@@ -198,7 +208,7 @@ export default async function TpoReportsPage({
         </Link>
       </form>
       {visibleGroups.length===0?<EmptyState title="No matching reports"
-        description="No available report matches that search. Clear search to see the full gallery."/>:null}
+        description="No available report matches this search and category. Clear filters to see the full gallery."/>:null}
       {visibleGroups.map((group) => (
         <section key={group.heading} className="space-y-3">
           <div>
