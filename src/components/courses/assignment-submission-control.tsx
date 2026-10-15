@@ -3,6 +3,7 @@
 import {
   type FormEvent,
   useState,
+  useRef,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
+import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
+import { isLearnerAssignmentHttpsLink } from "@/modules/courses/learner-assignment-link-model";
 
 type SubmissionType = "TEXT" | "LINK" | "FILE";
 
@@ -35,12 +38,13 @@ export function AssignmentSubmissionControl({
     useState<string | null>(null);
   const [success, setSuccess] =
     useState(false);
+  const flight = useRef(createSubmissionFlightGuard());
 
   async function submit(
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    if (submissionType === "FILE") return;
+    if (submissionType === "FILE" || !flight.current.begin()) return;
     setError(null);
     setSuccess(false);
 
@@ -51,21 +55,16 @@ export function AssignmentSubmissionControl({
       setError(
         "Enter your assignment response before submitting.",
       );
+      flight.current.end();
       return;
     }
 
     if (submissionType === "LINK") {
-      try {
-        const url = new URL(
-          submissionUrl.trim(),
-        );
-        if (url.protocol !== "https:") {
-          throw new Error("https required");
-        }
-      } catch {
+      if (!isLearnerAssignmentHttpsLink(submissionUrl)) {
         setError(
-          "Enter a valid HTTPS submission link.",
+          "Enter an HTTPS submission link without embedded credentials.",
         );
+        flight.current.end();
         return;
       }
     }
@@ -112,6 +111,7 @@ export function AssignmentSubmissionControl({
         "Could not submit the assignment. Check your connection and try again.",
       );
     } finally {
+      flight.current.end();
       setSubmitting(false);
     }
   }

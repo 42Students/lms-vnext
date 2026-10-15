@@ -73,6 +73,7 @@ describe("authenticated shell model", () => {
       "Dashboard",
       "Organizations",
       "Colleges",
+      "Profile Verification",
       "Feature Controls",
       "Departments",
       "Academics",
@@ -95,6 +96,8 @@ describe("authenticated shell model", () => {
       "/admin/placements",
       "/admin/placements/calendar",
       "/admin/recruiters",
+      "/admin/announcements",
+      "/admin/inbound-mail",
     ]);
 
     expect(
@@ -107,6 +110,11 @@ describe("authenticated shell model", () => {
       icon: "/assets/images/common/calender.svg",
     });
 
+    expect(superAdminNavigation.find((item) => item.href === "/admin/recruiters")).toMatchObject({ label: "Recruiter Accounts" });
+    expect(superAdminNavigation.find((item) => item.href === "/admin/announcements")).toMatchObject({ label: "Announcements" });
+
+    expect(superAdminHrefs).toContain("/admin/verification");
+    expect(superAdminHrefs).toContain("/tracker/audit-findings");
     expect(superAdminHrefs).not.toContain("/tpo/calendar");
     expect(superAdminHrefs).not.toContain("/college/placements/calendar");
 
@@ -125,6 +133,8 @@ describe("authenticated shell model", () => {
     const tpoHrefs = hrefs(context(["TPO"]));
     expect(tpoHrefs).toContain("/tpo/calendar");
     expect(tpoHrefs).not.toContain("/admin/placements/calendar");
+    expect(tpoHrefs).not.toContain("/tracker/audit-findings");
+    expect(tpoHrefs).not.toContain("/admin/inbound-mail");
 
     const collegeHrefs = hrefs(context(["COLLEGE_ADMIN"]));
     expect(collegeHrefs).toContain("/college/placements/calendar");
@@ -134,6 +144,18 @@ describe("authenticated shell model", () => {
     expect(learnerHrefs).not.toContain("/admin/placements/calendar");
     expect(learnerHrefs).not.toContain("/tpo/calendar");
     expect(learnerHrefs).not.toContain("/college/placements/calendar");
+  });
+
+  it("hides legacy Student Groups from College Admin navigation for all role mixes", () => {
+    for (const roles of [
+      ["COLLEGE_ADMIN"],
+      ["COLLEGE_ADMIN", "FACULTY"],
+      ["COLLEGE_ADMIN", "MENTOR", "LEARNER"],
+    ] as const) {
+      const links = getShellNavigation(context(roles)).map((item) => item.href);
+      expect(links).not.toContain("/college/groups");
+      expect(links).toContain("/college/students");
+    }
   });
 
   it("keeps College Admin navigation tenant-focused", () => {

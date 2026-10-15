@@ -7,6 +7,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { safeAnnouncementLink } from "@/modules/announcements/link-model";
 
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
@@ -224,7 +225,7 @@ export function AnnouncementAdminWorkspace({
               <Input className="mt-1" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
             </label>
             <label className="text-sm font-semibold text-body">
-              Expiry · local time
+              Show until · local time
               <Input className="mt-1" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
             </label>
             <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
@@ -247,6 +248,7 @@ export function AnnouncementAdminWorkspace({
         ) : (
           items.map((item) => {
             const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
+            const safeLink = safeAnnouncementLink(item.message);
             return (
               <article key={item.id} className="rounded-xl border border-border bg-surface p-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -258,6 +260,8 @@ export function AnnouncementAdminWorkspace({
                     </div>
                     <h3 className="mt-2 text-base font-semibold text-foreground">{item.title}</h3>
                     <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.message}</p>
+                    {safeLink ? <a href={safeLink} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center break-all text-sm font-semibold text-primary-text underline">Open linked resource ↗</a> : null}
+                    {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p> : null}
                     <p className="mt-2 text-xs text-muted-foreground">
                       Sender: {item.senderType} · Version {item.version}
                     </p>
@@ -332,7 +336,7 @@ export function AnnouncementAdminWorkspace({
               <Input name="scheduledAt" type="datetime-local" defaultValue={localInputValue(editing.scheduledAt)} className="mt-1" />
             </label>
             <label className="text-sm font-semibold text-body">
-              Expiry · local time
+              Show until · local time
               <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="mt-1" />
             </label>
             <label className="flex items-center gap-3 text-sm font-semibold text-body">

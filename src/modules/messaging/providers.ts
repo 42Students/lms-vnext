@@ -2,6 +2,7 @@ import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exo
 import { readZeptoMailConfig, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
 import type { OutboundProvider } from "./service";
 import type { OutboundSendRequest } from "./model";
+import { canContactRecipientAtRuntime } from "./runtime-safety";
 
 /** Templates are explicitly provisioned; OTP identifiers must never be reused for campaigns. */
 export type OutboundTemplate = {
@@ -19,9 +20,15 @@ export type OutboundProviderConfig = {
 export function readOutboundProviderConfig(templates: OutboundProviderConfig["templates"]): OutboundProviderConfig {
   return { email: readZeptoMailConfig(), sms: readExotelConfig(), templates };
 }
-export function createOutboundProvider(config: OutboundProviderConfig, fetchImpl: typeof fetch = fetch): OutboundProvider {
+export function createOutboundProvider(
+  config: OutboundProviderConfig,
+  fetchImpl: typeof fetch = fetch,
+  env: Record<string, string | undefined> = process.env,
+): OutboundProvider {
   return {
     async send(request: OutboundSendRequest): Promise<boolean> {
+      // This guard is inside the provider: callers cannot bypass it by passing an unsafe policy.
+      if (!canContactRecipientAtRuntime(request.channel, request.recipient, env)) return false;
       const template = config.templates[request.templateKey];
       if (!template) return false;
       try {

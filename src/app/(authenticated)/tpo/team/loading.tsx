@@ -1,0 +1,1 @@
+export default function Loading(){return <div aria-busy="true" className="space-y-4 p-4"><div className="h-9 w-48 animate-pulse rounded-md bg-surface-secondary"/><div className="h-28 animate-pulse rounded-xl bg-surface-secondary"/><div className="h-28 animate-pulse rounded-xl bg-surface-secondary"/></div>;}

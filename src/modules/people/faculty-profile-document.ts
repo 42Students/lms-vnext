@@ -182,7 +182,15 @@ const educationSchema = z
     description: text(2000),
     certificateDocumentId: receiptId,
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.startYear && value.endYear && Number(value.endYear) < Number(value.startYear)) {
+      ctx.addIssue({ code: "custom", path: ["endYear"], message: "Graduation year cannot precede start year" });
+    }
+    if (value.isCurrentlyPursuing && value.endYear) {
+      ctx.addIssue({ code: "custom", path: ["endYear"], message: "Current education cannot have a completed end year" });
+    }
+  });
 
 const certificationSchema = z
   .object({
@@ -195,7 +203,12 @@ const certificationSchema = z
     certificateDocumentId: receiptId,
     description: text(3000),
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.certificationDate && value.validityDate && value.validityDate < value.certificationDate) {
+      ctx.addIssue({ code: "custom", path: ["validityDate"], message: "Validity cannot precede certification date" });
+    }
+  });
 
 const experienceSchema = z
   .object({
@@ -305,7 +318,19 @@ export const facultyProfileDocumentSchema = z
         panDocumentId: null,
       }),
   })
-  .strict();
+  .strict()
+  .superRefine((profile, ctx) => {
+    const collections = ["languages", "education", "certifications", "experiences", "skills", "publications", "awards"] as const;
+    for (const section of collections) {
+      const seen = new Set<string>();
+      for (const [index, entry] of profile[section].entries()) {
+        if (seen.has(entry.id)) {
+          ctx.addIssue({ code: "custom", path: [section, index, "id"], message: "Duplicate profile record ID" });
+        }
+        seen.add(entry.id);
+      }
+    }
+  });
 
 export const emptyFacultyProfileDocument =
   facultyProfileDocumentSchema.parse({});
