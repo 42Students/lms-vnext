@@ -9,6 +9,7 @@ import { learnerCourseCardMedia } from "@/modules/courses/learner-course-card-me
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
 import { learnerCourseFilteredEmptyTitle } from "@/modules/courses/learner-course-filtered-empty-model";
+import { learnerCoursePreferredPeriod } from "@/modules/courses/learner-course-preferred-period-model";
 import { resolveLearnerCoursePeriod } from "@/modules/courses/learner-course-current-period-model";
 import { resolveLearnerCourseTypeFilter } from "@/modules/courses/learner-course-type-availability-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
@@ -102,8 +103,9 @@ export function LearnerCourseList({
     );
   }, [rows]);
 
-  const [periodId, setPeriodId] = useState(periods[0]?.id ?? "");
-  const selectedPeriodId = resolveLearnerCoursePeriod(periodId, periods);
+  const preferredPeriodId = learnerCoursePreferredPeriod(rows);
+  const [periodId, setPeriodId] = useState(preferredPeriodId);
+  const selectedPeriodId = resolveLearnerCoursePeriod(periodId, periods, preferredPeriodId);
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
   const [continueOnly, setContinueOnly] = useState(false);

@@ -1344,3 +1344,5 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 Learner Course cards now read the existing verified-gated authored thumbnail via the already-authorized course list, validating an HTTPS URL and using the bundled fallback for unavailable/invalid records. The `DB05_COURSE_DISPLAY_READY` gate remains disabled until registered migration acceptance; no new schema was introduced. L1-021 remains GAP until a real authored thumbnail is persisted, fetched and browser-compared with the legacy card on desktop and mobile.
 
 **Chat-7 course-search correction (2026-10-15):** overlong pasted queries retain their normalized first 100 characters instead of silently returning every Course; the UI now caps input at 100. Pure tests authored; browser/CI proof outstanding.
+
+**Chat-7 semester selection correction (2026-10-15):** initial/stale Course filters prefer the latest term with an active authorized Learner course; if none remains active, the newest accessible historical term is selected. No client-clock inference. Unit tests authored, browser proof pending.
