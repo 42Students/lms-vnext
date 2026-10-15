@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import {tenantCreationScopeRequest} from "@/modules/colleges/admin-tenant-create-handoff";
 
 export type OrganizationOption = {
   id: string;
@@ -13,8 +14,10 @@ export type OrganizationOption = {
 
 export function CollegeCreateForm({
   organizations,
+  advanceToSetup = false,
 }: {
   organizations: readonly OrganizationOption[];
+  advanceToSetup?: boolean;
 }) {
   const router = useRouter();
   const [organizationId, setOrganizationId] = useState(
@@ -42,6 +45,26 @@ export function CollegeCreateForm({
         return;
       }
 
+      if (advanceToSetup) {
+        const payload: unknown = await response.json().catch(() => null);
+        const request = tenantCreationScopeRequest(payload);
+        if (!request) {
+          setError("College created, but the setup handoff was unavailable. Select it from the scope switcher.");
+          router.refresh();
+          return;
+        }
+        const scopeResponse = await fetch("/api/auth/admin-scope", {
+          method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(request),
+        });
+        if (!scopeResponse.ok) {
+          setError("College created, but selecting it failed. Choose the new college in the scope switcher before setup.");
+          router.refresh();
+          return;
+        }
+        router.push("/admin/tenants/setup");
+        router.refresh();
+        return;
+      }
       setName("");
       setCode("");
       router.refresh();

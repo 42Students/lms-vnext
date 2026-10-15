@@ -848,3 +848,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 primary host server enforcement (PARTIAL):** The DELETE API now strictly parses an optional hostname and the domain service checks exact confirmation *after scoped authorization* for persisted primary hosts. The UI passes it to the same-origin guarded route. Explicit denial/success PostgreSQL fixture authored; not executed. Concurrent primary changes between read and delete still require transactional row-lock certification.
+
+
+**2026-10-15 chat-6 college creation handoff (PARTIAL):** The Super Admin Tenant Create stage now asks the existing permissioned scope API to select exactly the newly created college before advancing to Set up; malformed responses and failed selection show a non-success message rather than implicitly claiming a selected tenant. Shared College Create elsewhere retains its former refresh-only behavior. Unit tests authored, unexecuted; browser navigation and post-create permission/tenant fixtures remain open.
