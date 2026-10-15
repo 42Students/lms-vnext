@@ -32,6 +32,11 @@ describe.skipIf(!enabled)("Super Admin company directory PostgreSQL", () => {
     const chosen = { ...superAdmin, adminScope: { organizationId: SEED_IDS.organization, collegeId: SEED_IDS.collegeA } };
     const visible = await listSuperAdminCompanyDirectory(chosen, { q: "SA Company " + unique });
     expect(visible.rows.some(row => row.relationshipId === created.relationship.id)).toBe(true);
+    const trusted = await listSuperAdminCompanyDirectory(chosen, {q: "SA Company " + unique, trust:"TRUSTED"});
+    const untrusted = await listSuperAdminCompanyDirectory(chosen, {q: "SA Company " + unique, trust:"UNTRUSTED"});
+    expect([...trusted.rows,...untrusted.rows].some(row=>row.relationshipId===created.relationship.id)).toBe(true);
+    expect(trusted.rows.every(row=>row.trusted)).toBe(true);
+    expect(untrusted.rows.every(row=>!row.trusted)).toBe(true);
     const foreign = { ...superAdmin, adminScope: { organizationId: SEED_IDS.organization, collegeId: SEED_IDS.collegeB } };
     const hidden = await listSuperAdminCompanyDirectory(foreign, { q: "SA Company " + unique });
     expect(hidden.rows).toHaveLength(0);

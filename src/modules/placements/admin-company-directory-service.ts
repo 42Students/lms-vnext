@@ -19,6 +19,7 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   const filters: SQL[] = [];
   if (selected?.collegeId) filters.push(eq(colleges.id, selected.collegeId));
   else if (selected?.organizationId) filters.push(eq(colleges.organizationId, selected.organizationId));
+  if (query.trust !== "ALL") filters.push(eq(placementCompanyRelationships.isTrusted, query.trust === "TRUSTED"));
   if (query.status !== "ALL") {
     filters.push(eq(placementCompanyRelationships.status, query.status));
     filters.push(eq(placementCompanies.status, query.status));
