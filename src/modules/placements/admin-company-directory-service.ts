@@ -17,7 +17,11 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     collegeId: selected?.collegeId,
   });
   const filters: SQL[] = [];
-  if (selected?.collegeId) filters.push(eq(colleges.id, selected.collegeId));
+  if(query.collegeId) filters.push(eq(colleges.id,query.collegeId));
+  if (selected?.collegeId) {
+    if (query.collegeId && query.collegeId !== selected.collegeId) throw new AuthorizationError("placements.read");
+    filters.push(eq(colleges.id, selected.collegeId));
+  }
   else if (selected?.organizationId) filters.push(eq(colleges.organizationId, selected.organizationId));
   if (query.trust !== "ALL") filters.push(eq(placementCompanyRelationships.isTrusted, query.trust === "TRUSTED"));
   if (query.status !== "ALL") {

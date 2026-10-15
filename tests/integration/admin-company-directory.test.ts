@@ -40,6 +40,9 @@ describe.skipIf(!enabled)("Super Admin company directory PostgreSQL", () => {
     expect([...trusted.rows,...untrusted.rows].some(row=>row.relationshipId===created.relationship.id)).toBe(true);
     expect(trusted.rows.every(row=>row.trusted)).toBe(true);
     expect(untrusted.rows.every(row=>!row.trusted)).toBe(true);
+    const explicitlyScoped=await listSuperAdminCompanyDirectory(chosen,{q:"SA Company "+unique,collegeId:SEED_IDS.collegeA});
+    expect(explicitlyScoped.rows.some(row=>row.relationshipId===created.relationship.id)).toBe(true);
+    await expect(listSuperAdminCompanyDirectory(chosen,{q:"SA Company "+unique,collegeId:SEED_IDS.collegeB})).rejects.toBeInstanceOf(AuthorizationError);
     const foreign = { ...superAdmin, adminScope: { organizationId: SEED_IDS.organization, collegeId: SEED_IDS.collegeB } };
     const hidden = await listSuperAdminCompanyDirectory(foreign, { q: "SA Company " + unique });
     expect(hidden.rows).toHaveLength(0);
