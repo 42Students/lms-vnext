@@ -14,6 +14,7 @@ import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-res
 import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizClockInterval } from "@/modules/courses/learner-quiz-clock-interval-model";
+import { learnerQuizQuestionNavState } from "@/modules/courses/learner-quiz-question-nav-model";
 import { learnerQuizDeadlineDisplay } from "@/modules/courses/learner-quiz-deadline-display-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -443,8 +444,9 @@ export function LearnerQuizAttempt() {
                 key={question.id}
                 type="button"
                 onClick={() => setStep(index)}
-                aria-label={`Go to question ${index + 1}`}
-                className={`min-h-9 rounded-md border text-sm font-semibold ${index === step ? "border-primary bg-primary text-on-primary" : answers[question.id]?.length ? "border-success bg-success-subtle text-foreground" : "border-border bg-surface text-body"}`}
+                aria-label={learnerQuizQuestionNavState(index,step,answers[question.id] ?? []).label}
+                aria-current={index === step ? "step" : undefined}
+                className={`min-h-11 rounded-md border text-sm font-semibold ${index === step ? "border-primary bg-primary text-on-primary" : answers[question.id]?.length ? "border-success bg-success-subtle text-foreground" : "border-border bg-surface text-body"}`}
               >
                 {index + 1}
               </button>
