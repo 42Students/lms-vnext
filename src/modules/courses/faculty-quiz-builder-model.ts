@@ -286,3 +286,11 @@ export function facultyQuizQuestionMatches(
  return !term||String(index+1)===term||question.prompt.toLocaleLowerCase().includes(term)
   ||question.options.some(option=>option.text.toLocaleLowerCase().includes(term));
 }
+
+/** Reuse the server command's shared question schema for inline authoring feedback. */
+export function facultyQuizQuestionIssue(
+ question:{type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+  options:readonly {text:string;correct:boolean;sequence:number}[]},
+):string|null {
+ return facultyQuizDraftIssue("Question check",[question]);
+}
