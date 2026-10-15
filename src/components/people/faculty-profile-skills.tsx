@@ -4,7 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
-import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue,facultyProfileSkillMatches} from "@/modules/people/faculty-profile-draft-actions";
+import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue,facultyProfileSkillMatches,facultyMoveSkillRecord} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
 export function FacultyProfileSkills({initial,pending,onSave}:{
  initial:FacultyProfileDocument["skills"];pending:boolean;
@@ -45,6 +45,14 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
      <input className="mt-1.5 w-full min-w-0 rounded-md border border-border bg-background p-3" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>
+    <div className="flex flex-wrap gap-2 sm:col-span-3">
+      <button type="button" disabled={pending||index===0}
+       onClick={()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
+       className="min-h-10 rounded-md border border-border px-3 text-sm">Move up</button>
+      <button type="button" disabled={pending||index===rows.length-1}
+       onClick={()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index+1));setChanged(true);}}
+       className="min-h-10 rounded-md border border-border px-3 text-sm">Move down</button>
+    </div>
     <button type="button" disabled={pending} onClick={()=>{if(!window.confirm("Remove skill "+(index+1)+" from the unsaved draft?"))return;
       setRows(current=>removeFacultySkillDraft(current,skill.id));setChanged(true);}}
      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-error">Remove</button>
