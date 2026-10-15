@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import {summarizeTpoLiveTriage} from "@/modules/placements/tpo-live-triage-summary-model";
 import {filterTpoLiveRoundSearch,tpoLiveRoundSearchSchema} from "@/modules/placements/tpo-live-round-search-model";
 import { tpoDriveDaySortSchema, sortTpoDriveDayRows } from "@/modules/placements/tpo-drive-day-sort-model";
 import { tpoDriveDayIssueSchema, filterTpoDriveDayIssues } from "@/modules/placements/tpo-drive-day-issue-filter-model";
@@ -42,6 +43,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
     if(!sort.success)return <section role="alert">Invalid Drive Day sorting. <Link href="/tpo/drive-day">Clear filters</Link></section>;
     if(!issue.success)return <section role="alert">Invalid Drive Day filter. <Link href="/tpo/drive-day">Clear filters</Link></section>;
     const snapshot = await getTpoLiveDriveDaySummary(context);
+    const liveTotals=summarizeTpoLiveTriage(snapshot.rows);
     const liveRows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,search.data),issue.data),sort.data);
     return (
       <div className="space-y-6">
@@ -53,6 +55,11 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <label className="text-sm">Prioritize<select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></select></label>
           <button type="submit" className="self-end min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
         </form>
+        <dl aria-label="Current authorized live-round snapshot" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{[
+          ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
+          ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
+        ].map(([name,count])=><div key={name} className="rounded border border-border bg-surface p-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
+        <p className="text-xs text-muted-foreground">Counts describe the full retrieved live-round sample before these screen filters, not every round in the college or verified attendance.</p>
         {snapshot.truncated ? (
           <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
             Only the first 20 live rounds are shown; more records may exist.
