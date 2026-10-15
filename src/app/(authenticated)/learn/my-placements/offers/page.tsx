@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
 import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
@@ -22,7 +23,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 export default async function LearnerOffersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[] }>;
 }) {
   const query = await searchParams;
   const requested = typeof query.status === "string" ? query.status : "all";
@@ -38,6 +39,13 @@ export default async function LearnerOffersPage({
   const snapshotNowIso = new Date().toISOString();
   const searchedOffers = searchOwnOffers(offers.items, searchTerm);
   const visibleOffers = dueOnly ? ownOffersDueWithinWeek(searchedOffers,Date.parse(snapshotNowIso)) : searchedOffers;
+  const pageResult = learnerOfferPageSchema.safeParse(query.page ?? "1");
+  const requestedPage = pageResult.success ? pageResult.data : 1;
+  const paginated = paginateOwnOffers(visibleOffers,requestedPage,15);
+  const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
+    ...(view!=="all"?{status:view}:{}),...(searchTerm?{q:searchTerm}:{}),
+    ...(dueOnly?{due:"1"}:{}),page:String(page),
+  }).toString();
   const expiringSoon = learnerOffersExpiringSoon(offers.items.map(row => ({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
   })), Date.parse(snapshotNowIso));
@@ -126,7 +134,7 @@ export default async function LearnerOffersPage({
             requestType:row.request.requestType,
           }))}
           snapshotNowIso={snapshotNowIso}
-          offers={visibleOffers.map((row) => ({
+          offers={paginated.items.map((row) => ({
             offerId: row.offer.id,
             applicationId: row.offer.applicationId,
             companyName: row.company.name,
@@ -149,6 +157,12 @@ export default async function LearnerOffersPage({
           }))}
         />
       )}
+      {paginated.total>0 ? <nav aria-label="Offer results pagination" className="flex flex-wrap items-center gap-3 text-sm">
+        <p className="text-muted-foreground">{paginated.from}–{paginated.to} of {paginated.total} matching offers</p>
+        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link> : null}
+        <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
+        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link> : null}
+      </nav> : null}
       <p className="text-xs text-muted-foreground">
         Offer actions reuse the existing authorized offer-response endpoint.
         This page does not issue an offer or infer joining from acceptance.
