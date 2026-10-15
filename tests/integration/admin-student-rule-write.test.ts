@@ -5,6 +5,9 @@ import {writeSuperAdminStudentRule} from "@/modules/module-access/admin-student-
 import {SEED_IDS} from "../../scripts/db-seed-data";
 const context:RequestContext={user:{id:SEED_IDS.collegeAdminUser,identityUid:"test",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},membership:null};
 describe.skipIf(!process.env.TEST_DATABASE_URL)("Super Admin student rule write boundaries",()=>{
+ it("rejects inherited write from non-Super-Admin actors",async()=>{
+  await expect(writeSuperAdminStudentRule({...context,user:{...context.user,systemRoles:[]}},SEED_IDS.collegeA,SEED_IDS.learnerCollegeAMembership,{action:"INHERIT",module:"projects"})).rejects.toBeDefined();
+ });
  it("does not permit non-Super-Admin actors",async()=>{
   await expect(writeSuperAdminStudentRule({...context,user:{...context.user,systemRoles:[]}},SEED_IDS.collegeA,SEED_IDS.learnerCollegeAMembership,{action:"SET",module:"projects",enabled:true,locked:false})).rejects.toBeDefined();
  });
