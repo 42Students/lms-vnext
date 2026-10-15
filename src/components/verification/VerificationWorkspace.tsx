@@ -4,7 +4,7 @@ import Link from "next/link";
 import {collegeVerificationStudentHref} from "@/modules/verification/staff-links";
 import {collegeRoleContactHref} from "@/modules/people/college-role-directory-model";
 import {verificationTab,verificationTabCounts,type VerificationTab} from "@/modules/verification/queue-tabs";
-import {orderVerificationQueue} from "@/modules/verification/queue-order";
+import {displayVerificationQueueOrder} from "@/modules/verification/queue-order";
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {verificationQueueCardPresentation} from "@/modules/verification/queue-card-action";
 import type {VerificationRecord} from "@/modules/profile-verification/domain";
@@ -14,20 +14,20 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
- disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;
+ disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;preserveServerOrder?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
  const [query,setQuery]=useState("");
  const counts=useMemo(()=>authoritativeCounts??verificationTabCounts(rows),[authoritativeCounts,rows]);
- const visible=useMemo(()=>orderVerificationQueue(rows.filter(row=>
+ const visible=useMemo(()=>displayVerificationQueueOrder(rows.filter(row=>
   verificationTab(row)===tab&&(kind==="ALL"||row.section===kind)&&
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
- ),sort),[rows,tab,kind,query,sort]);
+ ),sort,preserveServerOrder),[rows,tab,kind,query,sort,preserveServerOrder]);
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
   <header className="space-y-2">
    <h1 className="text-xl font-semibold">Profile verification</h1>
