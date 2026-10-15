@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { facultyReportStudentPage, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
+import { facultyReportStudentPage, facultyReportLearnerName, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
 
 const row = (id: number, name: string, percent: number | null): FacultyReportStudentRow => ({
   id: String(id),
@@ -53,5 +53,14 @@ describe("Faculty report contact minimization", () => {
   it("never requires or searches a learner email in the report roster", () => {
     const result = facultyReportStudentPage([row(1,"Ravi",60)],"ravi@example.edu",1);
     expect(result.rows).toEqual([]);
+  });
+});
+
+
+describe("Faculty PDF report name privacy", () => {
+  it("uses only a public display name and a neutral missing-name label", () => {
+    expect(facultyReportLearnerName(null)).toBe("Learner (name unavailable)");
+    expect(facultyReportLearnerName("  Asha  ")).toBe("Asha");
+    expect(facultyReportLearnerName("   ")).not.toContain("@");
   });
 });

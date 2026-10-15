@@ -2,6 +2,7 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import {parseFacultyAssessmentReportRoute,facultyQuizReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
+import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
@@ -100,11 +101,11 @@ export default async function FacultyQuizReportPage({
             " correct | " + (question.accuracyPercent === null ? "Not answered" : question.accuracyPercent + "%")
           ) },
           { title: "Student scores", rows: latestAttempts.map((attempt) =>
-            (attempt.learnerDisplayName || attempt.learnerEmail || "Learner") +
+            (facultyReportLearnerName(attempt.learnerDisplayName)) +
             " | Attempt " + attempt.attemptNumber + " | " + attempt.score + "/" +
             attempt.maxScore + " | " + attempt.submittedAt.toISOString()
           ) },
-          { title: "Not attempted", rows: notAttemptedLearners.map((learner) => learner.displayName || learner.email || "Learner") },
+          { title: "Not attempted", rows: notAttemptedLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -220,7 +221,7 @@ export default async function FacultyQuizReportPage({
 
       <FacultyReportStudentTable title="Submitted attempts" rows={latestAttempts.map((attempt) => ({
         id: attempt.id,
-        name: attempt.learnerDisplayName || "Learner (name unavailable)",
+        name: facultyReportLearnerName(attempt.learnerDisplayName),
         score: attempt.score + "/" + attempt.maxScore,
         percent: attempt.maxScore > 0 ? Math.round(attempt.score / attempt.maxScore * 100) : null,
         submittedAt: attempt.submittedAt.toISOString(),
@@ -243,10 +244,10 @@ export default async function FacultyQuizReportPage({
                 className="rounded-lg bg-surface-subtle p-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
-                  {learner.displayName || learner.email}
+                  {facultyReportLearnerName(learner.displayName)}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {learner.email}
+                  {null}
                 </p>
               </li>
             ))}

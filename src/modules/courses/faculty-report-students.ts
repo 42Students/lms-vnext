@@ -38,3 +38,8 @@ export function facultyReportStudentPage(
     rows: filtered.slice((page - 1) * size, page * size),
   };
 }
+
+/** Report labels are display names only; missing identities never fall back to contact data. */
+export function facultyReportLearnerName(displayName: string | null | undefined): string {
+  return displayName?.trim() || "Learner (name unavailable)";
+}
