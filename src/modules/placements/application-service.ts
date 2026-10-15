@@ -13,6 +13,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   cohorts,
   collegeMemberships,
+  colleges,
   departments,
   learnerProgramEnrollments,
   membershipRoles,
@@ -44,6 +45,8 @@ import { evaluatePlacementEligibility, isPlacementJobTargetCohort } from "./elig
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
+import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   createPlacementApplicationInputSchema,
@@ -555,6 +558,9 @@ export async function applyToPlacementJob(
   // Legacy V188: do not let per-job INCLUDE override the college switch or
   // student/class/batch placement participation decision.
   await requireLearnerPlacementAccess(context);
+  if (!(await getOwnPlacementParticipationAccess(context)).canSelfApply) {
+    throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+  }
 
   if (job.status !== "PUBLISHED" || job.archivedAt !== null) {
     throw new PlacementsServiceError(
@@ -667,6 +673,19 @@ export async function applyToPlacementJob(
         .where(eq(placementJobEligibilityPolicies.jobId, job.id))
         .for("share").limit(1);
       if (!isPlacementJobTargetCohort(targetPolicy, enrollment)) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+      // Serialize with batch finish and creation, which first take the
+      // parent college FOR UPDATE lock in batch-participation-service.
+      await tx.select({ id: colleges.id }).from(colleges)
+        .where(eq(colleges.id, job.collegeId)).for("share").limit(1);
+      const [batch] = await tx.select({
+        finishedAt: placementBatchLifecycles.finishedAt,
+      }).from(placementBatchLifecycles).where(and(
+        eq(placementBatchLifecycles.collegeId, job.collegeId),
+        eq(placementBatchLifecycles.cohortId, enrollment.cohortId),
+      )).for("share").limit(1);
+      if (batch?.finishedAt) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
       // Re-run both the paid/inherited placement gate and the job-specific
