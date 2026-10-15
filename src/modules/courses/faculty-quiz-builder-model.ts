@@ -294,3 +294,11 @@ export function facultyQuizQuestionIssue(
 ):string|null {
  return facultyQuizDraftIssue("Question check",[question]);
 }
+
+/** Current answer selection is explicit before a confirmation or save. */
+export function facultyQuizAnswerSummary(question:{
+ type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";options:readonly {correct:boolean}[],
+}):string {
+ const count=question.options.filter(option=>option.correct).length;
+ return count+" of "+question.options.length+" answers marked correct";
+}

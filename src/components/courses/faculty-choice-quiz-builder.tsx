@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionMatches,facultyQuizQuestionIssue}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionMatches,facultyQuizQuestionIssue,facultyQuizAnswerSummary}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -213,6 +213,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       onChange={e=>updateQuestion(i,old=>({...old,points:Number(e.target.value)}))}
       className="min-h-10 w-24 rounded border border-border p-2"/></label>
    </div>
+   <p className="text-xs text-body" role="status">{facultyQuizAnswerSummary(q)}</p>
    {q.options.map((o,j)=><div key={j} className="flex flex-wrap items-center gap-2">
     <label className="min-w-0 flex-[1_1_12rem] text-sm">Option {j+1}
      <input value={o.text} maxLength={2000}
