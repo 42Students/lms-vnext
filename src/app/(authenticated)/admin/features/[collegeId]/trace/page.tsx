@@ -204,6 +204,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             <select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
               <option value="all">All active learners</option>
               <option value="only">Only students with stored overrides</option>
+              <option value="locked">Only students with locked overrides</option>
             </select>
           </label>
           <button
