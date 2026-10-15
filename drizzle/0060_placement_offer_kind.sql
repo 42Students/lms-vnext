@@ -1,0 +1,2 @@
+ALTER TABLE "placement_offers" ADD COLUMN "kind" varchar(8) DEFAULT 'OFFER' NOT NULL;--> statement-breakpoint
+ALTER TABLE "placement_offers" ADD CONSTRAINT "placement_offers_kind_ck" CHECK ("placement_offers"."kind" in ('OFFER', 'LOI'));

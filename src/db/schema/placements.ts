@@ -1373,6 +1373,7 @@ export const placementOffers = pgTable(
         onDelete: "restrict",
       }),
     version: integer("version").notNull(),
+    kind: varchar("kind", { length: 8 }).notNull().default("OFFER"),
     status: varchar("status", { length: 24 })
       .notNull()
       .default("ISSUED"),
@@ -1437,6 +1438,10 @@ export const placementOffers = pgTable(
     check(
       "placement_offers_status_ck",
       sql`${table.status} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN')`,
+    ),
+    check(
+      "placement_offers_kind_ck",
+      sql`${table.kind} in ('OFFER', 'LOI')`,
     ),
     check(
       "placement_offers_role_title_ck",
