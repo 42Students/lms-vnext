@@ -1,4 +1,4 @@
-if(q.programStatus&&q.programStatus!=="ALL")p.set("programStatus",q.programStatus);if(q.cohortStatus&&q.cohortStatus!=="ALL")p.set("cohortStatus",q.cohortStatus);import { collegeClassBaseQuerySchema,withCollegeClassCapacityCheck } from "./college-structure-directory-model";
+import { collegeClassBaseQuerySchema,withCollegeClassCapacityCheck } from "./college-structure-directory-model";
 import { escapeActivityCsvCell } from "@/modules/activity/college-activity-export-model";
 
 export const CLASSES_EXPORT_CAP = 1000;
@@ -9,7 +9,7 @@ export type ClassExportRow = {
   periodName: string; capacity: number | null; activeLearners: number; status: string;
 };
 
-export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED" cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
+export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED"; cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
   const params = new URLSearchParams();
   if (raw.q) params.set("q", raw.q);
   if (raw.programId) params.set("programId", raw.programId);
