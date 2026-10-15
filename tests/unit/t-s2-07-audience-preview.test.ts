@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {tpoPlacementAudienceSchema} from "@/modules/announcements/tpo-audience-preview-service";
+import {tpoPlacementAudienceSchema} from "@/modules/announcements/tpo-placement-audience-model";
 describe("T-S2-07 announcement audience preview parsing",()=>{
  it("supports legacy PLACEMENTS, BATCHES, BRANCHES and DRIVE kinds",()=>{
   expect(tpoPlacementAudienceSchema.parse({kind:"PLACEMENTS"})).toEqual({kind:"PLACEMENTS"});
