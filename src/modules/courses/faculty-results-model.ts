@@ -23,7 +23,7 @@ export type FacultyResultCandidate = {
 };
 
 export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
-  rows: readonly T[], query: Pick<FacultyResultsQuery, "kind" | "status" | "search" | "deliveryId"|"sort">,
+  rows: readonly T[], query: Pick<FacultyResultsQuery, "kind" | "status" | "search" | "deliveryId"> & Partial<Pick<FacultyResultsQuery,"sort">>,
 ): T[] {
   const term = query.search.toLowerCase();
   return rows.filter(row =>

@@ -41,7 +41,7 @@ export async function getFacultyAssessmentResults(
     })),
   ];
   const chosen = paginateFacultyResults(
-    filterFacultyResultCandidates(candidates,query),query.page,
+    filterFacultyResultCandidates(candidates,query),query.page,query.pageSize,
   );
   const items = await Promise.all(chosen.items.map(async row => {
     if (row.kind === "ASSIGNMENT") {
