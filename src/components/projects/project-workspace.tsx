@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts, mentorWorkspaceMissingPrimaryMentor } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts, mentorWorkspaceMissingPrimaryMentor, mentorLatestDeliveryVersion } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -750,6 +750,13 @@ export function ProjectWorkspace({
             and rubric evaluation.
           </p>
         </div>
+        {mode==="MENTOR" && mentorLatestDeliveryVersion(workspace.finalDelivery.submissions) ? (
+          <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+            Latest recorded delivery: version {mentorLatestDeliveryVersion(workspace.finalDelivery.submissions)?.version}
+            {" · "}{mentorLatestDeliveryVersion(workspace.finalDelivery.submissions)?.status}.
+            Historic versions remain available below.
+          </p>
+        ) : null}
         {workspace.finalDelivery.submissions.length ===
         0 ? (
           <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
