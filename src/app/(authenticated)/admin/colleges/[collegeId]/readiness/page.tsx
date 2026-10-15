@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {superAdminReadinessQuerySchema,visibleReadinessChecks} from "@/modules/colleges/admin-readiness-filter";
+import {parseSuperAdminReadinessParams,visibleReadinessChecks} from "@/modules/colleges/admin-readiness-filter";
 import {ErrorState} from "@/components/ui/error-state";
 import { notFound } from "next/navigation";
 
@@ -75,7 +75,7 @@ export default async function CollegeReadinessPage({
   }
 
   const raw=await searchParams;
-  const parsed=superAdminReadinessQuerySchema.safeParse({status:raw.status,area:raw.area});
+  const parsed=parseSuperAdminReadinessParams(raw);
   const context =
     await getCurrentRequestContext();
 
@@ -94,8 +94,8 @@ export default async function CollegeReadinessPage({
     evaluation,
     supplemental,
   } = result;
-  if(!parsed.success || Array.isArray(raw.status) || Array.isArray(raw.area))return <ErrorState title="Invalid readiness filter" description="Choose a supported check status." action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>}/>;
-  const shownChecks=visibleReadinessChecks(evaluation.checks,parsed.data.status,parsed.data.area);
+  if(!parsed)return <ErrorState title="Invalid readiness filter" description="Choose a supported check status." action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>}/>;
+  const shownChecks=visibleReadinessChecks(evaluation.checks,parsed.status,parsed.area);
 
   return (
     <div className="space-y-6">
@@ -190,12 +190,12 @@ export default async function CollegeReadinessPage({
 
         <form className="mt-4 flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm font-semibold text-body">Show checks
-            <select name="status" defaultValue={parsed.data.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <select name="status" defaultValue={parsed.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Setup area
-            <select name="area" defaultValue={parsed.data.area} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <select name="area" defaultValue={parsed.area} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </select>
           </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
