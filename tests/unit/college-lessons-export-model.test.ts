@@ -49,4 +49,9 @@ describe("college lessons CSV",()=>{
    expect(lessonsCsvHref(lessonsCsvSchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
  });
 
+ it("lessons CSV includes departmentCode but rejects oversized input",()=>{
+   expect(lessonsCsvSchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({departmentCode:"CS & EE"}))).toContain("departmentCode=CS+%26+EE");
+ });
+
 });

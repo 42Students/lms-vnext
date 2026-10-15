@@ -4,7 +4,7 @@ export const LESSONS_EXPORT_CAP=1000;
 export const lessonsCsvSchema=collegeLessonQuerySchema.omit({page:true});
 export {exportParams};
 export function lessonsCsvHref(q:{
- programStatus?:"ALL"|"ACTIVE"|"ARCHIVED"; cohortStatus?:"ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; periodStatus?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED"; courseStatus?:"ALL"|"ACTIVE"|"ARCHIVED"; q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";offeringStatus:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;cohortCode?:string;periodCode?:string;pathStatus?:"ALL"|"DRAFT"|"PUBLISHED"|"ARCHIVED";offeringType?:"ALL"|"CORE"|"ELECTIVE";departmentName?:string;contentPresence?:"ALL"|"HAS_CONTENT"|"EMPTY";publishedContent?:"ALL"|"HAS_PUBLISHED"|"NONE_PUBLISHED";flaggedVisibility?:"ALL"|"HAS_FLAGGED"|"NONE_FLAGGED";assignmentPresence?:"ALL"|"HAS_ASSIGNMENTS"|"NO_ASSIGNMENTS";quizPresence?:"ALL"|"HAS_QUIZZES"|"NO_QUIZZES";
+ programStatus?:"ALL"|"ACTIVE"|"ARCHIVED"; cohortStatus?:"ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; periodStatus?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED"; courseStatus?:"ALL"|"ACTIVE"|"ARCHIVED"; departmentCode?:string; q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";offeringStatus:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;cohortCode?:string;periodCode?:string;pathStatus?:"ALL"|"DRAFT"|"PUBLISHED"|"ARCHIVED";offeringType?:"ALL"|"CORE"|"ELECTIVE";departmentName?:string;contentPresence?:"ALL"|"HAS_CONTENT"|"EMPTY";publishedContent?:"ALL"|"HAS_PUBLISHED"|"NONE_PUBLISHED";flaggedVisibility?:"ALL"|"HAS_FLAGGED"|"NONE_FLAGGED";assignmentPresence?:"ALL"|"HAS_ASSIGNMENTS"|"NO_ASSIGNMENTS";quizPresence?:"ALL"|"HAS_QUIZZES"|"NO_QUIZZES";
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
@@ -26,6 +26,7 @@ export function lessonsCsvHref(q:{
  if(q.cohortStatus&&q.cohortStatus!=="ALL")p.set("cohortStatus",q.cohortStatus);
  if(q.periodStatus&&q.periodStatus!=="ALL")p.set("periodStatus",q.periodStatus);
  if(q.courseStatus&&q.courseStatus!=="ALL")p.set("courseStatus",q.courseStatus);
+ if(q.departmentCode)p.set("departmentCode",q.departmentCode);
  return "/api/academics/college-lessons-export"+(p.size?"?"+p.toString():"");
 }
 export function renderLessonsCsv(rows:readonly {

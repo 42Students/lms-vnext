@@ -128,4 +128,9 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
   });
 
+  it("lessons departmentCode is exact, bounded and escaped",()=>{
+    expect(collegeLessonQuerySchema.safeParse({departmentCode:"a".repeat(65)}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({departmentCode:"CS & EE"}))).toContain("departmentCode=CS+%26+EE");
+  });
+
 });
