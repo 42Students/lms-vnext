@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {hasMembershipRole} from "@/modules/identity/context";
 import {CollegeVerificationPanel} from "@/components/verification/CollegeVerificationPanel";
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
@@ -12,6 +13,8 @@ export const dynamic="force-dynamic";
 export default async function CollegeVerificationPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
  const raw=await searchParams;
  const parsed=parseCollegeVerificationPageQuery(raw);
  if(!parsed.success)return <section className="space-y-3 p-4">
@@ -22,7 +25,7 @@ export default async function CollegeVerificationPage({searchParams}:{
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>|undefined;
  let loadFailure:"UNAVAILABLE"|"LIMIT"|null=null;
  try{
-  data=await listCollegeVerificationQueue(await getCurrentRequestContext(),parsed.data);
+  data=await listCollegeVerificationQueue(context,parsed.data);
  }catch(error){
   if(error instanceof VerificationUnavailableError)loadFailure="UNAVAILABLE";
   else if(error instanceof VerificationQueueLimitError)loadFailure="LIMIT";
@@ -41,7 +44,6 @@ export default async function CollegeVerificationPage({searchParams}:{
  if(!data)throw new Error("VERIFICATION_QUEUE_UNAVAILABLE");
  const lastPage=verificationLastPage(data.total,data.filter.pageSize);
  if(data.page>lastPage)redirect(verificationPageUrl(data.filter,lastPage));
- const context=await getCurrentRequestContext();
  const batchChoices=await listVerificationBatchOptions(context);
  const branchChoices=await listVerificationBranchOptions(context);
  const classChoices=await listVerificationClassOptions(context);
