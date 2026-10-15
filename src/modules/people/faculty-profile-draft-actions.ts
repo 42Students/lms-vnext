@@ -1,3 +1,5 @@
+import {facultyMetadataEditableKey,type FacultyMetadataDraftEntry} from "./faculty-profile-metadata-model";
+import type {FacultyProfileDocument} from "./faculty-profile-document";
 /** Restore exactly the persisted text draft after an explicit discard. */
 export function restoreFacultyTextDraft(snapshot:Readonly<Record<string,string>>):Record<string,string>{
  return {...snapshot};
@@ -6,4 +8,13 @@ export function restoreFacultyTextDraft(snapshot:Readonly<Record<string,string>>
 /** Restore skill drafts with fresh object identities after explicit consent. */
 export function restoreFacultySkills<T extends {id:string}>(saved:readonly T[]):T[]{
  return saved.map(row=>({...row}));
+}
+
+/** Rebuild only editable textual metadata while retaining protected typed values at save. */
+export function restoreFacultyMetadataDraft(
+ saved:FacultyProfileDocument["metadata"],newId:()=>string,
+):FacultyMetadataDraftEntry[]{
+ return Object.entries(saved)
+  .filter((entry):entry is [string,string]=>typeof entry[1]==="string" && facultyMetadataEditableKey(entry[0]))
+  .map(([key,value])=>({id:newId(),key,value}));
 }
