@@ -6,6 +6,8 @@ import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenan
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {requirePermission} from "@/modules/permissions/policy";
 import {superAdminTenantSetupSteps} from "@/modules/colleges/admin-tenant-setup-journey";
+import {getSuperAdminCollegeReadiness} from "@/modules/colleges/readiness-service";
+import {summarizeTenantSetupReadiness} from "@/modules/colleges/admin-tenant-setup-status";
 export const dynamic="force-dynamic";
 export default async function SuperAdminTenantSetup(){
  const context=await getCurrentRequestContext();
@@ -14,6 +16,7 @@ export default async function SuperAdminTenantSetup(){
  if(!id)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Set up a college"
    description="Select a college in the Super Admin scope switcher to begin."/>
+  <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Create organization and college →</Link>
   <div role="status" className="rounded-xl border border-border bg-surface p-5">
    No college selected. Setup cannot default to an unrelated tenant.
    <Link href="/admin/tenants" className="ml-2 font-semibold text-primary-text underline">Browse colleges</Link>
@@ -22,12 +25,20 @@ export default async function SuperAdminTenantSetup(){
  try{college=await getSuperAdminTenantLifecycleDetail(context,id);}
  catch(e){if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();throw e;}
  requirePermission(context,"college.read",{organizationId:college.organizationId,collegeId:college.id});
+ const readiness=await getSuperAdminCollegeReadiness(context,college.id);
+ const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
  return <div className="min-w-0 space-y-5">
+  <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Create another tenant →</Link>
   <PageHeader eyebrow="Super Admin · Tenant Setup" title={college.name}
    description="Work through college-specific setup without losing the selected administrative scope."/>
   <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
    This is a navigation checklist, not automatic completion evidence. Only the Readiness Gate measures persisted setup checks; login and DNS runtime verification still require separate acceptance.
   </p>
+  <section aria-label="Persisted setup readiness" className="rounded-xl border border-border bg-surface p-4">
+   <h2 className="font-semibold text-foreground">Persisted setup readiness: {summary.label}</h2>
+   <p role="status" className="mt-2 text-sm text-body">{summary.detail}</p>
+   <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`} className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Inspect checks and re-evaluate →</Link>
+  </section>
   <ol className="grid min-w-0 gap-3 sm:grid-cols-2">
    {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>

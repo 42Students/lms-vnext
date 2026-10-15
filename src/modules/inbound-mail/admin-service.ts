@@ -13,7 +13,7 @@ export type InboundMailItem={
 export type InboundMailPage={
  available:boolean;items:readonly InboundMailItem[];page:number;hasMore:boolean;
 };
-type InboundMailFilters={status:"ALL"|"NEW"|"TRIAGED"|"RESOLVED";q:string;page:number};
+type InboundMailFilters={status:"ALL"|"NEW"|"TRIAGED"|"RESOLVED";q:string;page:number;recipient?:string};
 export interface InboundMailAdminRepository {
  tableExists():Promise<boolean>;
  list(input:InboundMailFilters):Promise<readonly InboundMailItem[]>;
@@ -26,6 +26,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
  async list(input){
   const t=inboundMailMessagesStaged,conditions:SQL[]=[];
   if(input.status!=="ALL")conditions.push(eq(t.status,input.status));
+  if(input.recipient)conditions.push(sql`lower(${t.toAddress}) = ${input.recipient}::text`);
   if(input.q) {
    const escaped=input.q.replace(/[\\%_]/g,"\\$&");
    const pattern="%"+escaped+"%";

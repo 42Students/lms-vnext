@@ -18,4 +18,9 @@ describe("Super Admin inbound mail authorization",()=>{
   await expect(listInboundMailForAdmin(admin,{},repo)).resolves.toMatchObject({available:false,items:[]});
   expect(repo.list).not.toHaveBeenCalled();
  });
+ it("normalizes recipient mailbox before querying the privileged repository",async()=>{
+  const repo=repository();
+  await listInboundMailForAdmin(admin,{recipient:" MAIL@EXAMPLE.EDU "},repo);
+  expect(repo.list).toHaveBeenCalledWith(expect.objectContaining({recipient:"mail@example.edu"}));
+ });
 });
