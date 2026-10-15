@@ -3,7 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
-import {collegeContactsHref,clearedCollegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
+import {collegeContactsHref,collegeContactsTabHref,clearedCollegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
@@ -26,11 +26,11 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    description="Read-only college contacts. Student contact details are masked; account management is separate."
    actions={<Link href="/college/people" className="rounded-md border px-3 py-2 text-sm font-semibold">Manage memberships</Link>}/>
   <nav aria-label="Contacts categories" className="flex flex-wrap gap-2">
-   <Link href={collegeContactsHref({...filter,tab:"ALL",page:1})} aria-current={filter.tab==="ALL"?"page":undefined}
+   <Link href={collegeContactsTabHref(filter,"ALL")} aria-current={filter.tab==="ALL"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">All contacts</Link>
-   <Link href={collegeContactsHref({...filter,tab:"FACULTY",page:1})} aria-current={filter.tab==="FACULTY"?"page":undefined}
+   <Link href={collegeContactsTabHref(filter,"FACULTY")} aria-current={filter.tab==="FACULTY"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">Faculty contacts</Link>
-   <Link href={collegeContactsHref({...filter,tab:"STUDENT",page:1})} aria-current={filter.tab==="STUDENT"?"page":undefined}
+   <Link href={collegeContactsTabHref(filter,"STUDENT")} aria-current={filter.tab==="STUDENT"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">Student contacts</Link>
   </nav>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
