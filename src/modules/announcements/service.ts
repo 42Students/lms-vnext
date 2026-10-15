@@ -25,6 +25,7 @@ import {
 import { AnnouncementError } from "./errors";
 import {requirePlatformPublishConsent} from "./super-admin-publish-consent-model";
 import { canAccessAnnouncements } from "./actor-status-model";
+import { requireCurrentAnnouncementVersion } from "./announcement-version-guard";
 
 type ReceiverType = (typeof ANNOUNCEMENT_RECEIVER_TYPES)[number];
 
@@ -296,6 +297,7 @@ export async function deleteAnnouncement(
   const { expectedVersion } = announcementVersionSchema.parse(raw);
   const current = await loadAnnouncement(id);
   requireManage(context, current);
+  requireCurrentAnnouncementVersion(current.version, expectedVersion);
   if (current.deletedAt) return current;
   const now = new Date();
   const [deleted] = await getDb()

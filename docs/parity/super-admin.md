@@ -1126,3 +1126,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 Audit Findings filtered PostgreSQL fixture (AUTHORED, NOT EXECUTED):** Extends isolated real-table tracker workflow with account-role, resolution-null, retest state, production-verification boolean (including false), and status selection before pagination, alongside existing foreign-scope and wrong-role denials. Execution and browser acceptance pending.
+
+
+**2026-10-15 chat-6 DB10 soft-delete stale-retry guard — PARTIAL:** An already-deleted announcement cannot acknowledge a stale delete as successful; the caller version is checked after authorization even for no-op repeat requests. Source-only regression test added; transactional PostgreSQL/browser acceptance pending.
