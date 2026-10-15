@@ -78,4 +78,9 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("maximumAllowedPicks=2");
    expect(electiveCsvSchema.safeParse({maximumAllowedPicks:1001}).success).toBe(false);
  });
+ it("Semester from is retained in elective CSV validation",()=>{
+   const q=electiveCsvSchema.parse({semesterFrom:1});
+   expect(electiveCsvHref(q)).toContain("semesterFrom=1");
+   expect(electiveCsvSchema.safeParse({semesterFrom:25}).success).toBe(false);
+ });
 });
