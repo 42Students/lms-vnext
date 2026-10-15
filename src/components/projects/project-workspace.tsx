@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -138,16 +139,7 @@ function Metric({
 }
 
 function safeHttpHref(value: string | null) {
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" ||
-      url.protocol === "http:"
-      ? url.toString()
-      : null;
-  } catch {
-    return null;
-  }
+  return safeProjectExternalHref(value);
 }
 
 function formatDateTime(value: Date | null) {
