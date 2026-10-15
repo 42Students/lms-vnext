@@ -212,9 +212,7 @@ function SubmissionGradeCard({
           submission.learnerEmail,
       });
     } catch {
-      setError(
-        "Could not publish this grade. Check your connection and try again.",
-      );
+      setError(facultyManualGradeUncertainMessage("PUBLISH"));
     } finally {
       operationInFlight.current=false;
       setPublishing(false);
