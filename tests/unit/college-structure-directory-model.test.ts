@@ -166,4 +166,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(classesExportHref(query)).toContain("schedulePresence=NO_EVENTS");
     expect(collegeClassQuerySchema.safeParse({schedulePresence:"INFERRED"}).success).toBe(false);
   });
+  it("Current section Faculty assignments validates persisted evidence and retains class/export filters",()=>{
+    const query=collegeClassQuerySchema.parse({facultyCoverage:"NO_FACULTY"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("facultyCoverage=NO_FACULTY");
+    expect(classesExportHref(query)).toContain("facultyCoverage=NO_FACULTY");
+    expect(collegeClassQuerySchema.safeParse({facultyCoverage:"INFERRED"}).success).toBe(false);
+  });
 });
