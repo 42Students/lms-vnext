@@ -4,13 +4,17 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { accountActionCopy } from "./college-account-copy";
 
 export function AccountActions({
   showNotifications = true,
+  legacyCollege = false,
 }: {
   showNotifications?: boolean;
+  legacyCollege?: boolean;
 }) {
   const router = useRouter();
+  const copy = accountActionCopy(legacyCollege);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -42,10 +46,10 @@ export function AccountActions({
         </Link>
       ) : null}
       <Link
-        href="/account/security"
+        href={copy.accountHref}
         className="inline-flex min-h-9 items-center justify-center rounded-md px-2 text-sm sm:px-3 font-semibold text-foreground transition hover:bg-muted"
       >
-        Security
+        {copy.accountLabel}
       </Link>
       <Button
         variant="ghost"
@@ -53,7 +57,7 @@ export function AccountActions({
         disabled={pending}
         onClick={signOut}
       >
-        {pending ? "Signing out…" : "Sign out"}
+        {pending && !legacyCollege ? "Signing out…" : copy.signOutLabel}
       </Button>
       {error ? (
         <p role="alert" className="mt-1 text-xs font-medium text-error">

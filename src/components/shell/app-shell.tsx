@@ -32,6 +32,7 @@ export async function AppShell({
 }) {
   const superAdmin = isSuperAdmin(context);
   const learner = hasMembershipRole(context, "LEARNER");
+  const collegeAdmin = hasMembershipRole(context, "COLLEGE_ADMIN") && !superAdmin;
   const learnerAccess = learner
     ? await getLearnerShellAccess(context)
     : null;
@@ -131,7 +132,7 @@ export async function AppShell({
                   activeMembershipId={context.membership?.id ?? null}
                 />
               )}
-              <AccountActions showNotifications={!learner} />
+              <AccountActions showNotifications={!learner} legacyCollege={collegeAdmin} />
             </div>
           </div>
         </header>
