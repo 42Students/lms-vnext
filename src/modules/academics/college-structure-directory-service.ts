@@ -95,7 +95,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
-      query.departmentCode ? eq(departments.code,query.departmentCode) : undefined,
+      query.departmentCode ? eq(departments.name, query.departmentCode) : undefined,
       query.periodEndsOnOrBefore ? lte(academicPeriods.endDate, query.periodEndsOnOrBefore) : undefined,
       query.periodStartsOnOrAfter ? gte(academicPeriods.startDate, query.periodStartsOnOrAfter) : undefined,
       query.deliveryPresence === "HAS_DELIVERIES" ? exists(db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries).where(eq(courseSectionDeliveries.sectionId,sections.id))) : query.deliveryPresence === "NO_DELIVERIES" ? not(exists(db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries).where(eq(courseSectionDeliveries.sectionId,sections.id)))) : undefined,
@@ -214,7 +214,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       query.semesterFrom !== undefined ? gte(electiveSlots.semesterNumber,query.semesterFrom) : undefined,
       query.maximumAllowedPicks !== undefined ? lte(electiveSlots.maxPick,query.maximumAllowedPicks) : undefined,
       query.minimumRequiredPicks !== undefined ? gte(electiveSlots.minPick,query.minimumRequiredPicks) : undefined,
-      query.departmentCode ? eq(departments.code, query.departmentCode) : undefined,
+      query.departmentCode ? eq(departments.name, query.departmentCode) : undefined,
       query.programCode ? eq(programs.code, query.programCode) : undefined,
       query.slotName ? eq(electiveSlots.name, query.slotName) : undefined,
       query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,

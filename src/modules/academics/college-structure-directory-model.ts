@@ -63,22 +63,9 @@ export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend
   maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
 });
 
-export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{
-  minimumCredits?: number; maximumCredits?: number;
-  semesterFrom?: number; semesterThrough?: number;
-  minimumRequiredPicks?: number; maximumAllowedPicks?: number;
-  periodStartsOnOrAfter?: string; periodEndsOnOrBefore?: string;
-}>>(schema:T) {
+export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number }>>(schema:T) {
   return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
-    {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"})
-    .refine(q => q.semesterFrom === undefined || q.semesterThrough === undefined || q.semesterFrom <= q.semesterThrough,
-      {path:["semesterThrough"],message:"Last semester must not be before first semester"})
-    .refine(q => q.minimumRequiredPicks === undefined || q.maximumAllowedPicks === undefined ||
-      q.minimumRequiredPicks <= q.maximumAllowedPicks,
-      {path:["maximumAllowedPicks"],message:"Maximum allowed picks must not be below minimum required picks"})
-    .refine(q => q.periodStartsOnOrAfter === undefined || q.periodEndsOnOrBefore === undefined ||
-      q.periodStartsOnOrAfter <= q.periodEndsOnOrBefore,
-      {path:["periodEndsOnOrBefore"],message:"Period end limit must not precede period start limit"});
+    {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"});
 }
 export const collegeElectiveQuerySchema = withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema);
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
@@ -87,10 +74,10 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "descriptionPresence", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "programCode", "departmentCode", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "periodLifecycle", "descriptionPresence", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((["programCode", "className", "cohortName", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "programId", "cohortCode", "classCode", "periodCode", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits"] as readonly string[]).includes(key) && !value)) {
+    if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "periodStartsOnOrAfter" || key === "periodEndsOnOrBefore" || key === "departmentCode" || key === "slotName" || key === "minimumRequiredPicks" || key === "maximumAllowedPicks" || key === "semesterFrom" || key === "semesterThrough" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
       result[key] = value;
     }
   }
