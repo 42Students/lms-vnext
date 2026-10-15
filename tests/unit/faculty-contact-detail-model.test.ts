@@ -49,3 +49,11 @@ describe("Faculty contact detail model", () => {
       .toBe("/teacher/contacts/students/" + id);
   });
 });
+
+
+describe("Faculty contact detail navigation bounds", () => {
+  it("rejects forged tab selectors and non-UUID memberships", () => {
+    expect(() => facultyContactDetailHref("../admin", "bad")).toThrow();
+    expect(() => facultyContactDetailHref("teachers", "bad")).toThrow();
+  });
+});
