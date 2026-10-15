@@ -479,6 +479,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Lesson quiz-authoring triage PARTIAL (2026-10-15):** College Admin Lessons now filter independently by persisted course_quizzes authorship, using the canonical lesson ownership scope rather than quiz attempt totals. All lifecycle states count as authored; query/export/page state and disposable-PG empty/matching fixtures authored, executed CI/browser acceptance pending.
+
 **Lesson assignment-authoring triage PARTIAL (2026-10-15):** The lesson catalogue now filters by actual course_assignments rows related to each college-owned lesson (including draft and archived), rather than assuming assessments exist when content exists. Filtered pagination and safe CSV share the state; strict Zod and isolated-PG fixtures authored, execution and browser acceptance open.
 
 **Saved content visibility flag triage PARTIAL (2026-10-15):** College Admin now isolates lessons having any PUBLISHED content with stored visibleToStudents=true, versus no such content, using EXISTS on the in-college lesson ancestry before pagination. This is a metadata flag, not an access-grant claim. URL/CSV propagation and disposable PostgreSQL branch assertions authored; execution pending.
