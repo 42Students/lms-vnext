@@ -77,7 +77,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   },[roster,mode,order,size,seed]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
-  const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length);
+  const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length,Boolean(error));
   async function create() {
     if(!roster||!groups.length||!balanced)return;
     setPending(true);setError("");setNotice("");
