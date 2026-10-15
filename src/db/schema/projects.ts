@@ -444,6 +444,10 @@ export const projectResources = pgTable(
     status: varchar("status", { length: 32 })
       .notNull()
       .default("ACTIVE"),
+    /** PR-S2-11: TEAM or MENTOR_ONLY. */
+    visibility: varchar("visibility", { length: 16 })
+      .notNull()
+      .default("TEAM"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -476,6 +480,13 @@ export const projectResources = pgTable(
       "project_resources_status_ck",
       sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
     ),
+    check(
+      "project_resources_visibility_ck",
+      sql`${table.visibility} in ('TEAM','MENTOR_ONLY')`,
+    ),
+    index("project_resources_visibility_idx")
+      .on(table.projectId, table.visibility)
+      .where(sql`${table.status} = 'ACTIVE'`),
   ],
 );
 
