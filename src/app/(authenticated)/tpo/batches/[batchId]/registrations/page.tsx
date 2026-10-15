@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {tpoPlacementConsentDescription} from "@/modules/placements/tpo-batch-registration-consent-model";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listTpoBatchRegistrationRoster} from "@/modules/placements/tpo-batch-registration-roster-service";
 import {TPO_REGISTRATION_CHOICES} from "@/modules/placements/tpo-batch-registration-summary-model";
@@ -56,6 +57,7 @@ export default async function BatchRegistrations({params,searchParams}:{
      <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{row.name}</strong>
       <span>{row.choice?.replaceAll("_"," ")??"Not recorded"}</span></div>
      <p className="text-xs text-muted-foreground">Source: {row.source??"None"}{row.updatedAt?" · Updated "+row.updatedAt:""}</p>
+     <p className="mt-1 text-xs text-muted-foreground">{tpoPlacementConsentDescription(row.placementConsentEvidence)}</p>
      <Link href={"/tpo/students/"+row.membershipId+"/participation"} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Review participation</Link>
     </li>)}</ul>}
    <nav aria-label="Registration pages" className="flex flex-wrap gap-2">

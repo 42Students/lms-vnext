@@ -2127,3 +2127,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / configurable batch registration page size — PARTIAL:** User-validated 25/50/100 rows are selected only after the capped authorized 500-person sample, preserving query state in navigation and current-page CSV. Unknown/too-large page sizes are rejected, not used for unbounded exports.
 
 **Chat-2 / actual sampled registration breakdown — PARTIAL:** Added source-backed total, recorded, missing, each five choice counts and SELF/TPO/BACKFILL counts over the pre-filtered, already-authorized max-500 roster. Cap is disclosed; no rates or consent assumptions.
+
+**Chat-2 / placement consent evidence clarity — PARTIAL:** The authorized batch roster now checks recorded PLACEMENTS consent timestamp plus version and explicitly distinguishes missing evidence versus other choices. This is placement registration evidence only, not permission for SMS/email/WhatsApp; raw version, actor or contact data is never shown. Runtime/PG/browser acceptance open.
