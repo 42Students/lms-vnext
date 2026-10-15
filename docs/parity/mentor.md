@@ -1450,3 +1450,51 @@ Mentor Project history now includes deleted/completed/readiness lifecycle events
 small-screen-safe history/review filters, and a full filter reset including page size.
 Those improvements are source-level parity only; browser and persisted PostgreSQL
 validation remain OPEN. No official tracker task was marked DONE.
+
+## 2026-10-15 chat-11: bulk-operation and Mentor delivery review deepening (PARTIAL)
+
+After merging current main's spreadsheet table components, the TPO current-page
+bulk-actions panel remains available only to authorized manage-capable TPO
+operators. Its explicit action labels distinguish eligibility overrides from
+applicant shortlist/rejection decisions; the selected-row cap is communicated
+and enforced on checkboxes, and selection/preview can be cleared without a
+write. Both POST endpoints require the existing same-origin protection and now
+reject malformed JSON, non-JSON media types and payloads over 16 KiB before
+domain processing. All confirmations retain the signed five-minute preview
+and current persisted actor/college, version, and row-eligibility checks.
+
+The Mentor final-delivery pending review queue now exposes a filter-aware,
+capped 200-row CSV of assigned-project metadata only, with formula-safe values,
+truncation disclosure and stable age boundaries across export pages. It does
+not reveal learner identity, feedback or source audit metadata. Assigned Mentor
+activity CSV time windows similarly reuse one instant for all fetched pages.
+The Mentor pending Task review filters gained narrow-screen-safe controls and
+an explicit page-one recovery link for an out-of-range empty state.
+
+These are **source-authored PARTIAL improvements**, not finished parity:
+focused unit tests were added, but a successful run of Vitest, TypeScript,
+disposable PostgreSQL tenant/permission/audit coverage, real browser/mobile
+checks and an independent clone-family comparison is still required. DB09
+application action registration is separately gated by
+`DB09_TPO_API_READY=DB09_VERIFIED`; do not claim it available merely because
+UI and handlers exist. No database migration, global tracker DONE or legacy
+parity checkbox is changed here.
+
+
+## 2026-10-15 chat-11 — class-team and Mentor progress hardening (PARTIAL)
+
+The class-team creation preview now rejects duplicate learner IDs, visually duplicate Unicode team names, over-capacity rosters and formula-like CSV cells; it exposes missing class/template prerequisites, a refresh path after roster drift and client-side slug validation. The Mentor project ordering now treats invalid completion values as unmeasured, retaining archived-last and deterministic ties. Mentor review export truncation counts are finite and bounded. All are source-authored with focused Vitest cases. They are NOT release-certified: isolated PostgreSQL writes/denials, TS/lint/full unit, browser 375px, frozen-legacy comparison and original tracker gates remain open.
+
+
+## 2026-10-15 chat-11 — Project resource-file UI contract (PARTIAL)
+
+Added pure Projects-side contracts and focused unit tests for strict metadata-only per-project/per-resource file lists, bounded status/search/page filters, verification-gated status badges, an upload state machine, backend-provided type/size/quota preflight, revision-bound delete confirmation, server-granted Project-scope UI affordances, differentiated empty/error/denied/storage-unavailable states, and mobile-first accessible layout tokens. No object keys, signed URLs or credentials enter these presentation contracts.
+
+The future storage integration must supply authenticated same-college list/intent/finalize/download/delete APIs, persisted Project access, malware/readiness statuses, concurrency versions, audit and error normalization. These models are not wired to a file backend and do NOT enable actual upload, delete or download. The Mentor resources directory now rejects repeated conflicting page and export query keys. No changes were made to src/modules/storage, registered schema, migrations or AI features. Unit tests are source-authored but not executed in this round; PostgreSQL, permission-denial, browser/mobile and exact legacy acceptance remain OPEN.
+
+
+## 2026-10-15 chat-11 — resource file contracts and Mentor/class-team parity follow-up (PARTIAL)
+
+Pure Projects-side resource-file UI contracts now reject spoofable filenames, stale callbacks from prior upload attempts, duplicate live metadata and invalid/ambiguous URL filters. The upload state machine keeps transfer/verification pending until an authoritative completion and does not turn an in-progress reset into a successful or cancelled file. File affordance models explain storage readiness, permission and read-only denials without revealing unrelated tenants. These are *not* connected to signed storage APIs; no Project resource upload/download/delete success is claimed. Storage adapter, authenticated persistence, signed endpoints, verification status, audit, end-to-end denial and browser acceptance remain OPEN.
+
+The class-team workspace creator now synchronously prevents duplicate creation requests, stays latched after a successful POST until navigation, locks team controls during submission/roster loading and allows retry after a failed mutation. The Mentor resource directory rejects unknown query keys instead of discarding them, and the metadata CSV formatter independently enforces the 200-row cap with finite omitted-row disclosure. Focused unit tests were authored but have not been executed for this revision; real PostgreSQL, browser/mobile, legacy source comparison, and upstream/downstream parity certification are still pending. No global tracker task was marked DONE; no registered schemas, storage module or AI features were changed.

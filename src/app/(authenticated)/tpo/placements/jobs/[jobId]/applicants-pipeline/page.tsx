@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoApplicationsSpreadsheet} from "@/components/tpo/tpo-applications-spreadsheet";
+import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
+import {can} from "@/modules/permissions/policy";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -9,7 +11,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
 import {tpoApplicantPipelineHasFilters} from "@/modules/placements/tpo-applicant-pipeline-model";
-import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
@@ -82,10 +83,15 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
-  {data.rows.length>0?<TpoBulkActionPanel key={"applications:"+jobId+":"+data.page+":"+data.stage+":"+data.search}
-    target="APPLICATIONS" jobId={jobId}
-    rows={data.rows.map(row=>({id:row.id,
-      label:(row.student??"Applicant")+" · "+row.role}))}/>:null}
+  {data.rows.length > 0 && context.membership &&
+    can(context, "placements.manage", {collegeId: context.membership.collegeId}) ?
+    <TpoBulkActionPanel
+      key={["applications", jobId, data.page, data.stage, data.search, data.channel, data.eligibility, data.sort, data.submittedWithin].join(":")}
+      target="APPLICATIONS" jobId={jobId}
+      rows={data.rows.map((row) => ({
+        id:row.id,label:(row.student ?? "Applicant") + " · " + row.role,
+      }))}
+    /> : null}
   {!data.rows.length?<div className="space-y-2">
    <EmptyState title="No matching applicants" description={tpoApplicantPipelineHasFilters(data)
     ?"No applications match the selected stage, channel, search or submission window."

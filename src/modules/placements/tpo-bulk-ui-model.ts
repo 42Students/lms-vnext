@@ -5,6 +5,10 @@ export function toggleTpoBulkRow(ids:readonly string[],id:string,checked:boolean
  if(ids.includes(id)||ids.length>=TPO_BULK_UI_LIMIT)return [...ids];
  return [...ids,id];
 }
+/** Once at capacity, only already checked rows stay enabled for removal. */
+export function canSelectTpoBulkRow(selected:readonly string[],id:string) {
+ return selected.includes(id)||selected.length<TPO_BULK_UI_LIMIT;
+}
 export function selectTpoBulkPage(ids:readonly string[]){
  return Array.from(new Set(ids)).slice(0,TPO_BULK_UI_LIMIT);
 }

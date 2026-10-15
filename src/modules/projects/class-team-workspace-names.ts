@@ -13,8 +13,9 @@ export function planClassTeamWorkspaceNames(baseTitle: string, baseSlug: string,
   return teams.map((team, index) => {
     const teamName = z.string().trim().min(1).max(120).parse(team.name);
     if (team.membershipIds.length === 0) throw new Error("Cannot create an empty workspace");
-    if (seenNames.has(teamName.toLocaleLowerCase("en-IN"))) throw new Error("Duplicate team name");
-    seenNames.add(teamName.toLocaleLowerCase("en-IN"));
+    const normalizedName = teamName.normalize("NFKC").replace(/\s+/gu, " ").trim().toLocaleLowerCase("en-IN");
+    if (seenNames.has(normalizedName)) throw new Error("Duplicate team name");
+    seenNames.add(normalizedName);
     for (const memberId of team.membershipIds) {
       z.string().uuid().parse(memberId);
       if (seenMembers.has(memberId)) throw new Error("Learner appears in multiple teams");

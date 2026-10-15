@@ -3,26 +3,21 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
-import {mentorResourceDirectoryHref,mentorResourceDirectoryQuerySchema}
+import {mentorResourceDirectoryHref,parseMentorResourceDirectorySearch}
  from "@/modules/projects/mentor-resource-directory-model";
+import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-resource-directory-layout-model";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
-const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
 }){
  const [{projectId},raw]=await Promise.all([params,searchParams]);
- const parsed=mentorResourceDirectoryQuerySchema.safeParse({
-  projectId,required:first(raw.required)??undefined,
-  link:first(raw.link)??undefined,
-  description:first(raw.description)??undefined,
-  order:first(raw.order)??undefined,
-  search:first(raw.search)??undefined,page:first(raw.page)??undefined,
- });
- if(!parsed.success)return <section role="alert" className="space-y-3">
+ const parsed=parseMentorResourceDirectorySearch(projectId,raw);
+ if(!parsed)return <section role="alert" className="space-y-3">
   <h1>Invalid resource filters</h1>
-  <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
+   className="text-primary-text underline">Clear invalid filters</Link>
  </section>;
- const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed.data);
+ const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed);
  const base="/mentor/projects/"+encodeURIComponent(projectId);
  const current=mentorResourceDirectoryHref({...data.query,page:1});
  const filters=current.includes("?")?"?"+current.split("?")[1]:"";
@@ -41,7 +36,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {" "}{data.linkableCount} with HTTPS links.
    </p>
    <form method="get" action={base+"/resources-directory"}
-    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    className={mentorResourceDirectoryFilterLayout}>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource title or description
      <input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-10 rounded-md border border-border bg-background px-3"/>
@@ -95,7 +90,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
      "Clear the filters to see other registered resource metadata."}/>:
-   <ol className="grid gap-3 sm:grid-cols-2">
+   <ol className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 rounded-xl border border-border bg-surface p-4">
      <div className="flex flex-wrap items-start justify-between gap-2">
@@ -114,7 +109,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      </p>}
     </li>)}
    </ol>}
-   <nav aria-label="Resource directory pages" className="flex items-center justify-between gap-3">
+   <nav aria-label="Resource directory pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
     <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
     <div className="flex gap-3">
      {data.page>1?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page-1})}

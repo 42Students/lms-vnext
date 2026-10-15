@@ -7,6 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorReviewQueue } from "@/modules/projects/mentor-portfolio-service";
 import { mentorPortfolioHref, mentorReviewQuerySchema, mentorDeliveryReviewMobileForm } from "@/modules/projects/mentor-portfolio-model";
 import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
+import {mentorReviewExportHref} from "@/modules/projects/mentor-review-export-model";
 
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
@@ -86,6 +87,13 @@ export default async function MentorReviewsPage({
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
         <Link href="/mentor/reviews" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={mentorReviewExportHref(data.query)} download
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          Export filtered delivery review metadata CSV (max 200)
+        </Link>
+        {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}
+      </div>
       <p className="text-sm text-body">{data.total} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." />

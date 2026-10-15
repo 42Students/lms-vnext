@@ -18,12 +18,13 @@ export async function GET(request:Request){
   if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
   const query=mentorActivityQuerySchema.parse({...filters,page:1,pageSize:50});
   const context=await getCurrentRequestContext();
-  const first=await getMentorPortfolioActivity(context,query);
+  const snapshotAt=new Date();
+  const first=await getMentorPortfolioActivity(context,query,snapshotAt);
   if(!first.enabled) return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
   const rows=[...first.items];
   const pages=Math.min(4,first.totalPages);
   for(let page=2;page<=pages;page++){
-   const next=await getMentorPortfolioActivity(context,{...query,page});
+   const next=await getMentorPortfolioActivity(context,{...query,page},snapshotAt);
    if(!next.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
    rows.push(...next.items);
   }

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,12 @@ import { previewClassTeams, type ProjectTeam } from "@/modules/projects/class-te
 import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
 import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
+import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
+import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
+import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
+import {classTeamCreationFeedback} from "@/modules/projects/class-team-create-feedback-model";
+import {mayBeginClassTeamCreation} from "@/modules/projects/class-team-create-once-model";
+import {canEditClassTeamPlanner} from "@/modules/projects/class-team-edit-guard-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
 type ClassChoice = { id:string;name:string;code:string };
@@ -30,7 +36,9 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   const [groups,setGroups]=useState<ProjectTeam[]>([]);
   const [loading,setLoading]=useState(true);
   const [rosterLoading,setRosterLoading]=useState(false);
+  const [rosterRefreshKey,setRosterRefreshKey]=useState(0);
   const [pending,setPending]=useState(false);
+  const createInFlight=useRef(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
   useEffect(()=>{
@@ -59,7 +67,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
       .catch(e=>{if(!controller.signal.aborted)setError(e instanceof Error?e.message:"Could not load class roster");})
       .finally(()=>{if(!controller.signal.aborted)setRosterLoading(false);});
     return()=>controller.abort();
-  },[collegeId,classId]);
+  },[collegeId,classId,rosterRefreshKey]);
   useEffect(()=>{
     // eslint-disable-next-line react-hooks/set-state-in-effect -- derived/fetched state synchronised to props
     if(!roster){setGroups([]);return;}
@@ -72,26 +80,39 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     }
   },[roster,mode,order,size,seed]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
+  const plannerEditable=canEditClassTeamPlanner(pending,rosterLoading);
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
+  const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length,Boolean(error));
   async function create() {
-    if(!roster||!groups.length||!balanced)return;
+    if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
+    if(!roster)return;
+    createInFlight.current=true;
+    let created=false;
     setPending(true);setError("");setNotice("");
     try {
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
         baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,expectedPreviewVersion:previewVersion(groups),
       }) as {created:{projectId:string}[]};
+      created=true;
       setNotice(result.created.length+" Project workspaces created.");
       if(result.created.length===1)router.push(basePath+"/"+result.created[0].projectId);
       else router.push(basePath);
       router.refresh();
     } catch(e) {
-      setError(e instanceof Error?e.message:"Could not create workspaces");
+      setError(classTeamCreationFeedback(e));
     } finally {
-      setPending(false);
+      // After a successful POST, keep Create locked until navigation unmounts this form.
+      // Releasing the latch would allow a second request while router.push is pending.
+      if(!created){
+        createInFlight.current=false;
+        setPending(false);
+      }
     }
   }
   return <div className="space-y-6">
+    {emptyMessages.classes?<p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.classes}</p>:null}
+    {emptyMessages.templates?<p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.templates}</p>:null}
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <label className="block space-y-1 text-sm font-medium">Class
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
@@ -105,32 +126,38 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
         </Select>
       </label>
       <label className="block space-y-1 text-sm font-medium">Workspace title
-        <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
+        <Input value={title} disabled={!plannerEditable} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
       </label>
       <label className="block space-y-1 text-sm font-medium">Base slug
-        <Input value={slug} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" />
+        <Input value={slug} disabled={!plannerEditable} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
+        {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
       <label className="block space-y-1 text-sm font-medium">Add students as
-        <Select value={mode} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS")}>
+        <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS")}>
           <option value="TEAMS">Split class into teams</option>
           <option value="WHOLE_CLASS">Add a whole class</option>
         </Select>
       </label>
       {mode==="TEAMS"?<>
         <label className="block space-y-1 text-sm font-medium">Preferred team size
-          <Input type="number" min={1} max={100} value={size} onChange={e=>setSize(Number(e.target.value))} />
+          <Input type="number" min={1} max={100} value={size} disabled={!plannerEditable} onChange={e=>setSize(Number(e.target.value))} />
         </label>
         <label className="block space-y-1 text-sm font-medium">Grouping order
-          <Select value={order} onChange={e=>setOrder(e.target.value as "ROLL"|"SHUFFLE")}>
+          <Select value={order} disabled={!plannerEditable} onChange={e=>setOrder(e.target.value as "ROLL"|"SHUFFLE")}>
             <option value="ROLL">Roll number</option>
             <option value="SHUFFLE">Seeded shuffle</option>
           </Select>
         </label>
         {order==="SHUFFLE"?<label className="block space-y-1 text-sm font-medium">Shuffle seed
-          <Input value={seed} onChange={e=>setSeed(e.target.value)} maxLength={128}/>
+          <Input value={seed} disabled={!plannerEditable} onChange={e=>setSeed(e.target.value)} maxLength={128}/>
         </label>:null}
       </>:null}
     </div>
+    {classId?<div className="flex flex-wrap items-center gap-3">
+      <Button variant="secondary" disabled={!canRefreshClassTeamRoster(classId,rosterLoading,pending)}
+        onClick={()=>setRosterRefreshKey(value=>value+1)}>Refresh class roster</Button>
+      <p className="text-xs text-muted-foreground">Refresh after enrollment changes or a stale preview before retrying creation.</p>
+    </div>:null}
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
     {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2" aria-label="Adjustable team preview">
@@ -141,7 +168,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
           return <li key={id} className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
             {groups.length>1?<label className="min-w-24 text-xs">Team
-              <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} value={index} onChange={event=>{
+              <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} disabled={!plannerEditable} value={index} onChange={event=>{
                 try{const updated=moveMemberBalanced(groups,id,Number(event.target.value));setGroups(updated);setError("");}
                 catch(e){setError(e instanceof Error?e.message:"Cannot move learner");}
               }}>
@@ -149,7 +176,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
               </Select>
             </label>:null}
             {groups.length>1?<label className="min-w-24 text-xs">Swap with
-              <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} value="" onChange={event=>{
+              <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} disabled={!plannerEditable} value="" onChange={event=>{
                 const other=groups[Number(event.target.value)]?.membershipIds[0];
                 if(!other)return;
                 try{setGroups(swapClassTeamMembers(groups,id,other));setError("");}
@@ -168,7 +195,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     {notice?<p role="status" className="text-sm">{notice}</p>:null}
     <div className="flex flex-wrap justify-end gap-3">
       <Button variant="secondary" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
-      <Button disabled={pending||!balanced||!title.trim()||!slug.trim()||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
+      <Button disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
         {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":"Create whole-class workspace"}
       </Button>
     </div>
