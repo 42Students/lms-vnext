@@ -13,6 +13,14 @@ export function facultyProfileSaveReceipt(raw:unknown,expectedVersion:number):Fa
  const persisted=payload.document as Record<string,unknown>;
  if(Object.keys(emptyFacultyProfileDocument).some(key=>!Object.hasOwn(persisted,key)))
   throw new FacultyProfileSaveResponseError();
+ const baseline=emptyFacultyProfileDocument as Record<string,unknown>;
+ for(const key of ["about","personalDetails","contact","address","socialProfiles","identitySummary"]){
+  const expected=baseline[key],actual=persisted[key];
+  if(!expected||typeof expected!=="object"||!actual||typeof actual!=="object"||Array.isArray(actual))
+   throw new FacultyProfileSaveResponseError();
+  if(Object.keys(expected).some(field=>!Object.hasOwn(actual,field)))
+   throw new FacultyProfileSaveResponseError();
+ }
  const parsed=facultyProfileDocumentSchema.safeParse(persisted);
  if(!parsed.success)throw new FacultyProfileSaveResponseError();
  if(typeof payload.version!=="number"||!Number.isSafeInteger(payload.version)||
