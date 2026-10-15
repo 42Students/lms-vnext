@@ -3,7 +3,7 @@ import { z } from "zod";
 /** GET-only filters; the college is always resolved from the signed-in membership. */
 export const COLLEGE_LECTURE_HALL_PAGE_SIZE = 25;
 
-export const collegeLectureHallFiltersSchema = z.object({
+export const collegeLectureHallFiltersBaseSchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   roomType: z.enum([
@@ -17,8 +17,18 @@ export const collegeLectureHallFiltersSchema = z.object({
   ]).default("ALL"),
   departmentId: z.string().uuid().optional(),
   minimumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
+  maximumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
+
+export function withCollegeLectureHallCapacityCheck<T extends z.ZodType<{ minimumCapacity?: number; maximumCapacity?: number }>>(schema: T) {
+  return schema.refine(
+    (q) => q.minimumCapacity === undefined || q.maximumCapacity === undefined || q.minimumCapacity <= q.maximumCapacity,
+    { path: ["maximumCapacity"], message: "Maximum seats must not be below minimum seats" },
+  );
+}
+
+export const collegeLectureHallFiltersSchema = withCollegeLectureHallCapacityCheck(collegeLectureHallFiltersBaseSchema);
 
 export type CollegeLectureHallFilters = z.infer<typeof collegeLectureHallFiltersSchema>;
 
@@ -29,7 +39,7 @@ export function parseCollegeLectureHallSearchParams(
   const input: Record<string, string> = {};
   for (const [key, value] of Object.entries(params)) {
     if (Array.isArray(value)) return null;
-    if (value !== undefined && !((key === "departmentId" || key === "minimumCapacity") && value === "")) {
+    if (value !== undefined && !((key === "departmentId" || key === "minimumCapacity" || key === "maximumCapacity") && value === "")) {
       input[key] = value;
     }
   }
@@ -44,6 +54,7 @@ export function collegeLectureHallHref(query: CollegeLectureHallFilters) {
   if (query.roomType !== "ALL") params.set("roomType", query.roomType);
   if (query.departmentId) params.set("departmentId", query.departmentId);
   if (query.minimumCapacity !== undefined) params.set("minimumCapacity", String(query.minimumCapacity));
+  if (query.maximumCapacity !== undefined) params.set("maximumCapacity", String(query.maximumCapacity));
   if (query.page !== 1) params.set("page", String(query.page));
   const suffix = params.toString();
   return "/college/lecture-halls" + (suffix ? "?" + suffix : "");
@@ -55,5 +66,5 @@ export function collegeLectureHallTotalPages(total: number) {
 
 export function hasCollegeLectureHallFilters(query: CollegeLectureHallFilters) {
   return Boolean(query.q || query.status !== "ALL" ||
-    query.roomType !== "ALL" || query.departmentId || query.minimumCapacity !== undefined);
+    query.roomType !== "ALL" || query.departmentId || query.minimumCapacity !== undefined || query.maximumCapacity !== undefined);
 }
