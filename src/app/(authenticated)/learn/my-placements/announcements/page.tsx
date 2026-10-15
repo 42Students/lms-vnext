@@ -7,6 +7,8 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placement-announcement-model";
 import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
+import {getOwnLearnerPlacementAlerts} from "@/modules/placements/learner-placement-alerts-service";
+import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-alerts";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[] }>;
@@ -25,6 +27,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     ? learnerPlacementNoticeFeed(await listVisibleAnnouncementsForMembership(context))
     : [];
   const notices = learnerPlacementNoticeView(allNotices, pinnedOnly);
+  const personalAlerts = await getOwnLearnerPlacementAlerts(context);
   return (
     <main className="min-w-0 space-y-6">
       <div>
@@ -59,6 +62,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           ))}
         </ul>
       )}
+      <LearnerPlacementAlerts alerts={personalAlerts} />
     </main>
   );
 }
