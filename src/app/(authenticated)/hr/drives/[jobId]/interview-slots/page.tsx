@@ -83,7 +83,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
       <input type="hidden" name="expectedVersion" value={slot.version}/>
       {slot.status==="PROPOSED"?<button type="submit" name="action" value="OFFER"
         className="min-h-11 rounded-md border border-border px-4 text-primary-text">Offer time to college</button>:null}
-      {slot.status==="OFFERED"?<button type="submit" name="action" value="BOOK"
+      {(slot.status==="OFFERED"||slot.status==="BOOKED")&&slot.bookedCount<slot.capacity?<button type="submit" name="action" value="BOOK"
         className="min-h-11 rounded-md border border-border px-4 text-primary-text">Reserve one internal slot</button>:null}
       {(slot.status==="PROPOSED"||slot.status==="OFFERED")?<button type="submit" name="action" value="CANCEL"
         className="min-h-11 rounded-md border border-border px-4 text-primary-text">Cancel time block</button>:null}

@@ -18,9 +18,10 @@ export const hrInterviewSlotActionSchema=z.strictObject({
  expectedVersion:z.coerce.number().int().positive(),
  action:z.enum(["OFFER","BOOK","CANCEL"]),
 });
-export function slotTransitionAllowed(status:string,action:"OFFER"|"BOOK"|"CANCEL"){
+export function slotTransitionAllowed(status:string,action:"OFFER"|"BOOK"|"CANCEL",bookedCount=0,capacity=1){
  return (status==="PROPOSED"&&(action==="OFFER"||action==="CANCEL"))||
-        (status==="OFFERED"&&(action==="BOOK"||action==="CANCEL"));
+        (status==="OFFERED"&&((action==="BOOK"&&bookedCount<capacity)||action==="CANCEL"))||
+        (status==="BOOKED"&&action==="BOOK"&&bookedCount<capacity);
 }
 export function slotsOverlap(a:{startAt:Date;endAt:Date},b:{startAt:Date;endAt:Date}){
  return a.startAt.getTime()<b.endAt.getTime()&&b.startAt.getTime()<a.endAt.getTime();
