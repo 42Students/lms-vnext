@@ -1033,3 +1033,37 @@ TypeScript/lint, unit, isolated PostgreSQL and 375px/desktop browser gates pass.
   existing modules with no new DB tables/migrations. The central parity matrix
   is intentionally unchanged; legacy Team, Board, Reviews, Activity and
   navigation/browser sign-off remain OPEN.
+
+
+## 2026-10-15 chat-11 — truthful Project roster and review triage (PARTIAL)
+
+This batch builds on existing current-Mentor persisted-assignment reads and retains
+Mentor write restrictions (no team membership editing). Source implementations:
+
+- **Projects list** cards show measured task completion (DONE versus all registered
+  tasks), unknown rather than invented 0% when no tasks exist, and an explicit
+  archived/read-only badge. Count of active Project members comes from live,
+  same-college membership and registered persisted roles. Added least-recorded-
+  progress sorting with unknown last; archived projects remain last.
+- **Meetings** now triages overdue requested meetings (still actionable),
+  scheduled meetings within 48 hours, and uncompleted past-day scheduled
+  meetings using the already existing IST-based derived MISSED semantics.
+  Filters are retained in the authenticated 200-row capped calendar CSV.
+- **Pending task reviews** offer last-seven-days / waiting-over-seven-days
+  age scopes and an exact-project selector limited to the authenticated
+  Mentor's currently assigned projects. Both constrain scoped SQL count and
+  pagination before returning submission metadata.
+- **Sanitized activity** and **final-delivery review queue** now have an
+  explicit per-project selector. Unknown/foreign Project UUID selection
+  fails closed. Options come from persisted current-Mentor assignments; only
+  registered safe activity labels and permitted review attention are shown.
+
+Pure unit cases and new disposable-PostgreSQL fixture assertions for accurate
+same-college team sizes and learner-role denial were authored. Tests, typecheck,
+ESLint, isolated PostgreSQL, browser 375px/desktop, and historical legacy
+semantic sign-off have **not been executed** in this branch. No new schema,
+migration or API mutation endpoint was introduced. Consequently Project list,
+Team, Meetings, Task Reviews, Delivery Review and Activity remain PARTIAL; no
+central parity matrix row is marked DONE. Section 8 legacy-delta contains no
+separate Mentor-specific MISSING surface; this batch targets its existing
+PARTIAL Project/Team/Meeting/Review gaps only.
