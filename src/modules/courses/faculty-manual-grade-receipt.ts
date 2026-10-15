@@ -14,7 +14,7 @@ export type FacultyGradeReceiptScope={
  id:string;assignmentId:string;deliveryId:string;membershipId:string;version:number;
 };
 export function facultyManualGradeReceipt(raw:unknown,current:FacultyGradeReceiptScope,
- action:"GRADE"|"PUBLISH",maximum:number){
+ action:"GRADE"|"PUBLISH",maximum:number,expectedGrade?:{points:number;feedback:string|null}){
  const parsed=receipt.safeParse(raw);
  if(!parsed.success)throw new FacultyManualGradeReceiptError();
  const result=parsed.data.submission;
@@ -24,5 +24,8 @@ export function facultyManualGradeReceipt(raw:unknown,current:FacultyGradeReceip
  result.gradingStatus!=="GRADED"||result.pointsAwarded===null||
  result.pointsAwarded>maximum||result.gradePublished!==(action==="PUBLISH"))
  throw new FacultyManualGradeReceiptError();
+ if(expectedGrade && (result.pointsAwarded!==expectedGrade.points||
+   (result.feedback??null)!==(expectedGrade.feedback??null)))
+  throw new FacultyManualGradeReceiptError();
  return result;
 }
