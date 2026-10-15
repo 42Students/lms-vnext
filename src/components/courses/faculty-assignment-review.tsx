@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
+import {facultyManualGradeReceipt} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
@@ -138,14 +139,11 @@ function SubmissionGradeCard({
         return;
       }
 
-      const payload =
-        (await response.json()) as {
-          submission: Submission;
-        };
+      const saved = facultyManualGradeReceipt(await response.json(),submission,"GRADE",maxPoints);
       setSuccess("Grade state saved. Refresh the report to verify visibility.");
       onUpdated({
         ...submission,
-        ...payload.submission,
+        ...saved,
         learnerDisplayName:
           submission.learnerDisplayName,
         learnerEmail:
