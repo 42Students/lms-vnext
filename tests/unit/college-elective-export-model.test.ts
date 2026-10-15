@@ -116,4 +116,8 @@ describe("college electives CSV",()=>{
   expect(electiveCsvSchema.safeParse({minimumRequiredPicks:4,maximumAllowedPicks:3}).success).toBe(false);
   expect(electiveCsvSchema.safeParse({minimumRequiredPicks:2,maximumAllowedPicks:3}).success).toBe(true);
  });
+ it("rejects elective linked period date interval during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({periodStartsOnOrAfter:"2026-12-01",periodEndsOnOrBefore:"2026-11-30"}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({periodStartsOnOrAfter:"2026-07-01",periodEndsOnOrBefore:"2026-12-31"}).success).toBe(true);
+ });
 });
