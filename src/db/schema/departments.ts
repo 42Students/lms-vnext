@@ -26,5 +26,6 @@ export const departments = pgTable(
       .on(table.collegeId, sql`lower(${table.name})`)
       .where(sql`${table.archivedAt} is null`),
     index("departments_college_idx").on(table.collegeId),
+    uniqueIndex("departments_id_college_uq").on(table.id, table.collegeId),
   ],
 );
