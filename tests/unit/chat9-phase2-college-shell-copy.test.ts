@@ -11,7 +11,7 @@ const legacyCollegeSidebar = [
   ["Profile verification", "/college/verification"],
   ["Placements", "/college/placements"],
   ["Placement cell", "/tpo/home"],
-  ["Projects", "/college/projects/workspaces"],
+  ["Projects", "/college/projects"],
   ["Profile", "/college/profile"],
 ] as const;
 

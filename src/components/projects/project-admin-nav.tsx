@@ -22,6 +22,10 @@ export function ProjectAdminNav({
     | "templates"
     | "audit";
 }) {
+  // College Admin already has the identical legacy group strip in its layout.
+  // Keep the shared Super Admin navigation, but never render two college strips.
+  if (basePath === "/college/projects") return null;
+
   const activePath =
     active === "workspaces"
       ? ""
