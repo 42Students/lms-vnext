@@ -1148,3 +1148,8 @@ PostgreSQL, browser/375px or legacy-oracle side-by-side run was available
 in this connector-only source session. Full Team/Overview/Delivery/Sprints
 source-legacy interaction fidelity, upstream producers and browser/mobile
 acceptance remain open. No DONE surface/task/phase claim is made.
+
+
+## 2026-10-15 chat-11 — single-mentor team coverage (PARTIAL)
+
+Projects with exactly one active Mentor now have a current-assignment, registered-team filter; this surfaces single-Mentor coverage without inferring workload. The existing active-Mentor/college/module permission service is reused; the new selector is server-validated and preserved in paging. Pure regression is authored, not executed. Real PostgreSQL, mobile/desktop, exact legacy producer and staffing-action verification remain OPEN; no Team row is closed.

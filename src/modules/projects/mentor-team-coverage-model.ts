@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const mentorTeamCoverageQuerySchema = z.object({
-  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR","MULTIPLE_MENTORS"]).default("ALL"),
+  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR","MULTIPLE_MENTORS","SINGLE_MENTOR"]).default("ALL"),
   order: z.enum(["TITLE","FEWEST_LEARNERS","MOST_LEARNERS"]).default("TITLE"),
   assignment: z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   status: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
@@ -48,7 +48,8 @@ export function selectMentorTeamCoverage(
       (query.filter === "NO_PRIMARY_MENTOR" && !row.hasPrimaryMentor) ||
       (query.filter === "HAS_LEARNERS" && row.learners > 0) ||
       (query.filter === "HAS_PRIMARY_MENTOR" && row.hasPrimaryMentor) ||
-      (query.filter === "MULTIPLE_MENTORS" && row.mentors > 1)),
+      (query.filter === "MULTIPLE_MENTORS" && row.mentors > 1) ||
+      (query.filter === "SINGLE_MENTOR" && row.mentors === 1)),
   ).sort((a,b) =>
     (query.order==="FEWEST_LEARNERS" ? a.learners-b.learners :
       query.order==="MOST_LEARNERS" ? b.learners-a.learners : 0) ||
