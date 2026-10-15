@@ -20,7 +20,7 @@ import {
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
-import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
+import { collegeRoleDirectoryExportHref } from "@/modules/people/college-role-directory-export";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -84,7 +84,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 Import CSV
               </Link>
             ) : null}
-            <Link href={collegePeopleExportHref({q:result.filter.q,role:kind,status:result.filter.status})}
+            <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
               className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
               Export {kind === "FACULTY" ? "Faculty" : "Learner"} CSV (max 1,000)
             </Link>
@@ -385,9 +385,8 @@ export async function CollegeRoleDirectoryWorkspace({
         </div>
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
-        CSV applies name/email and membership-status filters only. Platform account,
-        academic enrollment and teaching filters do not apply to export.
-        College Admin CSV includes contacts and is capped at 1,000 rows.
+        CSV applies the same roster filters as this view, not just name and status.
+        Export includes only current-college role memberships, rechecks College Admin access and is capped at 1,000 rows.
       </p>
       <p className="text-xs leading-5 text-muted-foreground">
         Read-only source: registered memberships, roles and related college-owned records.
