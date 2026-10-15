@@ -418,3 +418,13 @@ export function facultyQuizOptionRemovalPrompt(
  return "Remove correct option "+(optionIndex+1)+" from question "+(questionIndex+1)+"?"+
   consequence;
 }
+
+/** A Faculty publish decision must be based on a saved, complete question bank. */
+export function facultyQuizReadyToPublish(
+ status:string|undefined,dirty:boolean,failed:boolean,
+ questions:readonly {type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+ options:readonly {text:string;correct:boolean;sequence:number}[]}[],
+):boolean {
+ return facultyQuizCanPublishSavedDraft(status,dirty,failed)&&
+  questions.length>0&&facultyQuizDraftIssue("Review before publishing",questions)===null;
+}

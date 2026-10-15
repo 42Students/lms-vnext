@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionMatches,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionMatches,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -92,7 +92,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   if(action==="EDIT" && !facultyQuizCanSaveChanges(chosen?.status,dirtyDraft,detailsFailed,pending)){
     setError("Nothing to save. Change a Quiz field before saving.");return;
   }
-  if(action==="PUBLISH" && !facultyQuizCanPublishSavedDraft(chosen?.status,dirtyDraft,detailsFailed)){
+  if(action==="PUBLISH" && !facultyQuizReadyToPublish(chosen?.status,dirtyDraft,detailsFailed,questions)){
     setError("Save the draft changes and reload the current Quiz before publishing.");return;
   }
   if(!facultyQuizDraftLoadAllowsAction(detailsFailed,chosen?.status,action)){
@@ -314,7 +314,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <>
     <button type="button" disabled={!confirmed||!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</button>
-    <button type="button" disabled={!confirmed||pending||!facultyQuizCanPublishSavedDraft(chosen.status,dirtyDraft,detailsFailed)}
+    <button type="button" disabled={!confirmed||pending||!facultyQuizReadyToPublish(chosen.status,dirtyDraft,detailsFailed,questions)}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
     {chosen.status==="PUBLISHED"&&
      <button type="button" disabled={!confirmed||pending}
