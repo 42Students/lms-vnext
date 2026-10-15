@@ -243,4 +243,9 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",q)).toContain("semesterThrough=");
     expect(collegeElectiveQuerySchema.safeParse({semesterThrough:0}).success).toBe(false);
   });
+  it("validates linked academic-period lifecycle and preserves page filters",()=>{
+    const q=collegeElectiveQuerySchema.parse({periodLifecycle:"ACTIVE"});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("periodLifecycle=");
+    expect(collegeElectiveQuerySchema.safeParse({periodLifecycle:"INFERRED"}).success).toBe(false);
+  });
 });

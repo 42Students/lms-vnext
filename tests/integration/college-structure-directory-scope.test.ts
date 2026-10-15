@@ -511,4 +511,19 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
     expect(csvMatch.csv).toContain(key);
   });
+  it("Linked academic-period lifecycle follows persisted same-college slot evidence",async()=>{
+    const found=await pool!.query<{status:"PLANNED"|"ACTIVE"|"CLOSED"}>("SELECT status FROM academic_periods WHERE id=$1",[ids.period]);const actual=found.rows[0]!.status;const other=actual==="CLOSED"?"ACTIVE":"CLOSED";
+    const [matching,excluded,foreign,csvMatch,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodLifecycle:actual}),
+      listCollegeElectives(adminA,{q:key,periodLifecycle:other}),
+      listCollegeElectives(adminB,{q:key,periodLifecycle:actual}),
+      exportCollegeElectives(adminA,{q:key,periodLifecycle:actual}),
+      exportCollegeElectives(adminA,{q:key,periodLifecycle:other}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
 });

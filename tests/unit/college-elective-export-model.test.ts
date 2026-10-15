@@ -88,4 +88,9 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("semesterThrough=");
    expect(electiveCsvSchema.safeParse({semesterThrough:0}).success).toBe(false);
  });
+ it("exports the validated linked academic-period lifecycle selector",()=>{
+   const q=electiveCsvSchema.parse({periodLifecycle:"ACTIVE"});
+   expect(electiveCsvHref(q)).toContain("periodLifecycle=");
+   expect(electiveCsvSchema.safeParse({periodLifecycle:"INFERRED"}).success).toBe(false);
+ });
 });
