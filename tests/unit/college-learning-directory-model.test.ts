@@ -310,4 +310,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("sharedContentState=HAS_SHARED");
   });
 
+  it("retains saved section association filter across progress and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({sectionContentState:"SECTION_COUNT"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({sectionContentState:"NO_SECTION"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("sectionContentState=NO_SECTION");
+    expect(collegeProgressCsvHref(q)).toContain("sectionContentState=NO_SECTION");
+  });
+
 });
