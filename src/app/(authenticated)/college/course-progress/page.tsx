@@ -42,6 +42,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       sharedContentState:first(params.sharedContentState),
       sectionContentState:first(params.sectionContentState),
       offeringId:first(params.offeringId)||undefined,
+      draftContentState:first(params.draftContentState),
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );

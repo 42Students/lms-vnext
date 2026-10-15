@@ -359,4 +359,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessonsCsvHref(q)).toContain("maxContentCount=0");
   });
 
+  it("distinguishes authored draft metadata without claiming learner visibility",()=>{
+    expect(collegeProgressQuerySchema.safeParse({draftContentState:"UNRELEASED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({draftContentState:"HAS_DRAFT"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("draftContentState=HAS_DRAFT");
+    expect(collegeProgressCsvHref(q)).toContain("draftContentState=HAS_DRAFT");
+  });
+
 });
