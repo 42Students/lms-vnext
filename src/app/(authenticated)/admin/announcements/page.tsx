@@ -15,17 +15,24 @@ import {
   listAnnouncementTargetOptions,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { parseSuperAdminAnnouncementParams } from "@/modules/announcements/super-admin-list-query";
 
 export default async function AnnouncementsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ deleted?: string; beforeCreatedAt?: string; beforeId?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") {
     redirect("/dashboard");
   }
-  const params = await searchParams;
+  const params = parseSuperAdminAnnouncementParams(await searchParams);
+  if (!params) {
+    return <div className="space-y-5">
+      <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
+      <p role="alert" className="rounded-xl border border-border bg-surface p-5">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline">Reset filters</Link></p>
+    </div>;
+  }
 
   if (!announcementsRuntimeEnabled()) {
     return (
