@@ -1013,3 +1013,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 matrix CSV page export (PARTIAL):** New authorized Super Admin GET exports exactly the strict-filtered and currently permissioned page (max 20 colleges), effective source-labelled module decisions, formula-neutralized strings and row/total headers with private no-store caching. No recruiter/learner contacts or global raw rule dump. Unit tests authored, PG/browser/download evidence pending.
+
+
+**2026-10-15 chat-6 focused module hierarchy drill-in (PARTIAL):** Matching colleges now carry the selected Projects/Placements/Electives module into their read-only hierarchy view on both mobile cards and desktop rows. Cross-college authorization continues in the destination service. Pure navigation checks authored; browser/back-forward and full legacy parity remain open.

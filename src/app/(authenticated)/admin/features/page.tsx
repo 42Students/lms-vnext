@@ -9,6 +9,7 @@ import {
   ADMIN_MODULE_LABELS,
   adminFeaturesHref,
   adminFeatureExportHref,
+  adminFeatureHierarchyHref,
   describeModuleDecision,
   collegeModuleCardSummary,
   type AdminModuleDecision,
@@ -231,7 +232,7 @@ export default async function SuperAdminFeaturesPage({
                 <p className="mt-3 text-xs text-muted-foreground">
                   {summary.locked} locked · {summary.persisted} rules with persisted source
                 </p>
-                <Link href={`/admin/features/${encodeURIComponent(college.id)}`}
+                <Link href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
                   className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
                   View access hierarchy →
                 </Link>
@@ -299,7 +300,7 @@ export default async function SuperAdminFeaturesPage({
 
                       <td className="px-4 py-4 align-top">
                         <Link
-                          href={`/admin/features/${encodeURIComponent(college.id)}`}
+                          href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
                           className="font-semibold text-primary-text hover:underline"
                         >
                           View hierarchy →
