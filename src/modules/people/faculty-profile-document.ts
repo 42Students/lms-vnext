@@ -195,7 +195,12 @@ const certificationSchema = z
     certificateDocumentId: receiptId,
     description: text(3000),
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.certificationDate && value.validityDate && value.validityDate < value.certificationDate) {
+      ctx.addIssue({ code: "custom", path: ["validityDate"], message: "Validity cannot precede certification date" });
+    }
+  });
 
 const experienceSchema = z
   .object({
