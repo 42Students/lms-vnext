@@ -69,6 +69,14 @@ export default async function FacultyAssessmentResultsPage({
           <option value="PUBLISHED">Published</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Sort
+        <select name="sort" defaultValue={data.query.sort}
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          <option value="DUE_DESC">Latest due date</option>
+          <option value="DUE_ASC">Earliest due date</option>
+          <option value="TITLE">Assessment title</option>
+        </select>
+      </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
       </button>
