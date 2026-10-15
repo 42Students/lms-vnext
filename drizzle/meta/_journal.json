@@ -442,6 +442,13 @@
       "when": 1792050473231,
       "tag": "0062_messaging_delivery_receipts",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792050888060,
+      "tag": "0063_profile_verification",
+      "breakpoints": true
     }
   ]
 }

@@ -41,3 +41,5 @@ export * from "./college-branding";
 export * from "./placement-application-notes";
 
 export * from "./messaging-receipts";
+
+export * from "./profile-verification";
