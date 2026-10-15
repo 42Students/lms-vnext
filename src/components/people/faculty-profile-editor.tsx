@@ -1,6 +1,7 @@
 "use client";
 import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
+import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {facultyProfileNeedsReload,facultyProfileSaveFailure} from "@/modules/people/faculty-profile-error-model";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -63,6 +64,12 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    {needsReload?<button type="button" onClick={()=>window.location.reload()} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">Reload latest profile</button>:null}
   </div>:null}
   {success?<p role="status" className="rounded-md border border-border p-3 text-sm text-foreground">{success}</p>:null}
+  <nav aria-label="Profile sections" className="rounded-xl border border-border bg-surface p-4">
+    <p className="mb-3 text-sm font-semibold text-foreground">Jump to a profile section</p>
+    <div className="flex flex-wrap gap-2">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
+      className="rounded-md border border-border px-3 py-2 text-sm text-primary-text hover:underline"
+      href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
+  </nav>
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
    description="Introduce your teaching and research interests."
    fields={ABOUT_FIELDS} initial={{description:document.about.description}} pending={pending} onSave={save}/>
