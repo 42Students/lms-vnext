@@ -37,3 +37,33 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
   return created;
  });
 }
+
+const statusSchema=z.object({
+ jobTypeId:z.string().uuid(),active:z.boolean(),
+ expectedVersion:z.iso.datetime({offset:true}),
+}).strict();
+export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
+ const input=statusSchema.parse(raw),collegeId=await requireTpoBatchActor(context);
+ if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  const [current]=await tx.select().from(placementTpoJobTypes).where(and(
+   eq(placementTpoJobTypes.id,input.jobTypeId),eq(placementTpoJobTypes.collegeId,collegeId))).limit(1);
+  if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  if(current.active===input.active)return {changed:false,updatedAt:current.updatedAt.toISOString()};
+  const [updated]=await tx.update(placementTpoJobTypes).set({active:input.active,updatedAt:new Date()})
+   .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId))).returning();
+  if(!updated)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId,actorUserId:context.user.id,
+   actorMembershipId:context.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.status_changed",
+   subjectType:"JOB_TYPE",subjectId:current.id,
+   summary:input.active?"TPO enabled a job type":"TPO disabled a job type",
+   metadata:{active:input.active},
+  });
+  return {changed:true,updatedAt:updated.updatedAt.toISOString()};
+ });
+}
