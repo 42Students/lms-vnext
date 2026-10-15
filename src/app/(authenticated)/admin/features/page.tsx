@@ -76,6 +76,7 @@ export default async function SuperAdminFeaturesPage({
       q: one(params.q) || undefined,
       page: one(params.page) || undefined,
       sort: one(params.sort) || undefined,
+      module: one(params.module) || undefined,
     });
 
   if (!parsed.success) {
@@ -148,6 +149,11 @@ export default async function SuperAdminFeaturesPage({
           <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
             <select name="sort" defaultValue={result.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="NAME">College name</option><option value="CODE">College code</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Explicit college rule for
+            <select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
             </select>
           </label>
           <button
@@ -304,6 +310,7 @@ export default async function SuperAdminFeaturesPage({
                 href={adminFeaturesHref({
                   q: result.q,
                   sort: result.sort,
+                  module: result.moduleFilter ?? undefined,
                   page: result.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -316,6 +323,7 @@ export default async function SuperAdminFeaturesPage({
                 href={adminFeaturesHref({
                   q: result.q,
                   sort: result.sort,
+                  module: result.moduleFilter ?? undefined,
                   page: result.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -328,7 +336,7 @@ export default async function SuperAdminFeaturesPage({
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        Source: module_access_rules and the existing
+        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner's effective access. Source: module_access_rules and the existing
         optional-module resolver. A persisted global,
         organization or college rule can override the
         source defaults. This matrix shows college-level

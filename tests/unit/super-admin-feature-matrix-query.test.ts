@@ -7,4 +7,9 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.safeParse({sort:"CREATED_AT"}).success).toBe(false);
   expect(adminFeaturesHref({sort:"CODE",q:"Eng",page:3})).toContain("sort=CODE");
  });
+ it("filters for exact stored college rule modules and preserves navigation",()=>{
+  expect(adminFeatureQuerySchema.parse({module:"projects"}).module).toBe("projects");
+  expect(adminFeatureQuerySchema.safeParse({module:"all"}).success).toBe(false);
+  expect(adminFeaturesHref({module:"electives",page:2})).toContain("module=electives");
+ });
 });

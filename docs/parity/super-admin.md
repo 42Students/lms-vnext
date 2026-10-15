@@ -983,3 +983,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 feature matrix sorting (PARTIAL):** Server-side name/code sort with UUID tie-breaking, validated URL state and filter-preserving pagination. Unit contracts authored; PostgreSQL/browser evidence not yet executed. Existing module matrix is not parity-closed.
+
+
+**2026-10-15 chat-6 feature matrix stored college-rule module filter (PARTIAL):** Strict Projects/Placements/Electives URL selector now applies an exact persisted COLLEGE rule EXISTS predicate before totals and pagination. It is not an effective per-learner access filter. Authored unit regression, runtime/browser not executed.
