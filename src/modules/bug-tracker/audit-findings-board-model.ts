@@ -5,6 +5,7 @@ const findingStatusOptions=["ALL",...BUG_STATUSES] as const;
 const findingSeverityOptions=["ALL",...BUG_SEVERITIES] as const;
 export const auditFindingsQuerySchema=z.strictObject({
  severity:z.enum(findingSeverityOptions).default("ALL"),
+ environment:z.enum(["ALL","LOCAL","DEVELOPMENT","UAT","PRODUCTION","OTHER","NOT_SURE"]).default("ALL"),
  status:z.enum(findingStatusOptions).default("ALL"),
  q:z.string().trim().max(120).default(""),
  beforeCreatedAt:z.iso.datetime({offset:true}).optional(),
@@ -16,6 +17,7 @@ export function trackerAuditFindingsInput(x:z.infer<typeof auditFindingsQuerySch
  return {
   status:x.status==="ALL"?undefined:x.status,
   severity:x.severity==="ALL"?undefined:x.severity,
+  environment:x.environment==="ALL"?undefined:x.environment,
   q:x.q||undefined,sort:"newest" as const,limit:50,
   beforeCreatedAt:x.beforeCreatedAt,
   beforeId:x.beforeId,
