@@ -29,6 +29,8 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Readiness</Link>
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Branding</Link>
    {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Profile Verification</Link> : null}
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Sign-in Methods</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Web address</Link>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
    <Link href="/admin/tenants" className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Tenant directory</Link>
   </div>
