@@ -23,7 +23,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
  const visible=useMemo(()=>orderVerificationQueue(rows.filter(row=>
   verificationTab(row)===tab&&(kind==="ALL"||row.section===kind)&&
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
- )),[rows,tab,kind,query]);
+ ),sort),[rows,tab,kind,query,sort]);
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
   <header className="space-y-2">
    <h1 className="text-xl font-semibold">Profile verification</h1>
