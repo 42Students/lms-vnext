@@ -178,3 +178,9 @@ export function collegeRoleDirectoryFilterMessage(error:unknown):string{
   return "This filter belongs to the other directory. Clear filters and choose the appropriate tab.";
  return "A directory filter is invalid. No people were loaded.";
 }
+
+/** A missing role population and a filtered-zero search are different states. */
+export function collegeRoleDirectoryHasActiveFilters(kind:CollegeDirectoryKind,filter:CollegeRoleDirectoryQuery):boolean {
+ const base=collegeRoleDirectoryHref(kind,{...filter,page:1,pageSize:COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,sort:"NAME"});
+ return new URL(base,"https://college.invalid").searchParams.size>0;
+}
