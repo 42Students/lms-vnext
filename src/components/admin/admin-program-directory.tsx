@@ -14,6 +14,7 @@ import {
   filterAdminPrograms,
   paginateAdminPrograms,
   type AdminProgramRow,
+  programDurationYearsLabel, legacyDurationYearsToTerms,
 } from "@/modules/admin-ui/program-directory";
 
 const columns: DataTableColumn<AdminProgramRow>[] = [
@@ -27,7 +28,7 @@ const columns: DataTableColumn<AdminProgramRow>[] = [
     ),
   },
   { key: "department", header: "Department", cell: (item) => item.departmentName },
-  { key: "duration", header: "Duration", cell: (item) => `${item.durationTerms} terms` },
+  { key: "duration", header: "Duration", cell: (item) => programDurationYearsLabel(item.durationTerms) },
   {
     key: "actions",
     header: <span className="sr-only">Actions</span>,
@@ -54,7 +55,7 @@ export function AdminProgramDirectory({
   const [departmentId, setDepartmentId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
-  const [durationTerms, setDurationTerms] = useState("8");
+  const [durationYears, setDurationYears] = useState("4");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
@@ -66,7 +67,7 @@ export function AdminProgramDirectory({
   function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const parsed = createCollegeProgramSchema.safeParse({
-      departmentId, name, code, durationTerms: Number(durationTerms),
+      departmentId, name, code, durationTerms: legacyDurationYearsToTerms(Number(durationYears)),
     });
     if (!parsed.success) {
       showToast({
@@ -104,7 +105,7 @@ export function AdminProgramDirectory({
       <form onSubmit={create} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">Create program</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Programs belong to a department. The current vNext database stores duration in academic terms.
+          Programs belong to a department. Choose the usual academic years; two terms are stored per year.
         </p>
         {departments.length === 0 ? (
           <p role="status" className="mt-3 text-sm text-muted-foreground">
@@ -137,10 +138,10 @@ export function AdminProgramDirectory({
               onChange={(event) => setCode(event.target.value)} placeholder="CSE" />
           </div>
           <div>
-            <label htmlFor="admin-program-duration" className="mb-1 block text-xs font-semibold text-body">Duration (terms)</label>
-            <Input id="admin-program-duration" type="number" value={durationTerms}
-              onChange={(event) => setDurationTerms(event.target.value)}
-              min={1} max={24} required />
+            <label htmlFor="admin-program-duration" className="mb-1 block text-xs font-semibold text-body">Duration (years)</label>
+            <Input id="admin-program-duration" type="number" value={durationYears}
+              onChange={(event) => setDurationYears(event.target.value)}
+              min={0.5} max={12} step={0.5} required />
           </div>
         </div>
         <div className="mt-4">
