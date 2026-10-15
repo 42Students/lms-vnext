@@ -1,5 +1,5 @@
 import { describe,expect,it } from "vitest";
-import { facultyVideoMayPublish,facultyVideoMayPreview,facultyVideoMayReplace,facultyVideoOrderPatch,facultyVideoPublishAction,parseFacultyVideoUploadGrant,parseManagedVideos } from "@/modules/courses/faculty-video-storage-model";
+import { facultyVideoMayPublish,facultyVideoMayPreview,facultyVideoMayReplace,facultyVideoReorderPlan,facultyVideoPublishAction,parseFacultyVideoUploadGrant,parseManagedVideos } from "@/modules/courses/faculty-video-storage-model";
 const uuid=(n:number)=>"00000000-0000-4000-8000-"+String(n).padStart(12,"0");
 const row={
  id:uuid(1),lessonId:uuid(2),deliveryId:uuid(3),lessonContentId:null,title:"Lecture",sequence:0,
