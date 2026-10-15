@@ -11,6 +11,7 @@ export const collegeContactsQuerySchema=z.strictObject({
   accountStatus:z.enum(["ALL","ACTIVE","DISABLED"]).default("ALL"),
   audience:z.enum(["ALL","FACULTY_ONLY","LEARNER_ONLY","DUAL"]).default("ALL"),
   profile:z.enum(["ALL","PROFILED","UNPROFILED"]).default("ALL"),
+  rollPresence:z.enum(["ALL","PRESENT","MISSING"]).default("ALL"),
   teaching:z.enum(["ALL","ASSIGNED","NONE"]).default("ALL"),
   enrollment:z.enum(["ALL","ACTIVE","NONE"]).default("ALL"),
   sort:z.enum(["NAME","NAME_DESC","NEWEST","OLDEST"]).default("NAME"),
@@ -38,6 +39,7 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.accountStatus!=="ALL")params.set("accountStatus",filter.accountStatus);
  if(filter.audience!=="ALL")params.set("audience",filter.audience);
  if(filter.profile!=="ALL")params.set("profile",filter.profile);
+ if(filter.rollPresence!=="ALL")params.set("rollPresence",filter.rollPresence);
  if(filter.teaching!=="ALL")params.set("teaching",filter.teaching);
  if(filter.enrollment!=="ALL")params.set("enrollment",filter.enrollment);
  if(filter.sort!=="NAME")params.set("sort",filter.sort);
