@@ -34,6 +34,13 @@ export default async function PublicPlacementsPage() {
           Private student information is never displayed here.
         </p>
       </header>
+      {published && metrics.some(metric=>!metric.suppressed) ? (
+        <p className="mt-5 text-xs text-muted-foreground">
+          College-published figures last updated{" "}
+          <time dateTime={published.publishedAt}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(published.publishedAt))}</time>.
+          Individual records are never displayed here.
+        </p>
+      ) : null}
       <section aria-label="Placement results" className="mt-8 grid min-w-0 gap-3 sm:grid-cols-3">
         {metrics.map((metric) => (
           <article key={metric.label} className="min-w-0 rounded-xl border border-border bg-surface p-5">
