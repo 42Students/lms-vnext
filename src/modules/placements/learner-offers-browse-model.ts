@@ -5,6 +5,8 @@ export const learnerOfferViewSchema = z.enum([
   "pending",
   "accepted",
   "closed",
+  "declined",
+  "withdrawn",
 ]);
 
 export type LearnerOfferView = z.infer<typeof learnerOfferViewSchema>;
@@ -25,6 +27,8 @@ export function browseOwnLearnerOffers<T extends LearnerOfferBrowseRow>(
     all: rows.length,
     pending: rows.filter((row) => row.offer.status === "ISSUED").length,
     accepted: rows.filter((row) => row.offer.status === "ACCEPTED").length,
+    declined: rows.filter(row=>row.offer.status==="DECLINED").length,
+    withdrawn: rows.filter(row=>row.offer.status==="WITHDRAWN").length,
     closed: rows.filter((row) =>
       row.offer.status === "DECLINED" ||
       row.offer.status === "WITHDRAWN",
@@ -34,7 +38,9 @@ export function browseOwnLearnerOffers<T extends LearnerOfferBrowseRow>(
     view === "all" ||
     (view === "pending" && status === "ISSUED") ||
     (view === "accepted" && status === "ACCEPTED") ||
-    (view === "closed" && (status === "DECLINED" || status === "WITHDRAWN"));
+    (view === "closed" && (status === "DECLINED" || status === "WITHDRAWN")) ||
+    (view === "declined" && status === "DECLINED") ||
+    (view === "withdrawn" && status === "WITHDRAWN");
 
   return {
     counts,

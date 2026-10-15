@@ -24,3 +24,16 @@ export function matchesSubmittedFrom(submittedAt:Date,submittedFrom:string|undef
 export function verificationSubmissionWindowValid(filter:{submittedFrom?:string;waitingSince?:string}):boolean {
  return !(filter.submittedFrom&&filter.waitingSince&&filter.submittedFrom>filter.waitingSince);
 }
+
+/** Pure, fixed-offset IST day boundaries. Upper bound is exclusive next midnight. */
+export function verificationSubmittedSqlBounds(filter:{submittedFrom?:string;waitingSince?:string}){
+ const valid=(value:string)=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&
+  new Date(value+"T00:00:00Z").toISOString().slice(0,10)===value;
+ const start=(value:string)=>{
+  if(!valid(value))throw Error("INVALID_VERIFICATION_DATE");
+  return new Date(value+"T00:00:00+05:30");
+ };
+ const from=filter.submittedFrom?start(filter.submittedFrom):undefined;
+ const before=filter.waitingSince?new Date(start(filter.waitingSince).getTime()+86400000):undefined;
+ return {from,before};
+}

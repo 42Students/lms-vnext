@@ -1,23 +1,25 @@
 import "server-only";
-import {and,asc,desc,eq,ilike,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,gte,lt,ilike,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
 import {profileVerifications,profileVerificationSettings} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
-import {verificationQueueFilters,verificationWaitingStateValid} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
+import {verificationSqlSections} from "./queue-kind";
 import {matchesVerificationAttention} from "./attention-filter";
+import {matchesVerificationAgeBand} from "./queue-age-band";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
-import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid} from "./queue-waiting-since";
+import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid,verificationSubmittedSqlBounds} from "./queue-waiting-since";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
-import type {VerificationRecord,VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
+import type {VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
 
 export class VerificationQueueLimitError extends Error {
  constructor(){super("VERIFICATION_QUEUE_LIMIT_REACHED");}
@@ -26,8 +28,11 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  const filter=verificationQueueFilters.parse(raw);
  if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
  if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
+ if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
+ if(!verificationAgeBandValid(filter))throw Error("INVALID_VERIFICATION_AGE_BAND");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
+ const dateBounds=verificationSubmittedSqlBounds(filter);
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
  const tpoCanVerify=effectiveTpoVerifierSetting(setting);
  // Cap the working set and FAIL LOUDLY rather than silently reporting
@@ -44,16 +49,19 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
    filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
    eq(users.platformStatus,"ACTIVE"),filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
-   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
+   dateBounds.from?gte(profileVerifications.submittedAt,dateBounds.from):undefined,
+   dateBounds.before?lt(profileVerifications.submittedAt,dateBounds.before):undefined,
+   inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
    inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]:[filter.waitingState]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
+ .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
  const evaluatedAt=new Date();
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
   if(!matchesSubmittedFrom(row.submittedAt,filter.submittedFrom))return false;
+  if(!matchesVerificationAgeBand(row.submittedAt,row.status,filter.ageBand,evaluatedAt))return false;
   const marks=submittedMarksheets(row.submittedSnapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&marks.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&marks.count>0&&marks.missing===0))return false;
