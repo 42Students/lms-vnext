@@ -15,3 +15,8 @@ export function isStudentRuleNoop(current:PreviousStudentRule,action:
 export function hasPersistedAncestorLock(rows:readonly {locked:boolean}[]):boolean{
  return rows.some(row=>row.locked);
 }
+
+export const studentRuleWriteInput=z.discriminatedUnion("action",[
+ z.strictObject({action:z.literal("SET"),module:z.enum(["projects","electives"]),enabled:z.boolean(),locked:z.boolean(),expected:previousStudentRuleSchema}),
+ z.strictObject({action:z.literal("INHERIT"),module:z.enum(["projects","electives"]),expected:previousStudentRuleSchema}),
+]);

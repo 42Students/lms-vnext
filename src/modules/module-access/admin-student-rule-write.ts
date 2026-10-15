@@ -8,12 +8,8 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {getSuperAdminLearnerAccessTrace} from "./admin-trace-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {previousStudentRuleSchema,studentRuleMatches,isStudentRuleNoop,hasPersistedAncestorLock} from "./admin-student-rule-model";
+import {studentRuleWriteInput,studentRuleMatches,isStudentRuleNoop,hasPersistedAncestorLock} from "./admin-student-rule-model";
 
-export const studentRuleWriteInput=z.discriminatedUnion("action",[
- z.strictObject({action:z.literal("SET"),module:z.enum(["projects","electives"]),enabled:z.boolean(),locked:z.boolean(),expected:previousStudentRuleSchema}),
- z.strictObject({action:z.literal("INHERIT"),module:z.enum(["projects","electives"]),expected:previousStudentRuleSchema}),
-]);
 export class StudentRuleConflict extends Error {
  constructor(public readonly code:string){super(code);this.name="StudentRuleConflict";}
 }

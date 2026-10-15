@@ -962,3 +962,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 student override/lock activity history — PARTIAL:** Added role-fenced, exact learner/college-scoped history linked from the editor. A verified active learner lookup precedes a 40-event scoped Activity Log query; pure projection exposes actor display name, time, module, old/new stored values only, never arbitrary metadata or contact information. Older history links to the audited filter surface. Unit/PG tests authored, not executed; production browser/retention/history certification open.
+
+
+**2026-10-15 chat-6 source correction:** Moved mutation Zod contract to the pure module for isolated Vitest imports, removed the invalid union-property unit assertion, and made malformed JSON return a deterministic 400 rather than an unhandled server error. Real execution remains open.
