@@ -26,7 +26,7 @@ export default async function CollegeFacultyAssignmentPage({
   const parsed = facultyAssignmentQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
       q: first(raw.q), status: first(raw.status), role: first(raw.role), page: first(raw.page),
-      courseCode: first(raw.courseCode),
+      courseCode: first(raw.courseCode), sectionCode: first(raw.sectionCode),
     }).filter(([, value]) => value !== undefined && value !== "")),
   );
   if (!parsed.success) return (
@@ -68,6 +68,11 @@ export default async function CollegeFacultyAssignmentPage({
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
             Exact course code
             <input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
+            Exact class code
+            <input name="sectionCode" defaultValue={query.sectionCode ?? ""} maxLength={64}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">

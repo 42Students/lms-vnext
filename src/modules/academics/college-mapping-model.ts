@@ -15,6 +15,7 @@ export const semesterCourseQuerySchema = z.object({
 
 export const facultyAssignmentQuerySchema = z.object({
   courseCode: z.string().trim().min(1).max(64).optional(),
+  sectionCode: z.string().trim().min(1).max(64).optional(),
   role: z.enum(["ALL", ...COURSE_TEACHING_ROLES]).default("ALL"),
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ENDED"]).default("ACTIVE"),
@@ -52,6 +53,7 @@ export function collegeMappingHref(
     ? query.status !== "ALL" : query.status !== "ACTIVE")) params.set("status", query.status);
   if ("role" in query && query.role !== "ALL") params.set("role", query.role);
   if ("courseCode" in query && query.courseCode) params.set("courseCode",query.courseCode);
+  if ("sectionCode" in query && query.sectionCode) params.set("sectionCode",query.sectionCode);
   if (query.page !== 1) params.set("page", String(query.page));
   const encoded = params.toString();
   return encoded ? base + "?" + encoded : base;
