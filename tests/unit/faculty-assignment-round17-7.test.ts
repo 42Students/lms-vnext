@@ -6,4 +6,5 @@ it("distinguishes stale, access, conflict and unknown error responses",()=>{
  expect(facultyAssignmentCommandError(400,{error:"ASSIGNMENT_HAS_SUBMISSIONS"})).toContain("submissions");
  expect(facultyAssignmentCommandError(400,{error:"ASSIGNMENT_NAME_CONFLICT"})).toContain("already");
  expect(facultyAssignmentCommandError(500,{error:"secrets: internal DB"})).not.toContain("secrets");
+ expect(facultyAssignmentCommandError(400,null)).toContain("rejected");
 });
