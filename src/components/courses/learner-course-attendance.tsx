@@ -1,7 +1,8 @@
 "use client";
 
-import { learnerCourseAttendanceIstMonth, learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
+import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { useMemo, useState } from "react";
+import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached } from "@/modules/attendance/learner-course-attendance-summary-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -78,34 +79,8 @@ function label(status: string) {
     );
 }
 
-function summarize(
-  rows: readonly AttendanceRecord[],
-) {
-  const held = rows.filter(
-    (row) => row.status !== "SCHEDULED",
-  );
-  const marked = held.filter(
-    (row) => row.status !== "NOT_MARKED",
-  );
-  const present = marked.filter(
-    (row) => row.status === "PRESENT",
-  ).length;
-  const absent = marked.length - present;
-
-  return {
-    heldSessions: held.length,
-    markedSessions: marked.length,
-    unmarkedSessions:
-      held.length - marked.length,
-    present,
-    absent,
-    percentage:
-      marked.length > 0
-        ? Math.round(
-            (present / marked.length) * 100,
-          )
-        : null,
-  };
+function summarize(rows: readonly AttendanceRecord[]) {
+  return learnerCourseAttendanceSummary(rows);
 }
 
 function attendanceHeadroom(
@@ -265,7 +240,7 @@ export function LearnerCourseAttendance({
   if (summary.markedSessions > 0) {
     if (
       summary.percentage !== null &&
-      summary.percentage >= threshold
+      learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
     ) {
       thresholdDetail = Number.isFinite(
         headroom.canMiss,
@@ -386,7 +361,7 @@ export function LearnerCourseAttendance({
         <Metric
           label="Absent"
           value={summary.absent}
-          detail="Marked sessions not counted as present."
+          detail={`${summary.otherMarked} other marked session(s) are late, excused or medical, not explicitly absent.`}
         />
         <Metric
           label="Attendance"
@@ -417,16 +392,14 @@ export function LearnerCourseAttendance({
             tone={
               summary.percentage === null
                 ? "neutral"
-                : summary.percentage >=
-                    threshold
+                : learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
                   ? "success"
                   : "error"
             }
           >
             {summary.percentage === null
               ? "No marked attendance"
-              : summary.percentage >=
-                  threshold
+              : learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
                 ? "At or above threshold"
                 : "Below threshold"}
           </StatusBadge>
