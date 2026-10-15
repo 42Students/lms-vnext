@@ -3,7 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
-import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
+import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,parseCollegeRuleRecheck,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
 export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean}){
  const router=useRouter();
  const [observed,setObserved]=useState<ObservedCollegeRule>(stored);
@@ -14,6 +14,18 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const [feedback,setFeedback]=useState("");
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/rules";
  const disabled=busy||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT");
+ async function recheck(){
+  setBusy(true);setFeedback("");
+  try{
+   const response=await fetch(endpoint,{method:"GET",cache:"no-store"});
+   const data:unknown=await response.json().catch(()=>null);
+   const current=response.ok?parseCollegeRuleRecheck(data,module):undefined;
+   if(current===undefined){setFeedback("Current policy cannot be verified. No edit state was changed.");return;}
+   setObserved(current);setChoice(collegeRuleSelection(current));setLocked(current?.locked??false);
+   setFeedback("Current stored college rule reloaded.");router.refresh();
+  }catch{setFeedback("Could not recheck the college rule.");}
+  finally{setBusy(false);}
+ }
  async function save(){
   setBusy(true);setFeedback("");
   try{
@@ -39,7 +51,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    </select>
   </label>
   <label className="flex items-center gap-2 text-xs text-body"><input type="checkbox" checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
-  <Button size="sm" variant="secondary" disabled={disabled} onClick={()=>setConfirm(true)}>Review policy change</Button>
+  <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled} onClick={()=>setConfirm(true)}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
   {feedback?<p role="status" className="text-xs text-body">{feedback}</p>:null}
   <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Confirm college feature policy"
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
