@@ -8,7 +8,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
-import { BUG_SEVERITIES } from "@/modules/bug-tracker/admin-validation";
+import { BUG_SEVERITIES, BUG_ENVIRONMENTS } from "@/modules/bug-tracker/admin-validation";
 import { parseAuditFindingsSearchParams, trackerAuditFindingsInput } from "@/modules/bug-tracker/audit-findings-board-model";
 
 type Params=Record<string,string|string[]|undefined>;
@@ -34,6 +34,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
   ...(query.q?{q:query.q}:{}),
   ...(query.status!=="ALL"?{status:query.status}:{}),
   ...(query.severity!=="ALL"?{severity:query.severity}:{}),
+  ...(query.environment!=="ALL"?{environment:query.environment}:{}),
   beforeCreatedAt:data.nextCursor.beforeCreatedAt.toISOString(),
   beforeId:data.nextCursor.beforeId,
  }):null;
@@ -47,6 +48,11 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
    <label className="min-w-0 text-sm">Severity
     <select name="severity" defaultValue={query.severity} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3">
     <option value="ALL">All</option>{BUG_SEVERITIES.map(x=><option key={x} value={x}>{x}</option>)}</select></label>
+   <label className="min-w-0 text-sm">Environment
+    <select name="environment" defaultValue={query.environment} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3">
+      <option value="ALL">All environments</option>{BUG_ENVIRONMENTS.map(value=><option key={value} value={value}>{value}</option>)}
+    </select>
+   </label>
    <div className="flex flex-wrap gap-2 sm:col-span-3">
     <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
     <Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
