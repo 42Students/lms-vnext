@@ -54,6 +54,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch code (exact)
+              <input name="cohortCode" type="search" maxLength={64}
+                defaultValue={data.query.cohortCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Program code (exact)
               <input name="programCode" type="search" maxLength={64}
                 defaultValue={data.query.programCode??""}
