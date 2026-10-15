@@ -1,0 +1,4 @@
+import{expect,it}from"vitest";import{selectMentorAttention as select,mentorAttentionOrderSchema}from"@/modules/projects/mentor-attention-kind-model";
+const row=(key:string,kind:"REVIEW"|"MEETING_SOON",occurredAt:string)=>({key,kind,projectId:"p",title:key,description:key,href:"/mentor",occurredAt});
+it("prioritizes pending decisions over upcoming meetings when explicitly selected",()=>{const rows=[row("soon","MEETING_SOON","2026-10-15T10:00:00Z"),row("review","REVIEW","2026-10-14T10:00:00Z")];expect(select(rows,"ALL",undefined,"REVIEW_FIRST").map(r=>r.key)).toEqual(["review","soon"]);expect(select(rows,"ALL").map(r=>r.key)).toEqual(["soon","review"])});
+it("rejects fabricated urgency modes",()=>expect(mentorAttentionOrderSchema.safeParse("RANDOM").success).toBe(false));
