@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Scoped verification card selection PARTIAL (chat-9):** Only submitted/updated waiting rows offer accessible selection checkboxes in the reusable workspace when mounted by College Admin; selection uses membership+section composite identity, is capped at 20 and is intersected with the current server-authorized page, with no bulk writes yet. Pure-model and browser acceptance open.
+
+
 **Disposable PostgreSQL bulk isolation fixture PARTIAL (chat-9):** Gated integration exercise rejects LEARNER-role batch execution and maps foreign-college identity-review IDs to generic NOT_AVAILABLE without target metadata. Existing single-review fixture still covers version CAS, audit and in-app notification. Requires DB04_VERIFICATION_READY=1 and disposable DB target; not yet executed.
 
 
