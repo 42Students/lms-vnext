@@ -193,6 +193,7 @@ export function LearnerCourseList({
               Search courses
               <input
                 value={query}
+                maxLength={100}
                 onChange={(event) => {
                   setQuery(event.target.value);
                   setVisibleLimit(PAGE_SIZE);
