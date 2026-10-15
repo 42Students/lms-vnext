@@ -9,6 +9,7 @@ const schema=z.strictObject({
  kind:z.enum(["all","offer","loi"]).optional(),
  joining:z.enum(["all","joined","pending","deferred","did-not-join","not-recorded"]).optional(),
  focus:uuid.optional(),
+ expiry:z.enum(["all","expired","undated"]).optional(),
 });
 /** Invalid URL arguments never become authorizations or backend selectors. */
 export function learnerOffersQueryHasInvalidFields(input:Record<string,unknown>){
