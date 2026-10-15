@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {filterLearnerProjectActivityText} from "@/modules/projects/learner-project-activity-text-model";
 import { learnerProjectActivityPageSummary } from "@/modules/projects/learner-project-activity-page-summary-model";
+import { learnerProjectActivityLastFetched } from "@/modules/projects/learner-project-activity-cursor-model";
 import Link from "next/link";
 import { learnerProjectActivityCsv } from "@/modules/projects/learner-project-activity-csv-model";
 import { filterLearnerProjectActivity, learnerProjectActivityCategories,
@@ -24,8 +25,8 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const [textQuery,setTextQuery]=useState("");
   const pageRows = parsed.success ? filterLearnerProjectActivity(events,category) : [];
   const shown=filterLearnerProjectActivityText(pageRows,textQuery);
-  // Pagination must advance using the last *fetched* row, not the last text match.
-  const lastEvent=pageRows.at(-1);
+  // Cursor advances using the last fetched row, never the last category/text match.
+  const lastEvent=learnerProjectActivityLastFetched(events);
   const csv=learnerProjectActivityCsv(shown);
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-label="Project Activity" className="space-y-4">
