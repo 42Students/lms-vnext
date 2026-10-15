@@ -1,0 +1,1 @@
+"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert" className="space-y-2 p-4"><p>Unable to load verification.</p><button type="button" onClick={reset} className="min-h-11 rounded border px-4">Retry</button></section>;}
