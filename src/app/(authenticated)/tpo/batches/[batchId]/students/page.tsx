@@ -14,6 +14,11 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const href=(page:number)=>"/tpo/batches/"+batchId+"/students?page="+page;
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
  <Link href={"/tpo/batches/"+batchId} className="text-sm text-primary-text underline">Batch overview</Link>
+ <div className="flex flex-wrap items-center justify-between gap-2">
+  <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
+  <a href={"/api/placements/tpo/batches/"+batchId+"/students/export?page="+result.page}
+   className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">Export current page CSV</a>
+ </div>
  <TpoBatchEligibilityImport batchId={batchId}/>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
  {result.students.length===0?<p role="status">No active learners found on this page.</p>:<ul className="space-y-2">
