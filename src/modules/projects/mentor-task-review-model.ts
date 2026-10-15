@@ -61,3 +61,13 @@ export function mentorTaskReviewAgeBoundary(
  return {cutoff:new Date(now.getTime()-days*86400000),
    older:age==="OLDER_THAN_7_DAYS"||age==="OLDER_THAN_30_DAYS"};
 }
+
+/** Export the complete current review scope, never only its visible first filters. */
+export function mentorTaskReviewExportHref(query: {
+  search?:string;projectId?:string;assignment?:string;priority?:string;
+  version?:number;age?:string;order?:string;
+}) {
+  const listing=mentorTaskReviewHref({...query,page:1,pageSize:20});
+  const suffix=listing.includes("?")?listing.slice(listing.indexOf("?")):"";
+  return "/api/mentor/task-reviews/export"+suffix;
+}
