@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Single-enrollment academic filter correctness PARTIAL (chat-9):** Class+program+batch+branch verification filters now bind to the same current section enrollment and college-owned ancestry instead of accepting unrelated enrollments for the same learner. Queue and CSV share one scoped predicate. Pure query-mode tests authored; a multi-enrollment PostgreSQL negative fixture and browser proof remain required.
+
 **Academic-program verification selector PARTIAL (chat-9):** The queue and capped CSV now share exact current-college active program-enrollment filtering. A persisted college-only program picker is bounded to 200 and retains unknown bookmark IDs without showing another tenant's labels. Pure URL/CSV contract tests authored; PostgreSQL/browser acceptance open.
 
 **Unified verification CSV filter validation PARTIAL (chat-9):** The same strict date-window and pending-state compatibility checks now apply at the CSV URL boundary; invalid/ambiguous filters receive an explicit 400 without triggering protected reads. Disposable DB04-gated fixtures cover exact learner, lower-day and first-submission filters plus wrong-role/foreign tenant denials. These fixtures are authored but have not executed in this session.

@@ -3,12 +3,14 @@ import {and,eq,exists} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProgramEnrollments,sectionEnrollments,sections,cohorts,programs,departments} from "@/db/schema";
 import type {VerificationQueueFilters} from "./queue-filters";
+import {verificationEnrollmentFilterMode} from "./enrollment-mode";
 
 /** Correlated EXISTS checks avoid duplicate roster rows or conflicting joined
  * column aliases; every academic path is anchored in this college. */
 export function verificationEnrollmentPredicates(collegeId:string,filter:VerificationQueueFilters){
  const db=getDb();
- const cohortOrBranch=filter.batchId||filter.branchId||filter.programId?exists(
+ const mode=verificationEnrollmentFilterMode(filter);
+ const cohortOrBranch=mode==="PROGRAM"?exists(
   db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
      eq(cohorts.programId,learnerProgramEnrollments.programId)))
@@ -20,7 +22,7 @@ export function verificationEnrollmentPredicates(collegeId:string,filter:Verific
     filter.branchId?eq(departments.id,filter.branchId):undefined,
     filter.programId?eq(programs.id,filter.programId):undefined))
  ):undefined;
- const section=filter.sectionId?exists(
+ const section=mode==="SECTION"?exists(
   db.select({sectionEnrollmentId:sectionEnrollments.id}).from(sectionEnrollments)
    .innerJoin(learnerProgramEnrollments,and(
      eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
@@ -36,7 +38,10 @@ export function verificationEnrollmentPredicates(collegeId:string,filter:Verific
      eq(departments.collegeId,collegeId)))
    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
      eq(sectionEnrollments.sectionId,filter.sectionId),
-     eq(sectionEnrollments.status,"ACTIVE")))
+     eq(sectionEnrollments.status,"ACTIVE"),
+     filter.batchId?eq(cohorts.id,filter.batchId):undefined,
+     filter.branchId?eq(departments.id,filter.branchId):undefined,
+     filter.programId?eq(programs.id,filter.programId):undefined)))
  ):undefined;
  return [cohortOrBranch,section] as const;
 }
