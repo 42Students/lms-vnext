@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
 import { RECRUITER_STAGE_LEGACY_LABELS, type TpoRecruiterLeadStage } from "@/modules/placements/tpo-recruiter-lead-policy";
 import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
 import {
@@ -279,7 +280,7 @@ export function RecruiterLeadsWorkspace({
     <section className="space-y-5" aria-label="Recruiter leads">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Engage</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{TPO_OWNER_PAGE_COPY.recruiterLeads}</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>

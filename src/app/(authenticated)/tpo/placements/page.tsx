@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
@@ -17,7 +18,7 @@ export default async function TpoPlacementsPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO"
-        title="Placement Operations"
+        title={TPO_OWNER_PAGE_COPY.placementOperations}
         description="One prioritized command center for screening, drives, results and upcoming rounds."
         actions={
           <div className="flex flex-wrap gap-2">
