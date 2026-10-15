@@ -129,6 +129,74 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Class parent batch lifecycle
+              <select name="cohortStatus" defaultValue={data.query.cohortStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All batches</option>
+                <option value="PLANNED">Planned</option>
+                <option value="ACTIVE">Active</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Class parent program lifecycle
+              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All programs</option>
+                <option value="ACTIVE">Active</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Elective slot academic period linkage
+              <select name="periodState" defaultValue={data.query.periodState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All slots</option>
+                <option value="LINKED">Linked to a period</option>
+                <option value="UNLINKED">No period assigned</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Parent program lifecycle
+              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All programs</option>
+                <option value="ACTIVE">Active programs</option>
+                <option value="ARCHIVED">Archived programs</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Class academic period code
+              <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
+                placeholder="Exact registered code" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Class exact section code
+              <input name="classCode" type="search" maxLength={64} defaultValue={data.query.classCode ?? ""}
+                placeholder="Exact registered code" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Elective selection choice constraints
+              <select name="choiceMode" defaultValue={data.query.choiceMode ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All slots</option>
+                <option value="FLEXIBLE">Minimum and maximum differ</option>
+                <option value="FIXED">Exact selection count</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Elective active offering presence
+              <select name="offeringState" defaultValue={data.query.offeringState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All slots</option>
+                <option value="HAS_ACTIVE">Has active course offerings</option>
+                <option value="NONE_ACTIVE">No active course offerings</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

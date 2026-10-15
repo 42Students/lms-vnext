@@ -9,15 +9,17 @@ export type ClassExportRow = {
   periodName: string; capacity: number | null; activeLearners: number; status: string;
 };
 
-export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED" }) {
+export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; classCode?: string; periodCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED"; cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
   const params = new URLSearchParams();
   if (raw.q) params.set("q", raw.q);
   if (raw.programId) params.set("programId", raw.programId);
-  if (raw.cohortCode) params.set("cohortCode", raw.cohortCode);
+  if (raw.cohortCode) params.set("cohortCode", raw.cohortCode);  if (raw.classCode) params.set("classCode",raw.classCode);  if (raw.periodCode) params.set("periodCode",raw.periodCode);
   if (raw.capacityState && raw.capacityState !== "ALL") params.set("capacityState",raw.capacityState);
   if (raw.minimumCapacity !== undefined) params.set("minimumCapacity", String(raw.minimumCapacity));
   if (raw.maximumCapacity !== undefined) params.set("maximumCapacity",String(raw.maximumCapacity));
   if (raw.status !== "ACTIVE") params.set("status", raw.status);
+  if(raw.cohortStatus&&raw.cohortStatus!=="ALL")params.set("cohortStatus",raw.cohortStatus);
+  if(raw.programStatus&&raw.programStatus!=="ALL")params.set("programStatus",raw.programStatus);
   return "/api/academics/college-classes-export" + (params.size ? "?" + params.toString() : "");
 }
 
