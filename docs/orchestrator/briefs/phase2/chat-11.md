@@ -1,0 +1,15 @@
+# Phase 2 brief: chat-11 (projects logic and wording)
+Branch chatgpt/chat-11. Scope: Projects, mentor and class-team workspaces (Learner, Mentor and Admin sides).
+## Tasks in order
+1. Projects logic fixes (backlog section B): PR-S1-01 closeout dead end (one COMPLETED path), PR-S1-02 reject a new draft when the latest submission is APPROVED, PR-S2-02 PATCH task status must not set/revert DONE without review, PR-S2-03 task assignee check (stage SQL for assignee_membership_id), PR-S2-06 release ship requires >=1 sprint, PR-S2-09 sole-mentor guards, PR-S2-12 consistent authorization between lifecycle-service and mentor-* services, PR-S2-13 meeting time zone and future-time/overlap checks, PR-S2-14 transactional loads and template revise lock/expectedVersion, progress cap at 99 unless all done.
+2. Next: PR-S2-01 carry-over/backlog for open tasks on sprint close, PR-S2-05 readiness override, PR-S2-08 member role kinds, PR-S2-10 restore archived project, PR-S2-11 resource visibility (stage SQL where schema is needed).
+3. Wording: compare Mentor and Projects sidebar items, page titles and tab names with docs/audit/legacy-copy-A.md and fix mismatches with a unit test of exact labels.
+## Rules for this round (all lanes)
+- Push ONLY to your own branch chatgpt/chat-N; merge latest main into it first (keep main's version of files you did not intend to change; never re-add AI code, drafts of registered tables, or schema files).
+- OWNER RULE: every user-visible word must match the OLD LMS exactly (sidebar, top navbar, page titles, tab names, buttons, field labels, modal titles, table headers, messages). Source of truth: docs/audit/legacy-copy-A.md (Learner/Faculty/Mentor/College) and docs/audit/legacy-copy-B.md (TPO/Recruiter/Super Admin/Public); route inventory in docs/audit/legacy-inventory-A.md / -B.md. Never invent wording. Where the legacy dev branch renamed something, use the dev branch name.
+- Small rounds: at most 10 commits per round, push after each commit, one logical change per commit, unit tests with every change.
+- Logic fixes come from docs/audit/logic-fix-backlog.md (IDs like P-S1-01). Do S1 first, then S2, then S3/S4. Cite the backlog ID in each commit message. Mark an item done in your docs/parity file with the commit reference.
+- Do NOT touch protected paths: src/auth, src/security, src/modules/storage, drizzle/, src/db/schema/, .github, deploy, scripts, package files, env. New tables/columns only as staged schema (src/modules/<area>/staged-schema.ts) + docs/proposed-migrations/<name>.sql; the orchestrator registers migrations.
+- Pitfalls: cast reused SQL params; alias duplicate Drizzle columns; ::enum casts; no setState in useEffect; no Date.now() in render; no eslint-disable; no JSX inside try/catch; escape apostrophes in JSX; every POST/PUT/PATCH/DELETE route handler needs isSameOriginRequest; GET handlers never call write services; keep multi-line layout/guard code that existing tests grep for; CRLF-safe string matching in tests.
+- No AI features of any kind.
+
