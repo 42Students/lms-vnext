@@ -2,7 +2,7 @@
 import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileNeedsReload,facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired} from "@/modules/people/faculty-profile-error-model";
 import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -50,7 +50,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    if(!response.ok){
     const problem:unknown=await response.json().catch(()=>null);
     const code=facultyProfileErrorCode(problem);
-    setNeedsReload(facultyProfileNeedsReload(code));
+    setNeedsReload(facultyProfileReloadRequired(code,response.status));
     setError(facultyProfileSaveFailure(code,response.status));return;
    }
    const result=facultyProfileSaveReceipt(await response.json(),version);
