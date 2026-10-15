@@ -53,4 +53,59 @@ describe("college electives CSV",()=>{
     expect(electiveCsvHref({q:"",status:"ACTIVE",periodCode:"P&26"})).toContain("periodCode=P%2626");
   });
 
+ it("keeps exact elective slot name in scoped CSV",()=>{
+   const q=electiveCsvSchema.parse({slotName:"A&26"});
+   expect(electiveCsvHref(q)).toContain("slotName=A%2626");
+   expect(electiveCsvSchema.safeParse({slotName:"x".repeat(151)}).success).toBe(false);
+ });
+ it("keeps exact elective program code in scoped CSV",()=>{
+   const q=electiveCsvSchema.parse({programCode:"A&26"});
+   expect(electiveCsvHref(q)).toContain("programCode=A%2626");
+   expect(electiveCsvSchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+ });
+ it("keeps elective owning department code in scoped CSV",()=>{
+   const q=electiveCsvSchema.parse({departmentCode:"A&26"});
+   expect(electiveCsvHref(q)).toContain("departmentCode=A%2626");
+   expect(electiveCsvSchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+ });
+ it("Minimum required elective choices is retained in elective CSV validation",()=>{
+   const q=electiveCsvSchema.parse({minimumRequiredPicks:1});
+   expect(electiveCsvHref(q)).toContain("minimumRequiredPicks=1");
+   expect(electiveCsvSchema.safeParse({minimumRequiredPicks:1001}).success).toBe(false);
+ });
+ it("Maximum allowed elective choices is retained in elective CSV validation",()=>{
+   const q=electiveCsvSchema.parse({maximumAllowedPicks:2});
+   expect(electiveCsvHref(q)).toContain("maximumAllowedPicks=2");
+   expect(electiveCsvSchema.safeParse({maximumAllowedPicks:1001}).success).toBe(false);
+ });
+ it("Semester from is retained in elective CSV validation",()=>{
+   const q=electiveCsvSchema.parse({semesterFrom:1});
+   expect(electiveCsvHref(q)).toContain("semesterFrom=1");
+   expect(electiveCsvSchema.safeParse({semesterFrom:25}).success).toBe(false);
+ });
+ it("exports the validated semester through selector",()=>{
+   const q=electiveCsvSchema.parse({semesterThrough:1});
+   expect(electiveCsvHref(q)).toContain("semesterThrough=");
+   expect(electiveCsvSchema.safeParse({semesterThrough:0}).success).toBe(false);
+ });
+ it("exports the validated linked academic-period lifecycle selector",()=>{
+   const q=electiveCsvSchema.parse({periodLifecycle:"ACTIVE"});
+   expect(electiveCsvHref(q)).toContain("periodLifecycle=");
+   expect(electiveCsvSchema.safeParse({periodLifecycle:"INFERRED"}).success).toBe(false);
+ });
+ it("exports the validated elective description availability selector",()=>{
+   const q=electiveCsvSchema.parse({descriptionPresence:"MISSING"});
+   expect(electiveCsvHref(q)).toContain("descriptionPresence=");
+   expect(electiveCsvSchema.safeParse({descriptionPresence:"INFERRED"}).success).toBe(false);
+ });
+ it("preserves validated elective linked period starts on or after in elective CSV",()=>{
+   const q=electiveCsvSchema.parse({periodStartsOnOrAfter:"2026-07-01"});
+   expect(electiveCsvHref(q)).toContain("periodStartsOnOrAfter=2026-07-01");
+   expect(electiveCsvSchema.safeParse({periodStartsOnOrAfter:"2026-13-39"}).success).toBe(false);
+ });
+ it("preserves validated elective linked period ends on or before in elective CSV",()=>{
+   const q=electiveCsvSchema.parse({periodEndsOnOrBefore:"2026-12-31"});
+   expect(electiveCsvHref(q)).toContain("periodEndsOnOrBefore=2026-12-31");
+   expect(electiveCsvSchema.safeParse({periodEndsOnOrBefore:"2026-13-39"}).success).toBe(false);
+ });
 });
