@@ -1,0 +1,80 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {broadcastConsentSummary} from "@/modules/announcements/super-admin-college-broadcast-model";
+type CollegeTarget={id:string;label:string};
+const asUtc=(value:string)=>value.trim()?new Date(value).toISOString():null;
+export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly CollegeTarget[]}){
+ const router=useRouter();
+ const [mode,setMode]=useState<"ALL_COLLEGES"|"SELECTED_COLLEGES">("SELECTED_COLLEGES");
+ const [selected,setSelected]=useState<string[]>([]);
+ const [title,setTitle]=useState("");
+ const [message,setMessage]=useState("");
+ const [scheduledAt,setScheduledAt]=useState("");
+ const [expiresAt,setExpiresAt]=useState("");
+ const [pinned,setPinned]=useState(false);
+ const [review,setReview]=useState(false);
+ const [pending,setPending]=useState(false);
+ const [feedback,setFeedback]=useState("");
+ const count=mode==="ALL_COLLEGES"?colleges.length:selected.length;
+ const valid=count>0&&Boolean(title.trim())&&Boolean(message.trim())&&!pending;
+ async function submit(){
+  if(!valid)return;
+  setPending(true);setFeedback("");
+  try{
+   const response=await fetch("/api/admin/announcements/broadcast",{
+    method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({audienceMode:mode,collegeIds:mode==="ALL_COLLEGES"?[]:selected,
+     title,message,scheduledAt:asUtc(scheduledAt),expiresAt:asUtc(expiresAt),
+     isPinned:pinned,publishConsent:true}),
+   });
+   const data:unknown=await response.json().catch(()=>null);
+   if(!response.ok){
+    setFeedback(response.status===503?"Announcements database is not yet ready.":response.status===403?"You are not authorized for this audience.":"Publication failed. Review the audience, timing and permissions.");
+    return;
+   }
+   const published=data&&typeof data==="object"&&"result" in data&&data.result&&typeof data.result==="object"&&"count" in data.result?Number(data.result.count):null;
+   if(published===null||!Number.isSafeInteger(published)||published<=0){setFeedback("Publication confirmation was incomplete. Check the notice list.");return;}
+   setFeedback(published+" college notices published.");setTitle("");setMessage("");setSelected([]);
+   router.refresh();
+  }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
+  finally{setPending(false);setReview(false);}
+ }
+ return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+  <h2 className="m-0 text-lg font-semibold text-foreground">Publish to all or selected colleges</h2>
+  <p className="text-sm text-body">One in-app notice is persisted per authorized college. This action does not send SMS or email.</p>
+  <label className="grid gap-1 text-sm font-semibold text-body">Audience
+   <select value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11 rounded-md border border-border bg-surface px-3">
+    <option value="SELECTED_COLLEGES">Selected colleges</option>
+    <option value="ALL_COLLEGES">All colleges in current scope</option>
+   </select>
+  </label>
+  {mode==="SELECTED_COLLEGES"?<fieldset className="space-y-2 rounded-md border border-border p-3">
+   <legend className="text-sm font-semibold">Select colleges</legend>
+   {colleges.map(item=><label key={item.id} className="flex min-h-10 items-center gap-3 text-sm text-body">
+    <input type="checkbox" checked={selected.includes(item.id)} onChange={e=>setSelected(prev=>e.target.checked?[...prev,item.id]:prev.filter(id=>id!==item.id))}/>{item.label}
+   </label>)}
+  </fieldset>:null}
+  <label className="grid gap-1 text-sm font-semibold text-body">Title<Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}/></label>
+  <label className="grid gap-1 text-sm font-semibold text-body">Message<Textarea value={message} maxLength={10000} onChange={e=>setMessage(e.target.value)}/></label>
+  <div className="grid gap-3 sm:grid-cols-2">
+   <label className="grid gap-1 text-sm font-semibold text-body">Schedule (local)<Input type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Show until (local)<Input type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
+  </div>
+  <label className="flex items-center gap-2 text-sm font-semibold text-body">
+   <input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin for recipients
+  </label>
+  <p className="text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,Boolean(scheduledAt))}</p>
+  <Button disabled={!valid} onClick={()=>setReview(true)}>Review college publication</Button>
+  {feedback?<p role="status" className="text-sm text-body">{feedback}</p>:null}
+  <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmDisabled={!valid}
+   title="Approve publication to colleges" description={broadcastConsentSummary(mode,count,Boolean(scheduledAt))}
+   confirmLabel="Consent and publish" confirmVariant="danger" onConfirm={()=>{void submit();}}>
+   <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, recipient rows are persisted atomically and become visible according to their schedule.</p>
+  </ConfirmDialog>
+ </section>;
+}
