@@ -953,3 +953,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 student rule recheck endpoint — PARTIAL:** Added authenticated, Super Admin-scoped GET returning only membership stored On/Off/lock and resolver flags, `no-store` cache, no student contacts or identity. Editor can recheck and reload observed optimistic state after a conflict rather than overriding blindly. Pure unit tests authored; real PostgreSQL and browser stale-edit checks remain OPEN.
+
+
+**2026-10-15 chat-6 auditable no-op suppression — PARTIAL:** After college/member authorization and strict expected-state check, identical SET requests or INHERIT of an already-inherited rule return an `unchanged` result without rewriting timestamps or inserting misleading activity events. Actual edits retain the same transactional audit. Pure regression authored; persistence/runtime proof still open.

@@ -8,7 +8,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {getSuperAdminLearnerAccessTrace} from "./admin-trace-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {previousStudentRuleSchema,studentRuleMatches} from "./admin-student-rule-model";
+import {previousStudentRuleSchema,studentRuleMatches,isStudentRuleNoop} from "./admin-student-rule-model";
 
 export const studentRuleWriteInput=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("SET"),module:z.enum(["projects","electives"]),enabled:z.boolean(),locked:z.boolean(),expected:previousStudentRuleSchema}),
@@ -48,6 +48,8 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
   const [previous]=await tx.select({id:moduleAccessRules.id,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked}).from(moduleAccessRules).where(predicate).limit(1);
   if(!studentRuleMatches(input.expected,previous?{enabled:previous.enabled,locked:previous.locked}:null))
     throw new StudentRuleConflict("STALE_RULE");
+  if(isStudentRuleNoop(previous?{enabled:previous.enabled,locked:previous.locked}:null,input))
+    return {module:input.module,enabled:previous?.enabled??null,locked:previous?.locked??false,unchanged:true};
   if(input.action==="INHERIT"){
    if(previous)await tx.delete(moduleAccessRules).where(eq(moduleAccessRules.id,previous.id));
   }else if(previous){
@@ -65,6 +67,6 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
    metadata:{module:input.module,before:previous?{enabled:previous.enabled,locked:previous.locked}:null,
     after:input.action==="INHERIT"?null:{enabled:input.enabled,locked:input.locked}},
   });
-  return {module:input.module,enabled:input.action==="INHERIT"?null:input.enabled,locked:input.action==="INHERIT"?false:input.locked};
+  return {module:input.module,enabled:input.action==="INHERIT"?null:input.enabled,locked:input.action==="INHERIT"?false:input.locked,unchanged:false};
  });
 }

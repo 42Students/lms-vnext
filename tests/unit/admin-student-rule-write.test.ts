@@ -1,7 +1,13 @@
 import {describe,expect,it} from "vitest";
 import {studentRuleWriteInput} from "@/modules/module-access/admin-student-rule-write";
-import {studentRuleMatches} from "@/modules/module-access/admin-student-rule-model";
+import {studentRuleMatches,isStudentRuleNoop} from "@/modules/module-access/admin-student-rule-model";
 describe("Super Admin student rule writes",()=>{
+ it("does not create new audit records for a genuinely unchanged rule",()=>{
+  expect(isStudentRuleNoop(null,{action:"INHERIT"})).toBe(true);
+  expect(isStudentRuleNoop({enabled:false,locked:true},{action:"SET",enabled:false,locked:true})).toBe(true);
+  expect(isStudentRuleNoop({enabled:false,locked:true},{action:"SET",enabled:false,locked:false})).toBe(false);
+  expect(isStudentRuleNoop(null,{action:"SET",enabled:false,locked:false})).toBe(false);
+ });
  it("rejects stale stored states, including lock changes",()=>{
   expect(studentRuleMatches(null,{enabled:true,locked:false})).toBe(false);
   expect(studentRuleMatches({enabled:true,locked:false},{enabled:true,locked:true})).toBe(false);

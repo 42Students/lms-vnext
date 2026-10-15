@@ -5,3 +5,9 @@ export function studentRuleMatches(expected:PreviousStudentRule,actual:PreviousS
  if(expected===null||actual===null)return expected===actual;
  return expected.enabled===actual.enabled&&expected.locked===actual.locked;
 }
+
+export function isStudentRuleNoop(current:PreviousStudentRule,action:
+ {action:"SET";enabled:boolean;locked:boolean}|{action:"INHERIT"}){
+ return action.action==="INHERIT"?current===null:
+  current!==null&&current.enabled===action.enabled&&current.locked===action.locked;
+}
