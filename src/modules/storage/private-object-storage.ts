@@ -16,6 +16,7 @@ export const PRIVATE_OBJECT_NAMESPACES = [
   "assignment-submission",
   "course-resource",
   "project-resource",
+  "lesson-video",
 ] as const;
 
 export type PrivateObjectNamespace =
