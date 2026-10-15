@@ -1,3 +1,4 @@
+import {selectTpoBatchStudentView} from "@/modules/placements/tpo-batch-student-selection-model";
 import {summarizeBatchStudentEvidence} from "@/modules/placements/tpo-batch-student-evidence-summary-model";
 import Link from "next/link";
 import {tpoEligibilityImportScaffoldHref} from "@/modules/placements/tpo-eligibility-import-scaffold-model";
@@ -7,7 +8,7 @@ import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
 import { z } from "zod";
-import {parseBatchStudentSearchParams,filterBatchStudentNames,filterBatchStudentDecisions,filterBatchStudentDecisionSource,filterBatchStudentRegistration,sortBatchStudentView,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
+import {parseBatchStudentSearchParams,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export default async function BatchStudents({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{page?:string|string[];q?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}>}){
@@ -17,7 +18,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const view=parseBatchStudentSearchParams(raw);
  if(!view.success)return <p role="alert">Invalid student search. <Link href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
  const result=await getTpoBatchStudentRegistrations(await getCurrentRequestContext(),batchId,parsed.data);
- const visible=sortBatchStudentView(filterBatchStudentRegistration(filterBatchStudentDecisionSource(filterBatchStudentDecisions(filterBatchStudentNames(result.students,view.data.q),view.data.decision),view.data.source),view.data.registration,result.registrationAvailable),view.data.order);
+ const visible=selectTpoBatchStudentView(result.students,view.data,result.registrationAvailable);
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>

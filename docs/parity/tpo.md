@@ -2103,3 +2103,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 current-page student triage ordering — PARTIAL:** Name A–Z/Z–A and needs-review-first ordering now prioritize only verified ambiguous/undecided status with stable ties; no change to eligibility or database ordering.
 
 **Chat-2 loaded page student evidence summary — PARTIAL:** Explicit slice-only counters separate eligible, ineligible, undecided, ambiguous and direct overrides without suggesting cohort-wide totals. Back-end and browser checks remain open.
+
+**Chat-2 shared batch Student selection — PARTIAL:** Extracted the pure multi-filter and sort pipeline so the filtered CSV endpoint can reuse the exact page semantics and same authorized roster. This is a consistency guard, not full-cohort SQL filtering.
