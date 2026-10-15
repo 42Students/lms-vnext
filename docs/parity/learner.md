@@ -1428,3 +1428,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **L8 review availability (source FIXED, proof open):** if a published quiz has no currently available question details but its own previously submitted attempt exists, the review preserves the saved-attempt explanation rather than saying the learner never started a quiz. No grades or answers are invented. Pure regression authored; browser/DB verification pending.
 
 **L4 Attendance record badge parity (source FIXED, proof open):** medical/excused statuses no longer display the same error styling as explicitly absent sessions; late remains warning and unrecognized values are neutral. Persisted counts and policy are unchanged. Focused unit test authored; browser/legacy comparison pending.
+
+**L11 Profile remove guard (source FIXED, proof open):** removing a saved career-profile entry requires explicit confirmation and a still-existing saved ID, preventing silent data loss and no-op section overwrites. This is a documented safety correction. Unit regression authored; browser and PostgreSQL acceptance open.

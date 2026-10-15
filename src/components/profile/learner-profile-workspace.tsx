@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
+import { learnerProfileDeletePrompt } from "@/modules/people/learner-profile-delete-confirm-model";
 import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people/learner-profile-refresh-model";
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
@@ -373,6 +374,9 @@ export function LearnerProfileWorkspace(props: {
 
   function removeItem(section: CollectionKey, id: string) {
     const current = document[section] as Array<Record<string, unknown>>;
+    const confirmation=learnerProfileDeletePrompt(section,
+      current.some(item=>String(item.id)===id));
+    if(!confirmation || !window.confirm(confirmation))return;
     const items = current.filter((item) => String(item.id) !== id);
     if (section === "education" || section === "skills" || section === "projects") {
       saveOwnedSection(section, items as LearnerProfileDocument[typeof section]);
