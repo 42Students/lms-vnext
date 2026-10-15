@@ -38,6 +38,16 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    </li>)}
   </ol>
   {!result.messages.length?<p role="status" className="rounded-xl border border-border p-5 text-body">No messages on this page.</p>:null}
+  <form method="post" action={"/api/placements/recruiter/conversations/"+result.thread.id+"/reply"}
+   className="space-y-3 rounded-xl border border-border bg-surface p-4">
+   <h2 className="font-semibold text-foreground">Reply to placement cell</h2>
+   <label className="grid gap-2 text-sm text-body">Message
+    <textarea name="body" required maxLength={4000} rows={4}
+     className="rounded-md border border-border bg-surface p-3" placeholder="Write a message to the placement cell" />
+   </label>
+   <p className="text-xs text-muted-foreground">Replies stay in this employer-college thread and are reauthorized when sent.</p>
+   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Send reply</button>
+  </form>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page<result.pages?<Link href={"/hr/conversations/"+threadId+"?page="+(result.page+1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older</Link>:null}
