@@ -231,3 +231,9 @@ export function facultyDuplicateQuizOption<T extends {correct:boolean}>(options:
 export function facultyQuizSwitchNeedsConfirmation(unsaved:boolean,fromId:string,toId:string):boolean {
  return unsaved&&fromId!==toId;
 }
+
+/** Synchronous write lock: React state updates only after the current event. */
+export function facultyBeginQuizWrite(lock:{current:boolean}):boolean{
+ if(lock.current)return false;
+ lock.current=true;return true;
+}
