@@ -4,7 +4,7 @@ import { transferLearnerAssignmentFile } from "@/components/courses/assignment-f
 const delivery = "00000000-0000-4000-8000-000000000001";
 const receipt = "00000000-0000-4000-8000-000000000002";
 const grant = { receiptId: receipt, method: "PUT", uploadUrl: "https://storage.example.test/signed?token=private",
-  expiresAt: new Date(Date.now() + 10 * 60_000).toISOString(), requiredHeaders: { "content-type": "application/pdf", "x-amz-meta-upload-token": "test-token" }, originalName: "proof.pdf" };
+  expiresAt: new Date(Date.now() + 10 * 60_000).toISOString(), requiredHeaders: { "content-type": "application/pdf", "x-amz-meta-upload-token": "test-token", "x-amz-meta-owner-membership-id": delivery, "x-amz-meta-college-id": receipt, "x-amz-meta-expected-size": "5", "x-amz-meta-malware-scan-status": "PENDING" }, originalName: "proof.pdf" };
 describe("learner assignment private-file boundary", () => {
   it("validates file size, filename and allowed MIME without trusting extension over provided MIME", () => {
     expect(learnerAssignmentFileRequest(delivery, { name: "paper.docx", size: 10, type: "" }).success).toBe(true);
@@ -25,6 +25,8 @@ describe("learner assignment private-file boundary", () => {
   });
   it("rejects unsafe signed PUT headers", () => {
     expect(learnerAssignmentUploadHeadersSafe(grant.requiredHeaders)).toBe(true);
+    expect(learnerAssignmentUploadHeadersSafe({})).toBe(false);
+    expect(learnerAssignmentUploadHeadersSafe({ "content-type": "application/pdf" })).toBe(false);
     const badHeaders: Record<string, string>[] = [{ authorization: "Bearer secret" }, { "content-type": "application/pdf\r\nX-Test: 1" }, { cookie: "session=secret" }];
     for (const bad of badHeaders) {
       expect(learnerAssignmentUploadHeadersSafe(bad)).toBe(false);
