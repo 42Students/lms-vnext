@@ -48,7 +48,7 @@ export async function listTpoBatchRegistrationRoster(ctx:RequestContext,cohortId
  });
  const filtered=filterTpoRegistrationRecency(filterTpoBatchRegistrationSource(filterBatchRegistrations(roster,filters),filters.source),filters.recency,new Date());
  const ordered=sortTpoBatchRegistrationRows(filtered,filters.order);
- const page=paginateBatchRegistrations(ordered,filters.page);
+ const page=paginateBatchRegistrations(ordered,filters.page,filters.pageSize);
  return {batch,ready:true,limited,filters,items:page.items,hasMore:page.hasMore,
    total:page.total,sampleSize:sample.length};
 }
