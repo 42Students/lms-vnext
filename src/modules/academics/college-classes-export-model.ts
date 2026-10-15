@@ -1,8 +1,8 @@
-import { collegeClassQuerySchema } from "./college-structure-directory-model";
+import { collegeClassBaseQuerySchema,withCollegeClassCapacityCheck } from "./college-structure-directory-model";
 import { escapeActivityCsvCell } from "@/modules/activity/college-activity-export-model";
 
 export const CLASSES_EXPORT_CAP = 1000;
-export const collegeClassesExportSchema = collegeClassQuerySchema.omit({ page: true });
+export const collegeClassesExportSchema = withCollegeClassCapacityCheck(collegeClassBaseQuerySchema.omit({ page: true }));
 
 export type ClassExportRow = {
   name: string; code: string; programName: string; cohortName: string;

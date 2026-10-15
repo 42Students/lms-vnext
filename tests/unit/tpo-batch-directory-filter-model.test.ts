@@ -1,0 +1,3 @@
+import {it,expect} from "vitest";
+import { batchDirectoryFilterSchema,filterTpoBatchDirectory,batchDirectoryHref } from "@/modules/placements/tpo-batch-directory-filter-model";
+it("validates and combines search with lifecycle state",()=>{const row={name:"CSE 2026",program:"BTech",department:"CS",code:"C26",invitedAt:null,finishedAt:null};expect(filterTpoBatchDirectory([row],{q:"cse",state:"PLANNING"})).toHaveLength(1);expect(filterTpoBatchDirectory([row],{q:"cse",state:"FINISHED"})).toHaveLength(0);expect(batchDirectoryFilterSchema.safeParse({state:"UNKNOWN"}).success).toBe(false);expect(batchDirectoryHref("CS E","INVITED")).toContain("q=CS+E");});
