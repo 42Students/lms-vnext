@@ -14,7 +14,7 @@ describe("Filtered College role directory CSV",()=>{
   expect(parsed.filter.programId).toBe(filter.programId);
   expect(()=>parseCollegeRoleDirectoryExportQuery(new URLSearchParams("kind=LEARNER&kind=FACULTY"))).toThrow("INVALID_ROLE_DIRECTORY_EXPORT");
   expect(()=>parseCollegeRoleDirectoryExportQuery(new URLSearchParams("kind=LEARNER&collegeId=foreign"))).toThrow("INVALID_ROLE_DIRECTORY_EXPORT");
-  expect(()=>parseCollegeRoleDirectoryExportQuery(new URLSearchParams("kind=FACULTY&programId=00000000-0000-4000-8000-000000000001"))).not.toThrow();
+  expect(()=>parseCollegeRoleDirectoryExportQuery(new URLSearchParams("kind=FACULTY&programId=00000000-0000-4000-8000-000000000001"))).toThrow("INVALID_ROLE_DIRECTORY_EXPORT");
  });
  it("neutralizes spreadsheet formulas and preserves the 1000-row bound",()=>{
   const csv=renderCollegeRoleDirectoryCsv("FACULTY",[{membershipId:"id",name:"=HYPERLINK(1)",email:"+bad@example.test",membershipStatus:"ACTIVE",userStatus:"ACTIVE",joinedAt:new Date("2026-10-15T00:00:00Z"),program:null,cohort:null,sections:[],activeTeachingAssignments:2}],true);
