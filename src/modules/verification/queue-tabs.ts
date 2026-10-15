@@ -12,3 +12,12 @@ export function verificationTabCounts(rows:ReadonlyArray<Pick<VerificationRecord
   for(const row of rows) counts[verificationTab(row)]++;
   return counts;
 }
+
+/** Export does not need other-tab counts; narrow its SQL read before the cap. */
+export function verificationTabStatuses(tab:VerificationTab,waitingState:"ALL"|"SUBMITTED"|"UPDATE_PENDING"){
+ if(tab==="SENT_BACK")return ["SENT_BACK"] as const;
+ if(tab==="VERIFIED")return ["VERIFIED"] as const;
+ if(waitingState==="SUBMITTED")return ["SUBMITTED"] as const;
+ if(waitingState==="UPDATE_PENDING")return ["UPDATE_PENDING"] as const;
+ return ["SUBMITTED","UPDATE_PENDING"] as const;
+}

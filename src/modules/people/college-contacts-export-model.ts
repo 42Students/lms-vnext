@@ -1,8 +1,12 @@
 import {z} from "zod";
-import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible} from "./college-contacts-model";
+import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactRoleAudienceCompatible} from "./college-contacts-model";
 import type {CollegeContactRow} from "./college-contacts-service";
 export const CONTACT_EXPORT_LIMIT=1000;
-export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true,membershipId:true});
+export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true});
+export function assertCollegeContactExportFilters(filter:z.infer<typeof collegeContactsExportSchema>):void {
+ if(!contactDateWindowValid(filter)||!contactAcademicFiltersCompatible(filter)||!contactRoleAudienceCompatible(filter))
+  throw new Error("INVALID_CONTACT_EXPORT");
+}
 export function parseCollegeContactsExportParams(params:URLSearchParams){
  const input:Record<string,string>={};
  for(const key of params.keys()){
@@ -10,7 +14,7 @@ export function parseCollegeContactsExportParams(params:URLSearchParams){
   input[key]=params.get(key)??"";
  }
  const parsed=collegeContactsExportSchema.parse(input);
- if(!contactDateWindowValid(parsed)||!contactAcademicFiltersCompatible(parsed))throw new Error("INVALID_CONTACT_EXPORT");
+ assertCollegeContactExportFilters(parsed);
  return parsed;
 }
 export function neutralizeContactCell(value:string){
@@ -27,4 +31,13 @@ export function renderCollegeContactCsv(rows:readonly CollegeContactRow[],trunca
  }
  if(truncated||rows.length>CONTACT_EXPORT_LIMIT)lines.push(["EXPORT TRUNCATED","First 1,000 matching contacts","","","",""].map(neutralizeContactCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
+}
+
+/** Offset pages may overlap under concurrent membership changes; never duplicate a person in CSV. */
+export function appendUniqueContactExportRows(rows:CollegeContactRow[],page:readonly CollegeContactRow[]):void{
+ const seen=new Set(rows.map(row=>row.membershipId));
+ for(const row of page){
+  if(rows.length>=CONTACT_EXPORT_LIMIT)break;
+  if(!seen.has(row.membershipId)){seen.add(row.membershipId);rows.push(row);}
+ }
 }
