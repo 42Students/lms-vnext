@@ -1663,3 +1663,7 @@ Learner delivery draft create/edit now accepts up to 10 typed FILE/LINK attachme
 ### PR-S2-04 and PR-S2-07 0090/0091 acceptance cases
 
 P5 PostgreSQL tests cover task fields, comments and stale task tokens. P6B tests now assert locked_at, reopened_at, append-only LOCKED/REOPENED/ATTACHMENTS_CHANGED rows, safe link metadata roundtrips and rejected unsafe schemes. Deprecated proposal files are historical only; never reapply after registered migrations 0090/0091. These tests are authored, NOT run.
+
+### PR-S2-04 legacy task metadata and comments UI
+
+Mentor create/edit forms now expose 0090 Estimate, Type, Due date and Blocker reason and remove obsolete storage-unavailable warnings. Learner/Mentor/Admin task cards have an on-demand Comments panel with authorized read and member-authorized writes to the registered service. Exact legacy field labels covered by source tests. Real browser/mobile acceptance still outstanding.
