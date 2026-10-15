@@ -652,6 +652,13 @@
       "when": 1792100129263,
       "tag": "0092_placement_recruiter_grant_validity",
       "breakpoints": true
+    },
+    {
+      "idx": 93,
+      "version": "7",
+      "when": 1792100290686,
+      "tag": "0093_recruiter_invite_code",
+      "breakpoints": true
     }
   ]
 }

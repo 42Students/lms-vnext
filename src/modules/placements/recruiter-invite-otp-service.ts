@@ -1,8 +1,7 @@
 import "server-only";
-import { and, count, desc, eq, gte, sql } from "drizzle-orm";
+import { and, count, eq, gte, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementTpoLeads } from "@/db/schema";
-import { recruiterInviteCodesStaged } from "./staged-schema";
+import { placementTpoLeads, recruiterInviteCodes } from "@/db/schema";
 import { isRecruiterInviteTokenShape, recruiterInviteTokenHash,
   requireRecruiterInviteUsable } from "./tpo-recruiter-invite-policy";
 import { TpoRecruiterInviteServiceError } from "./tpo-recruiter-invite-service";
@@ -47,23 +46,23 @@ export async function requestRecruiterInviteOtp(
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${lead.collegeId}::text,0))`);
     const hourAgo=new Date(now.getTime()-3_600_000);
     const [[forLink],[forCollege]]=await Promise.all([
-      tx.select({n:count()}).from(recruiterInviteCodesStaged)
-        .where(and(eq(recruiterInviteCodesStaged.tokenHash,hash),
-          gte(recruiterInviteCodesStaged.sentAt,hourAgo))),
-      tx.select({n:count()}).from(recruiterInviteCodesStaged)
-        .where(and(eq(recruiterInviteCodesStaged.collegeId,lead.collegeId),
-          gte(recruiterInviteCodesStaged.sentAt,hourAgo))),
+      tx.select({n:count()}).from(recruiterInviteCodes)
+        .where(and(eq(recruiterInviteCodes.tokenHash,hash),
+          gte(recruiterInviteCodes.sentAt,hourAgo))),
+      tx.select({n:count()}).from(recruiterInviteCodes)
+        .where(and(eq(recruiterInviteCodes.collegeId,lead.collegeId),
+          gte(recruiterInviteCodes.sentAt,hourAgo))),
     ]);
     if (!recruiterOtpSendAllowed(forLink?.n??0,forCollege?.n??0)) {
       // Do not distinguish rate limit from invalid token to public callers.
       throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
     }
-    const [stored] = await tx.insert(recruiterInviteCodesStaged).values({
+    const [stored] = await tx.insert(recruiterInviteCodes).values({
       leadId:lead.id,collegeId:lead.collegeId,tokenHash:hash,
       codeHash:recruiterOtpDigest(hash,code,secret),
       sentAt:now,expiresAt:new Date(now.getTime()+RECRUITER_OTP_TTL_MS),
       deliveryState:"PENDING",
-    }).returning({id:recruiterInviteCodesStaged.id});
+    }).returning({id:recruiterInviteCodes.id});
     if (!stored) throw new Error("RECRUITER_OTP_STORE_FAILED");
     return { id: stored.id, email:lead.emailNorm };
   });
@@ -71,11 +70,11 @@ export async function requestRecruiterInviteOtp(
   try {
     sent=await deliver(challenge.email,code);
   } finally {
-    await getDb().update(recruiterInviteCodesStaged).set({
+    await getDb().update(recruiterInviteCodes).set({
       deliveryState:sent?"SENT":"FAILED",
     }).where(and(
-      eq(recruiterInviteCodesStaged.id,challenge.id),
-      eq(recruiterInviteCodesStaged.deliveryState,"PENDING"),
+      eq(recruiterInviteCodes.id,challenge.id),
+      eq(recruiterInviteCodes.deliveryState,"PENDING"),
     ));
   }
   if (!sent) throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");

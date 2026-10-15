@@ -4,10 +4,10 @@ import { getDb } from "@/db/client";
 import {
   placementCompanies,placementCompanyRelationships,
   placementRecruiterCollegeGrants,placementRecruiterProfiles,
-  placementTpoCollegeSettings,placementTpoLeadActivities,placementTpoLeads,users,
+  placementTpoCollegeSettings,placementTpoLeadActivities,placementTpoLeads,
+  recruiterInviteCodes,users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { recruiterInviteCodesStaged } from "./staged-schema";
 import { recruiterGrantValidUntil } from "./recruiter-grant-expiry-policy";
 import {
   isRecruiterInviteTokenShape,recruiterInviteTokenHash,requireRecruiterInviteUsable,
@@ -51,21 +51,21 @@ export async function acceptTpoRecruiterInviteOtp(
    if(!identity || identity.status!=="ACTIVE" ||
       !identity.email || identity.email.trim().toLowerCase()!==lead.emailNorm)
        return "DENIED";
-   const [challenge]=await tx.select().from(recruiterInviteCodesStaged)
+   const [challenge]=await tx.select().from(recruiterInviteCodes)
       .where(and(
-        eq(recruiterInviteCodesStaged.leadId,lead.id),
-        eq(recruiterInviteCodesStaged.collegeId,lead.collegeId),
-        eq(recruiterInviteCodesStaged.tokenHash,hash),
-      )).orderBy(desc(recruiterInviteCodesStaged.sentAt),
-         desc(recruiterInviteCodesStaged.id)).for("update").limit(1);
+        eq(recruiterInviteCodes.leadId,lead.id),
+        eq(recruiterInviteCodes.collegeId,lead.collegeId),
+        eq(recruiterInviteCodes.tokenHash,hash),
+      )).orderBy(desc(recruiterInviteCodes.sentAt),
+         desc(recruiterInviteCodes.id)).for("update").limit(1);
    if(!challenge)return "DENIED";
    const decision=recruiterOtpAttemptDecision(challenge,now,
       recruiterOtpMatches(challenge.codeHash,hash,code,secret));
    if(decision==="LOCKED")return "DENIED";
    if(decision==="REJECT"){
-     await tx.update(recruiterInviteCodesStaged)
+     await tx.update(recruiterInviteCodes)
        .set({failedAttempts:challenge.failedAttempts+1})
-       .where(eq(recruiterInviteCodesStaged.id,challenge.id));
+       .where(eq(recruiterInviteCodes.id,challenge.id));
      return "DENIED";
    }
    const [relationship]=await tx.select({
@@ -103,11 +103,11 @@ export async function acceptTpoRecruiterInviteOtp(
      capabilities:["DRIVES"],verificationStatus:"VERIFIED",
    }).onConflictDoNothing().returning({id:placementRecruiterCollegeGrants.id});
    if(!grant)return "DENIED"; // Never quietly renew existing active grants.
-   const [used]=await tx.update(recruiterInviteCodesStaged)
+   const [used]=await tx.update(recruiterInviteCodes)
      .set({consumedAt:now})
-     .where(and(eq(recruiterInviteCodesStaged.id,challenge.id),
-       isNull(recruiterInviteCodesStaged.consumedAt)))
-     .returning({id:recruiterInviteCodesStaged.id});
+     .where(and(eq(recruiterInviteCodes.id,challenge.id),
+       isNull(recruiterInviteCodes.consumedAt)))
+     .returning({id:recruiterInviteCodes.id});
    if(!used)throw invalid();
    const [accepted]=await tx.update(placementTpoLeads)
      .set({inviteTokenHash:null,recruiterUserId:identity.id,updatedAt:now})
