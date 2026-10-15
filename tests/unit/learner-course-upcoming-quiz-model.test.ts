@@ -12,3 +12,15 @@ describe("Course Home actionable quiz feed",()=>{
   expect(learnerUpcomingQuizEligible({status:"NOT_STARTED",dueAt:new Date(NaN)},now,now+86400000)).toBe(false);
  });
 });
+
+describe("resume ongoing quizzes on Course Home",()=>{
+ it("includes an in-progress attempt until its real deadline",()=>{
+  const now=Date.parse("2026-10-15T12:00:00Z");
+  expect(learnerUpcomingQuizEligible({
+   status:"IN_PROGRESS",dueAt:new Date(now+60000),
+  },now,now+86400000)).toBe(true);
+  expect(learnerUpcomingQuizEligible({
+   status:"IN_PROGRESS",dueAt:new Date(now-60000),
+  },now,now+86400000)).toBe(false);
+ });
+});

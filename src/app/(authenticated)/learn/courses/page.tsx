@@ -3,6 +3,7 @@ import {
   LearnerCourseList,
   type LearnerCourseListRow,
 } from "@/components/courses/learner-course-list";
+import { learnerCourseInstructorLabels } from "@/modules/courses/learner-course-instructor-labels-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import { selectLearnerOverdueAssignment } from "@/modules/courses/learner-course-overdue-link-model";
@@ -59,9 +60,7 @@ export default async function LearnerCoursesPage() {
           periodStartDate: course.periodStartDate,
           periodEndDate: course.periodEndDate,
         },
-        instructorNames: instructors.map(
-          (instructor) => instructor.name?.trim() || "Instructor",
-        ),
+        instructorNames: learnerCourseInstructorLabels(instructors),
         summary: {
           overallPercent: signals.percentage,
           itemsCompleted: workspace.summary.itemsCompleted,

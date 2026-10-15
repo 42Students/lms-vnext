@@ -20,11 +20,20 @@ export function quizOverviewActionState(
   const dueMillis = item.dueAt
     ? Date.parse(item.dueAt)
     : Number.POSITIVE_INFINITY;
+  const deadlineUnknown = item.dueAt !== null && !Number.isFinite(dueMillis);
   const expired = Number.isFinite(dueMillis) && dueMillis < now;
   const closed = item.status !== "PUBLISHED";
   const exhausted = item.attemptsRemaining <= 0;
 
-  if (closed && item.resultsPublished && item.attemptsUsed > 0) {
+  if (deadlineUnknown) {
+    return {
+      label: "Deadline unavailable",
+      tone: "warning" as const,
+      action: "View quiz",
+      review: true,
+    };
+  }
+  if ((closed || expired || exhausted) && item.resultsPublished && item.attemptsUsed > 0) {
     return {
       label: "Results published",
       tone: "success" as const,
@@ -40,11 +49,19 @@ export function quizOverviewActionState(
       review: true,
     };
   }
+  if (exhausted && item.attemptsUsed === 0) {
+    return {
+      label: "No attempts remaining",
+      tone: "neutral" as const,
+      action: "View quiz",
+      review: true,
+    };
+  }
   if (expired || item.progressStatus === "MISSED") {
     return {
       label: "Missed",
       tone: "error" as const,
-      action: "View answers",
+      action: "View quiz",
       review: true,
     };
   }
@@ -52,7 +69,7 @@ export function quizOverviewActionState(
     return {
       label: "Closed",
       tone: "neutral" as const,
-      action: "Review quiz",
+      action: "View quiz",
       review: true,
     };
   }

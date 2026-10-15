@@ -99,6 +99,8 @@ export function LearnerCourseOverview({
     safeBodyHtml: meta.bodyHtml,
     courseDescription:meta.courseDescription,
     learningPathDescription:workspace.learningPath?.description??null,
+    introductionText:meta.introductionText,
+    takeaways:meta.takeaways,
   });
   const progressAvailability = learnerProgressAvailability({
     hasPublishedLearningPath: workspace.learningPath !== null,
@@ -250,6 +252,7 @@ export function LearnerCourseOverview({
   const homeCompletion = learnerCourseHomeCompletion({
     itemsTotal:summary.itemsTotal,itemsCompleted:summary.itemsCompleted,itemsMissed:summary.itemsMissed,readOnly,
     hasNextAction:Boolean(nextAction),
+    hasPublishedPath:workspace.learningPath!==null,
   });
   const jumpLinks=learnerCourseOverviewJumps({
     hasPublishedPath:pathPreview.totalLessons>0,
