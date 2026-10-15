@@ -18,3 +18,12 @@ export const facultyLessonVideoSchema=z.object({
 }).strict();
 export type FacultyLessonVideo=z.infer<typeof facultyLessonVideoSchema>;
 export type FacultyVideoProcessingStatus=FacultyLessonVideo["processingStatus"];
+
+/** UI-only defensive filtering; authenticated service must enforce the scope. */
+export function facultyVideosForLesson(
+ rows:readonly FacultyLessonVideo[],scope:{lessonId:string;deliveryId:string|null},
+):FacultyLessonVideo[]{
+ return rows.filter(row=>row.lessonId===scope.lessonId &&
+   (scope.deliveryId===null?row.deliveryId===null:
+     row.deliveryId===null||row.deliveryId===scope.deliveryId));
+}
