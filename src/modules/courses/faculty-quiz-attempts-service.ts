@@ -16,7 +16,7 @@ export async function getFacultyQuizAttemptDrilldown(context:RequestContext,raw:
     }))throw new AuthorizationError("courses.read");
   await getFacultyCourseWorkspace(context,query.deliveryId);
   const report=await getFacultyQuizReport(context,query.quizId,query.deliveryId);
-  const page=facultyQuizAttemptsPage(facultySearchQuizAttempts(report.attempts,query.q),query.page,query.order);
+  const page=facultyQuizAttemptsPage(facultySearchQuizAttempts(query.view==="LATEST"?report.latestAttempts:report.attempts,query.q),query.page,query.order);
   return {
     query,quiz:report.quiz,questions:report.questions,
     ...page,
