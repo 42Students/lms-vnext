@@ -8,14 +8,14 @@ import {
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 
-type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[]};
+type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[];pageSize?:string|string[]};
 
 export default async function MentorProjectActivityHistoryPage({
   params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}) {
   const [{projectId},raw]=await Promise.all([params,searchParams]);
   const filters=singleValueMentorFilters({
-    importance:raw.importance,view:raw.view,window:raw.window,order:raw.order,page:raw.page,
+    importance:raw.importance,view:raw.view,window:raw.window,order:raw.order,page:raw.page,pageSize:raw.pageSize,
   });
   const parsed=mentorProjectActivityQuerySchema.safeParse(
     filters ? {projectId,...filters} : null,
@@ -76,6 +76,13 @@ export default async function MentorProjectActivityHistoryPage({
             className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="NEWEST">Newest recorded first</option>
             <option value="OLDEST">Oldest recorded first</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
+          <select name="pageSize" defaultValue={String(data.query.pageSize)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="20">20 events</option>
+            <option value="50">50 events</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

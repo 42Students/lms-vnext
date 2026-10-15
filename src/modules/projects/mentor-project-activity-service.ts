@@ -30,7 +30,7 @@ export async function getMentorProjectActivityHistory(
   const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
   const empty=()=>({
     enabled:false as const,title:scope.project.title,query,
-    ...mentorProjectActivityPage(0,1),
+    ...mentorProjectActivityPage(0,1,query.pageSize),
     items:[] as {id:string;label:string;importance:string;occurredAt:Date}[],
   });
   if(!enabled)return empty();
@@ -53,7 +53,7 @@ export async function getMentorProjectActivityHistory(
   );
   const db=getDb();
   const [summary]=await db.select({total:count()}).from(activityEvents).where(filters);
-  const paging=mentorProjectActivityPage(Number(summary?.total??0),query.page);
+  const paging=mentorProjectActivityPage(Number(summary?.total??0),query.page,query.pageSize);
   const rows=await db.select({
     id:activityEvents.id,
     eventType:activityEvents.eventType,
