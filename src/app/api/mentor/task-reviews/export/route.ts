@@ -2,21 +2,18 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {mentorTaskReviewQuerySchema} from "@/modules/projects/mentor-task-review-model";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-service";
 import {mentorPendingTaskReviewCsv} from "@/modules/projects/mentor-pending-task-review-export";
 export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const url=new URL(request.url);
-  const query=mentorTaskReviewQuerySchema.parse({
-   search:url.searchParams.get("search")??undefined,
-   projectId:url.searchParams.get("projectId")??undefined,
-   assignment:url.searchParams.get("assignment")??undefined,
-   priority:url.searchParams.get("priority")??undefined,
-   version:url.searchParams.get("version")??undefined,
-   age:url.searchParams.get("age")??undefined,
-   order:url.searchParams.get("order")??undefined,page:1,pageSize:50,
-  });
+  const filters=singleValueMentorExportFilters(url.searchParams,[
+   "search","projectId","assignment","priority","version","age","order",
+  ]);
+  if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
+  const query=mentorTaskReviewQuerySchema.parse({...filters,page:1,pageSize:50});
   const ctx=await getCurrentRequestContext();
   const first=await getMentorTaskReviews(ctx,query);
   if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});

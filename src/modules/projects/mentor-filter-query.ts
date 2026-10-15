@@ -13,3 +13,17 @@ export function singleValueMentorFilters(
   }
   return Object.fromEntries(entries);
 }
+
+/** GET export filters must never collapse duplicated or unrecognized keys. */
+export function singleValueMentorExportFilters(
+  params: URLSearchParams,
+  allowed: readonly string[],
+): Record<string, string> | null {
+  const accepted=new Set(allowed);
+  const fields:Record<string,string>={};
+  for(const [key,value] of params){
+    if(!accepted.has(key)||Object.prototype.hasOwnProperty.call(fields,key))return null;
+    fields[key]=value;
+  }
+  return fields;
+}
