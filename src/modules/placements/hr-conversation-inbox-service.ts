@@ -21,7 +21,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const allowed=jobs.filter(j=>j.collegeId===collegeId&&j.companyId===context.recruiter!.companyId);
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
- const filtered=filterRecruiterConversations(threads,knownJobIds,query.q);
+ const filtered=filterRecruiterConversations(threads,knownJobIds,query.q,titles);
  return {status:"READY" as const,choices:grants,collegeId,
   items:filtered.slice(0,100).map(t=>({
    id:t.id,jobId:t.jobId,jobTitle:t.jobId?(titles.get(t.jobId)??"Authorized drive"):"General conversation",
