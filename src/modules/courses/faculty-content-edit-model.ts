@@ -37,6 +37,7 @@ export function facultyContentPatch(input: {
     return base;
   }
   if (input.kind === "YOUTUBE") {
+    if (!/^[1-9]\d*$/.test(input.duration ?? "")) throw new Error("Duration must be 1-86400 seconds.");
     const seconds = Number(input.duration);
     if (!Number.isInteger(seconds) || seconds < 1 || seconds > 86400)
       throw new Error("Duration must be 1-86400 seconds.");
