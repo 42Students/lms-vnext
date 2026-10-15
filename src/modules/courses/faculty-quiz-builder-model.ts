@@ -327,3 +327,10 @@ export function facultyQuizOptionRemovalNeedsConfirmation(
 ):boolean {
  return index>=0&&index<options.length&&Boolean(options[index]?.correct);
 }
+
+/** Use a short, human-readable destructive action description in the browser dialog. */
+export function facultyQuizQuestionRemovalPrompt(index:number,prompt:string):string {
+ const name=prompt.trim().replace(/\s+/g," ").slice(0,80);
+ return "Remove question "+(index+1)+(name?' ("'+name+'")':"")+
+  "? This removes its options from your unsaved draft.";
+}
