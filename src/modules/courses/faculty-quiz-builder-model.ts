@@ -209,3 +209,11 @@ export function facultyMoveQuizQuestion<T>(rows:readonly T[],from:number,to:numb
 export function facultyMoveQuizOption<T>(options:readonly T[],from:number,to:number):T[]{
  return facultyMoveQuizQuestion(options,from,to);
 }
+
+/** A duplicate question has an independent option list and a sequence assigned at save. */
+export function facultyDuplicateQuizQuestion<T extends {options:readonly object[]}>(rows:readonly T[],index:number):T[]{
+ if(index<0||index>=rows.length||rows.length>=100)return [...rows];
+ const original=rows[index]!;
+ const clone={...original,options:original.options.map(option=>({...option}))} as T;
+ const next=[...rows];next.splice(index+1,0,clone);return next;
+}
