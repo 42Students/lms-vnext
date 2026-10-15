@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts, mentorWorkspaceMissingPrimaryMentor } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -411,6 +411,12 @@ export function ProjectWorkspace({
             />
           ) : null}
         </div>
+        {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
+          <p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+            No primary Mentor is recorded in the current Project roster.
+            Team staffing changes remain a College Admin action.
+          </p>
+        ) : null}
         {mode==="MENTOR" ? (() => {
           const facts=mentorWorkspaceTeamFacts(workspace.members);
           return <p className="text-sm text-body">
