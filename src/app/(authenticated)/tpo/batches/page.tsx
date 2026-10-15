@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
+import { tpoBatchNextAction } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
 import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref } from "@/modules/placements/tpo-batch-directory-pagination-model";
 import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/placements/tpo-batch-deadline-filter-model";
@@ -62,7 +63,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     <p className="text-xs text-muted-foreground">{data.ready?batchDirectoryState(b):"Lifecycle pending"}</p>
     <p className="text-xs text-muted-foreground">{tpoBatchDeadlineLabel(b.deadline,data.ready)}</p>
     <p className="text-sm text-muted-foreground">Eligibility split and journey counts: open Students to review verified records.</p>
-    <Link href={"/tpo/batches/"+b.id} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">Open batch</Link>
+    <Link href={"/tpo/batches/"+b.id} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready)}</Link>
    </li>)}</ul>}
  </main>;
 }
