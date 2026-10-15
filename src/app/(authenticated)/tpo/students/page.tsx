@@ -106,10 +106,6 @@ function percentage(value: number | null) {
   return value === null ? "—" : `${value.toFixed(2)}%`;
 }
 
-function displayNumber(value: number | null) {
-  return value === null ? "—" : String(value);
-}
-
 export default async function TpoStudentsPage({
   searchParams,
 }: {
