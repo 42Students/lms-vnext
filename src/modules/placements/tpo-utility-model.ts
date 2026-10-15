@@ -19,9 +19,9 @@ export const TPO_MORE_GROUPS = [
       },
       {
         label: "Requests",
-        href: "/tpo/students/requests",
+        href: "/tpo/requests",
         description:
-          "Review students' recorded placement requests.",
+          "Triage pending student placement requests and review recorded decisions.",
       },
       {
         label: "Calendar",
