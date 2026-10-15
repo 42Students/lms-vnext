@@ -547,6 +547,13 @@
       "when": 1792081266845,
       "tag": "0077_placement_company_applicant_shares",
       "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "7",
+      "when": 1792081407893,
+      "tag": "0078_placement_hr_interview_slots",
+      "breakpoints": true
     }
   ]
 }
