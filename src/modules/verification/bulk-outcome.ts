@@ -16,3 +16,15 @@ export function bulkReviewFailureLabel(code:BulkReviewOutcome["result"]):string{
   default:return "Decision saved";
  }
 }
+
+/** Resolve batch responses against authorized current-page labels, not raw IDs in the UI. */
+export function describeBulkReviewOutcomeRows(outcomes:readonly BulkReviewOutcome[],selected:readonly {learnerMembershipId:string;section:"EDUCATION"|"IDENTITY";learnerName:string}[]){
+ const labels=new Map(selected.map(row=>[row.learnerMembershipId+":"+row.section,row.learnerName]));
+ return outcomes.map(row=>({
+  key:row.learnerMembershipId+":"+row.section,
+  label:labels.get(row.learnerMembershipId+":"+row.section)??"Selected learner",
+  section:row.section,
+  result:row.result,
+  message:bulkReviewFailureLabel(row.result),
+ }));
+}
