@@ -243,6 +243,14 @@ export async function CollegeRoleDirectoryWorkspace({
             </select>
           </label> : null}
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Joined from (IST)
+            <input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Joined through (IST)
+            <input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Order
             <select name="sort" defaultValue={result.filter.sort}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">

@@ -6,6 +6,9 @@ import {
   parseCollegeRoleDirectorySearchParams,
   canonicalCollegeRoleDirectoryHref,
   selectedDirectoryValueNotListed,
+  roleDirectoryDateWindowValid,
+  roleDirectoryIstDayStart,
+  roleDirectoryNextIstDayStart,
   collegeDirectorySearchHint,
 } from "@/modules/people/college-role-directory-model";
 
@@ -163,5 +166,17 @@ describe("Selected Faculty employment type beyond options",()=>{
  it("preserves a typed value even when the first 100 distinct types omit it",()=>{
   expect(selectedDirectoryValueNotListed("VISITING",["FULL_TIME"])).toBe(true);
   expect(selectedDirectoryValueNotListed("VISITING",["VISITING"])).toBe(false);
+ });
+});
+
+describe("Role-directory IST join date range",()=>{
+ it("filters inclusive local days and rejects reversed windows",()=>{
+  expect(roleDirectoryDateWindowValid({joinedFrom:"2026-10-15",joinedThrough:"2026-10-14"})).toBe(false);
+  expect(()=>parseCollegeRoleDirectorySearchParams({joinedFrom:"2026-10-15",joinedThrough:"2026-10-14"})).toThrow("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
+  expect(roleDirectoryIstDayStart("2026-10-15").toISOString()).toBe("2026-10-14T18:30:00.000Z");
+  expect(roleDirectoryNextIstDayStart("2026-10-15").toISOString()).toBe("2026-10-15T18:30:00.000Z");
+  const filters=collegeRoleDirectoryQuerySchema.parse({joinedFrom:"2026-10-14",joinedThrough:"2026-10-15",page:2});
+  expect(collegeRoleDirectoryHref("FACULTY",filters)).toContain("joinedFrom=2026-10-14&joinedThrough=2026-10-15");
+  expect(collegeRoleDirectoryQuerySchema.safeParse({joinedFrom:"2026-02-30"}).success).toBe(false);
  });
 });

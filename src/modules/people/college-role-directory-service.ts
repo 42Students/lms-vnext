@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, not, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, gte, ilike, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -24,6 +24,9 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
   collegeRoleDirectoryQuerySchema,
+  roleDirectoryDateWindowValid,
+  roleDirectoryIstDayStart,
+  roleDirectoryNextIstDayStart,
   type CollegeDirectoryKind,
   type CollegeRoleDirectoryRow,
 } from "./college-role-directory-model";
@@ -39,6 +42,7 @@ export async function listCollegeRoleDirectory(
   rawFilter: unknown,
 ) {
   const filter = collegeRoleDirectoryQuerySchema.parse(rawFilter);
+  if (!roleDirectoryDateWindowValid(filter)) throw new RangeError("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
   if (
     !context.membership ||
     !hasMembershipRole(context, "COLLEGE_ADMIN") ||
@@ -222,6 +226,8 @@ export async function listCollegeRoleDirectory(
         ? undefined
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
+      filter.joinedFrom ? gte(collegeMemberships.createdAt,roleDirectoryIstDayStart(filter.joinedFrom)) : undefined,
+      filter.joinedThrough ? lt(collegeMemberships.createdAt,roleDirectoryNextIstDayStart(filter.joinedThrough)) : undefined,
       kind === "FACULTY" ? facultyInDepartment : undefined,
       kind === "FACULTY" && filter.titlePresence !== "ALL"
         ? (filter.titlePresence === "PRESENT" ? hasAcademicTitle : not(hasAcademicTitle)) : undefined,
