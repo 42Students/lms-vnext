@@ -1,3 +1,4 @@
+import {superAdminHrLiteralSearchPattern} from "./super-admin-hr-search-model";
 import {
   and,
   asc,
@@ -255,23 +256,24 @@ export async function listSuperAdminHrAccounts(
   const query =
     superAdminHrListQuerySchema.parse(rawQuery);
 
-  const search = query.q
+  const pattern = query.q ? superAdminHrLiteralSearchPattern(query.q) : null;
+  const search = pattern
     ? or(
         ilike(
           users.displayName,
-          `%${query.q}%`,
+          pattern,
         ),
         ilike(
           users.phoneE164,
-          `%${query.q}%`,
+          pattern,
         ),
         ilike(
           users.email,
-          `%${query.q}%`,
+          pattern,
         ),
         ilike(
           placementCompanies.name,
-          `%${query.q}%`,
+          pattern,
         ),
       )
     : undefined;
