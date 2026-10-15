@@ -73,9 +73,6 @@ export function TpoCompanyMemoryWorkspace({
   const [error, setError] = useState("");
 
   const load = useCallback(async (signal?: AbortSignal) => {
-    setCompany(null);
-    setPhase("loading");
-    setError("");
     try {
       const response = await fetch(
         "/api/placements/tpo/companies/detail?collegeId=" +
@@ -112,6 +109,13 @@ export function TpoCompanyMemoryWorkspace({
     }
   }, [collegeId, companyName]);
 
+  function retry() {
+    setCompany(null);
+    setPhase("loading");
+    setError("");
+    void load();
+  }
+
   useEffect(() => {
     const controller = new AbortController();
     void load(controller.signal);
@@ -131,7 +135,7 @@ export function TpoCompanyMemoryWorkspace({
         </p>
         {phase === "error" || phase === "not-found" ? (
           <div className="mt-4 flex flex-wrap gap-3">
-            <button className={buttonStyle} onClick={() => void load()}>Retry</button>
+            <button className={buttonStyle} onClick={retry}>Retry</button>
             <Link className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</Link>
           </div>
         ) : null}
