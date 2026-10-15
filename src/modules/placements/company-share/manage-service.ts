@@ -119,13 +119,23 @@ export async function revokeTpoCompanyApplicantShare(context: RequestContext, ra
   const input = companyShareRevokeSchema.parse(raw);
   const college = await tpoJob(context,input.jobId);
   if (!await companyShareTablesReady()) throw new CompanyShareError("MIGRATION_PENDING");
-  const [updated] = await getDb().update(shares).set({revokedAt:new Date()})
-    .where(and(eq(shares.id,input.shareId),eq(shares.collegeId,college.id),
-      eq(shares.jobId,input.jobId),isNull(shares.revokedAt)))
-    .returning({id:shares.id});
-  // Unknown, foreign and previously-revoked ids are indistinguishable.
-  if (!updated) throw new CompanyShareError("NOT_FOUND");
-  return {revoked:true};
+  return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+    const [updated] = await tx.update(shares).set({revokedAt:new Date()})
+      .where(and(eq(shares.id,input.shareId),eq(shares.collegeId,college.id),
+        eq(shares.jobId,input.jobId),isNull(shares.revokedAt)))
+      .returning({id:shares.id});
+    // Unknown, foreign and previously-revoked ids are indistinguishable.
+    if (!updated)throw new CompanyShareError("NOT_FOUND");
+    await tx.insert(activityEvents).values(companyShareLifecycleActivity("REVOKED",{
+      organizationId:college.organizationId,collegeId:college.id,
+      actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+      jobId:input.jobId,shareId:updated.id,
+    }));
+    return {revoked:true};
+  });
 }
 
 /** Recent scoped access history; no token hash, visitor address, or PII is selected. */
