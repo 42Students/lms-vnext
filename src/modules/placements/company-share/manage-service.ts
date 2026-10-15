@@ -12,6 +12,7 @@ import { placementCompanyApplicantShares as shares, placementCompanyApplicantSha
 import { companyShareAuditTotals } from "./audit-model";
 import {canIssueCompanyApplicantShare} from "./issue-policy";
 import { companyShareStatusSchema } from "./status-model";
+import {companyShareLinkPageSchema,COMPANY_SHARE_PAGE_SIZE} from "./link-page-model";
 import { isShareableJob } from "./scope-model";
 import {
   companyShareExpiry, companyShareIssueSchema,
@@ -91,19 +92,30 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
     return {shareId:row.id,token,expiresAt:expiresAt.toISOString()};
   });
 }
-export async function listTpoCompanyApplicantShares(context: RequestContext, rawJobId: unknown, rawStatus:unknown="ALL") {
+export async function listTpoCompanyApplicantShares(
+ context: RequestContext, rawJobId: unknown, rawStatus:unknown="ALL", rawPage:unknown=1,
+) {
   const status=companyShareStatusSchema.parse(rawStatus);
+  const page=companyShareLinkPageSchema.parse(rawPage);
   const jobId = companyShareIssueSchema.shape.jobId.parse(rawJobId);
   const college = await tpoJob(context,jobId);
-  if (!await companyShareTablesReady()) return {ready:false,links:[]};
-  const links = await getDb().select({
-    id:shares.id, expiresAt:shares.expiresAt, revokedAt:shares.revokedAt,
-    createdAt:shares.createdAt,
-  }).from(shares).where(and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId),
-    status==="ACTIVE"?and(isNull(shares.revokedAt),gt(shares.expiresAt,new Date())):
-    status==="EXPIRED"?and(isNull(shares.revokedAt),lte(shares.expiresAt,new Date())):
-    status==="REVOKED"?isNotNull(shares.revokedAt):undefined))
-    .orderBy(desc(shares.createdAt),desc(shares.id)).limit(50);
+  if (!await companyShareTablesReady()) return {ready:false,links:[],page,totalPages:1,total:0};
+  const now=new Date();
+  const filter=and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId),
+    status==="ACTIVE"?and(isNull(shares.revokedAt),gt(shares.expiresAt,now)):
+    status==="EXPIRED"?and(isNull(shares.revokedAt),lte(shares.expiresAt,now)):
+    status==="REVOKED"?isNotNull(shares.revokedAt):undefined);
+  const [totals,links]=await Promise.all([
+    getDb().select({total:count()}).from(shares).where(filter),
+    getDb().select({
+      id:shares.id,expiresAt:shares.expiresAt,revokedAt:shares.revokedAt,
+      createdAt:shares.createdAt,
+    }).from(shares).where(filter)
+      .orderBy(desc(shares.createdAt),desc(shares.id))
+      .limit(COMPANY_SHARE_PAGE_SIZE).offset((page-1)*COMPANY_SHARE_PAGE_SIZE),
+  ]);
+  const total=totals[0]?.total??0;
+  const totalPages=Math.max(1,Math.ceil(total/COMPANY_SHARE_PAGE_SIZE));
   const ids=links.map(link=>link.id);
   const stats=ids.length?await getDb().select({
     shareId:views.shareId,eventKind:views.eventKind,count:count(),
@@ -111,7 +123,7 @@ export async function listTpoCompanyApplicantShares(context: RequestContext, raw
     eq(views.collegeId,college.id),inArray(views.shareId,ids),
   )).groupBy(views.shareId,views.eventKind):[];
   const byId=companyShareAuditTotals(stats);
-  return {ready:true,links:links.map(link=>({
+  return {ready:true,page,total,totalPages,links:links.map(link=>({
     ...link, audit:byId.get(link.id)??{views:0,exports:0},
   }))};
 }
