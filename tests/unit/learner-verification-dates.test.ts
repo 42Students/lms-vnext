@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {learnerVerificationStatus} from "@/modules/placements/learner-verification-status-model";it("maintains section isolation for record status",()=>{expect(learnerVerificationStatus("EDUCATION",{section:"IDENTITY",status:"SENT_BACK",note:"sensitive",version:2}).reason).toBeNull();});

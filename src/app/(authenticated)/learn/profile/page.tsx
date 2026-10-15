@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {learnerCodingProfileLink} from "@/modules/placements/learner-coding-profile-link";
+import {learnerSavedCodingProfiles} from "@/modules/placements/learner-saved-coding-profiles-model";
 import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
 import {learnerProfileAcademicRecovery} from "@/modules/people/learner-profile-recovery-model";
 import {LearnerProfileAcademicRetry} from "@/components/profile/learner-profile-academic-retry";
@@ -72,13 +72,26 @@ export default async function LearnerProfilePage({
       </section>
       <section aria-label="Coding profiles" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Coding platform profiles</h2>
-        <p className="mt-1 text-sm text-body">GitHub is read from your saved social profile. A link is not proof of coding skill or a verified account.</p>
-        {learnerCodingProfileLink("GITHUB",profile.profileDocument.socialProfiles.githubUrl)
-          ? <a href={learnerCodingProfileLink("GITHUB",profile.profileDocument.socialProfiles.githubUrl)!}
-              target="_blank" rel="noopener noreferrer"
-              className="mt-3 inline-flex min-h-11 items-center break-all text-sm font-semibold text-primary-text underline">Open my GitHub profile ↗</a>
-          : <p className="mt-3 text-sm text-muted-foreground">No valid GitHub account URL is recorded.</p>}
-        <div><Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Edit social profiles →</Link></div>
+        <p className="mt-1 text-sm text-body">Saved GitHub and coding-platform links are learner-authored, not verified skill evidence.</p>
+        {learnerSavedCodingProfiles(profile.profileDocument).length === 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">No valid coding-platform links saved yet.</p>
+        ) : (
+          <ul className="mt-3 flex min-w-0 flex-wrap gap-3">
+            {learnerSavedCodingProfiles(profile.profileDocument).map(entry => (
+              <li key={entry.platform}>
+                <a href={entry.href} rel="noopener noreferrer" target="_blank"
+                  className="inline-flex min-h-11 items-center break-all rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline">
+                  {entry.label} ↗
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="mt-2 text-xs text-muted-foreground">Save GitHub under Social profiles; add other coding sites as URL-type entries under Additional information using the exact platform name.</p>
+        <div className="flex flex-wrap gap-4">
+          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Edit GitHub →</Link>
+          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Edit coding links →</Link>
+        </div>
       </section>
       <LearnerProfileWorkspace
         initialSection={initialSection}

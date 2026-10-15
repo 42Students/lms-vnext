@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {learnerNoticeQuerySchema as s} from "@/modules/placements/learner-notices-query-model";it("validates both filters and rejects unscoped query dimensions",()=>{expect(s.safeParse({pinned:"1",unread:"1"}).success).toBe(true);expect(s.safeParse({pinned:["1"]}).success).toBe(false);expect(s.safeParse({userId:"foreign"}).success).toBe(false);});
