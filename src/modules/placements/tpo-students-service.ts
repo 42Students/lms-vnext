@@ -42,6 +42,8 @@ import { placementTpoAfterCollege } from "@/db/schema/tpo-configuration";
 import { afterCollegeOutcomeSchema } from "./tpo-after-college-model";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
+import { learnerProfileDocumentSchema } from "@/modules/people/profile-validation";
+import { normalizeCodingProfile } from "./tpo-coding-profile-model";
 import type { RequestContext } from "@/modules/identity/context";
 
 import {
@@ -76,6 +78,7 @@ export const tpoStudentsQuerySchema = z
       .enum(TPO_STUDENT_JOURNEY_STATES)
       .optional(),
     afterCollege: afterCollegeOutcomeSchema.optional(),
+    codingPlatform: z.literal("GITHUB").optional(),
     branchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
@@ -200,6 +203,7 @@ export async function getTpoStudentsIntelligence(
       displayName: users.displayName,
       email: users.email,
       rollNumber: learnerProfiles.rollNumber,
+      profileDocument: learnerProfiles.profileDocument,
       registrationNumber:
         learnerProfiles.registrationNumber,
       enrollmentId: learnerProgramEnrollments.id,
@@ -778,6 +782,9 @@ export async function getTpoStudentsIntelligence(
             ),
           });
 
+    const profile=learnerProfileDocumentSchema.safeParse(learner.profileDocument??{});
+    const codingGithubUrl=profile.success&&profile.data.socialProfiles.githubUrl
+      ? normalizeCodingProfile("GITHUB",profile.data.socialProfiles.githubUrl):null;
     const source: TpoStudentSource = {
       membershipId: learner.membershipId,
       displayName: learner.displayName,
@@ -819,6 +826,7 @@ export async function getTpoStudentsIntelligence(
           learner.membershipId,
         ) ?? 0,
       ambiguousSection,
+      codingGithubUrl,
       afterCollegeOutcome: afterCollegeByMember.get(learner.membershipId)?.outcome??null,
       afterCollegeUpdatedAt: afterCollegeByMember.get(learner.membershipId)?.updatedAt??null,
     };
