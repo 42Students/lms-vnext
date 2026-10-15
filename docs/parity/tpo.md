@@ -2045,3 +2045,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / TPO communication templates (PARTIAL, 2026-10-15):** A TPO-only Templates destination offers three static copyable manual drafts. Neither college-managed template storage nor outbound delivery is claimed; exact legacy editable template and provider integration remain open.
 
 **Chat-2 batch invitation draft (PARTIAL):** A TPO-only batch-specific manual invitation preview uses the persisted cohort name and lifecycle/deadline where available, warns on already-invited/finished batches and offers a registration drill-in; it never sends or records an invite. Actual legacy invite delivery and receipt remain unavailable.
+
+**Chat-2 batch registration reminder preparation (PARTIAL):** A scoped reminder draft uses live DB08 registration-summary counts, distinguishes unavailable evidence from zero, warns for finished batches and links to unrecorded-choice rosters; no contacts, consent, outbound send or delivery receipts are inferred.
