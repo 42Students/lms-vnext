@@ -17,15 +17,16 @@ describe("College Admin content aggregate model", () => {
 
   it("rejects unscoped college overrides and invalid filters", () => {
     expect(collegeContentQuerySchema.parse({})).toEqual({
-      q: "", status: "ALL", format: "ALL", scope: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", scope: "ALL", visibility: "ALL", page: 1,
     });
     expect(collegeContentQuerySchema.parse({ q: "  safety  ", status: "PUBLISHED", page: "2" }))
-      .toEqual({ q: "safety", status: "PUBLISHED", format: "ALL", scope: "ALL", page: 2 });
+      .toEqual({ q: "safety", status: "PUBLISHED", format: "ALL", scope: "ALL", visibility: "ALL", page: 2 });
     for (const invalid of [
       { collegeId: "another-college" },
       { status: "CLOSED" },
       { format: "EXTERNAL_URL" },
       { scope: "OTHER" },
+      { visibility: "MAYBE" },
       { offeringStatus: "CANCELLED" },
       { page: 0 },
       { page: 1001 },
@@ -51,8 +52,9 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentHref("RESOURCE",{...collegeContentQuerySchema.parse({offeringStatus:"ARCHIVED"})}))
       .toContain("offeringStatus=ARCHIVED");
     expect(url.searchParams.has("collegeId")).toBe(false);
+    expect(collegeContentHref("RESOURCE",collegeContentQuerySchema.parse({visibility:"HIDDEN"}))).toContain("visibility=HIDDEN");
     expect(collegeContentHref("RESOURCE", {
-      q: "", status: "ALL", format: "ALL", scope: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", scope: "ALL", visibility: "ALL", page: 1,
     })).toBe("/college/resources");
   });
 
