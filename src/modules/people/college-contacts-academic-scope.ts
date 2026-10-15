@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,exists,sql,isNull,ilike} from "drizzle-orm";
+import {and,eq,exists,not,sql,isNull,ilike} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,facultyProfiles,learnerProgramEnrollments,programs,departments,courseTeachingAssignments,courseSectionDeliveries,courseOfferings,courses,sectionEnrollments,sections,cohorts} from "@/db/schema";
 export function collegeContactAcademicScope(collegeId:string){
@@ -31,19 +31,24 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(sectionEnrollments.status,"ACTIVE"),eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.id,sectionId))));
- const inCombinedPlacement=(input:{cohortId?:string;programId?:string;sectionId?:string;classPresence?:string})=>exists(
-  db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+ const inCombinedPlacement=(input:{cohortId?:string;programId?:string;sectionId?:string;classPresence?:string})=>{
+  const placedInEnrollment=exists(db.select({id:sectionEnrollments.id}).from(sectionEnrollments)
+   .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),
+     eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
+   .where(and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
+     eq(sections.cohortId,cohorts.id),eq(sectionEnrollments.status,"ACTIVE"),
+     input.sectionId?eq(sections.id,input.sectionId):undefined)));
+  return exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
    .innerJoin(programs,eq(programs.id,cohorts.programId))
    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
-   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"),
-     input.programId?eq(programs.id,input.programId):undefined,input.cohortId?eq(cohorts.id,input.cohortId):undefined,
-     input.sectionId||input.classPresence==="ASSIGNED"?exists(db.select({id:sectionEnrollments.id}).from(sectionEnrollments)
-       .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,cohorts.id),
-         eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
-       .where(and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
-         input.sectionId?eq(sectionEnrollments.sectionId,input.sectionId):undefined,eq(sectionEnrollments.status,"ACTIVE")))):undefined))
- );
+   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+     eq(learnerProgramEnrollments.status,"ACTIVE"),
+     input.programId?eq(programs.id,input.programId):undefined,
+     input.cohortId?eq(cohorts.id,input.cohortId):undefined,
+     input.sectionId||input.classPresence==="ASSIGNED"?placedInEnrollment:
+       input.classPresence==="NONE"?not(placedInEnrollment):undefined)));
+ };
  const inProgram=(programId:string)=>exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
