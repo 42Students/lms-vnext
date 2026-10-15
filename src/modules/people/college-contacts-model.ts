@@ -112,3 +112,17 @@ export function collegeContactsTabHref(filter:CollegeContactsQuery,tab:CollegeCo
 export function collegeContactsWithoutMemberHref(filter:CollegeContactsQuery):string{
  return collegeContactsHref({...filter,membershipId:undefined,page:1});
 }
+
+/** The public error explanation must not echo query values, memberships or internal stack traces. */
+export function collegeContactFilterMessage(error:unknown):string {
+ switch(error instanceof Error?error.message:"") {
+  case "INVALID_CONTACT_DATE_WINDOW":
+   return "Joined start date must be on or before the end date. No contacts were loaded.";
+  case "INVALID_CONTACT_ACADEMIC_COMBINATION":
+   return "The selected enrollment, class or teaching filters cannot be combined. No contacts were loaded.";
+  case "INVALID_CONTACT_ROLE_AUDIENCE":
+   return "That contact role audience is incompatible with the selected tab. No contacts were loaded.";
+  default:
+   return "A contact filter is invalid. No contacts were loaded.";
+ }
+}

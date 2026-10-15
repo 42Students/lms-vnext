@@ -3,7 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
-import {collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
+import {collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
@@ -14,8 +14,8 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
- catch{return <div className="space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
-  <ErrorState title="Invalid contact filters" description="A contact filter is invalid. No contacts were loaded."
+ catch(error){return <div className="space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
+  <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
  const context=await getCurrentRequestContext();
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
