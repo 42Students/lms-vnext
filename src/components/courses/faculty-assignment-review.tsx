@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
-import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
+import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
 import {
   assignmentSubmissionActions,
@@ -423,6 +423,8 @@ export function FacultyAssignmentReview({
       const parsed = facultySubmissionReviewResponseSchema.safeParse(await response.json());
       if (!parsed.success) throw new Error("The submission list could not be read. Refresh and try again.");
       const payload = parsed.data;
+      if (!facultySubmissionReviewMatchesScope(payload,assignmentId,deliveryId))
+        throw new Error("The submission list belongs to a different Section. Reload this assignment.");
       if (sequence !== loadSequence.current) return;
       setSubmissions(payload.items);setPagination(payload);setPage(payload.page);
     } catch (caught) {
