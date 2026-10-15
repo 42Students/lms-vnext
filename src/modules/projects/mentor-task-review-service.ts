@@ -58,6 +58,7 @@ export async function getMentorTaskReviews(
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
     query.priority==="ALL"?undefined:eq(projectTasks.priority,query.priority),
+    query.version===undefined?undefined:eq(projectTaskSubmissions.version,query.version),
     sql`not exists (select 1 from project_task_submissions newer
       where newer.task_id=${projectTaskSubmissions.taskId}
         and newer.version>${projectTaskSubmissions.version})`,

@@ -3,6 +3,7 @@ import { z } from "zod";
 export const mentorTaskReviewQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
   priority: z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
+  version: z.preprocess(v=>v===""?undefined:v,z.coerce.number().int().min(1).max(100000).optional()),
   order: z.enum(["NEWEST","OLDEST","PRIORITY"]).default("NEWEST"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
@@ -20,11 +21,12 @@ export function mentorTaskReviewTargetHref(projectId:string,taskId:string){
 }
 export function mentorTaskReviewHref(query: {
   search?: string; page?: number; pageSize?: number;
-  priority?: string; order?: string;
+  priority?: string; order?: string; version?: number;
 }) {
   const params = new URLSearchParams();
   if (query.search) params.set("search", query.search);
   if (query.priority&&query.priority!=="ALL")params.set("priority",query.priority);
+  if (query.version!==undefined)params.set("version",String(query.version));
   if (query.order&&query.order!=="NEWEST")params.set("order",query.order);
   if (query.page && query.page > 1) params.set("page", String(query.page));
   if (query.pageSize && query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
