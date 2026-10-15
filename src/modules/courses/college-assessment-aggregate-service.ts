@@ -2,8 +2,11 @@ import "server-only";
 
 import { and, asc, count, desc, eq, ilike, inArray, isNull, isNotNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { alias } from "drizzle-orm/pg-core";
 import {
   academicPeriods,
+  cohorts,
+  programs,
   assignmentSubmissions,
   courseAssignments,
   courseLearningPaths,
@@ -22,6 +25,8 @@ import {
   type CollegeAssessmentAggregateItem,
   type CollegeAssessmentKind,
 } from "./college-assessment-aggregate-model";
+
+const cohortDepartment = alias(departments,"assessment_cohort_department");
 
 function textPattern(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
@@ -72,6 +77,8 @@ export async function listCollegeAssessmentAggregate(
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
+      query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.scope==="SHARED"?isNull(courseAssignments.deliveryId):
         query.scope==="SECTION"?isNotNull(courseAssignments.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseAssignments.dueAt):
@@ -97,6 +104,9 @@ export async function listCollegeAssessmentAggregate(
       .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
       .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(cohorts,eq(cohorts.id,courseOfferings.cohortId))
+      .innerJoin(programs,eq(programs.id,cohorts.programId))
+      .innerJoin(cohortDepartment,and(eq(cohortDepartment.id,programs.departmentId),eq(cohortDepartment.collegeId,collegeId)))
       .innerJoin(academicPeriods, and(eq(academicPeriods.id,courseOfferings.academicPeriodId),eq(academicPeriods.collegeId,collegeId)))
       .where(conditions).as("college_assignment_scope");
     const [totals, items] = await Promise.all([
@@ -115,6 +125,8 @@ export async function listCollegeAssessmentAggregate(
         eq(courseQuizzes.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
+      query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.scope==="SHARED"?isNull(courseQuizzes.deliveryId):
         query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseQuizzes.dueAt):
@@ -142,6 +154,9 @@ export async function listCollegeAssessmentAggregate(
       .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
       .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(cohorts,eq(cohorts.id,courseOfferings.cohortId))
+      .innerJoin(programs,eq(programs.id,cohorts.programId))
+      .innerJoin(cohortDepartment,and(eq(cohortDepartment.id,programs.departmentId),eq(cohortDepartment.collegeId,collegeId)))
       .innerJoin(academicPeriods, and(eq(academicPeriods.id,courseOfferings.academicPeriodId),eq(academicPeriods.collegeId,collegeId)))
       .where(conditions).as("college_quiz_scope");
     const [totals, items] = await Promise.all([
