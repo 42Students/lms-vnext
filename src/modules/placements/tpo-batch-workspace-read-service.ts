@@ -69,7 +69,7 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  .from(sectionEnrollments).innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,batch.id),eq(sections.status,"ACTIVE")))
  .where(and(eq(sectionEnrollments.status,"ACTIVE"),inArray(sectionEnrollments.learnerEnrollmentId,enrollmentIds))):[];
  const scopeIds=[batch.id,...visible.map(r=>r.membershipId),...activeSections.map(r=>r.sectionId)];
- const decisions=await getDb().select({scopeType:placementEligibilityDecisions.scopeType,scopeId:placementEligibilityDecisions.scopeId,status:placementEligibilityDecisions.status,reason:placementEligibilityDecisions.reason})
+ const decisions=await getDb().select({scopeType:placementEligibilityDecisions.scopeType,scopeId:placementEligibilityDecisions.scopeId,status:placementEligibilityDecisions.status,reason:placementEligibilityDecisions.reason,note:placementEligibilityDecisions.note,updatedAt:placementEligibilityDecisions.updatedAt})
  .from(placementEligibilityDecisions).where(and(eq(placementEligibilityDecisions.collegeId,collegeId),inArray(placementEligibilityDecisions.scopeId,scopeIds)));
  const find=(kind:string,id:string)=>decisions.find(d=>d.scopeType===kind&&d.scopeId===id);
  const students=visible.map(r=>{const direct=find("MEMBERSHIP",r.membershipId);
@@ -78,7 +78,11 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  const cohort=find("COHORT",batch.id);const winner=sectionsFor.length>1?undefined:(direct??section??cohort);
  return {membershipId:r.membershipId,name:r.name??"Unnamed learner",decision:winner?.status??"NOT_DECIDED",
   source:!winner?"NONE":winner===direct?"LEARNER":winner===section?"CLASS":"BATCH",
-  reason:winner?.reason??null,ambiguous:sectionsFor.length>1};});
+  reason:winner?.reason??null,ambiguous:sectionsFor.length>1,
+  direct:direct&&["ELIGIBLE","INELIGIBLE"].includes(direct.status)
+   ?{status:direct.status as "ELIGIBLE"|"INELIGIBLE",reason:direct.reason,note:direct.note,updatedAt:direct.updatedAt.toISOString()}
+   :{status:null,reason:null,note:null,updatedAt:null},
+ };});
  return {batch,students,page,hasMore:records.length>25};
 }
 export async function listTpoBatchHistory(ctx:RequestContext,rawId:unknown){
