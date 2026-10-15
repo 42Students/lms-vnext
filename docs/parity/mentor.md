@@ -1298,3 +1298,8 @@ Added rolling 90-day selection for registered Mentor events, applied by timestam
 ## 2026-10-15 chat-11 — evaluation-events-mentor-activity (PARTIAL)
 
 Both assigned-project portfolio and exact-project activity screens can isolate actual registered evaluation events via fixed event-type SQL allowlists; raw rubrics, student data and metadata stay private. Unit source cases authored; runtime, database, 375px/desktop browser and complete legacy producers remain unverified.
+
+
+## 2026-10-15 chat-11 — mentor-sprint-change-events (PARTIAL)
+
+Both assigned Mentor portfolio and exact-project event readers now support sprint changes filtered to projects.sprint.updated. Existing active membership/college/role SQL gates and redacted event labels remain; unit tests authored, not executed. Browser and legacy event producer verification still open.

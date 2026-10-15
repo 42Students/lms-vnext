@@ -22,7 +22,7 @@ export const mentorActivityQuerySchema = z.object({
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS","PAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
-  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS"]).default("ALL"),
+  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS"]).default("ALL"),
   ...paging,
 }).strict();
 
