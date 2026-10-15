@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,exists,sql,isNull} from "drizzle-orm";
+import {and,eq,exists,sql,isNull,ilike} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,facultyProfiles,learnerProgramEnrollments,programs,departments,courseTeachingAssignments,courseSectionDeliveries,courseOfferings,courses,sectionEnrollments,sections,cohorts} from "@/db/schema";
 export function collegeContactAcademicScope(collegeId:string){
@@ -40,6 +40,8 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"),eq(cohorts.id,cohortId))));
+ const titleMatches=(pattern:string)=>exists(db.select({memberId:facultyProfiles.membershipId}).from(facultyProfiles)
+  .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),ilike(facultyProfiles.academicTitle,pattern))));
  const inEmploymentType=(employmentType:string)=>exists(db.select({memberId:facultyProfiles.membershipId}).from(facultyProfiles)
   .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),eq(facultyProfiles.employmentType,employmentType))));
  const inFacultyDepartment=(departmentId:string)=>exists(db.select({memberId:facultyProfiles.membershipId}).from(facultyProfiles)
@@ -61,5 +63,5 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(courseTeachingAssignments.membershipId,collegeMemberships.id),isNull(courseTeachingAssignments.endedAt))));
- return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeClass,inSection,inProgram,inCohort,inEmploymentType,inFacultyDepartment,activeEnrollment,activeTeaching,teachingInRole};
+ return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeClass,inSection,inProgram,inCohort,titleMatches,inEmploymentType,inFacultyDepartment,activeEnrollment,activeTeaching,teachingInRole};
 }

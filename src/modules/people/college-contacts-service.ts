@@ -7,7 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
 import {collegeContactAcademicScope} from "./college-contacts-academic-scope";
-import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
+import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactsIstDayStart,contactsNextIstDayStart,collegeContactLiteralPattern} from "./college-contacts-model";
 
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
@@ -59,6 +59,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.sectionId?and(learner,academic.inSection(filter.sectionId)):undefined,
    filter.facultyDepartmentId?and(faculty,academic.inFacultyDepartment(filter.facultyDepartmentId)):undefined,
    filter.employmentType?and(faculty,academic.inEmploymentType(filter.employmentType)):undefined,
+   filter.facultyTitleQ?and(faculty,academic.titleMatches(collegeContactLiteralPattern(filter.facultyTitleQ))):undefined,
    search?or(
     ilike(users.displayName,search),
     // Only staff who are not also learners may be located by email.

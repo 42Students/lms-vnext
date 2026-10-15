@@ -17,6 +17,7 @@ export const collegeContactsQuerySchema=z.strictObject({
   sectionId:z.string().uuid().optional(),
   facultyDepartmentId:z.string().uuid().optional(),
   employmentType:z.string().trim().min(1).max(128).optional(),
+  facultyTitleQ:z.string().trim().min(1).max(80).optional(),
   classPresence:z.enum(["ALL","ASSIGNED","NONE"]).default("ALL"),
   departmentPresence:z.enum(["ALL","ASSIGNED","MISSING"]).default("ALL"),
   titlePresence:z.enum(["ALL","PRESENT","MISSING"]).default("ALL"),
@@ -58,6 +59,7 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.sectionId)params.set("sectionId",filter.sectionId);
  if(filter.facultyDepartmentId)params.set("facultyDepartmentId",filter.facultyDepartmentId);
  if(filter.employmentType)params.set("employmentType",filter.employmentType);
+ if(filter.facultyTitleQ)params.set("facultyTitleQ",filter.facultyTitleQ);
  if(filter.classPresence!=="ALL")params.set("classPresence",filter.classPresence);
  if(filter.departmentPresence!=="ALL")params.set("departmentPresence",filter.departmentPresence);
  if(filter.titlePresence!=="ALL")params.set("titlePresence",filter.titlePresence);
@@ -85,4 +87,9 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
  return filter;
+}
+
+/** Literal SQL LIKE search, never expose wildcard interpretation to callers. */
+export function collegeContactLiteralPattern(value:string):string {
+ return "%"+value.replace(/[\\%_]/g,"\\$&")+"%";
 }
