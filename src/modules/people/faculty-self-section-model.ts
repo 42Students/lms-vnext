@@ -2,6 +2,26 @@ import { z } from "zod";
 import { facultyProfileDocumentSchema, type FacultyProfileDocument } from "./faculty-profile-document";
 import { facultyMetadataEditableKey } from "./faculty-profile-metadata-model";
 
+/** All document receipts remain administrator-controlled until uploads are approved.
+ * New entries may only have null receipts; existing receipts cannot be replaced or
+ * orphaned by deleting their parent entry.
+ */
+export function facultyReceiptIdsUnchanged<T extends {id:string}>(
+ current:readonly T[], next:readonly T[], names:readonly (keyof T & string)[],
+):boolean {
+ const previous=new Map(current.map(row=>[row.id,row]));
+ for(const original of current){
+  if(names.some(name=>original[name]!=null) && !next.some(row=>row.id===original.id))return false;
+ }
+ for(const row of next){
+  const old=previous.get(row.id);
+  for(const name of names){
+   if((old?.[name]??null)!==(row[name]??null))return false;
+  }
+ }
+ return true;
+}
+
 /** Writable, non-identity sections. Private contact and document receipts stay blocked. */
 export const facultySelfEditableSection = z.enum([
   "about", "personalDetails", "address", "socialProfiles",
@@ -30,7 +50,33 @@ export function updateFacultyProfileSection(
       }
     }
   }
+  // New public links must be secure. Unchanged historical HTTP links are
+  // retained to avoid destroying unrelated legacy data during section updates.
+  if(patch.section==="socialProfiles") {
+    const links=z.record(z.string(),z.string()).parse(patch.value);
+    for(const [key,raw] of Object.entries(links)){
+      if(raw && raw!==current.socialProfiles[key as keyof typeof current.socialProfiles]){
+        let valid=false;
+        try{
+          const url=new URL(raw);
+          valid=url.protocol==="https:" && !!url.hostname && !url.username && !url.password &&
+            url.hostname!=="localhost" && !url.hostname.endsWith(".localhost");
+        }catch{valid=false;}
+        if(!valid)throw new Error("Faculty public profile links must use HTTPS");
+      }
+    }
+  }
   // Reparse the *whole* document; cross-entry chronology, URLs and IDs apply.
   const copy: Record<string,unknown> = {...current, [patch.section]:patch.value};
-  return facultyProfileDocumentSchema.parse(copy);
+  const next=facultyProfileDocumentSchema.parse(copy);
+  if(patch.section==="education" && !facultyReceiptIdsUnchanged(
+    current.education,next.education,["certificateDocumentId"],
+  ))throw new Error("Private education document receipts cannot be changed");
+  if(patch.section==="certifications" && !facultyReceiptIdsUnchanged(
+    current.certifications,next.certifications,["certificateDocumentId"],
+  ))throw new Error("Private certification document receipts cannot be changed");
+  if(patch.section==="experiences" && !facultyReceiptIdsUnchanged(
+    current.experiences,next.experiences,["experienceCertificateDocumentId","offerLetterDocumentId"],
+  ))throw new Error("Private experience document receipts cannot be changed");
+  return next;
 }
