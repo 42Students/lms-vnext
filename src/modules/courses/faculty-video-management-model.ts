@@ -68,3 +68,15 @@ export function facultyVideoListEmptyState(
  if(processingCount>0)return "Videos are uploading or processing. Check the status again before publishing.";
  return "No videos match the current search or status filter.";
 }
+
+/** Only authorized Faculty can request replacement, never mid-upload or blocked. */
+export function facultyVideoCanReplace(
+ video:FacultyLessonVideo,canManage:boolean,
+):boolean {
+ return canManage && video.contentStatus!=="ARCHIVED" &&
+  (video.processingStatus==="READY"||video.processingStatus==="FAILED");
+}
+export function facultyVideoReplacePrompt(video:FacultyLessonVideo):string {
+ const title=video.title.slice(0,120);
+ return "Replace the video for \""+title+"\"? The current recording may become unavailable while its replacement is processed. Existing lesson placement is kept.";
+}
