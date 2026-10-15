@@ -8,7 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "./hr-interview-staged-schema";
-import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed} from "./hr-interview-slot-model";
+import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
 import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
 
@@ -53,12 +53,18 @@ export async function listHrInterviewSlots(context:RequestContext,rawJobId:unkno
    mode:hrInterviewSlots.mode,panelLabel:hrInterviewSlots.panelLabel,
    capacity:hrInterviewSlots.capacity,bookedCount:hrInterviewSlots.bookedCount,
    status:hrInterviewSlots.status,version:hrInterviewSlots.version,
+   createdByUserId:hrInterviewSlots.createdByUserId,
   }).from(hrInterviewSlots).innerJoin(placementJobRounds,and(
    eq(placementJobRounds.id,hrInterviewSlots.roundId),
    eq(placementJobRounds.jobId,job.id)))
    .where(eq(hrInterviewSlots.collegeId,job.collegeId))
    .orderBy(hrInterviewSlots.startAt).limit(100);
-  return {status:"READY" as const,items:rows};
+  return {status:"READY" as const,items:rows.map(row=>({
+   id:row.id,roundId:row.roundId,startAt:row.startAt,endAt:row.endAt,
+   mode:row.mode,panelLabel:row.panelLabel,capacity:row.capacity,
+   bookedCount:row.bookedCount,status:row.status,version:row.version,
+   canEdit:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id),
+  }))};
  });
 }
 export async function writeHrInterviewSlot(
@@ -114,7 +120,8 @@ export async function writeHrInterviewSlot(
    eq(placementJobRounds.id,hrInterviewSlots.roundId),eq(placementJobRounds.jobId,job.id)))
    .where(and(eq(hrInterviewSlots.id,input.slotId),eq(hrInterviewSlots.collegeId,job.collegeId)))
    .for("update").limit(1);
-  if(!slot||slot.createdByUserId!==context.user.id)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
+  if(!slot||!canRecruiterMutateOwnSlot(slot.createdByUserId,context.user.id))
+   throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
   if(input.expectedVersion!==slot.version || slot.startAt<=new Date() ||
      !slotTransitionAllowed(slot.status,input.action,slot.bookedCount,slot.capacity))
    throw new Error("SLOT_STALE");

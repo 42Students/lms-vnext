@@ -47,3 +47,8 @@ export function parseIstLocalSlot(value:unknown):string{
  if(actual!==input)throw new Error("INVALID_IST_DATE");
  return input+":00+05:30";
 }
+
+/** Internal aggregate slot changes are restricted to the recruiter who created that block. */
+export function canRecruiterMutateOwnSlot(createdByUserId:string,recruiterUserId:string):boolean{
+ return Boolean(createdByUserId&&recruiterUserId&&createdByUserId===recruiterUserId);
+}
