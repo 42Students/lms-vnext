@@ -29,14 +29,16 @@ export const studentRuleHistoryCursorSchema=z.strictObject({
  beforeOccurredAt:z.iso.datetime({offset:true}).optional(),
  beforeId:z.uuid().optional(),
  module:z.enum(["all","projects","electives"]).default("all"),
+ actorName:z.string().trim().max(100).default(""),
 }).refine(value=>Boolean(value.beforeOccurredAt)===Boolean(value.beforeId),{
  message:"Both pagination cursor fields are required",
 });
 export function studentRuleHistoryHref(collegeId:string,membershipId:string,
- next:{beforeOccurredAt:Date;beforeId:string}|null,module:"all"|"projects"|"electives"="all"){
+ next:{beforeOccurredAt:Date;beforeId:string}|null,module:"all"|"projects"|"electives"="all",actorName=""){
  const base="/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history";
  const query=new URLSearchParams();
  if(module!=="all")query.set("module",module);
+ if(actorName.trim())query.set("actorName",actorName.trim());
  if(next){query.set("beforeOccurredAt",next.beforeOccurredAt.toISOString());query.set("beforeId",next.beforeId);}
  return query.size?base+"?"+query.toString():base;
 }
