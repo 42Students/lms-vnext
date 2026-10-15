@@ -22,10 +22,12 @@ return learnerApplicationUrlSchema.parse(safe);
 export function updateLearnerApplicationUrl(current:string,changes:Record<string,string|null>){
 const allowed=["q","view","stage","sort","page","applicationId"];
 const query=new URLSearchParams(),old=new URLSearchParams(current);
-for(const key of allowed){const values=old.getAll(key);if(values.length===1&&values[0])query.set(key,values[0]);}
+for(const key of allowed){const values=old.getAll(key);if(values.length===1&&values[0]&&learnerApplicationUrlSchema.safeParse({[key]:values[0]}).success)query.set(key,values[0]);}
 for(const [key,value] of Object.entries(changes)){
 if(!allowed.includes(key))continue;
-if(!value||value==="all")query.delete(key);else query.set(key,value);
+if(!value||value==="all")query.delete(key);
+else if(learnerApplicationUrlSchema.safeParse({[key]:value}).success)query.set(key,value);
+else query.delete(key);
 }
 if(!Object.prototype.hasOwnProperty.call(changes,"page"))query.delete("page");
 return learnerApplicationUrlSchema.safeParse(Object.fromEntries(query.entries())).success?query.toString():"";

@@ -8,12 +8,11 @@ import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-pl
 import {
   availableLearnerJobFacets,
   filterLearnerPlacementJobs,
-  learnerDriveAvailabilityCounts,
   learnerJobEmploymentTypeCounts,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
-import {learnerDriveOverview} from "@/modules/placements/learner-drive-overview-model";
+import {learnerDriveOverview,learnerDriveAvailabilityDriveCounts} from "@/modules/placements/learner-drive-overview-model";
 import {learnerDrivePageState} from "@/modules/placements/learner-drive-pagination-model";
 import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mobile-model";
 import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
@@ -74,7 +73,7 @@ export function LearnerJobsBrowse({
   const filters:LearnerJobBrowseFilters={...urlState.filters,search};
   const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
   const employmentCounts=useMemo(()=>learnerJobEmploymentTypeCounts(items),[items]);
-  const availabilityCounts=useMemo(()=>learnerDriveAvailabilityCounts(items),[items]);
+  const availabilityCounts=useMemo(()=>learnerDriveAvailabilityDriveCounts(items),[items]);
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
   const visible = filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso));
   const parsedPage=urlState.page;
