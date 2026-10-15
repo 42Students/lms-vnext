@@ -16,3 +16,11 @@ describe("learner attendance scoped history export",()=>{
   expect(result.content.split("\r\n").filter(Boolean)).toHaveLength(201);
  });
 });
+
+describe("Attendance CSV invisible-prefix formula injection",()=>{
+ it("neutralizes spreadsheet formulas hidden after direction or zero-width marks",()=>{
+  const output=learnerAttendanceHistoryCsv([{...r,title:"\u200B\u202E=SUM(1,2)",location:"\uFEFF@cmd"}]).content;
+  expect(output).toContain("'\u200B\u202E=SUM(1,2)");
+  expect(output).toContain("'\uFEFF@cmd");
+ });
+});
