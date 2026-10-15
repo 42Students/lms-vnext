@@ -1588,3 +1588,7 @@ The new mentor/admin PATCH task-assignee mutation validates an active same-proje
 ### PR-S2-08 registered 0083 — enforced role-kind and mutation permission
 
 Project access resolves persisted role_kind and can_mutate, projecting observers/reviewers/QA as read-only even if their base role is MENTOR; project lifecycle mutation requires explicit writable MENTOR/CO_MENTOR status. College Admin add/update services now validate role kinds and prohibit read-only writes, including demoting an active primary. Project member list projects both fields. Test execution and PostgreSQL denial evidence outstanding.
+
+### PR-S2-11 0084 visibility: project link/note read and write enforcement
+
+`project_resources.visibility` is now a validated create/update field (TEAM or MENTOR_ONLY), defaulting to TEAM. The registered resource list and the separately implemented instance workspace read enforce visibility in SQL for every non-privileged role, including observer/reviewer/QA; only ADMIN and a writable MENTOR can see mentor-only resources. File endpoints require a separate check, and full read-path testing is pending.

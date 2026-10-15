@@ -658,6 +658,7 @@ export const createProjectResourceInputSchema = z
       .nullable()
       .optional(),
     required: z.boolean().optional(),
+    visibility: z.enum(["TEAM","MENTOR_ONLY"]).optional(),
   })
   .strict()
   .refine(
@@ -683,6 +684,7 @@ export const updateProjectResourceInputSchema = z
       .nullable()
       .optional(),
     required: z.boolean().optional(),
+    visibility: z.enum(["TEAM","MENTOR_ONLY"]).optional(),
   })
   .strict()
   .refine(
