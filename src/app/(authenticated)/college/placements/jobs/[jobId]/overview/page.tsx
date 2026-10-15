@@ -31,6 +31,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
     </section>
     <nav aria-label="Drive detail sections" className="flex flex-wrap gap-4 text-sm font-semibold">
       <Link href={`/college/placements/jobs/${drive.id}/applications`} className="text-primary-text underline">Applications</Link>
+      <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-primary-text underline">Shortlisted</Link>
       <Link href={`/college/placements/jobs/${drive.id}/interviews`} className="text-primary-text underline">Interviews</Link>
       <Link href={`/college/placements/jobs/${drive.id}`} className="text-primary-text underline">Operations and settings</Link>
     </nav>
