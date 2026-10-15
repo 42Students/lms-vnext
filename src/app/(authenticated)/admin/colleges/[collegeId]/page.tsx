@@ -8,8 +8,9 @@ import { tenantSetupLinksAvailable } from "@/modules/colleges/admin-tenant-lifec
 import { superAdminVerificationHref } from "@/modules/verification/admin-links";
 export default async function TenantDetail({params}:{params:Promise<{collegeId:string}>}) {
  const {collegeId}=await params;
+ const context=await getCurrentRequestContext();
  let item:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;
- try {item=await getSuperAdminTenantLifecycleDetail(await getCurrentRequestContext(),collegeId);}
+ try {item=await getSuperAdminTenantLifecycleDetail(context,collegeId);}
  catch(error){if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND") notFound();throw error;}
  const fields=[
   ["Organization",item.organizationName],["College code",item.code],
@@ -26,6 +27,7 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
   </dl>
   <div className="flex flex-wrap gap-3">
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
+   {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Set up this college</Link> : null}
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Readiness</Link>
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Branding</Link>
    {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Profile Verification</Link> : null}

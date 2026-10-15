@@ -974,3 +974,62 @@ accessibility and browser end-to-end acceptance remain OPEN. Do not mark
 the Mentor Team or College Admin/Super Admin workspace create parity rows CLOSED
 until the gates and legacy semantic checks pass. The Mentor's own Team view
 continues to be read-only for membership management.
+
+
+## 2026-10-15 chat-11 — Mentor queue and assignment navigation (PARTIAL)
+
+Source-authored enhancements to the assigned Mentor Projects list: explicit
+recorded meeting requests, stalled activity, upcoming meetings, any recorded
+attention and no recorded attention filters; primary/supporting Mentor assignment
+scope; stable title A–Z or recent-update sorting with archived projects behind
+current projects. Filtering occurs after the existing persisted active Mentor
+assignment reader; pagination retains selectors and all results remain within
+the same current-college/role scope. **No recorded attention does not mean
+verified project health.** Only registered alert producers are considered,
+and unmigrated legacy blocked/workload fields are not fabricated.
+
+The currently assigned Mentor delivery-review queue also supports recorded
+review-age windows (all, last 7 days, last 30 days), using an explicit server
+snapshot and preserving the selector in pagination. The pending task-review
+queue supports critical-priority-first ordering and filtering by a real positive
+submission version; both are applied in scoped SQL before pagination.
+Zod rejects invalid age/version/order values and the existing membership/role
+checks remain authoritative. No team-membership mutations are exposed to
+Mentors.
+
+Pure unit tests and an extension of the existing isolated PostgreSQL task
+review fixture (success, priority/order/version, learner-role denial) are
+**authored, not executed**. Full legacy page/interaction semantics, complete
+producer coverage, typecheck/lint, DB gates, desktop/375px browser acceptance,
+and fresh-data performance remain OPEN. All parent Mentor Project, Team,
+Reviews, Tasks/Board and Activity rows remain PARTIAL until independent
+acceptance; no parity matrix row was edited.
+
+
+## 2026-10-15 chat-11 follow-up — Mentor project triage, reviews and activity (PARTIAL)
+
+Source-authoring only; all listed work retains PARTIAL status until executed
+TypeScript/lint, unit, isolated PostgreSQL and 375px/desktop browser gates pass.
+
+- Mentor Projects now strictly parses bounded, role-scoped URL controls with Zod,
+  handles blank GET-form selectors, and shows an explicit invalid-filter recovery
+  state rather than silently broadening a bad filter. Its shared attention-selector
+  JSX fragment is repaired. The list can distinguish projects with no persisted
+  tasks and with persisted non-DONE tasks. Counts are loaded via revalidated
+  active Mentor membership/assigned-project scope, not caller-supplied IDs.
+  This does **not** simulate the unmigrated legacy blocked-workspace flag.
+- The sanitized assigned-project activity feed offers actual recorded-event
+  windows (past 7 and 30 rolling days), oldest/newest ordering with a stable
+  UUID tie-break, and scoped registered Project lifecycle filters applied
+  before database count and page. Events with missing historical producers
+  remain unknown; no raw summaries, metadata or learner contact are exposed.
+- Pending final-delivery reviews can be narrowed to current assigned Project
+  lifecycle and submissions waiting more than seven days. Existing age,
+  paging and optional-module checks remain authoritative. This is an
+  attention signal, not a fabricated SLA decision.
+- Unit model tests and existing isolated PostgreSQL Mentor fixture assertions
+  for recorded task count and learner denial are authored but **not executed**.
+  No Mentor membership write capability was introduced. New files stay in
+  existing modules with no new DB tables/migrations. The central parity matrix
+  is intentionally unchanged; legacy Team, Board, Reviews, Activity and
+  navigation/browser sign-off remain OPEN.

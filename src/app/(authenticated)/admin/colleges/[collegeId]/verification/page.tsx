@@ -1,48 +1,56 @@
-import { notFound } from "next/navigation";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { VerificationWorkspace } from "@/components/verification/VerificationWorkspace";
-import { PageHeader } from "@/components/ui/page-header";
-import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
-import { CollegeServiceError } from "@/modules/colleges/service";
-import { requirePermission } from "@/modules/permissions/policy";
+import Link from "next/link";
+import {notFound} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {SuperAdminVerificationPanel} from "@/components/verification/SuperAdminVerificationPanel";
+import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenant-lifecycle-service";
+import {CollegeServiceError} from "@/modules/colleges/service";
+import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
+import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
+import {verificationQueueFilters} from "@/modules/verification/queue-filters";
+import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
 
-/**
- * Reuses the cross-role queue UI, but fails closed until the staff queue
- * repository and audited review mutation are connected. Never claim an empty
- * queue while a read is unavailable or derive rows from untrusted input.
- */
-export default async function CollegeVerificationPage({
-  params,
-}: {
-  params: Promise<{ collegeId: string }>;
-}) {
-  const { collegeId } = await params;
-  const context = await getCurrentRequestContext();
-  let college: Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;
-  try {
-    college = await getSuperAdminTenantLifecycleDetail(context, collegeId);
-  } catch (error) {
-    if (error instanceof CollegeServiceError && error.code === "COLLEGE_NOT_FOUND") {
-      notFound();
-    }
-    throw error;
-  }
-  requirePermission(context, "profile-verification.review", {
-    organizationId: college.organizationId,
-    collegeId: college.id,
-  });
-
-  return (
-    <div className="min-w-0 space-y-6">
-      <PageHeader
-        eyebrow="Super Admin · Verification"
-        title={college.name}
-        description="College-scoped learner education and identity verification."
-      />
-      <VerificationWorkspace
-        rows={[]}
-        error="The staff queue service is not connected yet. No reviews or messaging can be performed."
-      />
-    </div>
-  );
+export const dynamic="force-dynamic";
+const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+export default async function AdminCollegeVerification({
+ params,searchParams,
+}:{
+ params:Promise<{collegeId:string}>;
+ searchParams:Promise<Record<string,string|string[]|undefined>>;
+}){
+ const {collegeId}=await params;
+ const context=await getCurrentRequestContext();
+ let college:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;
+ try{
+  await requireSuperAdminVerificationCollege(context,collegeId);
+  college=await getSuperAdminTenantLifecycleDetail(context,collegeId);
+ }catch(e){if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();throw e;}
+ const base=`/admin/colleges/${encodeURIComponent(college.id)}/verification`;
+ const raw=await searchParams;
+ const parsed=verificationQueueFilters.safeParse(Object.fromEntries(
+  Object.entries(raw).filter(([,v])=>v!==undefined&&v!=="").map(([k,v])=>[k,one(v)]),
+ ));
+ const header=<PageHeader eyebrow="Super Admin · Verification" title={college.name}
+  description="College-scoped learner Education and Identity verification. Review only the currently selected college."/>;
+ if(!parsed.success)return <div className="space-y-5">{header}
+  <div role="alert" className="rounded-xl border border-border p-5">Invalid verification filters.
+   <Link href={base} className="ml-2 text-primary-text underline">Reset</Link></div></div>;
+ let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
+ try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
+ catch(e){
+  if(!(e instanceof VerificationUnavailableError)&&!(e instanceof VerificationQueueLimitError))throw e;
+  return <div className="space-y-5">{header}
+   <p role="alert" className="rounded-xl border border-border p-5">{e instanceof VerificationUnavailableError?
+    "Verification storage is not yet available. No queue decisions can be made.":
+    "The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing."}</p>
+   <Link className="text-primary-text underline" href={base}>Retry</Link>
+  </div>;
+ }
+ const query:Record<string,string>={};
+ for(const [k,v] of Object.entries(data.filter)){if(v!==undefined&&v!==null)query[k]=String(v);}
+ return <div className="min-w-0 space-y-5">{header}
+   <SuperAdminVerificationPanel collegeId={college.id} rows={data.rows}
+    counts={data.counts} activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
+    page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>
+ </div>;
 }

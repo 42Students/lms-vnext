@@ -24,6 +24,9 @@ export default async function FacultyProfilePage() {
         description="Your college identity and teaching details."
       />
       <div className="flex justify-end">
+        <Link href="/teacher/profile/details" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Edit About &amp; profile sections →</Link>
+      </div>
+      <div className="flex justify-end">
         <Link href="/teacher/profile/teaching"
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Current teaching assignments →

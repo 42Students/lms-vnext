@@ -5,6 +5,7 @@ import { getDb } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { PeopleServiceError } from "./errors";
+import { facultyProfileDocumentStorageReady } from "./faculty-profile-readiness";
 import {
   emptyFacultyProfileDocument,
   facultyProfileDocumentSchema,
@@ -77,6 +78,10 @@ export async function loadOwnFacultyProfileDocumentStaged(
         resourceScope(context),
       );
     const membership = assertPersistedFaculty(persisted);
+    // Do not access unregistered optional columns on a fresh database.
+    if (!(await facultyProfileDocumentStorageReady(tx))) {
+      throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
+    }
 
     const result =
       await tx.execute<FacultyProfileDocumentRow>(sql`
@@ -122,6 +127,10 @@ export async function saveOwnFacultyProfileDocumentStaged(
         resourceScope(context),
       );
     const membership = assertPersistedFaculty(persisted);
+    // Do not access unregistered optional columns on a fresh database.
+    if (!(await facultyProfileDocumentStorageReady(tx))) {
+      throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
+    }
 
     const locked =
       await tx.execute<FacultyProfileDocumentRow>(sql`
