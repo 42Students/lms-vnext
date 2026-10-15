@@ -8,6 +8,7 @@ import { filterLearnerScheduleByKind, type LearnerScheduleKind } from "@/modules
 import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-schedule-upcoming-model";
 import { learnerScheduleResetFilters } from "@/modules/academics/learner-schedule-filter-reset-model";
 import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock-model";
+import { learnerScheduleDayAfterShift } from "@/modules/academics/learner-schedule-shift-day-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -303,11 +304,7 @@ export function LearnerClassSchedule({
   function movePeriod(direction:-1|1) {
     const next=shiftCalendarAnchor(anchor,view,direction);
     setAnchor(next);
-    if(view==="month") {
-      const year=next.getFullYear();
-      const month=String(next.getMonth()+1).padStart(2,"0");
-      setChosenDay(year+"-"+month+"-01");
-    }
+    setChosenDay(learnerScheduleDayAfterShift(next,view));
   }
 
 
