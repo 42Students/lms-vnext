@@ -7,6 +7,7 @@ export default async function SuperAdminApplicationsPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  return <AdminScopedReadPage title="Applications" path="/admin/placements/applications" statuses={statuses}
+  exportPath="/api/admin/placements/applications/export" exportFilename="super-admin-placement-applications-ist.csv"
   description="Read-only persisted applications by job and applicant in the selected college. No contact, screening notes or invented selection states."
   searchParams={searchParams} loader={query=>listAdminPlacementApplications(context,query)}/>;
 }
