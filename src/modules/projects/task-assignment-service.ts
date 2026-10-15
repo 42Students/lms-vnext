@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectTasks,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -46,7 +46,7 @@ export async function assignProjectTask(context:RequestContext,projectIdInput:st
     const now=new Date(Math.max(Date.now(),task.updatedAt.getTime()+1));
     const [updated]=await tx.update(projectTasks).set({assigneeMembershipId:input.assigneeMembershipId,updatedAt:now})
       .where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
-        eq(projectTasks.updatedAt,task.updatedAt))).returning();
+        sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`)).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,

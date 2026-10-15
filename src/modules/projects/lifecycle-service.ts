@@ -4,6 +4,7 @@ import {
   eq,
   ne,
   isNull,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { mayCloseProjectSprint } from "./sprint-close-policy";
@@ -560,7 +561,7 @@ export async function updateProjectTaskStatus(
       eq(projectTasks.id, lockedTask.id),
       eq(projectTasks.projectId, scope.project.id),
       eq(projectTasks.status, lockedTask.status),
-      eq(projectTasks.updatedAt, lockedTask.updatedAt),
+      sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
     )).returning();
     if (!updated) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
