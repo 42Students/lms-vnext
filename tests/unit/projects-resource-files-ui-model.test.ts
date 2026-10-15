@@ -7,6 +7,8 @@ describe("Project resource upload UI contract",()=>{
     expect(projectResourceFileDeclaration({name:"empty.pdf",size:0,type:"application/pdf"}).ok).toBe(false);
     expect(projectResourceFileDeclaration({name:"huge.pdf",size:MAX_DOCUMENT_BYTES+1,type:"application/pdf"}).ok).toBe(false);
     expect(projectResourceFileDeclaration({name:"evil.svg",size:123,type:"image/svg+xml"}).ok).toBe(false);
+    expect(projectResourceFileDeclaration({name:"mismatch.png",size:1024,type:"application/pdf"}).ok).toBe(false);
+    expect(projectResourceFileDeclaration({name:"folder/report.pdf",size:1024,type:"application/pdf"}).ok).toBe(false);
   });
   it("only accepts secure presigned PUT grants with documented headers",()=>{
     const grant={fileId:"file",method:"PUT",uploadUrl:"https://files.example.test/put",expiresAt:"2030-01-01T00:00:00.000Z",requiredHeaders:{"content-type":"application/pdf","x-amz-meta-upload-token":"abc"},originalName:"report.pdf"};

@@ -1,8 +1,8 @@
 import {
-  MAX_DOCUMENT_BYTES, allowedMimeTypesFor, allowedExtensionsFor,
   guessContentTypeFromName, isSafeSignedUrl, fileStatusDescriptor,
   storageErrorMessage, type FileStatus,
 } from "@/modules/storage/ui-models";
+import {validateStorageDeclaration} from "@/modules/storage/file-policy";
 
 export type ProjectResourceFile = {
   id:string; projectId:string; resourceId:string|null;
@@ -17,20 +17,11 @@ export type ProjectResourceUploadGrant = {
 export {fileStatusDescriptor,storageErrorMessage};
 export const PROJECT_FILE_LIMIT=200;
 export function projectResourceFileDeclaration(file:Pick<File,"name"|"size"|"type">){
-  const originalName=file.name;
-  if(!originalName||originalName.length>255||/[\\/\\\\\\u0000-\\u001f]/.test(originalName))
-    return {ok:false as const,error:"STORAGE_NAME_INVALID"};
-  if(!Number.isSafeInteger(file.size)||file.size<=0)
-    return {ok:false as const,error:"STORAGE_SIZE_INVALID"};
-  if(file.size>MAX_DOCUMENT_BYTES)
-    return {ok:false as const,error:"STORAGE_FILE_TOO_LARGE"};
-  const contentType=file.type||guessContentTypeFromName("project-resource",originalName);
-  if(!contentType||!allowedMimeTypesFor("project-resource").includes(contentType))
-    return {ok:false as const,error:"STORAGE_TYPE_NOT_ALLOWED"};
-  const extension=originalName.split(".").pop()?.toLowerCase();
-  if(!extension||!allowedExtensionsFor("project-resource").some(x=>x.toLowerCase().replace(/^\\./,"")===extension))
-    return {ok:false as const,error:"STORAGE_EXTENSION_MISMATCH"};
-  return {ok:true as const,originalName,contentType,sizeBytes:file.size};
+  const result=validateStorageDeclaration("project-resource",{
+    originalName:file.name,contentType:file.type||guessContentTypeFromName("project-resource",file.name),
+    sizeBytes:file.size,
+  });
+  return result.ok?{ok:true as const,...result.value}:{ok:false as const,error:result.code};
 }
 /** Check grants before any cross-origin PUT. Never expose or persist uploadUrl. */
 export function validProjectResourceUploadGrant(value:unknown):value is ProjectResourceUploadGrant{
