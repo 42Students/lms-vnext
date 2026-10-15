@@ -63,6 +63,10 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
  if(!await placementTableExists("placement_outside_drive_records"))
   throw new Error("RECORDED_OUTSIDE_NOT_REGISTERED");
  const actor=await outsideActor(context,input.collegeId,input.companyRelationshipId);
+ if(actor.role==="RECRUITER"&&!can(context,"placements.recruiter.outside.record",{
+  collegeId:actor.relationship.collegeId,
+  placementCompanyRelationshipId:actor.relationship.id,
+ }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return getDb().transaction(async tx=>{
   if(actor.role==="TPO"){
    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
