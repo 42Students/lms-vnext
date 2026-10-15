@@ -1153,3 +1153,8 @@ acceptance remain open. No DONE surface/task/phase claim is made.
 ## 2026-10-15 chat-11 — single-mentor team coverage (PARTIAL)
 
 Projects with exactly one active Mentor now have a current-assignment, registered-team filter; this surfaces single-Mentor coverage without inferring workload. The existing active-Mentor/college/module permission service is reused; the new selector is server-validated and preserved in paging. Pure regression is authored, not executed. Real PostgreSQL, mobile/desktop, exact legacy producer and staffing-action verification remain OPEN; no Team row is closed.
+
+
+## 2026-10-15 chat-11 — uncovered-team current Mentor team triage (PARTIAL)
+
+The existing live same-college current-assignment Team coverage screen supports no learners and no primary mentor using registered active Learner/Mentor membership counts. Server-side Zod accepts only known selectors and paging retains them; no invented staffing adequacy or new team write is introduced. Focused unit test authored. Runtime, disposable PostgreSQL, accessible browser/mobile and exact legacy behavior checks remain open.
