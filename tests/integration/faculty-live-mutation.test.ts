@@ -104,7 +104,7 @@ describe("Faculty live session create, edit, cancel with PostgreSQL",()=>{
    expect(edited.status).toBe("PUBLISHED");
    await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
      action:"CANCEL",contentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),confirm:true,
-   })).rejects.toBeDefined();
+   })).rejects.toMatchObject({code:"LESSON_CONTENT_STALE_VERSION"});
    const cancelled=await commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
      action:"CANCEL",contentId:created.id,expectedUpdatedAt:edited.updatedAt.toISOString(),confirm:true,
    });

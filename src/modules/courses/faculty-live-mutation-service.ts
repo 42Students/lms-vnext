@@ -82,9 +82,10 @@ export async function commandFacultyLiveClass(
         eq(lessonContents.deliveryId,params.deliveryId),
         eq(lessonContents.contentType,"LIVE_CLASS"),
       )).for("update").limit(1);
-      if(!current || current.status==="ARCHIVED" ||
-        current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+      if(!current || current.status==="ARCHIVED")
         throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
+      if(current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+        throw new CoursesServiceError("LESSON_CONTENT_STALE_VERSION");
       // Draft or retired content cannot be rescheduled or cancelled through
       // the published-session editor, even with a forged version token.
       if(!facultyLivePublishedMutationAllowed(current.status))
