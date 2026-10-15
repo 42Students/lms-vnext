@@ -24,6 +24,15 @@ export const tpoBulkPreviewRequestSchema = z.object({
       ctx.addIssue({code:"custom",message:"Screening decisions require at least ten characters of review context"});
   }
 });
+/** Explicit action language makes the confirmation auditable to the operator. */
+export function tpoBulkActionLabel(action:z.infer<typeof tpoBulkActionSchema>):string {
+  switch(action){
+    case "ELIGIBLE":return "Mark learners eligible";
+    case "CLEAR_OVERRIDE":return "Clear learner overrides";
+    case "SHORTLISTED":return "Shortlist applicants";
+    case "REJECTED":return "Reject applicants";
+  }
+}
 export type TpoBulkPreviewRequest=z.output<typeof tpoBulkPreviewRequestSchema>;
 export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExtend({
   selections:bulkActionCommandSchema.shape.selections,
