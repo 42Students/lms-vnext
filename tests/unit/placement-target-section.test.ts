@@ -9,5 +9,7 @@ describe("P-S2-04 restricted class sections", () => {
     expect(isPlacementJobTargetSection(["s1","s2"],["s2"])).toBe(true);
     expect(isPlacementJobTargetSection(["s1"],["s2"])).toBe(false);
     expect(isPlacementJobTargetSection(["s1"],[])).toBe(false);
+    // Explicit INCLUDE decisions cannot grant a cohort without enrollment.
+    expect(isPlacementJobTargetSection(["s1"],[])).not.toBe(true);
   });
 });
