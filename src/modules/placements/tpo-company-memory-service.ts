@@ -17,7 +17,11 @@ import {
   placementTpoLeads,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { deriveCompanyDriveFacts } from "./company-drive-facts-policy";
+import {
+  deriveCompanyDriveFacts,
+  type DriveFactRow,
+} from "./company-drive-facts-policy";
+import { deriveTpoRecruiterLeadStage } from "./tpo-recruiter-lead-policy";
 import { requirePlacementManageScope } from "./scope";
 import { tpoCrmCollegeIdSchema } from "./tpo-crm-validation";
 
@@ -57,15 +61,33 @@ export function tpoCompanyKey(name: string | null | undefined) {
 
 type LeadRow = typeof placementTpoLeads.$inferSelect;
 
-function leadStage(
-  lead: LeadRow,
-  facts: ReturnType<typeof deriveCompanyDriveFacts>,
+/**
+ * T-S1-02: a recruiter contact inherits stage evidence only from drives
+ * belonging to its explicit college-company relationship. Similar company
+ * spellings and unrelated recruiters do not establish this recruiter's facts.
+ */
+export function deriveOwnRecruiterLeadStage(
+  lead: Pick<LeadRow, "manualStage" | "recruiterUserId" |
+    "inviteSentAt" | "inviteClickedAt" | "companyRelationshipId">,
+  jobs: readonly { jobId: string; relationshipId: string }[],
+  driveRows: readonly DriveFactRow[],
 ) {
-  if (lead.manualStage === "NOT_NOW") return "NOT_NOW";
-  if (facts.hasDrivePlanned) return "DRIVE_PLANNED";
-  if (lead.recruiterUserId) return "JOINED";
-  if (lead.inviteSentAt || lead.inviteClickedAt) return "INVITED";
-  return lead.manualStage;
+  const ownJobIds = new Set(
+    lead.companyRelationshipId
+      ? jobs.filter((job) => job.relationshipId === lead.companyRelationshipId)
+          .map((job) => job.jobId)
+      : [],
+  );
+  const facts = deriveCompanyDriveFacts(
+    driveRows.filter((row) => ownJobIds.has(row.jobId)),
+  );
+  return deriveTpoRecruiterLeadStage({
+    manualStage: lead.manualStage,
+    hasRecruitedFact: facts.hasAcceptedOffer,
+    hasPlannedDriveFact: facts.hasDrivePlanned,
+    recruiterUserId: lead.recruiterUserId,
+    inviteSentAt: lead.inviteSentAt ?? lead.inviteClickedAt,
+  });
 }
 
 async function loadCompanySourceRows(
@@ -198,16 +220,18 @@ export async function listTpoCompanies(
   const out = [];
 
   for (const group of groups.values()) {
-    const facts = deriveCompanyDriveFacts(
-      await loadDriveFacts(group.jobs.map((row) => row.job.id)),
-    );
+    const driveRows = await loadDriveFacts(group.jobs.map((row) => row.job.id));
+    const facts = deriveCompanyDriveFacts(driveRows);
+    const linkedJobs = group.jobs.map((row) => ({
+      jobId: row.job.id, relationshipId: row.relationshipId,
+    }));
     out.push({
       key: group.key,
       name: group.name,
       aliases: [...group.aliases].filter((name) => name !== group.name),
       contacts: group.leads.length,
       activeContacts: group.leads.filter(
-        (lead) => !["NOT_NOW"].includes(leadStage(lead, facts)),
+        (lead) => !["NOT_NOW"].includes(deriveOwnRecruiterLeadStage(lead, linkedJobs, driveRows)),
       ).length,
       drivesRan: facts.plannedDriveCount,
       acceptedOfferDrives: facts.acceptedOfferDriveCount,
@@ -237,7 +261,11 @@ export async function getTpoCompanyMemory(
   }
 
   const jobIds = group.jobs.map((row) => row.job.id);
-  const facts = deriveCompanyDriveFacts(await loadDriveFacts(jobIds));
+  const driveRows = await loadDriveFacts(jobIds);
+  const facts = deriveCompanyDriveFacts(driveRows);
+  const linkedJobs = group.jobs.map((row) => ({
+    jobId: row.job.id, relationshipId: row.relationshipId,
+  }));
   const leadIds = group.leads.map((lead) => lead.id);
   const activities =
     leadIds.length === 0
@@ -259,7 +287,7 @@ export async function getTpoCompanyMemory(
     designation: lead.designation,
     email: lead.emailNorm,
     phone: lead.phoneNorm,
-    stage: leadStage(lead, facts),
+    stage: deriveOwnRecruiterLeadStage(lead, linkedJobs, driveRows),
     source: lead.source,
     updatedAt: lead.updatedAt,
   }));

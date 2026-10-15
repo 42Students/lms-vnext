@@ -70,6 +70,23 @@ export function createRegistrationWrite(input: {
   };
 }
 
+/**
+ * P-S1-04: The learner's self-application gate is not the same as merely
+ * seeing placements. No registration means REGISTER_FIRST; choosing a
+ * non-placement path means CHOSE_OTHER. Neither grants consent implicitly.
+ */
+export type PlacementSelfApplyRegistrationState =
+  | "CAN_APPLY"
+  | "REGISTER_FIRST"
+  | "CHOSE_OTHER";
+
+export function resolveSelfApplyRegistrationChoice(
+  registration: { choice: PlacementRegistrationChoice } | null | undefined,
+): PlacementSelfApplyRegistrationState {
+  if (!registration) return "REGISTER_FIRST";
+  return registration.choice === "PLACEMENTS" ? "CAN_APPLY" : "CHOSE_OTHER";
+}
+
 /** Original V1 rules: a date limit takes precedence over drive-count limit. */
 export function isDebarmentActive(
   record: {
