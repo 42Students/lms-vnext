@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultySkills,removeFacultySkillDraft} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
 export function FacultyProfileSkills({initial,pending,onSave}:{
@@ -11,6 +12,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
 }){
  const [rows,setRows]=useState<Skill[]>(initial);
  const [changed,setChanged]=useState(false);
+ useFacultyProfileUnsavedWarning(changed);
  function edit(id:string,field:"skill"|"proficiency",value:string){
   setRows(current=>current.map(row=>row.id===id?{...row,[field]:value}:row));setChanged(true);
  }
