@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
-import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
+import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityFormLayout } from "@/modules/projects/mentor-portfolio-model";
 
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
@@ -36,7 +36,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
-      <form action="/mentor/activity" method="get" className="flex min-w-0 flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_select]:min-w-0 [&_select]:max-w-full">
+      <form action="/mentor/activity" method="get" className={mentorActivityFormLayout}>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded importance
           <select name="importance" defaultValue={data.query.importance}
             className="min-h-10 rounded-md border border-border bg-background px-3">
@@ -97,7 +97,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
           <li key={event.id} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-sm font-semibold text-foreground">{event.label}</p>
             <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
-              className="mt-1 block text-sm font-semibold text-primary-text hover:underline">
+              className="mt-1 block break-words text-sm font-semibold text-primary-text hover:underline">
               {event.projectTitle} →
             </Link>
             <time dateTime={event.occurredAt.toISOString()} className="mt-2 block text-xs text-muted-foreground">
