@@ -31,6 +31,8 @@ import {
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
+import {updateMentorTaskDetails} from "@/modules/projects/mentor-task-details-service";
+import {postProjectTaskComment,listProjectTaskComments} from "@/modules/projects/task-comment-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -362,6 +364,31 @@ describe("Projects P5 lifecycle", () => {
     expect(changed.status).toBe("IN_PROGRESS");
     await expect(updateProjectTaskStatus(mentor,project.id,task.id,{
       status:"BLOCKED",expectedUpdatedAt:unassigned.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+  });
+
+  it("persists registered 0090 task metadata and tenant-scoped append-only comments",async()=>{
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const task=workspace.tasks[0]!;
+    const changed=await updateMentorTaskDetails(mentor,{projectId:project.id,taskId:task.id},{
+      title:task.title,description:task.description,acceptanceCriteria:task.acceptanceCriteria,
+      priority:task.priority,expectedUpdatedAt:task.updatedAt.toISOString(),
+      taskType:"BUG",estimatePoints:5,dueDate:"2026-11-15",blockerReason:"Waiting for review",
+    });
+    expect(changed).toMatchObject({taskType:"BUG",estimatePoints:5,blockerReason:"Waiting for review"});
+    const comment=await postProjectTaskComment(learner,project.id,task.id,{
+      body:"Investigating the repro steps",expectedTaskUpdatedAt:changed.updatedAt.toISOString(),
+    });
+    const history=await listProjectTaskComments(learner,project.id,task.id);
+    expect(history.map(row=>row.id)).toContain(comment.id);
+    const dbRows=await pool.query<{task_type:string;estimate_points:number;due_date:string}>(
+      "select task_type,estimate_points,due_date::text as due_date from project_tasks where id=$1",
+      [task.id],
+    );
+    expect(dbRows.rows[0]).toEqual({task_type:"BUG",estimate_points:5,due_date:"2026-11-15"});
+    await expect(postProjectTaskComment(learner,project.id,task.id,{
+      body:"Stale comment version",expectedTaskUpdatedAt:task.updatedAt.toISOString(),
     })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
   });
 
