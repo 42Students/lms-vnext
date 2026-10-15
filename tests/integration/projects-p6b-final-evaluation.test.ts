@@ -157,6 +157,12 @@ function blueprint() {
 
 async function cleanup() {
   await pool.query(
+    `delete from activity_events where module='PROJECTS'
+     and metadata ->> 'projectId' in (
+       select id::text from project_instances where slug like 'p6b-%'
+     )`,
+  );
+  await pool.query(
     `delete from project_evaluation_items
      where evaluation_id in (
        select id from project_evaluations
@@ -471,6 +477,27 @@ describe("Projects P6B final delivery and evaluation", () => {
     expect(approved.submission.status).toBe(
       "APPROVED",
     );
+
+    const audit = await pool.query<{
+      event_type:string;subject_id:string;metadata:{projectId:string;version:number;decision?:string};
+      summary:string;
+    }>(
+      `select event_type,subject_id,metadata,summary from activity_events
+       where module='PROJECTS' and metadata ->> 'projectId' = $1::text
+         and event_type like 'projects.delivery.%'
+       order by occurred_at,id`,
+      [project.id],
+    );
+    expect(audit.rows.map(row=>row.event_type).sort()).toEqual([
+      "projects.delivery.draft_created","projects.delivery.draft_created",
+      "projects.delivery.reviewed","projects.delivery.reviewed",
+      "projects.delivery.submitted","projects.delivery.submitted",
+    ].sort());
+    expect(audit.rows.filter(row=>row.event_type==="projects.delivery.reviewed")
+      .map(row=>row.metadata.decision).sort()).toEqual(["APPROVED","CHANGES_REQUESTED"]);
+    expect(audit.rows.every(row=>row.subject_id===first.id||row.subject_id===second.id)).toBe(true);
+    expect(audit.rows.every(row=>row.metadata.projectId===project.id)).toBe(true);
+    expect(JSON.stringify(audit.rows)).not.toMatch(/example.com|Improve the demo evidence|Approved for evaluation/);
 
     const history =
       await listProjectSubmissions(

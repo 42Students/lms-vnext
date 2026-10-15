@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, gte, lt, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, lt, ne, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import {
@@ -11,6 +11,7 @@ import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 import { listMyMentorProjectAttention } from "./mentor-attention-service";
 import { mentorProjectActivityEventTypes } from "./mentor-project-activity-model";
+import {resolveMentorActivityProjectId} from "./mentor-project-event-attribution";
 import {
   mentorActivityQuerySchema, mentorReviewQuerySchema,
   pageMentorPortfolio, mentorActivityPagination, mentorActivityProjectTitleMatch, safeMentorProjectEventLabel, selectMentorReviewQueue,
@@ -95,7 +96,7 @@ export async function getMentorPortfolioActivity(
     types?inArray(activityEvents.eventType,types):undefined,
     or(
       and(eq(activityEvents.subjectType, "project"), inArray(activityEvents.subjectId, ids)),
-      inArray(metadataProjectId, ids),
+      and(ne(activityEvents.subjectType,"project"),inArray(metadataProjectId, ids)),
     ),
   );
   const db = getDb();
@@ -110,8 +111,7 @@ export async function getMentorPortfolioActivity(
         query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
       .limit(paging.pageSize).offset((paging.page - 1) * paging.pageSize);
   const items = rows.flatMap(row => {
-    const id = row.subjectType === "project" && byId.has(row.subjectId)
-      ? row.subjectId : row.metadataProjectId;
+    const id = resolveMentorActivityProjectId(row, new Set(byId.keys()));
     const project = id ? byId.get(id) : null;
     return project ? [{
       id: row.id, projectId: project.id, projectTitle: project.title,
