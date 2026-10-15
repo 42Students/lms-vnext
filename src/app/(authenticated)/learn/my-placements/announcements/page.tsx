@@ -32,7 +32,12 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <h1 className="mt-3 text-2xl font-semibold text-foreground">Announcements</h1>
         <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership.</p>
       </div>
-      <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">\n        <Link href="/learn/my-placements/announcements" aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>\n        <Link href="/learn/my-placements/announcements?pinned=1" aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>\n      </nav>\n      <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>\n      {!ready ? (
+      <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
+        <Link href="/learn/my-placements/announcements" aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>
+        <Link href="/learn/my-placements/announcements?pinned=1" aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>
+      </nav>
+      <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>
+      {!ready ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           College announcements are not available until the announcements database is enabled.
         </div>

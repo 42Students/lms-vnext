@@ -24,7 +24,11 @@ export default async function LearnerPlacementCellPage() {
         <Link href="/learn/my-placements/support" className="mt-3 mr-4 inline-flex text-sm font-semibold text-primary-text">My support-request history →</Link>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
       </section>
-      <nav aria-label="Placement cell resources" className="flex flex-wrap gap-3">\n        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read college notices →</Link>\n        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>\n      </nav>\n      <LearnerPlacementAlerts alerts={alerts} />
+      <nav aria-label="Placement cell resources" className="flex flex-wrap gap-3">
+        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read college notices →</Link>
+        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
+      </nav>
+      <LearnerPlacementAlerts alerts={alerts} />
       <LearnerPlacementOffers
         extensionRequests={requestWorkspace.requests.map(row=>({
           offerId:row.request.offerId,status:row.request.status,
