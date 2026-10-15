@@ -2041,3 +2041,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 global Requests navigation — PARTIAL:** The TPO More/Work Requests destination now leads to the functional global pending decision inbox rather than the Students-specific list. The existing Students Requests tab remains available; full legacy navigation/browser checks are open.
 
 **Chat-2 TPO Home Requests attention — PARTIAL:** TPO Home now shows a college-scoped SQL COUNT of persisted pending learner requests and prioritizes the decision inbox when the existing job queue has no next-up task. The count service independently verifies a currently active persisted TPO membership via the existing actor guard; no private request payload is loaded for the dashboard. Full home legacy/DB/browser parity remains open.
+
+**Chat-2 / TPO communication templates (PARTIAL, 2026-10-15):** A TPO-only Templates destination offers three static copyable manual drafts. Neither college-managed template storage nor outbound delivery is claimed; exact legacy editable template and provider integration remain open.
