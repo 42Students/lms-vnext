@@ -136,6 +136,18 @@ describe("authenticated shell model", () => {
     expect(learnerHrefs).not.toContain("/college/placements/calendar");
   });
 
+  it("hides legacy Student Groups from College Admin navigation for all role mixes", () => {
+    for (const roles of [
+      ["COLLEGE_ADMIN"],
+      ["COLLEGE_ADMIN", "FACULTY"],
+      ["COLLEGE_ADMIN", "MENTOR", "LEARNER"],
+    ] as const) {
+      const links = getShellNavigation(context(roles)).map((item) => item.href);
+      expect(links).not.toContain("/college/groups");
+      expect(links).toContain("/college/students");
+    }
+  });
+
   it("keeps College Admin navigation tenant-focused", () => {
     const shellContext = context(["COLLEGE_ADMIN"]);
 

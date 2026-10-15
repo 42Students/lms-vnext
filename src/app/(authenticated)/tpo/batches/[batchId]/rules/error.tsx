@@ -1,0 +1,1 @@
+"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Unable to load batch rules.</p><button className="rounded border px-3 py-2" onClick={reset}>Retry</button></section>;}

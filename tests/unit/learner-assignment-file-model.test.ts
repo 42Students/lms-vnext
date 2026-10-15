@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { learnerAssignmentFileRequest, learnerAssignmentFilePayload, learnerAssignmentUploadGrantSchema, validateLearnerAssignmentReadGrant } from "@/modules/courses/learner-assignment-file-model";
+import { learnerAssignmentFileRequest, learnerAssignmentFilePayload, learnerAssignmentUploadGrantSchema, validateLearnerAssignmentReadGrant, validateLearnerAssignmentUploadGrant } from "@/modules/courses/learner-assignment-file-model";
 import { transferLearnerAssignmentFile } from "@/components/courses/assignment-file-transfer";
 const delivery = "00000000-0000-4000-8000-000000000001";
 const receipt = "00000000-0000-4000-8000-000000000002";
 const grant = { receiptId: receipt, method: "PUT", uploadUrl: "https://storage.example.test/signed?token=private",
-  expiresAt: "2099-01-01T00:00:00Z", requiredHeaders: { "content-type": "application/pdf", "x-amz-meta-upload-token": "test-token" }, originalName: "proof.pdf" };
+  expiresAt: new Date(Date.now() + 10 * 60_000).toISOString(), requiredHeaders: { "content-type": "application/pdf", "x-amz-meta-upload-token": "test-token" }, originalName: "proof.pdf" };
 describe("learner assignment private-file boundary", () => {
   it("validates file size, filename and allowed MIME without trusting extension over provided MIME", () => {
     expect(learnerAssignmentFileRequest(delivery, { name: "paper.docx", size: 10, type: "" }).success).toBe(true);
@@ -19,7 +19,16 @@ describe("learner assignment private-file boundary", () => {
     expect(learnerAssignmentFilePayload(delivery, receipt, true)).toMatchObject({ submissionType: "FILE", uploadReceiptId: receipt });
     expect(() => learnerAssignmentFilePayload(delivery, receipt, false)).toThrow();
     expect(() => learnerAssignmentFilePayload(delivery, "forged", true)).toThrow();
-    expect(learnerAssignmentUploadGrantSchema.safeParse({ grant: { ...grant, uploadUrl: "http://storage.example.test" } }).success).toBe(false);
+    for (const url of ["http://storage.example.test", "https://user:secret@storage.example.test/file", "https://storage.example.test/file#fragment"]) {
+      expect(learnerAssignmentUploadGrantSchema.safeParse({ grant: { ...grant, uploadUrl: url } }).success).toBe(false);
+    }
+  });
+  it("bounds upload-grant validity to fifteen minutes", () => {
+    const now = Date.parse("2026-10-14T10:00:00Z");
+    expect(validateLearnerAssignmentUploadGrant({ grant: { ...grant, expiresAt: "2026-10-14T10:10:00Z" } }, now).receiptId).toBe(receipt);
+    for (const expiresAt of ["2026-10-14T10:00:00Z", "2026-10-14T11:00:00Z"]) {
+      expect(() => validateLearnerAssignmentUploadGrant({ grant: { ...grant, expiresAt } }, now)).toThrow();
+    }
   });
   it("uploads only to the signed URL without app cookies and never auto-submits", async () => {
     const fetcher = vi.fn<typeof fetch>()

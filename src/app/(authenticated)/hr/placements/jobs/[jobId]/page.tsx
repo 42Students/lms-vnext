@@ -16,6 +16,7 @@ import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
+import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
@@ -37,7 +38,7 @@ export default async function HrPlacementJobPage({
   params: Promise<{ jobId: string }>;
   searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
     offerPage?:string; offerState?:string;
-    roundId?:string; outcome?:string }>;
+    roundId?:string; outcome?:string; review?:string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -62,7 +63,19 @@ export default async function HrPlacementJobPage({
     throw error;
   }
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
-  const selectedApplicant = buildHrApplicantDrawer(applicants.rows, filters.applicant);
+  const reviewMode = z.enum(["1"]).optional().safeParse(query.review);
+  if (!reviewMode.success) notFound();
+  const focused = reviewMode.data === "1" && filters.tab === "applicants";
+  // Step only through this server-authorized page of actively shortlisted applicants.
+  const focusedIds = applicants.rows.filter(row => row.status === "SUBMITTED").map(row => row.id);
+  const selectedId = focused ? (filters.applicant ?? focusedIds[0] ?? null) : filters.applicant;
+  if (focused && selectedId && !focusedIds.includes(selectedId)) notFound();
+  const selectedApplicant = buildHrApplicantDrawer(applicants.rows, selectedId);
+  const focusedNavigation = focused && selectedId
+    ? focusedReviewNavigation({candidateIds: focusedIds, currentId: selectedId})
+    : null;
+  const focusedHref = (id:string) => "/recruiter/drives/"+workspace.job.id+
+    "?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1&applicant="+id;
   // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
   const now = new Date();
 
@@ -231,6 +244,11 @@ export default async function HrPlacementJobPage({
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Shared applicants</h2>
+            {applicants.rows.some(row=>row.status==="SUBMITTED") ? <Link
+              href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1"}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+              Focused review
+            </Link> : null}
             <Link href={"/api/placements/recruiter/jobs/"+workspace.job.id+"/applicants/export?stage="+filters.stage}
               className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
               Export shared applicants CSV
@@ -260,14 +278,19 @@ export default async function HrPlacementJobPage({
             ))}
           </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
           {selectedApplicant ? (
-            <section role="dialog" aria-modal="false" aria-labelledby="hr-applicant-drawer-title"
+            <section role="dialog" aria-modal={focused ? "true" : "false"} aria-labelledby="hr-applicant-drawer-title"
               className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">Applicant review</h3>
+                <h3 id="hr-applicant-drawer-title" className="text-lg font-semibold text-foreground">{focused ? "Focused review" : "Applicant review"}</h3>
                 <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
+              {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+                <span className="text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
+                {focusedNavigation.previous ? <Link className="rounded-md border border-border px-3 py-2 text-primary-text" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
+                {focusedNavigation.next ? <Link className="rounded-md border border-border px-3 py-2 text-primary-text" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
+              </nav> : null}
               <dl className="mt-5 grid gap-4 text-sm">
                 <div><dt className="text-muted-foreground">Applicant</dt><dd className="font-semibold text-foreground">{selectedApplicant.name}</dd></div>
                 <div><dt className="text-muted-foreground">Role</dt><dd className="text-foreground">{selectedApplicant.role}</dd></div>
