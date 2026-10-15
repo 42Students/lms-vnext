@@ -247,4 +247,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(foreign.items).toEqual([]);
   });
 
+  it("expectedEndState: matches persisted own-college evidence only",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,expectedEndState:"UNSET"}),
+      listCollegeBatches(adminA,{q:label,expectedEndState:"SET"}),
+      listCollegeBatches(adminB,{q:label,expectedEndState:"UNSET"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
