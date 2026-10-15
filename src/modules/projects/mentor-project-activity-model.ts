@@ -4,7 +4,7 @@ export const mentorProjectActivityQuerySchema=z.object({
   projectId:z.string().uuid(),
   importance:z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
   view:z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM"]).default("ALL"),
-  window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","LAST_90_DAYS"]).default("ALL"),
+  window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","LAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type MentorProjectActivityQuery=z.infer<typeof mentorProjectActivityQuerySchema>;
@@ -43,7 +43,7 @@ export function mentorProjectActivityPage(total:number,requested:number) {
 }
 
 /** Rolling 7x24h / 30x24h window over stored instants, never a local timezone guess. */
-export function mentorProjectActivitySince(window:"ALL"|"LAST_7_DAYS"|"LAST_30_DAYS"|"LAST_90_DAYS",now:Date){
+export function mentorProjectActivitySince(window:"ALL"|"LAST_7_DAYS"|"LAST_30_DAYS"|"LAST_90_DAYS"|"OLDER_THAN_30_DAYS",now:Date){
   if(window==="ALL")return null;
   return new Date(now.getTime()-(window==="LAST_7_DAYS"?7:window==="LAST_90_DAYS"?90:30)*86400000);
 }

@@ -68,6 +68,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="LAST_7_DAYS">Past 7×24 hours</option>
             <option value="LAST_30_DAYS">Past 30×24 hours</option>
             <option value="LAST_90_DAYS">Past 90×24 hours</option>
+            <option value="OLDER_THAN_30_DAYS">Older than 30×24 hours</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
