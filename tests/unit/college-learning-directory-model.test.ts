@@ -226,4 +226,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("assignmentPresence=NO_ASSIGNMENTS");
   });
 
+  it("persists authored quiz triage across progress navigation and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({quizPresence:"ATTEMPTED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({quizPresence:"NO_QUIZZES"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("quizPresence=NO_QUIZZES");
+    expect(collegeProgressCsvHref(q)).toContain("quizPresence=NO_QUIZZES");
+  });
+
 });

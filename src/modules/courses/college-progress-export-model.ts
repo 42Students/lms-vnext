@@ -24,6 +24,7 @@ export function collegeProgressCsvHref(query: CollegeProgressQuery) {
  if(query.departmentCode)p.set("departmentCode",query.departmentCode);
  if(query.lessonPresence!=="ALL")p.set("lessonPresence",query.lessonPresence);
  if(query.assignmentPresence!=="ALL")p.set("assignmentPresence",query.assignmentPresence);
+ if(query.quizPresence!=="ALL")p.set("quizPresence",query.quizPresence);
  return "/api/academics/college-progress-export"+(p.size?"?"+p.toString():"");
 }
 export function renderCollegeProgressCsv(rows:readonly {
