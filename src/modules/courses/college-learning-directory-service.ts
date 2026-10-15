@@ -217,6 +217,13 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.sectionContentState==="HAS_SECTION"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),sql`${lessonContents.deliveryId} IS NOT NULL`))):query.sectionContentState==="NO_SECTION"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),sql`${lessonContents.deliveryId} IS NOT NULL`)))):undefined,
       query.sharedContentState==="HAS_SHARED"?exists(db.select({id:lessonContents.id}).from(lessonContents)
   .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
