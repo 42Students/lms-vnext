@@ -4,6 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { FacultyProfileTextSection } from "./faculty-profile-text-section";
 const ABOUT_FIELDS = [{name:"description",label:"About me",multiline:true,maxLength:5000}] as const;
+const PERSONAL_DETAILS_FIELDS = [{name:"gender",label:"Gender",maxLength:64},{name:"dateOfBirth",label:"Date of birth",type:"date",maxLength:10},{name:"bloodGroup",label:"Blood group",maxLength:16}] as const;
 export function FacultyProfileEditor({initialDocument,initialVersion}:{
  initialDocument:FacultyProfileDocument;initialVersion:number;
 }){
@@ -36,5 +37,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <FacultyProfileTextSection key={"about-"+version} section="about" title="About"
    description="Introduce your teaching and research interests."
    fields={ABOUT_FIELDS} initial={{description:document.about.description}} pending={pending} onSave={save}/>
+  <FacultyProfileTextSection key={"personalDetails-"+version} section="personalDetails" title="Personal details"
+   description="Self-reported details only; college identity records remain separate."
+   fields={PERSONAL_DETAILS_FIELDS}
+   initial={{gender:document.personalDetails.gender,dateOfBirth:document.personalDetails.dateOfBirth,bloodGroup:document.personalDetails.bloodGroup}} pending={pending} onSave={save}/>
  </div>;
 }
