@@ -24,13 +24,13 @@ export function sortBatchStudentView<T extends {membershipId:string;name:string;
   ||(order==="NAME_DESC"?b.name.localeCompare(a.name,"en-IN"):a.name.localeCompare(b.name,"en-IN"))
   ||a.membershipId.localeCompare(b.membershipId));
 }
-export function batchStudentPageHref(batchId:string,page:number,filters:{q:string;decision:string;source:string;registration:string;order:string}){
+export function batchStudentPageHref(batchId:string,page:number,filters:{q:string;decision?:string;source?:string;registration?:string;order?:string}){
  const params=new URLSearchParams({page:String(page)});
  if(filters.q)params.set("q",filters.q);
- if(filters.decision!=="ALL")params.set("decision",filters.decision);
- if(filters.source!=="ALL")params.set("source",filters.source);
- if(filters.registration!=="ALL")params.set("registration",filters.registration);
- if(filters.order!=="NAME_ASC")params.set("order",filters.order);
+ if(filters.decision&&filters.decision!=="ALL")params.set("decision",filters.decision);
+ if(filters.source&&filters.source!=="ALL")params.set("source",filters.source);
+ if(filters.registration&&filters.registration!=="ALL")params.set("registration",filters.registration);
+ if(filters.order&&filters.order!=="NAME_ASC")params.set("order",filters.order);
  return "/tpo/batches/"+encodeURIComponent(batchId)+"/students?"+params.toString();
 }
 
