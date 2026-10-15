@@ -14,6 +14,7 @@ export default async function SuperAdminTenantSetup(){
  if(!id)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Set up a college"
    description="Select a college in the Super Admin scope switcher to begin."/>
+  <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Create organization and college →</Link>
   <div role="status" className="rounded-xl border border-border bg-surface p-5">
    No college selected. Setup cannot default to an unrelated tenant.
    <Link href="/admin/tenants" className="ml-2 font-semibold text-primary-text underline">Browse colleges</Link>
@@ -23,6 +24,7 @@ export default async function SuperAdminTenantSetup(){
  catch(e){if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();throw e;}
  requirePermission(context,"college.read",{organizationId:college.organizationId,collegeId:college.id});
  return <div className="min-w-0 space-y-5">
+  <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Create another tenant →</Link>
   <PageHeader eyebrow="Super Admin · Tenant Setup" title={college.name}
    description="Work through college-specific setup without losing the selected administrative scope."/>
   <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
