@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {learnerProfileSectionRecoveryNotice} from "@/modules/people/learner-profile-section-recovery-model";
 import {learnerSavedCodingProfiles} from "@/modules/placements/learner-saved-coding-profiles-model";
 import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
 import {learnerProfileAcademicRecovery} from "@/modules/people/learner-profile-recovery-model";
@@ -18,6 +19,7 @@ export default async function LearnerProfilePage({
   const query = await searchParams;
   const parsedSection = learnerProfileSectionSchema.safeParse(query.section);
   const initialSection = parsedSection.success ? parsedSection.data : null;
+  const sectionNotice=learnerProfileSectionRecoveryNotice(query.section);
   const context = await getCurrentRequestContext();
 
   await requireOwnLearnerProfileAccess(context);
@@ -34,6 +36,7 @@ export default async function LearnerProfilePage({
         title="Profile"
         description="Your academic, career and placement profile in one place."
       />
+      {sectionNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{sectionNotice}</p> : null}
       <section aria-label="Academic identity" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
