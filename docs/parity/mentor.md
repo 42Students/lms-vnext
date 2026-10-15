@@ -1378,3 +1378,8 @@ The admin-owned Project member end service now records registered Team membershi
 ## 2026-10-15 chat-11 — persistent Team lifecycle audit regression (PARTIAL)
 
 A seeded, disposable PostgreSQL integration case now drives actual College Admin Project member update/end services against an existing persisted Learner assignment, verifies the earlier create event, validates three role/tenant-scoped events and lack of membership identifiers, and checks rejected Learner mutation plus the Mentor read-only timeline. Runtime execution and mobile/desktop acceptance remain OPEN.
+
+
+## 2026-10-15 chat-11 — active membership-scoped Project roster (PARTIAL)
+
+The shared Project Team roster reader now joins registered Project roles to persisted ACTIVE same-college memberships and active platform users, mirroring the centralized Project access predicate. A revoked/disabled membership is no longer projected as a current Learner/Mentor or counted in derived workspace team staffing. The existing isolated PostgreSQL Team lifecycle fixture checks ended roster removal, while revoked-role/disabled-user database and browser acceptance remain OPEN. Duplicate integration-test import corrected.
