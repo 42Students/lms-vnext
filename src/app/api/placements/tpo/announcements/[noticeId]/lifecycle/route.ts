@@ -10,7 +10,7 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
  const form=await request.formData().catch(()=>null);
  const {noticeId}=await params;
  const parsed=z.object({
-  noticeId:z.string().uuid(),action:z.enum(["DELETE","RESTORE"]),
+  noticeId:z.string().uuid(),action:z.enum(["DELETE","RESTORE","UNDO_SEND"]),
   expectedVersion:z.coerce.number().int().nonnegative(),
  }).strict().safeParse({
   noticeId,action:form?.get("action"),expectedVersion:form?.get("expectedVersion"),
@@ -18,13 +18,15 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   await mutateTpoNotice(await getCurrentRequestContext(),parsed.data);
-  const tab=parsed.data.action==="DELETE"?"yours":"deleted";
+  const tab=parsed.data.action==="RESTORE"?"deleted":"yours";
   return NextResponse.redirect(new URL("/tpo/announcements?tab="+tab,request.url),303);
  }catch(error){
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_NOT_FOUND")
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
+  if(error instanceof Error&&error.message==="ANNOUNCEMENT_UNDO_EXPIRED")
+   return NextResponse.json({error:"UNDO_WINDOW_EXPIRED"},{status:409});
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
    return NextResponse.json({error:"STALE_VERSION"},{status:409});
   if(error instanceof Error&&error.message==="ANNOUNCEMENTS_NOT_REGISTERED")
