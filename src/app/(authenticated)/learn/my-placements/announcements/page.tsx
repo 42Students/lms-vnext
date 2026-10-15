@@ -17,6 +17,7 @@ import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-
 import {learnerNoticeFilterHref,learnerNoticePageHref} from "@/modules/placements/learner-notices-navigation-model";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
+import {learnerNoticePageWasClamped} from "@/modules/placements/learner-notice-page-recovery-model";
 import {filterLearnerNoticesBySource} from "@/modules/placements/learner-notice-source-filter-model";
 import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing, learnerNoticeRecoveryHref } from "@/modules/placements/learner-notice-deep-link-model";
 
@@ -52,6 +53,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const sortedNotices=sortLearnerNotices(notices,sortKey);
   const focused=learnerNoticeFocusPage(sortedNotices,filters.page,filters.focus);
   const pages = paginateOwnOffers(sortedNotices,focused.page,15);
+  const pageClamped=learnerNoticePageWasClamped(filters.page,pages.page,sortedNotices.length,focused.found);
   const noticePageUrl=(page:number)=>learnerNoticePageHref({
     pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ,sort:sortKey,source,page,
   });
@@ -121,6 +123,14 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Last 30 days</Link>
       </nav>
       <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>
+      {pageClamped && collegeNoticesRead.available ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          The requested notice page no longer exists in the current filtered results. Showing page {pages.page} instead.
+          <Link href={noticePageUrl(pages.page)} className="ml-2 font-semibold text-primary-text underline">
+            Update page link
+          </Link>
+        </p>
+      ) : null}
       {ready && collegeNoticesRead.available && learnerNoticeMissing(filters.focus,focused.found) ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
