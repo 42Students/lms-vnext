@@ -1,18 +1,21 @@
 import "server-only";
-import {and,asc,desc,eq,ilike,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,gte,lt,ilike,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
-import {verificationQueueFilters,verificationWaitingStateValid} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
+import {verificationSqlSections} from "./queue-kind";
 import {matchesVerificationAttention} from "./attention-filter";
+import {matchesVerificationAgeBand} from "./queue-age-band";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab} from "./queue-tabs";
-import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid} from "./queue-waiting-since";
+import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid,verificationSubmittedSqlBounds} from "./queue-waiting-since";
 import {submittedMarksheets} from "./queue-mark-sheets";
+import {verificationAttentionFlags} from "./attention-flags";
 import {verificationCsv} from "./queue-export";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
@@ -24,8 +27,11 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  const filter=verificationQueueFilters.parse(raw);
  if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
  if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
+ if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
+ if(!verificationAgeBandValid(filter))throw Error("INVALID_VERIFICATION_AGE_BAND");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
+ const dateBounds=verificationSubmittedSqlBounds(filter);
  const rows=await getDb().select({
   membershipId:collegeMemberships.id,learnerName:users.displayName,
   section:profileVerifications.section,status:profileVerifications.status,
@@ -39,10 +45,12 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
   filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
-  inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
+  dateBounds.from?gte(profileVerifications.submittedAt,dateBounds.from):undefined,
+  dateBounds.before?lt(profileVerifications.submittedAt,dateBounds.before):undefined,
+  inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
   inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]:[filter.waitingState]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
+ .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
  const evaluatedAt=new Date();
  const selected=rows.filter(row=>{
@@ -50,15 +58,23 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
   if(!matchesSubmittedFrom(row.submittedAt,filter.submittedFrom))return false;
+  if(!matchesVerificationAgeBand(row.submittedAt,row.status,filter.ageBand,evaluatedAt))return false;
   const m=submittedMarksheets(row.snapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&m.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&m.count>0&&m.missing===0))return false;
   return matchesVerificationAttention({status:row.status as VerificationStatus,section:row.section as VerificationSection,
    submittedAt:row.submittedAt,missingMarksheet:row.section==="EDUCATION"&&m.missing>0},filter.attention,evaluatedAt);
  });
- const output=verificationCsv(selected.map(row=>({
-  learnerName:row.learnerName?.trim()||"Learner",section:row.section,status:row.status,
-  submittedAt:fmt.format(row.submittedAt),reviewedAt:row.decidedAt?fmt.format(row.decidedAt):"",
- })));
+ const output=verificationCsv(selected.map(row=>{
+  const marks=submittedMarksheets(row.snapshot),section=row.section as VerificationSection;
+  const flags=verificationAttentionFlags({status:row.status as VerificationStatus,section,submittedAt:row.submittedAt,
+   missingMarksheet:section==="EDUCATION"&&marks.missing>0},evaluatedAt);
+  return {learnerName:row.learnerName?.trim()||"Learner",section,status:row.status,
+   submittedAt:fmt.format(row.submittedAt),reviewedAt:row.decidedAt?fmt.format(row.decidedAt):"",
+   educationEntryCount:section==="EDUCATION"?marks.count:undefined,
+   missingDocumentCount:section==="EDUCATION"?marks.missing:undefined,
+   attentionFlags:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase()).join("; "),
+  };
+ }));
  return {...output,total:selected.length};
 }
