@@ -47,6 +47,18 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               </select>
             </label>
           ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent batch lifecycle
+              <select name="cohortStatus" defaultValue={data.query.cohortStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="PLANNED">Planned</option>
+                <option value="ACTIVE">Active</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             {lessons ? "Lesson status" : "Offering status"}
             <select name="status" defaultValue={data.query.status}

@@ -328,4 +328,15 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(foreign.items).toEqual([]);
   });
 
+  it("lessons cohortStatus filters persisted same-college parent rows",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,cohortStatus:"PLANNED"}),
+      listCollegeLessons(own,{q:name,cohortStatus:"COMPLETED"}),
+      listCollegeLessons(otherCollege,{q:name,cohortStatus:"PLANNED"}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

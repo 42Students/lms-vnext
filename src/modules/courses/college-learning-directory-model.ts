@@ -13,6 +13,7 @@ export const collegeLearningQuerySchema = z.object({
 export type CollegeLearningQuery = z.infer<typeof collegeLearningQuerySchema>;
 export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
+  cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
   offeringStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   courseCode: z.string().trim().min(1).max(64).optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
@@ -68,6 +69,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if (kind === "LESSONS" && "offeringStatus" in query && query.offeringStatus !== "ALL")
     params.set("offeringStatus", query.offeringStatus);
   if ("programStatus" in query && query.programStatus !== "ALL") params.set("programStatus",query.programStatus);
+  if ("cohortStatus" in query && query.cohortStatus !== "ALL") params.set("cohortStatus",query.cohortStatus);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
