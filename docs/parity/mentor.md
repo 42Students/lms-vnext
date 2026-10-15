@@ -1617,3 +1617,8 @@ Compared Mentor and Learner Project tabs with exact legacy-copy-A labels, and Co
 ### 2026-10-16 PR-S2-03 / PR-S2-10 / PR-S2-14 precision correction
 
 Fixed the optimistic write conditions for task assignment, task-status transition and archived project restoration to compare PostgreSQL's microsecond timestamps using `date_trunc('milliseconds', updated_at)` against the UTC millisecond client token. All retain project/row locks and scoped status predicates. The archive write itself uses a locked row and no JS-Date timestamp CAS. Real PostgreSQL and browser acceptance still require independent execution.
+
+
+### PR-S2-07 registered activity log partial runtime: approval lock and explicit reopen
+
+Approval now writes a separately deduplicated LOCKED activity event, and a mentor/admin can reopen the **exact latest approved submission** through a same-origin, project-row-locked endpoint only while the project is ACTIVE and no evaluation exists. A reopened activity event authorizes one additional learner draft version while preserving immutable APPROVED history. No new schema is required for this part. Attachment metadata and migration-backed delivery event table remain **NOT DONE**; all runtime tests including the direct SQL acceptance have not been executed.
