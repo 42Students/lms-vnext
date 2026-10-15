@@ -1346,3 +1346,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 course-search correction (2026-10-15):** overlong pasted queries retain their normalized first 100 characters instead of silently returning every Course; the UI now caps input at 100. Pure tests authored; browser/CI proof outstanding.
 
 **Chat-7 semester selection correction (2026-10-15):** initial/stale Course filters prefer the latest term with an active authorized Learner course; if none remains active, the newest accessible historical term is selected. No client-clock inference. Unit tests authored, browser proof pending.
+
+**Chat-7 progress display correction (2026-10-15):** a non-finite upstream completion percentage is now shown as unavailable instead of `NaN%`; valid values are bounded to 0–100. Unit tests authored; runtime acceptance pending.

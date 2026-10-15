@@ -17,3 +17,12 @@ describe("course card persisted progress context",()=>{
       nextDue:{kind:"Assignment",title:"Essay"}});
   });
 });
+
+describe("unknown or invalid progress", () => {
+  it("does not show NaN as a measured learner Course percentage", () => {
+    expect(learnerCourseListSignals([],{itemsTotal:2,overallPercent:Number.NaN},
+      new Date("2026-10-15T00:00:00Z")).percentage).toBeNull();
+    expect(learnerCourseListSignals([],{itemsTotal:2,overallPercent:120},
+      new Date("2026-10-15T00:00:00Z")).percentage).toBe(100);
+  });
+});

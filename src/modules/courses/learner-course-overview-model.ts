@@ -8,7 +8,8 @@ export function learnerCourseListSignals(
   summary:{overallPercent:number;itemsTotal:number},
   now:Date,
 ) {
-  const percentage=summary.itemsTotal>0 ? Math.min(100,Math.max(0,summary.overallPercent)) : null;
+  const percentage=summary.itemsTotal>0 && Number.isFinite(summary.overallPercent)
+    ? Math.min(100,Math.max(0,summary.overallPercent)) : null;
   const activity=lessons.flatMap(lesson=>[
     ...lesson.contents.map(item=>item.progress.completedAt?.getTime()??null),
     ...lesson.assignments.map(item=>item.submittedAt?.getTime()??null),
