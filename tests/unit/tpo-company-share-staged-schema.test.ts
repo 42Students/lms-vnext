@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   placementCompanyApplicantShares, placementCompanyApplicantShareViews,
-} from "@/modules/placements/company-share/staged-schema";
+} from "@/db/schema/placement-company-shares";
 
 describe("staged employer-sharing schema", () => {
   it("isolates hashed capability and view audit in separate scoped tables", () => {

@@ -8,7 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {placementOutsideDriveRecords} from "./recorded-outside-staged-schema";
+import {placementOutsideDriveRecords} from "@/db/schema/placement-outside-drives";
 import {recordedOutsideDriveSchema} from "./recorded-outside-model";
 import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";

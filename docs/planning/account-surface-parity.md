@@ -561,6 +561,7 @@ These were absent from matrix v1 and are now explicit.
 | Separate Super Admin login | `/superadmin-login` | unified sign-in on a platform host | Intentional: one login; a college host refuses super admins, they sign in on the platform host. **Production must add a second factor for SUPER_ADMIN (docs/architecture/privileged-authentication.md); phone/email OTP alone is not enough.** | REDESIGNED |
 | Cross-domain/account auth handoff | `/auth/handoff` | membership chooser/switcher only | Same-origin membership switching exists; token handoff across hosts is not equivalent. | DONE |
 | Company applicant share | `/company-share/[token]` | none | Code-gated external applicant list, expiry/revocation, CSV/resume ZIP/download audit is missing. | MISSING |
+| Standalone AI Grading | `/ai-grading` | AI tools only | Legacy has exam/rubric form+JSON, PDF grading, extraction evidence, confidence/review queue and report generation. | OUT OF SCOPE — owner decision 2026-10-15: AI grading is not required; excluded from the parity target and from row counts. |
 | Standalone learner quiz | `/quiz` | inline quiz UI | Tracked under Learner; exact full-screen behavior pending. | DONE |
 | Privacy Policy | `/privacy-policy` | none | Decide whether vNext owns legal/public site or separate deployment retains it. | VERIFY |
 | Custom 404 | `/404` | `src/app/not-found.tsx` | Legacy copy, Go back and Home recovery authored with brand tokens; public/mobile/browser parity remains unverified. | DONE |
@@ -617,10 +618,10 @@ Important rules:
 | --- | --- | --- |
 | Browser login | Replaced by first-party Exotel/ZeptoMail OTP (no Identity Platform project needed). | DONE |
 | Live session restoration | Opaque device sessions (digest stored, revocable per device); verified live: session survives requests, logout/revocation ends it, signed-in devices page. | DONE |
-| Assignment file upload | Cloud Storage upload receipt/signing required. | BLOCKED |
-| Signed VIDEO playback | Cloud Storage signed delivery required. | BLOCKED |
-| Project file resource uploads | Same Cloud Storage dependency. | BLOCKED |
-| Vertex AI-backed quality runs | Provider/config dependency; does not block non-AI parity work. | BLOCKED |
+| Assignment file upload | Cloud Storage upload receipt/signing required. | MISSING — UNBLOCKED 2026-10-15 (owner decision 10): build now on the dev R2 bucket with the dev-only prefix; real private bucket and scanner are production work later. |
+| Signed VIDEO playback | Cloud Storage signed delivery required. | MISSING — UNBLOCKED 2026-10-15 (owner decision 11): implement video fully now (upload, processing metadata, signed playback, access control, management) on the dev R2 bucket; legacy-bucket read adapter if credentials allow. |
+| Project file resource uploads | Same Cloud Storage dependency. | MISSING — UNBLOCKED 2026-10-15 (owner decision 10): build now on the dev R2 bucket with the dev-only prefix. |
+| Vertex AI-backed quality runs | Provider/config dependency; does not block non-AI parity work. | OUT OF SCOPE — owner decision 12 (2026-10-15): Vertex AI and all AI features dropped everywhere, including code; excluded from counts. |
 
 ---
 
