@@ -6,6 +6,7 @@ export type CollegeAssessmentKind = z.infer<typeof collegeAssessmentKindSchema>;
 
 export const collegeAssessmentListQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
+  courseCode: z.string().trim().min(1).max(64).optional(),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "CLOSED", "ARCHIVED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
@@ -39,6 +40,7 @@ export function collegeAssessmentHref(
 ): string {
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
+  if (query.courseCode) params.set("courseCode",query.courseCode);
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.page > 1) params.set("page", String(query.page));
   const base = kind === "ASSIGNMENT" ? "/college/assignments" : "/college/quizzes";

@@ -69,6 +69,7 @@ export async function listCollegeAssessmentAggregate(
       eq(departments.collegeId, collegeId),
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
+      query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.q ? ilike(courseAssignments.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
@@ -103,6 +104,7 @@ export async function listCollegeAssessmentAggregate(
       eq(departments.collegeId, collegeId),
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
+      query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.q ? ilike(courseQuizzes.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
