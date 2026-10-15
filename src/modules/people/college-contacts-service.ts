@@ -7,7 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
 import {collegeContactAcademicScope} from "./college-contacts-academic-scope";
-import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactsIstDayStart,contactsNextIstDayStart,collegeContactLiteralPattern} from "./college-contacts-model";
+import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactRoleAudienceCompatible,contactsIstDayStart,contactsNextIstDayStart,collegeContactLiteralPattern} from "./college-contacts-model";
 
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
@@ -17,6 +17,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
  const filter=collegeContactsQuerySchema.parse(raw);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
+ if(!contactRoleAudienceCompatible(filter))throw new Error("INVALID_CONTACT_ROLE_AUDIENCE");
  const claim=context.membership;
  if(!claim||claim.status!=="ACTIVE"||!claim.roles.includes("COLLEGE_ADMIN"))
   throw new AuthorizationError("people.manage");
