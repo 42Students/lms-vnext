@@ -589,6 +589,13 @@
       "when": 1792093761776,
       "tag": "0083_project_member_kinds",
       "breakpoints": true
+    },
+    {
+      "idx": 84,
+      "version": "7",
+      "when": 1792093886635,
+      "tag": "0084_project_resource_visibility",
+      "breakpoints": true
     }
   ]
 }

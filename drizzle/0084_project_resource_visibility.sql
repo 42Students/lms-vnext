@@ -1,0 +1,3 @@
+ALTER TABLE "project_resources" ADD COLUMN "visibility" varchar(16) DEFAULT 'TEAM' NOT NULL;--> statement-breakpoint
+CREATE INDEX "project_resources_visibility_idx" ON "project_resources" USING btree ("project_id","visibility") WHERE "project_resources"."status" = 'ACTIVE';--> statement-breakpoint
+ALTER TABLE "project_resources" ADD CONSTRAINT "project_resources_visibility_ck" CHECK ("project_resources"."visibility" in ('TEAM','MENTOR_ONLY'));
