@@ -6,7 +6,7 @@ type ExportRow={
 /** Export only aggregate follow-up counts; never names, rolls, phones, emails or private IDs. */
 export function facultyFollowUpPageCsv(rows:readonly ExportRow[]):string{
  if(rows.length>10)throw new Error("FOLLOWUP_CSV_PAGE_TOO_LARGE");
- const quote=(value:string)=>'"'+(/^\s*[=+@-]/.test(value)?"'"+value:value).replaceAll('"','""')+'"';
+ const quote=(value:string)=>{ const normalized=value.replace(/[\u0000-\u001f\u007f-\u009f]/g," "); return '"'+(/^\s*[=+@-]/.test(normalized)?"'"+normalized:normalized).replaceAll('"','""')+'"'; };
  const lines=[["Type","Assessment","Course","Section","Due UTC","Missing responses","Additional hidden in preview"]];
  for(const row of rows){
   lines.push([row.kind,row.title,row.courseName,row.sectionName,
