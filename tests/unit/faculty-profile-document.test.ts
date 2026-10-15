@@ -131,3 +131,31 @@ describe("DB04 Faculty profile document contract", () => {
     });
   });
 });
+
+
+describe("Faculty certification chronology", () => {
+  it("rejects a validity date preceding issue date", () => {
+    const certification = { id, name: "Safety", certificationDate: "2026-10-15", validityDate: "2026-10-14" };
+    expect(facultyProfileDocumentSchema.safeParse({ certifications: [certification] }).success).toBe(false);
+    expect(facultyProfileDocumentSchema.safeParse({ certifications: [{ ...certification, validityDate: "2027-10-15" }] }).success).toBe(true);
+  });
+});
+
+
+describe("Faculty education dates", () => {
+  it("rejects reversed years and current degree with graduation year", () => {
+    const education = { id, institutionName: "College", startYear: "2026", endYear: "2024" };
+    expect(facultyProfileDocumentSchema.safeParse({ education: [education] }).success).toBe(false);
+    expect(facultyProfileDocumentSchema.safeParse({ education: [{ ...education, endYear: "", isCurrentlyPursuing: true }] }).success).toBe(true);
+    expect(facultyProfileDocumentSchema.safeParse({ education: [{ ...education, endYear: "2027", isCurrentlyPursuing: true }] }).success).toBe(false);
+  });
+});
+
+
+describe("Faculty record identities", () => {
+  it("does not allow duplicate entries within a section", () => {
+    const skill = { id, skill: "Java" };
+    expect(facultyProfileDocumentSchema.safeParse({ skills: [skill, skill] }).success).toBe(false);
+    expect(facultyProfileDocumentSchema.safeParse({ skills: [skill] }).success).toBe(true);
+  });
+});

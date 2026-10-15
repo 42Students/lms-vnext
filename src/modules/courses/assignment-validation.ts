@@ -121,8 +121,9 @@ const linkSubmissionSchema = z.object({
     .url()
     .refine(
       (value) =>
-        new URL(value).protocol === "https:",
-      "Only https submission links are allowed",
+        new URL(value).protocol === "https:" &&
+        !new URL(value).username && !new URL(value).password,
+      "Only credential-free https submission links are allowed",
     ),
 });
 
