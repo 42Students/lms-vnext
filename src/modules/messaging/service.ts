@@ -38,9 +38,12 @@ export async function deliverBatch(args: {
   if(keyedRequests.some(item=>!/^[0-9a-f]{64}$/.test(item.recipientKey)))
     throw new Error("INVALID_RECIPIENT_KEY");
   const records: DeliveryRecord[] = [];
+  let startingDailySent:number|undefined;
+  let acceptedInBatch=0;
   const seenRecipientPurpose = new Set<string>();
   for (const {request,recipientKey} of keyedRequests) {
     const policy = await args.policyFor(request);
+    startingDailySent ??= policy.sentToday;
     const initial = decideDelivery(request, policy);
     // Enforce the independently configured AUTH test allowlist even if a caller
     // accidentally builds a permissive DeliveryPolicy object.
@@ -52,9 +55,12 @@ export async function deliverBatch(args: {
     const dedupeKey = opaqueBatchAttemptKey(request.channel,recipientKey,request.purpose,request.templateKey);
     const duplicate = seenRecipientPurpose.has(dedupeKey);
     seenRecipientPurpose.add(dedupeKey);
+    const capacityDecision = decision.status==="QUEUED" &&
+      Math.max(policy.sentToday,startingDailySent+acceptedInBatch)>=policy.dailyCap
+      ? {status:"SUPPRESSED" as const,reason:"daily-cap" as const}:decision;
     const finalDecision = duplicate
       ? {status: "SUPPRESSED" as const, reason: "duplicate-in-batch" as const}
-      : decision;
+      : capacityDecision;
     const record: DeliveryRecord = {
       batchId: args.batchId,
       channel: request.channel,
@@ -73,6 +79,7 @@ export async function deliverBatch(args: {
         record.status = "FAILED";
       }
       await args.repository.update(record);
+      if(record.status==="SENT")acceptedInBatch++;
     }
     records.push({ ...record });
   }
