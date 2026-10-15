@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch,facultyProfileCanReorderVisible,facultyProfileSearchAfterInsertion} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileCanReorderVisible,facultyProfileSearchAfterInsertion,facultyProfileSearchSummary} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue,facultyProfileSkillMatches,facultyMoveSkillRecord} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
@@ -35,6 +35,10 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      className="mt-1 w-full rounded-md border border-border bg-background p-3"/>
    </label>:null}
+  {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
+    <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
+    <button type="button" className="rounded border border-border px-2 py-1" onClick={()=>setSearch("")}>Clear Skill search</button>
+   </div>:null}
   {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
   {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
   <div className="space-y-3">
