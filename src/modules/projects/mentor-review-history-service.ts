@@ -32,18 +32,22 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
   }
   const modules=await resolveOptionalModuleAccess(context);
   if (!modules.projects.enabled) {
-    return {enabled:false as const,query,
+    return {enabled:false as const,query,projects:[] as {id:string;title:string}[],
       ...mentorReviewHistoryPagination(0,1),items:[]};
   }
   const assigned=(await listMyProjectInstances(context))
     .filter(row=>row.memberRole==="MENTOR");
   const ids=assigned.map(row=>row.project.id);
+  const projects=assigned.map(row=>({id:row.project.id,title:row.project.title}));
+  if(query.projectId&&!ids.includes(query.projectId))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if (!ids.length) {
-    return {enabled:true as const,query,
+    return {enabled:true as const,query,projects,
       ...mentorReviewHistoryPagination(0,1),items:[]};
   }
   const filter=and(
     inArray(projectSubmissionReviews.projectId,ids),
+    query.projectId?eq(projectSubmissionReviews.projectId,query.projectId):undefined,
     eq(projectInstances.collegeId,membership.collegeId),
     query.search?ilike(projectInstances.title,"%"+mentorReviewHistoryLiteralSearch(query.search)+"%"):undefined,
     query.decision==="ALL" ? undefined :
@@ -74,5 +78,5 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
     .orderBy(desc(projectSubmissionReviews.reviewedAt),desc(projectSubmissionReviews.id))
     .limit(pagination.pageSize)
     .offset((pagination.page-1)*pagination.pageSize);
-  return {enabled:true as const,query,...pagination,items};
+  return {enabled:true as const,query,projects,...pagination,items};
 }
