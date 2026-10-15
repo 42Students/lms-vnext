@@ -500,4 +500,15 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(csvMatched.csv).toContain(key);
     expect(csvExcluded.csv).not.toContain(key);
   });
+  it("Semester through follows persisted same-college slot evidence",async()=>{
+    
+    const [matching,foreign,csvMatch]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,semesterThrough:1}),
+      listCollegeElectives(adminB,{q:key,semesterThrough:1}),
+      exportCollegeElectives(adminA,{q:key,semesterThrough:1}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+  });
 });

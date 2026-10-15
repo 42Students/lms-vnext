@@ -238,4 +238,9 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeElectiveQuerySchema.safeParse({semesterFrom:25}).success).toBe(false);
     expect(readCollegeStructureParams({semesterFrom:""})).toEqual({});
   });
+  it("validates semester through and preserves page filters",()=>{
+    const q=collegeElectiveQuerySchema.parse({semesterThrough:1});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("semesterThrough=");
+    expect(collegeElectiveQuerySchema.safeParse({semesterThrough:0}).success).toBe(false);
+  });
 });
