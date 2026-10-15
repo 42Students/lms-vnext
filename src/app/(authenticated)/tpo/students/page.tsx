@@ -1,3 +1,4 @@
+import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
@@ -137,7 +138,7 @@ export default async function TpoStudentsPage({
       <div className="space-y-6">
         <PageHeader
           eyebrow="TPO · Students"
-          title="Students intelligence"
+          title={TPO_OWNER_PAGE_COPY.students}
           description="College-wide placement participation and journey oversight."
         />
         <section
@@ -223,7 +224,7 @@ export default async function TpoStudentsPage({
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Students"
-        title="Students intelligence"
+        title={TPO_OWNER_PAGE_COPY.students}
         description="Read-only college-wide placement participation, branch performance and student journeys. Counts are based on active learner enrollments."
         actions={
           <div className="flex flex-wrap items-center gap-2">

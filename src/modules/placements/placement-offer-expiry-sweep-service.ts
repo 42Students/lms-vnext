@@ -19,6 +19,8 @@ export async function sweepExpiredPlacementOffers(
   if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
     throw new Error("Invalid offer sweep batch size");
   }
+  // Separate sweep workers must skip rows locked by a competing sweep or
+  // learner offer response, never block a 15-minute batch behind them.
   return getDb().transaction(async (tx) => {
     const candidates = await tx.select({
       id: placementOffers.id,
@@ -29,7 +31,7 @@ export async function sweepExpiredPlacementOffers(
       isNotNull(placementOffers.expiresAt),
       lte(placementOffers.expiresAt, now),
     )).orderBy(asc(placementOffers.expiresAt), asc(placementOffers.id))
-      .limit(limit).for("update");
+      .limit(limit).for("update",{skipLocked:true});
 
     let expired = 0;
     for (const row of candidates) {

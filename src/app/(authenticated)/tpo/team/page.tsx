@@ -1,3 +1,4 @@
+import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {z} from "zod";
@@ -21,7 +22,7 @@ export default async function TpoTeamPage({searchParams}:{
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context):null;
  return <div className="space-y-6">
-  <PageHeader eyebrow="TPO · Internal" title="Placement Team"
+  <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
    description="People are taken from active college memberships and recorded coordinator assignments, not employer conversations." />
   <nav aria-label="Team tabs" className="flex flex-wrap gap-2">
    {(["conversations","people"] as const).map(item=><Link key={item} href={"/tpo/team?tab="+item}

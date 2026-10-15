@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -116,6 +117,16 @@ export default async function TpoAnnouncements({searchParams}:Props){
       <input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
       <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
+      </button>
+     </form>:null}
+    {tab.data==="yours"&&row.senderUserId===context.user.id&&
+     canUndoTpoAnnouncementSend(row.createdAt,new Date())?
+     <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
+      className="mt-2">
+      <input type="hidden" name="expectedVersion" value={row.version}/>
+      <input type="hidden" name="action" value="UNDO_SEND"/>
+      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">
+       Undo send (30 seconds)
       </button>
      </form>:null}
     <p className="mt-3 text-xs text-muted-foreground">
