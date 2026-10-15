@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTimeIst } from "@/lib/format-date";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -384,7 +385,7 @@ export function RecruiterLeadDetailWorkspace({
                       <span className="font-semibold">{a.type}</span>
                       {a.outcome ? " · " + a.outcome : ""}
                       <time className="ml-2 text-muted-foreground" dateTime={a.createdAt}>
-                        {new Date(a.createdAt).toLocaleString()}
+                        {formatDateTimeIst(a.createdAt)}
                       </time>
                       {a.note ? <p className="mt-1 whitespace-pre-wrap">{a.note}</p> : null}
                     </li>
@@ -415,7 +416,7 @@ export function RecruiterLeadDetailWorkspace({
                 {followups.map(f => (
                   <li key={f.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-3 text-sm">
                     <div>
-                      <time className="font-medium" dateTime={f.dueAt}>{new Date(f.dueAt).toLocaleString()}</time>
+                      <time className="font-medium" dateTime={f.dueAt}>{formatDateTimeIst(f.dueAt)}</time>
                       <p className="text-muted-foreground">{f.note || "No note"}</p>
                     </div>
                     {f.doneAt ? <span className="text-muted-foreground">Done</span> : (

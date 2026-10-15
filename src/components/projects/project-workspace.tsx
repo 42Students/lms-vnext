@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -138,16 +139,7 @@ function Metric({
 }
 
 function safeHttpHref(value: string | null) {
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" ||
-      url.protocol === "http:"
-      ? url.toString()
-      : null;
-  } catch {
-    return null;
-  }
+  return safeProjectExternalHref(value);
 }
 
 function formatDateTime(value: Date | null) {
@@ -419,6 +411,20 @@ export function ProjectWorkspace({
             />
           ) : null}
         </div>
+        {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
+          <p role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+            No primary Mentor is recorded in the current Project roster.
+            Team staffing changes remain a College Admin action.
+          </p>
+        ) : null}
+        {mode==="MENTOR" ? (() => {
+          const facts=workspace.mentorEvidence.team;
+          return <p className="text-sm text-body">
+            Current recorded roster: {facts.learners} Learner{facts.learners===1?"":"s"} ·
+            {" "}{facts.mentors} Mentor{facts.mentors===1?"":"s"} ·
+            {" "}{facts.primaryMentors} primary Mentor assignment{facts.primaryMentors===1?"":"s"}
+          </p>;
+        })() : null}
         {workspace.project.teamGroupId ? (
           <p className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
             Learner assignments in this workspace come from its managed class team.
@@ -538,6 +544,13 @@ export function ProjectWorkspace({
                             {sprint.description}
                           </p>
                         ) : null}
+                        {mode==="MENTOR" ? (() => {
+                          const facts=workspace.mentorEvidence.tasksBySprint[sprint.id]??mentorSprintTaskFacts([]);
+                          return <p className="mt-2 text-xs text-body">
+                            Recorded tasks: {facts.done}/{facts.total} Done · {facts.inReview} In review · {facts.blocked} Blocked
+                            {" · "}Completion: {facts.completionPercent===null?"Unknown (no tasks)":facts.completionPercent+"%"}
+                          </p>;
+                        })() : null}
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
                         <StatusBadge
@@ -586,6 +599,11 @@ export function ProjectWorkspace({
                     </div>
 
                     <div className="mt-3 grid gap-2">
+                      {mode==="MENTOR" && mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[]) ? (
+                        <p role="status" className="rounded-lg border border-border bg-surface p-3 text-xs text-body">
+                          {mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[])}
+                        </p>
+                      ) : null}
                       {(tasksBySprint.get(sprint.id) ??
                         []).map((task) => {
                         const attempts =
@@ -610,7 +628,7 @@ export function ProjectWorkspace({
                                     {task.description}
                                   </p>
                                 ) : null}
-                                {mode === "LEARNER" && learnerTaskCriteriaPreview(task.acceptanceCriteria) ? (
+                                {showMentorTaskCriteria(mode,task.acceptanceCriteria) ? (
                                   <details className="mt-2 rounded-lg border border-border bg-surface-subtle px-3 py-2">
                                     <summary className="min-h-9 cursor-pointer py-1 text-xs font-semibold text-primary-text">
                                       Acceptance criteria
@@ -619,6 +637,17 @@ export function ProjectWorkspace({
                                       {learnerTaskCriteriaPreview(task.acceptanceCriteria)}
                                     </p>
                                   </details>
+                                ) : null}
+                                {mode==="MENTOR" && mentorTaskReviewEvidence(task.status,latestAttempt)==="REVIEW_PENDING" ? (
+                                  <p role="status" className="mt-2 text-xs font-semibold text-primary-text">
+                                    Submitted attempt v{latestAttempt?.version} is waiting for Mentor review.
+                                  </p>
+                                ) : null}
+                                {mode==="MENTOR" && latestAttempt ? (
+                                  <Link href={mentorTaskFeedbackHref(workspace.project.id,task.id)}
+                                    className="mt-2 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">
+                                    Review recorded task feedback →
+                                  </Link>
                                 ) : null}
                                 {latestAttempt ? (
                                   <p className="mt-2 text-xs text-muted-foreground">
@@ -721,6 +750,13 @@ export function ProjectWorkspace({
             and rubric evaluation.
           </p>
         </div>
+        {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
+          <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+            Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}
+            {" · "}{workspace.mentorEvidence.latestDelivery?.status}.
+            Historic versions remain available below.
+          </p>
+        ) : null}
         {workspace.finalDelivery.submissions.length ===
         0 ? (
           <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
@@ -901,6 +937,18 @@ export function ProjectWorkspace({
                         </StatusBadge>
                       ) : null}
                     </div>
+                    {mode==="MENTOR" &&
+                      mentorRequiredResourceLinkState(resource)==="TEXT_ONLY" ? (
+                      <p className="mt-2 text-xs text-body">
+                        Required text resource: no safe external link; use the recorded description.
+                      </p>
+                    ) : null}
+                    {mode==="MENTOR" &&
+                      mentorRequiredResourceLinkState(resource)==="LINK_UNAVAILABLE" ? (
+                      <p role="status" className="mt-2 text-xs text-body">
+                        Required resource has no usable external link or description.
+                      </p>
+                    ) : null}
                     {href ? (
                       <a
                         href={href}
