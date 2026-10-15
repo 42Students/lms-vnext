@@ -2,7 +2,7 @@
 import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired,facultyProfileSavedStatus} from "@/modules/people/faculty-profile-error-model";
 import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -56,7 +56,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    const result=facultyProfileSaveReceipt(await response.json(),version);
    setDocument(result.document);setVersion(result.version);
    setSectionRevisions(current=>advanceFacultySectionRevision(current,section));
-   setSuccess("Profile saved.");
+   setSuccess(facultyProfileSavedStatus(section,result.version));
   }catch(error){
    if(error instanceof FacultyProfileSaveResponseError){
     setNeedsReload(true);
