@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {notFound,redirect} from "next/navigation";
+import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manage-service";
@@ -17,6 +17,10 @@ export default async function TpoCompanyShareAuditPage({params}:{
    Back to company-share preview
   </Link>
   <h1 className="text-2xl font-semibold text-foreground">Company-share access history</h1>
+  {result.ready?<a href={"/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares/audit/export"}
+    className="inline-flex min-h-10 items-center rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+    Export access history CSV
+  </a>:null}
   {!result.ready?<p role="status" className="rounded border border-border p-5">
    Access history is unavailable until the share-audit migration is registered.
   </p>:result.entries.length===0?<p role="status" className="rounded border border-border p-5">
