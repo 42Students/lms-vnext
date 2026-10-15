@@ -533,6 +533,13 @@
       "when": 1792067197326,
       "tag": "0075_db09_tpo_collaboration",
       "breakpoints": true
+    },
+    {
+      "idx": 76,
+      "version": "7",
+      "when": 1792075074937,
+      "tag": "0076_db10_announcements_bug_tracker",
+      "breakpoints": true
     }
   ]
 }
