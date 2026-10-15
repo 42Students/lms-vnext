@@ -440,7 +440,7 @@ Detailed page contract: `docs/parity/tpo.md`.
 | Export applicants | drive action | `/tpo/placements/jobs/[jobId]` + `/api/placements/jobs/[jobId]/applicants/export` | DONE |
 | Share with company | drive action + `/company-share/[token]` | none | Critical external-sharing workflow missing. | MISSING |
 | Extend deadline | drive action | vNext requests/lifecycle | DONE |
-| Cancel drive + consequence preview | drive action | vNext lifecycle | PARTIAL |
+| Cancel drive + consequence preview | drive action | `/tpo/placements/jobs/[jobId]/cancel-preview`: audited reason-required cancel (drive closed, open rounds cancelled, accepted offers block) with consequence counts and stale-preview rejection. No CANCELLED job state (reads as CLOSED; audit only); issued offers retained, no learner notification; browser acceptance pending. | PARTIAL |
 | Close drive + consequence preview | drive action | vNext lifecycle | DONE |
 | Recruiter Messages drawer | drive action | none | Missing. | MISSING |
 | Student detail drawer | drive action | manager data | Exact UX missing. | PARTIAL |
