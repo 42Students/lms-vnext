@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
-import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, facultySubmissionReviewEmptyLabel, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
+import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, facultySubmissionReviewEmptyLabel, facultyReviewRequestCurrent, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
 import {
   assignmentSubmissionActions,
@@ -425,13 +425,13 @@ export function FacultyAssignmentReview({
       const payload = parsed.data;
       if (!facultySubmissionReviewMatchesScope(payload,assignmentId,deliveryId))
         throw new Error("The submission list belongs to a different Section. Reload this assignment.");
-      if (sequence !== loadSequence.current) return;
+      if (!facultyReviewRequestCurrent(sequence,loadSequence.current)) return;
       setSubmissions(payload.items);setPagination(payload);setPage(payload.page);
     } catch (caught) {
-      if (sequence === loadSequence.current) setError(caught instanceof Error ? caught.message :
+      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setError(caught instanceof Error ? caught.message :
         "Could not load Assignment submissions. Check your connection and try again.");
     } finally {
-      if (sequence === loadSequence.current) setLoading(false);
+      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setLoading(false);
     }
   }
 
@@ -445,7 +445,10 @@ export function FacultyAssignmentReview({
       </div>
       <Drawer
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(nextOpen)=>{
+          if(!nextOpen){loadSequence.current+=1;setLoading(false);}
+          setOpen(nextOpen);
+        }}
         title="Assignment submissions"
         description="Review authorized Section work. Grades stay private until explicitly published."
       >
