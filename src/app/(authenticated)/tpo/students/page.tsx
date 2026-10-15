@@ -2,12 +2,13 @@ import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import { redirect } from "next/navigation";
+import {tpoStudentUrlError,tpoStudentEmptyRecoveryHref,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
+import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
-import { TpoBulkActionPanel } from "@/components/tpo/tpo-bulk-action-panel";
 import { listPlacementJobs } from "@/modules/placements/job-service";
 import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
 import { can, requirePermission } from "@/modules/permissions/policy";
@@ -120,6 +121,7 @@ export default async function TpoStudentsPage({
   }
 
   const raw = await searchParams;
+  const urlError = tpoStudentUrlError(raw);
   const parsed = tpoStudentsQuerySchema.safeParse({
     collegeId: context.membership.collegeId,
     journeyState: first(raw.journeyState) || undefined,
@@ -129,7 +131,7 @@ export default async function TpoStudentsPage({
     pageSize: first(raw.pageSize) || undefined,
   });
 
-  if (!parsed.success) {
+  if (urlError || !parsed.success) {
     return (
       <div className="space-y-6">
         <PageHeader
@@ -145,7 +147,7 @@ export default async function TpoStudentsPage({
             Invalid Students filters
           </h2>
           <p className="mt-2 text-sm text-body">
-            One or more filters are invalid. No student data was loaded.
+            {urlError ?? tpoStudentFilterMessage(raw)}
           </p>
           <Link
             href="/tpo/students"
@@ -562,28 +564,25 @@ export default async function TpoStudentsPage({
               : "No students match these filters. Try another journey, branch or search term."}
             <div className="mt-3">
               <Link
-                href={studentsHref({
+                href={tpoStudentEmptyRecoveryHref(roster.total,studentsHref({
                   ...currentFilters,
                   page: 1,
-                })}
+                }))}
                 className="font-semibold text-primary-text hover:underline"
               >
-                First page
+                {roster.total>0?"First page":"Clear student filters"}
               </Link>
             </div>
           </div>
-        ) : (
-          <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-            <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
-          </Suspense>
-        )}
-
-        {manageAllowed ? (
-          <TpoBulkActionPanel key={"students:"+roster.page+":"+query.search+":"+query.journeyState}
-            target="STUDENTS"
-            rows={roster.items.map(student=>({id:student.membershipId,
-              label:student.displayName+" · "+student.branchName}))}/>
         ) : null}
+        <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
+          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
+        </Suspense>
+
+        <TpoBulkActionPanel key={"students:"+roster.page+":"+query.search+":"+query.journeyState}
+          target="STUDENTS"
+          rows={roster.items.map(student=>({id:student.membershipId,
+            label:student.displayName+" · "+student.branchName}))}/>
 
         {manageAllowed ? (
           <TpoStudentsBulkAdd

@@ -72,10 +72,8 @@ export function TpoCompanyMemoryWorkspace({
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
 
-  const load = useCallback(async (signal?: AbortSignal) => {
-    setCompany(null);
-    setPhase("loading");
-    setError("");
+  type LoadResult = { company: CompanyMemory | null; phase: Phase; error: string };
+  const load = useCallback(async (signal?: AbortSignal): Promise<LoadResult | null> => {
     try {
       const response = await fetch(
         "/api/placements/tpo/companies/detail?collegeId=" +
@@ -88,33 +86,42 @@ export function TpoCompanyMemoryWorkspace({
         company?: CompanyMemory;
         error?: string;
       };
+      if (signal?.aborted) return null;
       if (!response.ok) {
-        if (signal?.aborted) return;
-        if (response.status === 503 && payload.error === "DB09_MIGRATIONS_PENDING") {
-          setPhase("migration-pending");
-          setError("Company Memory is awaiting DB09 database verification.");
-        } else if (response.status === 404) {
-          setPhase("not-found");
-          setError("Company not found in this college.");
-        } else {
-          setPhase("error");
-          setError("Company Memory could not be loaded.");
-        }
-        return;
+        if (response.status === 503 && payload.error === "DB09_MIGRATIONS_PENDING")
+          return { company: null, phase: "migration-pending", error: "Company Memory is awaiting DB09 database verification." };
+        if (response.status === 404)
+          return { company: null, phase: "not-found", error: "Company not found in this college." };
+        return { company: null, phase: "error", error: "Company Memory could not be loaded." };
       }
-      if (signal?.aborted) return;
-      setCompany(payload.company ?? null);
-      setPhase(payload.company ? "ready" : "error");
+      return payload.company
+        ? { company: payload.company, phase: "ready", error: "" }
+        : { company: null, phase: "error", error: "Company Memory could not be loaded." };
     } catch {
-      if (signal?.aborted) return;
-      setPhase("error");
-      setError("Company Memory could not be loaded. Try again.");
+      if (signal?.aborted) return null;
+      return { company: null, phase: "error", error: "Company Memory could not be loaded. Try again." };
     }
   }, [collegeId, companyName]);
 
+  function applyLoad(result: LoadResult | null) {
+    if (!result) return;
+    setCompany(result.company);
+    setPhase(result.phase);
+    setError(result.error);
+  }
+
+  function retry() {
+    setCompany(null);
+    setPhase("loading");
+    setError("");
+    void load().then(applyLoad);
+  }
+
   useEffect(() => {
     const controller = new AbortController();
-    void load(controller.signal);
+    void load(controller.signal).then(result => {
+      if (!controller.signal.aborted) applyLoad(result);
+    });
     return () => controller.abort();
   }, [load]);
 
@@ -131,7 +138,7 @@ export function TpoCompanyMemoryWorkspace({
         </p>
         {phase === "error" || phase === "not-found" ? (
           <div className="mt-4 flex flex-wrap gap-3">
-            <button className={buttonStyle} onClick={() => void load()}>Retry</button>
+            <button className={buttonStyle} onClick={retry}>Retry</button>
             <Link className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</Link>
           </div>
         ) : null}

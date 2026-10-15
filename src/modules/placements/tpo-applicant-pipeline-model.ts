@@ -50,3 +50,11 @@ export function tpoApplicantSubmittedSince(value:"ALL"|"LAST_7_DAYS"|"LAST_30_DA
  if(value==="ALL")return null;
  return new Date(now.getTime()-(value==="LAST_7_DAYS"?7:30)*86400000);
 }
+
+/** An empty filtered result should not be mistaken for an empty drive. */
+export function tpoApplicantPipelineHasFilters(filter:{
+ stage:string;search:string;channel:string;eligibility:string;submittedWithin:string
+}):boolean {
+ return filter.stage!=="ALL"||Boolean(filter.search.trim())||filter.channel!=="ALL"||
+  filter.eligibility!=="ALL"||filter.submittedWithin!=="ALL";
+}

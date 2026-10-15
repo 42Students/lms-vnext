@@ -100,14 +100,14 @@ export function collegeRoleDirectoryHref(
 
 /** Reject ambiguous or forged directory queries before loading any college people. */
 export function parseCollegeRoleDirectorySearchParams(raw: Record<string, string | string[] | undefined>): CollegeRoleDirectoryQuery {
-  const input: Record<string, string> = {};
+  const entries: [string,string][] = [];
   for (const [key, value] of Object.entries(raw)) {
-    if (!(key in collegeRoleDirectoryQuerySchema.shape) || Array.isArray(value)) {
+    if (!Object.hasOwn(collegeRoleDirectoryQuerySchema.shape,key) || Array.isArray(value)) {
       throw new Error("INVALID_ROLE_DIRECTORY_FILTERS");
     }
-    if (value !== undefined && value !== "") input[key] = value;
+    if (value !== undefined && value !== "") entries.push([key,value]);
   }
-  const filter=collegeRoleDirectoryQuerySchema.parse(input);
+  const filter=collegeRoleDirectoryQuerySchema.parse(Object.fromEntries(entries));
   if (!roleDirectoryDateWindowValid(filter)) throw new Error("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
   return filter;
 }
@@ -163,4 +163,29 @@ export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirecto
 /** A direct, masked-contact drilldown for an already-authorized roster row. */
 export function collegeRoleContactHref(membershipId:string):string {
   return "/college/contacts/"+z.string().uuid().parse(membershipId);
+}
+
+/** Public message categories; raw user values and internal exception details are never displayed. */
+export function collegeRoleDirectoryFilterMessage(error:unknown):string{
+ const code=error instanceof Error?error.message:"";
+ if(code==="INVALID_ROLE_DIRECTORY_DATE_WINDOW")
+  return "Joined-from date must be on or before joined-through date. No roster was loaded.";
+ if(code==="LEARNER_CLASS_FILTER_CONFLICT"||code==="LEARNER_ENROLLMENT_FILTER_CONFLICT")
+  return "The class and enrollment filters cannot be combined. No roster was loaded.";
+ if(code==="FACULTY_TEACHING_FILTER_CONFLICT")
+  return "A specific teaching role cannot be combined with no active teaching. No roster was loaded.";
+ if(code.endsWith("_UNSUPPORTED"))
+  return "This filter belongs to the other directory. Clear filters and choose the appropriate tab.";
+ return "A directory filter is invalid. No people were loaded.";
+}
+
+/** A missing role population and a filtered-zero search are different states. */
+export function collegeRoleDirectoryHasActiveFilters(kind:CollegeDirectoryKind,filter:CollegeRoleDirectoryQuery):boolean {
+ const base=collegeRoleDirectoryHref(kind,{...filter,page:1,pageSize:COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,sort:"NAME"});
+ return new URL(base,"https://college.invalid").searchParams.size>0;
+}
+
+export function collegeRoleDirectoryPageRange(page:number,pageSize:number,total:number):{first:number;last:number}{
+ if(total<=0)return {first:0,last:0};
+ return {first:Math.min(total,(page-1)*pageSize+1),last:Math.min(total,page*pageSize)};
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { hasMembershipRole } from "@/modules/identity/context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -8,13 +9,12 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PEOPLE_PAGE_SIZE, peoplePageState } from "@/modules/admin-ui/people-pagination";
-import { collegePeopleDirectoryHref, collegePeopleDirectoryFilterSchema } from "@/modules/people/college-people-directory-model";
+import { collegePeopleHasFilters, collegePeopleDirectoryHref, parseCollegePeopleDirectorySearchParams, type CollegePeopleDirectoryFilter } from "@/modules/people/college-people-directory-model";
 import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import type { PersonMembershipView } from "@/modules/people/service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 
 type Search = Record<string, string | string[] | undefined>;
-const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
 
 const columns: DataTableColumn<PersonMembershipView>[] = [
   { key: "person", header: "Person", cell: person => (
@@ -42,15 +42,14 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
 ];
 
 export default async function CollegePeoplePage({ searchParams }: { searchParams: Promise<Search> }) {
-  const raw = await searchParams;
-  const parsed = collegePeopleDirectoryFilterSchema.safeParse({
-    q: first(raw.q), role: first(raw.role), status: first(raw.status), page: first(raw.page),
-  });
   const context = await getCurrentRequestContext();
   const membership = context.membership;
-  if (!membership) redirect("/dashboard");
+  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
+  const raw = await searchParams;
+  let filter:CollegePeopleDirectoryFilter|null=null;
+  try{filter=parseCollegePeopleDirectorySearchParams(raw);}catch{filter=null;}
 
-  if (!parsed.success) {
+  if (!filter) {
     return <div className="space-y-5">
       <PageHeader eyebrow="College Admin" title="People" />
       <ErrorState title="Invalid directory filters"
@@ -58,7 +57,6 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
         action={<Link href="/college/people" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>;
   }
-  const filter = parsed.data;
   const people = await listCollegePeopleWithRuntime(context, {
     collegeId: membership.collegeId,
     limit: PEOPLE_PAGE_SIZE, offset: (filter.page - 1) * PEOPLE_PAGE_SIZE,
@@ -106,9 +104,13 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       <p className="text-sm text-muted-foreground">{pagination.total} matching membership{pagination.total === 1 ? "" : "s"}</p>
       {people.items.length ? <DataTable columns={columns} rows={people.items}
         getRowKey={person => person.membership.id} /> :
-        <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
-          No matching memberships. Clear filters or onboard a person to this college.
-        </p>}
+        <div role="status" className="space-y-3 rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+          <p>{collegePeopleHasFilters(filter)
+            ?"No memberships match the selected People filters."
+            :"No memberships are recorded in this college yet."}</p>
+          {collegePeopleHasFilters(filter)?<Link href="/college/people"
+            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear People filters</Link>:null}
+        </div>}
     </section>
     <nav aria-label="People directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <span className="text-muted-foreground">

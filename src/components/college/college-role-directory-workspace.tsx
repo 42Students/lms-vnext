@@ -9,6 +9,9 @@ import { CollegeFacultyLifecycleAction } from "@/components/college/college-facu
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
   collegeRoleDirectoryHref,
+  collegeRoleDirectoryFilterMessage,
+  collegeRoleDirectoryHasActiveFilters,
+  collegeRoleDirectoryPageRange,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
@@ -48,13 +51,13 @@ export async function CollegeRoleDirectoryWorkspace({
   try {
     filter = parseCollegeRoleDirectorySearchParams(await searchParams);
     assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
-  } catch {
+  } catch (error) {
     return (
       <div className="space-y-5">
         <PageHeader eyebrow="College Admin · People" title={title} />
         <ErrorState
           title="Invalid directory filters"
-          description="A search, status or page value is invalid. No people were loaded."
+          description={collegeRoleDirectoryFilterMessage(error)}
           action={<Link href={path} className="font-semibold text-primary-text hover:underline">Clear directory filters</Link>}
         />
       </div>
@@ -304,13 +307,47 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>
         {result.items.length === 0 ? (
-          <p className="p-6 text-sm text-body">
-            {result.total === 0
-              ? "No matching role memberships were found in this college. Academic records may still exist outside this role-specific view."
-              : "There are no records on this page. Select an earlier page."}
-          </p>
+          <div role="status" className="space-y-3 p-6 text-sm text-body">
+            <p>{result.total === 0
+              ? collegeRoleDirectoryHasActiveFilters(kind,result.filter)
+                ? "No memberships match these directory filters."
+                : "No role memberships are recorded in this college."
+              : "There are no records on this page. Select an earlier page."}</p>
+            {collegeRoleDirectoryHasActiveFilters(kind,result.filter) ?
+              <Link href={path} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear roster filters</Link> : null}
+          </div>
         ) : (
-          <table className="w-full min-w-[45rem] text-left text-sm">
+          <>
+          <ul aria-label={title + " mobile records"} className="space-y-3 p-3 md:hidden">
+            {result.items.map(item=>(
+              <li key={item.membershipId} className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
+                <div className="min-w-0">
+                  <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
+                    className="break-words font-semibold text-primary-text underline">{item.name}</Link>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusBadge tone={item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"?"success":"warning"}>
+                    {item.membershipStatus}
+                  </StatusBadge>
+                  {item.userStatus!=="ACTIVE"?<span className="text-xs text-warning">Account: {item.userStatus}</span>:null}
+                </div>
+                <p className="break-words text-sm text-body">{describeCollegeDirectoryContext(kind,item)}</p>
+                <p className="text-xs text-muted-foreground">Joined {joinedLabel(item.joinedAt)} IST</p>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <Link href={collegeRoleContactHref(item.membershipId)}
+                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">View contact card</Link>
+                  {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
+                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Profile verification</Link>:null}
+                </div>
+                {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
+                  <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
+                {kind==="FACULTY"?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
+                  name={item.name} status={item.membershipStatus}/>:null}
+              </li>
+            ))}
+          </ul>
+          <table className="hidden w-full min-w-[45rem] text-left text-sm md:table">
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th scope="col" className="px-4 py-3">Person</th>
@@ -360,12 +397,13 @@ export async function CollegeRoleDirectoryWorkspace({
               ))}
             </tbody>
           </table>
+          </>
         )}
       </section>
 
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Page {result.filter.page} of {result.totalPages} · {result.pageSize} per page
+          Page {result.filter.page} of {result.totalPages} · Showing {collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first}–{collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last} of {result.total} memberships
         </p>
         <div className="flex gap-2">
           {result.filter.page > 1 ? (

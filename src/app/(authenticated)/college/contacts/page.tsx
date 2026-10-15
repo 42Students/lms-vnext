@@ -1,9 +1,10 @@
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {hasMembershipRole} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
-import {collegeContactsHref,clearedCollegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
+import {collegeContactPageRoleCounts,activeCollegeContactFilterCount,collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
@@ -11,28 +12,36 @@ type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export default async function CollegeContactsPage({searchParams}:{searchParams:Promise<RawSearch>}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
- catch{return <div className="space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
-  <ErrorState title="Invalid contact filters" description="A contact filter is invalid. No contacts were loaded."
+ catch(error){return <div className="space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
+  <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
- const context=await getCurrentRequestContext();
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
  const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));
+ const range=collegeContactsPageRange(filter.page,results.pageSize,results.total);
+ const roleCounts=collegeContactPageRoleCounts(results.items);
  if(filter.page>pageCount)redirect(collegeContactsHref({...filter,page:pageCount}));
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="College Admin · People" title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
    actions={<Link href="/college/people" className="rounded-md border px-3 py-2 text-sm font-semibold">Manage memberships</Link>}/>
   <nav aria-label="Contacts categories" className="flex flex-wrap gap-2">
-   <Link href={collegeContactsHref({...filter,tab:"ALL",page:1})} aria-current={filter.tab==="ALL"?"page":undefined}
+   <Link href={collegeContactsTabHref(filter,"ALL")} aria-current={filter.tab==="ALL"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">All contacts</Link>
-   <Link href={collegeContactsHref({...filter,tab:"FACULTY",page:1})} aria-current={filter.tab==="FACULTY"?"page":undefined}
+   <Link href={collegeContactsTabHref(filter,"FACULTY")} aria-current={filter.tab==="FACULTY"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">Faculty contacts</Link>
-   <Link href={collegeContactsHref({...filter,tab:"STUDENT",page:1})} aria-current={filter.tab==="STUDENT"?"page":undefined}
+   <Link href={collegeContactsTabHref(filter,"STUDENT")} aria-current={filter.tab==="STUDENT"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">Student contacts</Link>
   </nav>
+  {filter.membershipId&&<div role="status" className="flex flex-wrap items-center gap-3 rounded-lg border bg-surface p-3 text-sm">
+   <span>Showing the bookmarked contact record only.</span>
+   <Link href={collegeContactsWithoutMemberHref(filter)} className="font-semibold text-primary-text underline">Show matching contact directory</Link>
+  </div>}
+  <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
   <form action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-lg border bg-surface p-4">
    <input type="hidden" name="tab" value={filter.tab}/>
@@ -174,7 +183,8 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   </div>
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
-   {results.items.length===0?<p className="rounded-lg border p-4 text-sm">No matching contacts in this college.</p>:
+   <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
+   {results.items.length===0?<div role="status" className="space-y-2 rounded-lg border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear filters in this tab</Link></div>:
     <ul className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
      {results.items.map(contact=><li key={contact.membershipId} className="min-w-0 space-y-2 rounded-lg border bg-surface p-4">
       <h2 className="break-words font-semibold">{contact.name}</h2>
@@ -188,10 +198,12 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </ul>}
   </section>
   <nav aria-label="Contact directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-   <p>Page {filter.page} of {pageCount} · {results.total} matching contacts</p>
+   <p>Page {filter.page} of {pageCount} · Showing {range.first}–{range.last} of {results.total} matching contacts</p>
    <div className="flex flex-wrap gap-2">
+    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="rounded-md border px-4 py-2">First</Link>:null}
     {filter.page>1?<Link href={collegeContactsHref({...filter,page:filter.page-1})} className="rounded-md border px-4 py-2">Previous</Link>:null}
     {filter.page<pageCount?<Link href={collegeContactsHref({...filter,page:filter.page+1})} className="rounded-md border px-4 py-2">Next</Link>:null}
+    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="rounded-md border px-4 py-2">Last</Link>:null}
    </div>
   </nav>
  </div>;
