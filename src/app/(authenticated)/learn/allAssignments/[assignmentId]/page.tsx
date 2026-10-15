@@ -1,5 +1,7 @@
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
+import { learnerAssessmentSubmittedLinkHref } from "@/modules/courses/learner-assessment-submitted-link-model";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AssignmentFileOpenControl } from "@/components/courses/assignment-file-open-control";
@@ -51,12 +53,16 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         {item.submissionType === "TEXT" ? (
           <p className="whitespace-pre-wrap break-words rounded-lg bg-surface-subtle p-4">{item.submissionText}</p>
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
-          <a href={item.submissionUrl} target="_blank" rel="noopener noreferrer"
-            className="block break-all text-primary-text underline">{item.submissionUrl}</a>
+          learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
+            <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} target="_blank" rel="noopener noreferrer"
+              className="block break-all text-primary-text underline">{item.submissionUrl}</a>
+          ) : (
+            <p role="status" className="break-all text-body">Saved link unavailable. Open the original submission from a trusted HTTPS source.</p>
+          )
         ) : <AssignmentFileOpenControl key={item.submissionId}
           submissionId={item.submissionId} enabled={assignmentFilesRuntimeEnabled()} />}
         {item.gradePublished ? <div className="rounded-lg bg-surface-subtle p-4">
-          <p className="font-semibold text-foreground">Published grade: {item.pointsAwarded ?? 0} / {item.maxPoints}</p>
+          <p className="font-semibold text-foreground">Published grade: {learnerAssignmentPublishedGradeLabel(item.pointsAwarded,item.maxPoints)}</p>
           <p className="mt-2 whitespace-pre-wrap break-words">{item.feedback || "No written feedback was provided."}</p>
         </div> : <p>Grade and feedback are not published yet.</p>}
       </div> : <div className="mt-3">
