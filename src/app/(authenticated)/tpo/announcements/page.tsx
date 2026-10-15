@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placement-read-service";
+import {previewTpoCollegeAnnouncementVisibility} from "@/modules/announcements/tpo-audience-preview-service";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
 type Props={searchParams:Promise<{tab?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
@@ -14,12 +15,19 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const tab=tpoAnnouncementTabSchema.safeParse(t??"yours");
  if(!tab.success)return <main role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></main>;
  const result=await listTpoPlacementAnnouncements(context,tab.data);
+ const audience=result.status==="READY"&&tab.data==="yours"
+  ?await previewTpoCollegeAnnouncementVisibility(context):null;
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description="College-wide notices for this college. Removal and undo are author-only and version checked; external reminders remain unavailable."/>
   {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
+   {audience?<div role="status" className="mt-3 rounded-lg border border-border p-3">
+     <p className="text-sm font-semibold text-foreground">Current college-wide visibility preview</p>
+     <p className="mt-1 text-sm text-body">{audience.potentiallyVisibleMemberships} active memberships with active platform accounts.</p>
+     <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users.</p>
+   </div>:null}
    <form action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
     <label className="grid gap-1 text-sm font-semibold">Title
      <input name="title" required maxLength={255} className="min-h-11 rounded-md border border-border bg-surface px-3" />
