@@ -66,3 +66,14 @@ describe("large learner activity histories",()=>{
     expect(result.lastActivity).toBe(new Date(1700000000000+29999*1000).toISOString());
   });
 });
+
+describe("in-progress quiz course-card deadlines",()=>{
+ it("keeps a still-open in-progress attempt actionable",()=>{
+  const due=new Date("2026-10-18T10:00:00Z");
+  const result=learnerCourseListSignals([{contents:[],assignments:[],quizzes:[
+   {title:"Resume quiz",dueAt:due,progress:{status:"IN_PROGRESS"}},
+   {title:"Completed quiz",dueAt:due,progress:{status:"COMPLETED"}},
+  ]}],{itemsTotal:2,overallPercent:0},new Date("2026-10-15T10:00:00Z"));
+  expect(result.nextDue?.title).toBe("Resume quiz");
+ });
+});
