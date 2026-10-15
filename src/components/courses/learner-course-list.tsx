@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
+import { learnerCourseFilteredEmptyTitle } from "@/modules/courses/learner-course-filtered-empty-model";
 import { resolveLearnerCoursePeriod } from "@/modules/courses/learner-course-current-period-model";
 import { resolveLearnerCourseTypeFilter } from "@/modules/courses/learner-course-type-availability-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
@@ -301,13 +302,7 @@ export function LearnerCourseList({
       {visibleRows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
           <h2 className="m-0 text-base font-semibold text-foreground">
-            {query.trim()
-              ? `No courses match “${query.trim()}”`
-              : continueOnly
-                ? "No courses with a next step right now."
-                : effectiveTypeFilter === "elective"
-                  ? "No electives to show right now."
-                : "No regular courses to show right now."}
+            {learnerCourseFilteredEmptyTitle({query,continueOnly,typeFilter:effectiveTypeFilter,termState,progressFilter,periodCount:periodRows.length})}
           </h2>
           <p className="mt-2 text-sm text-body">
             Change the semester, course type or search to see other courses.
