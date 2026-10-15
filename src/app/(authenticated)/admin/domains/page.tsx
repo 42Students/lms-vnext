@@ -5,6 +5,7 @@ import {
 } from "@/components/admin/tenant-domain-manager";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import {requirePermission} from "@/modules/permissions/policy";
 import { listTenantDomainsWithRuntime } from "@/modules/tenant-domains/runtime";
 
 function serializeDomains(
@@ -24,6 +25,7 @@ function serializeDomains(
 
 export default async function SuperAdminDomainsPage() {
   const context = await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const collegeId = context.adminScope?.collegeId ?? null;
 
   if (!collegeId) {

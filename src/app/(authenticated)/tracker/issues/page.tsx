@@ -9,35 +9,21 @@ import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-servic
 import {
   BUG_ENVIRONMENTS,
   BUG_SEVERITIES,
-  trackerAdminListSchema,
 } from "@/modules/bug-tracker/admin-validation";
 import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import { parseTrackerIssuesPageParams } from "@/modules/bug-tracker/issues-query-model";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-const one = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
 export default async function TrackerIssuesPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
   const context = await getCurrentRequestContext();
-  if (!isSuperAdmin(context)) redirect("/dashboard");
+  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
 
-  const params = await searchParams;
-  const raw = {
-    status: one(params.status),
-    severity: one(params.severity),
-    environment: one(params.environment),
-    q: one(params.q),
-    sort: one(params.sort),
-    beforeCreatedAt: one(params.beforeCreatedAt),
-    beforeId: one(params.beforeId),
-    limit: 50,
-  };
-  const parsed = trackerAdminListSchema.safeParse(raw);
+  const parsed = parseTrackerIssuesPageParams(await searchParams);
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
@@ -45,20 +31,20 @@ export default async function TrackerIssuesPage({
         <PageHeader
           eyebrow="42 Tracker"
           title="Issues"
-          description="Tracker code is staged but the DB10 migration has not been promoted and verified."
+          description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
         <TrackerAdminNav />
         <div role="status" className="rounded-xl border border-border bg-surface p-6">
           <p className="m-0 font-semibold text-foreground">Tracker database is not enabled.</p>
           <p className="mt-2 text-sm text-body">
-            W01 must register and replay the DB10 tracker tables before this page can read issue data.
+            Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
           </p>
         </div>
       </div>
     );
   }
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <PageHeader eyebrow="42 Tracker" title="Issues" description="Review and triage reported LMS issues." />
@@ -73,8 +59,8 @@ export default async function TrackerIssuesPage({
     );
   }
 
-  const page = await listBugTrackerIssuesForAdmin(context, parsed.data);
-  const current = parsed.data;
+  const page = await listBugTrackerIssuesForAdmin(context, parsed.input);
+  const current = parsed.display;
   const next = new URLSearchParams();
   if (current.status) next.set("status", current.status);
   if (current.severity) next.set("severity", current.severity);

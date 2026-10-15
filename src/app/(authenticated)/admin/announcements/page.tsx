@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   AnnouncementAdminWorkspace,
@@ -7,23 +9,37 @@ import {
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import {SuperAdminCollegeBroadcastForm} from "@/components/announcements/super-admin-college-broadcast-form";
+import {listSuperAdminBroadcastColleges} from "@/modules/announcements/super-admin-college-broadcast-service";
 import {
   listAnnouncementsForAdmin,
   listAnnouncementTargetOptions,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { parseSuperAdminAnnouncementParams } from "@/modules/announcements/super-admin-list-query";
+import { announcementVisibilityAt } from "@/modules/announcements/visibility-model";
+import {announcementHistoryEmptyMessage} from "@/modules/announcements/admin-history-empty-model";
+import { ANNOUNCEMENT_SENDER_TYPES } from "@/modules/announcements/validation";
 
-function currentTimeMs(): number {
+function currentTimeMs() {
   return Date.now();
 }
 
 export default async function AnnouncementsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ deleted?: string; beforeCreatedAt?: string; beforeId?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  const params = await searchParams;
+  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") {
+    redirect("/dashboard");
+  }
+  const params = parseSuperAdminAnnouncementParams(await searchParams);
+  if (!params) {
+    return <div className="space-y-5">
+      <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
+      <p role="alert" className="rounded-xl border border-border bg-surface p-5">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline">Reset filters</Link></p>
+    </div>;
+  }
 
   if (!announcementsRuntimeEnabled()) {
     return (
@@ -31,25 +47,31 @@ export default async function AnnouncementsPage({
         <PageHeader
           eyebrow="Super Admin"
           title="Announcements"
-          description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
+          description="Migration 0076 registers the announcement tables; this environment has not enabled the verified DB10 runtime flag."
         />
         <div role="status" className="rounded-xl border border-border bg-surface p-6">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
-          <p className="mt-2 text-sm text-body">W01 must promote and replay the DB10 announcement table before this page performs any DB reads or writes.</p>
+          <p className="mt-2 text-sm text-body">Apply and verify migration 0076, then explicitly set DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED. No announcement DB reads or writes are attempted while disabled.</p>
         </div>
       </div>
     );
   }
 
   const includeDeleted = params.deleted === "1";
-  const [page, targetGroups] = await Promise.all([
+  const [page, targetGroups, broadcastColleges] = await Promise.all([
     listAnnouncementsForAdmin(context, {
       includeDeleted,
+      q: params.q,
+      receiverType: params.receiverType,
+      visibility: params.visibility,
+      pinned: params.pinned,
+      senderType: params.senderType,
       beforeCreatedAt: params.beforeCreatedAt,
       beforeId: params.beforeId,
       limit: 50,
     }),
     listAnnouncementTargetOptions(context),
+    listSuperAdminBroadcastColleges(context),
   ]);
 
   const targets: AnnouncementTarget[] = targetGroups
@@ -77,18 +99,17 @@ export default async function AnnouncementsPage({
     deletedAt: item.deletedAt?.toISOString() ?? null,
     version: item.version,
     createdAt: item.createdAt.toISOString(),
-    visibilityState: item.deletedAt
-      ? "DELETED"
-      : item.scheduledAt && item.scheduledAt.getTime() > now
-        ? "SCHEDULED"
-        : item.expiresAt && item.expiresAt.getTime() <= now
-          ? "EXPIRED"
-          : "LIVE",
+    visibilityState: announcementVisibilityAt(item, now),
   }));
 
   const next = page.nextCursor
     ? "/admin/announcements?" + new URLSearchParams({
         ...(includeDeleted ? { deleted: "1" } : {}),
+        ...(params.q ? { q: params.q } : {}),
+        ...(params.receiverType ? {receiverType:params.receiverType} : {}),
+        ...(params.visibility ? {visibility:params.visibility} : {}),
+        ...(params.pinned ? {pinned:params.pinned} : {}),
+        ...(params.senderType ? {senderType:params.senderType} : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -102,15 +123,61 @@ export default async function AnnouncementsPage({
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
           <Link
-            href={includeDeleted ? "/admin/announcements" : "/admin/announcements?deleted=1"}
+            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
         }
       />
-      <SuperAdminCollegeBroadcastForm colleges={targets.filter(target=>target.type==="COLLEGE").map(target=>({id:target.id,label:target.label}))}/>
-      <AnnouncementAdminWorkspace items={items} targets={targets} />
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
+        <label className="text-sm font-semibold text-body">Visibility
+          <select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All visible states</option>
+            <option value="LIVE">Live</option>
+            <option value="SCHEDULED">Scheduled</option>
+            <option value="EXPIRED">Expired</option>
+            <option value="DELETED">Deleted only</option>
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-body">Pinned
+          <select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All notices</option><option value="PINNED">Pinned only</option><option value="UNPINNED">Not pinned</option>
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-body">Published by
+          <select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All senders</option>{ANNOUNCEMENT_SENDER_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-body">Audience type
+          <select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All audiences</option>
+            {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
+          </select>
+        </label>
+        <label className="min-w-[14rem] flex-1 text-sm font-semibold text-body">Search announcement title or message
+          <input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Search</button>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
+      </form>
+      <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
+        ...(includeDeleted ? {deleted:"1"} : {}),
+        ...(params.q ? {q:params.q} : {}),
+        ...(params.receiverType ? {receiverType:params.receiverType} : {}),
+        ...(params.visibility ? {visibility:params.visibility} : {}),
+        ...(params.pinned ? {pinned:params.pinned} : {}),
+        ...(params.senderType ? {senderType:params.senderType} : {}),
+        ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
+        ...(params.beforeId ? {beforeId:params.beforeId} : {}),
+      }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this filtered page (CSV)</Link>
+      <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
+      <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent
+        emptyMessage={announcementHistoryEmptyMessage({
+          hasFilters:Boolean(params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted),
+        })}/>
       {next ? (
         <div className="flex justify-center">
           <Link href={next} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground">

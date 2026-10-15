@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { safeAnnouncementLink } from "@/modules/announcements/link-model";
+import { announcementLocalTiming } from "@/modules/announcements/local-timing-model";
 
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
@@ -39,12 +40,6 @@ function localInputValue(value: string | null) {
   return local.toISOString().slice(0, 16);
 }
 
-function isoOrNull(value: string) {
-  if (!value.trim()) return null;
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) ? date.toISOString() : null;
-}
-
 function splitTarget(value: string) {
   const separator = value.indexOf(":");
   return {
@@ -56,9 +51,13 @@ function splitTarget(value: string) {
 export function AnnouncementAdminWorkspace({
   items,
   targets,
+  requiresPublicationConsent=false,
+  emptyMessage="No announcements in this view.",
 }: {
   items: readonly AnnouncementAdminItem[];
   targets: readonly AnnouncementTarget[];
+  requiresPublicationConsent?:boolean;
+  emptyMessage?:string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -73,6 +72,7 @@ export function AnnouncementAdminWorkspace({
   const [pinned, setPinned] = useState(false);
   const [editing, setEditing] = useState<AnnouncementAdminItem | null>(null);
   const [editConsent,setEditConsent]=useState(false);
+  const createTiming = announcementLocalTiming(scheduledAt, expiresAt);
   const [reviewPublish,setReviewPublish]=useState(false);
   const targetLabels = useMemo(
     () => new Map(targets.map((entry) => [`${entry.type}:${entry.id}`, entry.label])),
@@ -88,7 +88,7 @@ export function AnnouncementAdminWorkspace({
   }
 
   function create() {
-    if (!target) return;
+    if (!target || !createTiming.valid) return;
     const receiver = splitTarget(target);
     startTransition(async () => {
       const response = await fetch("/api/announcements/admin", {
@@ -98,10 +98,10 @@ export function AnnouncementAdminWorkspace({
           ...receiver,
           title,
           message,
-          scheduledAt: isoOrNull(scheduledAt),
-          expiresAt: isoOrNull(expiresAt),
+          scheduledAt: createTiming.scheduledAt,
+          expiresAt: createTiming.expiresAt,
           isPinned: pinned,
-          publishConsent:true,
+          publishConsent:requiresPublicationConsent?true:undefined,
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -159,6 +159,11 @@ export function AnnouncementAdminWorkspace({
     const data = new FormData(form);
     const targetValue = String(data.get("target") ?? "");
     const receiver = splitTarget(targetValue);
+    const editTiming = announcementLocalTiming(String(data.get("scheduledAt") ?? ""), String(data.get("expiresAt") ?? ""));
+    if (!editTiming.valid) {
+      showToast({tone:"error",title:"Invalid announcement timing",description:"Expiry must be after the scheduled time."});
+      return;
+    }
     startTransition(async () => {
       const response = await fetch(`/api/announcements/${editing.id}`, {
         method: "PATCH",
@@ -168,10 +173,10 @@ export function AnnouncementAdminWorkspace({
           ...receiver,
           title: String(data.get("title") ?? ""),
           message: String(data.get("message") ?? ""),
-          scheduledAt: isoOrNull(String(data.get("scheduledAt") ?? "")),
-          expiresAt: isoOrNull(String(data.get("expiresAt") ?? "")),
+          scheduledAt: editTiming.scheduledAt,
+          expiresAt: editTiming.expiresAt,
           isPinned: data.get("isPinned") === "on",
-          publishConsent:true,
+          publishConsent:requiresPublicationConsent?true:undefined,
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -239,9 +244,10 @@ export function AnnouncementAdminWorkspace({
               <input type="checkbox" checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
               Pin for recipients
             </label>
+            {!createTiming.valid?<p role="alert" className="md:col-span-2 text-sm text-danger-text">Invalid timing: expiry must follow the schedule.</p>:null}
             <div className="md:col-span-2">
-              <Button disabled={pending || !title.trim() || !message.trim() || !target} onClick={()=>setReviewPublish(true)}>
-                Review publication
+              <Button disabled={pending || !title.trim() || !message.trim() || !target || !createTiming.valid} onClick={requiresPublicationConsent?()=>setReviewPublish(true):create}>
+                {requiresPublicationConsent?"Review publication":pending?"Creating…":"Create announcement"}
               </Button>
             </div>
           </div>
@@ -251,7 +257,7 @@ export function AnnouncementAdminWorkspace({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
         {items.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">No announcements in this view.</p>
+          <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">{emptyMessage}</p>
         ) : (
           items.map((item) => {
             const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
@@ -293,7 +299,7 @@ export function AnnouncementAdminWorkspace({
         )}
       </section>
 
-      <Dialog open={reviewPublish} onOpenChange={setReviewPublish} title="Confirm announcement publication"
+      {requiresPublicationConsent?<Dialog open={reviewPublish} onOpenChange={setReviewPublish} title="Confirm announcement publication"
        description="The selected recipients will see this notice when it becomes visible. This does not send external SMS or email."
        footer={<><Button variant="secondary" disabled={pending} onClick={()=>setReviewPublish(false)}>Cancel</Button>
          <Button disabled={pending} onClick={create}>{pending?"Publishing…":"Confirm and publish"}</Button></>}>
@@ -301,11 +307,11 @@ export function AnnouncementAdminWorkspace({
         {platformAnnouncementPublicationSummary({
           receiverType:splitTarget(target).receiverType,
           receiverLabel:targetLabels.get(target)??"Selected audience",
-          title,scheduledAt:isoOrNull(scheduledAt),expiresAt:isoOrNull(expiresAt),isPinned:pinned,
+          title,scheduledAt:createTiming.scheduledAt,expiresAt:createTiming.expiresAt,isPinned:pinned,
         }).map(line=><li key={line}>{line}</li>)}
        </ul>
        <p className="mt-3 text-xs text-muted-foreground">You are confirming publication to the selected audience. No external outbound delivery is initiated.</p>
-      </Dialog>
+      </Dialog>:null}
       <Dialog
         open={Boolean(editing)}
         onOpenChange={(open) => { if (!open) setEditing(null); }}
@@ -314,16 +320,16 @@ export function AnnouncementAdminWorkspace({
         footer={
           <>
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
-            <Button disabled={pending || !editing || !editConsent} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
+            <Button disabled={pending || !editing || (requiresPublicationConsent&&!editConsent)} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
           </>
         }
       >
         {editing ? (
           <form id="announcement-edit-form" className="grid gap-4">
-            <label className="flex items-start gap-2 text-sm text-body">
+            {requiresPublicationConsent?<label className="flex items-start gap-2 text-sm text-body">
               <input type="checkbox" checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
-            </label>
+            </label>:null}
             <label className="text-sm font-semibold text-body">
               Audience
               <select

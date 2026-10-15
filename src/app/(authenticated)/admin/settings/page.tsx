@@ -3,6 +3,7 @@ import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platfo
 import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import {requirePermission} from "@/modules/permissions/policy";
 import {
   formatPlatformSettingValue,
   platformSettingOriginLabel,
@@ -17,11 +18,12 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   const context =
     await getCurrentRequestContext();
 
+  requirePermission(context,"admin-scope.select");
   const raw=await searchParams;
   const parsed=parseAdminInventoryQuery(raw);
+  if(!parsed) return <ErrorState title="Invalid setting filter" description="Use a valid section or search query." action={<Link href="/admin/settings">Clear filters</Link>}/>;
   const { selectedCollegeName, sections: allSections } =
     await getSuperAdminPlatformSettings(context);
-  if(!parsed) return <ErrorState title="Invalid setting filter" description="Use a valid section or search query." action={<Link href="/admin/settings">Clear filters</Link>}/>;
   const sections=filterPlatformInventory(allSections,parsed);
 
   return (

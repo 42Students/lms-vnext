@@ -12,7 +12,7 @@ export function announcementApiError(error: unknown) {
       error.code === "FORBIDDEN" ? 403 :
       error.code === "TARGET_NOT_FOUND" ||
       error.code === "ANNOUNCEMENT_NOT_FOUND" ? 404 :
-      error.code === "STALE_VERSION" ? 409 : 400;
+      error.code === "STALE_VERSION" || error.code === "STALE_AUDIENCE" ? 409 : 400;
     return NextResponse.json({ error: error.code }, { status });
   }
   return apiErrorResponse(error);

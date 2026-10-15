@@ -1,8 +1,10 @@
 import {
-  and, desc, eq, gt, isNull, lt, or, type SQL,
+  and, desc, eq, gt, isNotNull, isNull, lt, lte, or, sql, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10Announcements } from "@/db/schema/db10-announcements";
+import { activityEvents } from "@/db/schema/activity";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { colleges } from "@/db/schema/colleges";
 import { departments } from "@/db/schema/departments";
 import {
@@ -24,6 +26,8 @@ import {
 } from "./validation";
 import { AnnouncementError } from "./errors";
 import {requirePlatformPublishConsent} from "./super-admin-publish-consent-model";
+import { canAccessAnnouncements } from "./actor-status-model";
+import { requireCurrentAnnouncementVersion } from "./announcement-version-guard";
 
 type ReceiverType = (typeof ANNOUNCEMENT_RECEIVER_TYPES)[number];
 
@@ -125,10 +129,12 @@ function senderType(context: RequestContext) {
 }
 
 function requireManage(context: RequestContext, scope: { collegeId: string; organizationId: string }) {
+  if (!canAccessAnnouncements(context.user.platformStatus)) throw new AnnouncementError("FORBIDDEN");
   requirePermission(context, "college.manage", scope);
 }
 
 function adminListScope(context: RequestContext): { collegeId?: string; organizationId?: string } {
+  if (!canAccessAnnouncements(context.user.platformStatus)) throw new AnnouncementError("FORBIDDEN");
   if (isSuperAdmin(context)) {
     if (context.adminScope?.collegeId) return { collegeId: context.adminScope.collegeId };
     if (context.adminScope?.organizationId) return { organizationId: context.adminScope.organizationId };
@@ -152,19 +158,35 @@ export async function createAnnouncement(context: RequestContext, raw: unknown) 
   const scope = await resolveTarget(input.receiverType, input.receiverId);
   requireManage(context, scope);
   assertSchedule(input.scheduledAt ?? null, input.expiresAt ?? null);
-  const [created] = await getDb().insert(db10Announcements).values({
-    ...scope,
-    receiverType: input.receiverType,
-    receiverId: input.receiverId,
-    title: input.title,
-    message: input.message,
-    senderUserId: context.user.id,
-    senderType: senderType(context),
-    scheduledAt: input.scheduledAt ?? null,
-    expiresAt: input.expiresAt ?? null,
-    isPinned: input.isPinned,
-  }).returning();
-  return created;
+  return getDb().transaction(async tx => {
+    const [created] = await tx.insert(db10Announcements).values({
+      ...scope,
+      receiverType: input.receiverType,
+      receiverId: input.receiverId,
+      title: input.title,
+      message: input.message,
+      senderUserId: context.user.id,
+      senderType: senderType(context),
+      scheduledAt: input.scheduledAt ?? null,
+      expiresAt: input.expiresAt ?? null,
+      isPinned: input.isPinned,
+    }).returning();
+    if (isSuperAdmin(context)) {
+      await tx.insert(activityEvents).values({
+        collegeId: scope.collegeId,
+        organizationId: scope.organizationId,
+        actorUserId: context.user.id,
+        module: "PLATFORM",
+        eventType: ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_ANNOUNCEMENT_PUBLISHED,
+        subjectType: "announcement",
+        subjectId: created.id,
+        importance: "HIGH",
+        summary: "Super Admin published an in-app college notice",
+        metadata: { noticeId: created.id, receiverType: input.receiverType },
+      });
+    }
+    return created;
+  });
 }
 
 export async function listAnnouncementsForAdmin(context: RequestContext, raw: unknown = {}) {
@@ -173,7 +195,32 @@ export async function listAnnouncementsForAdmin(context: RequestContext, raw: un
   const conditions: SQL[] = [];
   if (scope.collegeId) conditions.push(eq(db10Announcements.collegeId, scope.collegeId));
   if (scope.organizationId) conditions.push(eq(db10Announcements.organizationId, scope.organizationId));
-  if (!input.includeDeleted) conditions.push(isNull(db10Announcements.deletedAt));
+  const currentTime = new Date();
+  if (input.visibility === "DELETED") {
+    conditions.push(isNotNull(db10Announcements.deletedAt));
+  } else if (input.visibility) {
+    conditions.push(isNull(db10Announcements.deletedAt));
+    if (input.visibility === "SCHEDULED") {
+      conditions.push(gt(db10Announcements.scheduledAt, currentTime));
+    } else if (input.visibility === "EXPIRED") {
+      conditions.push(lte(db10Announcements.expiresAt, currentTime));
+    } else {
+      conditions.push(or(isNull(db10Announcements.scheduledAt), lte(db10Announcements.scheduledAt, currentTime))!);
+      conditions.push(or(isNull(db10Announcements.expiresAt), gt(db10Announcements.expiresAt, currentTime))!);
+    }
+  } else if (!input.includeDeleted) {
+    conditions.push(isNull(db10Announcements.deletedAt));
+  }
+  if (input.receiverType) conditions.push(eq(db10Announcements.receiverType, input.receiverType));
+  if (input.pinned) conditions.push(eq(db10Announcements.isPinned, input.pinned === "PINNED"));
+  if (input.senderType) conditions.push(eq(db10Announcements.senderType, input.senderType));
+  if (input.q) {
+    const term = input.q.toLowerCase();
+    conditions.push(or(
+      sql`position(${term}::text in lower(${db10Announcements.title})) > 0`,
+      sql`position(${term}::text in lower(${db10Announcements.message})) > 0`,
+    )!);
+  }
   if (input.beforeCreatedAt && input.beforeId) {
     conditions.push(or(
       lt(db10Announcements.createdAt, input.beforeCreatedAt),
@@ -270,6 +317,7 @@ export async function deleteAnnouncement(
   const { expectedVersion } = announcementVersionSchema.parse(raw);
   const current = await loadAnnouncement(id);
   requireManage(context, current);
+  requireCurrentAnnouncementVersion(current.version, expectedVersion);
   if (current.deletedAt) return current;
   const now = new Date();
   const [deleted] = await getDb()
@@ -299,6 +347,7 @@ export async function restoreAnnouncement(
   const { expectedVersion } = announcementVersionSchema.parse(raw);
   const current = await loadAnnouncement(id);
   requireManage(context, current);
+  requireCurrentAnnouncementVersion(current.version, expectedVersion);
   if (!current.deletedAt) return current;
   const now = new Date();
   const [restored] = await getDb()
@@ -323,7 +372,7 @@ export async function listVisibleAnnouncementsForMembership(
   context: RequestContext,
   now = new Date(),
 ) {
-  if (!context.membership || context.membership.status !== "ACTIVE") {
+  if (!canAccessAnnouncements(context.user.platformStatus) || !context.membership || context.membership.status !== "ACTIVE") {
     return [];
   }
   const membership = context.membership;
@@ -411,6 +460,7 @@ export async function listVisibleAnnouncementsForMembership(
 
 
 export async function listAnnouncementTargetOptions(context: RequestContext) {
+  if (!canAccessAnnouncements(context.user.platformStatus)) throw new AnnouncementError("FORBIDDEN");
   let collegeId: string | null = null;
   if (isSuperAdmin(context)) {
     collegeId = context.adminScope?.collegeId ?? null;
