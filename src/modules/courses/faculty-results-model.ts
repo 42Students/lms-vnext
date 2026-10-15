@@ -25,6 +25,12 @@ export type FacultyResultCandidate = {
   dueAt: Date | null;
 };
 
+/** Treat non-finite database date values as unknown rather than giving them false priority. */
+export function safeFacultyDueTime(value:Date|null):number|null{
+ const millis=value?.getTime();
+ return millis===undefined||!Number.isFinite(millis)?null:millis;
+}
+
 export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
   rows: readonly T[], query: Pick<FacultyResultsQuery, "kind" | "status" | "search" | "deliveryId"> & Partial<Pick<FacultyResultsQuery,"sort"|"due">>,
  now:Date=new Date(),
@@ -36,7 +42,7 @@ export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
       (row.kind === "QUIZ" && row.status === "CLOSED")) &&
     (!query.deliveryId || row.deliveryId === query.deliveryId) &&
     (!query.due || query.due==="ALL" ||
-      (query.due==="UNDATED" && !row.dueAt) ||
+      (query.due==="UNDATED" && safeFacultyDueTime(row.dueAt)===null) ||
       (query.due==="OVERDUE" && row.dueAt!==null && row.dueAt.getTime()<now.getTime() &&
        (row.status==="PUBLISHED"||row.status==="CLOSED")) ||
       (query.due==="UPCOMING" && row.dueAt!==null && row.dueAt.getTime()>=now.getTime())) &&
@@ -44,8 +50,8 @@ export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
       field.toLowerCase().includes(term))),
   ).sort((a,b) =>
     (query.sort==="TITLE" ? a.title.localeCompare(b.title) :
-      query.sort==="DUE_ASC" ? (a.dueAt?.getTime()??Number.MAX_SAFE_INTEGER)-(b.dueAt?.getTime()??Number.MAX_SAFE_INTEGER) :
-      (b.dueAt?.getTime()??Number.NEGATIVE_INFINITY)-(a.dueAt?.getTime()??Number.NEGATIVE_INFINITY)) ||
+      query.sort==="DUE_ASC" ? (safeFacultyDueTime(a.dueAt)??Number.MAX_SAFE_INTEGER)-(safeFacultyDueTime(b.dueAt)??Number.MAX_SAFE_INTEGER) :
+      (safeFacultyDueTime(b.dueAt)??Number.NEGATIVE_INFINITY)-(safeFacultyDueTime(a.dueAt)??Number.NEGATIVE_INFINITY)) ||
     a.kind.localeCompare(b.kind) || a.id.localeCompare(b.id) || a.deliveryId.localeCompare(b.deliveryId),
   );
 }
