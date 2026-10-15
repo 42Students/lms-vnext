@@ -105,6 +105,10 @@ export const placementCompanyRelationships = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("outside_drives_relationship_college_parent_uq").on(
+      table.id,
+      table.collegeId,
+    ),
     uniqueIndex("placement_company_relationships_college_company_uq").on(
       table.collegeId,
       table.companyId,

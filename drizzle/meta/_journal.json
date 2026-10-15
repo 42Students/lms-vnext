@@ -554,6 +554,13 @@
       "when": 1792081407893,
       "tag": "0078_placement_hr_interview_slots",
       "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1792081445018,
+      "tag": "0079_placement_outside_drive_records",
+      "breakpoints": true
     }
   ]
 }
