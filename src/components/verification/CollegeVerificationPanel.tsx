@@ -110,7 +110,6 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh queue</button>
   </section>}
   {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review failed: {bulkError}. No blanket success is assumed; refresh to inspect persisted decisions.</p>}
-  <nav aria-label="Verification pagination"
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
    <label>Sort by <select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option>

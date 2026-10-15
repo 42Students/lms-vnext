@@ -27,6 +27,7 @@ const admin:RequestContext={
 const wrongRole:RequestContext={...admin,membership:{...admin.membership!,roles:["LEARNER"]}};
 const ids={
  ownUser:randomUUID(),ownMember:randomUUID(),ownRole:randomUUID(),ownRecord:randomUUID(),
+ bulkUser:randomUUID(),bulkMember:randomUUID(),bulkRole:randomUUID(),bulkRecord:randomUUID(),
  foreignUser:randomUUID(),foreignMember:randomUUID(),foreignRole:randomUUID(),foreignRecord:randomUUID(),
 };
 const ownBody={learnerMembershipId:ids.ownMember,section:"IDENTITY" as const,
@@ -37,6 +38,7 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   if(!pool)throw Error("DB04 disposable target required");
   for(const [user,member,role,college,record] of [
    [ids.ownUser,ids.ownMember,ids.ownRole,SEED_IDS.collegeA,ids.ownRecord],
+   [ids.bulkUser,ids.bulkMember,ids.bulkRole,SEED_IDS.collegeA,ids.bulkRecord],
    [ids.foreignUser,ids.foreignMember,ids.foreignRole,SEED_IDS.collegeB,ids.foreignRecord],
   ]){
    await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1::uuid,$2::text,$3::text)",
@@ -54,6 +56,7 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
    if(pool){
     for(const [user,member,role,record] of [
      [ids.ownUser,ids.ownMember,ids.ownRole,ids.ownRecord],
+     [ids.bulkUser,ids.bulkMember,ids.bulkRole,ids.bulkRecord],
      [ids.foreignUser,ids.foreignMember,ids.foreignRole,ids.foreignRecord],
     ]){
      await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1::text)",[record]);
@@ -136,6 +139,23 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   const response=await reviewCollegeVerificationBulk(admin,foreignInput);
   expect(response.summary).toEqual({attempted:1,succeeded:0,failed:1});
   expect(response.outcomes[0].result).toBe("NOT_AVAILABLE");
+ });
+ it("persists one authorized bulk send-back with audit/notification, rejects foreign entry and stale replay",async()=>{
+  const request={confirm:true,action:"SEND_BACK",reason:"Please provide correct evidence",items:[
+   {learnerMembershipId:ids.bulkMember,section:"IDENTITY",expectedVersion:1},
+   {learnerMembershipId:ids.foreignMember,section:"IDENTITY",expectedVersion:1},
+  ]};
+  const result=await reviewCollegeVerificationBulk(admin,request);
+  expect(result.summary).toEqual({attempted:2,succeeded:1,failed:1});
+  expect(result.outcomes.map(x=>x.result)).toEqual(["SENT_BACK","NOT_AVAILABLE"]);
+  const record=await pool!.query("SELECT status,row_version FROM profile_verifications WHERE id=$1::uuid",[ids.bulkRecord]);
+  expect(record.rows[0]).toMatchObject({status:"SENT_BACK",row_version:2});
+  const audit=await pool!.query("SELECT id FROM activity_events WHERE subject_id=$1::text",[ids.bulkRecord]);
+  expect(audit.rows).toHaveLength(1);
+  const notice=await pool!.query("SELECT id FROM in_app_notifications WHERE event_id=$1::uuid",[audit.rows[0].id]);
+  expect(notice.rows).toHaveLength(1);
+  const retry=await reviewCollegeVerificationBulk(admin,{...request,items:[request.items[0]]});
+  expect(retry.outcomes[0].result).toBe("STALE_VERSION");
  });
  it("commits a send-back event and learner in-app notification, rejecting replay",async()=>{
   const saved=await reviewProfileVerification(admin,ownBody,createProfileVerificationRepository());
