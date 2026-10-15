@@ -19,3 +19,11 @@ export function prepareTpoBatchInvite(input:{batchName:string;deadline:Date|null
  const warning=input.finishedAt?"This batch is finished; do not issue a new invitation.":input.invitedAt?"An invitation is already marked in batch lifecycle. This draft does not record or resend it.":null;
  return {subject,body,warning};
 }
+
+export function prepareTpoBatchReminder(input:{batchName:string;unrecorded:number;activeLearners:number;available:boolean;finished:boolean}):{subject:string;body:string;status:string}{
+ const subject="Review your placement registration — "+input.batchName;
+ const body="Please review your placement registration choice for "+input.batchName+" on the LMS portal. If you have already responded, your saved choice remains unchanged.";
+ if(!input.available)return {subject,body,status:"Registration evidence unavailable; do not infer the number requiring follow-up."};
+ if(input.finished)return {subject,body,status:"This batch is finished; no further registration reminders should be initiated."};
+ return {subject,body,status:input.unrecorded+" of "+input.activeLearners+" currently active learners have no recorded choice. This is not a contact or delivery list."};
+}
