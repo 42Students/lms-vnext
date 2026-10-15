@@ -69,5 +69,7 @@ export function decideDelivery(request: OutboundSendRequest, policy: DeliveryPol
   return { status: "QUEUED" };
 }
 export function previewAudience(requests: readonly OutboundSendRequest[], policyFor: (request: OutboundSendRequest) => DeliveryPolicy) {
-  return requests.map(request => ({ channel: request.channel, recipient: normalizeRecipient(request.channel, request.recipient), ...decideDelivery(request, policyFor(request)) }));
+  // Validate every address and template before performing any policy lookups.
+  const prepared=requests.map(request=>outboundSendSchema.parse(request));
+  return prepared.map(request => ({ channel: request.channel, recipient: normalizeRecipient(request.channel, request.recipient), ...decideDelivery(request, policyFor(request)) }));
 }
