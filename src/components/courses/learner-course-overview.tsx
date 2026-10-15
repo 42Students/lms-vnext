@@ -249,7 +249,7 @@ export function LearnerCourseOverview({
     .slice(0, 6);
 
   const homeCompletion = learnerCourseHomeCompletion({
-    itemsTotal:summary.itemsTotal,itemsMissed:summary.itemsMissed,readOnly,
+    itemsTotal:summary.itemsTotal,itemsCompleted:summary.itemsCompleted,itemsMissed:summary.itemsMissed,readOnly,
   });
   const jumpLinks=learnerCourseOverviewJumps({
     hasPublishedPath:pathPreview.totalLessons>0,
