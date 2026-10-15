@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   evaluateTpoDriveCancellation,
+  isIssuedOfferCancelable,
   tpoDriveCancelSchema,
 } from "@/modules/placements/tpo-drive-cancel-model";
 
@@ -33,5 +34,16 @@ describe("TPO drive cancellation", () => {
     expect(tpoDriveCancelSchema.safeParse({ ...valid, confirmed: false }).success).toBe(false);
     expect(tpoDriveCancelSchema.safeParse({ ...valid, reason: "short" }).success).toBe(false);
     expect(tpoDriveCancelSchema.safeParse({ ...valid, collegeId: "x" }).success).toBe(false);
+  });
+});
+
+describe("P-S2-12 cancel outstanding offers", () => {
+  it("withdraws ISSUED only; accepted offers must block cancellation", () => {
+    expect(isIssuedOfferCancelable("ISSUED")).toBe(true);
+    for (const status of ["ACCEPTED","DECLINED","WITHDRAWN","EXPIRED"]) {
+      expect(isIssuedOfferCancelable(status)).toBe(false);
+    }
+    const accepted = { submittedApplications: 2, openRounds: 1, issuedOffers: 1, acceptedOffers: 1 };
+    expect(evaluateTpoDriveCancellation("PUBLISHED","ACTIVE", accepted, accepted)).toBe("BLOCKED_ACCEPTED_OFFERS");
   });
 });
