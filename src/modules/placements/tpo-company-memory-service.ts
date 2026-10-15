@@ -168,6 +168,24 @@ async function loadDriveFacts(jobIds: string[]) {
   return rows;
 }
 
+/**
+ * T-S1-02: canonical stage projection for the Engage roster. Each lead
+ * inherits execution evidence only from its own persisted relationship.
+ */
+export async function getTpoRecruiterLeadStages(
+  context: RequestContext, rawCollegeId: string,
+): Promise<Map<string, ReturnType<typeof deriveTpoRecruiterLeadStage>>> {
+  const source = await loadCompanySourceRows(context, rawCollegeId);
+  const jobs = source.jobs.map(row => ({
+    jobId: row.job.id, relationshipId: row.relationshipId,
+  }));
+  const driveRows = await loadDriveFacts(jobs.map(row => row.jobId));
+  return new Map(source.leads.map(lead => [
+    lead.id,
+    deriveOwnRecruiterLeadStage(lead, jobs, driveRows),
+  ]));
+}
+
 function matchingCompanies(
   rows: Awaited<ReturnType<typeof loadCompanySourceRows>>,
 ) {

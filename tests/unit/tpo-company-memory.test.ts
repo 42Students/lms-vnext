@@ -62,3 +62,19 @@ describe("T-S1-02 owned-drive lead stage", () => {
     )).toBe("JOINED");
   });
 });
+
+describe("T-S1-02 derived pipeline precedence", () => {
+  it("NOT_NOW always overrides a drive that recruited and planned", () => {
+    const lead = {
+      manualStage: "NOT_NOW", recruiterUserId: "recruiter",
+      inviteSentAt: new Date("2026-10-10T00:00:00Z"),
+      inviteClickedAt: null, companyRelationshipId: "rel-a",
+    };
+    expect(deriveOwnRecruiterLeadStage(lead, [
+      { jobId: "job-a", relationshipId: "rel-a" },
+    ], [{
+      jobId: "job-a", jobStatus: "PUBLISHED", archivedAt: null,
+      offerStatus: "ACCEPTED", joiningStatus: "JOINED",
+    }])).toBe("NOT_NOW");
+  });
+});
