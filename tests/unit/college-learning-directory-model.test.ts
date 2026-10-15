@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 import {
   collegeLearningHref,
   collegeLearningPageCount,
@@ -169,6 +170,13 @@ describe("College Admin lessons and course progress pure models", () => {
       for (const key of ["programStatus","cohortStatus","periodStatus","courseStatus","departmentCode"])
         expect(params.getAll(key)).toHaveLength(1);
     }
+  });
+
+  it("filters college lessons by contentType without silently accepting an unknown value", () => {
+    expect(collegeLessonQuerySchema.safeParse({contentType:"AUDIO"}).success).toBe(false);
+    const query=collegeLessonQuerySchema.parse({contentType:"YOUTUBE"});
+    expect(new URL(collegeLearningHref("LESSONS",query),"https://test.example").searchParams.get("contentType")).toBe("YOUTUBE");
+    expect(new URL(lessonsCsvHref(query),"https://test.example").searchParams.get("contentType")).toBe("YOUTUBE");
   });
 
 });
