@@ -44,3 +44,10 @@ export function verificationSectionEvidenceFiltersValid(filter:{kind?:string;mar
 export function verificationWaitingAttentionValid(filter:{tab:string;attention:string}):boolean{
  return filter.tab==="WAITING"||filter.attention!=="VERIFIED_DETAILS_CHANGED"&&filter.attention!=="WAITING_OVER_WEEK";
 }
+
+/** Waiting attention cues and elapsed-age bands share one possible state/time intersection. */
+export function verificationAttentionAgeCompatible(filter:{attention:string;ageBand:string;waitingState:string}):boolean{
+ if(filter.attention==="WAITING_OVER_WEEK"&&(filter.ageBand==="WITHIN_48_HOURS"||filter.ageBand==="TWO_TO_SEVEN_DAYS"))return false;
+ if(filter.attention==="VERIFIED_DETAILS_CHANGED"&&filter.waitingState==="SUBMITTED")return false;
+ return true;
+}
