@@ -11,7 +11,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
-import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema} from "@/modules/placements/tpo-report-gallery-filter-model";
+import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards} from "@/modules/placements/tpo-report-gallery-filter-model";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -196,7 +196,7 @@ export default async function TpoReportsPage({
         <label className="grid gap-2 text-sm font-semibold text-body">Report category
           <select name="group" defaultValue={parsedGroup.data}
             className="min-h-11 rounded border border-border bg-surface px-3">
-            {tpoReportGalleryGroupSchema.options.map(group=><option key={group} value={group}>
+            {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
               {group==="ALL"?"All report categories":group}
             </option>)}
           </select>
@@ -207,6 +207,7 @@ export default async function TpoReportsPage({
           Clear
         </Link>
       </form>
+      <p role="status" className="text-sm text-body">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>
       {visibleGroups.length===0?<EmptyState title="No matching reports"
         description="No available report matches this search and category. Clear filters to see the full gallery."/>:null}
       {visibleGroups.map((group) => (
