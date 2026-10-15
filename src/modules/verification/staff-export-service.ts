@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,ilike,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,gte,lt,ilike,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
@@ -11,7 +11,7 @@ import {matchesVerificationAttention} from "./attention-filter";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab} from "./queue-tabs";
-import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid} from "./queue-waiting-since";
+import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid,verificationSubmittedSqlBounds} from "./queue-waiting-since";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationCsv} from "./queue-export";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
@@ -27,6 +27,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
+ const dateBounds=verificationSubmittedSqlBounds(filter);
  const rows=await getDb().select({
   membershipId:collegeMemberships.id,learnerName:users.displayName,
   section:profileVerifications.section,status:profileVerifications.status,
@@ -40,6 +41,8 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
   filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
+  dateBounds.from?gte(profileVerifications.submittedAt,dateBounds.from):undefined,
+  dateBounds.before?lt(profileVerifications.submittedAt,dateBounds.before):undefined,
   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
   inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]:[filter.waitingState]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
