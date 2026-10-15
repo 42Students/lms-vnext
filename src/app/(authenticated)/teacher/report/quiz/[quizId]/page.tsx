@@ -3,6 +3,7 @@ import {notFound} from "next/navigation";
 import {parseFacultyAssessmentReportRoute,facultyQuizReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
+import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
@@ -92,7 +93,7 @@ export default async function FacultyQuizReportPage({
           "Total attempts: " + metrics.totalAttempts,
           "Question count: " + metrics.questionCount + "; Total points: " + quiz.totalPoints,
           "Results: " + (quiz.resultsPublished ? "Published" : "Private"),
-          "Due: " + (quiz.dueAt ? quiz.dueAt.toISOString() : "No due date"),
+          "Due: " + (quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "No due date"),
         ]}
         sections={[
           { title: "Score distribution", rows: distribution.map((bucket) => bucket.label + ": " + bucket.count) },
@@ -103,7 +104,7 @@ export default async function FacultyQuizReportPage({
           { title: "Student scores", rows: latestAttempts.map((attempt) =>
             (facultyReportLearnerName(attempt.learnerDisplayName)) +
             " | Attempt " + attempt.attemptNumber + " | " + attempt.score + "/" +
-            attempt.maxScore + " | " + attempt.submittedAt.toISOString()
+            attempt.maxScore + " | " + facultyReportIstTimestamp(attempt.submittedAt)
           ) },
           { title: "Not attempted", rows: notAttemptedLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
@@ -224,7 +225,7 @@ export default async function FacultyQuizReportPage({
         name: facultyReportLearnerName(attempt.learnerDisplayName),
         score: attempt.score + "/" + attempt.maxScore,
         percent: attempt.maxScore > 0 ? Math.round(attempt.score / attempt.maxScore * 100) : null,
-        submittedAt: attempt.submittedAt.toISOString(),
+        submittedAt: facultyReportIstTimestamp(attempt.submittedAt),
         note: "Attempt " + attempt.attemptNumber,
       }))} />
 

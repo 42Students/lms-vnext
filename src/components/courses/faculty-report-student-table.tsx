@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { facultyReportStudentPage, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
 
 export function FacultyReportStudentTable({
@@ -17,13 +18,7 @@ export function FacultyReportStudentTable({
     () => facultyReportStudentPage(rows, search, requestedPage),
     [rows, search, requestedPage],
   );
-  const formatDate = (value: string | null) => {
-    if (!value) return "—";
-    const date = new Date(value);
-    return Number.isNaN(date.getTime())
-      ? "Date unavailable"
-      : new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(date);
-  };
+  const formatDate = facultyReportIstTimestamp;
 
   return (
     <section aria-label={title} className="rounded-xl border border-border bg-surface p-5">
