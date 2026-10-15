@@ -8,6 +8,7 @@ export function facultyProfileSaveFailure(code:string|undefined,status:number):s
  if(code==="REQUEST_TOO_LARGE"||status===413)return "This profile change is too large. Shorten the text or remove extra records.";
  if(status===403)return "Your permission to edit this profile is unavailable. No changes were saved.";
  if(status===401)return "Your sign-in has expired. Sign in again before editing your profile.";
+ if(status===429)return "Profile requests are being limited. Avoid repeated saves and try again later.";
  return "The profile change was not saved. Review the fields and try again.";
 }
 
