@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {facultyProfileActiveSearch} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue,facultyProfileSkillMatches,facultyMoveSkillRecord} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
@@ -13,7 +14,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
  const [rows,setRows]=useState<Skill[]>(initial);
  const [changed,setChanged]=useState(false);
  const [search,setSearch]=useState("");
- const visibleSkills=rows.map((skill,index)=>({skill,index})).filter(({skill})=>facultyProfileSkillMatches(skill,search));
+ const visibleSkills=rows.map((skill,index)=>({skill,index})).filter(({skill})=>facultyProfileSkillMatches(skill,facultyProfileActiveSearch(search,rows.length)));
  const skillsIssue=facultyProfileSkillsIssue(rows);
  useFacultyProfileUnsavedWarning(changed);
  function edit(id:string,field:"skill"|"proficiency",value:string){
