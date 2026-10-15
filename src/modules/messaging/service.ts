@@ -84,10 +84,33 @@ export async function deliverBatch(args: {
     // Persist suppression or queue BEFORE contacting an external provider.
     await args.repository.insert(record);
     if (record.status === "QUEUED") {
+      // The queue decision can become stale while persisted: an unsubscribe,
+      // quota change or removed allowlist entry must stop dispatch.
+      let refreshedPolicy: DeliveryPolicy | null = null;
       try {
-        record.status = await args.provider.send({ ...request, recipient: normalizeRecipient(request.channel, request.recipient) }) ? "SENT" : "FAILED";
+        refreshedPolicy = await args.policyFor(request);
       } catch {
         record.status = "FAILED";
+        record.reason = "policy-recheck-failed";
+      }
+      if(refreshedPolicy){
+        const refreshed = decideDelivery(request,refreshedPolicy);
+        if(refreshed.status==="SUPPRESSED"){
+          record.status = "SUPPRESSED";
+          record.reason = refreshed.reason;
+        }else if(!canContactRecipientAtRuntime(
+          request.channel,request.recipient,args.runtimeEnv ?? process.env,
+        )){
+          record.status = "SUPPRESSED";
+          record.reason = "nonprod-not-allowlisted";
+        }
+      }
+      if(record.status==="QUEUED"){
+        try {
+          record.status = await args.provider.send({ ...request, recipient: normalizeRecipient(request.channel, request.recipient) }) ? "SENT" : "FAILED";
+        } catch {
+          record.status = "FAILED";
+        }
       }
       await args.repository.update(record);
       if(record.status==="SENT"){
