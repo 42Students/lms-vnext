@@ -9,6 +9,7 @@ import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer
 import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
 import { learnerQuizRouteScopeCurrent } from "@/modules/courses/learner-quiz-route-scope-model";
 import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
+import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -386,7 +387,7 @@ export function LearnerQuizAttempt() {
                 <div className="mt-3 space-y-2">
                   {question.options.map((option) => {
                     const isSelected = selected.has(option.id);
-                    const correct = latestAttempt?.resultsVisible ? option.correct === true : false;
+                    const correct = canReviewLearnerQuizCorrectAnswers(quiz.quiz.resultsPublished,latestAttempt?.resultsVisible === true) && option.correct === true;
                     return (
                       <div key={option.id} className="flex items-start gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm">
                         <span aria-hidden="true">{correct ? "✓" : isSelected ? "•" : "○"}</span>
