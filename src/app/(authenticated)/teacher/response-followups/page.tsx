@@ -7,6 +7,7 @@ import {
   facultyResponseFollowUpHref, parseFacultyFollowUpSearchParams,
 } from "@/modules/courses/faculty-response-followup-model";
 import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
+import {facultyFollowUpCsvHref} from "@/modules/courses/faculty-followup-export";
 
 type Params = Record<string,string|string[]|undefined>;
 
@@ -73,9 +74,15 @@ export default async function FacultyResponseFollowUpsPage({
       <Link href="/teacher/response-followups"
         className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
     </form>
-    <p className="text-sm text-body">
-      {data.total} matching past-due published assessment{data.total === 1 ? "" : "s"}
-    </p>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <p className="text-sm text-body">
+        {data.total} matching past-due published assessment{data.total === 1 ? "" : "s"}
+      </p>
+      <Link href={facultyFollowUpCsvHref({...data.query,page:data.page})}
+       className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        Export this page counts (no learner details)
+      </Link>
+    </div>
     {data.items.length === 0 ? <EmptyState title="No past-due assessments match"
       description="Only published assessments with recorded due dates in the past are eligible. Drafts, undated and future work are omitted rather than marked overdue." />
     : <div className="grid gap-3">{data.items.map(item =>
