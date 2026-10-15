@@ -3,14 +3,18 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
-import { readTpoInternalConversation, tpoThreadIdSchema } from "@/modules/placements/tpo-team-conversation-service";
-export default async function InternalThread({params}:{params:Promise<{threadId:string}>}){
+import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } from "@/modules/placements/tpo-team-conversation-service";
+export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {threadId}=await params;
  const parsed=tpoThreadIdSchema.safeParse(threadId);
  if(!parsed.success)notFound();
- const result=await readTpoInternalConversation(context,parsed.data);
+ const query=await searchParams;
+ const rawPage=Array.isArray(query.page)?query.page[0]:query.page;
+ const parsedPage=tpoMessagePageSchema.safeParse(rawPage ?? 1);
+ if(!parsedPage.success)notFound();
+ const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data);
  if(result.status==="NOT_FOUND")notFound();
  if(result.status==="NOT_REGISTERED")return <main className="space-y-4 p-5">
    <PageHeader eyebrow="TPO · Team" title="Conversations unavailable"/>
@@ -28,6 +32,19 @@ export default async function InternalThread({params}:{params:Promise<{threadId:
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
    </li>)}
   </ol>
+  <nav aria-label="Team message history pages" className="flex flex-wrap items-center gap-3 text-sm">
+   <span className="text-body">Page {result.page} of {result.pages}</span>
+   {result.page < result.pages ? <Link
+    href={"/tpo/team/"+result.thread.id+"?page="+(result.page+1)}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">
+    Older messages
+   </Link> : null}
+   {result.page > 1 ? <Link
+    href={"/tpo/team/"+result.thread.id+"?page="+(result.page-1)}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">
+    Newer messages
+   </Link> : null}
+  </nav>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/messages"}
    className="space-y-3 rounded-xl border border-border bg-surface p-4">
    <h2 className="font-semibold text-foreground">Reply privately</h2>
@@ -40,6 +57,6 @@ export default async function InternalThread({params}:{params:Promise<{threadId:
    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Send to team member</button>
   </form>
   {!result.messages.length?<p role="status" className="rounded-xl border border-border p-5 text-sm text-body">No messages in this thread yet.</p>:null}
-  {result.messages.length===200?<p className="text-xs text-muted-foreground">Showing the first 200 messages. Older/newer pages require pagination.</p>:null}
+
  </main>;
 }
