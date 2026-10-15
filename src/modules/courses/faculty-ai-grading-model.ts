@@ -23,11 +23,14 @@ export const aiGradingRubricSchema=z.object({
  }
 });
 export type AiGradingRubric=z.infer<typeof aiGradingRubricSchema>;
+export class AiGradingRubricMaxMismatch extends Error {
+ constructor(){super("RUBRIC_MAX_POINTS_MISMATCH");}
+}
 /** Only an exact assignment maximum is acceptable; rubric never changes official grading. */
 export function aiGradingRubricForMaximum(raw:unknown,maximum:number):AiGradingRubric{
  const rubric=aiGradingRubricSchema.parse(raw);
  if(!Number.isInteger(maximum)||maximum<1||maximum>10000||
    rubric.criteria.reduce((sum,row)=>sum+row.maxPoints,0)!==maximum)
-  throw new Error("RUBRIC_MAX_POINTS_MISMATCH");
+  throw new AiGradingRubricMaxMismatch();
  return rubric;
 }

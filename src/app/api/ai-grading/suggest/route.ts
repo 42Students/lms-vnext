@@ -8,6 +8,7 @@ import {
 } from "@/modules/courses/faculty-ai-grading-request";
 import {getFacultyAiGradingSuggestion} from "@/modules/courses/faculty-ai-grading-suggestion-service";
 import {AiGradingProviderDisabled} from "@/modules/courses/faculty-ai-grading-provider";
+import {AiGradingRubricMaxMismatch} from "@/modules/courses/faculty-ai-grading-model";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -28,6 +29,8 @@ export async function POST(request:Request){
    return NextResponse.json({error:"AI_PROVIDER_DISABLED",
     message:"AI assistance is unavailable until the college approves a provider."},
     {status:503,headers:{"Cache-Control":"private, no-store"}});
+  if(error instanceof AiGradingRubricMaxMismatch)
+   return NextResponse.json({error:"RUBRIC_MAX_POINTS_MISMATCH"},{status:400});
   if(error instanceof ZodError)return NextResponse.json({error:"INVALID_GRADING_REQUEST"},{status:400});
   return apiErrorResponse(error);
  }
