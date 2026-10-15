@@ -11,7 +11,6 @@ import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects
 import {
   ProjectParticipantListControls,
   ProjectParticipantPagination,
-  type ProjectParticipantListQuery,
 } from "@/components/projects/project-participant-list-controls";
 import { ProjectList } from "@/components/projects/project-list";
 import { PageHeader } from "@/components/ui/page-header";
@@ -63,7 +62,7 @@ export default async function MentorProjectsPage({
       <Link href="/mentor/projects" className="text-primary-text underline">Clear filters</Link>
     </section>;
   }
-  const query: ProjectParticipantListQuery = parsed.data;
+  const query = parsed.data;
 
   const [allRows, attentionRows] =
     await Promise.all([
