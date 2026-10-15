@@ -73,6 +73,13 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Course offering type
+            <select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All offering types</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
