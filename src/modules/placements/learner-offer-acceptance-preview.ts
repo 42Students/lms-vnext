@@ -16,10 +16,14 @@ export const learnerAcceptancePreviewSchema = z.object({
 export function learnerOfferAcceptancePreview(raw: unknown, now: Date = new Date()) {
   const offer = learnerAcceptancePreviewSchema.parse(raw);
   const expiresAt = offer.expiresAt ? new Date(offer.expiresAt) : null;
+  const currentTime = now.getTime();
+  const validClock = Number.isFinite(currentTime);
+  const expiration = expiresAt?.getTime() ?? null;
+  const expired = expiration !== null &&
+    (!Number.isFinite(expiration) || !validClock || currentTime >= expiration);
   return {
     ...offer,
-    expired: expiresAt !== null && now.getTime() > expiresAt.getTime(),
-    canConfirm: offer.status === "ISSUED" &&
-      (expiresAt === null || now.getTime() <= expiresAt.getTime()),
+    expired,
+    canConfirm: validClock && offer.status === "ISSUED" && !expired,
   };
 }
