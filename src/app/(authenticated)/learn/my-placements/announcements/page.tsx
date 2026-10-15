@@ -11,15 +11,17 @@ import {getOwnLearnerPlacementAlerts} from "@/modules/placements/learner-placeme
 import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-alerts";
 import {learnerNoticeQuerySchema} from "@/modules/placements/learner-notices-query-model";
 import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-model";
+import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-recent-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
-  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[] }>;
+  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[] }>;
 }) {
   const query = await searchParams;
   const filters=learnerNoticeQuerySchema.safeParse(query);
   const pinnedOnly = filters.success ? filters.data.pinned==="1" : false;
   const unreadOnly = filters.success ? filters.data.unread==="1" : false;
   const queryText = filters.success ? filters.data.q ?? "" : "";
+  const recentOnly = filters.success ? filters.data.recent === "1" : false;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) throw new AuthorizationError("placements.read");
   const own = await requireLearnerPlacementAccess(context);
@@ -31,7 +33,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const allNotices = ready
     ? learnerPlacementNoticeFeed(await listVisibleAnnouncementsForMembership(context))
     : [];
-  const notices = searchLearnerNotices(learnerPlacementNoticeView(allNotices, pinnedOnly),queryText);
+  const searchedNotices=searchLearnerNotices(learnerPlacementNoticeView(allNotices,pinnedOnly),queryText);
+  const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
   const personalAlerts = await getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20});
   return (
     <main className="min-w-0 space-y-6">
@@ -42,6 +45,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       </div>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
         {pinnedOnly ? <input type="hidden" name="pinned" value="1" /> : null}
+        {recentOnly ? <input type="hidden" name="recent" value="1" /> : null}
         {unreadOnly ? <input type="hidden" name="unread" value="1" /> : null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search college notices
@@ -55,6 +59,14 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
         <Link href="/learn/my-placements/announcements" aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>
         <Link href="/learn/my-placements/announcements?pinned=1" aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>
+      </nav>
+      <nav aria-label="Notice recency filter" className="flex flex-wrap gap-3 text-sm">
+        <Link href="/learn/my-placements/announcements" aria-current={!recentOnly ? "page" : undefined}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">All available dates</Link>
+        <Link href={"/learn/my-placements/announcements?"+new URLSearchParams({
+          ...(pinnedOnly?{pinned:"1"}:{}),...(unreadOnly?{unread:"1"}:{}),...(queryText?{q:queryText}:{}),recent:"1"
+        }).toString()} aria-current={recentOnly?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Last 30 days</Link>
       </nav>
       <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>
       {!ready ? (
