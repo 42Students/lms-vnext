@@ -19,5 +19,10 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
         <span>{column.label}</span>
       </label>)}
     </div>
+    <button type="button" disabled={selected.length === available.length}
+      onClick={() => onChange(available.map(column => column.key))}
+      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      Show all columns
+    </button>
   </fieldset>;
 }
