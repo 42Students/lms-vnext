@@ -902,3 +902,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 round: targeted learner override module filter — PARTIAL.** Persisted active-learner override queue can narrow to Projects/Electives/Placements stored rules, paired with existing all/only/locked modes. The SQL `exists` stays college-scoped by each verified membership; links preserve the selector and Zod disallows unknown modules. Placements membership rules are displayed as stored-but-ignored, never effective. Tests authored, not executed; editing/drawer and browser acceptance open.
+
+
+**2026-10-15 chat-6: stored On/Off student-override filter — PARTIAL.** Active college learner search now narrows membership-stored enabled/disabled values (and existing locked/module filter) through typed query + persisted SQL `exists`, with page deep-links retaining the selection. This is *stored* state, not necessarily effective access where an ancestor lock wins. Tests authored, not executed; editable controls/browser parity open.
