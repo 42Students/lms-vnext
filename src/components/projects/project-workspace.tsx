@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -623,6 +623,11 @@ export function ProjectWorkspace({
                                       {learnerTaskCriteriaPreview(task.acceptanceCriteria)}
                                     </p>
                                   </details>
+                                ) : null}
+                                {mode==="MENTOR" && mentorTaskReviewEvidence(task.status,latestAttempt)==="REVIEW_PENDING" ? (
+                                  <p role="status" className="mt-2 text-xs font-semibold text-primary-text">
+                                    Submitted attempt v{latestAttempt?.version} is waiting for Mentor review.
+                                  </p>
                                 ) : null}
                                 {latestAttempt ? (
                                   <p className="mt-2 text-xs text-muted-foreground">
