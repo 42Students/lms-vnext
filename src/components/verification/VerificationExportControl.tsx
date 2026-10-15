@@ -1,13 +1,13 @@
 "use client";
 import {useState} from "react";
-export function VerificationExportControl({query}:{query:Record<string,string>}){
+export function VerificationExportControl({query,url="/api/college/verification/export",filename="college-profile-verification.csv"}:{query:Record<string,string>;url?:string;filename?:string}){
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  async function download(){
   if(busy)return;
   setBusy(true);setError("");
   try{
-   const url="/api/college/verification/export?"+new URLSearchParams(query).toString();
-   const response=await fetch(url,{cache:"no-store"});
+   const resource=url+"?"+new URLSearchParams(query).toString();
+   const response=await fetch(resource,{cache:"no-store"});
    if(!response.ok){
     const detail=await response.json().catch(()=>({error:"EXPORT_UNAVAILABLE"})) as {error?:string};
     throw Error(detail.error??"EXPORT_UNAVAILABLE");
@@ -15,7 +15,7 @@ export function VerificationExportControl({query}:{query:Record<string,string>})
    const blob=await response.blob(),objectUrl=URL.createObjectURL(blob);
    try{
     const a=document.createElement("a");
-    a.href=objectUrl;a.download="college-profile-verification.csv";
+    a.href=objectUrl;a.download=filename;
     document.body.appendChild(a);a.click();a.remove();
    }finally{URL.revokeObjectURL(objectUrl);}
   }catch(e){setError(e instanceof Error?e.message:"Export unavailable");}

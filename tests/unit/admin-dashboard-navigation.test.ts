@@ -62,6 +62,7 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
     expect(SUPER_ADMIN_COLLEGE_LINKS.map(item => item.href)).toEqual([
       "/admin/tenants/setup?tab=setup", "/admin/academics", "/admin/courses",
       "/admin/people", "/admin/placements", "/admin/projects/templates",
+      "/admin/verification", "/tracker/audit-findings",
     ]);
   });
 });

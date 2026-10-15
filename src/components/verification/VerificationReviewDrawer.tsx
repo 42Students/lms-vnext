@@ -7,8 +7,8 @@ import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
  documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;}};
-export function VerificationReviewDrawer({row,onClose,onSaved}:{
- row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;
+export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId}:{
+ row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;apiBase?:string;collegeId?:string;
 }){
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
@@ -16,11 +16,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved}:{
  const [saving,setSaving]=useState(false);
  const [reason,setReason]=useState<string>(VERIFICATION_SEND_BACK_REASONS[0]);
  const [additional,setAdditional]=useState("");
- const url=`/api/college/verification/${encodeURIComponent(row.learnerMembershipId)}/${row.section}`;
+ const url=`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`;
  useEffect(()=>{
   let active=true;
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount / reset-on-input synchronisation
-  setLoading(true);setDetail(null);setError("");
   fetch(url,{cache:"no-store"}).then(async response=>{
    if(!response.ok)throw Error(response.status===404?"Review is no longer available":"Unable to load review");
    return response.json() as Promise<Detail>;
@@ -32,9 +30,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved}:{
   if(!detail||saving)return;
   setSaving(true);setError("");
   try{
-   const response=await fetch("/api/college/verification/review",{
+   const response=await fetch(`${apiBase}/review`,{
     method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({learnerMembershipId:row.learnerMembershipId,section:row.section,
+    body:JSON.stringify({... (collegeId?{collegeId}:{}),learnerMembershipId:row.learnerMembershipId,section:row.section,
       expectedVersion:detail.review.version,action,...(action==="SEND_BACK"?
       {reason:[reason,additional.trim()].filter(Boolean).join(": ")}:{})}),
    });
@@ -69,7 +67,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved}:{
       <ul className="mt-2 space-y-2">{detail.review.documents.map(doc=>
        <li key={doc.receiptId} className="break-words">
         <a target="_blank" rel="noopener noreferrer" className="underline"
-         href={`${url}/documents/${encodeURIComponent(doc.receiptId)}`}>Open {doc.purpose.toLowerCase()} (private signed link)</a>
+         href={`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}/documents/${encodeURIComponent(doc.receiptId)}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`}>Open {doc.purpose.toLowerCase()} (private signed link)</a>
        </li>)}</ul>}
     </section>
     {detail.review.status==="SUBMITTED"||detail.review.status==="UPDATE_PENDING"?<>

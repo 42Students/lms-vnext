@@ -61,11 +61,19 @@ export default async function OrganizationsPage() {
         description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
       {canCreate ? <OrganizationCreateForm /> : null}
-      <DataTable
-        columns={columns}
-        rows={organizations}
-        getRowKey={(organization) => organization.id}
-      />
+      <div className="grid min-w-0 gap-3 lg:hidden" aria-label="Organization cards">
+        {organizations.map((organization) => (
+          <article key={organization.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+            <h2 className="break-words text-base font-semibold text-foreground">{organization.name}</h2>
+            <p className="mt-2 text-xs text-muted-foreground">Created {organization.createdAt.toISOString().slice(0,10)}</p>
+            {can(context,"organization.manage",{organizationId:organization.id}) ?
+              <div className="mt-3 flex flex-wrap"><OrganizationActions organizationId={organization.id} name={organization.name}/></div> : null}
+          </article>
+        ))}
+      </div>
+      <div className="hidden min-w-0 lg:block">
+        <DataTable columns={columns} rows={organizations} getRowKey={(organization)=>organization.id}/>
+      </div>
     </div>
   );
 }
