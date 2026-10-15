@@ -1612,3 +1612,30 @@ Safe immutable lock/reopen history and attachments require additional registered
 ### Legacy Projects wording and one-strip audit — partial
 
 Compared Mentor and Learner Project tabs with exact legacy-copy-A labels, and College/Admin project strips with legacy-copy-A/B. Learner section tabs now exclude the non-legacy Final Delivery tab while retaining a separately reachable Final delivery action. Mentor Task Allocation no longer claims the now-registered assignee column is unavailable. College workspace route uses exactly the workspace section strip; Mentor/Learner pages only render their account section strip. Source-level label tests added; full modal/button/page text and browser visual audit remain outstanding.
+
+
+### 2026-10-16 PR-S2-03 / PR-S2-10 / PR-S2-14 precision correction
+
+Fixed the optimistic write conditions for task assignment, task-status transition and archived project restoration to compare PostgreSQL's microsecond timestamps using `date_trunc('milliseconds', updated_at)` against the UTC millisecond client token. All retain project/row locks and scoped status predicates. The archive write itself uses a locked row and no JS-Date timestamp CAS. Real PostgreSQL and browser acceptance still require independent execution.
+
+
+### PR-S2-07 registered activity log partial runtime: approval lock and explicit reopen
+
+Approval now writes a separately deduplicated LOCKED activity event, and a mentor/admin can reopen the **exact latest approved submission** through a same-origin, project-row-locked endpoint only while the project is ACTIVE and no evaluation exists. A reopened activity event authorizes one additional learner draft version while preserving immutable APPROVED history. No new schema is required for this part. Attachment metadata and migration-backed delivery event table remain **NOT DONE**; all runtime tests including the direct SQL acceptance have not been executed.
+
+
+### PR-S2-07 confirmed UI + authorized new draft after explicit reopen
+
+Readiness now projects the latest approved submission's durable reopen event and permits only its explicitly reopened state to create a new learner draft. The final-delivery view exposes the legacy Reopen for revision confirmation with required review feedback to an eligible Mentor/Admin, hides it after reopen or evaluation and preserves existing archived/complete denial. Browser and real PostgreSQL verification outstanding; attachment metadata still awaits registration.
+
+
+### 2026-10-16 chat-11 priority Postgres regression and parity summary
+
+- PR-S2-03: repaired PostgreSQL's microsecond optimistic timestamp CAS, added current project-learner assignment in the shared review fixture and direct-submit adversarial cases, and updated P6A/Mentor Board/Faculty Project submit fixtures. Added dedicated SQL-microsecond and stale-token integration cases; **source repaired, DB execution on this branch not yet verified**.
+- PR-S2-14: task-status transitions now use the same millisecond-truncated SQL optimistic token. The archive operation already holds the project lock without comparing timestamps.
+- PR-S2-10: archived project restoration compares the client millisecond token in SQL and has a dedicated PostgreSQL replay/stale test; runtime acceptance not certified.
+- PR-S2-07: approved submissions are audit-locked; an authorized explicit reopen event can allow the learner's next draft, with legacy UI and PostgreSQL test added. Attachment metadata is **still staged** pending registration and must not be marked DONE.
+- PR-S2-04: task-type/estimate/date/blocker/comment storage remains **unregistered**. The existing proposal and source validation cannot be safely wired to absent DB columns. This item remains NOT DONE.
+- Projects wording: adjusted Mentor/Learner/Admin workspace headings and empty states to the exact legacy catalogue, including one account-level section strip. Source tests added; full button/form/table/browser/mobile text parity remains open.
+
+No `as never` casts or protected schema changes were introduced. Tests authored in this round have not been executed here. The orchestrator must run the named disposable PostgreSQL integration cases and focused tests against this SHA before certifying any of these items.

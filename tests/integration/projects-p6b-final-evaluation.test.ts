@@ -38,6 +38,7 @@ import {
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {approveProjectTaskThroughReview} from "./support/projects-review-fixture";
+import {reopenApprovedProjectDelivery} from "@/modules/projects/delivery-reopen-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -515,6 +516,42 @@ describe("Projects P6B final delivery and evaluation", () => {
     ).toEqual([
       "CHANGES_REQUESTED",
       "APPROVED",
+    ]);
+  });
+
+  it("locks approved delivery, audits mentor reopen, then permits exactly one new draft version",async()=>{
+    const project=await createProject();
+    await finishExecution(project.id);
+    const draft=await createProjectSubmissionDraft(learner,project.id,{
+      summary:"Initial accepted delivery",sourceUrl:"https://example.com/final-approved",
+    });
+    const submitted=await submitProjectSubmission(learner,project.id,draft.id);
+    const outcome=await reviewProjectSubmission(mentor,project.id,submitted.id,{
+      decision:"APPROVED",
+    });
+    expect(outcome.submission.status).toBe("APPROVED");
+    await expect(createProjectSubmissionDraft(learner,project.id,{
+      summary:"Cannot draft without mentor reopen",
+    })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_INVALID_STATE"});
+    const reopened=await reopenApprovedProjectDelivery(mentor,project.id,submitted.id,{
+      expectedUpdatedAt:outcome.submission.updatedAt.toISOString(),
+      reason:"Needs an additional demonstration",
+    });
+    expect(reopened.reopened).toBe(true);
+    await expect(reopenApprovedProjectDelivery(mentor,project.id,submitted.id,{
+      expectedUpdatedAt:outcome.submission.updatedAt.toISOString(),reason:"Replay",
+    })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_CONFLICT"});
+    const later=await createProjectSubmissionDraft(learner,project.id,{
+      summary:"Resubmission after approved review",sourceUrl:"https://example.com/revised",
+    });
+    expect(later.version).toBe(2);
+    const events=await pool.query<{event_type:string}>(`
+      select event_type from activity_events where subject_id=$1 and
+      event_type in ('projects.delivery.locked','projects.delivery.reopened')
+      order by occurred_at,event_type
+    `,[submitted.id]);
+    expect(events.rows.map(row=>row.event_type).sort()).toEqual([
+      "projects.delivery.locked","projects.delivery.reopened",
     ]);
   });
 

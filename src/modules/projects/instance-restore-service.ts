@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,isNull} from "drizzle-orm";
+import {and,desc,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,membershipRoles,projectInstances,projectMembers,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -41,7 +41,7 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
     const now=new Date(Math.max(Date.now(),project.updatedAt.getTime()+1));
     const [restored]=await tx.update(projectInstances).set({status,archivedAt:null,updatedAt:now})
       .where(and(eq(projectInstances.id,project.id),eq(projectInstances.collegeId,scope.collegeId),
-        eq(projectInstances.status,"ARCHIVED"),eq(projectInstances.updatedAt,project.updatedAt)))
+        eq(projectInstances.status,"ARCHIVED"),sql`date_trunc('milliseconds', ${projectInstances.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`))
       .returning();
     if(!restored)throw new ProjectsServiceError("PROJECT_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{

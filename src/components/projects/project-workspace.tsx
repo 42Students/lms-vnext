@@ -3,6 +3,7 @@ import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts,
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
+import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
@@ -239,7 +240,7 @@ export function ProjectWorkspace({
         href={backHref}
         className="inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
       >
-        ← {backLabel}
+        {backLabel === "Projects" ? "Back to projects" : backLabel}
       </Link>
 
       {sectionBaseHref ? (
@@ -401,12 +402,8 @@ export function ProjectWorkspace({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              Team
+              Project people
             </h2>
-            <p className="mt-1 text-sm text-body">
-              Canonical college memberships with explicit
-              Project responsibility.
-            </p>
           </div>
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <AddProjectMemberControl
@@ -776,7 +773,7 @@ export function ProjectWorkspace({
         {workspace.finalDelivery.submissions.length ===
         0 ? (
           <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-            No final submission version yet.
+            Not submitted
           </div>
         ) : (
           <div className="space-y-3">
@@ -886,6 +883,18 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
+                    {mode !== "LEARNER" &&
+                     workspace.project.status === "ACTIVE" &&
+                     submission.status === "APPROVED" &&
+                     !evaluation &&
+                     workspace.readiness.finalSubmission.latest?.id === submission.id &&
+                     !workspace.readiness.finalSubmission.reopened ? (
+                      <div className="mt-3">
+                        <ProjectDeliveryReopenControl projectId={workspace.project.id}
+                          submissionId={submission.id} expectedUpdatedAt={submission.updatedAt.toISOString()} />
+                      </div>
+                    ) : null}
+
                     {evaluation ? (
                       <div className="mt-3 rounded-lg bg-[var(--lms-success-subtle)] p-3">
                         <p className="m-0 text-sm font-semibold text-success">
@@ -910,10 +919,7 @@ export function ProjectWorkspace({
               <h2 className="m-0 text-lg font-semibold text-foreground">
                 Resources
               </h2>
-              <p className="mt-1 text-sm text-body">
-                Template and runtime links available to the
-                Project team.
-              </p>
+
             </div>
             {mode !== "LEARNER" && !readOnly ? (
               <CreateProjectResourceControl
@@ -924,7 +930,9 @@ export function ProjectWorkspace({
           <div className="space-y-3">
             {workspace.resources.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-                No active resources.
+                {mode === "LEARNER"
+                  ? "No resources yet. Share the first link or file with your team."
+                  : "No resources yet. Add the briefs, templates and reference links your team will need."}
               </div>
             ) : (
               workspace.resources.map((resource) => {
