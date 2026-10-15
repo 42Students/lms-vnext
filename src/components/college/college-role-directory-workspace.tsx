@@ -12,16 +12,16 @@ import {
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
+  parseCollegeRoleDirectorySearchParams,
+  assertCompatibleCollegeRoleDirectoryFilters,
+  canonicalCollegeRoleDirectoryHref,
+  selectedDirectoryValueNotListed,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 
 type RawSearch = Record<string, string | string[] | undefined>;
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 function joinedLabel(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -42,49 +42,26 @@ export async function CollegeRoleDirectoryWorkspace({
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
 
-  const params = await searchParams;
-  const input = {
-    q: first(params.q),
-    status: first(params.status),
-    accountStatus: first(params.accountStatus),
-    enrollment: first(params.enrollment),
-    rollPresence: first(params.rollPresence),
-    registrationPresence: first(params.registrationPresence),
-    cohortId: first(params.cohortId),
-    classPresence: first(params.classPresence),
-    teaching: first(params.teaching),
-    teachingRole: first(params.teachingRole),
-    facultyDepartmentId: first(params.facultyDepartmentId),
-    titlePresence: first(params.titlePresence),
-    departmentPresence: first(params.departmentPresence),
-    employmentType: first(params.employmentType),
-    sort: first(params.sort),
-    page: first(params.page),
-  };
-  const parsed = collegeRoleDirectoryQuerySchema.safeParse(
-    Object.fromEntries(
-      Object.entries(input).filter(([, value]) => value !== undefined && value !== ""),
-    ),
-  );
-
-  if (!parsed.success) {
+  let filter: ReturnType<typeof parseCollegeRoleDirectorySearchParams>;
+  try {
+    filter = parseCollegeRoleDirectorySearchParams(await searchParams);
+    assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
+  } catch {
     return (
       <div className="space-y-5">
         <PageHeader eyebrow="College Admin · People" title={title} />
         <ErrorState
           title="Invalid directory filters"
           description="A search, status or page value is invalid. No people were loaded."
-          action={
-            <Link href={path} className="font-semibold text-primary-text hover:underline">
-              Clear directory filters
-            </Link>
-          }
+          action={<Link href={path} className="font-semibold text-primary-text hover:underline">Clear directory filters</Link>}
         />
       </div>
     );
   }
 
-  const result = await listCollegeRoleDirectory(context, kind, parsed.data);
+  const result = await listCollegeRoleDirectory(context, kind, filter);
+  const canonical = canonicalCollegeRoleDirectoryHref(kind, result.filter, result.totalPages);
+  if (canonical) redirect(canonical);
   return (
     <div className="space-y-6">
       <PageHeader
@@ -167,6 +144,8 @@ export async function CollegeRoleDirectoryWorkspace({
             <select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All batches</option>
+              {selectedDirectoryValueNotListed(result.filter.cohortId,result.cohortOptions.map(c=>c.id)) ?
+                <option value={result.filter.cohortId}>Selected batch (outside first 200)</option> : null}
               {result.cohortOptions.map(cohort=><option key={cohort.id} value={cohort.id}>
                 {cohort.programName} · {cohort.name}
               </option>)}
@@ -207,6 +186,8 @@ export async function CollegeRoleDirectoryWorkspace({
             <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All departments</option>
+              {selectedDirectoryValueNotListed(result.filter.facultyDepartmentId,result.departmentOptions.map(d=>d.id)) ?
+                <option value={result.filter.facultyDepartmentId}>Selected department (outside first 200)</option> : null}
               {result.departmentOptions.map(dept=><option key={dept.id} value={dept.id}>{dept.name}</option>)}
             </select>
             {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
@@ -218,6 +199,8 @@ export async function CollegeRoleDirectoryWorkspace({
             <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All employment types</option>
+              {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
+                <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
               {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
             </select>
             {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
@@ -262,12 +245,27 @@ export async function CollegeRoleDirectoryWorkspace({
             </select>
           </label> : null}
           <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Joined from (IST)
+            <input type="date" name="joinedFrom" defaultValue={result.filter.joinedFrom??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Joined through (IST)
+            <input type="date" name="joinedThrough" defaultValue={result.filter.joinedThrough??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Order
             <select name="sort" defaultValue={result.filter.sort}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="NAME">Name A–Z</option>
+              <option value="NAME_DESC">Name Z–A</option>
               <option value="NEWEST">Newest membership</option>
               <option value="OLDEST">Oldest membership</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Rows per page
+            <select name="pageSize" defaultValue={result.filter.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="10">10</option><option value="25">25</option><option value="50">50</option>
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
@@ -343,7 +341,7 @@ export async function CollegeRoleDirectoryWorkspace({
 
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Page {result.filter.page} of {result.totalPages} · 25 per page
+          Page {result.filter.page} of {result.totalPages} · {result.pageSize} per page
         </p>
         <div className="flex gap-2">
           {result.filter.page > 1 ? (
