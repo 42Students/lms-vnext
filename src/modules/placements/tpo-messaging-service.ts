@@ -25,6 +25,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
+import {hrConversationDetailPageWindow} from "./hr-conversation-detail-pagination-model";
 
 const collegeIdSchema = z.string().uuid();
 const userIdSchema = z.string().uuid();
@@ -594,6 +595,7 @@ export async function readRecruiterThreadMessages(
    eq(placementTpoMessages.senderType,"TPO"),
    isNull(placementTpoMessages.readAt),
   ));
+  const window=hrConversationDetailPageWindow(page,total);
   const descending=await tx.select({
     id:placementTpoMessages.id,senderType:placementTpoMessages.senderType,
     body:placementTpoMessages.body,readAt:placementTpoMessages.readAt,
@@ -601,8 +603,8 @@ export async function readRecruiterThreadMessages(
   }).from(placementTpoMessages)
    .where(eq(placementTpoMessages.threadId,thread.id))
    .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
-   .limit(40).offset((page-1)*40);
-  return {thread,messages:descending.reverse(),page,pages:Math.max(1,Math.ceil(total/40)),total,unread:Number(pending?.unread??0)};
+   .limit(40).offset(window.offset);
+  return {thread,messages:descending.reverse(),page:window.page,pages:window.pages,total,unread:Number(pending?.unread??0)};
  });
 }
 
