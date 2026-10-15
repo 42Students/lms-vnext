@@ -180,8 +180,8 @@ const facultyItems: ShellNavItem[] = [
 
 const mentorItems: ShellNavItem[] = [
   { label: "Projects", href: "/mentor/projects", shortLabel: "P", icon: "/assets/images/common/folder.svg", group: "learning" },
-  { label: "Meetings", href: "/mentor/calendar", shortLabel: "M", icon: "/assets/images/common/calender.svg", group: "tracking" },
-  { label: "Notifications", href: "/mentor/notifications", shortLabel: "N", icon: "/assets/images/common/notification.svg", group: "account" },
+  { label: "Meetings", href: "/mentor/calendar", shortLabel: "M", icon: "/assets/images/common/calender.svg", group: "learning" },
+  { label: "Notifications", href: "/mentor/notifications", shortLabel: "N", icon: "/assets/images/common/notification.svg", group: "learning" },
 ];
 
 const tpoItems: ShellNavItem[] = [

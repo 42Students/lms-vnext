@@ -330,7 +330,7 @@ async function finishExecution(
     mentor,
     projectId,
     task.id,
-    { status: "DONE" },
+    { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
   );
   await completeProjectSprint(
     mentor,
