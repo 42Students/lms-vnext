@@ -48,6 +48,7 @@ export function facultyResponseFollowUpPage<T>(
   rows: readonly T[], requested: number,pageSize=5,
 ) {
   if(pageSize!==5&&pageSize!==10)throw new Error("INVALID_FOLLOWUP_PAGE_SIZE");
+  if (!Number.isInteger(requested) || requested < 1) throw new Error("INVALID_FOLLOWUP_PAGE");
   const total = rows.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const page = Math.min(requested, totalPages);
