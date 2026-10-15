@@ -5,7 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
-import {recordedOutsideChoices} from "@/modules/placements/recorded-outside-service";
+import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
 export default async function HrRecordedOutsidePage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];saved?:string|string[]}>;
 }){
@@ -22,11 +22,13 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  </main>;
  if(!z.string().uuid().safeParse(collegeId).success||!context.recruiter.grants.some(g=>g.collegeId===collegeId))notFound();
  const result=await recordedOutsideChoices(context,collegeId);
+ const savedId=Array.isArray(q.saved)?q.saved[0]:q.saved;
+ const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
  return <main className="space-y-5">
   <PageHeader eyebrow="Recruiter · Drive creation" title="Record an outside-platform drive"
    description="Historical employer-college record only. This cannot publish a student-visible job."/>
   <Link href={"/hr/drives/new?collegeId="+collegeId} className="inline-flex min-h-11 items-center text-primary-text">Back to drive request</Link>
-  {q.saved?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">External drive record saved. It was not published as a job.</p>:null}
+  {saved?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">External drive record saved. It was not published as a job.</p>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices} registered={result.status==="READY"}/>
  </main>;
 }
