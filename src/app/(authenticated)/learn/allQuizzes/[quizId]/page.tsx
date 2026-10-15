@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { getMyQuizAttempts } from "@/modules/courses/quiz-attempt-service";
 import {
-  learnerAttemptResultLabel, ownQuizHistorySelection,
+  learnerAttemptResultLabel, learnerQuizAttemptDateLabel, ownQuizHistorySelection,
 } from "@/modules/courses/learner-quiz-history-model";
 
 type Props={
@@ -13,7 +13,7 @@ type Props={
   searchParams:Promise<{deliveryId?:string|string[];attemptId?:string|string[]}>;
 };
 function date(value:Date) {
-  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short"}).format(value);
+  return learnerQuizAttemptDateLabel(value);
 }
 export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const [path,query]=await Promise.all([params,searchParams]);
