@@ -3,6 +3,10 @@ import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFilters
 import type {CollegeContactRow} from "./college-contacts-service";
 export const CONTACT_EXPORT_LIMIT=1000;
 export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true});
+export function assertCollegeContactExportFilters(filter:z.infer<typeof collegeContactsExportSchema>):void {
+ if(!contactDateWindowValid(filter)||!contactAcademicFiltersCompatible(filter)||!contactRoleAudienceCompatible(filter))
+  throw new Error("INVALID_CONTACT_EXPORT");
+}
 export function parseCollegeContactsExportParams(params:URLSearchParams){
  const input:Record<string,string>={};
  for(const key of params.keys()){
@@ -10,7 +14,7 @@ export function parseCollegeContactsExportParams(params:URLSearchParams){
   input[key]=params.get(key)??"";
  }
  const parsed=collegeContactsExportSchema.parse(input);
- if(!contactDateWindowValid(parsed)||!contactAcademicFiltersCompatible(parsed)||!contactRoleAudienceCompatible(parsed))throw new Error("INVALID_CONTACT_EXPORT");
+ assertCollegeContactExportFilters(parsed);
  return parsed;
 }
 export function neutralizeContactCell(value:string){
