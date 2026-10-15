@@ -26,3 +26,5 @@ describe("Contacts faculty department selector",()=>{it("preserves only a valid 
 describe("Clear contacts filters",()=>{it("clears academic and lifecycle facets while preserving the contact tab",()=>{expect(clearedCollegeContactsHref("STUDENT")).toBe("/college/contacts?tab=STUDENT");expect(clearedCollegeContactsHref("ALL")).toBe("/college/contacts");});});
 
 describe("College contact academic program selector",()=>{it("persists a strict program UUID to the server and CSV URL",()=>{const programId="00000000-0000-4000-8000-000000000101";expect(collegeContactsHref(collegeContactsQuerySchema.parse({programId}))).toContain("programId="+programId);expect(collegeContactsQuerySchema.safeParse({programId:"other-college"}).success).toBe(false);});});
+
+describe("College Contacts active class selection",()=>{it("persists only a strict section UUID",()=>{const sectionId="00000000-0000-4000-8000-000000000102";expect(collegeContactsHref(collegeContactsQuerySchema.parse({sectionId}))).toContain("sectionId="+sectionId);expect(collegeContactsQuerySchema.safeParse({sectionId:"other-tenant"}).success).toBe(false);});});
