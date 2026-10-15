@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, ilike, type SQL } from "drizzle-orm";
+import { and, asc, count, eq, ilike, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, placementCompanies, placementCompanyRelationships } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -29,7 +29,13 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     const escaped = query.q.replace(/[\\%_]/g, "\\$&");
     filters.push(ilike(placementCompanies.name, "%" + escaped + "%"));
   }
-  const results = await getDb().select({
+  const db = getDb();
+  const [totalRows, results] = await Promise.all([
+    db.select({total:count()}).from(placementCompanyRelationships)
+      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+      .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
+      .where(filters.length ? and(...filters) : undefined),
+    db.select({
     relationshipId: placementCompanyRelationships.id,
     companyId: placementCompanies.id,
     name: placementCompanies.name,
@@ -45,9 +51,12 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
     .where(filters.length ? and(...filters) : undefined)
     .orderBy(asc(placementCompanies.name), asc(colleges.name), asc(placementCompanyRelationships.id))
-    .limit(201);
+    .limit(50).offset((query.page-1)*50),
+  ]);
+  const total=totalRows[0]?.total ?? 0;
   return {
     query, scope: { collegeId: selected?.collegeId ?? null, organizationId: selected?.organizationId ?? null },
-    ...projectAdminCompanies(results.slice(0, 200)), truncated: results.length > 200, cap: 200,
+    ...projectAdminCompanies(results), truncated: total > results.length, cap: 50,
+    total, totalPages: Math.max(1,Math.ceil(total/50)),
   };
 }

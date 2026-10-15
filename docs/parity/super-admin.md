@@ -863,3 +863,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Companies trust filter (PARTIAL):** Super Admin company relationships now filter by Trusted/Not trusted/All through a strict Zod enum and scoped SQL predicate, keeping status and name filters. Counts and curation candidates derive only from the selected subset, and the 200-row completeness caveat remains. Pure model and disposable-Postgres scope tests authored, not run; legacy curation verification/merge and browser tests still open.
+
+
+**2026-10-15 chat-6 Companies server pagination (PARTIAL):** The previously hard-capped 200-row Company directory now uses exact scoped PostgreSQL count and 50-row page/offset queries with strict page validation, filter-retaining Previous/Next links, and explicit page-local duplicate analysis. No cross-tenant scan or false all-tenant company totals are introduced. Unit and PG fixtures authored, unexecuted; large-dataset performance, race and browser checks still open.
