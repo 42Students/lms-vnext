@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive, facultyAssessmentEditReceiptMatches } from "@/modules/courses/faculty-assessment-editor-model";
+import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive, facultyAssessmentEditReceiptMatches, facultyAssessmentArchiveReceiptMatches } from "@/modules/courses/faculty-assessment-editor-model";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -168,6 +168,11 @@ export function FacultyAssessmentEditor({
         setError(
           await courseApiError(response),
         );
+        return;
+      }
+      const receipt:unknown=await response.json().catch(()=>null);
+      if(!facultyAssessmentArchiveReceiptMatches(assessment.kind,assessment.id,assessment.title,receipt)){
+        setError("The archive result could not be verified. Reload this Section before trying again.");
         return;
       }
       setOpen(false);
