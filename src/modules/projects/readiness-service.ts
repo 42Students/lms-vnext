@@ -4,6 +4,8 @@ import {
   eq,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { readProjectReadinessOverride } from "./readiness-override-service";
+import { effectiveProjectSubmissionReady } from "./readiness-override-model";
 import {
   projectEvaluations,
   projectReleases,
@@ -107,10 +109,12 @@ export async function getProjectReadiness(
     latestSubmission?.status === "SUBMITTED";
   const finalApproved =
     latestSubmission?.status === "APPROVED";
+  const readinessOverride=await readProjectReadinessOverride(db,projectId,scope.collegeId);
 
   return {
     projectId,
     projectStatus: scope.project.status,
+    readinessOverride,
     execution: {
       complete: executionComplete,
       releases: {
@@ -133,7 +137,8 @@ export async function getProjectReadiness(
         !hasOpenSubmission &&
         !finalApproved,
       canSubmitDraft:
-        executionComplete &&
+        effectiveProjectSubmissionReady(executionComplete,readinessOverride.state) &&
+        scope.project.status !== "ARCHIVED" &&
         latestSubmission?.status === "DRAFT",
       approved: finalApproved,
     },

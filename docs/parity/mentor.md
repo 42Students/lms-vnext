@@ -1515,3 +1515,7 @@ The class-team workspace creator now synchronously prevents duplicate creation r
 ## Phase 2 PR-S2-01 — sprint-close policy (source fixed, not parity-certified)
 
 Sprint close has an explicit **NO_CARRY_OVER** policy: open or in-review tasks block closure and remain in their sprint; mentors must review, return or complete those tasks before closing it. The registered `project_tasks.sprint_id NOT NULL` remains unchanged. Both regular and Mentor sprint-close mutation paths share this rule. This is the documented-policy alternative in PR-S2-01; carry-over is not available and no provenance column or hidden task reassignment is claimed. Commit reference: to be resolved from Git history. Browser and real PostgreSQL negative acceptance remain open.
+
+## Phase 2 PR-S2-05 — audited readiness override (source implemented, execution pending)
+
+College Admin may record the legacy **Force unlock (ready)** / **Force block (not ready)** / **Clear override** decisions with a note on both force states. The latest college-scoped registered activity event is the override source of truth, written under the project row lock and exposed on the readiness read API. The submission transaction independently rechecks the effective gate (including FORCE_BLOCK), rather than trusting a client-only readiness flag. Raw task/sprint/release completion remains unaltered. No new table or UI wording is introduced. Commit reference: see Git history. A real PostgreSQL race/tenant-negative test and full UI/browser parity remain OPEN.
