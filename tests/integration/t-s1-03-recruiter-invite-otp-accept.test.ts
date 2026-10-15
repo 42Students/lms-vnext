@@ -126,7 +126,7 @@ describe.skipIf(!enabled)("T-S1-03 0092/0093 recruiter OTP PostgreSQL acceptance
     "select valid_until,capabilities from placement_recruiter_college_grants where recruiter_user_id=$1",
     [f.user.id],
   )).rows[0]!;
-  await pool.query("update placement_recruiter_college_grants set valid_until=now()-interval '1 second' where recruiter_user_id=$1",[f.user.id]);
+  await pool.query("update placement_recruiter_college_grants set created_at=now()-interval '2 days',valid_until=now()-interval '1 second' where recruiter_user_id=$1",[f.user.id]);
   expect((await resolveRequestContext({identityUid:f.identity})).recruiter).toBeNull();
   await pool.query("update placement_recruiter_college_grants set valid_until=$2,verification_status='PENDING' where recruiter_user_id=$1",
     [f.user.id,original.valid_until]);

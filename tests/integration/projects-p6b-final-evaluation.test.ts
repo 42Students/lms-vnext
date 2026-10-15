@@ -188,6 +188,13 @@ async function cleanup() {
      )`,
   );
   await pool.query(
+    `delete from project_delivery_events
+     where project_id in (
+       select id from project_instances
+       where slug like 'p6b-%'
+     )`,
+  );
+  await pool.query(
     `delete from project_submissions
      where project_id in (
        select id from project_instances

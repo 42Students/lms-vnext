@@ -67,7 +67,7 @@ describe.skipIf(!enabled)("DB04 migration 0081 withdrawn event and optimistic re
    ...context,membership:{...context.membership!,roles:["COLLEGE_ADMIN"]},
   };
   await expect(withdrawOwnPendingVerification(wrongRole,"IDENTITY",2,
-   createProfileVerificationRepository())).rejects.toMatchObject({code:"NOT_ALLOWED"});
+   createProfileVerificationRepository())).rejects.toThrow(/Missing permission/);
   const events=await pool!.query(
    "select count(*)::integer as total from profile_verification_events where verification_id=$1::uuid",
    [ids.record]);

@@ -387,15 +387,20 @@ describe("Placement P5 applications", () => {
       repeatedHistory.rows[0]?.count,
     ).toBe(2);
 
-    await expect(
-      applyToPlacementJob(
-        learner,
-        job.id,
-        {},
-      ),
-    ).rejects.toMatchObject({
-      code:
-        "PLACEMENT_APPLICATION_ALREADY_WITHDRAWN",
+    // P-S2-11: an uncomplicated withdrawal may be audited-reapplied.
+    const reapplied = await applyToPlacementJob(learner, job.id, {});
+    expect(reapplied.id).toBe(application.id);
+    expect(reapplied.status).toBe("SUBMITTED");
+    const reappliedHistory = await pool.query(
+      `select from_status, to_status
+       from placement_application_status_history
+       where application_id = $1
+       order by created_at asc`,
+      [application.id],
+    );
+    expect(reappliedHistory.rows.at(-1)).toEqual({
+      from_status: "WITHDRAWN",
+      to_status: "SUBMITTED",
     });
   });
 
