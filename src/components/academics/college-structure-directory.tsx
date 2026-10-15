@@ -355,13 +355,16 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           {data.total} matching {classes ? "classes" : "elective slots"}
         </p>
         {data.items.length === 0 ? (
-          <p className="p-6 text-sm text-body">
+          <div role="status" className="space-y-2 p-6 text-sm text-body">
+           <p>
             {data.total === 0
               ? classes
                 ? "No recorded college classes match these filters. Classes are not inferred from batches."
                 : "No registered elective slots match these filters. This does not establish whether electives are enabled for your college."
               : "No rows on this page. Choose an earlier page."}
-          </p>
+           </p>
+           <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
+          </div>
         ) : (
           <table className="w-full min-w-[53rem] text-left text-sm">
             {data.kind === "CLASSES" ? (
