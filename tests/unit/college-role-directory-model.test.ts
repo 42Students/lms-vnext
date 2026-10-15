@@ -15,12 +15,12 @@ describe("College Admin Faculty/Students directory helpers", () => {
   });
   it("parses status/search/page filters and forbids caller-controlled college", () => {
     expect(collegeRoleDirectoryQuerySchema.parse({})).toEqual({
-      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", departmentPresence:"ALL", sort: "NAME", page: 1,
+      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", departmentPresence:"ALL", sort: "NAME", page: 1, pageSize:25,
     });
     expect(collegeRoleDirectoryQuerySchema.parse({
       q: "  test  ", status: "SUSPENDED", accountStatus: "DISABLED", page: "3",
     })).toEqual({
-      q: "test", status: "SUSPENDED", accountStatus: "DISABLED", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", departmentPresence:"ALL", sort: "NAME", page: 3,
+      q: "test", status: "SUSPENDED", accountStatus: "DISABLED", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", departmentPresence:"ALL", sort: "NAME", page: 3, pageSize:25,
     });
     for (const invalid of [
       { collegeId: "foreign" },
@@ -35,7 +35,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
 
   it("builds only role-specific relative routes with escaped parameters", () => {
     const query = { q: "a & b", status: "ACTIVE" as const, accountStatus: "DISABLED" as const,
-      enrollment: "ACTIVE" as const, rollPresence:"MISSING" as const, registrationPresence:"PRESENT" as const, classPresence:"ASSIGNED" as const, cohortId:"40000000-0000-4000-8000-000000000009", teaching: "ASSIGNED" as const, teachingRole:"TA" as const, titlePresence:"MISSING" as const, departmentPresence:"ASSIGNED" as const, facultyDepartmentId:"10000000-0000-4000-8000-000000000001", employmentType:"VISITING", sort:"NEWEST" as const, page: 2 };
+      enrollment: "ACTIVE" as const, rollPresence:"MISSING" as const, registrationPresence:"PRESENT" as const, classPresence:"ASSIGNED" as const, cohortId:"40000000-0000-4000-8000-000000000009", teaching: "ASSIGNED" as const, teachingRole:"TA" as const, titlePresence:"MISSING" as const, departmentPresence:"ASSIGNED" as const, facultyDepartmentId:"10000000-0000-4000-8000-000000000001", employmentType:"VISITING", sort:"NEWEST" as const, page: 2, pageSize:25 };
     const faculty = new URL(collegeRoleDirectoryHref("FACULTY", query), "https://example.test");
     const students = new URL(collegeRoleDirectoryHref("LEARNER", query), "https://example.test");
     expect(faculty.pathname).toBe("/college/faculty");
@@ -68,7 +68,7 @@ describe("College Admin Faculty/Students directory helpers", () => {
     expect(students.searchParams.has("teaching")).toBe(false);
     expect(students.searchParams.has("collegeId")).toBe(false);
     expect(collegeRoleDirectoryHref("LEARNER", {
-      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", departmentPresence:"ALL", sort:"NAME", page: 1,
+      q: "", status: "ALL", accountStatus: "ALL", enrollment: "ALL", rollPresence:"ALL", registrationPresence:"ALL", classPresence:"ALL", teaching: "ALL", teachingRole:"ALL", titlePresence:"ALL", departmentPresence:"ALL", sort:"NAME", page: 1, pageSize:25,
     })).toBe("/college/students");
   });
 
@@ -120,5 +120,14 @@ describe("College role directory stale-page recovery", () => {
     expect(canonicalCollegeRoleDirectoryHref("LEARNER",filters,3)).toBe("/college/students?q=Alice&status=ACTIVE&page=3");
     expect(canonicalCollegeRoleDirectoryHref("FACULTY",filters,8)).toBeNull();
     expect(canonicalCollegeRoleDirectoryHref("LEARNER",filters,0)).toBe("/college/students?q=Alice&status=ACTIVE");
+  });
+});
+
+describe("College directory bounded page sizes",()=>{
+  it("enforces exactly 10, 25 or 50 rows and preserves choice on pagination",()=>{
+    for (const count of [10,25,50]) expect(collegeRoleDirectoryQuerySchema.parse({pageSize:count}).pageSize).toBe(count);
+    expect(collegeRoleDirectoryQuerySchema.safeParse({pageSize:1000}).success).toBe(false);
+    const query=collegeRoleDirectoryQuerySchema.parse({pageSize:50,page:3});
+    expect(collegeRoleDirectoryHref("FACULTY",query)).toBe("/college/faculty?page=3&pageSize=50");
   });
 });

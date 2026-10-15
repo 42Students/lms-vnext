@@ -23,6 +23,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   employmentType: z.string().trim().min(1).max(128).optional(),
   sort: z.enum(["NAME", "NEWEST", "OLDEST"]).default("NAME"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
+  pageSize: z.coerce.number().int().refine(n => [10,25,50].includes(n)).default(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
 }).strict();
 
 export type CollegeRoleDirectoryQuery = z.infer<typeof collegeRoleDirectoryQuerySchema>;
@@ -84,6 +85,7 @@ export function collegeRoleDirectoryHref(
   if (kind === "FACULTY" && filter.employmentType) params.set("employmentType",filter.employmentType);
   if (filter.sort !== "NAME") params.set("sort", filter.sort);
   if (filter.page > 1) params.set("page", String(filter.page));
+  if (filter.pageSize !== COLLEGE_ROLE_DIRECTORY_PAGE_SIZE) params.set("pageSize", String(filter.pageSize));
   const base = kind === "FACULTY" ? "/college/faculty" : "/college/students";
   return params.size ? base + "?" + params.toString() : base;
 }

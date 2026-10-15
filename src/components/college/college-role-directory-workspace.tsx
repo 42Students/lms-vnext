@@ -244,6 +244,12 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="OLDEST">Oldest membership</option>
             </select>
           </label>
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Rows per page
+            <select name="pageSize" defaultValue={result.filter.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="10">10</option><option value="25">25</option><option value="50">50</option>
+            </select>
+          </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
             Apply
           </button>
@@ -317,7 +323,7 @@ export async function CollegeRoleDirectoryWorkspace({
 
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Page {result.filter.page} of {result.totalPages} · 25 per page
+          Page {result.filter.page} of {result.totalPages} · {result.pageSize} per page
         </p>
         <div className="flex gap-2">
           {result.filter.page > 1 ? (
