@@ -1424,3 +1424,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **L5 discussion post duplicate guard (source FIXED, proof open):** a synchronous per-mounted-composer lock now prevents double-Enter/double-click races before React applies posting state; read-only/historical composer never starts a POST. Central server permissions unchanged. Regression authored, browser/PG execution pending.
 
 **L5 discussion delivery-change isolation (source FIXED, proof open):** authorized delivery changes remount the discussion component, clearing the prior college-course's client messages, paging cursors and unsent reply state. Full read authorization remains in the server route. Unit test authored; cross-course browser replay and privacy acceptance pending.
+
+**L8 review availability (source FIXED, proof open):** if a published quiz has no currently available question details but its own previously submitted attempt exists, the review preserves the saved-attempt explanation rather than saying the learner never started a quiz. No grades or answers are invented. Pure regression authored; browser/DB verification pending.
