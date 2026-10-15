@@ -2099,3 +2099,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch Students registration evidence filter — PARTIAL:** Current-page recorded/unrecorded selection is permitted only when registration storage is available; unavailable never means unrecorded or consent. Page-scope/browser acceptance pending.
 
 **Chat-2 batch Students query parsing hardening:** All decision/source/registration URL parameters are now validated and applied rather than silently defaulting to ALL. Adds exact multi-filter regression tests; browser acceptance open.
+
+**Chat-2 current-page student triage ordering — PARTIAL:** Name A–Z/Z–A and needs-review-first ordering now prioritize only verified ambiguous/undecided status with stable ties; no change to eligibility or database ordering.
