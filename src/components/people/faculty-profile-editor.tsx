@@ -1,6 +1,7 @@
 "use client";
 import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
+import {facultyProfileNeedsReload,facultyProfileSaveFailure} from "@/modules/people/faculty-profile-error-model";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { advanceFacultySectionRevision } from "@/modules/people/faculty-section-revision-model";
@@ -34,24 +35,19 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
  const saveInFlight=useRef(false);
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
+ const [needsReload,setNeedsReload]=useState(false);
  async function save(section:FacultySelfSection,value:unknown){
   if(!beginFacultyProfileSave(saveInFlight))return;
-  setPending(true);setError(null);setSuccess(null);
+  setPending(true);setError(null);setSuccess(null);setNeedsReload(false);
   try{
    const response=await fetch("/api/people/faculty-self-document",{
     method:"PATCH",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({section,value,expectedVersion:version}),
    });
    if(!response.ok){
-    if(response.status===409){
-     const problem=await response.json().catch(()=>({error:"UNKNOWN"})) as {error?:string};
-     setError(problem.error==="PRIVATE_IDENTITY_STORAGE_NOT_READY"
-      ?"Profile storage is not registered. Your edits have not been saved."
-      :problem.error==="FACULTY_PROFILE_VERSION_CONFLICT"
-       ?"Your profile changed. Reload this page before saving again."
-       :"This change was rejected. Review your fields and retry.");return;
-    }
-    setError("Could not save your profile. Check the fields and retry.");return;
+    const problem=await response.json().catch(()=>({error:"UNKNOWN"})) as {error?:string};
+    setNeedsReload(facultyProfileNeedsReload(problem.error));
+    setError(facultyProfileSaveFailure(problem.error,response.status));return;
    }
    const result=await response.json() as {document:FacultyProfileDocument;version:number};
    setDocument(result.document);setVersion(result.version);
@@ -62,7 +58,10 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
  }
  return <div className="space-y-5">
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
-  {error?<p role="alert" className="rounded-md border border-border p-3 text-sm text-error">{error}</p>:null}
+  {error?<div role="alert" className="space-y-2 rounded-md border border-border p-3 text-sm text-error">
+   <p>{error}</p>
+   {needsReload?<button type="button" onClick={()=>window.location.reload()} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">Reload latest profile</button>:null}
+  </div>:null}
   {success?<p role="status" className="rounded-md border border-border p-3 text-sm text-foreground">{success}</p>:null}
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
    description="Introduce your teaching and research interests."
