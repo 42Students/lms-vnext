@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-course-copy-model";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type LearnerCourse = {
@@ -78,7 +79,7 @@ export function LearnerTopbarTools() {
               setOpen(false);
             }
           }}
-          placeholder="Search Courses"
+          placeholder={LEARNER_COURSE_SEARCH_PLACEHOLDER}
           className="min-h-10 w-52 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] lg:w-72"
           autoComplete="off"
         />
