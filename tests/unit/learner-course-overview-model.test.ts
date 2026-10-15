@@ -55,3 +55,14 @@ describe("Course card future deadlines",()=>{
   expect(learnerCourseListSignals(lessons,{itemsTotal:1,overallPercent:0},new Date("2026-10-15")).nextDue).toBeNull();
  });
 });
+
+describe("large learner activity histories",()=>{
+  it("finds the newest stored event in a large published learning path",()=>{
+    const lessons=Array.from({length:30000},(_,index)=>({
+      contents:[{progress:{completedAt:new Date(1700000000000+index*1000)}}],
+      assignments:[],quizzes:[],
+    }));
+    const result=learnerCourseListSignals(lessons,{itemsTotal:lessons.length,overallPercent:100},new Date("2026-10-15T10:00:00Z"));
+    expect(result.lastActivity).toBe(new Date(1700000000000+29999*1000).toISOString());
+  });
+});
