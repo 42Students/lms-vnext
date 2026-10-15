@@ -1,3 +1,5 @@
+**Projects → Bulk mentor reassignment entry (2026-10-16, P2 source fix):** The existing Workspaces landing page now links to the dedicated College Admin mentor reassignment workflow without adding a seventh non-legacy group tab. The route retains its persisted same-college project and mentor selection guards. Source link test authored, not run. Browser and permission-negative acceptance remain open.
+
 **Academic Setup → Attendance department report entry (2026-10-16, P2 source fix):** The canonical Attendance tab now offers a visible link to its existing College Attendance by Department report beside correction windows and policy, without adding an extra legacy group tab. Unit source-route assertion authored; browser/runtime acceptance pending.
 
 **People → Student groups entry (2026-10-16, P2 source fix):** People Directory links directly to the existing College group list, including membership and nested group detail. Legacy People tab names remain unchanged and this link uses the persisted destination heading. Source regression authored; runtime/browser acceptance open.
