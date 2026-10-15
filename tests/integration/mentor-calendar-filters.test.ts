@@ -123,6 +123,14 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
     const all=await listMyMentorCalendarMeetings(mentor);
     const owned=all.filter(row=>row.projectId===project.id);
     expect(owned).toHaveLength(2);
+    const byProject=filterMentorCalendar(owned,mentorCalendarFiltersSchema.parse({projectId:project.id}));
+    expect(byProject).toHaveLength(2);
+    expect(filterMentorCalendar(owned,mentorCalendarFiltersSchema.parse({projectId:randomUUID()}))).toHaveLength(0);
+    const safeLinks=filterMentorCalendar(owned,mentorCalendarFiltersSchema.parse({join:"HAS_SAFE_LINK"}));
+    expect(safeLinks.map(row=>row.id)).toEqual([secondId]);
+    const missingLinks=filterMentorCalendar(owned,mentorCalendarFiltersSchema.parse({join:"NO_SAFE_LINK"}));
+    expect(missingLinks.map(row=>row.id)).toEqual([meetingId]);
+    expect(filterMentorCalendar(owned,mentorCalendarFiltersSchema.parse({sprint:"LINKED"}))).toHaveLength(0);
     const csv=mentorCalendarCsv(owned,0);
     expect(csv).toContain("IST");
     expect(csv).not.toContain("https://meet.example.org/room");
