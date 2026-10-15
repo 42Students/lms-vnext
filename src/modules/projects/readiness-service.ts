@@ -102,7 +102,7 @@ export async function getProjectReadiness(
     shippedReleases === releases.length &&
     completedSprints === sprints.length &&
     doneTasks === tasks.length &&
-    scope.project.status === "COMPLETED";
+    (scope.project.status === "ACTIVE" || scope.project.status === "COMPLETED");
 
   const hasOpenSubmission =
     latestSubmission?.status === "DRAFT" ||
