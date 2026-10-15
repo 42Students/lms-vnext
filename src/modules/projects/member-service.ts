@@ -669,8 +669,8 @@ export async function addProjectMember(
         projectId: scope.project.id,
         membershipId: input.membershipId,
         role: input.role,
-        roleKind: input.role === "MENTOR" ? "MENTOR" : "LEARNER",
-        canMutate: true,
+        roleKind: input.roleKind ?? (input.role === "MENTOR" ? "MENTOR" : "LEARNER"),
+        canMutate: input.canMutate ?? !["OBSERVER","REVIEWER","QA"].includes(input.roleKind ?? ""),
         isPrimary: input.isPrimary,
         roleLabel: input.roleLabel ?? null,
         createdByUserId: context.user.id,
@@ -732,9 +732,19 @@ export async function updateProjectMember(
         throw new ProjectsServiceError("PROJECT_INVALID_STATE");
       if(input.isPrimary===true&&fresh.role!=="MENTOR")
         throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
+      const roleKind=input.roleKind??fresh.roleKind;
+      const canMutate=input.canMutate??fresh.canMutate;
+      if((fresh.role==="LEARNER" && !["LEARNER","OBSERVER","REVIEWER","QA"].includes(roleKind))||
+         (fresh.role==="MENTOR" && roleKind==="LEARNER")||
+         (["OBSERVER","REVIEWER","QA"].includes(roleKind)&&canMutate)||
+         (fresh.isPrimary && project.status==="ACTIVE" && (roleKind!=="MENTOR" || !canMutate))||
+         (input.isPrimary===true && (roleKind!=="MENTOR" || !canMutate)))
+        throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       const [changed]=await tx.update(projectMembers).set({
         ...(input.isPrimary!==undefined?{isPrimary:input.isPrimary}:{}),
         ...(input.roleLabel!==undefined?{roleLabel:input.roleLabel}:{}),
+        ...(input.roleKind!==undefined?{roleKind:input.roleKind}:{}),
+        ...(input.canMutate!==undefined?{canMutate:input.canMutate}:{}),
         updatedAt:new Date(),
       }).where(and(eq(projectMembers.id,fresh.id),
         eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
@@ -808,6 +818,8 @@ export async function listProjectMembers(
       id: projectMembers.id,
       membershipId: projectMembers.membershipId,
       role: projectMembers.role,
+      roleKind: projectMembers.roleKind,
+      canMutate: projectMembers.canMutate,
       isPrimary: projectMembers.isPrimary,
       roleLabel: projectMembers.roleLabel,
       displayName: users.displayName,
