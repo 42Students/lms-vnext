@@ -45,3 +45,5 @@ export * from "./messaging-receipts";
 export * from "./profile-verification";
 
 export * from "./tpo-configuration";
+
+export * from "./placement-batches";
