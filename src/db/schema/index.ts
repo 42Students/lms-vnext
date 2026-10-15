@@ -55,3 +55,7 @@ export * from "./inbound-mail";
 export * from "./platform-broadcasts";
 
 export * from "./tpo-internal";
+
+export * from "./placement-registration";
+
+export * from "./placement-debarments";

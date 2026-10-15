@@ -554,8 +554,6 @@ jobs:
           set -euo pipefail
           for draft in \
             db08-batch-eligibility-staging.sql \
-            db08-debarment-staging.sql \
-            db08-registration-staging.sql \
             db08-external-offers-staging.sql; do
             psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f "scripts/sql/$draft"
           done
