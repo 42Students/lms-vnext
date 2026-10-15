@@ -34,3 +34,13 @@ export function tpoRequestAgeLabel(requestedAt:Date,asOf:Date):string{
  const days=Math.floor(elapsed/86400000);
  return days+" day"+(days===1?"":"s")+" old";
 }
+
+export function tpoRequestContextLink(row:{requestType:string;roundId:string|null;offerId:string|null;jobId:string}):{href:string;label:string}{
+ if(row.requestType==="ROUND_RESCHEDULE"&&row.roundId){
+   return {href:"/tpo/drive-day/"+encodeURIComponent(row.roundId),label:"Open round"};
+ }
+ if(row.requestType==="OFFER_EXTENSION"&&row.offerId){
+   return {href:"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)+"/joining",label:"Review offer and joining"};
+ }
+ return {href:"/tpo/placements/jobs/"+encodeURIComponent(row.jobId),label:"Open drive"};
+}
