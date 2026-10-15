@@ -14,9 +14,10 @@ import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-
 import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-recent-model";
 import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerNoticeFilterHref} from "@/modules/placements/learner-notices-navigation-model";
+import {sortLearnerNotices,learnerNoticeSortSchema} from "@/modules/placements/learner-notices-sort-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
-  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[] }>;
+  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[] }>;
 }) {
   const query = await searchParams;
   const filters=learnerNoticeQuerySchema.safeParse(query);
@@ -24,6 +25,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const unreadOnly = filters.success ? filters.data.unread==="1" : false;
   const queryText = filters.success ? filters.data.q ?? "" : "";
   const recentOnly = filters.success ? filters.data.recent === "1" : false;
+  const sorting=learnerNoticeSortSchema.safeParse(query.sort ?? "pinned");
+  const sortKey=sorting.success?sorting.data:"pinned";
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) throw new AuthorizationError("placements.read");
   const own = await requireLearnerPlacementAccess(context);
@@ -38,10 +41,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const searchedNotices=searchLearnerNotices(learnerPlacementNoticeView(allNotices,pinnedOnly),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
   const noticePage = filters.success ? filters.data.page ?? 1 : 1;
-  const pages = paginateOwnOffers(notices,noticePage,15);
+  const pages = paginateOwnOffers(sortLearnerNotices(notices,sortKey),noticePage,15);
   const noticePageUrl=(page:number)=>"/learn/my-placements/announcements?"+new URLSearchParams({
     ...(pinnedOnly?{pinned:"1"}:{}),...(unreadOnly?{unread:"1"}:{}),
-    ...(queryText?{q:queryText}:{}),...(recentOnly?{recent:"1"}:{}),page:String(page),
+    ...(queryText?{q:queryText}:{}),...(recentOnly?{recent:"1"}:{}),...(sortKey!=="pinned"?{sort:sortKey}:{}),page:String(page),
   }).toString();
   const personalAlerts = await getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20});
   return (
@@ -55,6 +58,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {pinnedOnly ? <input type="hidden" name="pinned" value="1" /> : null}
         {recentOnly ? <input type="hidden" name="recent" value="1" /> : null}
         {unreadOnly ? <input type="hidden" name="unread" value="1" /> : null}
+        {sortKey!=="pinned"?<input type="hidden" name="sort" value={sortKey}/>:null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search college notices
           <input type="search" name="q" maxLength={100} defaultValue={queryText}
@@ -64,8 +68,22 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {queryText ? <Link href="/learn/my-placements/announcements"
           className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear filters</Link> : null}
       </form>
+      <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
+        {pinnedOnly?<input type="hidden" name="pinned" value="1"/>:null}
+        {unreadOnly?<input type="hidden" name="unread" value="1"/>:null}
+        {recentOnly?<input type="hidden" name="recent" value="1"/>:null}
+        {queryText?<input type="hidden" name="q" value={queryText}/>:null}
+        <label className="flex flex-col gap-1 text-sm font-medium text-foreground">Sort college notices
+          <select name="sort" defaultValue={sortKey} className="min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="pinned">Pinned then newest</option>
+            <option value="latest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
+      </form>
       <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
-        <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText})} aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>
+        <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey})} aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>
         <Link href={learnerNoticeFilterHref({pinned:true,unread:unreadOnly,recent:recentOnly,q:queryText})} aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>
       </nav>
       <nav aria-label="Notice recency filter" className="flex flex-wrap gap-3 text-sm">
