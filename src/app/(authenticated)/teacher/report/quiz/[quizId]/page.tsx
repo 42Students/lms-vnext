@@ -225,7 +225,7 @@ export default async function FacultyQuizReportPage({
         name: facultyReportLearnerName(attempt.learnerDisplayName),
         score: attempt.score + "/" + attempt.maxScore,
         percent: attempt.maxScore > 0 ? Math.round(attempt.score / attempt.maxScore * 100) : null,
-        submittedAt: facultyReportIstTimestamp(attempt.submittedAt),
+        submittedAt: attempt.submittedAt.toISOString(),
         note: "Attempt " + attempt.attemptNumber,
       }))} />
 
@@ -246,9 +246,6 @@ export default async function FacultyQuizReportPage({
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
                   {facultyReportLearnerName(learner.displayName)}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {null}
                 </p>
               </li>
             ))}
