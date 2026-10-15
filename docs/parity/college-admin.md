@@ -753,6 +753,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Hidden published metadata PARTIAL (chat-3, 2026-10-15):** Offering triage now detects PUBLISHED lesson content explicitly marked visibleToStudents=false; no student-access denial or release state is inferred. Read, URLs and safe CSV agree; authored PG/browser acceptance remains outstanding.
+
 **Saved content publication coverage PARTIAL (chat-3, 2026-10-15):** The course progress offering list distinguishes records with/without PUBLISHED lesson content in registered paths. It does not claim parent path or learner visibility. CSV/pagination scope retained; authored tests require PG/browser execution.
 
 **Video-content authoring coverage PARTIAL (chat-3, 2026-10-15):** Progress offering list can filter saved VIDEO/YOUTUBE content through scoped lesson paths, without interpreting watch or completion rates. Capped CSV uses the same predicate. Unit/PG tests authored, execution/browser acceptance open.

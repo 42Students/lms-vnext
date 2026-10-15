@@ -296,4 +296,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("publishedContentState=HAS_PUBLISHED");
   });
 
+  it("roundtrips hidden publication metadata in progress and CSV safely",()=>{
+    expect(collegeProgressQuerySchema.safeParse({hiddenContentState:"AUTHORIZED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({hiddenContentState:"NO_HIDDEN"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("hiddenContentState=NO_HIDDEN");
+    expect(collegeProgressCsvHref(q)).toContain("hiddenContentState=NO_HIDDEN");
+  });
+
 });
