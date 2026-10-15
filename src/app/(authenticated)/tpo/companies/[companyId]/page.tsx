@@ -208,7 +208,7 @@ export default async function TpoCompanyDetailPage({
       </section>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <section className="rounded-xl border border-border bg-surface">
+        <section className="min-w-0 rounded-xl border border-border bg-surface">
           <div className="border-b border-border px-5 py-4">
             <h2 className="text-lg font-semibold text-foreground">
               Recruiter contacts
@@ -272,7 +272,7 @@ export default async function TpoCompanyDetailPage({
           )}
         </section>
 
-        <section className="rounded-xl border border-border bg-surface">
+        <section className="min-w-0 rounded-xl border border-border bg-surface">
           <div className="border-b border-border px-5 py-4">
             <h2 className="text-lg font-semibold text-foreground">
               Placement drives
