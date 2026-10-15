@@ -322,6 +322,11 @@ export async function submitProjectSubmission(
       );
     }
 
+    await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+      action: "SUBMITTED", collegeId: scope.collegeId,
+      organizationId: scope.organizationId, projectId: scope.project.id,
+      submissionId: submitted.id, version: submitted.version,
+    }));
     return submitted;
   });
 }
