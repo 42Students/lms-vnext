@@ -151,3 +151,20 @@ export function facultyVideoCardActions(
  else if(facultyVideoCanEnableVisibility(video,context)) actions.push("SHOW");
  return actions;
 }
+
+/** Faculty export is safe metadata only; signed URLs/keys are never fields. */
+function facultyVideoCsvCell(value:string|number):string {
+ const clean=String(value).replaceAll("\r"," ").replaceAll("\n"," ").replaceAll("\t"," ").trim();
+ const neutral=/^[=+@-]/.test(clean)?"'"+clean:clean;
+ return '"'+neutral.replaceAll('"','""')+'"';
+}
+export function facultyVideoMetadataCsv(
+ rows:readonly FacultyLessonVideo[],scope:{lessonId:string;deliveryId:string|null},
+):string {
+ const header=["Video","Processing status","Publication","Learner visibility","Duration seconds"];
+ const content=facultyOrderLessonVideos(facultyVideosForLesson(rows,scope)).map(row=>
+  [row.title,facultyVideoStatusBadge(row.processingStatus).label,
+   row.contentStatus,row.visibleToStudents?"Shown":"Hidden",row.durationSeconds??""]
+   .map(cell=>facultyVideoCsvCell(cell)).join(","));
+ return [header.map(facultyVideoCsvCell).join(","),...content].join("\r\n")+"\r\n";
+}
