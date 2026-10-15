@@ -36,7 +36,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
-      <form action="/mentor/activity" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form action="/mentor/activity" method="get" className="flex min-w-0 flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_select]:min-w-0 [&_select]:max-w-full">
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded importance
           <select name="importance" defaultValue={data.query.importance}
             className="min-h-10 rounded-md border border-border bg-background px-3">
