@@ -108,4 +108,9 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLearningPageCount(0)).toBe(1);
     expect(collegeLearningPageCount(26)).toBe(2);
   });
+  it("lessons programStatus persists across validated page links",()=>{
+    expect(collegeLessonQuerySchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({programStatus:"ACTIVE",page:2}))).toContain("programStatus=ACTIVE");
+  });
+
 });

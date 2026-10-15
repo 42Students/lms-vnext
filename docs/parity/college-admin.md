@@ -1260,3 +1260,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 Electives PARTIAL:** Slot academic-year evidence now distinguishes persisted null from configured values across list/CSV. Browser/executed PostgreSQL and legacy acceptance remain open.
 
 **2026-10-15 Electives PARTIAL:** Exact, college-scoped linked academic period code lookup now works in the paginated page and bounded CSV; unit/PG fixtures authored, run/browser acceptance still pending.
+
+**Chat-3 College Admin Lessons PARTIAL:** Parent program lifecycle is filtered against registered, college-fenced programs.status before pagination and CSV export. Unit and isolated PostgreSQL regression source authored; execution, browser and exact legacy parity still open.

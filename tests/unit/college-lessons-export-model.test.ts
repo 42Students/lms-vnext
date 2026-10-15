@@ -29,4 +29,9 @@ describe("college lessons CSV",()=>{
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(csv).not.toContain("completion rate");
  });
+ it("lessons CSV carries validated programStatus",()=>{
+   expect(lessonsCsvSchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
+ });
+
 });
