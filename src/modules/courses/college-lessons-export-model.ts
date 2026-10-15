@@ -19,12 +19,12 @@ export function lessonsCsvHref(q:{
 export function renderLessonsCsv(rows:readonly {
  name:string;sequence:number;status:string;pathStatus:string;
  courseName:string;courseCode:string;cohortName:string;periodName:string;offeringStatus:string;
- contentCount:number;publishedContentCount:number;
+ contentCount:number;publishedContentCount:number;publishedAndVisibleFlagCount:number;
 }[],truncated:boolean){
  return buildCollegeDirectoryCsv(["Lesson","Order","Lesson status","Path status","Course",
-  "Course code","Batch","Period","Offering status","Authored content","Published content"],
+  "Course code","Batch","Period","Offering status","Authored content","Published content","Published and visibility-flagged content"],
  rows.map(r=>[r.name,String(r.sequence+1),r.status,r.pathStatus,r.courseName,
   r.courseCode,r.cohortName,r.periodName,r.offeringStatus,
-  String(r.contentCount),String(r.publishedContentCount)]),
+  String(r.contentCount),String(r.publishedContentCount),String(r.publishedAndVisibleFlagCount)]),
  truncated,LESSONS_EXPORT_CAP);
 }

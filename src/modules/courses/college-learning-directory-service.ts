@@ -125,6 +125,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     id: lessonContents.lessonId,
     total: count(),
     published: sql<number>`count(*) filter (where ${lessonContents.status} = 'PUBLISHED')`.mapWith(Number),
+    publishedVisible: sql<number>`count(*) filter (where ${lessonContents.status} = 'PUBLISHED' and ${lessonContents.visibleToStudents} = true)`.mapWith(Number),
   }).from(lessonContents)
     .where(inArray(lessonContents.lessonId, ids))
     .groupBy(lessonContents.lessonId);
@@ -133,6 +134,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ...row,
     contentCount: byLesson.get(row.id)?.total ?? 0,
     publishedContentCount: byLesson.get(row.id)?.published ?? 0,
+    publishedAndVisibleFlagCount: byLesson.get(row.id)?.publishedVisible ?? 0,
   }));
   const total = countRows[0]?.total ?? 0;
   return { kind: "LESSONS" as const, query, items, total, totalPages: collegeLearningPageCount(total) };
