@@ -26,3 +26,8 @@ export function collegeRuleReadSnapshot(rules:readonly {module:string;enabled:bo
   return {module,stored:stored?{enabled:stored.enabled,locked:stored.locked}:null};
  });
 }
+
+/** A stored global or organization lock forbids another SET at college level. */
+export function hasCollegeAncestorLock(rows:readonly {locked:boolean}[]):boolean{
+ return rows.some(row=>row.locked);
+}
