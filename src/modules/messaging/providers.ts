@@ -35,7 +35,9 @@ export function createOutboundProvider(
       if (!template || !isCampaignTemplateKey(request.templateKey)) return false;
       try {
         if (request.channel === "EMAIL") {
-          if (!config.email.token || !template.zeptoTemplateKey) return false;
+          if (!config.email.token || !template.zeptoTemplateKey ||
+              !isCampaignTemplateKey(template.zeptoTemplateKey) ||
+              template.zeptoTemplateKey === config.email.otpTemplateKey) return false;
           const response = await fetchImpl(config.email.apiUrl, {
             method: "POST",
             headers: { Authorization: config.email.token, "Content-Type": "application/json", Accept: "application/json" },
@@ -50,7 +52,8 @@ export function createOutboundProvider(
           return response.ok;
         }
         if (!config.sms.apiKey || !config.sms.apiToken || !/^[A-Za-z0-9_-]+$/.test(config.sms.accountSid) ||
-            !config.sms.dltEntityId || !template.exotelSenderId || !template.exotelDltTemplateId || !template.renderSms) return false;
+            !config.sms.dltEntityId || !template.exotelSenderId || !template.exotelDltTemplateId || !template.renderSms ||
+            template.exotelDltTemplateId === config.sms.otpDltTemplateId) return false;
         const body = template.renderSms(request.variables);
         if (!body.trim() || body.length > 1600) return false;
         const form = new URLSearchParams({
