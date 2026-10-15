@@ -157,3 +157,11 @@ export function canRemindRecruiterInvite(
 export function isRecruiterInviteFirstOpen(clickedAt: Date | null): boolean {
   return clickedAt === null;
 }
+
+/** Reminder rotates only the bearer digest, not the seven-day start time. */
+export function recruiterInviteReminderPatch(hash: string, now: Date) {
+  if (!/^[a-f0-9]{64}$/.test(hash) || !Number.isFinite(now.getTime())) {
+    throw new RecruiterInviteError("INVITE_INVALID");
+  }
+  return { inviteTokenHash: hash, inviteReminderSentAt: now, updatedAt: now };
+}
