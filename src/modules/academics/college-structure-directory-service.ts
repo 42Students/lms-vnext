@@ -206,6 +206,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       isNull(electiveSlots.deletedAt),
       or(isNull(electiveSlots.academicPeriodId), sql`${academicPeriods.id} is not null`),
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.programCode ? eq(programs.code, query.programCode) : undefined,
       query.slotName ? eq(electiveSlots.name, query.slotName) : undefined,
       query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.academicYearState === "RECORDED" ? isNotNull(electiveSlots.academicYear) :
