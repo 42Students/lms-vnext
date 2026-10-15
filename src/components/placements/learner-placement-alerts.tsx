@@ -11,7 +11,7 @@ function dateIst(value: Date) {
   }).format(value) + " IST";
 }
 
-export function LearnerPlacementAlerts({ alerts }: { alerts: Alerts }) {
+export function LearnerPlacementAlerts({ alerts, filtered=false }: { alerts: Alerts; filtered?: boolean }) {
   return (
     <section aria-labelledby="learner-placement-alerts"
       className="rounded-xl border border-border bg-surface p-4 sm:p-6">
@@ -30,7 +30,7 @@ export function LearnerPlacementAlerts({ alerts }: { alerts: Alerts }) {
       </p>
       {alerts.length === 0 ? (
         <div role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
-          No personal placement alerts have been delivered to you yet.
+          {filtered ? "No loaded personal placement alerts match this search." : "No personal placement alerts have been delivered to you yet."}
           This does not establish that your college has published no notices.
         </div>
       ) : (
