@@ -9,6 +9,8 @@ describe("D4 placement decimal to basis-point rounding", () => {
   });
   it("preserves exact percentage precision and nulls", () => {
     expect(scaleHundredths(79.25)).toBe(7925);
+    expect(scaleHundredths(7.1)).toBe(710);
+    expect(scaleHundredths(100)).toBe(10000);
     expect(scaleHundredths(0)).toBe(0);
     expect(scaleHundredths(null)).toBeNull();
   });
