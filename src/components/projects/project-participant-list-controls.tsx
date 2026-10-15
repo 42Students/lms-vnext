@@ -11,7 +11,7 @@ export type ProjectParticipantListQuery = {
   attention?:
     | "MENTOR_REVIEW"
     | "LEARNER_ACTION";
-  work?: "BLOCKED";
+  work?: "BLOCKED" | "NO_TASKS";
   sort?: "RECENT" | "TITLE" | "PROGRESS";
   page?: number;
   pageSize?: number;
@@ -108,6 +108,7 @@ export function ProjectParticipantListControls({
             className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
             <option value="">All work</option>
             <option value="BLOCKED">Has blocked tasks</option>
+            <option value="NO_TASKS">No tracked tasks yet</option>
           </select>
         </label>
       ) : null}

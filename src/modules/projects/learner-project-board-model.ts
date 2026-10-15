@@ -5,7 +5,7 @@ export const learnerBoardSprintSchema = z.string().uuid();
 export const learnerBoardReleaseSchema = z.string().uuid();
 export const learnerBoardPrioritySchema = z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]);
 export const learnerBoardStatusSchema = z.enum(["TODO", "IN_PROGRESS", "BLOCKED", "IN_REVIEW", "DONE"]);
-export type LearnerBoardTask = { id: string; title: string; description: string | null; priority?: string; sprintId?: string };
+export type LearnerBoardTask = { id: string; title: string; description: string | null; acceptanceCriteria?: string | null; priority?: string; sprintId?: string };
 
 export function filterLearnerBoardTasks<T extends LearnerBoardTask>(
   tasks: readonly T[], searchInput: unknown, options: {
@@ -23,7 +23,7 @@ export function filterLearnerBoardTasks<T extends LearnerBoardTask>(
     (!status || ("status" in task && task.status === status)) &&
     (!sprintId || task.sprintId === sprintId) &&
     (!releaseId || options.sprintReleaseById?.get(task.sprintId ?? "") === releaseId) &&
-    (!search || [task.title, task.description ?? ""].some(value =>
+    (!search || [task.title, task.description ?? "", task.acceptanceCriteria ?? ""].some(value =>
       value.toLocaleLowerCase("en-IN").includes(search))),
   );
 }
@@ -35,8 +35,9 @@ export function learnerBoardEmptyState(total: number, shown: number): LearnerBoa
 }
 
 export function learnerBoardActiveFilterCount(filters: {
-  search: string; priority: string; status?: string; sprintId: string; releaseId: string;
+  search: string; priority: string; status?: string; sprintId: string; releaseId: string; taskSort?: string;
 }): number {
-  return [filters.search.trim(), filters.priority, filters.status, filters.sprintId, filters.releaseId]
+  return [filters.search.trim(), filters.priority, filters.status, filters.sprintId, filters.releaseId,
+      filters.taskSort && filters.taskSort !== "DEFAULT" ? filters.taskSort : ""]
     .filter(Boolean).length;
 }
