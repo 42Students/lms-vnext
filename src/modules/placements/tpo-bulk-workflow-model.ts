@@ -28,7 +28,6 @@ export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExten
   selections:bulkActionCommandSchema.shape.selections,
   previewToken:bulkActionCommandSchema.shape.previewToken,
   confirmed:z.literal(true),
-  ids:z.array(z.string().uuid()).max(0).default([]),
 }).superRefine((value,ctx)=>{
   if(value.selections.length>25)
     ctx.addIssue({code:"custom",message:"Too many selected records"});
