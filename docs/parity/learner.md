@@ -1414,3 +1414,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / Course Attendance current-month navigation (L4 PARTIAL):** learners can return to the server-derived IST current month from historical attendance without losing the own Course delivery or mutating attendance. Unit regression authored; mobile/browser acceptance open.
 
 **Chat-7 follow-up / latest quiz-attempt review (L8 PARTIAL):** the standalone quiz review selects the largest persisted attempt number, not whatever array element happens to be last, preventing stale reordering from showing earlier results. Pure regression authored; PG/browser acceptance pending.
+
+**2026-10-15 chat-7 next round (L2-011 FIXED source, acceptance open):** Course Home no longer reports a no-deadline incomplete Course as 'Course work complete'. It distinguishes real persisted `itemsCompleted` from `itemsTotal`; no item status is guessed. Focused regression authored, browser/PostgreSQL acceptance pending.
