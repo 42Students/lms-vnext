@@ -1105,3 +1105,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Audit Findings persisted resolution (PARTIAL):** A strict resolution filter distinguishes SQL NULL (UNRESOLVED) from each DB10 resolution enum; the same predicate applies before pagination/export and survives bookmark/cursor navigation. Unit tests authored; database evidence pending.
+
+
+**2026-10-15 chat-6 Audit Findings retest status (PARTIAL):** DB10 persisted retest PASS/FAIL/NOT_RETESTED can be independently filtered in the board and CSV, scoped and paginated by service SQL. Unit enum and query tests authored, integration/browser acceptance still open.
