@@ -57,6 +57,8 @@ describe("College Admin lessons and course progress pure models", () => {
       .toContain("pathStatus=ARCHIVED");
     expect(collegeLessonQuerySchema.safeParse({ courseCode: "x".repeat(65) }).success).toBe(false);
     expect(collegeLessonQuerySchema.safeParse({ programCode: "x".repeat(65) }).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({ cohortCode: "x".repeat(65) }).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({cohortCode:"B&1"}))).toContain("cohortCode=B%261");
     expect(collegeLessonQuerySchema.safeParse({ periodCode: "x".repeat(65) }).success).toBe(false);
     expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({periodCode:"2026-FALL"})))
       .toContain("periodCode=2026-FALL");

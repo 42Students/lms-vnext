@@ -475,6 +475,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Batch-code scoping PARTIAL (2026-10-15):** College Admin Lessons aggregate now supports exact persisted batch code filtering, including page state and the formula-safe CSV. Query is confined to same-college course and cohort ancestry; strict validation and a disposable-PG matching/nonmatching fixture authored. Runtime and browser acceptance open.
+
 **Publication versus visibility counts PARTIAL (2026-10-15):** Lessons aggregate now distinguishes all authored content, published content, and published content with the persisted student-visibility flag enabled. These are actual per-lesson counts, not guaranteed learner access when parent path/lesson or section gating blocks it. CSV parity and existing database fixtures updated; runtime/browser acceptance open.
 
 **Learning-path lifecycle selector PARTIAL (2026-10-15):** College lesson rows and capped exports can now distinguish DRAFT, PUBLISHED and ARCHIVED owning learning paths independently of lesson and offering state. Query applies at signed-in-college scoped joins before page counts; strict schema and guarded PG inclusion/exclusion authored. Legacy/browser/CI acceptance remains open.
