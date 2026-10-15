@@ -8,7 +8,8 @@ import {VerificationExportControl} from "./VerificationExportControl";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {verificationAttentionShortcuts,verificationAttentionShortcutPatch} from "@/modules/verification/attention-shortcuts";
-import {verificationSelectionKey} from "@/modules/verification/selection-model";
+import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules/verification/selection-model";
+import {previewVerificationBulk} from "@/modules/verification/bulk-preview";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
@@ -17,6 +18,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
  const [selection,setSelection]=useState<Set<string>>(()=>new Set());
+ const [bulkAction,setBulkAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
  const selectable=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
@@ -52,7 +54,21 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    onTabChange={tab=>navigate({tab,page:"1"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
    onReview={row=>setSelected(row)}/>
-  <p role="status" className="text-sm text-muted-foreground">{selectedRows.length} of 20 requests selected on this page for bulk review.</p>
+  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
+   <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
+   <div className="flex flex-wrap gap-2">
+    <button type="button" onClick={()=>setSelection(selectEligibleVerificationKeys(selectable))} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
+    <button type="button" onClick={()=>{setSelection(new Set());setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
+    <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("VERIFY")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
+    <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("SEND_BACK")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
+   </div>
+   {bulkAction&&<div className="space-y-2 rounded-md border p-3">
+    <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
+    <p className="text-sm">{previewVerificationBulk(selectedRows,bulkAction).eligible.length} eligible and {previewVerificationBulk(selectedRows,bulkAction).skipped.length} skipped. No decisions have been saved.</p>
+    <button type="button" onClick={()=>setBulkAction(null)} className="rounded-md border px-3 py-2 text-sm">Cancel preview</button>
+   </div>}
+  </section>}
+  <nav aria-label="Verification pagination"
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
    <label>Sort by <select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option>
