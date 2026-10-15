@@ -38,6 +38,8 @@ import {
   listQuizAttempts,
   submitCourseQuiz,
 } from "@/modules/courses/quiz-attempt-service";
+import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
+import {facultyQuizNormalizeQuestions,facultyMoveQuizQuestion,facultyMoveQuizOption} from "@/modules/courses/faculty-quiz-builder-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl =
@@ -1045,4 +1047,22 @@ describe("courses C4B quizzes against PostgreSQL", () => {
     });
   });
 
+});
+
+
+describe("Faculty Quiz reordered bank persistence",()=>{
+ it("stores visible question and option ordering with exact Section scoping",async()=>{
+  const structure=await createStructure();
+  const reordered=facultyQuizNormalizeQuestions(facultyMoveQuizQuestion(quizQuestions(),0,1)
+   .map(q=>({...q,options:facultyMoveQuizOption(q.options,0,1)})));
+  const command={action:"CREATE" as const,lessonId:structure.lesson.id,
+   title:"C4B Authoring Order",description:null,dueAt:null,maxAttempts:1,sequence:12,
+   questions:reordered,confirmed:true as const};
+  const quiz=await commandFacultyQuiz(faculty,{deliveryId:structure.deliveryA.id},command);
+  const actual=await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id);
+  expect(actual.questions.map(q=>q.prompt)).toEqual(["Select linear structures","Which structure uses FIFO?"]);
+  expect(actual.questions[0]?.options.map(o=>o.text)).toEqual(["Linked list","Tree","Array"]);
+  await expect(commandFacultyQuiz(faculty,{deliveryId:structure.deliveryB.id},command))
+   .rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
+ });
 });
