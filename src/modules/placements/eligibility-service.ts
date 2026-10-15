@@ -838,6 +838,19 @@ export function evaluatePlacementEvidenceVerification(
   return !requireVerifiedEvidence || source === "VERIFIED" ? "PASS" : "MISSING";
 }
 
+/**
+ * P-S2-04: all enrollment and allowed-section IDs are UUIDs scoped by the
+ * caller's college before invoking this pure comparison. Empty targeting
+ * permits any section; targeted jobs fail closed for no active enrollment.
+ */
+export function isPlacementJobTargetSection(
+  allowedSectionIds: readonly string[],
+  activeSectionIds: readonly string[],
+): boolean {
+  return allowedSectionIds.length === 0 ||
+    activeSectionIds.some((id) => allowedSectionIds.includes(id));
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
