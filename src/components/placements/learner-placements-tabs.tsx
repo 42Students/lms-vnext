@@ -7,6 +7,7 @@ const tabs = [
   { label: "Dashboard", href: "/learn/my-placements" },
   { label: "Drives", href: "/learn/my-placements/jobs" },
   { label: "Applications", href: "/learn/my-placements/applications" },
+  { label: "Offers", href: "/learn/my-placements/offers" },
   { label: "Assessments", href: "/learn/my-placements/assessments" },
   { label: "Interviews", href: "/learn/my-placements/interviews" },
   { label: "Career Calendar", href: "/learn/my-placements/calendar" },
