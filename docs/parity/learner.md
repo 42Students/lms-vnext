@@ -1474,3 +1474,5 @@ past-deadline ISSUED offers without granting response rights. Tests are authored
 these commits; complete lint/typecheck, isolated PostgreSQL, responsive browser,
 legacy-oracle and cross-role acceptance are still required. No master-matrix DONE or
 Learner ledger CLOSED status is claimed from these changes.
+
+**2026-10-15 chat-5 parity hardening — offer expiry (PARTIAL):** confirmation preview now denies at the exact persisted expiry instant and on invalid server clocks, matching the protected offer-action deadline. Regression authored; runtime/browser/PG acceptance remains open.
