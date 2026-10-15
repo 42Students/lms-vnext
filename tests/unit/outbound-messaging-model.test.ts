@@ -27,6 +27,7 @@ describe("outbound messaging safety", () => {
       batchId: "batch-1",
       requests: [{ ...email, recipient: "stranger@example.com" }],
       policyFor: async () => policy,
+      recipientKeyFor: async () => "opaque-test-key",
       provider: { send: async () => { throw new Error("must never send"); } },
       repository: {
         insert: async row => { inserts.push(row.status); },
