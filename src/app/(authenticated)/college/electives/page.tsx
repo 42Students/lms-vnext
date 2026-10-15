@@ -1,3 +1,4 @@
+import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -23,7 +24,7 @@ export default async function CollegeElectivesPage({
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Electives" />
     <ErrorState title="Invalid elective filters"
-      description="The search, program, status or page is invalid. No elective slots were loaded."
+      description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const [data, options] = await Promise.all([
