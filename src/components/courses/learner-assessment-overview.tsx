@@ -204,7 +204,7 @@ export function LearnerAssessmentOverview({
         }
         description={
           kind === "ASSIGNMENT"
-            ? "Your assignments will appear here once your Faculty publishes them."
+            ? "Your assignments will appear here once your teachers add them."
             : "Your quizzes will appear here once your Faculty publishes them."
         }
       />
@@ -502,7 +502,7 @@ export function LearnerAssessmentOverview({
             {selectedAssignment.description ? (
               <section>
                 <h3 className="m-0 text-sm font-semibold text-foreground">
-                  Instructions
+                  Instructions & resources
                 </h3>
                 <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
                   {selectedAssignment.description}
@@ -520,6 +520,7 @@ export function LearnerAssessmentOverview({
                     <h3 className="m-0 text-sm font-semibold text-foreground">
                       Your submission
                     </h3>
+                    <p className="mt-1 text-xs text-muted-foreground">This is what you submitted for this assignment.</p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       Submitted {formatDate(selectedAssignment.submittedAt)}
                     </p>
@@ -541,7 +542,7 @@ export function LearnerAssessmentOverview({
                 selectedAssignment.submissionText ? (
                   <div className="mt-4 rounded-lg border border-border bg-surface p-4">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                      Written response
+                      Written Response
                     </p>
                     <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
                       {selectedAssignment.submissionText}
@@ -553,7 +554,7 @@ export function LearnerAssessmentOverview({
                 selectedAssignment.submissionUrl ? (
                   <div className="mt-4 rounded-lg border border-border bg-surface p-4">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                      Submitted link
+                      Submitted Link
                     </p>
                     {learnerAssessmentSubmittedLinkHref(selectedAssignment.submissionUrl) ? (
                       <a
