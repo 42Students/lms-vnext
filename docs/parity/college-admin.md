@@ -1506,3 +1506,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Classes filter validation PARTIAL (2026-10-15 chat-3):** Reversed linked academic-period date bounds now fail identically in the class page query and same-college CSV; authored unit cases, executed PG/browser and legacy parity pending.
 
 **College Admin directory validation feedback PARTIAL (2026-10-15 chat-3):** Classes, Electives, Batches and Semesters error states now render bounded, actionable field-specific messages for contradictory filters instead of a generic failure. Invalid raw values and internal authorization strings are not echoed; unit tests authored, browser verification pending.
+
+**College Admin semesters and batches empty-state recovery PARTIAL (2026-10-15 chat-3):** Both directories show a keyboard-reachable clear-filters action without choosing another college or exposing tenant data, including empty pages beyond the last result. Regression guard added, browser/accessibility validation pending.
