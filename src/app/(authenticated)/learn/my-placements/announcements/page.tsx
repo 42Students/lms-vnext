@@ -12,9 +12,10 @@ import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-
 import {learnerNoticeQuerySchema} from "@/modules/placements/learner-notices-query-model";
 import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-model";
 import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-recent-model";
+import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
-  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[] }>;
+  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[] }>;
 }) {
   const query = await searchParams;
   const filters=learnerNoticeQuerySchema.safeParse(query);
@@ -35,6 +36,12 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     : [];
   const searchedNotices=searchLearnerNotices(learnerPlacementNoticeView(allNotices,pinnedOnly),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
+  const noticePage = filters.success ? filters.data.page ?? 1 : 1;
+  const pages = paginateOwnOffers(notices,noticePage,15);
+  const noticePageUrl=(page:number)=>"/learn/my-placements/announcements?"+new URLSearchParams({
+    ...(pinnedOnly?{pinned:"1"}:{}),...(unreadOnly?{unread:"1"}:{}),
+    ...(queryText?{q:queryText}:{}),...(recentOnly?{recent:"1"}:{}),page:String(page),
+  }).toString();
   const personalAlerts = await getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20});
   return (
     <main className="min-w-0 space-y-6">
@@ -79,7 +86,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </p>
       ) : (
         <ul className="min-w-0 space-y-3">
-          {notices.map((notice) => (
+          {pages.items.map((notice) => (
             <li key={notice.id} className="min-w-0 rounded-xl border border-border bg-surface p-5">
               {notice.isPinned ? <p className="text-xs font-semibold text-primary-text">Pinned</p> : null}
               <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
@@ -91,6 +98,12 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           ))}
         </ul>
       )}
+      {pages.total > 0 ? <nav aria-label="College notice pages" className="flex flex-wrap items-center gap-3 text-sm">
+        <p className="text-muted-foreground">{pages.from}–{pages.to} of {pages.total} loaded matching notices</p>
+        {pages.page>1 ? <Link href={noticePageUrl(pages.page-1)} className="inline-flex min-h-11 items-center border border-border rounded-md px-3 text-primary-text">Previous</Link> : null}
+        <span aria-current="page">Page {pages.page} of {pages.pages}</span>
+        {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-11 items-center border border-border rounded-md px-3 text-primary-text">Next</Link> : null}
+      </nav> : null}
       <nav aria-label="Personal alert filter" className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={pinnedOnly?"/learn/my-placements/announcements?pinned=1":"/learn/my-placements/announcements"} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
         <Link href={pinnedOnly?"/learn/my-placements/announcements?pinned=1&unread=1":"/learn/my-placements/announcements?unread=1"} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
