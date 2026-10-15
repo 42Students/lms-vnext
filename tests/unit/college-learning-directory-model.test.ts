@@ -62,6 +62,8 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLessonQuerySchema.parse({pathStatus:"PUBLISHED"}).pathStatus).toBe("PUBLISHED");
     expect(collegeLessonQuerySchema.safeParse({ pathStatus: "ACTIVE" }).success).toBe(false);
     expect(collegeLessonQuerySchema.safeParse({publishedContent:"INFERRED"}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({flaggedVisibility:"LEARNER_VISIBLE"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({flaggedVisibility:"HAS_FLAGGED"}))).toContain("flaggedVisibility=HAS_FLAGGED");
     expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({publishedContent:"NONE_PUBLISHED"}))).toContain("publishedContent=NONE_PUBLISHED");
     expect(collegeLessonQuerySchema.safeParse({offeringType:"LAB"}).success).toBe(false);
     expect(collegeLessonQuerySchema.safeParse({departmentName:"x".repeat(256)}).success).toBe(false);
