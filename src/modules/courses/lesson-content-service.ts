@@ -9,6 +9,7 @@ import {
 import { getDb } from "@/db/client";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { lessonContentOrderRuntimeEnabled } from "./lesson-content-order-readiness";
+import { filterStagedStudentVisibleLessonContents } from "./faculty-lesson-visibility-staged";
 import { courseLessons, courseSectionDeliveries, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -370,13 +371,18 @@ export async function listLessonContents(
   // Until the DB05 ordering migration is certified, reading ordinary lesson
   // content must not eagerly load its server-only, staged-schema writer.
   // This also keeps disposable browser fixture setup on the registered path.
-  if (!deliveryId || rows.length <= 1 || !lessonContentOrderRuntimeEnabled()) {
-    return rows;
+  // Until the optional migration exists, all previously published rows retain
+  // their legacy default. Once registered, the admin visibility flag is real.
+  const visibleRows = access === "LEARNER"
+    ? await filterStagedStudentVisibleLessonContents(lessonId, rows)
+    : rows;
+  if (!deliveryId || visibleRows.length <= 1 || !lessonContentOrderRuntimeEnabled()) {
+    return visibleRows;
   }
 
   const { applyDeliveryContentOrderIfReady } =
     await import("./lesson-content-order-service");
-  return applyDeliveryContentOrderIfReady(rows, deliveryId);
+  return applyDeliveryContentOrderIfReady(visibleRows, deliveryId);
 }
 
 export async function createLessonContent(

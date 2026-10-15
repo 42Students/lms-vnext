@@ -1,3 +1,4 @@
+import { canContactRecipientAtRuntime } from "./runtime-safety";
 import { decideDelivery, normalizeRecipient, outboundSendSchema, type DeliveryPolicy, type OutboundSendRequest, type OutboundStatus } from "./model";
 
 export interface OutboundProvider {
@@ -25,15 +26,25 @@ export async function deliverBatch(args: {
   repository: DeliveryRepository;
   policyFor: (request: OutboundSendRequest) => Promise<DeliveryPolicy>;
   recipientKeyFor: (request: OutboundSendRequest) => Promise<string>;
+  runtimeEnv?: Record<string, string | undefined>;
 }): Promise<DeliveryRecord[]> {
+  if (args.requests.length > 500) throw new Error("OUTBOUND_BATCH_CAP_EXCEEDED");
   const records: DeliveryRecord[] = [];
   for (const raw of args.requests) {
     const request = outboundSendSchema.parse(raw);
-    const decision = decideDelivery(request, await args.policyFor(request));
+    const policy = await args.policyFor(request);
+    const initial = decideDelivery(request, policy);
+    // Enforce the independently configured AUTH test allowlist even if a caller
+    // accidentally builds a permissive DeliveryPolicy object.
+    const decision = canContactRecipientAtRuntime(
+      request.channel, request.recipient, args.runtimeEnv ?? process.env,
+    ) ? initial : {status:"SUPPRESSED" as const, reason:"nonprod-not-allowlisted" as const};
+    const recipientKey = await args.recipientKeyFor(request);
+    if (!/^[0-9a-f]{64}$/.test(recipientKey)) throw new Error("INVALID_RECIPIENT_KEY");
     const record: DeliveryRecord = {
       batchId: args.batchId,
       channel: request.channel,
-      recipientKey: await args.recipientKeyFor(request),
+      recipientKey,
       templateKey: request.templateKey,
       purpose: request.purpose,
       status: decision.status,

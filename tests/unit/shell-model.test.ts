@@ -110,6 +110,9 @@ describe("authenticated shell model", () => {
       icon: "/assets/images/common/calender.svg",
     });
 
+    expect(superAdminNavigation.find((item) => item.href === "/admin/recruiters")).toMatchObject({ label: "Recruiter Accounts" });
+    expect(superAdminNavigation.find((item) => item.href === "/admin/announcements")).toMatchObject({ label: "Announcements" });
+
     expect(superAdminHrefs).toContain("/admin/verification");
     expect(superAdminHrefs).toContain("/tracker/audit-findings");
     expect(superAdminHrefs).not.toContain("/tpo/calendar");

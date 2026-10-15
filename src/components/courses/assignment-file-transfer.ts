@@ -16,6 +16,8 @@ export async function transferLearnerAssignmentFile(
   const grant = validateLearnerAssignmentUploadGrant(await response.json(), Date.now());
   if (grant.originalName !== request.data.originalName ||
       grant.requiredHeaders["content-type"] !== request.data.contentType ||
+      (grant.requiredHeaders["x-amz-meta-expected-size"] !== undefined &&
+        grant.requiredHeaders["x-amz-meta-expected-size"] !== String(file.size)) ||
       Date.parse(grant.expiresAt) <= Date.now()) {
     throw new Error("The upload permission is invalid or expired. Try uploading again.");
   }

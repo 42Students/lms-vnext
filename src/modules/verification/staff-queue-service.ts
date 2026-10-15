@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,ilike,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import {verificationQueueFilters} from "./queue-filters";
@@ -10,6 +10,7 @@ import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
 import {matchesWaitingSince} from "./queue-waiting-since";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
+import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
 import type {VerificationRecord,VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
 
@@ -33,10 +34,10 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
    eq(users.platformStatus,"ACTIVE"),inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
-   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"])))
+   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]),
+   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
- if(filter.sectionId||filter.batchId||filter.branchId)throw Error("VERIFICATION_FILTER_NOT_SUPPORTED");
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
@@ -48,13 +49,27 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  const counts=verificationTabCounts(filtered.map(r=>({status:r.status as VerificationStatus})));
  const pageRows=filtered.filter(r=>verificationTab({status:r.status as VerificationStatus})===filter.tab);
  const start=(filter.page-1)*25;
- const cards:VerificationQueueCard[]=pageRows.slice(start,start+25).map(row=>{
+ const sliced=pageRows.slice(start,start+25);
+ const enrollmentIds=sliced.map(row=>row.membershipId);
+ const enrollments=enrollmentIds.length?await getDb().select({
+  membershipId:learnerProgramEnrollments.membershipId,
+  batchName:cohorts.name,branchName:departments.name,
+ }).from(learnerProgramEnrollments)
+ .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+ .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),
+   eq(programs.id,cohorts.programId)))
+ .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+   eq(departments.collegeId,scope.collegeId)))
+ .where(and(inArray(learnerProgramEnrollments.membershipId,enrollmentIds),
+   eq(learnerProgramEnrollments.status,"ACTIVE"))):[];
+ const byMember=new Map(enrollments.map(row=>[row.membershipId,row]));
+ const cards:VerificationQueueCard[]=sliced.map(row=>{
   const marks=submittedMarksheets(row.submittedSnapshot);
   const status=row.status as VerificationStatus,section=row.section as VerificationSection;
   const missingMarksheet=section==="EDUCATION"&&marks.missing>0;
   const flags=verificationAttentionFlags({status,section,submittedAt:row.submittedAt,missingMarksheet},new Date());
   return {learnerMembershipId:row.membershipId,learnerName:row.name?.trim()||"Learner",
-   section,status,version:row.version,submittedAt:row.submittedAt,batchName:null,branchName:null,
+   section,status,version:row.version,submittedAt:row.submittedAt,batchName:byMember.get(row.membershipId)?.batchName??null,branchName:byMember.get(row.membershipId)?.branchName??null,
    missingMarksheet,attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
  });
  return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+25<pageRows.length,filter};

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {VerificationWorkspace} from "@/components/verification/VerificationWorkspace";
+import {CollegeVerificationPanel} from "@/components/verification/CollegeVerificationPanel";
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {verificationQueueFilters} from "@/modules/verification/queue-filters";
@@ -28,10 +28,11 @@ export default async function CollegeVerificationPage({searchParams}:{
    <Link href="/college/verification" className="underline">Retry</Link>
   </section>;
  }
- return <div className="space-y-4">
-   <VerificationWorkspace rows={data.rows} counts={data.counts}/>
-   <p className="text-sm text-muted-foreground">Showing {data.rows.length} of {data.total} matching requests in this status.</p>
-   {data.page>1&&<Link className="underline" href={`/college/verification?tab=${data.filter.tab}&page=${data.page-1}`}>Previous page</Link>}
-   {data.hasMore&&<Link className="ml-4 underline" href={`/college/verification?tab=${data.filter.tab}&page=${data.page+1}`}>Next page</Link>}
- </div>;
+ const query:Record<string,string>={};
+ for(const [key,value] of Object.entries(data.filter)){
+  if(value!==undefined&&value!==null)query[key]=String(value);
+ }
+ return <CollegeVerificationPanel rows={data.rows} counts={data.counts}
+  activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
+  page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>;
 }

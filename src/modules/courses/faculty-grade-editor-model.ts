@@ -12,7 +12,7 @@ type SavedGrade = {
 export function facultyGradeEditorState(
   current: SavedGrade, rawPoints: string, feedback: string, maxPoints: number,
 ) {
-  const parsed = z.string().trim().min(1)
+  const parsed = z.string().trim().regex(/^(0|[1-9]\d{0,4})$/)
     .transform((value) => Number(value)).pipe(z.number().int().min(0).max(maxPoints)).safeParse(rawPoints);
   const points = parsed.success ? parsed.data : null;
   const hasChanges = points === null || facultyGradeHasChanges(current, {
