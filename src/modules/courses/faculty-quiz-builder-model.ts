@@ -340,8 +340,10 @@ export function facultyQuizQuestionRemovalPrompt(index:number,prompt:string):str
 export function facultyQuizApplyPastedOptions(
  current:readonly {text:string;correct:boolean;sequence:number}[],raw:string,
 ):{ok:true;options:{text:string;correct:boolean;sequence:number}[]}|{ok:false;issue:string}{
- const lines=raw.split(/\r?\n|\|/).map(line=>line.trim());
- if(!lines.length||lines.some(line=>!line||line.length>2000))
+ if(raw.length>40000)return {ok:false,issue:"Pasted answer text is too large."};
+ const normalized=raw.trim();
+ const lines=normalized.split(/\r?\n|\|/).map(line=>line.trim());
+ if(!normalized||lines.length>20||lines.some(line=>!line||line.length>2000))
   return {ok:false,issue:"Paste nonblank options of at most 2000 characters each."};
  const filled=current.filter(option=>option.text.trim().length>0);
  if((filled.length===0&&lines.length<2)||filled.length+lines.length>20)
