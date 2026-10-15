@@ -85,8 +85,8 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
-              Course department code (exact)
-              <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode??""}
+              Course department name (exact)
+              <input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}

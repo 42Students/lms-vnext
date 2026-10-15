@@ -107,7 +107,7 @@ export async function listCollegeContentAggregate(
       kind !== "LIVE_CLASS" && query.programCode ? eq(programs.code,query.programCode) : undefined,
       kind !== "LIVE_CLASS" && query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       kind !== "LIVE_CLASS" && query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
-      kind !== "LIVE_CLASS" && query.departmentCode ? eq(departments.code,query.departmentCode) : undefined,
+      kind !== "LIVE_CLASS" && query.departmentName ? eq(departments.name,query.departmentName) : undefined,
       kind !== "LIVE_CLASS" && query.offeringType && query.offeringType!=="ALL" ? eq(courseOfferings.type,query.offeringType) : undefined,
       kind !== "LIVE_CLASS" && query.lessonStatus && query.lessonStatus!=="ALL" ? eq(courseLessons.status,query.lessonStatus) : undefined,
       kind !== "LIVE_CLASS" && query.pathStatus && query.pathStatus!=="ALL" ? eq(courseLearningPaths.status,query.pathStatus) : undefined,

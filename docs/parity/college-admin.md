@@ -481,7 +481,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 ## Page: Lessons
 **Lessons with/without authored content PARTIAL (2026-10-15):** College Admin can isolate lessons that have any persisted content or have none using a correlated database existence check before pagination, without treating empty lessons as unpublished or without assignments/quizzes. Filter carries to CSV and unit/PG assertions; browser/runtime acceptance pending.
 
-**Course department code filter PARTIAL (2026-10-15):** College Admin lessons now support exact course-owning department code filtering within the authenticated college; URL pagination and CSV preserve this state. Typed URL and same-college PG fixture authored. Execution/browser acceptance pending.
+**Course department name filter PARTIAL (2026-10-15):** College Admin lessons now support exact course-owning department name filtering within the authenticated college; URL pagination and CSV preserve this state. Typed URL and same-college PG fixture authored. Execution/browser acceptance pending.
 
 **CORE/ELECTIVE lesson type PARTIAL (2026-10-15):** College Admin lessons can now be filtered by the registered offering CORE/ELECTIVE type before pagination, with stable URL and formula-neutralized CSV. Own-college positive/negative disposable-PG fixture authored; execution and responsive browser acceptance open.
 
@@ -514,7 +514,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
-**Department-specific content search PARTIAL (2026-10-15):** Video/Resource directories can filter by the owning course department code using in-college ancestry. URL/page and bounded CSV preserve this filter; strict inputs plus PostgreSQL own/unknown department fixtures authored. Real execution and browser acceptance open.
+**Department-specific content search PARTIAL (2026-10-15):** Video/Resource directories can filter by the owning course department name using in-college ancestry. URL/page and bounded CSV preserve this filter; strict inputs plus PostgreSQL own/unknown department fixtures authored. Real execution and browser acceptance open.
 
 **Learning-path lifecycle filter PARTIAL (2026-10-15):** Video and Resource catalogues filter by the actual DRAFT/PUBLISHED/ARCHIVED learning path state independently of content publication, including pagination and capped metadata CSV. A disposable PostgreSQL fixture and strict query tests are authored; executed gates and browser parity open.
 

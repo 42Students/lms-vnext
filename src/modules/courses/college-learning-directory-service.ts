@@ -106,7 +106,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
-      query.departmentCode?eq(departments.code,query.departmentCode):undefined,
+      query.departmentName?eq(departments.name,query.departmentName):undefined,
       query.contentPresence&&query.contentPresence!=="ALL" ?
         (query.contentPresence==="HAS_CONTENT" ? exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))) :
           not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))))) : undefined,

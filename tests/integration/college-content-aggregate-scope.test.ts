@@ -210,10 +210,10 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     ]);
     expect(coreContent.items.map(row=>row.id)).toContain(ids.resource);
     expect(electiveContent.items).toEqual([]);
-    const dep=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const dep=await pool!.query<{name:string}>("SELECT name FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const [sameDepartment,wrongDepartment]=await Promise.all([
-      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,departmentCode:dep.rows[0]!.code}),
-      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,departmentCode:"NO-SUCH-DEPARTMENT"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,departmentName:dep.rows[0]!.name}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,departmentName:"NO-SUCH-DEPARTMENT"}),
     ]);
     expect(sameDepartment.items.map(row=>row.id)).toContain(ids.resource);
     expect(wrongDepartment.items).toEqual([]);
