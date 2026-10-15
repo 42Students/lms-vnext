@@ -34,6 +34,7 @@ export const collegeBatchDirectorySchema = z.object({
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   expectedEndState: z.enum(["ALL","SET","UNSET"]).optional(),
   academicYearState: z.enum(["ALL","RECORDED","UNRECORDED"]).optional(),
+  activeClassState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
   startOnOrAfter: z.iso.date().optional(),
   startOnOrBefore: z.iso.date().optional(),
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
@@ -65,6 +66,7 @@ export function academicDirectoryHref(
   if ("academicYearState" in query && query.academicYearState && query.academicYearState !== "ALL") params.set("academicYearState",query.academicYearState);
   if ("startOnOrAfter" in query && query.startOnOrAfter) params.set("startOnOrAfter",query.startOnOrAfter);
   if ("startOnOrBefore" in query && query.startOnOrBefore) params.set("startOnOrBefore",query.startOnOrBefore);
+  if ("activeClassState" in query && query.activeClassState && query.activeClassState !== "ALL") params.set("activeClassState",query.activeClassState);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
@@ -77,7 +79,7 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "startOnOrBefore", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "startOnOrBefore", "activeClassState", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && (key !== "startOnOrAfter" || value !== "") && (key !== "startOnOrBefore" || value !== "") && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
