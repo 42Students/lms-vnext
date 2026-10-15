@@ -43,6 +43,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       liveEvidence:first(params.liveEvidence),
       lessonId:first(params.lessonId)||undefined,
       offeringId:first(params.offeringId)||undefined,
+      pathId:first(params.pathId)||undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
