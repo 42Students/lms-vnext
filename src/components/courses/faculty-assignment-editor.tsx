@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -80,22 +80,22 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   </label>
   {existing?<p className="text-xs text-body">Current state: {existing.status}. Published assignments cannot be edited; archived assignments are read-only. A submitted assignment cannot be archived.</p>:null}
   {!existing?<label className="grid gap-1 text-sm">Lesson
-   <select value={lessonId} onChange={e=>setLessonId(e.target.value)}
+   <select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}
     className="min-h-10 rounded border border-border p-2">
     {lessons.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
    </select></label>:null}
   <label className="grid gap-1 text-sm">Title
-   <input value={title} onChange={e=>setTitle(e.target.value)} maxLength={255}
+   <input value={title} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,title,next));setTitle(next);}} maxLength={255}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Text instructions
-   <textarea value={description} onChange={e=>setDescription(e.target.value)}
+   <textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}
     maxLength={10000} rows={4} className="rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Due date (IST, optional)
-   <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)}
+   <input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Maximum points
    <input type="number" min={1} max={10000} value={maxPoints}
-    onChange={e=>setMaxPoints(Number(e.target.value))}
+    onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="flex gap-2 text-sm">
    <input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)} />
