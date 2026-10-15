@@ -168,3 +168,17 @@ export function facultyVideoMetadataCsv(
    .map(cell=>facultyVideoCsvCell(cell)).join(","));
  return [header.map(facultyVideoCsvCell).join(","),...content].join("\r\n")+"\r\n";
 }
+
+/** Reject mismatched or older processing status replies; allow legitimate retries. */
+export function facultyVideoStatusUpdate(
+ current:FacultyLessonVideo,next:unknown,
+):FacultyLessonVideo|null{
+ const parsed=facultyLessonVideoSchema.safeParse(next);
+ if(!parsed.success)return null;
+ const incoming=parsed.data;
+ if(current.contentId!==incoming.contentId||current.lessonId!==incoming.lessonId ||
+  current.deliveryId!==incoming.deliveryId)return null;
+ const previous=Date.parse(current.updatedAt),latest=Date.parse(incoming.updatedAt);
+ if(!Number.isFinite(latest)||!Number.isFinite(previous)||latest<=previous)return null;
+ return incoming;
+}
