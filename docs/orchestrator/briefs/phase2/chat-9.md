@@ -1,0 +1,15 @@
+# Phase 2 brief: chat-9 (college admin + profile verification logic and wording)
+Branch chatgpt/chat-9. Scope: College admin pages (verification queue, contacts, directories) and profile verification.
+## Tasks in order
+1. Profile verification fixes (backlog section E): T-S2-09 parseAcademicSnapshot must dedupe duplicate levels by latest endYear and skip blank grades (never throw permanently on Verify), delete stale profileVerificationAcademicMarks rows for levels absent from the snapshot in the same transaction, re-check eligibility after publish; T-S2-10 evidence strictness: align with legacy (Aadhaar+document OR PAN+document; marks+marksheet only for the 3 key education entries; resume URL non-blank) or document the decision; salted hash of Aadhaar/PAN in the snapshot (never the number); withdraw action for UPDATE_PENDING.
+2. Wording: compare every College sidebar item, top navbar item, page title and tab name in vNext with docs/audit/legacy-copy-A.md and fix mismatches (check the 5 pages flagged UNKNOWN in docs/audit/legacy-inventory-A.md: drive Shortlisted, drive Settings, Companies, Hiring analytics; learner placement Schedule); add a unit test asserting the exact legacy labels.
+3. Then college-side logic items you find while doing 1-2: record them in docs/parity/college-admin.md with severity.
+## Rules for this round (all lanes)
+- Push ONLY to your own branch chatgpt/chat-N; merge latest main into it first (keep main's version of files you did not intend to change; never re-add AI code, drafts of registered tables, or schema files).
+- OWNER RULE: every user-visible word must match the OLD LMS exactly (sidebar, top navbar, page titles, tab names, buttons, field labels, modal titles, table headers, messages). Source of truth: docs/audit/legacy-copy-A.md (Learner/Faculty/Mentor/College) and docs/audit/legacy-copy-B.md (TPO/Recruiter/Super Admin/Public); route inventory in docs/audit/legacy-inventory-A.md / -B.md. Never invent wording. Where the legacy dev branch renamed something, use the dev branch name.
+- Small rounds: at most 10 commits per round, push after each commit, one logical change per commit, unit tests with every change.
+- Logic fixes come from docs/audit/logic-fix-backlog.md (IDs like P-S1-01). Do S1 first, then S2, then S3/S4. Cite the backlog ID in each commit message. Mark an item done in your docs/parity file with the commit reference.
+- Do NOT touch protected paths: src/auth, src/security, src/modules/storage, drizzle/, src/db/schema/, .github, deploy, scripts, package files, env. New tables/columns only as staged schema (src/modules/<area>/staged-schema.ts) + docs/proposed-migrations/<name>.sql; the orchestrator registers migrations.
+- Pitfalls: cast reused SQL params; alias duplicate Drizzle columns; ::enum casts; no setState in useEffect; no Date.now() in render; no eslint-disable; no JSX inside try/catch; escape apostrophes in JSX; every POST/PUT/PATCH/DELETE route handler needs isSameOriginRequest; GET handlers never call write services; keep multi-line layout/guard code that existing tests grep for; CRLF-safe string matching in tests.
+- No AI features of any kind.
+
