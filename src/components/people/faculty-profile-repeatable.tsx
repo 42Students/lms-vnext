@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
+import {restoreFacultyProfileRows} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -99,6 +100,11 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </button>
       </div>
+      {changed ? <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
+        onClick={()=>{if(!window.confirm("Discard unsaved changes to "+title+"?"))return;
+          setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
+        Discard unsaved edits
+      </button> : null}
       {changed ? <p className="text-xs text-muted-foreground">
         Draft changes, including removals, remain unsaved until you choose Save.
       </p> : null}
