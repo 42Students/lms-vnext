@@ -667,32 +667,32 @@ Source: docs/planning/legacy-delta-audit-2026-10-15.md (current legacy prod-2026
 
 | Surface | Legacy route | vNext route | Notes | Status |
 |---|---|---|---|---|
-| Profile verification queue | `/college-admin/verification` | `/college/verification` | Staff queue for learner Education/Identity verification: Waiting / Sent back / Verified views with counts, needs-a-closer-look links (marksheet missing, update to verified details, waiting over a week), filters (section, kind, marksheets, batch, branch, waiting since), review drawer with values beside signed-link marksheets/resume/Aadhaar-PAN last four, Verify, Send back with reason, bulk verify/send back/message, export. Includes toggle for whether the placement cell may verify. Needs private-document signed links and student notifications. | MISSING |
-| Verification: placement cell permission toggle | `/college-admin/verification` header switch | `/college/verification` | `tpoCanVerify` setting; TPO verification route is hidden/blocked when off. | MISSING |
-| Create workspace: split class into teams | `/college-admin/projects/workspaces/new` (mode Teams) | `/college/projects/workspaces/new` | Team size (default 5), order by roll or seeded shuffle, preview adjustable before create, team sizes differ by at most one; plus Add a whole class. Shared with Super Admin. | MISSING |
+| Profile verification queue | `/college-admin/verification` | `/college/verification` | Staff queue for learner Education/Identity verification: Waiting / Sent back / Verified views with counts, needs-a-closer-look links (marksheet missing, update to verified details, waiting over a week), filters (section, kind, marksheets, batch, branch, waiting since), review drawer with values beside signed-link marksheets/resume/Aadhaar-PAN last four, Verify, Send back with reason, bulk verify/send back/message, export. Includes toggle for whether the placement cell may verify. Needs private-document signed links and student notifications. | PARTIAL |
+| Verification: placement cell permission toggle | `/college-admin/verification` header switch | `/college/verification` | `tpoCanVerify` setting; TPO verification route is hidden/blocked when off. | PARTIAL |
+| Create workspace: split class into teams | `/college-admin/projects/workspaces/new` (mode Teams) | `/college/projects/workspaces/new` | Team size (default 5), order by roll or seeded shuffle, preview adjustable before create, team sizes differ by at most one; plus Add a whole class. Shared with Super Admin. | PARTIAL |
 
 ### Super Admin
 
 | Surface | Legacy route | vNext route | Notes | Status |
 |---|---|---|---|---|
-| Profile verification (scoped college) | `/superadmin/verification` | `/admin/colleges/[collegeId]/verification` | Same workspace as College Admin for the college chosen in scope picker; info alert until a college is chosen. | MISSING |
+| Profile verification (scoped college) | `/superadmin/verification` | `/admin/colleges/[collegeId]/verification` | Same workspace as College Admin for the college chosen in scope picker; info alert until a college is chosen. | PARTIAL |
 | Recruiter accounts (renamed from HR Accounts) | `/superadmin/recruiters` | `/admin/hr` (alias `/admin/recruiters`) | Legacy renamed HR to Recruiter; confirm route alias and labels; behavior as rows for HR Accounts. | PARTIAL |
 
 ### TPO
 
 | Surface | Legacy route | vNext route | Notes | Status |
 |---|---|---|---|---|
-| Verification queue | `/tpo/verification` | `/tpo/verification` | Same workspace, available only when college admin allows; add Send-a-message bulk action; export; Retry state. | MISSING |
-| Batches list | `/tpo/batches` | `/tpo/batches` | Cards per batch with state, eligible/ineligible/not-decided bar, journey counts, one Next step; KPI strip; search; filters; Undo last decision. | MISSING |
-| Batch detail: Students eligibility grid | `/tpo/batches/[batchId]` Students tab | `/tpo/batches/[batchId]` | Who is in (batch, classes, individuals), eligibility grid with inline decision and ineligible reason, bulk actions with preview and undo, WhatsApp prepared messages. | MISSING |
-| Batch detail: Rules tab | `/tpo/batches/[batchId]` Rules tab | `/tpo/batches/[batchId]?tab=rules` | Per-batch placement rules (BatchRulesTab) and drive job type. | MISSING |
-| Batch detail: History tab and undo | `/tpo/batches/[batchId]` History tab | `/tpo/batches/[batchId]?tab=history` | Decision history timeline, exact undo of last action, Mark finished / Reopen batch. | MISSING |
+| Verification queue | `/tpo/verification` | `/tpo/verification` | Same workspace, available only when college admin allows; add Send-a-message bulk action; export; Retry state. | PARTIAL |
+| Batches list | `/tpo/batches` | `/tpo/batches` | Cards per batch with state, eligible/ineligible/not-decided bar, journey counts, one Next step; KPI strip; search; filters; Undo last decision. | PARTIAL |
+| Batch detail: Students eligibility grid | `/tpo/batches/[batchId]` Students tab | `/tpo/batches/[batchId]` | Who is in (batch, classes, individuals), eligibility grid with inline decision and ineligible reason, bulk actions with preview and undo, WhatsApp prepared messages. | PARTIAL |
+| Batch detail: Rules tab | `/tpo/batches/[batchId]` Rules tab | `/tpo/batches/[batchId]?tab=rules` | Per-batch placement rules (BatchRulesTab) and drive job type. | PARTIAL |
+| Batch detail: History tab and undo | `/tpo/batches/[batchId]` History tab | `/tpo/batches/[batchId]?tab=history` | Decision history timeline, exact undo of last action, Mark finished / Reopen batch. | PARTIAL |
 | Batch eligibility import | batch Students action | `/tpo/batches/[batchId]` | Import preview (matched / can't use) then commit. | MISSING |
 | Batch invite / remind | batch Next step | `/tpo/batches/[batchId]` | Invite batch with deadline, remind. External sending needs owner decision. | MISSING |
-| Settings: Job types | `/tpo/settings?tab=jobtypes` | `/tpo/settings/job-types` | Own job types, counts-as-placed flag, switch off unused. | MISSING |
-| Settings: After college outcomes | `/tpo/settings?tab=outcomes` | `/tpo/settings/outcomes` | Fixed NAAC/NIRF outcome list with own labels; drives Students After-college column and Outcomes report. | MISSING |
-| Settings: Prep readiness | `/tpo/settings?tab=prep` | `/tpo/settings/prep` | Courses defining readiness bar; Students marks below-bar as needing prep. | MISSING |
-| Settings: Blocked dates | `/tpo/settings?tab=blocked` | `/tpo/settings/blocked-dates` | Exam weeks/holidays; scheduling and Calendar warn on collision. | MISSING |
+| Settings: Job types | `/tpo/settings?tab=jobtypes` | `/tpo/settings/job-types` | Own job types, counts-as-placed flag, switch off unused. | PARTIAL |
+| Settings: After college outcomes | `/tpo/settings?tab=outcomes` | `/tpo/settings/after-college` | Fixed NAAC/NIRF outcome list with own labels; drives Students After-college column and Outcomes report. | PARTIAL |
+| Settings: Prep readiness | `/tpo/settings?tab=prep` | `/tpo/settings/prep-readiness` | Courses defining readiness bar; Students marks below-bar as needing prep. | PARTIAL |
+| Settings: Blocked dates | `/tpo/settings?tab=blocked` | `/tpo/settings/blocked-dates` | Exam weeks/holidays; scheduling and Calendar warn on collision. | PARTIAL |
 | Settings: regrouped navigation | `/tpo/settings` 3 groups | `/tpo/settings` | Season/trusted/templates/notifications merged into Recruiters/Rules/Notices; redirect map MOVED. | PARTIAL |
 | Bulk-actions engine | all TPO tables | shared component | Preview who goes and who is skipped by reason, run, per-row failures, exact undo, one audit line. | MISSING |
 | Spreadsheet grid and filter panel | all TPO tables | shared component | Column chooser, header filters, URL-kept side panel, inline edit, export-only columns. | MISSING |
@@ -735,3 +735,60 @@ Source: docs/planning/legacy-delta-audit-2026-10-15.md (current legacy prod-2026
 | College sign-in methods and subdomain | superadmin sections | `/admin/domains` | Replaces TenantDomains. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
 | Audit findings | `/tracker/audit-findings` | none | Findings board. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
 
+
+## 2026-10-15 main/lane reconciliation snapshot
+
+Compared immutable main `ea1172d2cd6a425529dc200d566f5cebd0df4ff3` against the lane heads below using GitHub ancestry comparisons and complete, non-truncated Git trees. Main is **383 commits ahead** of the supplied `65bc62b6dfc8aa6d5055ffbef805f800be9a1eb9` baseline. This is a source reconciliation, not new runtime acceptance or a second task tracker. Recompare if any ref moves.
+
+| Lane | Exact sampled head | Ahead / behind main | Compare files | Already identical to main | Different from main |
+| --- | --- | --- | --- | --- | --- |
+| chat-2 | `968509020e5980665f435bb72b1de36b49d21657` | 21 / 41 | 29 | 0 | 29 |
+| chat-3 | `6bd02bff385911b5a6c7f6793cc504180ee30d7d` | 17 / 41 | 43 | 30 | 13 |
+| chat-4 | `1ecc15ef41f963003383eb47494c78cde199f3c1` | 7 / 27 | 10 | 0 | 10 |
+| chat-5 | `8add7b90cf0786cc263a5cc0910018238aab6d24` | 4 / 28 | 12 | 0 | 12 |
+| chat-6 | `3322c7c6e995f343fcdfcd5babaad619e5e98916` | 30 / 29 | 36 | 0 | 36 |
+| chat-7 | `4699534d28941eaf5efbb7f931dd3a859d5a412d` | 16 / 41 | 31 | 0 | 31 |
+| chat-8 | `305d6ef1c70b5e02ba5796303dcbc3c140021d4d` | 0 / 1155 | 0 | 0 | 0 |
+| chat-9 | `5bfb7588f8b1b9163db31145b17e5a9f6ff0f2f9` | 13 / 29 | 23 | 0 | 23 |
+| chat-10 | `832da64d08de16a429617bd56c02144f6dfbc4d8` | 22 / 41 | 44 | 0 | 44 |
+| chat-11 | `75b690f944014c863899dd0477d01ef1d1e8393c` | 23 / 41 | 29 | 0 | 29 |
+
+The file columns cover the three-dot comparison's changed paths, then compare their actual head blob SHAs with main. Different blobs require semantic review; they are not an assertion that every line is new, correct or merge-ready. File counts include docs/tests. Branches moved while this review ran; comparisons were refreshed to the exact heads shown. Main merged the earlier Faculty self-profile batch as af54f5b and Learner placement/profile batch as ea1172d; only their later additions remain branch-unique.
+
+### Already integrated: do not rebuild
+
+- **chat-3:** 30 of its 43 comparison paths are already byte-identical on main. These include lesson visibility route/service/control/export, content and lesson directory work, offering content overview, College Admin profile and associated tests. Main also has the unused SQL import repair. Thirteen paths differ: the parity note, program-directory component/model/tests, academic actions and assessment aggregate routes/component/model/service/tests. Review only that residual; do not replay the 30 identical paths as new work.
+- **chat-4:** the staged self-document storage proposal/API and first section editors are now on main via af54f5b (merge message reports tsc/ESLint/unit verification). Its remaining 10 comparison paths contain repeatable editors/row factories and follow-up section tests. The integrated proposal still requires canonical storage and PG/browser acceptance.
+- **chat-5:** main now includes the Learner verification status page, placement notice/navigation and application/offer counts via ea1172d (merge message reports tsc/ESLint/unit verification). Only later saved-coding-profile display and public placement page/enquiry staged work remain different at the sampled head.
+- Registered SQL files already include `0061_faculty_lesson_visibility.sql`, `0062_messaging_delivery_receipts.sql`, `0063_profile_verification.sql` and `0064_tpo_configuration.sql`. Registration is not fresh replay/drift/PG proof; do not create duplicate migrations because older notes call these staged.
+- College verification queue/detail/document/review/export/settings source and class-to-team workspace creation are already on main. TPO batch list/student/rules/history readers, cohort decisions/undo and configuration read pages also exist.
+- Historical orchestrator DONE labels remain recorded acceptance, not proof that every later detailed requirement is closed. The Faculty Assignment report has explicit exact-commit PG/browser evidence in its row; other broad acceptance-pass notes must be read with the detailed contracts and clone-family gates. No DONE row or tracker task is newly certified by this review.
+
+### Still unique: review existing work before assigning an implementation
+
+| Lane | Existing different work to preserve/review | Parent closure still open |
+| --- | --- | --- |
+| chat-2 | Batch inline decisions, import preview/commit, lifecycle finish/reopen, undo refinement, job-type editor/APIs and blocked-date write API | Full batch KPIs/rules/invite semantics, complete settings UI, PG/race/browser evidence |
+| chat-3 | Program directory, academic actions and assessment aggregate residual listed above | Full academic page contracts and fresh independent acceptance |
+| chat-4 | Later repeatable profile section editors/row factories/tests; earlier self-document API and proposal already integrated | Storage promotion, complete sections/uploads/privacy and real PG/browser proof |
+| chat-5 | Later saved coding-profile display and public-page/enquiry staged reads; earlier verification/navigation/count batch already integrated | Secure submit/resubmit, broader coding profiles, placement notice producer/read state and acceptance |
+| chat-6 | Selected-college Super Admin verification APIs/queue/drawer/export; onboarding/mobile/readiness/trace/auth-posture additions | Bulk review/message, complete notification flow, full scope/race/browser proof |
+| chat-7 | Learner course facets/current period, quiz return/receipt/deadline, schedule clock/navigation, attendance threshold, assignment file validation and task attention | Full assessment/file/schedule workflows and browser/PG proof |
+| chat-9 | College Contacts filtered safe CSV, search/privacy, links, loading/error and operations navigation | Contacts exact legacy semantics, denial/download/mobile proof |
+| chat-10 | TPO announcement read/write/lifecycle, campaign audience/history/detail/export/preview and internal Team read/staged persistence | Publication/outbound/consent and internal conversation writes; confirm DEV-ONLY oracle first |
+| chat-11 | Mentor project attention/assignment/order/work filters and review age/priority/version triage | Complete producer data, exact legacy queues, PG/browser proof |
+
+Chat-10 currently changes TPO/messaging, not HR: do not assign it solely from its historical HR label. Chat-8 has no ahead commits and is a stale ancestor.
+
+### Corrected inventory and safe next targets
+
+Thirteen section-8 MISSING labels were corrected to PARTIAL because main contains source for those surfaces. This does **not** close any requirement: scoped Super Admin verification is still an unavailable placeholder on main, TPO verification is a limited read with review disabled, and several configuration pages are read-only. Actual configuration routes are `/tpo/settings/after-college` and `/tpo/settings/prep-readiness`; do not duplicate them under speculative names. Other MISSING rows were left unchanged where this review did not establish their full source mapping.
+
+1. **Before more parity UI:** follow the current `AGENTS.md` / closure-first strategy and sole `docs/tracker.json`: DB-005 academic registered reconciliation after DB-004 parent checks, then DB-007 profile/private-document integration and DB-008/DB-012 downstream contracts. Tracker remains **6/81 DATABASE**, **4/11 original core**; phase remains DATABASE. Neither these merges nor this document unlock API/UI or release.
+2. **Reuse before implement:** reconcile the unique batches above onto fresh main with persisted membership/selected-college scope checks; run their existing targeted tests and applicable registered PG gates. Chat-9 is 29 commits behind at the refreshed snapshot, so review against current main's verification fixes. Preserve main's repaired files; never infer unique work merely from ahead counts.
+3. **Next uncovered verification behavior:** TPO review is disabled on main; adapt the existing College verification and chat-6 selected-college work rather than build another queue. Remaining coherent outcome is permissioned TPO review/private documents/export with off-toggle and revoked-grant denials, audit/notification behavior and cross-role browser proof. Review existing branches again before starting.
+4. **Next uncovered TPO configuration behavior:** after reconciling chat-2's existing job-type editor/APIs and blocked-date write API, inspect remaining editors and scheduling consumers for blocked dates, prep readiness and after-college outcomes. Main has read pages and migration 0064; complete canonical writes/consumer integration instead of another schema or parallel page.
+5. **Next Faculty profile outcome:** reconcile the now-integrated staged document with the canonical DB-007 contract before any migration, then review chat-4's later repeatable editors. Do not implement its already-authored sections again; complete only remaining legacy sections and receipt-backed fields after required gates.
+6. DEV-ONLY announcements, public joins, campaigns and Team expansion need the production-oracle/owner decision already stated in section 8 before treating them as mandatory release scope. Existing source is not permission to enable real outbound sending.
+
+**Verification of this reconciliation:** remote refs, ancestry, full Git-tree blob identities, main routes/services and main/lane parity notes inspected. No TypeScript, ESLint, unit, PostgreSQL or browser test was executed in this review; earlier merge messages remain historical evidence only. No new task closures.
