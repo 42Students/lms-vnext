@@ -148,4 +148,9 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({periodStatus:"PLANNED"}))).toContain("periodStatus=PLANNED");
   });
 
+  it("course progress courseStatus validates parent lifecycle and URL filtering",()=>{
+    expect(collegeProgressQuerySchema.safeParse({courseStatus:"BAD"}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
+  });
+
 });
