@@ -12,6 +12,8 @@ describe("College classes safe CSV export", () => {
     expect(collegeClassesExportSchema.safeParse({page:7}).success).toBe(false);
     expect(readClassesExportParams(new URLSearchParams("q=x&q=y"))).toBeNull();
     expect(collegeClassesExportSchema.safeParse({maximumCapacity:0}).success).toBe(false);
+    expect(collegeClassesExportSchema.safeParse({cohortCode:"x".repeat(65)}).success).toBe(false);
+    expect(classesExportHref({q:"",status:"ALL",cohortCode:"B&26"})).toContain("cohortCode=B%2626");
     expect(classesExportHref({q:"",status:"ALL",maximumCapacity:36})).toContain("maximumCapacity=36");
     const href = classesExportHref({q:"Math & Science",status:"ARCHIVED"});
     expect(new URL(href,"http://local").searchParams.get("q")).toBe("Math & Science");
