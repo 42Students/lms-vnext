@@ -3,6 +3,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
+import {VerificationExportControl} from "./VerificationExportControl";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
 
@@ -22,6 +23,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  };
  return <div className="min-w-0 space-y-4">
   <div className="flex flex-wrap justify-end gap-2">
+   <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
    <button type="button" onClick={()=>router.refresh()} className="min-h-10 rounded-md border px-3 text-sm">Refresh</button>
   </div>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={filters=>navigate({...filters,page:"1"})}/>
