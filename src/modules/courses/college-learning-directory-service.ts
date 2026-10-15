@@ -211,6 +211,13 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.resourcePresence !== "ALL" ? (query.resourcePresence === "HAS_RESOURCES" ? exists(db.select({id:lessonContents.id}).from(lessonContents)
+ .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+ .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+ .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.contentType,"RESOURCE")))) : not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+ .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+ .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+ .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.contentType,"RESOURCE")))))) : undefined,
       query.quizPresence !== "ALL" ? (query.quizPresence === "HAS_QUIZZES" ? exists(db.select({id:courseQuizzes.id}).from(courseQuizzes)
         .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
         .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))

@@ -34,6 +34,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       lessonPresence:first(params.lessonPresence),
       assignmentPresence:first(params.assignmentPresence),
       quizPresence:first(params.quizPresence),
+      resourcePresence:first(params.resourcePresence),
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
