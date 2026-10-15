@@ -1,0 +1,1 @@
+export default function Loading(){return <p role="status">Loading job types…</p>;}
