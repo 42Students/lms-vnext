@@ -5,8 +5,10 @@ import {verificationSnapshotComparison} from "@/modules/verification/snapshot-co
 import {VERIFICATION_SEND_BACK_REASONS} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
+import {verificationFocusWrap} from "@/modules/verification/review-focus-loop";
 import {verificationDecisionHistory} from "@/modules/verification/review-decision-history";
 import {verificationDecisionConfirmation} from "@/modules/verification/review-confirmation";
+import {canEditVerificationDecision} from "@/modules/verification/review-edit-guard";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
@@ -15,6 +17,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;apiBase?:string;collegeId?:string;
 }){
  const closeButton=useRef<HTMLButtonElement>(null);
+ const drawer=useRef<HTMLElement>(null);
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
@@ -31,6 +34,15 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  },[]);
  useEffect(()=>{
   function onKeyboard(event:KeyboardEvent){
+   if(event.key==="Tab"&&drawer.current){
+    const focusable=[...drawer.current.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+     .filter(element=>element.getClientRects().length>0);
+    if(focusable.length){
+     const direction=verificationFocusWrap(document.activeElement===focusable[0],document.activeElement===focusable[focusable.length-1],event.shiftKey);
+     if(direction){event.preventDefault();focusable[direction==="FIRST"?0:focusable.length-1]?.focus();}
+     else if(!drawer.current.contains(document.activeElement)){event.preventDefault();focusable[0]?.focus();}
+    }
+   }
    if(canDismissVerificationDialog(event.key,saving)){
     event.preventDefault();event.stopPropagation();onClose();
    }
@@ -63,14 +75,19 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
    });
    if(!response.ok){
     const payload=await response.json().catch(()=>({error:"UNAVAILABLE"})) as {error?:string};
-    throw Error(payload.error==="STALE_VERSION"?"This review changed. Close and refresh before deciding.":payload.error??"Decision failed");
+    if(payload.error==="STALE_VERSION"){
+     setDetail(null);
+     setPendingAction(null);
+     throw Error("The request changed since it was opened. Reload the current details before deciding again.");
+    }
+    throw Error(payload.error??"Decision failed");
    }
    setPendingAction(null);onSaved();
   }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
   finally{setSaving(false);}
  }
  return <div className="fixed inset-0 z-50 flex justify-end bg-black/50">
-  <aside role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto bg-background p-4 shadow-xl sm:p-6">
+  <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto bg-background p-4 shadow-xl sm:p-6">
    <header className="flex items-start justify-between gap-3 border-b pb-3">
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
@@ -105,15 +122,15 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     {detail.review.status==="SUBMITTED"||detail.review.status==="UPDATE_PENDING"?<>
      <section className="space-y-2"><h3 className="font-semibold">Send back for correction</h3>
       <label className="block text-sm">Reason
-       <select className="mt-1 w-full rounded-md border bg-background p-2" value={reason} onChange={e=>setReason(e.target.value)}>
+       <select disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full rounded-md border bg-background p-2" value={reason} onChange={e=>setReason(e.target.value)}>
         {VERIFICATION_SEND_BACK_REASONS.map(item=><option key={item} value={item}>{item}</option>)}
        </select></label>
       <label className="block text-sm">Additional details
-       <textarea className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
+       <textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex flex-wrap gap-2">
-      <button type="button" disabled={saving} onClick={()=>setPendingAction("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
-      <button type="button" disabled={saving} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
+      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
+      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
      </div>
      {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
       <h3 className="font-semibold">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>

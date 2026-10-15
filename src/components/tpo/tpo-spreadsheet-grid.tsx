@@ -1,20 +1,30 @@
 "use client";
-import { useState } from "react";
-import { chosenTpoGridColumns, type TpoGridColumn } from "@/modules/placements/tpo-grid-model";
-import { TpoGridColumnChooser } from "./tpo-grid-column-chooser";
-export function TpoSpreadsheetGrid<Row>({ rows, columns, rowKey }: {
- rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;
-}) {
- const [visible,setVisible]=useState<string[]>(columns.filter(column=>!column.exportOnly).map(column=>column.key));
- const display=chosenTpoGridColumns(columns,visible);
- return <section className="min-w-0 space-y-3">
- <TpoGridColumnChooser columns={columns} selected={visible} onChange={setVisible}/>
- {rows.length===0?<p role="status" className="rounded border border-border p-3">No matching records.</p>:<>
- <div className="hidden overflow-x-auto rounded border border-border md:block"><table className="w-full text-left text-sm">
- <thead><tr>{display.map(col=><th className="px-3 py-2" key={col.key}>{col.label}</th>)}</tr></thead>
- <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border">{display.map(col=><td key={col.key} className="px-3 py-2">{col.read(row)??"—"}</td>)}</tr>)}</tbody>
- </table></div>
- <ul className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-1 rounded border border-border p-3">{display.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm"><strong>{col.label}</strong><span className="break-words">{col.read(row)??"—"}</span></div>)}</li>)}</ul>
- </>}
+import {usePathname,useRouter,useSearchParams} from "next/navigation";
+import type {ReactNode} from "react";
+import {chosenTpoGridColumns,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
+import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
+
+export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode}){
+ const router=useRouter(),pathname=usePathname(),params=useSearchParams();
+ const permitted=columns.filter(column=>!column.exportOnly).map(column=>column.key);
+ const selected=parseTpoGridColumns(params.get("columns")??undefined,permitted);
+ const active=selected.length?selected:permitted;
+ const display=chosenTpoGridColumns(columns,active);
+ function choose(keys:string[]){
+  const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:keys.length===permitted.length?"":keys.join(",")});
+  router.replace(pathname+(next.size?"?"+next.toString():""));
+ }
+ return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
+  <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
+  {rows.length===0?<p role="status" className="rounded border border-border p-3">No matching records.</p>:<>
+   <div className="hidden overflow-x-auto rounded border border-border md:block"><table className="w-full text-left text-sm">
+    <thead><tr>{display.map(col=><th scope="col" className="px-3 py-2" key={col.key}>{col.label}</th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
+    <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{display.map(col=><td key={col.key} className="px-3 py-2">{col.read(row)??"—"}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
+   </table></div>
+   <ul className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded border border-border p-3">
+    {display.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm"><strong>{col.label}</strong><span className="break-words">{col.read(row)??"—"}</span></div>)}
+    {rowActions&&<div aria-label="Row actions">{rowActions(row)}</div>}
+   </li>)}</ul>
+  </>}
  </section>;
 }
