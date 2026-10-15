@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
+import {verificationFilterDraftError} from "@/modules/verification/filter-draft-validation";
 type Fields={ageBand:string;enrollment:string;waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
 const empty:Fields={ageBand:"ANY",enrollment:"ALL",waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -19,6 +20,8 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   if(query.tab!=="WAITING"&&value.ageBand!=="ANY"){setError("Waiting-age triage requires the Waiting tab");return;}
   if(value.attention==="WAITING_OVER_WEEK"&&["WITHIN_48_HOURS","TWO_TO_SEVEN_DAYS"].includes(value.ageBand)){setError("Waiting over a week cannot be combined with a younger age band");return;}
   if(value.attention==="VERIFIED_DETAILS_CHANGED"&&value.waitingState==="SUBMITTED"){setError("Changed verified details requires an updated submission");return;}
+  const draftError=verificationFilterDraftError({...query,...value});
+  if(draftError){setError(draftError);return;}
   setError("");onApply(value);
  }
  return <details className="min-w-0 rounded-lg border p-3">
