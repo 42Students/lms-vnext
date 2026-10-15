@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
+import { learnerQuizRouteScopeCurrent } from "@/modules/courses/learner-quiz-route-scope-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -92,6 +93,7 @@ export function LearnerQuizAttempt() {
   const deliveryId = params.get("deliveryId") ?? "";
   const reviewRequested = params.get("review") === "true";
   const [quiz, setQuiz] = useState<QuizPayload | null>(null);
+  const [loadedScopeKey,setLoadedScopeKey]=useState<string|null>(null);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [step, setStep] = useState(0);
@@ -112,6 +114,8 @@ export function LearnerQuizAttempt() {
 
   const load = useCallback(async (signal?: AbortSignal) => {
     if (!quizId || !deliveryId) {
+      setLoadedScopeKey(storageKey);
+      setQuiz(null);
       setError("This quiz link is incomplete. Open the quiz again from All Quizzes.");
       setLoading(false);
       return;
@@ -161,9 +165,12 @@ export function LearnerQuizAttempt() {
       setReview(mustReview);
       setNowMs(loadedAtMs);
       setQuiz(quizBody.quiz);
+      setLoadedScopeKey(storageKey);
       setAttempts(Array.isArray(attemptsBody.attempts) ? attemptsBody.attempts : []);
     } catch (cause) {
       if (learnerQuizRequestCurrent(signal)) {
+        setQuiz(null);
+        setLoadedScopeKey(storageKey);
         setError(cause instanceof Error ? cause.message : "Unable to load this quiz.");
       }
     } finally {
@@ -322,8 +329,8 @@ export function LearnerQuizAttempt() {
     }
   }
 
-  if (loading) {
-    return <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">Loading quiz…</div>;
+  if (loading || !learnerQuizRouteScopeCurrent(storageKey,loadedScopeKey)) {
+    return <div role="status" className="rounded-xl border border-border bg-surface p-8 text-sm text-body">Loading quiz…</div>;
   }
 
   if (error && !quiz) {
