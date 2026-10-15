@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { LearnerCourseCardImage } from "./learner-course-card-image";
 import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
 import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
 import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
@@ -9,7 +9,6 @@ import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-dat
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { learnerCourseCardMedia } from "@/modules/courses/learner-course-card-media-model";
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
 import { learnerCourseFilteredEmptyTitle } from "@/modules/courses/learner-course-filtered-empty-model";
@@ -354,25 +353,7 @@ export function LearnerCourseList({
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                   >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
-                      {learnerCourseCardMedia(row.thumbnailUrl).source === "AUTHORED" ? (
-                        <Image
-                          src={learnerCourseCardMedia(row.thumbnailUrl).src}
-                          alt=""
-                          fill
-                          unoptimized
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="pointer-events-none object-cover opacity-20"
-                        />
-                      ) : (
-                        <Image
-                          src={learnerCourseCardMedia(row.thumbnailUrl).src}
-                          alt=""
-                          aria-hidden="true"
-                          width={80}
-                          height={80}
-                          className="pointer-events-none absolute right-2 top-1 h-20 w-20 opacity-20"
-                        />
-                      )}
+                      <LearnerCourseCardImage thumbnailUrl={row.thumbnailUrl} />
                       <div className="flex w-full items-end justify-between gap-3">
                         <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
                           {row.course.courseCode}

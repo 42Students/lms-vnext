@@ -20,3 +20,11 @@ describe("learner course thumbnail with verified authored display data", () => {
     },
   );
 });
+
+describe("learner Course authored image transport failure",()=>{
+ it("falls back to the bundled illustration on image load errors",()=>{
+  const image="https://cdn.example.edu/old-or-deleted.jpg";
+  expect(learnerCourseCardMediaAfterError(image,false).source).toBe("AUTHORED");
+  expect(learnerCourseCardMediaAfterError(image,true).source).toBe("FALLBACK");
+ });
+});
