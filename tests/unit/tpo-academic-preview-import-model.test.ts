@@ -12,3 +12,10 @@ it("rejects unsafe formats, duplicates, out-of-range CGPA and negative backlog c
  expect(()=>parseTpoAcademicPreviewCsv("studentCode,cgpa,activeBacklogs\n"+id+",9,-1")).toThrow();
  expect(()=>parseTpoAcademicPreviewCsv("studentCode,cgpa,activeBacklogs\n"+id+",9,1\n"+id+",8,2")).toThrow(/Duplicate/);
 });
+
+it("retains grade fields in preview rows, not only the learner UUID",()=>{
+ const row={studentCode:id,cgpa:8.5,activeBacklogs:0};
+ const preview=previewTpoAcademicPageMatches([row],[id]);
+ expect(preview[0].cgpa).toBe(8.5);
+ expect(preview[0].activeBacklogs).toBe(0);
+});
