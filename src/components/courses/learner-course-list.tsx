@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { LearnerCourseCardImage } from "./learner-course-card-image";
+import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
+import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
+import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
 import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
 import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { learnerCourseCardMedia } from "@/modules/courses/learner-course-card-media-model";
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
 import { learnerCourseFilteredEmptyTitle } from "@/modules/courses/learner-course-filtered-empty-model";
@@ -21,6 +23,8 @@ import { learnerCourseNextItemHref } from "@/modules/courses/learner-course-next
 import { learnerCourseMatchesProgress, type LearnerCourseProgressFilter } from "@/modules/courses/learner-course-progress-filter-model";
 import { learnerCourseMatchesTermState, type LearnerCourseTermState } from "@/modules/courses/learner-course-term-state-model";
 import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
+
+import {learnerCourseCardNextLabel} from "@/modules/courses/learner-course-card-next-label-model";
 
 const PAGE_SIZE = 48;
 
@@ -64,24 +68,6 @@ export type LearnerCourseListRow = {
   } | null;
 };
 
-function nextLabel(row: LearnerCourseListRow) {
-  if (row.readOnly) return "View course";
-  if (!row.learningPathReady) return "Learning path not published";
-  if (!row.nextItem) {
-    return row.summary.itemsTotal === 0
-      ? "No learning items yet"
-      : "Course work complete";
-  }
-
-  switch (row.nextItem.kind) {
-    case "ASSIGNMENT":
-      return `Assignment · ${row.nextItem.title}`;
-    case "QUIZ":
-      return `Quiz · ${row.nextItem.title}`;
-    default:
-      return `Continue · ${row.nextItem.title}`;
-  }
-}
 
 export function LearnerCourseList({
   rows,
@@ -162,9 +148,8 @@ export function LearnerCourseList({
 
   const selectedPeriod =
     periods.find((period) => period.id === selectedPeriodId) ?? periods[0];
-  const totalCredits = periodRows.reduce(
-    (sum, row) => sum + (row.course.credits ?? 0),
-    0,
+  const creditSummary = learnerCourseCreditSummary(
+    periodRows.map((row) => row.course.credits),
   );
 
   return (
@@ -302,10 +287,15 @@ export function LearnerCourseList({
           <span className="rounded-full bg-muted px-3 py-1.5">
             {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
           </span>
-          {totalCredits > 0 ? (
+          {creditSummary.recordedCount > 0 ? (
             <span className="rounded-full bg-muted px-3 py-1.5">
-              {totalCredits} Credits
+              {creditSummary.credits} recorded credits
+              {creditSummary.missingCount > 0
+                ? ` · ${creditSummary.missingCount} course credit values unavailable`
+                : ""}
             </span>
+          ) : creditSummary.missingCount > 0 ? (
+            <span className="rounded-full bg-muted px-3 py-1.5">Credits not recorded</span>
           ) : null}
         </div>
       </section>
@@ -348,25 +338,7 @@ export function LearnerCourseList({
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                   >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
-                      {learnerCourseCardMedia(row.thumbnailUrl).source === "AUTHORED" ? (
-                        <Image
-                          src={learnerCourseCardMedia(row.thumbnailUrl).src}
-                          alt=""
-                          fill
-                          unoptimized
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                          className="pointer-events-none object-cover opacity-20"
-                        />
-                      ) : (
-                        <Image
-                          src={learnerCourseCardMedia(row.thumbnailUrl).src}
-                          alt=""
-                          aria-hidden="true"
-                          width={80}
-                          height={80}
-                          className="pointer-events-none absolute right-2 top-1 h-20 w-20 opacity-20"
-                        />
-                      )}
+                      <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl} />
                       <div className="flex w-full items-end justify-between gap-3">
                         <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
                           {row.course.courseCode}
@@ -441,15 +413,12 @@ export function LearnerCourseList({
                               : "Not recorded"}
                           </p>
                           <p className="m-0">
-                            Next due: {row.nextDue
-                              ? row.nextDue.kind+" · "+row.nextDue.title+" · "+
-                                (learnerCourseCardDate(row.nextDue.dueAt) ?? "Date unavailable")
-                              : "No upcoming due dates"}
+                            Next due: {learnerCourseCardDueLabel(row.readOnly,row.nextDue,learnerCourseCardDate)}
                           </p>
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
                           <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
-                            {nextLabel(row)}
+                            {learnerCourseCardNextLabel(row)}
                           </p>
                           <span
                             aria-hidden="true"

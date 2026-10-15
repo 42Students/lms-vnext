@@ -1,10 +1,14 @@
 /** Explicitly distinguish missed, unmeasured and read-only Course Home work. */
 export function learnerCourseHomeCompletion(input:{
- itemsTotal:number;itemsCompleted:number;itemsMissed:number;readOnly:boolean;hasNextAction?:boolean;
+ itemsTotal:number;itemsCompleted:number;itemsMissed:number;readOnly:boolean;hasNextAction?:boolean;hasPublishedPath?:boolean;
 }){
  if(input.readOnly)return {
   title:"Review the Learning Path",
   detail:"This historical course is read only. Previously published learning materials remain available.",
+ };
+ if(input.hasPublishedPath===false)return {
+  title:"Learning path not published",
+  detail:"Your course team has not published a learning path yet. No learner work has been assumed.",
  };
  if(input.itemsMissed>0&&input.hasNextAction)return {
   title:"Continue learning",

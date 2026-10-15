@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { learnerCourseCardMedia, learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
+import { learnerCourseCardMedia, learnerCourseFallbackMedia, learnerCourseCardMediaAfterError } from "@/modules/courses/learner-course-card-media-model";
 
 describe("learner course thumbnail with verified authored display data", () => {
   it("keeps a bundled local fallback when no image has been authored", () => {
@@ -19,4 +19,12 @@ describe("learner course thumbnail with verified authored display data", () => {
       expect(learnerCourseCardMedia(value).source).toBe("FALLBACK");
     },
   );
+});
+
+describe("learner Course authored image transport failure",()=>{
+ it("falls back to the bundled illustration on image load errors",()=>{
+  const image="https://cdn.example.edu/old-or-deleted.jpg";
+  expect(learnerCourseCardMediaAfterError(image,false).source).toBe("AUTHORED");
+  expect(learnerCourseCardMediaAfterError(image,true).source).toBe("FALLBACK");
+ });
 });
