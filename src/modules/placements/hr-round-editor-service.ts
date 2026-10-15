@@ -101,3 +101,29 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
   return {id:updated.id,action:input.action==="REMOVE"?"REMOVED" as const:"UPDATED" as const};
  });
 }
+
+/** The recruiter sees round metadata only, never internal candidate results. */
+export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:unknown){
+ const jobId=z.string().uuid().parse(jobIdInput);
+ const {getRecruiterPlacementWorkspace}=await import("./recruiter-workspace-service");
+ await getRecruiterPlacementWorkspace(context,jobId);
+ const [rounds,used]=await Promise.all([
+  getDb().select({
+   id:placementJobRounds.id,kind:placementJobRounds.kind,name:placementJobRounds.name,
+   mode:placementJobRounds.mode,status:placementJobRounds.status,
+   durationMinutes:placementJobRounds.durationMinutes,
+   createdByUserId:placementJobRounds.createdByUserId,
+   updatedAt:placementJobRounds.updatedAt,sequence:placementJobRounds.sequence,
+  }).from(placementJobRounds).where(eq(placementJobRounds.jobId,jobId))
+   .orderBy(placementJobRounds.sequence),
+  getDb().select({roundId:placementRoundResults.roundId})
+   .from(placementRoundResults).innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundResults.roundId))
+   .where(eq(placementJobRounds.jobId,jobId)).groupBy(placementRoundResults.roundId),
+ ]);
+ const ids=new Set(used.map(row=>row.roundId));
+ return rounds.filter(row=>row.status!=="CANCELLED").map(row=>({
+  ...row,hasResults:ids.has(row.id),
+  editable:canRecruiterEditRound({status:row.status,createdByUserId:row.createdByUserId,
+   recruiterUserId:context.user.id,hasResults:ids.has(row.id)}),
+ }));
+}
