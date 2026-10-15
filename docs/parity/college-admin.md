@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Contact name-initial selector PARTIAL (2026-10-15, chat-9):** Native A–Z initials select filters persisted display names before total/paging/export, scoped to the current college and combined with role/status/search. Prefix is a single validated alphabetic character, not a user-supplied SQL pattern. PG/browser checks outstanding.
+
+
 **Mixed-role Contacts triage PARTIAL (2026-10-15, chat-9):** A role-audience control distinguishes Faculty-only, Learner-only and dual Faculty+Learner memberships in a single current-college SQL filter. Dual-role learner contact fields remain masked even on Faculty tab and exports; no recipient privilege is inferred. Real database/browser acceptance pending.
 
 

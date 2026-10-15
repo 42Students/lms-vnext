@@ -3,6 +3,7 @@ export const COLLEGE_CONTACTS_PAGE_SIZE=25;
 export const collegeContactsQuerySchema=z.strictObject({
   tab:z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
   q:z.string().trim().max(100).default(""),
+  initial:z.string().regex(/^[A-Z]$/).optional(),
   status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
   accountStatus:z.enum(["ALL","ACTIVE","DISABLED"]).default("ALL"),
   audience:z.enum(["ALL","FACULTY_ONLY","LEARNER_ONLY","DUAL"]).default("ALL"),
@@ -15,6 +16,7 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  const params=new URLSearchParams();
  if(filter.tab!=="ALL")params.set("tab",filter.tab);
  if(filter.q)params.set("q",filter.q);
+ if(filter.initial)params.set("initial",filter.initial);
  if(filter.status!=="ACTIVE")params.set("status",filter.status);
  if(filter.accountStatus!=="ALL")params.set("accountStatus",filter.accountStatus);
  if(filter.audience!=="ALL")params.set("audience",filter.audience);

@@ -8,6 +8,7 @@ import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export default async function CollegeContactsPage({searchParams}:{searchParams:Promise<RawSearch>}){
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
@@ -34,6 +35,11 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <input type="hidden" name="tab" value={filter.tab}/>
    <label className="min-w-0 flex-1 basis-52 text-sm">Name or email
     <input type="search" name="q" maxLength={100} defaultValue={filter.q} placeholder="Search contacts" className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3"/>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Name begins with
+    <select name="initial" defaultValue={filter.initial??""} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="">Any letter</option>{initials.map(letter=><option key={letter} value={letter}>{letter}</option>)}
+    </select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Membership
     <select name="status" defaultValue={filter.status} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
@@ -68,7 +74,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
-    tab:filter.tab,q:filter.q,status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,sort:filter.sort,
+    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,sort:filter.sort,
    }).toString()} className="inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold">
     Export filtered contacts CSV
    </Link>
