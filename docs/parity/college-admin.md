@@ -652,6 +652,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Recorded completed-content triage PARTIAL (2026-10-15):** A second college-scoped EXISTS predicate distinguishes offerings with at least one LEARNER-role record whose completedAt is populated from those without. It does not classify whole courses as complete. Strict URL/CVS and disposable-PG fixture tests authored; browser and CI execution pending.
+
 **Observed activity versus no events PARTIAL (2026-10-15):** The offering directory now filters by EXISTS/NOT EXISTS of real LEARNER-role learner-content progress, restricted to college memberships and course learning paths before pagination and capped CSV. An empty result does not mean attendance or enrollment absence. Strict and disposable-PG tests authored, execution/browser acceptance open.
 
 **Department-specific course progress PARTIAL (2026-10-15):** College Admin can filter persisted learner-content activity offerings by exact owning department name, without inferring course completion or changing the recorded learner denominator. Pagination and capped CSV follow the same scope. PostgreSQL and validation fixtures authored; acceptance open.
