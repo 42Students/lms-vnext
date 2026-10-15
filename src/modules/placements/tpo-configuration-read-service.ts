@@ -1,6 +1,7 @@
 import "server-only";
-import { asc, eq } from "drizzle-orm";
+import { asc, and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { courses, departments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
@@ -31,4 +32,12 @@ export async function getTpoPrepReadiness(ctx:RequestContext){
   config:tpoPrepReadiness.config,updatedAt:tpoPrepReadiness.updatedAt,
  }).from(tpoPrepReadiness).where(eq(tpoPrepReadiness.collegeId,collegeId)).limit(1):[];
  return {ready,config:row?.config??null,updatedAt:row?.updatedAt??null};
+}
+
+export async function listTpoPrepCourses(ctx:RequestContext){
+ const collegeId=await requireTpoBatchActor(ctx);
+ return getDb().select({id:courses.id,name:courses.name,code:courses.code}).from(courses)
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(eq(departments.collegeId,collegeId),eq(courses.status,"ACTIVE")))
+  .orderBy(asc(courses.name),asc(courses.id)).limit(200);
 }
