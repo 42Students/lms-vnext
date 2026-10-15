@@ -51,3 +51,12 @@ export function renderCollegeRoleDirectoryCsv(kind:CollegeDirectoryKind,rows:rea
  }
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
+
+/** Avoid repeated memberships if a live roster shifts between CSV page reads. */
+export function appendUniqueRoleExportRows(rows:CollegeRoleDirectoryRow[],page:readonly CollegeRoleDirectoryRow[]):void {
+ const seen=new Set(rows.map(row=>row.membershipId));
+ for(const row of page){
+  if(rows.length>=ROLE_DIRECTORY_EXPORT_LIMIT)break;
+  if(!seen.has(row.membershipId)){seen.add(row.membershipId);rows.push(row);}
+ }
+}
