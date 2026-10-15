@@ -1,5 +1,6 @@
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentFileOpenControl } from "./assignment-file-open-control";
@@ -92,22 +93,8 @@ function progressLabel(
   }
 }
 
-function formatDateTime(
-  value: Date | string | null,
-) {
-  if (!value) return null;
-  const date =
-    value instanceof Date
-      ? value
-      : new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
-
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+function formatDateTime(value: Date | string | null) {
+  return formatLearnerCourseMoment(value);
 }
 
 function kindLabel(
