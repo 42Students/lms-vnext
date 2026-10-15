@@ -9,12 +9,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { applicantStage } from "@/modules/placements/tpo-applicant-pipeline-model";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
-type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>};
+type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
  const {jobId}=await params;const query=await searchParams;
+ const columns=first(query.columns)?.slice(0,800);
  const data=await getTpoApplicantPipeline(context,{jobId,...(first(query.stage)?{stage:first(query.stage)}:{}),
    ...(first(query.search)?{search:first(query.search)}:{}),
    ...(first(query.channel)?{channel:first(query.channel)}:{}),
@@ -24,7 +25,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    ...(first(query.page)?{page:first(query.page)}:{})});
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  function pageHref(page:number){return {pathname:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline",
-  query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin,page}};}
+  query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin,...(columns?{columns}:{}),page}};}
  return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Drive applicants" title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
@@ -42,6 +43,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   </section>
   <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   {columns&&<input type="hidden" name="columns" value={columns}/>}
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Stage
     <select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}

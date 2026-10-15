@@ -26,6 +26,7 @@ type SearchParams = {
   search?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
+  columns?: string | string[];
 };
 
 const JOURNEY_LABELS: Record<TpoStudentJourneyState, string> = {
@@ -47,6 +48,7 @@ function studentsHref(
     search?: string;
     page?: number;
     pageSize?: number;
+    columns?: string;
   },
   exportCsv = false,
 ) {
@@ -63,6 +65,7 @@ function studentsHref(
   if (filters.search) {
     params.set("search", filters.search);
   }
+  if(!exportCsv&&filters.columns)params.set("columns",filters.columns);
 
   if (!exportCsv) {
     if (filters.page && filters.page > 1) {
@@ -198,6 +201,7 @@ export default async function TpoStudentsPage({
   );
 
   const currentFilters = {
+    columns:first(raw.columns)?.slice(0,800),
     journeyState: query.journeyState,
     branchId: query.branchId,
     search: query.search,
@@ -315,6 +319,7 @@ export default async function TpoStudentsPage({
                 key={state}
                 href={studentsHref({
                   journeyState: state,
+                  columns:first(raw.columns)?.slice(0,800),
                   pageSize: query.pageSize,
                 })}
                 aria-current={selected ? "page" : undefined}
@@ -417,6 +422,7 @@ export default async function TpoStudentsPage({
                       <Link
                         href={studentsHref({
                           branchId: branch.branchId,
+                          columns:first(raw.columns)?.slice(0,800),
                           pageSize: query.pageSize,
                         })}
                         className="font-semibold text-primary-text hover:underline"
@@ -481,6 +487,7 @@ export default async function TpoStudentsPage({
           method="get"
           className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
         >
+          {first(raw.columns)&&<input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Journey
             <select
