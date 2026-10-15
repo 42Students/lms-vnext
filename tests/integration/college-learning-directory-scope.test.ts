@@ -189,7 +189,7 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     ]);
     expect(noActivity.items.map(row=>row.offeringId)).toContain(ids.offering);
     expect(hasActivity.items).toEqual([]);
-    expect((await exportCollegeCourseProgress(own,{q:name,activityState:"RECORDED"})).exported).toBe(0);
+    expect((await exportCollegeCourseProgress(own,{q:name,activityState:"RECORDED"})).rows.length).toBe(0);
     const depProgress=await pool!.query<{name:string}>("SELECT name FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const [matchingDepartment,unrelatedDepartment]=await Promise.all([
       listCollegeCourseProgress(own,{q:name,departmentName:depProgress.rows[0]!.name}),
