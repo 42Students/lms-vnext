@@ -21,6 +21,7 @@ import { learnerAssessmentMatchesSearch } from "@/modules/courses/learner-assess
 import { learnerAssessmentCourseCounts } from "@/modules/courses/learner-assessment-course-counts-model";
 import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type LearnerAssessmentStateFilter } from "@/modules/courses/learner-assessment-state-filter-model";
 import { learnerAssessmentActionCounts } from "@/modules/courses/learner-assessment-action-counts-model";
+import { learnerAssessmentActiveCourse } from "@/modules/courses/learner-assessment-active-course-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
 type CourseChoice = {
@@ -141,6 +142,7 @@ export function LearnerAssessmentOverview({
 
   const [courseId, setCourseId] =
     useState("");
+  const activeCourseId = learnerAssessmentActiveCourse(courseId,courses);
   const [search, setSearch] = useState("");
   const [stateFilter, setStateFilter] = useState<LearnerAssessmentStateFilter>("ALL");
   const [sort, setSort] = useState<LearnerAssessmentSort>("DUE");
@@ -153,11 +155,11 @@ export function LearnerAssessmentOverview({
   const filtered = useMemo(
     () =>
       learnerAssessmentSort(items.filter(item =>
-        (!courseId || item.courseId === courseId) &&
+        (!activeCourseId || item.courseId === activeCourseId) &&
         learnerAssessmentMatchesSearch(item, search) &&
         learnerAssessmentMatchesState(item, stateFilter, currentNowMs),
       ),sort),
-    [courseId, items, search, stateFilter, currentNowMs,sort],
+    [activeCourseId, items, search, stateFilter, currentNowMs,sort],
   );
 
   const totalPages = Math.max(
@@ -247,7 +249,7 @@ export function LearnerAssessmentOverview({
             Course
           </span>
           <Select
-            value={courseId}
+            value={activeCourseId}
             onChange={(event) => {
               setCourseId(event.target.value);
               setPage(1);
