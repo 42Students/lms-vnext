@@ -38,8 +38,7 @@ export default async function FacultyCalendarPage({
   const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   const selected=grid.query.deliveryId;
   return <div className="space-y-6">
-    <PageHeader eyebrow="Faculty" title="Class Schedule"
-      description="Persisted teaching sessions, with an India Standard Time month calendar and exact Section links." />
+    <PageHeader title="Class Schedule" />
     <div className="flex justify-end">
       <Link href="/teacher/live-classes"
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">

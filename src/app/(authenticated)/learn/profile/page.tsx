@@ -32,9 +32,7 @@ export default async function LearnerProfilePage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="Profile"
-        description="Your academic, career and placement profile in one place."
       />
       {sectionNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{sectionNotice}</p> : null}
       <section aria-label="Academic identity" className="rounded-xl border border-border bg-surface p-4 sm:p-6">

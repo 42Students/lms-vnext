@@ -32,10 +32,22 @@ export function facultyVideoMayPreview(video:Pick<ManagedVideo,"processingStatus
 export function facultyVideoPublishAction(video:Pick<ManagedVideo,"publishStatus">):VideoPublishStatus {
  return video.publishStatus==="PUBLISHED"?"DRAFT":video.publishStatus==="ARCHIVED"?"DRAFT":"PUBLISHED";
 }
-export function facultyVideoOrderPatch(target:ManagedVideo,delta:-1|1,rows:ManagedVideo[]):number|null{
- const current=rows.findIndex(video=>video.id===target.id);
- if(current<0||current+delta<0||current+delta>=rows.length)return null;
- return rows[current+delta]!.sequence;
+export function facultyVideoReorderPlan(target:ManagedVideo,delta:-1|1,rows:ManagedVideo[]):Array<{id:string;sequence:number}>|null{
+ const ordered=[...rows].sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
+ const index=ordered.findIndex(video=>video.id===target.id);
+ const neighbor=ordered[index+delta];
+ if(index<0||!neighbor||target.sequence===neighbor.sequence)return null;
+ const occupied=new Set(ordered.map(video=>video.sequence));
+ let spare=0;
+ while(occupied.has(spare)&&spare<=10000)spare++;
+ if(spare>10000)return null;
+ // Temporarily free the neighbor's ordinal before the two-way swap. No
+ // duplicate sequence is sent, including when backend uniqueness is enforced.
+ return [
+  {id:neighbor.id,sequence:spare},
+  {id:target.id,sequence:neighbor.sequence},
+  {id:neighbor.id,sequence:target.sequence},
+ ];
 }
 export const videoUploadGrantSchema=z.object({
  video:managedVideoSchema,

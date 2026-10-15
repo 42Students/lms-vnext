@@ -70,9 +70,7 @@ export default async function FacultyNotificationsPage({
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Faculty"
         title="Notifications"
-        description="Course workflow updates and college announcements that need your attention."
       />
       <AnnouncementFeed
         enabled={announcementsEnabled}

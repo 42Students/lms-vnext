@@ -40,9 +40,7 @@ export default async function LearnerCalendarPage({searchParams}:{
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="Class Schedule"
-        description="Your current Section schedule, Course filters and upcoming classes."
       />
       <div className="flex flex-wrap justify-end">
         <Link href="/learn/attendance/calendar"

@@ -62,9 +62,7 @@ export default async function NotificationsPage({searchParams}:{
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="Notifications"
-        description="Your course, project, placement and college notifications."
       />
       <Link href="/learn/notifications/history"
         className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">

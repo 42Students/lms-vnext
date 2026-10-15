@@ -68,7 +68,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L0-010 | Sidebar label + route: Profile | `/learn/profile` | same | CLOSED |
 | L0-011 | Projects feature-flag visibility | Sidebar feature filtering | learner shell | FIXED |
 | L0-012 | Placements feature-flag visibility | Sidebar feature filtering | learner shell | FIXED |
-| L0-013 | Conditional Drive Day sidebar item | Sidebar + `getDriveDayMine` | coordinator assignment + learner Drive Day workspace | FIXED |
+| L0-013 | Drive Day coordinator access without extra learner sidebar row | dev legacy lists.js L55–123 (no Drive Day row) | existing coordinator route and access; no extra learner sidebar item | FIXED |
 | L0-014 | Active sidebar highlight across nested routes | Sidebar | learner shell | CLOSED |
 | L0-015 | Learner mobile sidebar/open-close behavior | Sidebar | learner shell | FIXED |
 | L0-016 | Learner topbar/account switch/sign-out behavior | shared shell | authenticated shell | FIXED |
@@ -784,14 +784,14 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 
 | L30-044 | Whole-profile save conflict protection + audit | learner Profile edit workflow | strict saved baseline, locked live own-profile write, stale-before-no-op, private-value-free field-name audit; PARTIAL pending PG and multi-tab/browser acceptance | PARTIAL |
 
-## L31 — Conditional Drive Day learner entry
+## L31 — Drive Day learner coordinator access
 
-The old learner sidebar can dynamically expose `Drive Day` but the actual route lives under `/tpo/drive-day`. Treat this as a cross-role learner-access surface, not as permission to expose TPO controls.
+The dev legacy learner sidebar catalogue in `docs/audit/legacy-copy-A.md` (lists.js L55–123) has no `Drive Day` row. Keep `/tpo/drive-day` and its assignment-scoped coordinator authorization, but do not inject an extra Learner sidebar entry. This does not affect TPO navigation.
 
 | ID | UI surface | Legacy oracle | vNext target | Status |
 | --- | --- | --- | --- | --- |
 | L31-001 | Detect learner's Drive Day assignment | Sidebar + `getDriveDayMine` | `hasStudentCoordinatorAssignmentToday` | FIXED |
-| L31-002 | Conditional sidebar item only when assigned | Sidebar | learner shell | FIXED |
+| L31-002 | No non-legacy conditional Drive Day learner sidebar item | dev legacy lists.js L55–123 | learner shell omits extra link even when assigned | FIXED |
 | L31-003 | Learner-safe Drive Day landing | `/tpo/drive-day` | `/tpo/drive-day` | FIXED |
 | L31-004 | Assigned drive/round context | Drive Day page | assigned round cards + restricted roster | FIXED |
 | L31-005 | Learner cannot see/manage TPO-only controls | Drive Day page | coordinator access policy + Present/Absent-only UI | FIXED |
@@ -822,7 +822,7 @@ After Learner closes, move to Faculty using the same ledger pattern. Do not star
 
 Against FE `008d113ddd9f515df65ae7fe90dba360938314f6` + BE `ed1377b744088f2ec759895658105c494337ba30`, vNext now has persisted optional-module decisions with the legacy precedence/lock semantics, Placements' college-only module switch, and the learner Placement eligibility ladder (membership → section → cohort, equivalent to legacy learner → class → batch). The learner shell consumes those results fail-closed for optional links while keeping core navigation available.
 
-L0-011 through L0-013 are now implemented at the consumer/domain level and remain `FIXED`, not `CLOSED`: CI/browser evidence is still unavailable and producer UIs must be verified in their owning admin/TPO families. Drive Day now has persisted dated coordinator assignments, applicant-conflict prevention, learner-only conditional navigation, an assigned-round landing, and a restricted roster that hides contact/result controls and permits only Present/Absent for student coordinators.
+L0-011 through L0-013 are now implemented at the consumer/domain level and remain `FIXED`, not `CLOSED`: CI/browser evidence is still unavailable and producer UIs must be verified in their owning admin/TPO families. Drive Day now has persisted dated coordinator assignments, applicant-conflict prevention, an assigned-round landing, and a restricted roster that hides contact/result controls and permits only Present/Absent for student coordinators. The dev legacy sidebar catalogue has no Drive Day item, so the extra conditional learner navigation was removed.
 
 ## 2026-10-10 W02 quiz/assignment safety re-audit
 

@@ -122,9 +122,7 @@ export default async function LearnerProjectsPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="Projects"
-        description="Your active Project workspaces, team responsibilities and final delivery progress."
       />
 
       <LearnerProjectMobileFilters query={{ ...query, page }} />

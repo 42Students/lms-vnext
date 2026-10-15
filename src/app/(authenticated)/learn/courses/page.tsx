@@ -88,11 +88,7 @@ export default async function LearnerCoursesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="Courses"
-        description={rows[0]?.course.programName
-          ? `${rows[0].course.programName} · Your semester courses, electives, credits and learning progress.`
-          : "Your semester courses, electives, credits and learning progress."}
       />
       <LearnerCourseList rows={rows} />
     </div>
