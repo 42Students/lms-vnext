@@ -3,7 +3,9 @@ import { facultyResponseFollowUpQuerySchema, parseFacultyFollowUpSearchParams } 
 
 describe("Faculty follow-up pagination input", () => {
   it("accepts canonical page and already validated number", () => {
-    expect(parseFacultyFollowUpSearchParams({page:"4"}).data?.page).toBe(4);
+    const parsed = parseFacultyFollowUpSearchParams({page:"4"});
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.page).toBe(4);
     expect(facultyResponseFollowUpQuerySchema.parse({page:4}).page).toBe(4);
   });
   it("rejects ambiguous page selectors", () => {
