@@ -105,6 +105,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
