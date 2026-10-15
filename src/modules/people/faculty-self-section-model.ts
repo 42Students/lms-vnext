@@ -50,6 +50,22 @@ export function updateFacultyProfileSection(
       }
     }
   }
+  // New public links must be secure. Unchanged historical HTTP links are
+  // retained to avoid destroying unrelated legacy data during section updates.
+  if(patch.section==="socialProfiles") {
+    const links=z.record(z.string(),z.string()).parse(patch.value);
+    for(const [key,raw] of Object.entries(links)){
+      if(raw && raw!==current.socialProfiles[key as keyof typeof current.socialProfiles]){
+        let valid=false;
+        try{
+          const url=new URL(raw);
+          valid=url.protocol==="https:" && !!url.hostname && !url.username && !url.password &&
+            url.hostname!=="localhost" && !url.hostname.endsWith(".localhost");
+        }catch{valid=false;}
+        if(!valid)throw new Error("Faculty public profile links must use HTTPS");
+      }
+    }
+  }
   // Reparse the *whole* document; cross-entry chronology, URLs and IDs apply.
   const copy: Record<string,unknown> = {...current, [patch.section]:patch.value};
   const next=facultyProfileDocumentSchema.parse(copy);
