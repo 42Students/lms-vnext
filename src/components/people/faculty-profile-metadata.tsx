@@ -1,8 +1,9 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
-import { facultyMetadataFromDraft,facultyMetadataEditableKey,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
+import { facultyMetadataFromDraft,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
+import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
  initial:FacultyProfileDocument["metadata"];pending:boolean;
@@ -19,7 +20,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   try{if(dirty&&!pending)void onSave("metadata",facultyMetadataFromDraft(initial,rows));}
   catch(error){setError(error instanceof Error?error.message:"Invalid metadata");}
  }
- return <form aria-label="Additional metadata" onSubmit={submit}
+ return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
   className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
   <h2 className="text-lg font-semibold text-foreground">Additional metadata</h2>
   <p className="text-sm text-muted-foreground">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>

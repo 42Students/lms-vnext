@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
+import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {restoreFacultySkills,removeFacultySkillDraft} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
 export function FacultyProfileSkills({initial,pending,onSave}:{
@@ -17,7 +18,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   event.preventDefault();
   if(changed&&!pending)void onSave("skills",rows);
  }
- return <form className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6"
+ return <form id={facultyProfileAnchor("skills")} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6"
    aria-label="Skills" onSubmit={submit}>
   <div>
    <h2 className="font-semibold text-foreground">Skills</h2>
