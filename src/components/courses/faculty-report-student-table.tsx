@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { facultyReportStudentPage, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
 
 export function FacultyReportStudentTable({
@@ -17,13 +18,7 @@ export function FacultyReportStudentTable({
     () => facultyReportStudentPage(rows, search, requestedPage),
     [rows, search, requestedPage],
   );
-  const formatDate = (value: string | null) => {
-    if (!value) return "—";
-    const date = new Date(value);
-    return Number.isNaN(date.getTime())
-      ? "Date unavailable"
-      : new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(date);
-  };
+  const formatDate = facultyReportIstTimestamp;
 
   return (
     <section aria-label={title} className="rounded-xl border border-border bg-surface p-5">
@@ -42,7 +37,7 @@ export function FacultyReportStudentTable({
               className="mt-1"
               value={search}
               onChange={(event) => { setSearch(event.target.value); setRequestedPage(1); }}
-              placeholder="Name or email"
+              placeholder="Name"
             />
           </label>
         ) : null}
@@ -69,7 +64,6 @@ export function FacultyReportStudentTable({
                   <tr key={student.id}>
                     <td className="py-3 pr-3 font-semibold text-foreground">
                       {student.name}
-                      {student.email ? <span className="block text-xs font-normal text-muted-foreground">{student.email}</span> : null}
                     </td>
                     <td className="py-3 pr-3">
                       <span className="font-semibold text-foreground">
@@ -88,7 +82,6 @@ export function FacultyReportStudentTable({
             {result.rows.map((student) => (
               <article key={student.id} className="rounded-lg border border-border p-4">
                 <h3 className="font-semibold text-foreground">{student.name}</h3>
-                {student.email ? <p className="mt-1 break-all text-xs text-muted-foreground">{student.email}</p> : null}
                 <p className="mt-2 text-sm text-body">
                   <strong>{student.percent === null ? "Not graded" : student.percent + "%"}</strong>
                   {" · "}{student.score}

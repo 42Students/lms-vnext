@@ -6,6 +6,7 @@ import { filterLearnerScheduleSections } from "@/modules/academics/learner-sched
 import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-schedule-search-model";
 import { filterLearnerScheduleByKind, type LearnerScheduleKind } from "@/modules/academics/learner-schedule-kind-filter-model";
 import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-schedule-upcoming-model";
+import { learnerScheduleResetFilters } from "@/modules/academics/learner-schedule-filter-reset-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -463,6 +464,14 @@ export function LearnerClassSchedule({
                 ? "min-h-11 rounded-lg border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text"
                 : "min-h-11 rounded-lg border border-border px-3 text-sm font-semibold text-body"}>
               Upcoming sessions only
+            </button>
+            <button type="button" onClick={() => {
+              const reset = learnerScheduleResetFilters(courses);
+              setSessionSearch(reset.search);setSessionKind(reset.kind);
+              setSectionId(reset.sectionId);setUpcomingOnly(reset.upcomingOnly);
+              setSelectedDeliveryIds(reset.deliveryIds);
+            }} className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text">
+              Clear schedule filters
             </button>
             <span role="status" className="w-full text-xs text-muted-foreground">
               {filteredEvents.length} matching authorized sessions

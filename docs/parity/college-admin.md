@@ -17,6 +17,16 @@ Every page below also requires:
 
 **Announcements personal inbox unread filter PARTIAL (2026-10-15):** College Admin notices can filter unread, own-recipient *registered* notifications within the signed-in college before the 50-row cap. Toggle preserves the deleted-announcement selector. The draft college-wide DB10 announcement table remains gated and no broadcast sending is claimed. Pure model and isolated PG own/foreign/wrong-role tests authored; runtime/browser acceptance open.
 
+## Page: Profile Verification (legacy /college-admin/verification)
+
+**Staff verification workspace PARTIAL (2026-10-15, chat-9):** Added /college/verification and shared src/components/verification + src/modules/verification. The route loads College Admin-owned learner Education/Identity requests from DB04 profile_verifications, checked against a persisted active actor membership/role and active learner roles. The reusable queue has Waiting/Sent back/Verified counts, submitted-update attention cues, safe mobile cards, same-college cohort/branch display, section/kind/marksheet/batch/branch/IST waiting-date filters, bounded paging, explicit unavailable/retry states and 5,000-request fail-closed working-set limit. Batch/branch/class selectors currently accept UUIDs rather than native college-owned pickers; search is local to the displayed page, not full-roster search.
+
+**Review and notification PARTIAL:** Submitted/previously verified fields are compared without raw identity values or receipt IDs; document access requires an authorized current-college receipt anchored in the submitted snapshot and the private-storage short-lived read signer with object attestation. A reasoned send-back or verify POST requires same-origin, Zod and expected version; the existing DB04 locked writer records the decision, immutable activity event, and learner in-app notification together. External email/SMS delivery still needs chat-10's shared messaging port, and bulk verify/send-back and bulk messaging are preview-only, not executed.
+
+**TPO switch and export PARTIAL:** College header switch calls a same-origin checked, audited tpoCanVerifyProfiles setting service. This is *not* the TPO verifier-grant management page nor the TPO route owned by chat-2. GET CSV is scoped, caps output at 1,000 formula-neutralized rows, labels IST timestamps and truncation; the UI offers an explicit retry on failure. DB04 table availability is checked before reads/writes; no migrations or src/modules/storage files were changed.
+
+**Open acceptance:** Independent PostgreSQL fixture is authored and explicitly gated on disposable DB03 target plus DB04_VERIFICATION_READY=1; not executed in this chat. Need registered DB04 schema, full database-side indexed pagination/counts beyond 5k, interactive native class/batch/branch choices, complete legacy bulk actions, real outbound messaging integration, Super Admin/TPO mounts by their owners, accessibility/375px browser QA and CI/typecheck/real-PG acceptance. This page remains PARTIAL, never DONE.
+
 ## Page: Dashboard
 **Empty-source follow-ups PARTIAL (2026-10-15):** Dashboard adds an actionable, zero-only list of deep links to relevant directories. It never calls an unavailable count zero, and deliberately says an empty source is not a setup failure, readiness score or student-performance alarm. Pure-model and existing scoped PG read fixtures cover the projection; exact legacy priority cards and browser acceptance remain open.
 **Legacy:** `/college-admin/dashboard`
@@ -257,7 +267,6 @@ Legacy contract audited:
 
 ## Page: Classes / Sections
 **Class capacity combination validation PARTIAL (2026-10-15):** Contradictory minimum/maximum seat filters and numeric bounds combined with UNSET capacity are rejected consistently by the directory and CSV validation; valid adjacent bounds remain supported. Unit tests authored; execution open.
-
 **Unconfigured capacity filter PARTIAL (2026-10-15):** Admin Classes now distinguish NULL configured class capacity from numeric seat counts before pagination/export. Filter state is URL-persistent and strictly validated; own-college fixture checks genuine unset rows rather than treating them as zero. Acceptance pending.
 
 **Batch-code filter PARTIAL (2026-10-15):** Classes now support an exact batch/cohort-code filter against persisted in-college records. Filter state is preserved in pagination and the capped CSV, with bounded input and own-college PostgreSQL fixture assertions. Browser/mobile acceptance still open.

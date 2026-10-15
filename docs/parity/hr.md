@@ -1,4 +1,4 @@
-# HR / Recruiter — Detailed Page Parity Spec
+**Chat-10 continuation / Recruiter navigation and review — PARTIAL (2026-10-15):** Authenticated /recruiter URLs now alias the existing recruiter-scoped HR surfaces, and legacy invite URLs redirect to /recruiter-invite. Today has a college/company-filtered quick-action queue; the authorized shortlisted-applicant drawer supports page-local focused review with existing notes. Full canonical navigation, multi-page focused review, production request/fix persistence, desktop/mobile acceptance and isolated PG role/scope tests remain open.\n\n# HR / Recruiter — Detailed Page Parity Spec
 
 Legacy navigation: Today, Drives, Calendar, Messages, Company & Team. Profile and invite/bootstrap are secondary surfaces.
 

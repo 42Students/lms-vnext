@@ -1,0 +1,3 @@
+import { describe, expect, it } from "vitest";import {readFileSync} from "node:fs";import {join}from"node:path";
+const code=readFileSync(join(process.cwd(),"src/components/projects/project-workspace.tsx"),"utf8");
+describe("managed Project team affordances",()=>{it("keeps membership controls exclusive to administrators",()=>expect(code).toContain('mode === "ADMIN" && !readOnly'));it("hides normal add UI for group-managed Projects",()=>expect(code).toContain("!workspace.project.teamGroupId"));it("does not render learner member edit controls for group-managed Projects",()=>expect(code).toContain('member.role !== "LEARNER"'));});

@@ -5,7 +5,7 @@ const saved = {gradingStatus:"GRADED", pointsAwarded:0, feedback:null, gradePubl
 describe("Faculty grade editor publication", () => {
   it("distinguishes a deliberate zero from an empty or invalid score", () => {
     expect(facultyGradeEditorState(saved,"0","",10).canPublish).toBe(true);
-    for (const value of ["", " ", "-1", "11", "1.5", "NaN", "Infinity"]) {
+    for (const value of ["", " ", "-1", "11", "1.5", "NaN", "Infinity", "1e1", "0xA", "01", "5.0"]) {
       const state = facultyGradeEditorState(saved,value,"",10);
       expect(state.points).toBeNull();
       expect(state.canPublish).toBe(false);

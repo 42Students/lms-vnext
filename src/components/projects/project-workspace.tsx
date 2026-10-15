@@ -413,12 +413,19 @@ export function ProjectWorkspace({
               Project responsibility.
             </p>
           </div>
-          {mode === "ADMIN" && !readOnly ? (
+          {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <AddProjectMemberControl
               projectId={workspace.project.id}
             />
           ) : null}
         </div>
+        {workspace.project.teamGroupId ? (
+          <p className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+            Learner assignments in this workspace come from its managed class team.
+            Only College Admin or Super Admin may change team membership in the class team workspace;
+            mentors can review Project work but cannot edit team membership.
+          </p>
+        ) : null}
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {workspace.members.map((member) => (
             <article
@@ -449,7 +456,7 @@ export function ProjectWorkspace({
                     : label(member.role)}
                 </StatusBadge>
               </div>
-              {mode === "ADMIN" && !readOnly ? (
+              {mode === "ADMIN" && !readOnly && (!workspace.project.teamGroupId || member.role !== "LEARNER") ? (
                 <ProjectMemberActions
                   projectId={workspace.project.id}
                   member={{

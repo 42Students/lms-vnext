@@ -726,13 +726,32 @@ export function SuperAdminHrAccounts({
               }
             />
           ) : (
-            <DataTable
-              rows={list.items}
-              columns={columns}
-              getRowKey={(account) =>
-                account.userId
-              }
-            />
+            <>
+              <div className="grid min-w-0 gap-3 lg:hidden" aria-label="Recruiter account cards">
+                {list.items.map((account) => (
+                  <article key={account.userId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h2 className="m-0 break-words text-base font-semibold text-foreground">{hrDisplayName(account)}</h2>
+                        <p className="mt-1 break-all text-xs text-muted-foreground">{account.email || account.phoneE164 || "No contact listed"}</p>
+                      </div>
+                      <StatusBadge tone={hrStatusTone(account.status)}>{account.status}</StatusBadge>
+                    </div>
+                    <dl className="mt-3 grid min-w-0 gap-2 text-sm">
+                      <div><dt className="text-xs text-muted-foreground">Company</dt><dd className="m-0 break-words">{account.companyName}</dd></div>
+                      <div><dt className="text-xs text-muted-foreground">Colleges</dt><dd className="m-0 break-words">{account.grants.length ? account.grants.map((grant) => grant.collegeName).join(", ") : "No visible grants"}</dd></div>
+                    </dl>
+                    <div className="mt-4 flex flex-wrap justify-end gap-2">
+                      <Button variant="secondary" size="sm" onClick={() => openDetail(account)}>View</Button>
+                      <Button variant="ghost" size="sm" onClick={() => openEdit(account)}>Edit</Button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <div className="hidden min-w-0 lg:block">
+                <DataTable rows={list.items} columns={columns} getRowKey={(account) => account.userId} />
+              </div>
+            </>
           )}
 
           {list.total > 0 ? (
