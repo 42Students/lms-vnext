@@ -1,5 +1,4 @@
 import "server-only";
-import { createHash } from "node:crypto";
 import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementApplications, placementApplicationScreenings, placementJobs } from "@/db/schema";
@@ -11,27 +10,9 @@ import { tpoBulkPreviewRequestSchema, selectedBulkActionRows,
 import { signTpoBulkPreview } from "./tpo-bulk-preview-token";
 import { getAuthConfig } from "@/modules/auth/config";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { PlacementsServiceError } from "./errors";
-import type { TpoMembershipDecisionSnapshot } from "./tpo-participation-model";
+import {tpoBulkApplicationReady,tpoBulkStudentReady,tpoBulkStudentVersion} from "./tpo-bulk-decision-model";
 
 export type TpoBulkCurrent={version:string;ready:boolean};
-export function tpoBulkStudentVersion(snapshot:TpoMembershipDecisionSnapshot){
-  return createHash("sha256").update(JSON.stringify([
-    snapshot.status,snapshot.reason,snapshot.note,snapshot.updatedAt,
-  ])).digest("hex");
-}
-export function tpoBulkStudentReady(action:TpoBulkPreviewRequest["action"],
-  status:TpoMembershipDecisionSnapshot["status"]){
-  return action==="ELIGIBLE"?status!=="ELIGIBLE":
-    action==="CLEAR_OVERRIDE"?status!==null:false;
-}
-export function tpoBulkApplicationReady(action:TpoBulkPreviewRequest["action"],
-  jobStatus:string,applicationStatus:string,screeningStatus:string|null,updatedAt:Date|null){
-  return (action==="SHORTLISTED"||action==="REJECTED")&&jobStatus==="PUBLISHED"&&
-    applicationStatus==="SUBMITTED"&&(screeningStatus==="PENDING"||screeningStatus==="HOLD")&&
-    updatedAt!==null;
-}
-
 /** Read only; only current college-scoped records are projected, never person names. */
 export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPreviewRequest){
  const collegeId=await requireTpoJobCollege(context);
