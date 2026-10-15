@@ -51,6 +51,10 @@ const columns: DataTableColumn<CollegeRow>[] = [
     className: "text-right",
     cell: (college) => (
       <div className="flex justify-end gap-2">
+        <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
+          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          Tenant setup
+        </Link>
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
@@ -126,6 +130,8 @@ export default async function CollegesPage() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Tenant setup</Link>
+              <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/branding`}
+                className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Branding</Link>
               <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Readiness</Link>
               {college.canManage ? <>
