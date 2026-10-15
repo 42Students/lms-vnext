@@ -89,7 +89,7 @@ export default async function MentorProjectActivityHistoryPage({
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
-        <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",page:1})}
+        <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
           className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
       <p className="text-sm text-body">
