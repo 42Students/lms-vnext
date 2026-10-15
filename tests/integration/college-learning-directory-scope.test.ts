@@ -136,6 +136,11 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
       listCollegeLessons(own, { q: name }),
       listCollegeCourseProgress(own, { q: name }),
     ]);
+    const contentTypeMatches=await listCollegeLessons(own,{q:name,contentType:"YOUTUBE"});
+    const contentTypeMisses=await listCollegeLessons(own,{q:name,contentType:"VIDEO"});
+    expect(contentTypeMatches.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(contentTypeMisses.items).toEqual([]);
+    expect((await exportCollegeLessons(own,{q:name,contentType:"VIDEO"})).rows).toEqual([]);
     const exact=await listCollegeLessons(own,{courseCode:name});
     const unknown=await listCollegeLessons(own,{courseCode:"MISSING-CODE"});
     expect(exact.items.map(row=>row.id)).toContain(ids.lesson);
@@ -317,4 +322,118 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     await expect(listCollegeCourseProgress(own, { collegeId: SEED_IDS.collegeB })).rejects.toBeDefined();
     await expect(listCollegeCourseProgress(own, { page: 1001 })).rejects.toBeDefined();
   });
+  it("lessons programStatus filters persisted same-college parent rows",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,programStatus:"ACTIVE"}),
+      listCollegeLessons(own,{q:name,programStatus:"ARCHIVED"}),
+      listCollegeLessons(otherCollege,{q:name,programStatus:"ACTIVE"}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("lessons cohortStatus filters persisted same-college parent rows",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,cohortStatus:"PLANNED"}),
+      listCollegeLessons(own,{q:name,cohortStatus:"COMPLETED"}),
+      listCollegeLessons(otherCollege,{q:name,cohortStatus:"PLANNED"}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("lessons periodStatus narrows persisted tenant-owned parent rows",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,periodStatus:"PLANNED"}),
+      listCollegeLessons(own,{q:name,periodStatus:"CLOSED"}),
+      listCollegeLessons(otherCollege,{q:name,periodStatus:"PLANNED"}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("lessons courseStatus narrows persisted tenant-owned parent rows",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,courseStatus:"ACTIVE"}),
+      listCollegeLessons(own,{q:name,courseStatus:"ARCHIVED"}),
+      listCollegeLessons(otherCollege,{q:name,courseStatus:"ACTIVE"}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("lessons departmentCode matches only the registered owning course department",async()=>{
+    const result=await pool!.query<{code:string}>("SELECT name AS code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const code=result.rows[0]!.code;
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,departmentCode:code}),
+      listCollegeLessons(own,{q:name,departmentCode:"NO-EXISTENT-DEPT"}),
+      listCollegeLessons(otherCollege,{q:name,departmentCode:code}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("course progress programStatus is derived from same-college parent state",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,programStatus:"ACTIVE"}),
+      listCollegeCourseProgress(own,{q:name,programStatus:"ARCHIVED"}),
+      listCollegeCourseProgress(otherCollege,{q:name,programStatus:"ACTIVE"}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("course progress cohortStatus is derived from same-college parent state",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,cohortStatus:"PLANNED"}),
+      listCollegeCourseProgress(own,{q:name,cohortStatus:"COMPLETED"}),
+      listCollegeCourseProgress(otherCollege,{q:name,cohortStatus:"PLANNED"}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("progress periodStatus filters persisted college-owned offering parents",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,periodStatus:"PLANNED"}),
+      listCollegeCourseProgress(own,{q:name,periodStatus:"CLOSED"}),
+      listCollegeCourseProgress(otherCollege,{q:name,periodStatus:"PLANNED"}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("progress courseStatus filters persisted college-owned offering parents",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,courseStatus:"ACTIVE"}),
+      listCollegeCourseProgress(own,{q:name,courseStatus:"ARCHIVED"}),
+      listCollegeCourseProgress(otherCollege,{q:name,courseStatus:"ACTIVE"}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("progress departmentCode only matches owning college course department",async()=>{
+    const data=await pool!.query<{code:string}>("SELECT name AS code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const code=data.rows[0]!.code;
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,departmentCode:code}),
+      listCollegeCourseProgress(own,{q:name,departmentCode:"NONEXISTENT-DEPT"}),
+      listCollegeCourseProgress(otherCollege,{q:name,departmentCode:code}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

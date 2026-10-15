@@ -5,6 +5,7 @@ import {
 } from "@/components/courses/learner-course-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
+import { selectLearnerOverdueAssignment } from "@/modules/courses/learner-course-overdue-link-model";
 import { learnerCourseListSignals } from "@/modules/courses/learner-course-overview-model";
 import {
   getLearnerCourseWorkspace,
@@ -39,6 +40,7 @@ export default async function LearnerCoursesPage() {
         thumbnailUrl: display?.thumbnailUrl ?? null,
         lastActivity:signals.lastActivity,
         overdueAssignments: signals.overdueAssignments,
+        firstOverdue: selectLearnerOverdueAssignment(workspace.lessons,workspace.snapshotNowMs),
         nextDue:signals.nextDue,
         course: {
           deliveryId: course.deliveryId,

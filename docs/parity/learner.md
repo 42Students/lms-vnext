@@ -1376,3 +1376,43 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 Learning Path compact-item dialog (2026-10-15; L3-037 PARTIAL):** published content, assignment and quiz rows now show compact summaries opening native, keyboard-dismissable, focus-contained dialogs. The existing authorized actions/players mount only while opened; exact lesson/item deep links auto-open the corresponding dialog. The family remains PARTIAL until side-by-side legacy-modal, mobile/keyboard and actual interaction-regression verification.
 
 **Chat-7 standalone quiz deadline display (2026-10-15):** quiz-attempt deadline labels use the persisted instant in Asia/Kolkata (including midnight crossing) and distinguish missing from malformed deadline data. Server submission fencing remains unchanged. Unit tests authored; mobile/browser/clock-edge acceptance still pending.
+
+**Chat-7 round 2 / Course Home overdue next action (PARTIAL):** unsubmitted published assignments with past due dates are now offered as the first actionable Course Home step with an explicit late-submission notice and exact lesson/item link. Future-only update feed remains chronological. Model tests authored; saved data, legacy visual and browser parity still required.
+
+**Chat-7 round 2 / Learning Path deep links (PARTIAL; L3-006/037):** an exact learner-authorized lesson/item focus now selects its own resource/lecture/assessment/live filter even if the copied URL carried an incompatible filter. Missing/forged item IDs never reveal other lessons. Pure regressions authored; browser Back/Forward and modal verification remain.
+
+**Chat-7 round 2 / Quiz deadline fail-closed policy:** both initial quiz load and live attempt availability now reuse the same deadline guard as final confirmed submission. Malformed deadlines cannot expose an actionable attempt, and exact equality remains allowed. Unit regressions authored; PostgreSQL and real-clock browser verification pending.
+
+**Chat-7 round 2 / Quiz deadline clock:** the attempt now refreshes once per second in the last 60 seconds, every five seconds within ten minutes and every thirty seconds otherwise. The server remains final authority; client controls now catch deadlines without the previous 30-second lag. Unit tests authored, browser timing proof pending.
+
+**Chat-7 round 2 / Aggregate assessment quick states (PARTIAL; L6/L7):** All Assignments/All Quizzes expose count-backed, keyboard-accessible one-tap Needs action, Due soon, Overdue/missed and Published results filters. Counts share the existing persisted-state policy and don't expose unpublished scores. Models and unit cases authored; browser/PG parity remains open.
+
+**Chat-7 round 2 / Course card overdue navigation (PARTIAL):** active Course cards now deep-link to the earliest real overdue unsubmitted assignment under the exact learner-authorized lesson; destination UUIDs are validated by the existing guarded link model. Submitted and historical work cannot present an action. Unit model cases authored; runtime/browser acceptance pending.
+
+**Chat-7 round 2 / Empty published Learning Paths (PARTIAL):** the learner workspace now distinguishes published paths without lessons, published lesson shells without available items and unpublished paths, without inventing progress. Pure tests authored; mobile/browser parity remains pending.
+
+**Chat-7 round 2 / Attendance month recovery (PARTIAL; L10):** while browsing another month, Learner Attendance now provides a one-tap This month action that preserves the currently authorized Course and history preferences, using the server-supplied IST month rather than browser-local guesses. Model tests authored; URL/Back-Forward and browser acceptance pending.
+
+**Chat-7 round 2 / Quiz question-index accessibility (PARTIAL; L8):** question navigation now exposes exact active-step semantics and answered/unanswered accessible labels, with 44px touch targets on mobile. Status reflects only the local selections, not correctness. Pure tests authored; keyboard/screen-reader/browser acceptance still pending.
+
+**Chat-7 round 2 / Quiz empty-question resilience (PARTIAL; L8):** an authorized quiz with no available questions now shows an explicit non-attemptable explanation and route back to All Quizzes rather than misreporting an unattempted closing status. Real question submission and result visibility rules remain unchanged. Pure test authored; browser/DB verification pending.
+
+**Chat-7 follow-up / Learner external resource links (L3 PARTIAL):** published course resource and live-session links now allow only absolute HTTP(S) URLs without embedded credentials or oversized input; invalid legacy values show a warning rather than becoming executable links. No new reads, writes, or authorization bypass. Pure tests authored; browser and producer acceptance outstanding.
+
+**Chat-7 follow-up / Course Home actionable heading (L2-011 PARTIAL):** persisted overdue assignment actions are labeled `Overdue assignment` rather than `Due soon`, and historical Course Home announces past-semester read-only status. Pure unit assertions authored; browser verification outstanding.
+
+**Chat-7 follow-up / historical and missed Course Home states (L2-011 PARTIAL):** prior-semester Course Home never proposes actionable next-item links; when closed quizzes were missed, the summary does not claim all work completed. Unit regressions authored; browser/role acceptance pending.
+
+**Chat-7 follow-up / Course-card timestamp resilience (L1 PARTIAL):** malformed persisted activity or due timestamps no longer throw during Learner Course-card render; legitimate dates are shown in IST. Model regression authored; browser and integration evidence open.
+
+**Chat-7 follow-up / Course-card progress bounds (L1-012 PARTIAL verification):** Learner Course progress labels and aria-valuenow now use one guarded measured-percent projection; empty paths remain unmeasured, corrupt/non-finite values never render into progressbar ARIA or CSS. Pure tests authored; executed/browser evidence pending.
+
+**Chat-7 follow-up / Course Attendance IST month and timestamps (L4-015/018 PARTIAL):** server-provided default month and recorded session grouping now use Asia/Kolkata, including sessions crossing midnight UTC; mobile and desktop attendance date/time labels follow the same zone. No status mutation, external storage or new query. Pure timezone-boundary tests authored; responsive/browser verification pending.
+
+**Chat-7 follow-up / Course Attendance exact status and threshold (L4 PARTIAL):** `Absent` now counts only sessions explicitly marked ABSENT, with Late/Medical/Excused disclosed separately. Threshold badges use exact present-to-marked counts rather than rounded percentages, while unmarked/future sessions remain excluded. No attendance writes; pure tests authored, DB/browser acceptance open.
+
+**Chat-7 follow-up / Aggregate Assignments and Quizzes date resilience (L6/L7 PARTIAL):** malformed persisted creation/deadline strings display `Date unavailable` rather than an untrusted raw value or crashing the list, while null deadlines remain `No deadline`. Same date renderer covers assignment detail drawer and quiz list. Unit tests authored; responsive browser proof outstanding.
+
+**Chat-7 follow-up / Course Attendance current-month navigation (L4 PARTIAL):** learners can return to the server-derived IST current month from historical attendance without losing the own Course delivery or mutating attendance. Unit regression authored; mobile/browser acceptance open.
+
+**Chat-7 follow-up / latest quiz-attempt review (L8 PARTIAL):** the standalone quiz review selects the largest persisted attempt number, not whatever array element happens to be last, preventing stale reordering from showing earlier results. Pure regression authored; PG/browser acceptance pending.
