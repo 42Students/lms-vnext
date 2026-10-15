@@ -72,7 +72,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </nav>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
-   selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose}
+   selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} disableLocalSearch
    initialTab={activeTab} initialKind={initialKind}
    onTabChange={tab=>navigate({tab,page:"1"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}

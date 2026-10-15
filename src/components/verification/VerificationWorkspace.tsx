@@ -10,10 +10,11 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
+ disableLocalSearch?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
@@ -36,10 +37,10 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
     </button>)}
   </nav>
   <div className="flex flex-wrap gap-2">
-   <label className="min-w-0 flex-1 text-sm">Search learners
+   {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
     <input aria-label="Search learners" className="mt-1 block w-full min-w-0 rounded-md border bg-background px-3 py-2"
      value={query} onChange={e=>setQuery(e.target.value)} placeholder="Learner, batch or branch"/>
-   </label>
+   </label>}
    <label className="text-sm">Kind
     <select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
      className="mt-1 block w-full rounded-md border bg-background px-3 py-2">
