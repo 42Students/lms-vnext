@@ -20,3 +20,10 @@ export function mentorSprintTaskFacts(tasks:readonly {status:string}[]) {
   return {total,done,blocked,inReview,
     completionPercent:total===0?null:Math.round(100*done/total)};
 }
+
+export function mentorSprintEmptyWorkNotice(status:string, tasks:readonly unknown[]) {
+  if(tasks.length!==0)return null;
+  return status==="COMPLETED"
+    ? "This completed Sprint has no recorded tasks; no execution percentage is inferred."
+    : "No tasks have been recorded for this Sprint.";
+}
