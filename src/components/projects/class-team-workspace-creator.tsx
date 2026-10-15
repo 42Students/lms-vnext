@@ -11,6 +11,7 @@ import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
 import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
 import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
+import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
 type ClassChoice = { id:string;name:string;code:string };
@@ -114,7 +115,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
         <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
       </label>
       <label className="block space-y-1 text-sm font-medium">Base slug
-        <Input value={slug} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" />
+        <Input value={slug} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
+        {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
       <label className="block space-y-1 text-sm font-medium">Add students as
         <Select value={mode} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS")}>
@@ -179,7 +181,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     {notice?<p role="status" className="text-sm">{notice}</p>:null}
     <div className="flex flex-wrap justify-end gap-3">
       <Button variant="secondary" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
-      <Button disabled={pending||!balanced||!title.trim()||!slug.trim()||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
+      <Button disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
         {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":"Create whole-class workspace"}
       </Button>
     </div>
