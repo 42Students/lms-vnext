@@ -6,7 +6,12 @@ import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-servic
 import { TpoBellPanel } from "@/components/tpo/tpo-bell-panel";
 export default async function TpoLayout({children}:Readonly<{children:React.ReactNode}>){
  const context=await getCurrentRequestContext();
- if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if (
+  !hasMembershipRole(
+      context,
+      "TPO",
+  )
+ )redirect("/dashboard");
  const inbox=await getTpoPersonalInbox(context,{view:"all"});
  const items=inbox.page.items.slice(0,10).map(({notification})=>({
   id:notification.id,title:notification.title,body:notification.body,
