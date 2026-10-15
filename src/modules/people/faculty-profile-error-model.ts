@@ -9,6 +9,7 @@ export function facultyProfileSaveFailure(code:string|undefined,status:number):s
  if(status===403)return "Your permission to edit this profile is unavailable. No changes were saved.";
  if(status===401)return "Your sign-in has expired. Sign in again before editing your profile.";
  if(status===429)return "Profile requests are being limited. Avoid repeated saves and try again later.";
+ if([502,503,504].includes(status))return "Profile service is temporarily unavailable. Your unsaved draft remains in this form; verify the latest profile before trying again.";
  return "The profile change was not saved. Review the fields and try again.";
 }
 
