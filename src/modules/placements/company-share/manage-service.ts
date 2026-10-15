@@ -4,7 +4,9 @@ import { projectCompanyShareAudit } from "./audit-history-model";
 import {tpoCompanyAuditKindSchema} from "./audit-kind-model";
 import {companyShareAuditPageSchema,COMPANY_SHARE_AUDIT_PAGE_SIZE,COMPANY_SHARE_AUDIT_EXPORT_LIMIT,clampCompanyShareAuditPage} from "./audit-page-model";
 import { getDb } from "@/db/client";
-import {placementJobs} from "@/db/schema";
+import {placementJobs,activityEvents} from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {companyShareLifecycleActivity} from "./activity-model";
 import {requirePersistedTpoMembership} from "../tpo-persisted-actor-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoReadCollege } from "../tpo-surface-access";
@@ -46,6 +48,9 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
   if (!context.membership) throw new CompanyShareError("NOT_FOUND");
   const actorMembershipId=context.membership.id;
   return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
     // A job-row lock serializes simultaneous officers issuing for one drive.
     const [job]=await tx.select({id:placementJobs.id})
       .from(placementJobs)
@@ -69,6 +74,11 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
       tokenHash:digest,expiresAt,
     }).returning({id:shares.id});
     if(!row)throw new CompanyShareError("NOT_SHAREABLE");
+    await tx.insert(activityEvents).values(companyShareLifecycleActivity("ISSUED",{
+      organizationId:college.organizationId,collegeId:college.id,
+      actorUserId:context.user.id,actorMembershipId,
+      jobId:job.id,shareId:row.id,
+    }));
     return {shareId:row.id,token,expiresAt:expiresAt.toISOString()};
   });
 }
