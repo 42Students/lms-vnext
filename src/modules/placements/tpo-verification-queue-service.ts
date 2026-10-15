@@ -5,6 +5,8 @@ import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, users } from "@/db/schema";
 import { profileVerifications, profileVerificationSettings, profileVerificationTpoGrants } from "@/db/schema/profile-verification";
 import type { RequestContext } from "@/modules/identity/context";
+import { requirePermission } from "@/modules/permissions/policy";
+import { loadPlacementCollegeScope } from "./scope";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
 import type { VerificationQueueCard } from "@/components/verification/VerificationWorkspace";
@@ -26,6 +28,11 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
   .where(and(eq(profileVerificationTpoGrants.membershipId,ctx.membership!.id),
    isNull(profileVerificationTpoGrants.revokedAt))).limit(1);
  if(!grant)return {available:true,enabled:true,permitted:false,rows:[]};
+ const college=await loadPlacementCollegeScope(collegeId);
+ requirePermission(ctx,"profile-verification.review",{
+  collegeId,organizationId:college.organizationId,
+  tpoVerificationAdministrator:true,tpoVerificationEnabled:true,
+ });
  const records=await getDb().select({
   id:profileVerifications.learnerMembershipId,status:profileVerifications.status,
   section:profileVerifications.section,submittedAt:profileVerifications.submittedAt,
