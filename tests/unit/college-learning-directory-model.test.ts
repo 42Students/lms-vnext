@@ -352,4 +352,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessonsCsvHref(q)).toContain("minContentCount=2");
   });
 
+  it("allows zero authored items while bounding the upper authoring-count filter",()=>{
+    for(const n of ["-1","1001","1.5"])expect(collegeLessonQuerySchema.safeParse({maxContentCount:n}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({maxContentCount:0});
+    expect(collegeLearningHref("LESSONS",q)).toContain("maxContentCount=0");
+    expect(lessonsCsvHref(q)).toContain("maxContentCount=0");
+  });
+
 });

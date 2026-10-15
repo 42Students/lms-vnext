@@ -552,6 +552,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Maximum authored content bound PARTIAL (chat-3, 2026-10-15):** College Admin can find empty/underpopulated lesson rows using a bounded ceiling, including zero, applied in SQL before count/pagination and matching CSV export. Authored tests await real PG and browser execution; counts are authored metadata only.
+
 **Minimum content-authoring count PARTIAL (chat-3, 2026-10-15):** A bounded, nonzero lower limit on persisted lesson_contents rows filters full college-scoped lesson/CSV sets before paging; all statuses count as authored metadata, not learner availability. Fixtures authored, PostgreSQL/browser runtime proof open.
 
 **Exact learning-path lesson drill-in PARTIAL (chat-3, 2026-10-15):** Registered path UUID resolves its lessons through signed-in-college course, cohort/program and period ownership; paged web and CSV match, while unknown/foreign paths do not leak. Tests authored, runtime/browser acceptance pending.
