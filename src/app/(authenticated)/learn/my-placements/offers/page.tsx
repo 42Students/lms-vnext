@@ -89,6 +89,7 @@ export default async function LearnerOffersPage({
             companyName: row.company.name,
             jobTitle: row.job.title,
             roleTitle: row.offer.roleTitle,
+            kind: row.offer.kind === "LOI" ? "LOI" as const : "OFFER" as const,
             status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN",
             annualCtcInr: row.offer.annualCtcInr,
             joiningDate: row.offer.joiningDate,

@@ -466,6 +466,8 @@ Legacy:
 - [ ] result progression into next stages matches.
 
 ### Tab: Offers
+**W70 PARTIAL — LOI kind:** Persisted LOI record kind (migration 0060 `placement_offers.kind` OFFER|LOI): the TPO Offers panel issues an Offer or a Letter of intent through the same audited, serializable issue path (version history, learner notification titled Letter of intent received, audit metadata kind), the learner offers page and the HR Offers tab label LOI records, and re-issue is idempotent only for the same kind. No LOI document/file is generated or stored; no selection list is sent externally. A dedicated selection-list send, LOI document upload via src/modules/storage and browser acceptance remain open.
+
 - [ ] offer/selection list matches.
 - [ ] candidate offer state matches.
 
@@ -504,6 +506,8 @@ Legacy includes:
 
 - [ ] Extend Deadline modal validation matches.
 **W66-3 PARTIAL — Close consequence preview:** A TPO-only drive close-preview page shows persisted applications, rounds, and offer versions. A confirmed same-origin POST checks signed-in college/actor, active season, PUBLISHED state, millisecond-safe job token and unchanged preview counts under a job lock, then closes and writes immutable audit. This is CLOSE only: the job enum has no CANCELLED state. Remaining: legacy CANCEL semantics, cross-writer serialization, consequence notifications, browser checks and executed PostgreSQL evidence.
+
+**W69 PARTIAL — TPO applicant notes:** TPO-only private append-only notes on the applicant detail page (`/tpo/placements/jobs/[jobId]/applicants/[applicationId]`), persisted in `placement_application_notes` (migration 0059), stale-token protected and audited without text; recruiter notes are never shown there. Browser acceptance remains open.
 
 **W66-4 PARTIAL — Cancel drive with consequence preview:** `/tpo/placements/jobs/[jobId]/cancel-preview` (TPO, published drive, active season) shows submitted applications, open rounds that will be cancelled, issued and accepted offers. A confirmed same-origin POST with a 10-character audited reason, job-lock millisecond token and unchanged-impact check closes the drive, cancels PENDING/SCHEDULED rounds with CANCELLED round events and writes an immutable PLACEMENTS_TPO_DRIVE_CANCELLED audit. Accepted offers block cancellation. There is no CANCELLED job state in the schema, so the drive reads as CLOSED and the cancellation is identifiable only in the audit. Issued offers and applications are retained. PG tests executed on a disposable DB; browser acceptance, learner notification and offer withdrawal remain open.
 
