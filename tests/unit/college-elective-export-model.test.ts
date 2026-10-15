@@ -63,4 +63,9 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("programCode=A%2626");
    expect(electiveCsvSchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
  });
+ it("keeps elective owning department code in scoped CSV",()=>{
+   const q=electiveCsvSchema.parse({departmentCode:"A&26"});
+   expect(electiveCsvHref(q)).toContain("departmentCode=A%2626");
+   expect(electiveCsvSchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+ });
 });
