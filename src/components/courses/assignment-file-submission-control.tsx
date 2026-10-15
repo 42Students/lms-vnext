@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
   acceptAttributeFor, fileStatusDescriptor, formatFileSize, limitsSummary,
   MAX_ASSIGNMENT_FILES_PER_SUBMISSION, storageErrorMessage,
@@ -167,7 +168,7 @@ export function AssignmentFileSubmissionControl({
         const state = fileStatusDescriptor(file.status);
         return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-3">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
-          <span title={state.detail} className="text-xs font-semibold text-muted-foreground">{state.label}</span>
+          <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
           {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
           {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => remove(file.id)}>Remove</Button> : null}
         </li>;
