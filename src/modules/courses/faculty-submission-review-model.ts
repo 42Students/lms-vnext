@@ -28,3 +28,10 @@ export function facultySubmissionReviewResponse(data: {
     learnerDisplayName:row.learnerDisplayName,learnerEmail:row.learnerEmail,
   }))});
 }
+
+/** A corrupted cross-Section review response must not enter the Faculty UI. */
+export function facultySubmissionReviewMatchesScope(
+ payload:FacultySubmissionReviewResponse, assignmentId:string,deliveryId:string,
+):boolean {
+ return payload.items.every(row=>row.assignmentId===assignmentId&&row.deliveryId===deliveryId);
+}
