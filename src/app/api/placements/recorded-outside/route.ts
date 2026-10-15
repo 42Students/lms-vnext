@@ -25,8 +25,6 @@ export async function POST(request:Request){
  }catch(error){
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_RECORD"},{status:400});
   if(error instanceof PlacementsServiceError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
-  if(error instanceof Error&&error.message==="RECORDED_OUTSIDE_NOT_REGISTERED")
-   return NextResponse.json({error:"EXTERNAL_RECORD_STORAGE_PENDING"},{status:503});
   throw error;
  }
 }
