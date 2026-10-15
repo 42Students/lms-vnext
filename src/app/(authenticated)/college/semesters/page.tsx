@@ -10,7 +10,7 @@ import {
   collegeSemesterDirectorySchema,
 } from "@/modules/academics/college-academic-directory-model";
 import { listCollegeSemesters } from "@/modules/academics/college-academic-directory-service";
-import { academicExportHref } from "@/modules/academics/college-academic-export-model";
+import { academicExportHref , ACADEMIC_EXPORT_CAP } from "@/modules/academics/college-academic-export-model";
 
 export default async function CollegeSemestersPage({
   searchParams,
@@ -30,10 +30,13 @@ export default async function CollegeSemestersPage({
     </div>;
   }
   return <div className="space-y-4">
+    <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered semesters CSV
     </Link>
+    <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching semesters; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
+    </div>
     <CollegeAcademicDirectory data={await listCollegeSemesters(context, parsed.data)} />
   </div>;
 }
