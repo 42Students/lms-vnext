@@ -3,6 +3,7 @@
 import { learnerCourseAttendanceMonthShortcutVisible } from "@/modules/attendance/learner-course-attendance-month-shortcut-model";
 import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { useMemo, useState } from "react";
+import { learnerCourseAttendanceTone } from "@/modules/attendance/learner-course-attendance-tone-model";
 import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached } from "@/modules/attendance/learner-course-attendance-summary-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -53,22 +54,6 @@ function timeLabel(value: Date) {
     minute: "2-digit",
     timeZone: "Asia/Kolkata",
   }).format(value);
-}
-
-function tone(status: string) {
-  if (status === "PRESENT") {
-    return "success" as const;
-  }
-  if (
-    status === "NOT_MARKED" ||
-    status === "LATE"
-  ) {
-    return "warning" as const;
-  }
-  if (status === "SCHEDULED") {
-    return "neutral" as const;
-  }
-  return "error" as const;
 }
 
 function label(status: string) {
@@ -479,7 +464,7 @@ export function LearnerCourseAttendance({
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge
-                        tone={tone(
+                        tone={learnerCourseAttendanceTone(
                           row.status,
                         )}
                       >
@@ -514,7 +499,7 @@ export function LearnerCourseAttendance({
                     </p>
                   </div>
                   <StatusBadge
-                    tone={tone(
+                    tone={learnerCourseAttendanceTone(
                       row.status,
                     )}
                   >
