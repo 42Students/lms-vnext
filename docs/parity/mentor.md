@@ -1643,3 +1643,7 @@ No `as never` casts or protected schema changes were introduced. Tests authored 
 ### PR-S2-04 0090 validation and registered field models
 
 Task create/edit validation accepts registered taskType, estimatePoints, blockerReason and dueDate; detail change detection extends to all four. Next task transaction and comment paths must enforce these validated columns. Migration 0090 is registered; no staged migrations should be reapplied.
+
+### PR-S2-04 0090 registered task comments runtime
+
+The new task-comment service and GET/POST route use registered `project_task_comments`, enforce exact project+task row scope and membership, deny read-only observers from posting, and serialize optimistic task writes in a PostgreSQL transaction. Read and write services are separate. Tests include source contracts; disposable PostgreSQL acceptance is pending.
