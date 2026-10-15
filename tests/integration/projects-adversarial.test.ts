@@ -53,7 +53,7 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import {approveProjectTaskThroughReview} from "./support/projects-review-fixture";
+import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -967,6 +967,12 @@ describe("Projects adversarial isolation", () => {
       sprint.id,
     );
 
+    // A member of the team is not automatically assigned a task.
+    await expect(submitProjectTask(learner,project.id,task.id,{
+      submissionUrl:"https://example.com/unassigned-task",
+    })).rejects.toMatchObject({code:"PROJECT_TASK_SUBMISSION_ACCESS_DENIED"});
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
+
     const outcomes = await Promise.allSettled([
       submitProjectTask(
         learner,
@@ -1158,6 +1164,8 @@ describe("Projects adversarial isolation", () => {
       project.id,
       workspace.sprints[0]!.id,
     );
+
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:workspace.tasks[0]!.id});
 
     await pool.query(
       `update project_instances
