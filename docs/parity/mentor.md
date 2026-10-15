@@ -1203,3 +1203,8 @@ The project-scoped review timeline distinguishes persisted decisions older than 
 ## 2026-10-15 chat-11 — sprint-attention-postgres isolated DB regression (PARTIAL)
 
 Added an isolated registered PostgreSQL regression for TODO, DONE and no-task Sprint triage, honest zero-task completion, current active Mentor scope and learner/foreign-project denial. The fixture is authored but not executed; independent PostgreSQL/typecheck/CI remain open.
+
+
+## 2026-10-15 chat-11 — review-age-postgres isolated DB regression (PARTIAL)
+
+Added a persisted Project-state and deliberately backdated review fixture for assigned Mentor review history, with older-than-30 vs last-30 contrast and learner/foreign project denials. The disposable PostgreSQL test is source-authored only; runtime/legacy acceptance is pending.
