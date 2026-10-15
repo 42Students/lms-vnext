@@ -268,4 +268,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessonsCsvHref(q)).toContain("videoEvidence=NO_VIDEO");
   });
 
+  it("keeps resource existence filter in lesson and CSV links",()=>{
+    expect(collegeLessonQuerySchema.safeParse({resourceEvidence:"DOWNLOADED"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({resourceEvidence:"NO_RESOURCE"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("resourceEvidence=NO_RESOURCE");
+    expect(lessonsCsvHref(q)).toContain("resourceEvidence=NO_RESOURCE");
+  });
+
 });
