@@ -11,6 +11,7 @@ export function learnerCoursePathPreview(lessons:readonly LearnerPathPreviewInpu
       return {id:lesson.id,name:lesson.name,total,completed,
         progress:total>0?Math.round(100*completed/total):null};
     });
-  return {lessons:rows.slice(0,limit),totalLessons:rows.length,
-    remaining:Math.max(0,rows.length-limit)};
+  const safeLimit=Number.isFinite(limit)?Math.max(0,Math.trunc(limit)):5;
+  return {lessons:rows.slice(0,safeLimit),totalLessons:rows.length,
+    remaining:Math.max(0,rows.length-safeLimit)};
 }
