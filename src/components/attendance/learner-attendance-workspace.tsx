@@ -15,6 +15,7 @@ import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { learnerAttendanceRecoveryProjection } from "@/modules/attendance/learner-attendance-recovery-model";
 import { learnerAttendanceStatusTone } from "@/modules/attendance/learner-attendance-status-tone-model";
+import { learnerAttendanceExactAbsences } from "@/modules/attendance/learner-attendance-exact-absence-model";
 import { learnerAttendanceOrderSchema, sortLearnerAttendanceHistory, type LearnerAttendanceOrder } from "@/modules/attendance/learner-attendance-history-order-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -109,7 +110,7 @@ function summarize(
   const present = marked.filter(
     (row) => isPresent(row.status),
   ).length;
-  const absent = marked.length - present;
+  const absent = learnerAttendanceExactAbsences(marked);
 
   return {
     heldSessions: held.length,
@@ -379,7 +380,7 @@ export function LearnerAttendanceWorkspace({
         <Metric
           label="Absent"
           value={summary.absent}
-          detail="Absent, excused, medical or late records."
+          detail="Only explicitly absent records. Excused, medical and late sessions keep their distinct statuses."
         />
         <Metric
           label="Attendance"
