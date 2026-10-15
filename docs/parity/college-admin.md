@@ -496,6 +496,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Program-code filter PARTIAL (2026-10-15):** Video and Resource aggregates now filter by an exact registered, college-owned program code before pagination. Filter persists in CSV/download URL and rejects overlong codes. No cross-college program lookup or media URL exposed. Unit coverage authored; PG/browser acceptance open.
+
 **Registered student-visibility filter PARTIAL (2026-10-15):** Video and Resource aggregate now show and filter the actual `lesson_contents.visible_to_students` setting, using college-scoped query/pagination and matching capped metadata CSV. This flag is not proof the parent path/lesson is published or that a given student belongs to the delivery. UI/model tests authored, independent PostgreSQL/mobile/browser acceptance open.
 
 **Owning-offering lifecycle filter PARTIAL (2026-10-15):** VIDEO and YOUTUBE metadata catalogues now distinguish ACTiVE/ARCHIVED registered course offerings independently of content status; scoped list/CSV preserve the choice and disclose no storage credentials. PostgreSQL fixture authored, executed PG/browser acceptance outstanding.
