@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useRef,useState } from "react";
+import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { advanceFacultySectionRevision } from "@/modules/people/faculty-section-revision-model";
@@ -30,10 +31,11 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
  const [version,setVersion]=useState(initialVersion);
  const [sectionRevisions,setSectionRevisions]=useState<Partial<Record<FacultySelfSection,number>>>({});
  const [pending,setPending]=useState(false);
+ const saveInFlight=useRef(false);
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  async function save(section:FacultySelfSection,value:unknown){
-  if(pending)return;
+  if(!beginFacultyProfileSave(saveInFlight))return;
   setPending(true);setError(null);setSuccess(null);
   try{
    const response=await fetch("/api/people/faculty-self-document",{
@@ -56,7 +58,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    setSectionRevisions(current=>advanceFacultySectionRevision(current,section));
    setSuccess("Profile saved.");
   }catch{setError("Unable to connect. Your unsaved changes remain in this form.");}
-  finally{setPending(false);}
+  finally{saveInFlight.current=false;setPending(false);}
  }
  return <div className="space-y-5">
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
