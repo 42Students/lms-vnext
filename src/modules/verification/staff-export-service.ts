@@ -15,6 +15,7 @@ import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab} from "./queue-tabs";
 import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid,verificationSubmittedSqlBounds} from "./queue-waiting-since";
 import {submittedMarksheets} from "./queue-mark-sheets";
+import {verificationAttentionFlags} from "./attention-flags";
 import {verificationCsv} from "./queue-export";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
@@ -64,9 +65,16 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   return matchesVerificationAttention({status:row.status as VerificationStatus,section:row.section as VerificationSection,
    submittedAt:row.submittedAt,missingMarksheet:row.section==="EDUCATION"&&m.missing>0},filter.attention,evaluatedAt);
  });
- const output=verificationCsv(selected.map(row=>({
-  learnerName:row.learnerName?.trim()||"Learner",section:row.section,status:row.status,
-  submittedAt:fmt.format(row.submittedAt),reviewedAt:row.decidedAt?fmt.format(row.decidedAt):"",
- })));
+ const output=verificationCsv(selected.map(row=>{
+  const marks=submittedMarksheets(row.snapshot),section=row.section as VerificationSection;
+  const flags=verificationAttentionFlags({status:row.status as VerificationStatus,section,submittedAt:row.submittedAt,
+   missingMarksheet:section==="EDUCATION"&&marks.missing>0},evaluatedAt);
+  return {learnerName:row.learnerName?.trim()||"Learner",section,status:row.status,
+   submittedAt:fmt.format(row.submittedAt),reviewedAt:row.decidedAt?fmt.format(row.decidedAt):"",
+   educationEntryCount:section==="EDUCATION"?marks.count:undefined,
+   missingDocumentCount:section==="EDUCATION"?marks.missing:undefined,
+   attentionFlags:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase()).join("; "),
+  };
+ }));
  return {...output,total:selected.length};
 }
