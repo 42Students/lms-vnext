@@ -92,7 +92,7 @@ export default async function MentorProjectsPage({
         ? status
         : undefined,
     attention:
-      attention === "MENTOR_REVIEW" || attention === "MENTOR_REQUESTED" || attention === "MENTOR_STALLED"
+      attention === "MENTOR_REVIEW" || attention === "MENTOR_REQUESTED" || attention === "MENTOR_STALLED" || attention === "MENTOR_MEETING_SOON"
         ? attention
         : undefined,
     page: pageNumber(
