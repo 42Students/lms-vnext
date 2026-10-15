@@ -93,7 +93,7 @@ export default async function FacultyAssignmentReportPage({
           ["Submitted", `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
-          ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(assignment.dueAt) : "—"],
+          ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
@@ -168,7 +168,7 @@ export default async function FacultyAssignmentReportPage({
           name: facultyReportLearnerName(submission.learnerDisplayName),
           score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded",
           percent: scored ? Math.round((submission.pointsAwarded! / assignment.maxPoints) * 100) : null,
-          submittedAt: facultyReportIstTimestamp(submission.submittedAt),
+          submittedAt: submission.submittedAt.toISOString(),
           note: (assignment.dueAt && submission.submittedAt > assignment.dueAt ? "Late" : "On time") +
             (submission.gradePublished ? " · Published" : " · Private"),
         };

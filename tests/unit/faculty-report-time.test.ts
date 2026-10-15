@@ -11,3 +11,13 @@ describe("Faculty assessment report IST timestamps", () => {
     expect(facultyReportIstTimestamp("invalid")).toBe("Date unavailable");
   });
 });
+
+
+describe("Faculty report date transport", () => {
+  it("renders IST only at presentation, retaining a machine-readable ISO instant", () => {
+    const persisted = new Date("2026-10-14T18:30:00.000Z");
+    const browserTransport = persisted.toISOString();
+    expect(new Date(browserTransport).getTime()).toBe(persisted.getTime());
+    expect(facultyReportIstTimestamp(browserTransport)).toContain("15 Oct 2026");
+  });
+});
