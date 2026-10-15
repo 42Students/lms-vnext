@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -110,6 +110,9 @@ async function findRecruiterContext(
     .limit(1);
 
   if (!profile) return null;
+  // T-S1-01: refusing recruiter authorization until the registered expiry
+  // migration is verified is safer than honoring perpetual ACTIVE rows.
+  if (process.env.TPO_RECRUITER_GRANT_EXPIRY_READY !== "VERIFIED") return null;
 
   const grants = await db
     .select({
@@ -149,6 +152,11 @@ async function findRecruiterContext(
           placementRecruiterCollegeGrants.status,
           "ACTIVE",
         ),
+        // to_jsonb permits schema registration to lag deployed app code;
+        // missing or NULL validity/verification/capabilities fail closed.
+        sql`(to_jsonb(${placementRecruiterCollegeGrants})->>'valid_until')::timestamptz > clock_timestamp()`,
+        sql`(to_jsonb(${placementRecruiterCollegeGrants})->>'verification_status') = 'VERIFIED'`,
+        sql`(to_jsonb(${placementRecruiterCollegeGrants})->'capabilities') ? 'DRIVES'`,
         eq(
           placementCompanyRelationships.status,
           "ACTIVE",
@@ -162,6 +170,8 @@ async function findRecruiterContext(
       ),
     )
     .orderBy(asc(colleges.name));
+
+  if (grants.length === 0) return null;
 
   return {
     userId: profile.userId,
