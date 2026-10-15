@@ -1,5 +1,6 @@
 import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empty-state-model";
 import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
+import { learnerRoadmapDialogKey } from "@/modules/courses/learner-roadmap-dialog-key-model";
 import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
 import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
 import { learnerSafeExternalContentHref } from "@/modules/courses/learner-external-content-link-model";
@@ -876,7 +877,10 @@ export function LearnerCourseWorkspace({
                         );
                         return content ? (
                           <LearnerRoadmapItemDialog
-                            key={item.id}
+                            key={learnerRoadmapDialogKey(
+                              lesson.id,item.id,
+                              learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId),
+                            )}
                             title={content.title}
                             kind="Content"
                             progress={item.progress.status}
@@ -894,7 +898,10 @@ export function LearnerCourseWorkspace({
                         );
                         return assignment ? (
                           <LearnerRoadmapItemDialog
-                            key={item.id}
+                            key={learnerRoadmapDialogKey(
+                              lesson.id,item.id,
+                              learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId),
+                            )}
                             title={assignment.title}
                             kind="Assignment"
                             progress={item.progress.status}
@@ -911,7 +918,10 @@ export function LearnerCourseWorkspace({
                       );
                       return quiz ? (
                         <LearnerRoadmapItemDialog
-                          key={item.id}
+                          key={learnerRoadmapDialogKey(
+                            lesson.id,item.id,
+                            learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId),
+                          )}
                           title={quiz.title}
                           kind="Quiz"
                           progress={item.progress.status}
