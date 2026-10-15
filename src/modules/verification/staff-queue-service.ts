@@ -10,6 +10,7 @@ import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
 import {matchesWaitingSince} from "./queue-waiting-since";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
+import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
 import type {VerificationRecord,VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
 
@@ -33,10 +34,10 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
    eq(users.platformStatus,"ACTIVE"),inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
-   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"])))
+   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]),
+   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
- if(filter.sectionId||filter.batchId||filter.branchId)throw Error("VERIFICATION_FILTER_NOT_SUPPORTED");
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
