@@ -9,14 +9,14 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,loading=false,error=null,onRetry,onReview}:{
- rows:readonly VerificationQueueCard[];loading?:boolean;error?:string|null;
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview}:{
+ rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
 }){
- const [tab,setTab]=useState<VerificationTab>("WAITING");
- const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">("ALL");
+ const [tab,setTab]=useState<VerificationTab>(initialTab);
+ const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
  const [query,setQuery]=useState("");
- const counts=useMemo(()=>verificationTabCounts(rows),[rows]);
+ const counts=useMemo(()=>authoritativeCounts??verificationTabCounts(rows),[authoritativeCounts,rows]);
  const visible=useMemo(()=>orderVerificationQueue(rows.filter(row=>
   verificationTab(row)===tab&&(kind==="ALL"||row.section===kind)&&
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
@@ -28,7 +28,7 @@ export function VerificationWorkspace({rows,loading=false,error=null,onRetry,onR
   </header>
   <nav aria-label="Verification status" className="flex flex-wrap gap-2">
    {(["WAITING","SENT_BACK","VERIFIED"] as const).map(t=>
-    <button type="button" key={t} aria-pressed={tab===t} onClick={()=>setTab(t)}
+    <button type="button" key={t} aria-pressed={tab===t} onClick={()=>onTabChange?onTabChange(t):setTab(t)}
      className={`rounded-md border px-3 py-2 text-sm ${tab===t?"font-semibold ring-2 ring-offset-1":""}`}>
      {t==="SENT_BACK"?"Sent back":t==="WAITING"?"Waiting":"Verified"} ({counts[t]})
     </button>)}
@@ -39,7 +39,7 @@ export function VerificationWorkspace({rows,loading=false,error=null,onRetry,onR
      value={query} onChange={e=>setQuery(e.target.value)} placeholder="Learner, batch or branch"/>
    </label>
    <label className="text-sm">Kind
-    <select aria-label="Kind" value={kind} onChange={e=>setKind(e.target.value as typeof kind)}
+    <select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
      className="mt-1 block w-full rounded-md border bg-background px-3 py-2">
      <option value="ALL">All</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
     </select>
@@ -48,7 +48,7 @@ export function VerificationWorkspace({rows,loading=false,error=null,onRetry,onR
   {loading?<p role="status">Loading verification requests…</p>:
    error?<div role="alert" className="space-y-2"><p>Unable to load verification requests: {error}</p>
     {onRetry&&<button type="button" className="rounded-md border px-3 py-2" onClick={onRetry}>Retry</button>}</div>:
-   visible.length===0?<p role="status" className="rounded-md border p-4">No matching verification requests.</p>:
+   visible.length===0?<p role="status" className="rounded-md border p-4">No matching verification requests on this page.</p>:
    <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-lg border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>

@@ -48,3 +48,10 @@ describe("Faculty Quiz close command validation",()=>{
   expect(facultyQuizCommandSchema.safeParse({...close,collegeId:close.quizId}).success).toBe(false);
  });
 });
+
+
+describe("Faculty draft title boundary", () => {
+  it("blocks oversized names before quiz draft confirmation", () => {
+    expect(facultyQuizDraftIssue("x".repeat(256), [])).toMatch(/255/);
+  });
+});

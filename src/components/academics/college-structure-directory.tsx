@@ -80,9 +80,36 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           ) : null}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
+              Maximum slot credits
+              <input name="maximumCredits" type="number" min={1} max={500} step={1}
+                defaultValue={data.query.maximumCredits ?? ""} placeholder="No upper bound"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
               Semester number
               <input name="semesterNumber" type="number" min={1} max={24} step={1}
                 defaultValue={data.query.semesterNumber ?? ""} placeholder="All semesters"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
+              Capacity configuration
+              <select name="capacityState" defaultValue={data.query.capacityState}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">Any configuration</option>
+                <option value="CONFIGURED">Configured seats</option>
+                <option value="UNSET">Not configured</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
+              Batch code
+              <input name="cohortCode" type="text" maxLength={64}
+                defaultValue={data.query.cohortCode ?? ""} placeholder="Exact batch code"
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}

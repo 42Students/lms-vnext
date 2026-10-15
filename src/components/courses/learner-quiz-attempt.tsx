@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
+import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { learnerQuizReviewRows } from "@/modules/courses/learner-quiz-review-model";
 import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
 import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
@@ -382,6 +383,9 @@ export function LearnerQuizAttempt() {
             </p>
             <h1 className="mt-1 text-xl font-semibold text-foreground">{quiz.quiz.title}</h1>
             <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
+            {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
+              <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
+            ) : null}
           </div>
           <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">Back</button>
         </div>

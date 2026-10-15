@@ -21,10 +21,27 @@ export function learnerAssignmentFileRequest(deliveryId: string, file: { name: s
 
 export const learnerAssignmentUploadGrantSchema = z.object({ grant: z.object({
   receiptId: z.string().uuid(), method: z.literal("PUT"),
-  uploadUrl: z.string().url().refine(value => new URL(value).protocol === "https:", "A secure upload URL is required"),
+  uploadUrl: z.string().url().refine(value => { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password && !url.hash; }, "A secure upload URL is required"),
   expiresAt: z.iso.datetime({ offset: true }),
   requiredHeaders: z.record(z.string(), z.string()), originalName: z.string().min(1).max(255),
 }).strict() }).strict();
+
+/** Reject response-header injection and credentials-like headers before the cross-origin signed PUT. */
+export function learnerAssignmentUploadHeadersSafe(headers: Record<string, string>): boolean {
+  return Object.entries(headers).every(([name, value]) =>
+    (name === "content-type" || name.startsWith("x-amz-meta-")) &&
+    /^[a-z0-9-]+$/.test(name) && value.length > 0 && value.length <= 1024 &&
+    !/[\r\n]/.test(value)
+  );
+}
+
+export function validateLearnerAssignmentUploadGrant(input: unknown, nowMs: number) {
+  const { grant } = learnerAssignmentUploadGrantSchema.parse(input);
+  if (!learnerAssignmentUploadHeadersSafe(grant.requiredHeaders)) throw new Error("Invalid signed upload headers.");
+  const lifetimeMs = Date.parse(grant.expiresAt) - nowMs;
+  if (lifetimeMs <= 0 || lifetimeMs > 15 * 60 * 1000) throw new Error("Upload permission expired or invalid.");
+  return grant;
+}
 
 export function learnerAssignmentFilePayload(deliveryId: string, receiptId: string, confirmed: boolean) {
   return z.object({ deliveryId: z.string().uuid(), uploadReceiptId: z.string().uuid(),

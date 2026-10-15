@@ -14,6 +14,8 @@ import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, L
 import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner-attendance-history-link-model";
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { learnerAttendanceRecoveryProjection } from "@/modules/attendance/learner-attendance-recovery-model";
+import { learnerAttendanceStatusTone } from "@/modules/attendance/learner-attendance-status-tone-model";
+import { learnerAttendanceExactAbsences } from "@/modules/attendance/learner-attendance-exact-absence-model";
 import { learnerAttendanceOrderSchema, sortLearnerAttendanceHistory, type LearnerAttendanceOrder } from "@/modules/attendance/learner-attendance-history-order-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -108,7 +110,7 @@ function summarize(
   const present = marked.filter(
     (row) => isPresent(row.status),
   ).length;
-  const absent = marked.length - present;
+  const absent = learnerAttendanceExactAbsences(marked);
 
   return {
     heldSessions: held.length,
@@ -142,21 +144,6 @@ function timeLabel(value: string) {
     hour: "numeric",
     minute: "2-digit",
   }).format(new Date(value));
-}
-
-function statusTone(
-  status: RecordRow["status"],
-) {
-  if (status === "PRESENT") {
-    return "success" as const;
-  }
-  if (status === "NOT_MARKED") {
-    return "warning" as const;
-  }
-  if (status === "SCHEDULED") {
-    return "neutral" as const;
-  }
-  return "error" as const;
 }
 
 function statusLabel(
@@ -393,7 +380,7 @@ export function LearnerAttendanceWorkspace({
         <Metric
           label="Absent"
           value={summary.absent}
-          detail="Absent, excused, medical or late records."
+          detail="Only explicitly absent records. Excused, medical and late sessions keep their distinct statuses."
         />
         <Metric
           label="Attendance"
@@ -597,7 +584,7 @@ export function LearnerAttendanceWorkspace({
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge
-                        tone={statusTone(
+                        tone={learnerAttendanceStatusTone(
                           row.status,
                         )}
                       >
@@ -634,7 +621,7 @@ export function LearnerAttendanceWorkspace({
                     </p>
                   </div>
                   <StatusBadge
-                    tone={statusTone(
+                    tone={learnerAttendanceStatusTone(
                       row.status,
                     )}
                   >

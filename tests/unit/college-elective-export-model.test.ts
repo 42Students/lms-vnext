@@ -6,6 +6,10 @@ describe("college electives CSV",()=>{
   expect(electiveCsvSchema.safeParse({collegeId:"foreign"}).success).toBe(false);
   expect(electiveCsvSchema.safeParse({page:6}).success).toBe(false);
   expect(electiveCsvSchema.safeParse({semesterNumber:25}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({maximumCredits:0}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({minimumCredits:9,maximumCredits:8}).success).toBe(false);
+  expect(electiveCsvSchema.parse({maximumCredits:8}).maximumCredits).toBe(8);
+  expect(electiveCsvHref({q:"",status:"ACTIVE",maximumCredits:8})).toContain("maximumCredits=8");
   expect(exportParams(new URLSearchParams("q=a&q=b"))).toBeNull();
   expect(electiveCsvHref({q:"",status:"ACTIVE",semesterNumber:3})).toContain("semesterNumber=3");
  });

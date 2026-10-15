@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, gte, ilike, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, gt, gte, ilike, isNull, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -97,6 +97,8 @@ export const listLectureHallsSchema = z.object({
   roomType: z.enum(ROOM_TYPES).optional(),
   departmentId: z.string().uuid().optional(),
   minimumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
+  maximumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
+  upcoming: z.enum(["YES","NO"]).optional(),
   limit: z.coerce.number().int().min(1).max(200).default(100),
   offset: z.coerce.number().int().min(0).default(0),
 });
@@ -170,6 +172,7 @@ export async function listLectureHalls(
   const college = await loadCollege(query.collegeId);
   authorize(context, college);
 
+  const scheduledFuture = sql<boolean>`exists (select 1 from ${sectionScheduleEvents} future where future.lecture_hall_id = ${lectureHalls.id} and future.status = 'SCHEDULED' and future.ends_at > now())`;
   const filters = [
     eq(lectureHalls.collegeId, college.id),
     ...(query.q ? [ilike(
@@ -179,6 +182,8 @@ export async function listLectureHalls(
     ...(query.status ? [eq(lectureHalls.status, query.status)] : []),
     ...(query.roomType ? [eq(lectureHalls.roomType, query.roomType)] : []),
     ...(query.minimumCapacity !== undefined ? [gte(lectureHalls.capacity, query.minimumCapacity)] : []),
+    ...(query.maximumCapacity !== undefined ? [lte(lectureHalls.capacity, query.maximumCapacity)] : []),
+    ...(query.upcoming === "YES" ? [scheduledFuture] : query.upcoming === "NO" ? [sql`not ${scheduledFuture}`] : []),
     ...(query.departmentId
       ? [eq(lectureHalls.departmentId, query.departmentId)]
       : []),

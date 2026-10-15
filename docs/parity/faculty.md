@@ -1470,3 +1470,25 @@ The Quiz editor now consumes the authoritative `{quiz}` response after successfu
 
 ## 2026-10-15 R6 Faculty Contacts detail return context — PARTIAL
 Public Contact cards now preserve only validated directory search, page and page-size selectors in their details link, and the Back to Contacts action restores the same filtered directory. Duplicate, foreign or malformed query fields are discarded instead of being propagated. No private contact fields or role claims are included in URLs. Pure URL tests authored; browser acceptance pending.
+
+
+## 2026-10-15 Faculty scoped follow-up — PARTIAL, not accepted
+
+- **Lesson visibility:** staged pure reader policy and administrator-only command input under `src/modules/courses/faculty-lesson-visibility-model.ts`; column `lesson_contents.visible_to_students` is registered as migration `drizzle/0061_faculty_lesson_visibility.sql`. No routes or production reads are wired, and no learner/faculty browser acceptance exists. Leave Blueprint scheduling/visibility unchecked.
+- **Persisted Faculty scope:** the shared delivery-access reader now checks live user status, college membership and persisted FACULTY role before authorizing a teaching assignment. A disposable PostgreSQL revocation/suspension test was authored, but not run; it must pass before claims of complete revocation coverage.
+- **Report accuracy and bounds:** source-only fractional percentage bucketing, average calculation, CSV row cap and report page-size guards have targeted unit tests authored. No UI/mobile or full export acceptance claimed.
+- **Quiz and Contacts:** tightened draft title length, unknown-status draft failure guard, and contact detail selectors with targeted unit tests. Still not full authoring/Contacts page parity.
+- **Unverified:** no local test, typecheck, database migration or browser gate was executed in this tool environment. All existing unchecked Faculty page criteria remain OPEN; no DONE changes.
+
+## 2026-10-15 Faculty follow-up round — PARTIAL (source only, orchestrator gates pending)
+
+Faculty lane branch `chatgpt/chat-4` merged latest `main` at `1ddd538312f8dface515268d475a5ef396a914ad` before these commits.
+
+- **Student-visible lesson content (PARTIAL):** learner list readers now consult the proposed `visible_to_students` column when present, with a PostgreSQL readiness guard and existing published/read-scope checks. Before migration, legacy published content remains visible. No admin visibility write route was added; no registered migration/verified browser gate. Do not mark Blueprint visibility DONE.
+- **Assignment authoring/grading (PARTIAL):** persisted Faculty-user/member/teaching checks were added inside Assignment authoring and grade/publish transactions. Decimal-only whole-number score editor input rejects scientific/hex formats. In-test PostgreSQL denial cases authored but not executed. Do not mark full grading parity DONE.
+- **Attendance (PARTIAL):** transaction-time active delivery and platform user checks now reject stale user or ended-class assignment snapshots, alongside existing `expectedMarkedAt` and correction reason rules. No evidence of end-to-end correction browser parity was produced here.
+- **Discussions (PARTIAL additional hardening):** pin/delete moderation revalidates persisted Faculty scope inside mutations. Existing Discussion DONE evidence is historical; this batch needs its own executable gate before being treated as verified.
+- **Assessment reports (PARTIAL):** CSV rows reject learner email properties; report table and PDF names do not fall back to learner email, and report pages use explicit IST display with ISO timestamps retained for client props. Focused unit tests added, but no browser/PDF export review performed.
+- **Open dependencies:** administrator-only visibility editing + migration promotion, remaining Faculty quiz shuffle, full Profile workflows, report browser/mobile QA, assignment file permissions and independent PostgreSQL verification. No other checkbox changed to DONE.
+
+**Verification status:** GitHub commits were pushed; repository tests, typecheck, build and browser gates were not run by this chat. Owner/orchestrator remains responsible for final gates and acceptance.

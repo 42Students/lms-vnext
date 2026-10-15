@@ -46,7 +46,6 @@ export async function getFacultyReportCsvForDownload(
             submission.pointsAwarded !== null && assignment.maxPoints > 0;
           return {
             name:facultyCsvLearnerLabel(submission.learnerDisplayName),
-            email:null,
             status:"SUBMITTED" as const,
             score:scored ? submission.pointsAwarded + "/" + assignment.maxPoints : null,
             percent:scored ? Math.round(submission.pointsAwarded! /
@@ -60,7 +59,6 @@ export async function getFacultyReportCsvForDownload(
         ...(query.filter===undefined||query.filter==="ALL" ? missingLearners : [])
           .map(learner => ({
           name:facultyCsvLearnerLabel(learner.displayName),
-          email:null,
           status:"NOT_SUBMITTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded submission",
         })),
@@ -80,7 +78,6 @@ export async function getFacultyReportCsvForDownload(
       rows:[
         ...capped.selectedAttempts.map(attempt => ({
           name:facultyCsvLearnerLabel(attempt.learnerDisplayName),
-          email:null,
           status:"ATTEMPTED" as const,
           score:attempt.score + "/" + attempt.maxScore,
           percent:attempt.maxScore > 0 ?
@@ -90,7 +87,6 @@ export async function getFacultyReportCsvForDownload(
         })),
         ...capped.selectedMissing.map(learner => ({
           name:facultyCsvLearnerLabel(learner.displayName),
-          email:null,
           status:"NOT_ATTEMPTED" as const,
           score:null,percent:null,submittedAt:null,note:"No recorded attempt",
         })),

@@ -24,7 +24,8 @@ export function facultyContactTabMatches(
 }
 
 export function facultyContactDetailHref(tab: string, membershipId: string) {
-  return "/teacher/contacts/" + encodeURIComponent(tab) +
+  const valid = facultyContactDetailParamsSchema.parse({ contactsTab: tab, membershipId });
+  return "/teacher/contacts/" + encodeURIComponent(valid.contactsTab) +
     "/" + encodeURIComponent(membershipId);
 }
 
