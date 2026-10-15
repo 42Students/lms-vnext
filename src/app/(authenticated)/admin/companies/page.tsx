@@ -14,7 +14,7 @@ export default async function SuperAdminCompaniesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, status: params.status, trust: params.trust, page: params.page, collegeId: params.collegeId,
+    q: params.q, status: params.status, trust: params.trust, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId,
   });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
