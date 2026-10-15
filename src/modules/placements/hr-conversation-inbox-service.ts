@@ -1,7 +1,8 @@
 import "server-only";
-import {and,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementTpoMessages} from "@/db/schema/tpo-collaboration";
+import {conversationSnippet} from "./hr-conversation-snippet-model";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listMessageThreads} from "./tpo-messaging-service";
@@ -39,11 +40,24 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
     isNull(placementTpoMessages.readAt),
    )).groupBy(placementTpoMessages.threadId):[];
  const byThread=new Map(counts.map(row=>[row.threadId,Number(row.unread)]));
+ const previews=visible.length?await getDb().selectDistinctOn(
+  [placementTpoMessages.threadId],{
+    threadId:placementTpoMessages.threadId,
+    body:sql<string>`left(${placementTpoMessages.body},160)`,
+    senderType:placementTpoMessages.senderType,
+  }).from(placementTpoMessages)
+   .where(inArray(placementTpoMessages.threadId,visible.map(row=>row.id)))
+   .orderBy(placementTpoMessages.threadId,
+    desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id)):[];
+ const byPreview=new Map(previews.map(row=>[row.threadId,{
+  text:conversationSnippet(row.body),senderType:row.senderType,
+ }]));
  return {status:"READY" as const,choices:grants,collegeId,
   items:visible.map(t=>({
    id:t.id,jobId:t.jobId,jobTitle:t.jobId?(titles.get(t.jobId)??"Authorized drive"):"General conversation",
    lastMessageAt:t.lastMessageAt,createdAt:t.createdAt,
    unread:byThread.get(t.id)??0,
+   preview:byPreview.get(t.id)??null,
   })),pages:pagination.pages,page:query.page,total:filtered.length,
   first:pagination.first,last:pagination.last,
   unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
