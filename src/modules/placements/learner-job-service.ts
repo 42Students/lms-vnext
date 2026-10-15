@@ -14,6 +14,7 @@ import {
   placementJobRoleOptions,
   placementJobs,
   placementJobEligibilityPolicies,
+  placementBatchRegistrations,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -23,6 +24,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
+import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   evaluatePlacementEligibility,
@@ -153,6 +155,17 @@ export async function listLearnerPlacementJobs(
     eq(learnerProgramEnrollments.status, "ACTIVE"),
   )).limit(2);
   if (enrollments.length !== 1) return [];
+  const [registration] = await getDb().select({
+    choice: placementBatchRegistrations.choice,
+  }).from(placementBatchRegistrations).where(and(
+    eq(placementBatchRegistrations.collegeId, membership.collegeId),
+    eq(placementBatchRegistrations.cohortId, enrollments[0].cohortId),
+    eq(placementBatchRegistrations.membershipId, membership.id),
+  )).limit(1);
+  const registrationState = resolveSelfApplyRegistrationChoice(
+    registration?.choice === "PLACEMENTS" ? { choice: "PLACEMENTS" } :
+    registration ? { choice: "NOT_INTERESTED" } : null,
+  );
 
   const policies = rows.length
     ? await getDb().select({
@@ -222,6 +235,7 @@ export async function listLearnerPlacementJobs(
         eligibility,
         deadlinePassed,
         canApply:
+          registrationState === "CAN_APPLY" &&
           !debarred &&
           participation.canSelfApply &&
           !application &&
