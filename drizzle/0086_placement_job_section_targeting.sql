@@ -1,0 +1,1 @@
+ALTER TABLE "placement_job_eligibility_policies" ADD COLUMN "allowed_section_ids" uuid[] DEFAULT '{}'::uuid[] NOT NULL;
