@@ -10,6 +10,7 @@ import { LearnerCourseWorkspace } from "@/components/courses/learner-course-work
 import { PageHeader } from "@/components/ui/page-header";
 import { learnerCourseAttendanceIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
+import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
 import { listCourseDiscussionMessages } from "@/modules/courses/discussion-service";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import {
@@ -140,7 +141,7 @@ export default async function LearnerCourseTabPage({
       />
     );
   } else {
-    content = <LearnerCourseDiscussion deliveryId={deliveryId} />;
+    content = <LearnerCourseDiscussion key={learnerDiscussionScopeKey(deliveryId)} deliveryId={deliveryId} />;
   }
 
   return (

@@ -3,7 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
-import {studentRulePayload,studentRuleChangeSummary,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
+import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement,canReviewStudentRule,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
 export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,blocked}:{
  collegeId:string;membershipId:string;module:EditableStudentModule;
  stored:boolean|null;locked:boolean;blocked:boolean;
@@ -24,15 +24,8 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
   try{
    const response=await fetch(endpoint,{method:"GET",cache:"no-store"});
    const data:unknown=await response.json().catch(()=>null);
-   if(!response.ok||!data||typeof data!=="object"||!("rules" in data)||!Array.isArray(data.rules)){
-    setFeedback("Latest rule could not be loaded.");return;
-   }
-   const rule=(data.rules as unknown[]).find(row=>row!==null&&typeof row==="object"&&"module" in row&&row.module===module);
-   if(!rule||typeof rule!=="object"||!("enabled" in rule)||!("locked" in rule)) {
-    setFeedback("Latest module state is unavailable.");return;
-   }
-   const state=rule.enabled===null?null:
-    typeof rule.enabled==="boolean"&&typeof rule.locked==="boolean"?{enabled:rule.enabled,locked:rule.locked}:null;
+   const state=response.ok?parseStudentRuleRecheck(data,module):undefined;
+   if(state===undefined){setFeedback("Latest module state could not be verified.");return;}
    setObserved(state);
    setChoice(state===null?"INHERIT":state.enabled?"ON":"OFF");
    setNextLocked(state?.locked??false);
@@ -55,6 +48,9 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
     setFeedback(code==="STALE_RULE"?"The stored rule changed. Reload this page before editing.":code==="ANCESTOR_LOCKED"?"A broader locked rule prevents this change.":"Change failed ("+code+").");
     return;
    }
+   if(!hasStudentRuleAcknowledgement(data,module,choice,nextLocked)){
+    setFeedback("Server response did not confirm the intended rule. Recheck before another change.");return;
+   }
    const updated=choice==="INHERIT"?null:{enabled:choice==="ON",locked:nextLocked};
    setObserved(updated);
    setFeedback("Saved. The full learner access trace will now be refreshed.");
@@ -67,11 +63,11 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
   }
  }
  return <div className="mt-4 space-y-3 border-t border-border pt-3">
-  {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents membership overrides.</p>:null}
+  {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</p>:null}
   <label className="grid gap-1 text-sm font-semibold text-body">Stored override
-   <select value={choice} disabled={blocked||pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
+   <select value={choice} disabled={pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-    <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
+    <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>
    </select>
   </label>
   <label className="flex items-center gap-2 text-sm text-body">
@@ -80,7 +76,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    Lock this membership rule
   </label>
   <div className="flex flex-wrap gap-2">
-   <Button disabled={blocked||pending||noChange} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
+   <Button disabled={!canReviewStudentRule(choice,blocked,pending,noChange)} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
    <Button disabled={pending} variant="ghost" onClick={()=>{void reload();}}>Recheck stored rule</Button>
   </div>
   {feedback?<p role="status" className="text-xs leading-5 text-body">{feedback}</p>:null}
