@@ -252,6 +252,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Batch-code filter PARTIAL (2026-10-15):** Classes now support an exact batch/cohort-code filter against persisted in-college records. Filter state is preserved in pagination and the capped CSV, with bounded input and own-college PostgreSQL fixture assertions. Browser/mobile acceptance still open.
+
 **Configured upper-seat threshold PARTIAL (2026-10-15):** Classes list and capped CSV now support inclusive maximum configured Section capacity, separate from minimum capacity and registered active enrollment counts. Null capacities are not treated as zero; typed URL, blank-field and isolated PG boundary tests authored. Runtime/browser acceptance remains open.
 
 **Class capacity filter PARTIAL (2026-10-15):** Admin Classes directory and capped CSV export now share strict minimum-configured-capacity filtering against saved Section capacity (unknown/null does not match), with URL retention and PG fixture for boundary inclusivity. No real PG/browser gates run; recurring scheduling and full parity remain open.
