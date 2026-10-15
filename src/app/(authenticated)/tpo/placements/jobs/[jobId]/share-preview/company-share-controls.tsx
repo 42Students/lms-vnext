@@ -4,6 +4,7 @@ import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,companyShareLifecy
 import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
 import {prependCompanyShareLink} from "@/modules/placements/company-share/link-page-model";
 import {companyShareIssueFailureMessage} from "@/modules/placements/company-share/issue-message-model";
+import {copyCompanyShareUrl} from "@/modules/placements/company-share/copy-model";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:{
  jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;linkPage:number;
@@ -14,9 +15,10 @@ export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
  const [newUrl,setNewUrl]=useState<string|null>(null);
+ const [copyState,setCopyState]=useState<"IDLE"|"COPIED"|"MANUAL_COPY">("IDLE");
  const root="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares";
  async function createLink(){
-  setPending(true);setError("");setNewUrl(null);
+  setPending(true);setError("");setNewUrl(null);setCopyState("IDLE");
   try{
    const res=await fetch(root,{
     method:"POST",credentials:"same-origin",
@@ -35,6 +37,11 @@ export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:
    companyShareIssueFailureMessage("ACTIVE_LINK_LIMIT"):
    companyShareIssueFailureMessage(undefined));}
   finally{setPending(false);}
+ }
+ async function copyLink(){
+  if(!newUrl)return;
+  const state=await copyCompanyShareUrl(newUrl,value=>navigator.clipboard.writeText(value));
+  setCopyState(state);
  }
  async function revokeLink(id:string){
   if(!window.confirm("Revoke this company applicant link? Anyone using it will immediately lose access."))return;
@@ -72,10 +79,12 @@ export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:
    </div>
    {newUrl?<div className="rounded border border-border p-3">
     <p className="text-xs font-semibold text-body">Copy this URL now. The secret cannot be recovered later.</p>
-    <input aria-label="One-time share URL" readOnly value={newUrl}
+    <input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="mt-2 w-full rounded border border-border bg-surface p-2 text-xs"/>
-    <button type="button" onClick={()=>void navigator.clipboard.writeText(newUrl)}
+    <button type="button" onClick={()=>void copyLink()}
      className="mt-2 text-sm font-semibold text-primary-text underline">Copy URL</button>
+    {copyState==="COPIED"?<p role="status" className="mt-2 text-sm text-body">Copied to clipboard.</p>:null}
+    {copyState==="MANUAL_COPY"?<p role="status" className="mt-2 text-sm text-body">Clipboard unavailable. Select the URL field above and copy it manually.</p>:null}
    </div>:null}
    {links.length>0?<ul className="space-y-2">{links.map(link=><li key={link.id}
     className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
