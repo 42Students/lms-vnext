@@ -24,5 +24,10 @@ describe("college semester CSV",()=>{
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(academicExportHref("BATCHES",{q:"",status:"ACTIVE",yearStart:2026})).toContain("yearStart=2026");
  });
+ it("preserves the configured-credit filter in the scoped CSV URL",()=>{
+  expect(semesterCsvSchema.safeParse({creditState:"MISSING_COURSE"}).success).toBe(false);
+  expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",creditState:"UNSET"})).toContain("creditState=UNSET");
+ });
+
 });
 

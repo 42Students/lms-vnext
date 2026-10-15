@@ -85,6 +85,8 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       query.termNumber !== undefined ? eq(programTerms.termNumber, query.termNumber) : undefined,
       query.minimumCredits !== undefined ? gte(programTerms.totalCredits,query.minimumCredits) : undefined,
       query.maximumCredits !== undefined ? lte(programTerms.totalCredits,query.maximumCredits) : undefined,
+      query.creditState === "CONFIGURED" ? isNotNull(programTerms.totalCredits) :
+        query.creditState === "UNSET" ? isNull(programTerms.totalCredits) : undefined,
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
       query.q ? or(

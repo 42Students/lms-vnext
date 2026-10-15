@@ -214,4 +214,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(semesters.total).toBe(0);
     expect(batches.total).toBe(0);
   });
+  it("filters semesters by recorded credit configuration within the admin college", async () => {
+    const [configured,missing,foreign] = await Promise.all([
+      listCollegeSemesters(adminA,{q:label,creditState:"CONFIGURED"}),
+      listCollegeSemesters(adminA,{q:label,creditState:"UNSET"}),
+      listCollegeSemesters(adminB,{q:label,creditState:"CONFIGURED"}),
+    ]);
+    expect(configured.items.map(row=>row.id)).toContain(ids.term);
+    expect(missing.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

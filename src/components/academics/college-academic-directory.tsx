@@ -129,6 +129,15 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
+          {data.kind === "SEMESTERS" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Credits availability
+              <select name="creditState" defaultValue={data.query.creditState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All terms</option>
+                <option value="CONFIGURED">Credits configured</option>
+                <option value="UNSET">No configured credits</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter
