@@ -17,9 +17,10 @@ import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-
 import {learnerNoticeFilterHref,learnerNoticePageHref} from "@/modules/placements/learner-notices-navigation-model";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
+import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref } from "@/modules/placements/learner-notice-deep-link-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
-  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[] }>;
+  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[] }>;
 }) {
   const query = await searchParams;
   const filters=readLearnerNoticeFilters(query);
@@ -46,8 +47,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     : [];
   const searchedNotices=searchLearnerNotices(learnerPlacementNoticeView(allNotices,pinnedOnly),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
-  const noticePage = filters.page;
-  const pages = paginateOwnOffers(sortLearnerNotices(notices,sortKey),noticePage,15);
+  const sortedNotices=sortLearnerNotices(notices,sortKey);
+  const focused=learnerNoticeFocusPage(sortedNotices,filters.page,filters.focus);
+  const pages = paginateOwnOffers(sortedNotices,focused.page,15);
   const noticePageUrl=(page:number)=>learnerNoticePageHref({
     pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ,sort:sortKey,page,
   });
@@ -122,7 +124,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       ) : (
         <ul className="min-w-0 space-y-3">
           {pages.items.map((notice) => (
-            <li key={notice.id} className="min-w-0 rounded-xl border border-border bg-surface p-5">
+            <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-5">
               {notice.isPinned ? <p className="text-xs font-semibold text-primary-text">Pinned</p> : null}
               <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -130,6 +132,12 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                 {notice.audienceLabel ? " · Audience: "+notice.audienceLabel : ""}
               </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
+              {learnerNoticeHref(notice.id) ? (
+                <Link href={learnerNoticeHref(notice.id)!}
+                  className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  Link to this notice
+                </Link>
+              ) : null}
               <time dateTime={notice.createdAt} className="mt-3 block text-xs text-muted-foreground">
                 {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.createdAt))}
               </time>
