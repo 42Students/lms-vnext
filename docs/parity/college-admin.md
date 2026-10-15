@@ -27,6 +27,9 @@ Contacts now show an honest page range, page-local Faculty/Learner/dual-role bre
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**T-S2-09 Phase 2 (source fix, acceptance pending):** Education publishing now selects the latest end-year graded entry per supported level, ignores optional blank grades, and deletes prior verified-mark levels absent from the newly approved snapshot within the verification transaction. Core graded education and private receipt validation still gate approval. Fresh placement eligibility reads the newly published evidence; independent PostgreSQL and browser proof remain required before marking parity closed.
+
+
 **Verification card decision-state clarity PARTIAL (chat-9):** The shared queue now clearly labels new SUBMITTED and updated UPDATE_PENDING items with the appropriate review action, while VERIFIED/SENT_BACK cards say View decision rather than suggesting another write. Pure presentation unit cases authored; 375px browser and end-to-end permission acceptance open.
 
 **Submitted-evidence verification CSV PARTIAL (chat-9):** Capped scoped verification CSV now includes the count of submitted Education rows, count of those with no marksheet document reference, and public-safe attention cues, in addition to status/timestamps. Identity rows keep Education counters blank; no raw snapshot, receipt IDs, private URLs or identity values are exported. Formula-neutralized unit cases authored, real DB/browser acceptance outstanding.
