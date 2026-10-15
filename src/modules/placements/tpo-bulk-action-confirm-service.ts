@@ -47,6 +47,7 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
        });
        outcomes.push({id:selected.id,status:response.changed?"updated":"skipped",reason:null});
      }else{
+       if(plan.action!=="SHORTLISTED"&&plan.action!=="REJECTED")throw new TpoBulkPreviewError();
        await reviewTpoApplicant(context,{jobId:plan.jobId,applicationId:selected.id},{
          confirmed:true,expectedUpdatedAt:selected.version,
          decision:plan.action,note:plan.note,
