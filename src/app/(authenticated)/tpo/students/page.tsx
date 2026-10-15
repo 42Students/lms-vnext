@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {Suspense} from "react";
+import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -24,6 +26,7 @@ type SearchParams = {
   search?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
+  columns?: string | string[];
 };
 
 const JOURNEY_LABELS: Record<TpoStudentJourneyState, string> = {
@@ -45,6 +48,7 @@ function studentsHref(
     search?: string;
     page?: number;
     pageSize?: number;
+    columns?: string;
   },
   exportCsv = false,
 ) {
@@ -61,6 +65,7 @@ function studentsHref(
   if (filters.search) {
     params.set("search", filters.search);
   }
+  if(!exportCsv&&filters.columns)params.set("columns",filters.columns);
 
   if (!exportCsv) {
     if (filters.page && filters.page > 1) {
@@ -99,10 +104,6 @@ function metricTone(
 
 function percentage(value: number | null) {
   return value === null ? "—" : `${value.toFixed(2)}%`;
-}
-
-function displayNumber(value: number | null) {
-  return value === null ? "—" : String(value);
 }
 
 export default async function TpoStudentsPage({
@@ -196,6 +197,7 @@ export default async function TpoStudentsPage({
   );
 
   const currentFilters = {
+    columns:first(raw.columns)?.slice(0,800),
     journeyState: query.journeyState,
     branchId: query.branchId,
     search: query.search,
@@ -313,6 +315,7 @@ export default async function TpoStudentsPage({
                 key={state}
                 href={studentsHref({
                   journeyState: state,
+                  columns:first(raw.columns)?.slice(0,800),
                   pageSize: query.pageSize,
                 })}
                 aria-current={selected ? "page" : undefined}
@@ -415,6 +418,7 @@ export default async function TpoStudentsPage({
                       <Link
                         href={studentsHref({
                           branchId: branch.branchId,
+                          columns:first(raw.columns)?.slice(0,800),
                           pageSize: query.pageSize,
                         })}
                         className="font-semibold text-primary-text hover:underline"
@@ -479,6 +483,7 @@ export default async function TpoStudentsPage({
           method="get"
           className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4"
         >
+          {first(raw.columns)&&<input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Journey
             <select
@@ -564,136 +569,9 @@ export default async function TpoStudentsPage({
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[80rem] text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">Student</th>
-                  <th scope="col" className="px-4 py-3">Branch / batch</th>
-                  <th scope="col" className="px-4 py-3">CGPA / backlogs</th>
-                  <th scope="col" className="px-4 py-3">Readiness evidence</th>
-                  <th scope="col" className="px-4 py-3">Registration</th>
-                  <th scope="col" className="px-4 py-3">Best so far</th>
-                  <th scope="col" className="px-4 py-3">Applications</th>
-                  <th scope="col" className="px-4 py-3">Offers</th>
-                  <th scope="col" className="px-4 py-3">Journey</th>
-                </tr>
-              </thead>
-              <tbody>
-                {roster.items.map((student) => (
-                  <tr
-                    key={student.membershipId}
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-4">
-                      <p className="font-semibold text-foreground">
-                        {student.displayName}
-                      </p>
-                      <p className="mt-1 text-xs text-body">
-                        {student.rollNumber ??
-                          student.registrationNumber ??
-                          "No student number"}
-                      </p>
-                      {student.email ? (
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {student.email}
-                        </p>
-                      ) : null}
-                      <Link
-                        href={"/tpo/students/" + encodeURIComponent(student.membershipId) + "/history"}
-                        className="mt-2 inline-flex min-h-9 items-center text-xs font-semibold text-primary-text hover:underline"
-                      >
-                        View placement history →
-                      </Link>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <p className="font-medium text-foreground">
-                        {student.branchName}
-                      </p>
-                      <p className="mt-1 text-xs text-body">
-                        {student.programName} · {student.cohortName}
-                      </p>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <p>CGPA: {displayNumber(student.cgpa)}</p>
-                      <p className="mt-1 text-xs text-body">
-                        Active: {displayNumber(student.activeBacklogs)}
-                        {" · "}Past: {displayNumber(student.pastBacklogs)}
-                      </p>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge
-                        tone={
-                          student.readinessSignal ===
-                          "PARTICIPATION_ELIGIBLE_EVIDENCE_PRESENT"
-                            ? "info"
-                            : "warning"
-                        }
-                      >
-                        {student.readinessSignal ===
-                        "PARTICIPATION_ELIGIBLE_EVIDENCE_PRESENT"
-                          ? "Evidence present"
-                          : student.readinessSignal ===
-                              "ACADEMIC_EVIDENCE_MISSING"
-                            ? "Academic data missing"
-                            : "Participation not eligible"}
-                      </StatusBadge>
-                      {student.ambiguousSection ? (
-                        <p className="mt-2 text-xs text-warning">
-                          Ambiguous section assignment
-                        </p>
-                      ) : null}
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <p className="font-medium text-foreground">
-                        {student.registrationChoice?.replaceAll("_", " ") ??
-                          (data.definitions.registrationsAvailable
-                            ? "Not registered"
-                            : "Unavailable")}
-                      </p>
-                      <p className="mt-1 text-xs text-body">
-                        {student.participationStatus.replaceAll("_", " ")}
-                      </p>
-                      <Link
-                        href={`/tpo/students/${encodeURIComponent(student.membershipId)}/participation`}
-                        className="mt-2 inline-flex min-h-9 items-center text-xs font-semibold text-primary-text hover:underline"
-                      >
-                        Change participation →
-                      </Link>
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {student.bestSoFar}
-                    </td>
-
-                    <td className="px-4 py-4 tabular-nums">
-                      {student.applicationCount}
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {student.activeApplicationCount} active
-                      </p>
-                    </td>
-
-                    <td className="px-4 py-4 tabular-nums">
-                      {student.offerCount}
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {student.acceptedOfferCount} accepted
-                      </p>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge tone={metricTone(student.journeyState)}>
-                        {JOURNEY_LABELS[student.journeyState]}
-                      </StatusBadge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
+            <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
+          </Suspense>
         )}
 
         {manageAllowed ? (

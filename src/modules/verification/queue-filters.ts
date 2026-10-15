@@ -34,3 +34,20 @@ export function verificationEnrollmentFiltersValid(filter:{enrollment:string;pro
 export function verificationAgeBandValid(filter:{tab:string;ageBand:string}):boolean{
  return filter.ageBand==="ANY"||filter.tab==="WAITING";
 }
+
+/** Marksheets are Education evidence only; never silently show an empty Identity queue. */
+export function verificationSectionEvidenceFiltersValid(filter:{kind?:string;marksheets:string;attention:string}):boolean{
+ return filter.kind!=="IDENTITY"||filter.marksheets==="ANY"&&filter.attention!=="MISSING_MARKSHEET";
+}
+
+/** Waiting-only attention cues cannot appear in past-decision tabs. */
+export function verificationWaitingAttentionValid(filter:{tab:string;attention:string}):boolean{
+ return filter.tab==="WAITING"||filter.attention!=="VERIFIED_DETAILS_CHANGED"&&filter.attention!=="WAITING_OVER_WEEK";
+}
+
+/** Waiting attention cues and elapsed-age bands share one possible state/time intersection. */
+export function verificationAttentionAgeCompatible(filter:{attention:string;ageBand:string;waitingState:string}):boolean{
+ if(filter.attention==="WAITING_OVER_WEEK"&&(filter.ageBand==="WITHIN_48_HOURS"||filter.ageBand==="TWO_TO_SEVEN_DAYS"))return false;
+ if(filter.attention==="VERIFIED_DETAILS_CHANGED"&&filter.waitingState==="SUBMITTED")return false;
+ return true;
+}
