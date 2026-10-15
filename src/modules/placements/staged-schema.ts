@@ -1,6 +1,6 @@
 /** Proposed TPO configuration tables. Not imported into registered db/schema. 
  * Owner must register the SQL before runtime reads or writes are enabled. */
-import { boolean, date, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, date, integer, index, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 export const tpoJobTypes=pgTable("placement_tpo_job_types",{
  id:uuid("id").defaultRandom().primaryKey(),collegeId:uuid("college_id").notNull(),
  label:varchar("label",{length:100}).notNull(),active:boolean("active").notNull().default(true),
@@ -20,3 +20,21 @@ export const tpoAfterCollege=pgTable("placement_tpo_after_college",{
  collegeId:uuid("college_id").notNull(),outcome:varchar("outcome",{length:40}).notNull(),
  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
 });
+
+/** T-S1-03: unregistered OTP challenge store; never use before migration. */
+export const recruiterInviteCodesStaged=pgTable("recruiter_invite_code",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ leadId:uuid("lead_id").notNull(),
+ collegeId:uuid("college_id").notNull(),
+ tokenHash:varchar("token_hash",{length:64}).notNull(),
+ codeHash:varchar("code_hash",{length:64}).notNull(),
+ sentAt:timestamp("sent_at",{withTimezone:true}).notNull(),
+ expiresAt:timestamp("expires_at",{withTimezone:true}).notNull(),
+ failedAttempts:integer("failed_attempts").notNull().default(0),
+ consumedAt:timestamp("consumed_at",{withTimezone:true}),
+ deliveryState:varchar("delivery_state",{length:16}).notNull().default("PENDING"),
+},t=>[
+ index("recruiter_invite_code_lead_sent_idx").on(t.leadId,t.sentAt),
+ index("recruiter_invite_code_college_sent_idx").on(t.collegeId,t.sentAt),
+ index("recruiter_invite_code_token_active_idx").on(t.tokenHash,t.sentAt),
+]);
