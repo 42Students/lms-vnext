@@ -11,6 +11,7 @@ export const collegeStructureQuerySchema = z.object({
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
+  deliveryPresence: z.enum(["ALL","HAS_DELIVERIES","NO_DELIVERIES"]).default("ALL"),
   facultyCoverage: z.enum(["ALL","HAS_FACULTY","NO_FACULTY"]).default("ALL"),
   schedulePresence: z.enum(["ALL","HAS_EVENTS","NO_EVENTS"]).default("ALL"),
   cohortName: z.string().trim().min(1).max(255).optional(),
@@ -59,7 +60,7 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
@@ -104,6 +105,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (kind === "CLASSES" && "cohortName" in query && query.cohortName) params.set("cohortName",query.cohortName);
   if (kind === "CLASSES" && "schedulePresence" in query && query.schedulePresence !== "ALL") params.set("schedulePresence",query.schedulePresence);
   if (kind === "CLASSES" && "facultyCoverage" in query && query.facultyCoverage !== "ALL") params.set("facultyCoverage",query.facultyCoverage);
+  if (kind === "CLASSES" && "deliveryPresence" in query && query.deliveryPresence !== "ALL") params.set("deliveryPresence",query.deliveryPresence);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }

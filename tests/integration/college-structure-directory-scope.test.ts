@@ -370,4 +370,14 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(present.items).toEqual([]);
     expect(foreign.items).toEqual([]);
   });
+  it("Authored section course deliveries is observed only on persisted own-college classes",async()=>{
+    const [absent,present,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,deliveryPresence:"NO_DELIVERIES"}),
+      listCollegeClasses(adminA,{q:key,deliveryPresence:"HAS_DELIVERIES"}),
+      listCollegeClasses(adminB,{q:key,deliveryPresence:"NO_DELIVERIES"}),
+    ]);
+    expect(absent.items.map(row=>row.id)).toContain(ids.section);
+    expect(present.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
 });

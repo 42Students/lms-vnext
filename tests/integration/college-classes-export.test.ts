@@ -120,4 +120,14 @@ describe.skipIf(!enabled)("College classes export persisted PostgreSQL scope",()
     expect(excluded.exported).toBe(0);
     expect(foreign.exported).toBe(0);
   });
+  it("keeps authored section course deliveries evidence in scoped CSV filters",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,deliveryPresence:"NO_DELIVERIES"}),
+      exportCollegeClasses(own,{q:label,deliveryPresence:"HAS_DELIVERIES"}),
+      exportCollegeClasses(other,{q:label,deliveryPresence:"NO_DELIVERIES"}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
 });
