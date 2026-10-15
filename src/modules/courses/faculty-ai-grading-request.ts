@@ -3,6 +3,7 @@ import {aiGradingSelectionSchema,aiGradingRubricSchema} from "./faculty-ai-gradi
 export const facultyAiGradingRequestSchema=z.object({
  selection:aiGradingSelectionSchema.extend({submissionId:z.string().uuid()}),
  expectedSubmissionVersion:z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
+ consentToApprovedProcessing:z.literal(true),
  rubric:aiGradingRubricSchema,
 }).strict();
 export type FacultyAiGradingRequest=z.infer<typeof facultyAiGradingRequestSchema>;
