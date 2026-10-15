@@ -19,6 +19,7 @@ import {
 import {
   getLearnerCourseWorkspace,
 } from "@/modules/courses/learner-course-service";
+import { learnerRoadmapMeasuredProgress } from "@/modules/courses/learner-roadmap-progress-availability-model";
 import {learnerRoadmapMobileOutline} from "@/modules/courses/learner-roadmap-mobile-model";
 
 type Workspace = Awaited<
@@ -31,9 +32,14 @@ function ProgressBar({
   value,
   label,
 }: {
-  value: number;
+  value: number | null;
   label: string;
 }) {
+  if (value === null) {
+    return <p role="status" className="text-sm text-muted-foreground">
+      Progress is not measured until this Learning Path has trackable items.
+    </p>;
+  }
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-3">
@@ -561,6 +567,7 @@ export function LearnerCourseWorkspace({
   readOnly?: boolean;
 }) {
   const summary = workspace.summary;
+  const measuredProgress = learnerRoadmapMeasuredProgress(summary);
   const activeFilter = ["all", "lectures", "resources", "assessments", "live-sessions"].includes(filter)
     ? filter
     : "all";
@@ -671,14 +678,14 @@ export function LearnerCourseWorkspace({
               </div>
             ) : null}
           </div>
-          <ProgressBar value={summary.overallPercent} label="Overall Course progress" />
+          <ProgressBar value={measuredProgress} label="Overall Course progress" />
         </div>
       </section>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Overall"
-          value={`${summary.overallPercent}%`}
+          value={measuredProgress === null ? "Not measured" : `${measuredProgress}%`}
           detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
         <Metric
