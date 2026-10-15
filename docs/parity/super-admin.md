@@ -851,3 +851,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 college creation handoff (PARTIAL):** The Super Admin Tenant Create stage now asks the existing permissioned scope API to select exactly the newly created college before advancing to Set up; malformed responses and failed selection show a non-success message rather than implicitly claiming a selected tenant. Shared College Create elsewhere retains its former refresh-only behavior. Unit tests authored, unexecuted; browser navigation and post-create permission/tenant fixtures remain open.
+
+
+**2026-10-15 chat-6 organization-to-college creation handoff (PARTIAL):** The Tenant Create form receives the newly created organization ID from the existing authorized API, returns to the college step with an allowlisted choice, and preselects only an organization present in the current scoped server result. Duplicate/forged URL values cannot select foreign tenants. Other organization-create usages retain their prior behavior. Pure tests authored, not run; browser and PG creation acceptance open.

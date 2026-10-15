@@ -15,13 +15,15 @@ export type OrganizationOption = {
 export function CollegeCreateForm({
   organizations,
   advanceToSetup = false,
+  preferredOrganizationId,
 }: {
   organizations: readonly OrganizationOption[];
   advanceToSetup?: boolean;
+  preferredOrganizationId?: string;
 }) {
   const router = useRouter();
   const [organizationId, setOrganizationId] = useState(
-    organizations[0]?.id ?? "",
+    preferredOrganizationId ?? organizations[0]?.id ?? "",
   );
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
