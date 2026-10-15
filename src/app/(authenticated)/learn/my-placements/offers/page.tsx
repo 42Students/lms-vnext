@@ -2,6 +2,7 @@ import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
 import {learnerOfferStatusHref} from "@/modules/placements/learner-offers-navigation-model";
+import {learnerOfferKindSchema,filterOwnOffersByKind} from "@/modules/placements/learner-offer-kind-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
 import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
@@ -25,7 +26,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 export default async function LearnerOffersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[]; sort?: string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[]; sort?: string | string[]; kind?: string | string[] }>;
 }) {
   const query = await searchParams;
   const requested = typeof query.status === "string" ? query.status : "all";
@@ -39,7 +40,9 @@ export default async function LearnerOffersPage({
     getOwnLearnerOfferBrowse(context,view),listOwnPlacementRequests(context),
   ]);
   const snapshotNowIso = new Date().toISOString();
-  const searchedOffers = searchOwnOffers(offers.items, searchTerm);
+  const kindInput=learnerOfferKindSchema.safeParse(query.kind ?? "all");
+  const kind=kindInput.success?kindInput.data:"all";
+  const searchedOffers = filterOwnOffersByKind(searchOwnOffers(offers.items, searchTerm),kind);
   const visibleOffers = dueOnly ? ownOffersDueWithinWeek(searchedOffers,Date.parse(snapshotNowIso)) : searchedOffers;
   const pageResult = learnerOfferPageSchema.safeParse(query.page ?? "1");
   const requestedPage = pageResult.success ? pageResult.data : 1;
@@ -49,8 +52,9 @@ export default async function LearnerOffersPage({
   const paginated = paginateOwnOffers(sorted,requestedPage,15);
   const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
     ...(view!=="all"?{status:view}:{}),...(searchTerm?{q:searchTerm}:{}),
-    ...(dueOnly?{due:"1"}:{}),...(order!=="priority"?{sort:order}:{}),page:String(page),
+    ...(dueOnly?{due:"1"}:{}),...(order!=="priority"?{sort:order}:{}),...(kind!=="all"?{kind}:{}),page:String(page),
   }).toString();
+  const kindHref=(nextKind:"all"|"offer"|"loi")=>learnerOfferStatusHref(view,{searchTerm,dueOnly,sort:order,kind:nextKind});
   const expiringSoon = learnerOffersExpiringSoon(visibleOffers.map(row => ({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
   })), Date.parse(snapshotNowIso));
@@ -72,7 +76,7 @@ export default async function LearnerOffersPage({
         {tabs.map((tab) => (
           <Link
             key={tab.id}
-            href={learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order})}
+            href={learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order,kind})}
             aria-current={view === tab.id ? "page" : undefined}
             className={view === tab.id
               ? "inline-flex min-h-11 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
@@ -86,19 +90,21 @@ export default async function LearnerOffersPage({
         {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
         {dueOnly ? <input type="hidden" name="due" value="1" /> : null}
         {order !== "priority" ? <input type="hidden" name="sort" value={order} /> : null}
+        {kind !== "all" ? <input type="hidden" name="kind" value={kind} /> : null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search my offers
           <input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
-        {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order})}
+        {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind})}
           className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
         {view!=="all"?<input type="hidden" name="status" value={view}/>:null}
         {searchTerm?<input type="hidden" name="q" value={searchTerm}/>:null}
         {dueOnly?<input type="hidden" name="due" value="1"/>:null}
+        {kind!=="all"?<input type="hidden" name="kind" value={kind}/>:null}
         <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
           Sort my offers
           <select name="sort" defaultValue={order} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -109,16 +115,23 @@ export default async function LearnerOffersPage({
         </label>
         <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
       </form>
+      <nav aria-label="Offer document kind" className="flex flex-wrap gap-3 text-sm">
+        {(["all","offer","loi"] as const).map(value=><Link key={value} href={kindHref(value)}
+          aria-current={kind===value?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">
+          {value==="all"?"All documents":value==="offer"?"Offer letters":"Letters of intent"}
+        </Link>)}
+      </nav>
       <nav aria-label="Offer deadline filter" className="flex flex-wrap gap-3 text-sm">
-        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order})}
+        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order,kind})}
           aria-current={!dueOnly?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">All deadlines</Link>
-        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:true,sort:order})}
+        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:true,sort:order,kind})}
           aria-current={dueOnly?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Awaiting response · next 7 days</Link>
       </nav>
       {expiringSoon > 0 && view !== "pending" ? (
-        <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order})}
+        <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order,kind})}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Review {expiringSoon} awaiting-response {expiringSoon===1?"offer":"offers"} with a deadline in 24 hours →
         </Link>
