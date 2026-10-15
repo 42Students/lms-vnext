@@ -331,4 +331,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessonsCsvHref(q)).toContain("offeringId=");
   });
 
+  it("retains persisted offering ID search across progress and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({offeringId:"forged"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({offeringId:"123e4567-e89b-42d3-a456-426614174000"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("offeringId=");
+    expect(collegeProgressCsvHref(q)).toContain("offeringId=");
+  });
+
 });
