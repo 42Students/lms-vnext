@@ -1187,13 +1187,7 @@ export function ProjectWorkspace({
             </div>
           )}
 
-          <div className="rounded-xl border border-warning-border bg-warning-subtle p-4">
-            <p className="m-0 text-xs leading-5 text-body">
-              Legacy also keeps immutable meeting/resource/delivery history and task comments.
-              Those DB07 tables remain staged until W01 registers and replays the shared migration,
-              so this feed intentionally does not claim full legacy audit parity yet.
-            </p>
-          </div>
+
         </section>
       ) : null}
     </div>
