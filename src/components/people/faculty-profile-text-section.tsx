@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {restoreFacultyTextDraft,facultyProfileTextDraftIssue} from "@/modules/people/faculty-profile-draft-actions";
+import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 
 export type FacultyProfileTextField = {
   name:string; label:string; maxLength:number;
@@ -19,6 +20,7 @@ export function FacultyProfileTextSection({
  const [draft,setDraft]=useState<Record<string,string>>(initial);
  const changed=fields.some(field=>(draft[field.name]??"")!==(initial[field.name]??""));
  const issue=facultyProfileTextDraftIssue(section,draft);
+ useFacultyProfileUnsavedWarning(changed);
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(!pending && changed && !issue)void onSave(section,draft);
