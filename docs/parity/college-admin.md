@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Newest-first verification ordering repair PARTIAL (chat-9):** The shared card grid now respects the server-selected OLDEST/NEWEST mode instead of always reversing newest pages back into ascending order. The queue and CSV also tie-break same-timestamp, same-learner Education/Identity rows by section; attention flags use one captured read clock. Pure ordering tests authored, PostgreSQL/browser acceptance open.
+
 **Waiting request-state triage PARTIAL (chat-9):** College verification now distinguishes first SUBMITTED requests from UPDATE_PENDING updates through the same status-scoped PostgreSQL query used by its capped CSV; incompatible decided tabs fail closed rather than show a false empty queue. A native dropdown, safe tab reset and pure filter tests authored; executed PG/browser acceptance outstanding.
 
 **Exact learner lookup PARTIAL (chat-9):** College Admin staff can deep-link from a Student roster membership to a filtered verification queue and matching capped export, using a strict membership UUID. The stored-college/learner-role predicates remain authoritative, and foreign or forged IDs reveal no matching details. Unit and route integration coverage authored; real PostgreSQL/browser acceptance open.

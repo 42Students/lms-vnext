@@ -47,7 +47,7 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
    inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]:[filter.waitingState]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
+ .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
  const evaluatedAt=new Date();
  const filtered=rows.filter(row=>{
@@ -81,7 +81,7 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
   const marks=submittedMarksheets(row.submittedSnapshot);
   const status=row.status as VerificationStatus,section=row.section as VerificationSection;
   const missingMarksheet=section==="EDUCATION"&&marks.missing>0;
-  const flags=verificationAttentionFlags({status,section,submittedAt:row.submittedAt,missingMarksheet},new Date());
+  const flags=verificationAttentionFlags({status,section,submittedAt:row.submittedAt,missingMarksheet},evaluatedAt);
   return {learnerMembershipId:row.membershipId,learnerName:row.name?.trim()||"Learner",
    section,status,version:row.version,submittedAt:row.submittedAt,batchName:byMember.get(row.membershipId)?.batchName??null,branchName:byMember.get(row.membershipId)?.branchName??null,
    missingMarksheet,attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
