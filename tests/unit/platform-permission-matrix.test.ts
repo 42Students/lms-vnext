@@ -202,6 +202,9 @@ const expectedOwnActors = {
   "placements.recruiter.slot.manage": [
     "recruiter",
   ],
+  "placements.recruiter.outside.record": [
+    "recruiter",
+  ],
   "placements.recruiter.result.stage": [
     "recruiter",
   ],
@@ -353,6 +356,8 @@ describe("platform permission matrix", () => {
     expect(can(contexts.recruiter,"placements.recruiter.round.manage",otherResource)).toBe(false);
     expect(can(contexts.recruiter,"placements.recruiter.slot.manage",ownResource)).toBe(true);
     expect(can(contexts.recruiter,"placements.recruiter.slot.manage",otherResource)).toBe(false);
+    expect(can(contexts.recruiter,"placements.recruiter.outside.record",ownResource)).toBe(true);
+    expect(can(contexts.recruiter,"placements.recruiter.outside.record",otherResource)).toBe(false);
     expect(
       can(contexts.recruiter, "placements.recruiter.note", otherResource),
     ).toBe(false);
