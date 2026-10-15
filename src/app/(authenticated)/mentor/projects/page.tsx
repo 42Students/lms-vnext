@@ -1,3 +1,4 @@
+import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -91,7 +92,7 @@ export default async function MentorProjectsPage({
         ? status
         : undefined,
     attention:
-      attention === "MENTOR_REVIEW"
+      attention === "MENTOR_REVIEW" || attention === "MENTOR_REQUESTED"
         ? attention
         : undefined,
     page: pageNumber(
@@ -197,19 +198,7 @@ export default async function MentorProjectsPage({
         query.status
       );
     })
-    .filter((row) => {
-      if (
-        query.attention !==
-        "MENTOR_REVIEW"
-      ) {
-        return true;
-      }
-      return (
-        kinds
-          .get(row.project.id)
-          ?.has("REVIEW") ?? false
-      );
-    })
+    .filter((row) => matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
     .sort((a, b) => {
       const archivedOrder =
         Number(
