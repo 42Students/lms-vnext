@@ -1,6 +1,7 @@
 import "server-only";
-import {and,desc,eq,or} from "drizzle-orm";
+import {and,desc,eq,isNull,or,like,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
+import {activityEvents,inAppNotifications} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -26,6 +27,24 @@ export async function listMyTpoInternalThreads(context:RequestContext){
     or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
        eq(tpoInternalThreads.invitedMembershipId,membership.id))))
    .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(50);
-  return {status:"READY" as const,items};
+  const unread = await tx.select({
+   href:inAppNotifications.actionHref,
+   total:sql<number>`count(*)::integer`,
+  }).from(inAppNotifications)
+   .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
+   .where(and(
+    eq(inAppNotifications.userId,context.user.id),
+    eq(activityEvents.collegeId,college.id),
+    eq(activityEvents.organizationId,college.organizationId),
+    eq(activityEvents.module,"PLACEMENTS"),
+    or(eq(activityEvents.eventType,"placements.tpo_team.message_sent"),
+       eq(activityEvents.eventType,"placements.tpo_team.thread_created")),
+    isNull(inAppNotifications.readAt),
+    like(inAppNotifications.actionHref,"/tpo/team/%"),
+   )).groupBy(inAppNotifications.actionHref);
+  const unreadByHref=new Map(unread.map(row=>[row.href,Number(row.total)]));
+  return {status:"READY" as const,items:items.map(row=>({
+   ...row,unreadCount:unreadByHref.get("/tpo/team/"+row.id)??0,
+  }))};
  });
 }
