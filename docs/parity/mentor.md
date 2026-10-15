@@ -1258,3 +1258,8 @@ The Mentor Delivery tab explicitly identifies the highest persisted final-delive
 ## 2026-10-15 chat-11 new round — required-resource-link-evidence (PARTIAL)
 
 The Mentor Resources tab now distinguishes valid required external links, valid text-only resources, and required entries without usable content. Credential-bearing links are never shown as safe; no file/blob provider or invented upload is implied. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 — service-integrated Mentor workspace evidence (PARTIAL)
+
+The existing scope-checked getProjectWorkspaceView service now derives Sprint task status totals, active Team role counts and latest recorded delivery version from the already loaded registered rows in a pure shared model. Mentor and other account renderers consume in-request facts without duplicate database reads or invented workload metrics. Source-authored unit verification covers composition; isolated PostgreSQL, TypeScript, lint, Vitest and responsive browser gates remain unexecuted.

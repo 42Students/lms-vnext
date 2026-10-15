@@ -69,3 +69,21 @@ export function mentorRequiredResourceLinkState(resource:{
  if(safeProjectExternalHref(resource.url))return "SAFE_LINK";
  return resource.description?.trim()?"TEXT_ONLY":"LINK_UNAVAILABLE";
 }
+
+/** Derived only from the rows already loaded by the authorized Project workspace. */
+export function buildMentorWorkspaceEvidence(input:{
+ tasks:readonly {sprintId:string;status:string}[];
+ members:readonly {role:string;isPrimary:boolean}[];
+ submissions:readonly {version:number;status:string}[];
+}){
+ const bySprint=new Map<string,{status:string}[]>();
+ for(const task of input.tasks){
+  const rows=bySprint.get(task.sprintId)??[];
+  rows.push({status:task.status});
+  bySprint.set(task.sprintId,rows);
+ }
+ const tasksBySprint:Record<string,ReturnType<typeof mentorSprintTaskFacts>>={};
+ for(const [sprintId,tasks] of bySprint)tasksBySprint[sprintId]=mentorSprintTaskFacts(tasks);
+ return {tasksBySprint,team:mentorWorkspaceTeamFacts(input.members),
+  latestDelivery:mentorLatestDeliveryVersion(input.submissions)};
+}
