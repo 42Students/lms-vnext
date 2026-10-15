@@ -197,3 +197,10 @@ export function facultyQuizReconcileRows<T extends {id:string}>(
 ):T[]{
  return [saved,...existing.filter(row=>row.id!==saved.id)];
 }
+
+/** Keep authored question order stable until the next explicit user action. */
+export function facultyMoveQuizQuestion<T>(rows:readonly T[],from:number,to:number):T[]{
+ if(from<0||to<0||from>=rows.length||to>=rows.length||from===to)return [...rows];
+ const next=[...rows];const [entry]=next.splice(from,1);next.splice(to,0,entry!);
+ return next;
+}
