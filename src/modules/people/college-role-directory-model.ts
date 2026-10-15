@@ -135,3 +135,8 @@ export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirecto
     throw new RangeError("LEARNER_ENROLLMENT_FILTER_CONFLICT");
   }
 }
+
+/** A direct, masked-contact drilldown for an already-authorized roster row. */
+export function collegeRoleContactHref(membershipId:string):string {
+  return "/college/contacts/"+z.string().uuid().parse(membershipId);
+}

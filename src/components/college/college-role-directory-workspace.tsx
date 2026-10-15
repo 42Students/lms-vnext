@@ -16,6 +16,7 @@ import {
   assertCompatibleCollegeRoleDirectoryFilters,
   canonicalCollegeRoleDirectoryHref,
   selectedDirectoryValueNotListed,
+  collegeRoleContactHref,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
@@ -306,6 +307,7 @@ export async function CollegeRoleDirectoryWorkspace({
                     <Link href={kind === "LEARNER" ? `/college/students/${item.membershipId}` : `/college/faculty/${item.membershipId}`}
                       className="font-semibold text-primary-text hover:underline">{item.name}</Link>
                     <p className="mt-1 text-xs text-muted-foreground">{item.email ?? "No email recorded"}</p>
+                    <Link href={collegeRoleContactHref(item.membershipId)} className="mt-1 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">View contact card</Link>
                   </td>
                   <td className="px-4 py-4">
                     <StatusBadge tone={item.membershipStatus === "ACTIVE" && item.userStatus === "ACTIVE" ? "success" : "warning"}>
