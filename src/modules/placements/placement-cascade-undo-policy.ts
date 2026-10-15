@@ -1,3 +1,5 @@
+import { PlacementsServiceError } from "./errors";
+
 /** P-S1-06 strict, all-or-nothing compensation preconditions. */
 export function assertUndoablePlacementCascadeSnapshot(input: {
   acceptedStatus: string | null;
@@ -14,6 +16,6 @@ export function assertUndoablePlacementCascadeSnapshot(input: {
       input.joiningHasHistory ||
       input.siblingOfferStatuses.some((status) => status !== "DECLINED") ||
       input.siblingApplicationStatuses.some((status) => status !== "WITHDRAWN")) {
-    throw new Error("PLACEMENT_OFFER_INVALID_TRANSITION");
+    throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
   }
 }
