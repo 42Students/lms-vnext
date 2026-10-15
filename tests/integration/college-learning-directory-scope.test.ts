@@ -140,6 +140,12 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     const unknown=await listCollegeLessons(own,{courseCode:"MISSING-CODE"});
     expect(exact.items.map(row=>row.id)).toContain(ids.lesson);
     expect(unknown.items).toEqual([]);
+    const [hasComplete,noComplete]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,completionEvidence:"COMPLETED_CONTENT"}),
+      listCollegeCourseProgress(own,{q:name,completionEvidence:"NO_COMPLETED_CONTENT"}),
+    ]);
+    expect(hasComplete.items).toEqual([]);
+    expect(noComplete.items.map(row=>row.offeringId)).toContain(ids.offering);
     const [noActivity,hasActivity]=await Promise.all([
       listCollegeCourseProgress(own,{q:name,activityState:"UNRECORDED"}),
       listCollegeCourseProgress(own,{q:name,activityState:"RECORDED"}),

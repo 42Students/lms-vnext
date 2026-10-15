@@ -30,6 +30,7 @@ export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
   cohortCode:z.string().trim().min(1).max(64).optional(),
   departmentName:z.string().trim().min(1).max(255).optional(),
   activityState:z.enum(["ALL","RECORDED","UNRECORDED"]).default("ALL"),
+  completionEvidence:z.enum(["ALL","COMPLETED_CONTENT","NO_COMPLETED_CONTENT"]).default("ALL"),
   offeringType:z.enum(["ALL","CORE","ELECTIVE"]).optional(),
 });
 export type CollegeProgressQuery=z.infer<typeof collegeProgressQuerySchema>;
@@ -41,6 +42,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if (query.status !== "ACTIVE") params.set("status", query.status);
   if (kind === "PROGRESS" && "departmentName" in query && query.departmentName) params.set("departmentName",query.departmentName);
   if(kind==="PROGRESS"&&"activityState" in query&&query.activityState!=="ALL")params.set("activityState",query.activityState);
+  if(kind==="PROGRESS"&&"completionEvidence" in query&&query.completionEvidence!=="ALL")params.set("completionEvidence",query.completionEvidence);
   if (kind === "PROGRESS" && "offeringType" in query && query.offeringType && query.offeringType !== "ALL") params.set("offeringType",query.offeringType);
   if ("courseCode" in query && query.courseCode) params.set("courseCode",query.courseCode);
   if ("programCode" in query && query.programCode) params.set("programCode",query.programCode);
