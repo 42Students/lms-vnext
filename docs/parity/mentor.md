@@ -1651,3 +1651,7 @@ The new task-comment service and GET/POST route use registered `project_task_com
 ### PR-S2-07 registered 0091 reopen state (committed)
 
 Reopen now atomically writes the latest APPROVED submission's `reopened_at` field under a project/submission row lock and PostgreSQL millisecond CAS, checks evaluations, requires scoped actor membership, and inserts immutable `project_delivery_events(REOPENED)`. Learner draft/readiness paths consult persisted `reopened_at` instead of activity log hints. Separate LOCKED events and file attachment writes follow in subsequent commits. DB acceptance not yet run.
+
+### PR-S2-07 0091 approval locking
+
+APPROVED review now persists `locked_at` and emits append-only LOCKED delivery event in the same transaction for a college-scoped actor membership. Global system-admin reviews without a college membership still record the standard audited event but cannot supply the 0091 event actor (non-null FK); those approval records remain persisted locked. The separately authorized reopen endpoint requires a real college membership and a matching approved/locked row. Disposable PostgreSQL and Super Admin acceptance remain open.

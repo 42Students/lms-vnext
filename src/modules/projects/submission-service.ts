@@ -16,6 +16,7 @@ import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
 import {
   projectInstances,
   projectSubmissionReviews,
+  projectDeliveryEvents,
   projectSubmissions,
   projectReleases,
   projectSprints,
@@ -434,6 +435,7 @@ export async function reviewProjectSubmission(
         .update(projectSubmissions)
         .set({
           status: input.decision,
+          ...(input.decision==="APPROVED"?{lockedAt:new Date(),reopenedAt:null}:{}),
           updatedAt: new Date(),
         })
         .where(
@@ -459,6 +461,13 @@ export async function reviewProjectSubmission(
         decision: input.decision,
       }));
       if(input.decision==="APPROVED"){
+        // Registered 0091 event row is immutable; supersede no prior review.
+        if(context.membership?.id){
+          await tx.insert(projectDeliveryEvents).values({
+            projectId:scope.project.id,submissionId:updated.id,eventType:"LOCKED",
+            actorMembershipId:context.membership.id,reason:"Submission approved",
+          });
+        }
         await recordActivityEventInTransaction(tx,context,projectDeliveryActivity({
           action:"LOCKED",collegeId:scope.collegeId,organizationId:scope.organizationId,
           projectId:scope.project.id,submissionId:updated.id,version:updated.version,
