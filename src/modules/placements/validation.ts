@@ -596,6 +596,7 @@ export const placementEligibilityPolicyInputSchema = z
       .transform((values) => [...new Set(values)])
       .optional()
       .default([]),
+    requireVerifiedEvidence: z.boolean().optional().default(false),
     missingEvidencePolicy: z
       .enum(placementMissingEvidencePolicies)
       .optional()

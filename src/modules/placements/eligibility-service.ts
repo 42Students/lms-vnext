@@ -521,6 +521,7 @@ export async function getJobEligibilityPolicy(
       allowedPassingYears: [] as number[],
       missingEvidencePolicy:
         "ALLOW_WITH_FLAG" as const,
+      requireVerifiedEvidence: false,
       updatedAt: null as Date | null,
     };
   }
@@ -559,6 +560,7 @@ export async function getJobEligibilityPolicy(
       policy.allowedPassingYears,
     missingEvidencePolicy:
       policy.missingEvidencePolicy,
+    requireVerifiedEvidence: policy.requireVerifiedEvidence,
     updatedAt: policy.updatedAt,
   };
 }
@@ -609,6 +611,7 @@ export async function upsertJobEligibilityPolicy(
     allowedPassingYears: input.allowedPassingYears,
     missingEvidencePolicy:
       input.missingEvidencePolicy,
+    requireVerifiedEvidence: input.requireVerifiedEvidence,
     updatedByUserId: context.user.id,
   };
   const db = getDb();
@@ -841,8 +844,7 @@ export function placementPercentageThroughout(input: {
 
 /**
  * P-S2-01: SOURCE=SELF is never acceptable as verified evidence. This
- * evaluator remains a pure policy contract until a registered per-job
- * require_verified_evidence flag is available.
+ * the verified-only flag is persisted in migration 0089.
  */
 export function evaluatePlacementEvidenceVerification(
   source: "SELF" | "VERIFIED" | null,
@@ -992,6 +994,13 @@ export async function evaluatePlacementEligibility(
       }],
       override: null,
     };
+  }
+
+  // P-S2-01: SELF academic evidence must never satisfy a verified-only
+  // job. Evaluate this before per-learner INCLUDE overrides.
+  if (policy?.requireVerifiedEvidence &&
+      evaluatePlacementEvidenceVerification(evidence?.source ?? null, true) !== "PASS") {
+    return { status: "NEEDS_DATA", checks: [], override: null };
   }
 
   if (override) {
