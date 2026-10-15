@@ -6,6 +6,9 @@ import {
   isNull,
   lte,
   sql,
+  inArray,
+  max,
+  min,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -22,6 +25,7 @@ import {
 } from "./tpo-crm-confirmed-write-model";
 import { requirePlacementManageScope } from "./scope";
 import { inferLegacyRecruiterCompanyName } from "./tpo-recruiter-lead-policy";
+import { recruiterAttentionFromPersistedFacts } from "./tpo-recruiter-attention-model";
 import {
   checkTpoLeadContactSchema,
   createTpoFollowupSchema,
@@ -72,7 +76,7 @@ function ownerMembership(context: RequestContext, collegeId: string) {
 }
 
 /** Explicit API projection: never expose stored invitation token hashes. */
-function tpoLeadView(row: typeof placementTpoLeads.$inferSelect) {
+function tpoLeadView(row: typeof placementTpoLeads.$inferSelect, attention?: ReturnType<typeof recruiterAttentionFromPersistedFacts>) {
   return {
     id: row.id,
     collegeId: row.collegeId,
@@ -96,6 +100,8 @@ function tpoLeadView(row: typeof placementTpoLeads.$inferSelect) {
     recruiterUserId: row.recruiterUserId,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    chips: attention?.chips ?? [],
+    quietDays: attention?.quietDays ?? 0,
   };
 }
 
@@ -110,7 +116,40 @@ export async function listTpoLeads(
     .from(placementTpoLeads)
     .where(eq(placementTpoLeads.collegeId, collegeId))
     .orderBy(desc(placementTpoLeads.updatedAt), desc(placementTpoLeads.id));
-  return rows.map(tpoLeadView);
+  if (rows.length === 0) return [];
+  const ids = rows.map(row => row.id);
+  const db = getDb();
+  const [contacts, followups] = await Promise.all([
+    db.select({
+      leadId: placementTpoLeadActivities.leadId,
+      lastContactAt: max(placementTpoLeadActivities.createdAt),
+    }).from(placementTpoLeadActivities).where(and(
+      eq(placementTpoLeadActivities.collegeId, collegeId),
+      inArray(placementTpoLeadActivities.leadId, ids),
+      inArray(placementTpoLeadActivities.type, ["CALL", "WHATSAPP", "EMAIL", "MEETING"]),
+    )).groupBy(placementTpoLeadActivities.leadId),
+    db.select({
+      leadId: placementTpoFollowups.leadId,
+      nextFollowupAt: min(placementTpoFollowups.dueAt),
+    }).from(placementTpoFollowups).where(and(
+      eq(placementTpoFollowups.collegeId, collegeId),
+      inArray(placementTpoFollowups.leadId, ids),
+      isNull(placementTpoFollowups.doneAt),
+    )).groupBy(placementTpoFollowups.leadId),
+  ]);
+  const contactByLead = new Map(contacts.map(row => [row.leadId, row.lastContactAt]));
+  const nextByLead = new Map(followups.map(row => [row.leadId, row.nextFollowupAt]));
+  const now = new Date();
+  return rows.map(row => tpoLeadView(row, recruiterAttentionFromPersistedFacts({
+    createdAt: row.createdAt,
+    lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
+    nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
+    inviteBouncedAt: row.inviteBouncedAt,
+    inviteSentAt: row.inviteSentAt,
+    recruiterUserId: row.recruiterUserId,
+    manualStage: row.manualStage,
+    unsubscribedAt: row.unsubscribedAt,
+  }, now)));
 }
 
 /** Database partial uniques make email/phone duplicate prevention race-safe. */
