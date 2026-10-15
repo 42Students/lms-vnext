@@ -7,6 +7,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
+import { resolveLearnerCoursePeriod } from "@/modules/courses/learner-course-current-period-model";
+import { resolveLearnerCourseTypeFilter } from "@/modules/courses/learner-course-type-availability-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
@@ -98,6 +100,7 @@ export function LearnerCourseList({
   }, [rows]);
 
   const [periodId, setPeriodId] = useState(periods[0]?.id ?? "");
+  const selectedPeriodId = resolveLearnerCoursePeriod(periodId, periods);
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
   const [continueOnly, setContinueOnly] = useState(false);
@@ -109,15 +112,16 @@ export function LearnerCourseList({
   const periodRows = useMemo(
     () =>
       rows.filter(
-        (row) => !periodId || row.course.academicPeriodId === periodId,
+        (row) => !selectedPeriodId || row.course.academicPeriodId === selectedPeriodId,
       ),
-    [rows, periodId],
+    [rows, selectedPeriodId],
   );
 
   const coreCount = periodRows.filter(
     (row) => String(row.course.offeringType).toUpperCase() !== "ELECTIVE",
   ).length;
   const electiveCount = periodRows.length - coreCount;
+  const effectiveTypeFilter = resolveLearnerCourseTypeFilter(typeFilter,coreCount,electiveCount);
 
   const visibleRows = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -128,12 +132,12 @@ export function LearnerCourseList({
       .filter((row) => {
         const elective =
           String(row.course.offeringType).toUpperCase() === "ELECTIVE";
-        if (typeFilter === "core" && elective) return false;
-        if (typeFilter === "elective" && !elective) return false;
+        if (effectiveTypeFilter === "core" && elective) return false;
+        if (effectiveTypeFilter === "elective" && !elective) return false;
         return learnerCourseMatchesSearch(row, needle);
       })
       ,sortMode);
-  }, [periodRows, query, typeFilter, continueOnly,sortMode,progressFilter,termState]);
+  }, [periodRows, query, effectiveTypeFilter, continueOnly,sortMode,progressFilter,termState]);
 
   if (rows.length === 0) {
     return (
@@ -145,7 +149,7 @@ export function LearnerCourseList({
   }
 
   const selectedPeriod =
-    periods.find((period) => period.id === periodId) ?? periods[0];
+    periods.find((period) => period.id === selectedPeriodId) ?? periods[0];
   const totalCredits = periodRows.reduce(
     (sum, row) => sum + (row.course.credits ?? 0),
     0,
@@ -159,7 +163,7 @@ export function LearnerCourseList({
             <label className="text-xs font-semibold text-body">
               Semester
               <select
-                value={periodId}
+                value={selectedPeriodId}
                 onChange={(event) => {
                   const reset = learnerCourseSemesterFilterReset();
                   setPeriodId(event.target.value);
@@ -209,7 +213,7 @@ export function LearnerCourseList({
                 <button
                   key={value}
                   type="button"
-                  aria-pressed={typeFilter === value}
+                  aria-pressed={effectiveTypeFilter === value}
                   onClick={() => {
                     setTypeFilter(value as "all" | "core" | "elective");
                     setVisibleLimit(PAGE_SIZE);
@@ -254,6 +258,7 @@ export function LearnerCourseList({
               className="min-h-11 rounded-lg border border-border bg-surface px-3 text-sm text-foreground">
               <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
               <option value="DUE">Next assessment due</option>
+               <option value="RECENT">Most recently active</option>
             </select>
           </label>
           <button type="button" aria-pressed={continueOnly}
@@ -264,7 +269,7 @@ export function LearnerCourseList({
             Continue learning only
           </button>
         </div>
-        {learnerCourseHasActiveFilters({query,typeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
+        {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
           <button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
             className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">
             Clear Course filters
@@ -300,7 +305,7 @@ export function LearnerCourseList({
               ? `No courses match “${query.trim()}”`
               : continueOnly
                 ? "No courses with a next step right now."
-                : typeFilter === "elective"
+                : effectiveTypeFilter === "elective"
                   ? "No electives to show right now."
                 : "No regular courses to show right now."}
           </h2>

@@ -198,6 +198,13 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     ]);
     expect(scopedResource.items.map((item) => item.id)).toContain(ids.resource);
     expect(absentCourse.items).toEqual([]);
+    const [sameBatch,missingBatch]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,cohortCode:label}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,cohortCode:"not-this-batch"}),
+    ]);
+    expect(sameBatch.items.map(item=>item.id)).toContain(ids.resource);
+    expect(missingBatch.items).toEqual([]);
+    expect((await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label,cohortCode:"not-this-batch"})).csv).not.toContain(label);
     const [storedOnly, youtubeOnly] = await Promise.all([
       listCollegeContentAggregate(adminA, "VIDEO", { q: label, format: "VIDEO" }),
       listCollegeContentAggregate(adminA, "VIDEO", { q: label, format: "YOUTUBE" }),

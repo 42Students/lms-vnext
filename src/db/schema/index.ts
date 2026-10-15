@@ -45,3 +45,13 @@ export * from "./messaging-receipts";
 export * from "./profile-verification";
 
 export * from "./tpo-configuration";
+
+export * from "./placement-batches";
+
+export * from "./college-signin";
+
+export * from "./inbound-mail";
+
+export * from "./platform-broadcasts";
+
+export * from "./tpo-internal";

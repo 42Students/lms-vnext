@@ -11,6 +11,7 @@ import {
 import { submitProjectTask, reviewProjectTaskSubmission } from "@/modules/projects/task-submission-service";
 import { getMentorTeamHistory } from "@/modules/projects/mentor-team-history-service";
 import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-service";
+import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 import { getMentorTaskReviews } from "@/modules/projects/mentor-task-review-service";
 import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-history-service";
@@ -113,6 +114,9 @@ afterAll(async()=>{
 describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
   it("reads persisted assigned-project team, sprint, coverage and activity",async()=>{
     const {project,sprint}=await fixture();
+    const recordedWork=await getMentorProjectWorkCounts(mentor);
+    expect(recordedWork.get(project.id)).toMatchObject({total:1,open:1});
+    await expect(getMentorProjectWorkCounts(learner)).rejects.toBeDefined();
     const review=await getMentorProjectReviewCompleteness(mentor,{projectId:project.id,page:1});
     expect(review).toMatchObject({
       enabled:true,total:0,items:[],projectTitle:project.title,
