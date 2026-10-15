@@ -61,7 +61,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
           <select name="view" defaultValue={data.query.view}
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="ALL">All event groups</option>
-            <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option>
+            <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option><option value="DELIVERIES">Final delivery history</option>
             <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option><option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </select>
         </label>
