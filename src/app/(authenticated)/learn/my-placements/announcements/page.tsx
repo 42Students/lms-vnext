@@ -14,6 +14,7 @@ import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-
 import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-recent-model";
 import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerNoticeFilterHref} from "@/modules/placements/learner-notices-navigation-model";
+import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import {sortLearnerNotices,learnerNoticeSortSchema} from "@/modules/placements/learner-notices-sort-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
@@ -46,7 +47,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     ...(pinnedOnly?{pinned:"1"}:{}),...(unreadOnly?{unread:"1"}:{}),
     ...(queryText?{q:queryText}:{}),...(recentOnly?{recent:"1"}:{}),...(sortKey!=="pinned"?{sort:sortKey}:{}),page:String(page),
   }).toString();
-  const personalAlerts = await getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20});
+  const personalAlerts = await readOptionalLearnerAlertSource(
+    ()=>getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20}));
   return (
     <main className="min-w-0 space-y-6">
       <div>
@@ -129,7 +131,14 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText})} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText})} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
       </nav>
-      <LearnerPlacementAlerts alerts={personalAlerts} />
+      {personalAlerts.available ?
+        <LearnerPlacementAlerts alerts={personalAlerts.items} /> :
+        <div role="alert" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
+          <Link href="/learn/my-placements/announcements"
+            className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry personal alerts</Link>
+        </div>}
+
     </main>
   );
 }
