@@ -821,3 +821,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 New Template 5 (PARTIAL):** First sprint description now persists in the connected release-to-sprint blueprint. Canonical create writer unchanged. Regression tests authored, not executed; multi-entry legacy editor/browser and PG acceptance remain OPEN.
+
+
+**2026-10-15 chat-6 New Template 6 (PARTIAL):** Draft task instructions now survive to the task blueprint; task key and parent sprint remain stable. No migration or permissions changed. Tests authored but not run; the richer legacy editor, PG and browser gate remain open.
