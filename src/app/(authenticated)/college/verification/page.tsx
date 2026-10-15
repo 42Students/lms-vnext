@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {CollegeVerificationPanel} from "@/components/verification/CollegeVerificationPanel";
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
-import {parseCollegeVerificationPageQuery} from "@/modules/verification/page-query";
+import {parseCollegeVerificationPageQuery,collegeVerificationFilterError} from "@/modules/verification/page-query";
 import {verificationLastPage,verificationPageUrl} from "@/modules/verification/page-range";
 import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions,listVerificationProgramOptions} from "@/modules/verification/filter-options-service";
 
@@ -16,7 +16,7 @@ export default async function CollegeVerificationPage({searchParams}:{
  const parsed=parseCollegeVerificationPageQuery(raw);
  if(!parsed.success)return <section className="space-y-3 p-4">
   <h1 className="text-xl font-semibold">Profile verification</h1>
-  <p role="alert">Invalid verification filters. No records were loaded.</p>
+  <p role="alert">{collegeVerificationFilterError(raw)}</p>
   <Link href="/college/verification" className="underline">Clear filters</Link>
  </section>;
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>|undefined;
