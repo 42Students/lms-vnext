@@ -43,7 +43,7 @@ export default async function SuperAdminHrPage({
       <div className="space-y-6">
         <PageHeader
           eyebrow="Super Admin"
-          title="Recruiter Accounts"
+          title="Recruiter accounts"
           description="Employer recruiter administration."
         />
         <ErrorState

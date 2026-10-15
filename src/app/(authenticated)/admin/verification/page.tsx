@@ -21,7 +21,7 @@ export default async function AdminVerificationEntry() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin"
-        title="Profile Verification"
+        title="Profile verification"
         description="Review learner verification for one explicitly selected college."
       />
       <section role="status" className="rounded-xl border border-border bg-surface p-5">

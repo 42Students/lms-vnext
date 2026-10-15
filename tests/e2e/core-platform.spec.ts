@@ -156,7 +156,7 @@ test.describe("Core tenant browser acceptance", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Platform overview",
+        name: "Overview",
       }),
     ).toBeVisible();
 
@@ -231,7 +231,7 @@ test.describe("Core tenant browser acceptance", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Platform overview",
+        name: "Overview",
       }),
     ).toBeVisible();
 

@@ -458,3 +458,32 @@ Part 4: about 70 S2 replacement instructions across 52 files, 12 S3 groups.
 8. Faculty headings: `Courses`, `All Quizzes`, `All Assignments` should be `My Courses`, `My Quizzes`, `My Assignments`; sidebar `All Assignments` should be `All assignments`; Contacts H1 should follow tab (`All Contacts` / `Teachers` / `Students`); course tabs should end with Students.
 9. Recruiter: sidebar `Hiring Workspace` vs `Drives`, Messages row missing, extra Profile row; headings `Recruiter Calendar`, `Messages & Notifications`, `Your Profile` vs `Calendar`, `Messages`, `Profile`; `Request a Drive` vs `Request a drive`; top-bar Request button missing; role label `Employer Recruiter` vs `Recruiter`.
 10. College grouped pages have no visible group heading (legacy shows Academic Setup / Courses & Content / People / Placements / Projects), Placements tabs lack Companies and Analytics, Projects pages show two tab strips, and 6 pages (domains, announcements, groups, reassign-mentor, attendance/departments, readiness-by-department) lost their only link. Behind all of it, 469 vNext-only eyebrows and descriptions add words legacy never had.
+
+---------------------------------------------------------------------------------------------------
+
+## Shell-level wording pass (status after implementation)
+
+Done (unit-test evidence in tests/unit/shell-page-titles, chat9-phase2-college-topbar-copy, shell-switcher-wording, faculty-legacy-wording, super-admin-legacy-wording):
+- Browser titles: root metadata `{ default: "42LMS", template: "%s · 42LMS" }`; `PageTitle` (components/shell/page-title.tsx) sets `<title> · 42LMS` from the route map in components/shell/page-titles.ts for Learner, Faculty, Mentor, College Admin (legacy constant.js routeTitles/adminRouteTitles, including the legacy quirk "All Assignment"); Super Admin pages use the constant `Superadmin · 42LMS`. Pages with no known legacy title fall back to `42LMS`. TPO, Recruiter and project pages are not mapped (other lanes).
+- Account menu: `My Account` + `Logout` for every role (hrefs: College /college/profile, TPO /tpo/profile, Faculty /teacher/profile, Learner /learn/profile, Recruiter /hr/profile; Mentor and multi-role fallbacks keep /account/security because no mentor profile page exists); Super Admin shows `Logout` only; `Signing out…` removed. /account/security still works but is no longer linked from the menu for non-college roles (College profile still links "Signed-in devices"); decide where it should be linked.
+- Switchers: `Switch workspace` (label and placeholder), Super Admin `All colleges`.
+- Faculty: headings `My Courses`, `My Quizzes`, `My Assignments`; sidebar `All assignments`; Contacts heading follows the tab; `Students` is the last course tab. The sidebar rows `Courses` and `All Quizzes` stay as in legacy lists.js (only the headings are "My ...").
+- Super Admin label-only fixes: sidebar `Overview`, `Profile verification`, `Inbound mail`, `Tenant Settings`, `Activity Log`, `Courses & Content`, `Recruiter accounts`; headings `Overview`, `Tenant Setup`, `Tenant Settings`, `Inbound mail`, `Profile verification`, `Activity Log`, `Recruiter accounts`. No row added or removed, so no page was orphaned.
+
+Skipped: faculty conditional `Placement cell` row (needs a per-user TPO-access lookup in the single-role faculty branch, not cheap); faculty group dividers (S3).
+
+## Super Admin follow-up
+
+Do NOT restructure the Super Admin sidebar to the 13-row legacy list until these tab strips exist (otherwise the pages listed become unreachable). Build in this order:
+1. **Tenant Setup strip** (legacy row `Tenant Setup`, /admin/tenants): tabs for `Organizations` (/admin/organizations) and `Colleges` (/admin/colleges), plus the tenant directory itself. Only then drop the two flat rows `Organizations` and `Colleges`.
+2. **Academic Setup strip** (reuse COLLEGE_LEGACY_GROUPS with basePath /admin: Departments, Programs, Semesters, Semester–Course Mapping, Batches, Classes, Batch Promotion, Lecture Halls, Electives, Attendance). Only then drop the flat rows `Departments`, `Academics`, `Lecture Halls`, `Attendance`.
+3. **Courses & Content strip** (Courses, Lessons, Video, Resources, Live Classes, Assignments, Quizzes, Progress) so the single `Courses & Content` row reaches all of them.
+4. **People strip** (Faculty, Faculty Assignment, Students, People Directory).
+5. **Placements strip** with SA extras: Drives, Companies, Interviews, Analytics, `Recruiter accounts` (/admin/recruiters), `Announcements` (/admin/announcements). Only then drop the flat rows `Recruiter accounts`, `Announcements` and `Placement Interview Calendar` (the calendar becomes the `Interviews` tab).
+6. **Projects strip** with Super Admin order Templates, Workspaces, At Risk, Readiness, Submissions, Audit (ProjectAdminNav currently starts with Workspaces), landing on /admin/projects/templates.
+7. **Module Access** page/route (currently inside /admin/features/[collegeId]) so the legacy `Module Access` row has a target.
+8. Decide separately where `Domains` (/admin/domains) and `Audit Findings` (/tracker/audit-findings), which have no legacy row, are linked (e.g. from Tenant Setup / Activity Log), then add the three legacy dividers (after Feature Controls, Inbound mail, People).
+
+## Deferred decision: eyebrows and descriptions
+
+Removing the vNext-only eyebrow and description under page headings touches about 469 call sites and changes visual hierarchy. Not done in the shell pass. Options for the owner: (a) delete both globally by making `PageHeader` ignore them (one-file change, hides intent), (b) remove per role lane as each lane audits its pages, (c) keep descriptions only where legacy has a subtitle (list in Part 4 S3). Needs an owner decision before any change.

@@ -107,7 +107,7 @@ async function SuperAdminDashboard({
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin"
-        title="Platform overview"
+        title="Overview"
         description={`${scopeLabel}. Counts and actions follow the selected safety scope.`}
       />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
