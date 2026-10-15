@@ -13,7 +13,7 @@ import { listMyMentorProjectAttention } from "./mentor-attention-service";
 import { mentorProjectActivityEventTypes } from "./mentor-project-activity-model";
 import {
   mentorActivityQuerySchema, mentorReviewQuerySchema,
-  pageMentorPortfolio, safeMentorProjectEventLabel, selectMentorReviewQueue,
+  pageMentorPortfolio, mentorActivityPagination, safeMentorProjectEventLabel, selectMentorReviewQueue,
 } from "./mentor-portfolio-model";
 
 async function requireMentorPortfolio(context: RequestContext) {
@@ -96,18 +96,16 @@ export async function getMentorPortfolioActivity(
     ),
   );
   const db = getDb();
-  const [summary, rows] = await Promise.all([
-    db.select({ total: count() }).from(activityEvents).where(filters),
-    db.select({
+  const [summary] = await db.select({total:count()}).from(activityEvents).where(filters);
+  const paging=mentorActivityPagination(Number(summary?.total??0),query.page,query.pageSize);
+  const rows=await db.select({
       id: activityEvents.id, eventType: activityEvents.eventType,
       subjectId: activityEvents.subjectId, subjectType: activityEvents.subjectType,
       metadataProjectId, occurredAt: activityEvents.occurredAt,
     }).from(activityEvents).where(filters)
       .orderBy(query.order==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
         query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
-      .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
-  ]);
-  const total = Number(summary[0]?.total ?? 0);
+      .limit(paging.pageSize).offset((paging.page - 1) * paging.pageSize);
   const items = rows.flatMap(row => {
     const id = row.subjectType === "project" && byId.has(row.subjectId)
       ? row.subjectId : row.metadataProjectId;
@@ -118,7 +116,6 @@ export async function getMentorPortfolioActivity(
     }] : [];
   });
   return {
-    enabled: true, query, projects:scope.projects, page: query.page, pageSize: query.pageSize,
-    total, totalPages: Math.max(1, Math.ceil(total / query.pageSize)), items,
+    enabled: true, query, projects:scope.projects, ...paging, items,
   };
 }

@@ -103,3 +103,9 @@ export function mentorPortfolioHref(
 
 /** Zero-min-width grid protects long assigned-project names on mobile. */
 export const mentorActivityFormLayout = "grid min-w-0 w-full grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4 [&_label]:w-full [&_label]:min-w-0 [&_select]:w-full [&_select]:min-w-0 [&_select]:max-w-full";
+
+export function mentorActivityPagination(total:number, requested:number, pageSize:number){
+ const totalPages=Math.max(1,Math.ceil(total/pageSize));
+ const page=Math.max(1,Math.min(requested,totalPages));
+ return {page,pageSize,total,totalPages};
+}
