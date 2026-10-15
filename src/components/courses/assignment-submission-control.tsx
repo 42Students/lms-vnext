@@ -215,6 +215,7 @@ export function AssignmentSubmissionControl({
             <Input
               type="url"
               inputMode="url"
+              maxLength={2048}
               value={submissionUrl}
               onChange={(event) =>
                 setSubmissionUrl(
