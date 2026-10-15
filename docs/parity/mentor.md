@@ -1575,3 +1575,8 @@ The registered, tenant-scoped Project Resource File service is now loaded in the
 Four integration files (eight stale call sites) now use the actual Learner task submission and Mentor approval service flow instead of forbidden \`as never\` direct DONE/IN_REVIEW writes. P5 and P7A also expect ACTIVE after release shipment; explicit approved Mentor closeout owns COMPLETED. The Resources tab now offers the registered file API's presigned PUT workflow to eligible managers and a READY-only read/download projection to learners. File metadata edits, soft delete, progress, failed/blocked/verifying statuses and retry-complete controls are present. Tests for source contracts and fixture migration have been authored.
 
 **Not executed:** TypeScript/typecheck, ESLint, Vitest unit suites, P5/P6B/P7A/adversarial PostgreSQL integration tests, browser/mobile acceptance, upload PUT against an actual provider, scanner certification, complete retry race, tenant/member denial matrix, build. Any compiler/test defects must be resolved before merger certification. PR-S2-04 and PR-S2-07 still require remaining runtime parity; PR-S2-03/08/11 staged schema-dependent behavior cannot be considered complete solely on source files. No tracker task has been marked DONE.
+
+
+### PR-S2-03 registered schema enforcement — task submission (commit in branch history)
+
+With migration 0082 registered, task submission now enforces an exact persisted `assignee_membership_id` match **under the task lock**. Unassigned tasks and submissions from other learners fail closed. This must be paired with assignee selection in task creation/edit and corresponding integration fixture updates; no PostgreSQL acceptance is claimed.
