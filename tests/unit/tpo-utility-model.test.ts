@@ -45,6 +45,7 @@ describe("TPO More navigation", () => {
       "/tpo/students/requests",
       "/tpo/calendar",
       "/tpo/reports",
+      "/tpo/notifications",
       "/tpo/audit",
       "/tpo/recruiters?view=companies",
       "/tpo/profile",
@@ -98,7 +99,7 @@ describe("TPO More navigation", () => {
     );
   });
 
-  it("does not pretend missing utilities are implemented", () => {
+  it("does not link unimplemented utilities", () => {
     const destinations = links.map(
       (link) => link.href,
     );
@@ -106,7 +107,6 @@ describe("TPO More navigation", () => {
     for (const unavailable of [
       "/tpo/messages",
       "/tpo/settings",
-      "/tpo/notifications",
     ]) {
       expect(destinations).not.toContain(
         unavailable,

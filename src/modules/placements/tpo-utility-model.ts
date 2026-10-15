@@ -36,6 +36,12 @@ export const TPO_MORE_GROUPS = [
           "Explore placement performance and exportable reports.",
       },
       {
+        label: "Notifications",
+        href: "/tpo/notifications",
+        description:
+          "Read, filter and acknowledge your own notifications.",
+      },
+      {
         label: "Audit Log",
         href: "/tpo/audit",
         description:

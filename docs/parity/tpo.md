@@ -894,6 +894,8 @@ Legacy:
 - linked notifications;
 - stale refresh alert.
 
+**W68 PARTIAL — TPO Notifications page:** `/tpo/notifications` (linked from TPO More) lists only the signed-in TPO's own in-app notifications for their persisted current college, with All/Unread filter, unread count, cursor-paged Older link, Today/Yesterday/This week/Earlier grouping (shared NotificationList), linked notifications, per-item mark-read and confirmed Mark all as read. Services re-verify the live ACTIVE membership + TPO role + `placements.manage`; reads are idempotent and audit as identity.tpo_notification.acknowledged. Foreign-college, other-user, wrong-role and suspended access are denied without leaking. Loading and error states included. Browser acceptance, exact event-type coverage and sidebar placement remain open.
+
 - [ ] All/Unread counts/filter match.
 - [ ] Mark all as read matches.
 - [ ] opening individual notification marks read.
