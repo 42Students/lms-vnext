@@ -61,3 +61,11 @@ export function mentorLatestDeliveryVersion(
   if(!submissions.length)return null;
   return submissions.reduce((latest,row)=>row.version>latest.version?row:latest);
 }
+
+export function mentorRequiredResourceLinkState(resource:{
+ required:boolean;url:string|null;description:string|null;
+}):"NOT_REQUIRED"|"SAFE_LINK"|"TEXT_ONLY"|"LINK_UNAVAILABLE"{
+ if(!resource.required)return "NOT_REQUIRED";
+ if(safeProjectExternalHref(resource.url))return "SAFE_LINK";
+ return resource.description?.trim()?"TEXT_ONLY":"LINK_UNAVAILABLE";
+}

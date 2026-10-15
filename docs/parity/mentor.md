@@ -1253,3 +1253,8 @@ The Mentor Team view now calls out a live current-project roster with no registe
 ## 2026-10-15 chat-11 new round — latest-final-delivery-version (PARTIAL)
 
 The Mentor Delivery tab explicitly identifies the highest persisted final-delivery version and status, even if historical rows are returned in a different order. Prior submitted versions are not falsely presented as the latest review action. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 new round — required-resource-link-evidence (PARTIAL)
+
+The Mentor Resources tab now distinguishes valid required external links, valid text-only resources, and required entries without usable content. Credential-bearing links are never shown as safe; no file/blob provider or invented upload is implied. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
