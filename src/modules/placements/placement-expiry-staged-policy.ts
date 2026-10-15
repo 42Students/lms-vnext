@@ -1,6 +1,6 @@
 /**
  * P-S2-07: exact expiry instant is non-actionable. EXPIRED persistence
- * requires the separately staged status constraints to be registered first.
+ * persists under the registered 0085 constraints; scheduler activation is separate.
  */
 export function isPlacementOfferExpiredAt(
   expiresAt: Date | null, now: Date,
