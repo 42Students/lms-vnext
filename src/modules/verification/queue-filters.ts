@@ -2,6 +2,7 @@ import {z} from "zod";
 export const verificationQueueFilters=z.strictObject({
   tab:z.enum(["WAITING","SENT_BACK","VERIFIED"]).default("WAITING"),
   q:z.string().trim().max(100).default(""),
+  membershipId:z.string().uuid().optional(),
   sectionId:z.string().uuid().optional(),
   kind:z.enum(["EDUCATION","IDENTITY"]).optional(),
   marksheets:z.enum(["ANY","MISSING","PRESENT"]).default("ANY"),

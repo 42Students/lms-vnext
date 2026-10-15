@@ -35,6 +35,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),
+  filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
   filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),

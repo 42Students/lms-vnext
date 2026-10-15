@@ -21,6 +21,7 @@ import {
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
 import { collegeRoleDirectoryExportHref } from "@/modules/people/college-role-directory-export";
+import {collegeLearnerVerificationHref} from "@/modules/verification/admin-links";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -328,6 +329,7 @@ export async function CollegeRoleDirectoryWorkspace({
                       className="font-semibold text-primary-text hover:underline">{item.name}</Link>
                     <p className="mt-1 text-xs text-muted-foreground">{item.email ?? "No email recorded"}</p>
                     <Link href={collegeRoleContactHref(item.membershipId)} className="mt-1 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">View contact card</Link>
+                    {kind==="LEARNER"&&<Link href={collegeLearnerVerificationHref(item.membershipId)} className="ml-3 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">Profile verification</Link>}
                   </td>
                   <td className="px-4 py-4">
                     <StatusBadge tone={item.membershipStatus === "ACTIVE" && item.userStatus === "ACTIVE" ? "success" : "warning"}>
