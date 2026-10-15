@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
-import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh} from "@/modules/courses/faculty-manual-grade-receipt";
+import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
@@ -146,7 +146,7 @@ function SubmissionGradeCard({
       const saved = facultyManualGradeReceipt(await response.json(),submission,"GRADE",maxPoints,{
         points:parsed,feedback:feedback.trim()||null,
       });
-      setSuccess("Grade state saved. Refresh the report to verify visibility.");
+      setSuccess(facultyManualGradeSuccessMessage("GRADE",saved.version));
       onUpdated({
         ...submission,
         ...saved,
@@ -205,7 +205,7 @@ function SubmissionGradeCard({
       const saved = facultyManualGradeReceipt(await response.json(),submission,"PUBLISH",maxPoints,{
         points:submission.pointsAwarded ?? -1,feedback:submission.feedback,
       });
-      setSuccess("Grade state saved. Refresh the report to verify visibility.");
+      setSuccess(facultyManualGradeSuccessMessage("PUBLISH",saved.version));
       onUpdated({
         ...submission,
         ...saved,
