@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {projectDeliveryAttachmentsSchema} from "./pr-s2-07-delivery-reopen-model";
 import {
   PROJECT_MEETING_TYPES,
   PROJECT_MEMBER_ROLES,
@@ -528,6 +529,7 @@ export const projectSubmissionIdSchema =
 export const projectSubmissionDraftInputSchema = z
   .object({
     summary: z.string().trim().min(1).max(6000),
+    attachments:projectDeliveryAttachmentsSchema.optional(),
     sourceUrl: optionalHttpUrlSchema,
     demoUrl: optionalHttpUrlSchema,
     notes: z
