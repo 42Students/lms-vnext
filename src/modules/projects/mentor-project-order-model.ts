@@ -16,3 +16,13 @@ export function compareMentorProjectsByProgress(a:OrderableProject,b:OrderablePr
  if(bPercent===undefined)return -1;
  return aPercent-bPercent||compareMentorProjects(a,b,"RECENT");
 }
+
+/** Highest measured completion first; archived work stays after current work. */
+export function compareMentorProjectsByMostProgress(a:OrderableProject,b:OrderableProject,
+ aPercent:number|undefined,bPercent:number|undefined){
+ const archived=Number(a.status==="ARCHIVED")-Number(b.status==="ARCHIVED");
+ if(archived)return archived;
+ if(aPercent===undefined)return bPercent===undefined?compareMentorProjects(a,b,"RECENT"):1;
+ if(bPercent===undefined)return -1;
+ return bPercent-aPercent||compareMentorProjects(a,b,"RECENT");
+}
