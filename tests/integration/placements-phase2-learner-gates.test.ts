@@ -8,6 +8,7 @@ import { createPlacementJob, publishPlacementJob } from "@/modules/placements/jo
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import { minimumOfferResponseDeadline } from "@/modules/placements/offer-college-rules-policy";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { loadPlacementHeldOfferFacts } from "@/modules/placements/held-offer-facts-service";
@@ -238,6 +239,23 @@ describe("Section A: placement write/read integration boundaries", () => {
       .some(row => row.job.id === matching.id)).toBe(true);
   });
 
+
+  it("P-S2-06 applies persisted college response hours without crediting Sunday partial hours",async()=>{
+    await pool.query(`
+      INSERT INTO placement_college_rules (college_id,min_response_hours)
+      VALUES ($1,1) ON CONFLICT (college_id)
+      DO UPDATE SET min_response_hours=excluded.min_response_hours
+    `,[SEED_IDS.collegeA]);
+    const row=(await pool.query<{min_response_hours:number}>(
+      "SELECT min_response_hours FROM placement_college_rules WHERE college_id=$1",
+      [SEED_IDS.collegeA],
+    )).rows[0];
+    expect(row?.min_response_hours).toBe(1);
+    const issuedAt=new Date("2026-10-18T18:00:00.000Z"); // Sunday 23:30 IST
+    const deadline=minimumOfferResponseDeadline(issuedAt,row!.min_response_hours);
+    expect(deadline.toISOString()).toBe("2026-10-18T19:30:00.000Z");
+    expect(deadline.getTime()-issuedAt.getTime()).toBe(90*60_000);
+  });
 
   it("P-S1-07 persists exactly-once expiry and rejects acceptance at the deadline", async () => {
     // This is a real registered-DDL acceptance test, not a staged-schema mock.
