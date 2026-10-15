@@ -1,0 +1,4 @@
+import{it,expect}from"vitest";import{mentorReportsQuerySchema as schema,mentorReportsOverview as report}from"@/modules/projects/mentor-reports-model";
+const date=new Date("2026-10-15T00:00:00Z");const projects=["unknown","done","half"].map(id=>({id,title:id,status:"ACTIVE",isPrimaryMentor:false,updatedAt:date}));const counts=new Map([["done",{total:3,open:0}],["half",{total:2,open:1}]]);
+it("sorts measured task progress before unknown (not a fake zero)",()=>{const query=schema.parse({order:"TASK_PROGRESS"});expect(report(projects,[],query,counts).items.map(x=>x.id)).toEqual(["half","done","unknown"]);expect(report(projects,[],query,counts).exportItems.map(x=>x.id)).toEqual(["half","done","unknown"])});
+it("rejects unknown report sort",()=>expect(schema.safeParse({order:"LOW_PROGRESS_NO_DATA"}).success).toBe(false));

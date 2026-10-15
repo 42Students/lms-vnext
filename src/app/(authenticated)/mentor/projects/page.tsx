@@ -1,7 +1,8 @@
+import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-team-size-service";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
-import { matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
+import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
-import { compareMentorProjects } from "@/modules/projects/mentor-project-order-model";
+import { compareMentorProjects, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
@@ -74,7 +75,9 @@ export default async function MentorProjectsPage({
       ),
     ]);
 
-  const workCounts = query.work ? await getMentorProjectWorkCounts(context) : null;
+  const [workCounts, teamSizes] = await Promise.all([
+    getMentorProjectWorkCounts(context), getMentorProjectTeamSizes(context),
+  ]);
   const alerts = new Map<
     string,
     Set<string>
@@ -163,7 +166,11 @@ export default async function MentorProjectsPage({
       );
     })
     .filter((row) => matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
-    .sort((a,b) => compareMentorProjects(a.project,b.project,query.sort === "TITLE" ? "TITLE" : "RECENT"));
+    .sort((a,b) => query.sort === "PROGRESS"
+      ? compareMentorProjectsByProgress(a.project,b.project,
+          mentorTaskProgress(workCounts.get(a.project.id))?.percent,
+          mentorTaskProgress(workCounts.get(b.project.id))?.percent)
+      : compareMentorProjects(a.project,b.project,query.sort));
 
   const total = filtered.length;
   const totalPages = Math.max(
@@ -272,6 +279,10 @@ export default async function MentorProjectsPage({
               row.project.status,
             updatedAt:
               row.project.updatedAt,
+            memberCount: teamSizes.get(row.project.id) ?? 0,
+            progressPercent: mentorTaskProgress(workCounts.get(row.project.id))?.percent,
+            progressDetail: mentorTaskProgress(workCounts.get(row.project.id))?.label,
+            readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             participation:
               row.isPrimaryMentor
                 ? "Primary mentor"

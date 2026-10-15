@@ -1,0 +1,4 @@
+import {it,expect} from "vitest";import {mentorCalendarFiltersSchema as schema,filterMentorCalendar as filter,mentorCalendarFilterHref as href}from"@/modules/projects/mentor-calendar-filter-model";
+const row={id:"linked",projectId:"p",projectTitle:"P",projectStatus:"ACTIVE",title:"Review",status:"SCHEDULED"as const,startsAt:"2026-10-16T09:00:00Z",endsAt:"2026-10-16T10:00:00Z",timeZone:"Asia/Kolkata",meetingUrl:null,linkedSprintTitle:"Sprint"};
+it("filters only persisted Sprint-linked meetings",()=>{expect(filter([row,{...row,id:"none",linkedSprintTitle:null}],schema.parse({sprint:"LINKED"})).map(x=>x.id)).toEqual(["linked"]);expect(filter([row,{...row,id:"none",linkedSprintTitle:null}],schema.parse({sprint:"UNLINKED"})).map(x=>x.id)).toEqual(["none"])});
+it("retains Sprint selector in href",()=>expect(href(schema.parse({sprint:"LINKED"}))).toContain("sprint=LINKED"));

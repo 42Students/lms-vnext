@@ -1,8 +1,12 @@
 import {z} from "zod";
-import type {MentorMeetingCalendarItem} from "./mentor-calendar-view";
+import {mentorMeetingDisplayStatus,safeMentorMeetingJoinUrl,type MentorMeetingCalendarItem} from "./mentor-calendar-view";
 
 /** Filters only rows returned by the current Mentor's persisted scoped roster. */
 export const mentorCalendarFiltersSchema=z.object({
+  join:z.enum(["ALL","HAS_SAFE_LINK","NO_SAFE_LINK"]).default("ALL"),
+  sprint:z.enum(["ALL","LINKED","UNLINKED"]).default("ALL"),
+  projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
+  attention:z.enum(["ALL","OVERDUE_REQUESTED","SOON_SCHEDULED","MISSED_SCHEDULED"]).default("ALL"),
   status:z.enum(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   type:z.enum(["ALL","GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]).default("ALL"),
   projectState:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
@@ -14,7 +18,8 @@ export type MentorCalendarFilters=z.infer<typeof mentorCalendarFiltersSchema>;
 export function filterMentorCalendar(
   meetings:readonly MentorMeetingCalendarItem[],
   query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
-    {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"]},
+    {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
+      attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"];join?:MentorCalendarFilters["join"];sprint?:MentorCalendarFilters["sprint"]},
   now:Date=new Date(),
 ){
   const term=query.search.toLocaleLowerCase("en-IN");
@@ -34,6 +39,18 @@ export function filterMentorCalendar(
       query.period==="NEXT_7_DAYS"?diff>=0&&diff<=6:diff<=-1&&diff>=-7;
   };
   return meetings.filter(row=>
+    (!query.projectId||row.projectId===query.projectId)&&
+    (!query.sprint||query.sprint==="ALL"||
+      (query.sprint==="LINKED" ? row.linkedSprintTitle!==null : row.linkedSprintTitle===null))&&
+    (!query.join||query.join==="ALL"||
+      (query.join==="HAS_SAFE_LINK" ? safeMentorMeetingJoinUrl(row)!==null : safeMentorMeetingJoinUrl(row)===null))&&
+    (!query.attention||query.attention==="ALL"||
+      (query.attention==="OVERDUE_REQUESTED"
+        ? row.status==="REQUESTED"&&Date.parse(row.startsAt)<now.getTime()
+        : query.attention==="SOON_SCHEDULED"
+          ? row.status==="SCHEDULED"&&Date.parse(row.startsAt)>=now.getTime()&&
+            Date.parse(row.startsAt)<=now.getTime()+48*3600000
+          : mentorMeetingDisplayStatus(row,now)==="MISSED"))&&
     (query.status==="ALL"||row.status===query.status)&&
     (!query.type||query.type==="ALL"||row.meetingType===query.type)&&
     (!query.projectState||query.projectState==="ALL"||row.projectStatus===query.projectState)&&
@@ -43,9 +60,14 @@ export function filterMentorCalendar(
         (a,b)=>a.startsAt.localeCompare(b.startsAt)||a.id.localeCompare(b.id));
 }
 export function mentorCalendarFilterHref(query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
-  {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"]}){
+  {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
+   attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"];join?:MentorCalendarFilters["join"];sprint?:MentorCalendarFilters["sprint"]}){
   const params=new URLSearchParams();
+  if(query.projectId)params.set("projectId",query.projectId);
+  if(query.join&&query.join!=="ALL")params.set("join",query.join);
+  if(query.sprint&&query.sprint!=="ALL")params.set("sprint",query.sprint);
   if(query.status!=="ALL")params.set("status",query.status);
+  if(query.attention&&query.attention!=="ALL")params.set("attention",query.attention);
   if(query.type&&query.type!=="ALL")params.set("type",query.type);
   if(query.projectState&&query.projectState!=="ALL")params.set("projectState",query.projectState);
   if(query.search)params.set("search",query.search);

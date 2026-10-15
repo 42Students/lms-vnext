@@ -1,0 +1,3 @@
+import{it,expect}from"vitest";import{mentorReviewQuerySchema as schema,mentorPortfolioHref as href}from"@/modules/projects/mentor-portfolio-model";
+it("validates active Mentor assignment category only",()=>{expect(schema.parse({assignment:"PRIMARY"}).assignment).toBe("PRIMARY");expect(schema.safeParse({assignment:"GUEST"}).success).toBe(false)});
+it("retains assignment filter in pager URL",()=>expect(href("reviews",{assignment:"SUPPORTING",page:2})).toContain("assignment=SUPPORTING"));

@@ -33,6 +33,7 @@ async function requireMentorPortfolio(context: RequestContext) {
     enabled: true as const,
     projects: assigned.map(row => ({
       id: row.project.id, title: row.project.title, status: row.project.status,
+      isPrimaryMentor:row.isPrimaryMentor,
     })),
   };
 }
@@ -42,15 +43,19 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
   const query = mentorReviewQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
   if (!scope.enabled || !scope.projects.length) {
-    return { enabled: scope.enabled, query, ...pageMentorPortfolio([], query) };
+    return { enabled: scope.enabled, query, projects:scope.projects, ...pageMentorPortfolio([], query) };
   }
+  if (query.projectId && !scope.projects.some(p=>p.id===query.projectId))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const allowed = new Set(scope.projects
-    .filter(p=>query.projectStatus==="ALL"||p.status===query.projectStatus).map(p => p.id));
+    .filter(p=>(query.projectStatus==="ALL"||p.status===query.projectStatus)&&
+      (query.assignment==="ALL"||(query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
+      (!query.projectId||p.id===query.projectId)).map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(
     alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age,
   );
-  return { enabled: true, query, ...pageMentorPortfolio(items, query) };
+  return { enabled: true, query, projects:scope.projects, ...pageMentorPortfolio(items, query) };
 }
 
 /** College-scoped, assigned-project timeline. No raw summaries, metadata or actor PII. */
@@ -59,10 +64,14 @@ export async function getMentorPortfolioActivity(
 ) {
   const query = mentorActivityQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
-  const selectedProjects=scope.projects.filter(p=>query.projectStatus==="ALL"||p.status===query.projectStatus);
+  if (query.projectId && !scope.projects.some(p=>p.id===query.projectId))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const selectedProjects=scope.projects.filter(p=>(query.projectStatus==="ALL"||p.status===query.projectStatus)&&
+    (query.assignment==="ALL"||(query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
+    (!query.projectId||p.id===query.projectId));
   if (!scope.enabled || !selectedProjects.length) {
     return {
-      enabled: scope.enabled, query, page: 1, pageSize: query.pageSize,
+      enabled: scope.enabled, query, projects:scope.projects, page: 1, pageSize: query.pageSize,
       total: 0, totalPages: 1,
       items: [] as { id: string; projectId: string; projectTitle: string; label: string; occurredAt: Date }[],
     };
@@ -109,7 +118,7 @@ export async function getMentorPortfolioActivity(
     }] : [];
   });
   return {
-    enabled: true, query, page: query.page, pageSize: query.pageSize,
+    enabled: true, query, projects:scope.projects, page: query.page, pageSize: query.pageSize,
     total, totalPages: Math.max(1, Math.ceil(total / query.pageSize)), items,
   };
 }
