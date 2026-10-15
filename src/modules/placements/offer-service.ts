@@ -19,6 +19,8 @@ import {
   placementApplicationScreenings,
   placementCompanies,
   placementCompanyRelationships,
+  placementCollegeRules,
+  placementDebarments,
   placementJoiningHistory,
   placementJoiningOutcomes,
   placementJobRounds,
@@ -35,6 +37,11 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
+import { isDebarmentActive } from "./batch-registration-policy";
+import {
+  canReleaseAnotherHeldOffer,
+  minimumOfferResponseDeadline,
+} from "./offer-college-rules-policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
 import {
@@ -231,8 +238,10 @@ function sameOfferPayload(
       (input.annualCtcInr ?? null) &&
     offer.joiningDate ===
       (input.joiningDate ?? null) &&
-    (offer.expiresAt?.getTime() ?? null) ===
-      (input.expiresAt?.getTime() ?? null)
+    // An omitted expiry uses the college minimum-response default on issue;
+    // retries must not mismatch that generated timestamp.
+    (input.expiresAt == null ||
+      (offer.expiresAt?.getTime() ?? null) === input.expiresAt.getTime())
   );
 }
 
@@ -350,6 +359,62 @@ export async function issuePlacementOffer(
       );
     }
 
+    // P-S1-02: active debarments deny new offer release. Resolve this
+    // after the application lock so a concurrently lifted ban is observed.
+    const debarments = await tx.select().from(placementDebarments)
+      .where(and(
+        eq(placementDebarments.collegeId, current.job.collegeId),
+        eq(placementDebarments.membershipId, current.application.membershipId),
+      ))
+      .for("share");
+    const localDateParts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    }).formatToParts(now);
+    const datePart = (type: string) =>
+      localDateParts.find((part) => part.type === type)?.value ?? "";
+    const collegeToday = `${datePart("year")}-${datePart("month")}-${datePart("day")}`;
+    if (debarments.some((ban) => isDebarmentActive(ban, collegeToday))) {
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+    }
+
+    // P-S1-01/P-S1-05/P-S2-06: use persisted college settings instead of
+    // the default client value. Current schema has no dream-drive marker;
+    // the distinct exemption requires a staged, approved schema addition.
+    const [rules] = await tx.select().from(placementCollegeRules)
+      .where(eq(placementCollegeRules.collegeId, current.job.collegeId))
+      .for("share").limit(1);
+    const earliestResponse = minimumOfferResponseDeadline(
+      now, rules?.minResponseHours ?? 48,
+    );
+    if (input.expiresAt && input.expiresAt < earliestResponse) {
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+    }
+    const effectiveExpiresAt = input.expiresAt ?? earliestResponse;
+    if ((input.kind ?? "OFFER") === "OFFER") {
+      const heldOffers = await tx
+        .select({ annualCtcInr: placementOffers.annualCtcInr })
+        .from(placementOffers)
+        .innerJoin(placementApplications,
+          eq(placementApplications.id, placementOffers.applicationId))
+        .innerJoin(placementJobs,
+          eq(placementJobs.id, placementApplications.jobId))
+        .where(and(
+          eq(placementApplications.membershipId, current.application.membershipId),
+          eq(placementJobs.collegeId, current.job.collegeId),
+          eq(placementOffers.kind, "OFFER"),
+          inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
+        ));
+      if (!canReleaseAnotherHeldOffer({
+        maxHeldOffers: rules?.maxHeldOffers ?? 1,
+        upliftPct: rules?.upliftPct ?? 40,
+        heldOffers,
+        annualCtcInr: input.annualCtcInr ?? null,
+        isDreamDrive: false,
+      })) {
+        throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+      }
+    }
+
     const [aggregate] = await tx
       .select({
         maxVersion: max(
@@ -379,8 +444,7 @@ export async function issuePlacementOffer(
           input.annualCtcInr ?? null,
         joiningDate:
           input.joiningDate ?? null,
-        expiresAt:
-          input.expiresAt ?? null,
+        expiresAt: effectiveExpiresAt,
         issuedByUserId:
           context.user.id,
         issuedAt: now,
