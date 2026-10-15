@@ -97,6 +97,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
       query.maximumCapacity !== undefined ? lte(sections.capacity, query.maximumCapacity) : undefined,
       query.status === "ALL" ? undefined : eq(sections.status, query.status),
       query.cohortStatus && query.cohortStatus !== "ALL" ? eq(cohorts.status,query.cohortStatus) : undefined,
+      query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.q ? or(
         ilike(sections.name, searchPattern(query.q)),
         ilike(sections.code, searchPattern(query.q)),
