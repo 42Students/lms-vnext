@@ -35,13 +35,16 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    <Button size="sm" variant="secondary" onClick={()=>open?setOpen(false):void show()}>
      Comments
    </Button>
-   {open?<div className="space-y-2 rounded border border-border p-3">
+   {open?<div className="space-y-2 rounded border border-border p-3" aria-label="Task comments">
+     <p className="text-xs text-muted-foreground">Notes and progress updates people on this task have written.</p>
+     {rows.length===0?<p role="status" className="text-sm text-muted-foreground">No comments yet.</p>:null}
      {rows.map(row=><p key={row.id} className="whitespace-pre-wrap text-sm text-body">{row.body}</p>)}
-     {canPost?<label className="grid gap-1 text-sm text-body">Comments
+     {canPost?<label className="grid gap-1 text-sm text-body">Message
        <Textarea maxLength={4000} value={body} disabled={busy}
+         placeholder="Share a progress update or note..."
          onChange={e=>setBody(e.target.value)}/>
      </label>:null}
-     {canPost?<Button size="sm" disabled={busy||!body.trim()} onClick={()=>void post()}>Add comment</Button>:null}
+     {canPost?<Button size="sm" disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </div>;
