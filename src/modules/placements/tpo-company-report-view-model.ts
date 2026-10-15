@@ -37,3 +37,7 @@ export function companyReportViewHref(query:{seasonId?:string;jobId?:string;q?:s
  if(query.page&&query.page>1)q.set("page",String(query.page));
  const suffix=q.toString();return "/tpo/reports/by-company"+(suffix?"?"+suffix:"");
 }
+
+export function companyReportHasUserFilters(query:{q:string;outcome:"ALL"|"HAS_PLACED"|"NO_PLACED"}){
+ return query.q.trim().length>0||query.outcome!=="ALL";
+}
