@@ -27,3 +27,12 @@ export function mentorSprintEmptyWorkNotice(status:string, tasks:readonly unknow
     ? "This completed Sprint has no recorded tasks; no execution percentage is inferred."
     : "No tasks have been recorded for this Sprint.";
 }
+
+export function mentorTaskReviewEvidence(
+ taskStatus:string, latest:{status:string;version:number}|null
+):"REVIEW_PENDING"|"NO_SUBMISSION"|"RECORDED"|"UNMATCHED" {
+  if(taskStatus==="IN_REVIEW"&&latest?.status==="SUBMITTED")return "REVIEW_PENDING";
+  if(!latest)return "NO_SUBMISSION";
+  if(taskStatus==="IN_REVIEW")return "UNMATCHED";
+  return "RECORDED";
+}

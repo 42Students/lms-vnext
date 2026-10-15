@@ -1228,3 +1228,8 @@ Each Mentor Sprint displays counted persisted Done/In review/Blocked tasks and a
 ## 2026-10-15 chat-11 new round — sprint-empty-work-evidence (PARTIAL)
 
 The Mentor Board now explicitly distinguishes Sprints without persisted task rows from completed Sprints with work, preventing blank boards from implying a successful delivery. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — task-review-state-evidence (PARTIAL)
+
+Mentor Task cards now identify a real pending review only when the task is IN_REVIEW and its latest recorded attempt is SUBMITTED; stale or absent submissions do not produce phantom review-needed messages. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
