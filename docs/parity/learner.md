@@ -1356,3 +1356,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 discussion timestamp clarity (2026-10-15):** all Learner Course discussion timestamps now show year and IST timezone and fail to `Time unavailable` for malformed stored dates, avoiding client-local discrepancies. Pure tests authored; desktop/mobile browser acceptance still open.
 
 **Chat-7 Learning Path percentage truth (2026-10-15):** a published path with no trackable items shows `Not measured` rather than a fabricated 0%; tracked zero remains 0%. Non-finite metrics also fail closed. Pure tests authored; mobile/CI/browser evidence still pending (L3-002).
+
+**Chat-7 Learning Path compact-item dialog (2026-10-15; L3-037 PARTIAL):** published content, assignment and quiz rows now show compact summaries opening native, keyboard-dismissable, focus-contained dialogs. The existing authorized actions/players mount only while opened; exact lesson/item deep links auto-open the corresponding dialog. The family remains PARTIAL until side-by-side legacy-modal, mobile/keyboard and actual interaction-regression verification.
