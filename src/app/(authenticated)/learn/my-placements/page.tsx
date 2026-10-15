@@ -256,8 +256,12 @@ export default async function LearnerPlacementsPage({
       <section aria-labelledby="learner-college-notice-preview" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Recent college notices</h2>
-          <Link href="/learn/my-placements/announcements"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/learn/my-placements/announcements"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
+            <Link href="/learn/my-placements/announcements?source=placement-cell"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">From placement cell →</Link>
+          </div>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">These are notices visible to your college membership, not necessarily placement-cell announcements.</p>
         {collegeNoticesFailed ? <p role="alert" className="mt-3 text-sm text-body">College notices are temporarily unavailable. Your other placement information is unchanged.</p>
