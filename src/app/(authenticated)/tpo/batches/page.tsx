@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
 import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryState } from "@/modules/placements/tpo-batch-directory-filter-model";
 export const dynamic="force-dynamic";
 
@@ -10,13 +11,18 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  if(!parsed.success)return <div role="alert">Invalid search. <Link href="/tpo/batches">Clear search</Link></div>;
  const data=await listTpoBatches(await getCurrentRequestContext());
  const batches=filterTpoBatchDirectory(data.batches,parsed.data);
+ const summary=summarizeTpoBatchStates(data.batches);
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title="Placement batches" description="Make placement eligibility decisions cohort by cohort. This list does not guess inherited learner eligibility."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <label className="min-w-0 flex-1 text-sm">Search batches<input type="search" name="q" defaultValue={parsed.data.q??""} maxLength={100} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
-   <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Planning</option><option value="INVITED">Invited</option><option value="FINISHED">Finished</option></select></label>\n   <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Search</button>
+   <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Planning</option><option value="INVITED">Invited</option><option value="FINISHED">Finished</option></select></label>
+   <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Search</button>
   </form>
   {!data.ready?<p role="status" className="rounded border border-border p-3">Placement batch lifecycle migration is pending. Academic cohorts remain visible; invitation and completion status is unavailable.</p>:null}
+  <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
+  ["Total batches",summary.total],["Planning",summary.planning],["Invited",summary.invited],["Finished",summary.finished],
+  ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:label==="Total batches"?value:"—"}</dd></div>)}</dl>
   <p className="text-sm text-muted-foreground">{batches.length} matching batches</p>
   {batches.length===0?<p role="status" className="rounded border border-border p-4">No matching batches.</p>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batches.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold">{b.name}</h2><p className="text-sm">{b.program} · {b.department}</p>
