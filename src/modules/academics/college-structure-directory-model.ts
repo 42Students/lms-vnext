@@ -12,6 +12,7 @@ export const collegeStructureQuerySchema = z.object({
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassQuerySchema = collegeStructureQuerySchema.extend({
   cohortCode: z.string().trim().min(1).max(64).optional(),
+  capacityState: z.enum(["ALL","CONFIGURED","UNSET"]).default("ALL"),
   minimumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
   maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
@@ -27,7 +28,7 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
@@ -45,6 +46,8 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (query.status !== "ACTIVE") params.set("status", query.status);
   if (kind === "CLASSES" && "cohortCode" in query && query.cohortCode)
     params.set("cohortCode",query.cohortCode);
+  if (kind === "CLASSES" && "capacityState" in query && query.capacityState !== "ALL")
+    params.set("capacityState",query.capacityState);
   if (kind === "CLASSES" && "minimumCapacity" in query && query.minimumCapacity !== undefined)
     params.set("minimumCapacity", String(query.minimumCapacity));
   if (kind === "CLASSES" && "maximumCapacity" in query && query.maximumCapacity !== undefined)

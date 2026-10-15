@@ -96,6 +96,17 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           ) : null}
           {data.kind === "CLASSES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
+              Capacity configuration
+              <select name="capacityState" defaultValue={data.query.capacityState}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">Any configuration</option>
+                <option value="CONFIGURED">Configured seats</option>
+                <option value="UNSET">Not configured</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
               Batch code
               <input name="cohortCode" type="text" maxLength={64}
                 defaultValue={data.query.cohortCode ?? ""} placeholder="Exact batch code"
