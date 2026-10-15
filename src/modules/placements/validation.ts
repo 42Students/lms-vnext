@@ -1111,6 +1111,7 @@ const placementDateSchema = z
 export const issuePlacementOfferInputSchema =
   z
     .object({
+      kind: z.enum(["OFFER", "LOI"]).optional(),
       roleTitle: z
         .string()
         .trim()
