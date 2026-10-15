@@ -21,6 +21,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       q: first(params.q), status: first(params.status),
       offeringStatus: first(params.offeringStatus), pathStatus:first(params.pathStatus),
       offeringType:first(params.offeringType),departmentCode:first(params.departmentCode)||undefined,
+      contentPresence:first(params.contentPresence),
       courseCode: first(params.courseCode)||undefined,
       programCode:first(params.programCode)||undefined,
       cohortCode:first(params.cohortCode)||undefined,
