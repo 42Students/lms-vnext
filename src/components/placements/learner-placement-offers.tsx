@@ -15,6 +15,7 @@ import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
   from "@/modules/placements/learner-offer-extension-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {learnerOffersCsv} from "@/modules/placements/learner-offers-csv-model";
+import {learnerOfferCtc} from "@/modules/placements/learner-offer-ctc-model";
 import { useToast } from "@/components/ui/toast";
 
 export type LearnerPlacementOfferItem = {
@@ -57,12 +58,13 @@ function humanize(value: string) {
 }
 
 function formatMoney(value: number | null) {
-  if (value == null) return null;
+  const amount=learnerOfferCtc(value);
+  if (amount===null) return null;
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
-  }).format(value);
+  }).format(amount);
 }
 
 function formatWhen(value: string | null) {
