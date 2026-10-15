@@ -1042,3 +1042,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 notices route fence (PARTIAL):** The Super Admin announcement UI now checks both role and active platform account before reporting feature flags or reading tenant notices. Source/unit contract authored; scoped browser verification remains open.
+
+
+**2026-10-15 chat-6 notices URL contract (PARTIAL):** Announcements history rejects repeated/unknown parameters, invalid deleted selector and incomplete cursor before issuing DB queries. Cursor validation is covered by authored unit tests; browser evidence remains open.
