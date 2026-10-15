@@ -21,7 +21,7 @@ test("DB10 announcement routes fail closed until migration verification", () => 
   }
 });
 
-test("announcement draft is not registered in the shared schema barrel", () => {
+test("announcement schema is registered in the shared schema barrel", () => {
   const barrel = fs.readFileSync("src/db/schema/index.ts", "utf8");
-  assert.doesNotMatch(barrel, /db10-announcements\.draft/);
+  assert.match(barrel, /db10-announcements"/);
 });
