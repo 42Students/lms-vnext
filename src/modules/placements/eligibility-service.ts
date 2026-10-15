@@ -869,14 +869,21 @@ export async function evaluatePlacementEligibility(
     ]);
 
   if (policy && enrollment && !isPlacementJobTargetCohort(policy, enrollment)) {
+    // Reuse the existing legacy-facing Program/Cohort check vocabulary.
+    const wrongProgram = policy.allowedProgramIds.length > 0 &&
+      !policy.allowedProgramIds.includes(enrollment.programId);
     return {
       status: "INELIGIBLE",
       checks: [{
-        criterion: "Job targeting",
+        criterion: wrongProgram ? "Program" : "Cohort",
         status: "FAIL",
-        actual: null,
-        required: "Eligible cohort and program",
-        detail: "Job is not targeted to this academic cohort/program",
+        actual: wrongProgram ? enrollment.programId : enrollment.cohortId,
+        required: wrongProgram
+          ? "One of the eligible programs"
+          : "One of the eligible cohorts",
+        detail: wrongProgram
+          ? "Program is not eligible"
+          : "Cohort is not eligible",
       }],
       override: null,
     };
