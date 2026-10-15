@@ -3,6 +3,7 @@
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-submit-guard-model";
 import { learnerDiscussionTimeLabel } from "@/modules/courses/learner-discussion-time-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -66,6 +67,7 @@ export function LearnerCourseDiscussion({
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
+  const postLocked = useRef(false);
   const loadedOnce = useRef(false);
   const previousMessages = useRef<DiscussionMessage[]>([]);
   const forceBottomOnNextLoad = useRef(false);
@@ -219,8 +221,9 @@ export function LearnerCourseDiscussion({
   async function submit(event?: FormEvent) {
     event?.preventDefault();
     const messageText = draft.trim();
-    if (!messageText || posting) return;
+    if (!learnerDiscussionMayPost(messageText,canPost,postLocked.current)) return;
 
+    postLocked.current = true;
     setPosting(true);
     try {
       const response = await fetch(
@@ -250,6 +253,7 @@ export function LearnerCourseDiscussion({
     } catch(e) {
       setModerationError(e instanceof Error?e.message:"Could not post reply.");
     } finally {
+      postLocked.current = false;
       setPosting(false);
     }
   }

@@ -1420,3 +1420,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **L2-016 (source fix, unverified):** Course Home upcoming quiz actions exclude persisted missed/completed quizzes, validate actual finite due instants and retain only the authorized next-14-day window. Pure regression authored; producer/consumer and browser acceptance open.
 
 **L1 next-due attention (source FIXED, proof open):** missed/completed quizzes and invalid timestamps no longer leak into actionable Course-card due dates. No new read or mutation. Pure regressions authored; runtime/browser verification pending.
+
+**L5 discussion post duplicate guard (source FIXED, proof open):** a synchronous per-mounted-composer lock now prevents double-Enter/double-click races before React applies posting state; read-only/historical composer never starts a POST. Central server permissions unchanged. Regression authored, browser/PG execution pending.
