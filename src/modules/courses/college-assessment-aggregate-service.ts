@@ -1,8 +1,9 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNull, isNotNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  academicPeriods,
   assignmentSubmissions,
   courseAssignments,
   courseLearningPaths,
@@ -29,7 +30,7 @@ function textPattern(value: string) {
 type AssessmentRow = Omit<
   CollegeAssessmentAggregateItem,
   "deliverySpecific" | "activityCount" | "resultsPublished"
-> & { deliveryId: string | null };
+> & { deliveryId: string | null; resultsPublished?: boolean | null };
 
 export async function listCollegeAssessmentAggregate(
   context: RequestContext,
@@ -69,6 +70,14 @@ export async function listCollegeAssessmentAggregate(
       eq(departments.collegeId, collegeId),
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
+      query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
+      query.scope==="SHARED"?isNull(courseAssignments.deliveryId):
+        query.scope==="SECTION"?isNotNull(courseAssignments.deliveryId):undefined,
+      query.duePresence==="SCHEDULED"?isNotNull(courseAssignments.dueAt):
+        query.duePresence==="UNSCHEDULED"?isNull(courseAssignments.dueAt):undefined,
+      query.dueWindow==="PAST"?sql`${courseAssignments.dueAt} < now()`:
+        query.dueWindow==="FUTURE"?sql`${courseAssignments.dueAt} >= now()`:undefined,
       query.q ? ilike(courseAssignments.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
@@ -88,6 +97,7 @@ export async function listCollegeAssessmentAggregate(
       .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
       .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(academicPeriods, and(eq(academicPeriods.id,courseOfferings.academicPeriodId),eq(academicPeriods.collegeId,collegeId)))
       .where(conditions).as("college_assignment_scope");
     const [totals, items] = await Promise.all([
       db.select({ total: count() }).from(scoped),
@@ -103,6 +113,15 @@ export async function listCollegeAssessmentAggregate(
       eq(departments.collegeId, collegeId),
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
+      query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
+      query.scope==="SHARED"?isNull(courseQuizzes.deliveryId):
+        query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
+      query.duePresence==="SCHEDULED"?isNotNull(courseQuizzes.dueAt):
+        query.duePresence==="UNSCHEDULED"?isNull(courseQuizzes.dueAt):undefined,
+      query.dueWindow==="PAST"?sql`${courseQuizzes.dueAt} < now()`:
+        query.dueWindow==="FUTURE"?sql`${courseQuizzes.dueAt} >= now()`:undefined,
+      query.results!=="ALL"?eq(courseQuizzes.resultsPublished,query.results==="PUBLISHED"):undefined,
       query.q ? ilike(courseQuizzes.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
@@ -116,12 +135,14 @@ export async function listCollegeAssessmentAggregate(
       dueAt: courseQuizzes.dueAt,
       deliveryId: courseQuizzes.deliveryId,
       points: courseQuizzes.totalPoints,
+      resultsPublished: courseQuizzes.resultsPublished,
     }).from(courseQuizzes)
       .innerJoin(courseLessons, eq(courseLessons.id, courseQuizzes.lessonId))
       .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
       .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
       .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(academicPeriods, and(eq(academicPeriods.id,courseOfferings.academicPeriodId),eq(academicPeriods.collegeId,collegeId)))
       .where(conditions).as("college_quiz_scope");
     const [totals, items] = await Promise.all([
       db.select({ total: count() }).from(scoped),
@@ -164,7 +185,7 @@ export async function listCollegeAssessmentAggregate(
     deliverySpecific: row.deliveryId !== null,
     points: row.points,
     activityCount: countById.get(row.id) ?? 0,
-    resultsPublished: null,
+    resultsPublished: kind==="QUIZ" ? row.resultsPublished ?? false : null,
   }));
   return {
     kind,
