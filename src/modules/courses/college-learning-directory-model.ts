@@ -147,6 +147,12 @@ export function collegeOfferingProgressHref(offeringId:string) {
     offeringId:z.string().uuid().parse(offeringId), status:"ALL",
   }));
 }
+/** Reuses the authenticated lesson aggregate rather than a new unscoped detail read. */
+export function collegeOfferingLessonsHref(offeringId:string) {
+  return collegeLearningHref("LESSONS", collegeLessonQuerySchema.parse({
+    offeringId:z.string().uuid().parse(offeringId), status:"ALL",
+  }));
+}
 export function collegeLearningPageCount(total: number) {
   return Math.max(1, Math.ceil(total / COLLEGE_LEARNING_PAGE_SIZE));
 }
