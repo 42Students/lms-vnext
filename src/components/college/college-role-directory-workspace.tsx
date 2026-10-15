@@ -317,7 +317,37 @@ export async function CollegeRoleDirectoryWorkspace({
               <Link href={path} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear roster filters</Link> : null}
           </div>
         ) : (
-          <table className="w-full min-w-[45rem] text-left text-sm">
+          <>
+          <ul aria-label={title + " mobile records"} className="space-y-3 p-3 md:hidden">
+            {result.items.map(item=>(
+              <li key={item.membershipId} className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
+                <div className="min-w-0">
+                  <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
+                    className="break-words font-semibold text-primary-text underline">{item.name}</Link>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusBadge tone={item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"?"success":"warning"}>
+                    {item.membershipStatus}
+                  </StatusBadge>
+                  {item.userStatus!=="ACTIVE"?<span className="text-xs text-warning">Account: {item.userStatus}</span>:null}
+                </div>
+                <p className="break-words text-sm text-body">{describeCollegeDirectoryContext(kind,item)}</p>
+                <p className="text-xs text-muted-foreground">Joined {joinedLabel(item.joinedAt)} IST</p>
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <Link href={collegeRoleContactHref(item.membershipId)}
+                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">View contact card</Link>
+                  {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
+                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Profile verification</Link>:null}
+                </div>
+                {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
+                  <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
+                {kind==="FACULTY"?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
+                  name={item.name} status={item.membershipStatus}/>:null}
+              </li>
+            ))}
+          </ul>
+          <table className="hidden w-full min-w-[45rem] text-left text-sm md:table">
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th scope="col" className="px-4 py-3">Person</th>
@@ -367,6 +397,7 @@ export async function CollegeRoleDirectoryWorkspace({
               ))}
             </tbody>
           </table>
+          </>
         )}
       </section>
 
