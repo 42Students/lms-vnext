@@ -7,7 +7,8 @@ export const hrInterviewSlotCreateSchema=z.strictObject({
  timezone:z.literal("Asia/Kolkata"),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),
  meetingLocation:z.string().trim().max(500).optional(),
- panelLabel:z.string().trim().max(160).optional(),
+ panelLabel:z.string().trim().max(160)
+  .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid interview panel label"}).optional(),
  capacity:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
   .pipe(z.number().int().min(1).max(100)),
 }).refine(row=>row.endAt.getTime()>row.startAt.getTime()&&
