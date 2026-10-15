@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalMessages} from "@/db/schema/tpo-internal";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -33,7 +33,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
   if(!thread||![thread.startedByMembershipId,thread.invitedMembershipId].includes(membership.id))
     throw new Error("TEAM_THREAD_NOT_FOUND");
   const memberIds=[thread.startedByMembershipId,thread.invitedMembershipId];
-  const active=await tx.select({id:collegeMemberships.id})
+  const active=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
    .from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(membershipRoles,and(
@@ -51,13 +51,21 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    authorMembershipId:membership.id,body:input.body,
   }).returning({id:placementTpoInternalMessages.id});
   if(!message)throw new Error("TEAM_MESSAGE_FAILED");
-  await tx.insert(activityEvents).values({
+  const [event]=await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
    actorUserId:context.user.id,actorMembershipId:membership.id,
    module:"PLACEMENTS",eventType:"placements.tpo_team.message_sent",
    subjectType:"team_thread",subjectId:thread.id,
    summary:"Private team message created",
    metadata:{messageId:message.id,bodyLength:input.body.length},
+  }).returning({id:activityEvents.id});
+  const other=active.find(member=>member.id!==membership.id);
+  if(!event||!other)throw new Error("TEAM_PARTICIPANT_INACTIVE");
+  await tx.insert(inAppNotifications).values({
+   eventId:event.id,userId:other.userId,
+   title:"New private team message",
+   body:"A TPO colleague replied to your private conversation.",
+   actionHref:"/tpo/team/"+thread.id,
   });
   return {id:message.id,threadId:thread.id};
  });
