@@ -1067,3 +1067,44 @@ Team, Meetings, Task Reviews, Delivery Review and Activity remain PARTIAL; no
 central parity matrix row is marked DONE. Section 8 legacy-delta contains no
 separate Mentor-specific MISSING surface; this batch targets its existing
 PARTIAL Project/Team/Meeting/Review gaps only.
+
+
+## 2026-10-15 chat-11 — Mentor meeting, attention, reports and review follow-ups (PARTIAL)
+
+This round extends existing registered data reads without creating new tables,
+opening new mutation endpoints, or giving Mentors admin-only team membership
+writes. The source features below are **not independent browser/DB acceptance**.
+
+- Global Mentor Meetings (/mentor/calendar) filters meetings within the already
+  authorized Mentor roster by selected persisted Project UUID, whether an
+  actual registered Sprint is linked, and whether the existing safe-join-link
+  policy accepts the stored URL. Those selectors also apply to the current
+  200-row metadata-only CSV export, with strict Zod validation. Selection
+  cannot pull an unrelated Project into the scoped calendar reader. URL
+  presence alone is not treated as join readiness.
+- Mentor Notifications project attention can be isolated by a registered
+  Project UUID and sorted by recorded latest first or review/request priority.
+  The selector shows real Project titles reloaded from active authorized Mentor
+  assignments, not possibly misleading alert description fragments. The
+  personal notification inbox and college announcement scope remain unchanged.
+- Mentor Reports can distinguish Projects with no registered tasks, with
+  unfinished registered tasks, and with all registered tasks DONE, and can
+  order projects by measured task completion with unknown values last. The
+  same filtered order drives the capped, formula-safe report CSV and paginated
+  UI. Existing whole-assignment KPIs remain whole-assignment totals.
+- Pending final delivery reviews, sanitized portfolio activity, and pending
+  task reviews support PRIMARY versus SUPPORTING assignment selection using
+  persisted current Mentor assignment flags, not a client-supplied role grant.
+  These selectors are preserved in pagination; task review and activity
+  predicates restrict their registered database queries before count/page.
+- Isolated PostgreSQL integration fixture assertions have been expanded for
+  scoped Project calendar filters, safe join-link triage, Task Review assignment
+  selection and foreign Project UUID denial. Pure model tests are authored.
+
+**Unexecuted gates:** TypeScript, ESLint, unit tests, isolated PostgreSQL,
+parallel-write/concurrency, accessibility, desktop/browser 375px, and full
+legacy action/notification producer parity. This does not close the linked
+Mentor Meetings, Team, Reports, Task Review, Delivery Review or Notifications
+PARTIAL rows. Section 8 contains no independent Mentor-specific MISSING
+route to implement; College Admin bulk reassign Mentor remains admin-owned,
+not a Mentor write.
