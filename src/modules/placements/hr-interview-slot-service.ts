@@ -9,7 +9,6 @@ import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
-import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
 
 type JobScope={id:string;collegeId:string;organizationId:string;companyRelationshipId:string};
@@ -42,11 +41,9 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
 }
 export async function listHrInterviewSlots(context:RequestContext,rawJobId:unknown){
  const jobId=z.string().uuid().parse(rawJobId);
- // Never interpret missing storage as zero slots, and never reveal foreign jobs.
+ // Always authorize before reading the registered slots table.
  return getDb().transaction(async tx=>{
   const job=await verifyRecruiterSlotJob(tx,context,jobId);
-  if(!await placementTableExists("placement_hr_interview_slots"))
-   return {status:"NOT_REGISTERED" as const,items:[]};
   const rows=await tx.select({
    id:hrInterviewSlots.id,roundId:hrInterviewSlots.roundId,
    startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt,
@@ -79,8 +76,6 @@ export async function writeHrInterviewSlot(
   if(!can(context,"placements.recruiter.slot.manage",{
    collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
   }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
-  if(!await placementTableExists("placement_hr_interview_slots"))
-   throw new Error("INTERVIEW_SLOTS_NOT_REGISTERED");
   if(actionType==="CREATE"){
    const input=hrInterviewSlotCreateSchema.parse(data);
    if(input.startAt<=new Date()||input.startAt.getTime()>Date.now()+180*86400000)
