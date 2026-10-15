@@ -9,3 +9,8 @@ describe("contacts oldest-first sort",()=>{it("supports a deterministic oldest j
  expect(collegeContactsQuerySchema.parse({sort:"OLDEST"}).sort).toBe("OLDEST");
  expect(collegeContactsQuerySchema.safeParse({sort:"LAST"}).success).toBe(false);
 });});
+
+describe("contacts reverse-name order",()=>{it("keeps requested reverse order through URL navigation",()=>{
+ const filter=collegeContactsQuerySchema.parse({sort:"NAME_DESC"});
+ expect(filter.sort).toBe("NAME_DESC");
+});});

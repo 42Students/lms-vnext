@@ -48,7 +48,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Sort
     <select name="sort" defaultValue={filter.sort} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
-     <option value="NAME">Name</option><option value="NEWEST">Newest joined</option><option value="OLDEST">Longest-serving</option>
+     <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="NEWEST">Newest joined</option><option value="OLDEST">Longest-serving</option>
     </select>
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Rows per page
