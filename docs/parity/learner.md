@@ -1358,3 +1358,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 Learning Path percentage truth (2026-10-15):** a published path with no trackable items shows `Not measured` rather than a fabricated 0%; tracked zero remains 0%. Non-finite metrics also fail closed. Pure tests authored; mobile/CI/browser evidence still pending (L3-002).
 
 **Chat-7 Learning Path compact-item dialog (2026-10-15; L3-037 PARTIAL):** published content, assignment and quiz rows now show compact summaries opening native, keyboard-dismissable, focus-contained dialogs. The existing authorized actions/players mount only while opened; exact lesson/item deep links auto-open the corresponding dialog. The family remains PARTIAL until side-by-side legacy-modal, mobile/keyboard and actual interaction-regression verification.
+
+**Chat-7 standalone quiz deadline display (2026-10-15):** quiz-attempt deadline labels use the persisted instant in Asia/Kolkata (including midnight crossing) and distinguish missing from malformed deadline data. Server submission fencing remains unchanged. Unit tests authored; mobile/browser/clock-edge acceptance still pending.
