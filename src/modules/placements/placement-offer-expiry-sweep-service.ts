@@ -7,9 +7,9 @@ import { isIssuedPlacementOfferDue } from "./placement-offer-sweep-policy";
 /**
  * P-S1-07: transaction-bound batch primitive for the 15-minute expiry job.
  *
- * NOT INVOKED until the approved EXPIRED-status migration is registered.
- * The orchestration/scheduler and downstream application effects must be
- * installed by their owning lane after schema replay.
+ * EXPIRED is registered by migration 0085. This transactional primitive is
+ * now compatible with the real constraint; scheduler invocation every 15
+ * minutes and end-to-end race/notification acceptance remain outstanding.
  */
 export async function sweepExpiredPlacementOffers(
   actorUserId: string,
