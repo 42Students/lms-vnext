@@ -4,7 +4,8 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manage-service";
 import {tpoCompanyAuditKindSchema,tpoCompanyAuditHref,tpoCompanyAuditExportHref} from "@/modules/placements/company-share/audit-kind-model";
-import {companyShareAuditPageSchema,companyShareAuditPageHref} from "@/modules/placements/company-share/audit-page-model";
+import {companyShareAuditPageHref} from "@/modules/placements/company-share/audit-page-model";
+import {parseCompanyShareAuditQuery} from "@/modules/placements/company-share/audit-query-model";
 export const dynamic="force-dynamic";
 export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  params:Promise<{jobId:string}>;
@@ -15,13 +16,16 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const {jobId}=await params;
  const search=await searchParams;
  const rawKind=Array.isArray(search.kind)?search.kind[0]:search.kind;
- const parsed=tpoCompanyAuditKindSchema.safeParse(rawKind??"ALL");
- const kind=parsed.success?parsed.data:"ALL";
  const rawPage=Array.isArray(search.page)?search.page[0]:search.page;
- const parsedPage=companyShareAuditPageSchema.safeParse(rawPage??1);
- const auditPage=parsedPage.success?parsedPage.data:1;
- const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
+ const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
+ if(!parsed.success)return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
+  <h1 className="text-lg font-semibold text-foreground">Invalid share-audit filters</h1>
+  <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
+  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="text-primary-text underline">Clear filters</Link>
+ </section>;
+ const {kind,page:auditPage}=parsed.data;
+ const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
  return <div className="space-y-5">
   <Link href={back} className="text-sm font-semibold text-primary-text underline">
    Back to company-share preview
