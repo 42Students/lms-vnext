@@ -55,6 +55,17 @@ describe("content security policy and transport security", () => {
     expect(csp).not.toMatch(/script-src[^;]*\*/);
   });
 
+  it("allows only the YouTube origins needed for lesson embeds", () => {
+    expect(csp).toMatch(
+      /script-src 'self' 'unsafe-inline' https:\/\/www\.youtube\.com( 'unsafe-eval')?;/,
+    );
+    expect(csp).toContain(
+      "frame-src https://www.youtube.com https://www.youtube-nocookie.com;",
+    );
+    expect(csp).toContain("connect-src 'self';");
+    expect(csp).not.toMatch(/script-src[^;]*youtube-nocookie/);
+  });
+
   it("sends HSTS", () => {
     expect(values.get("Strict-Transport-Security")).toMatch(
       /max-age=\d{7,}/,
