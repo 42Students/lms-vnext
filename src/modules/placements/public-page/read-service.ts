@@ -1,7 +1,10 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, organizations } from "@/db/schema";
+import {
+  colleges, organizations, placementApplications, placementJobs,
+  placementOffers, placementCompanyRelationships, placementCollegeRules,
+} from "@/db/schema";
 import { placementPublicPageSettings as publicPlacementPageSettings } from "@/db/schema";
 import { publicPlacementTableReady } from "./readiness";
 import { publicMetricRelease } from "@/modules/placements/public-metric-release";
@@ -25,6 +28,49 @@ export async function getPublicPlacementStatistics(collegeId:string){
       eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
     .limit(1);
   if(!row||!row.enabled||row.publishedAt===null||!publicPublicationFresh(row.publishedAt,new Date()))return null;
+  // T-S2-08: never display stale manually entered totals as "live". Read
+  // the actual 12-month college-scoped offer ledger only after public opt-in.
+  const now = new Date();
+  const since = new Date(now);
+  since.setUTCMonth(since.getUTCMonth() - 12);
+  const db = getDb();
+  const [policy, totals] = await Promise.all([
+    db.select({ countsAsPlacedAt: placementCollegeRules.countsAsPlacedAt })
+      .from(placementCollegeRules)
+      .where(eq(placementCollegeRules.collegeId, collegeId)).limit(1),
+    db.select({
+      offers: sql<number>`count(distinct ${placementOffers.id})::integer`,
+      acceptedStudents: sql<number>`count(distinct case when ${placementOffers.status}='ACCEPTED'
+        then ${placementApplications.membershipId} end)::integer`,
+      releasedStudents: sql<number>`count(distinct ${placementApplications.membershipId})::integer`,
+      employers: sql<number>`count(distinct ${placementCompanyRelationships.companyId})::integer`,
+      ctcCount: sql<number>`count(${placementOffers.annualCtcInr})::integer`,
+      medianCtc: sql<number | null>`percentile_cont(0.5) within group
+        (order by ${placementOffers.annualCtcInr})`,
+      highestCtc: sql<number | null>`max(${placementOffers.annualCtcInr})`,
+    }).from(placementOffers)
+      .innerJoin(placementApplications,
+        eq(placementApplications.id, placementOffers.applicationId))
+      .innerJoin(placementJobs,
+        eq(placementJobs.id, placementApplications.jobId))
+      .innerJoin(placementCompanyRelationships,
+        eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId))
+      .where(and(
+        eq(placementJobs.collegeId, collegeId),
+        eq(placementCompanyRelationships.collegeId, collegeId),
+        gte(placementOffers.issuedAt, since),
+        inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
+        inArray(placementJobs.status, ["PUBLISHED", "CLOSED"]),
+        eq(placementOffers.kind, "OFFER"),
+      )),
+  ]);
+  const actual = totals[0];
+  const placedAt = policy[0]?.countsAsPlacedAt ?? "OFFER_RELEASED";
+  // SELECTED requires a distinct upstream selection ledger; it is never
+  // silently equated to released or accepted offers.
+  const placedCount = placedAt === "SELECTED" ? null
+    : placedAt === "OFFER_ACCEPTED" ? actual?.acceptedStudents ?? 0
+    : actual?.releasedStudents ?? 0;
   const input={enabled:row.enabled,collegeActive:true,population:row.population};
   // Offers and hiring employers can exceed the number of unique students.
   // They still need an eligible published cohort of at least five and their
@@ -32,8 +78,10 @@ export async function getPublicPlacementStatistics(collegeId:string){
 
   return {
     publishedAt:row.publishedAt.toISOString(),
-    placed:publicMetricRelease({...input,count:row.placed}),
-    offers:publicIndependentPlacementCount(row.offers,row.population),
-    employers:publicIndependentPlacementCount(row.employers,row.population),
+    placed:publicMetricRelease({...input,count:placedCount}),
+    offers:publicIndependentPlacementCount(actual?.offers ?? 0,row.population),
+    employers:publicIndependentPlacementCount(actual?.employers ?? 0,row.population),
+    medianCtcInr: (actual?.ctcCount ?? 0) >= 5 ? Number(actual?.medianCtc ?? 0) : null,
+    highestCtcInr: (actual?.ctcCount ?? 0) >= 5 ? Number(actual?.highestCtc ?? 0) : null,
   };
 }
