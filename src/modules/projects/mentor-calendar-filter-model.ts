@@ -3,6 +3,7 @@ import type {MentorMeetingCalendarItem} from "./mentor-calendar-view";
 
 /** Filters only rows returned by the current Mentor's persisted scoped roster. */
 export const mentorCalendarFiltersSchema=z.object({
+  attention:z.enum(["ALL","OVERDUE_REQUESTED"]).default("ALL"),
   status:z.enum(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   type:z.enum(["ALL","GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]).default("ALL"),
   projectState:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
@@ -14,7 +15,8 @@ export type MentorCalendarFilters=z.infer<typeof mentorCalendarFiltersSchema>;
 export function filterMentorCalendar(
   meetings:readonly MentorMeetingCalendarItem[],
   query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
-    {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"]},
+    {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
+      attention?:MentorCalendarFilters["attention"]},
   now:Date=new Date(),
 ){
   const term=query.search.toLocaleLowerCase("en-IN");
@@ -34,6 +36,8 @@ export function filterMentorCalendar(
       query.period==="NEXT_7_DAYS"?diff>=0&&diff<=6:diff<=-1&&diff>=-7;
   };
   return meetings.filter(row=>
+    (!query.attention||query.attention==="ALL"||
+      (row.status==="REQUESTED"&&Date.parse(row.startsAt)<now.getTime()))&&
     (query.status==="ALL"||row.status===query.status)&&
     (!query.type||query.type==="ALL"||row.meetingType===query.type)&&
     (!query.projectState||query.projectState==="ALL"||row.projectStatus===query.projectState)&&
@@ -43,9 +47,11 @@ export function filterMentorCalendar(
         (a,b)=>a.startsAt.localeCompare(b.startsAt)||a.id.localeCompare(b.id));
 }
 export function mentorCalendarFilterHref(query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
-  {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"]}){
+  {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
+   attention?:MentorCalendarFilters["attention"]}){
   const params=new URLSearchParams();
   if(query.status!=="ALL")params.set("status",query.status);
+  if(query.attention&&query.attention!=="ALL")params.set("attention",query.attention);
   if(query.type&&query.type!=="ALL")params.set("type",query.type);
   if(query.projectState&&query.projectState!=="ALL")params.set("projectState",query.projectState);
   if(query.search)params.set("search",query.search);
