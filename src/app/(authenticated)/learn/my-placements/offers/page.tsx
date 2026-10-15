@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
+import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
 import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
@@ -23,7 +24,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 export default async function LearnerOffersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[]; sort?: string | string[] }>;
 }) {
   const query = await searchParams;
   const requested = typeof query.status === "string" ? query.status : "all";
@@ -41,10 +42,13 @@ export default async function LearnerOffersPage({
   const visibleOffers = dueOnly ? ownOffersDueWithinWeek(searchedOffers,Date.parse(snapshotNowIso)) : searchedOffers;
   const pageResult = learnerOfferPageSchema.safeParse(query.page ?? "1");
   const requestedPage = pageResult.success ? pageResult.data : 1;
-  const paginated = paginateOwnOffers(visibleOffers,requestedPage,15);
+  const sortParsed=learnerOfferSortSchema.safeParse(query.sort ?? "priority");
+  const order=sortParsed.success?sortParsed.data:"priority";
+  const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
+  const paginated = paginateOwnOffers(sorted,requestedPage,15);
   const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
     ...(view!=="all"?{status:view}:{}),...(searchTerm?{q:searchTerm}:{}),
-    ...(dueOnly?{due:"1"}:{}),page:String(page),
+    ...(dueOnly?{due:"1"}:{}),...(order!=="priority"?{sort:order}:{}),page:String(page),
   }).toString();
   const expiringSoon = learnerOffersExpiringSoon(offers.items.map(row => ({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
@@ -90,6 +94,20 @@ export default async function LearnerOffersPage({
         {searchTerm ? <Link href={view === "all" ? "/learn/my-placements/offers" : "/learn/my-placements/offers?status="+view}
           className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
+      <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
+        {view!=="all"?<input type="hidden" name="status" value={view}/>:null}
+        {searchTerm?<input type="hidden" name="q" value={searchTerm}/>:null}
+        {dueOnly?<input type="hidden" name="due" value="1"/>:null}
+        <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+          Sort my offers
+          <select name="sort" defaultValue={order} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="priority">Needs response first</option>
+            <option value="newest">Newest issued</option>
+            <option value="company">Company A–Z</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
+      </form>
       <nav aria-label="Offer deadline filter" className="flex flex-wrap gap-3 text-sm">
         <Link href={"/learn/my-placements/offers" + (view==="all"?"":"?status="+view)}
           aria-current={!dueOnly?"page":undefined}
@@ -129,6 +147,7 @@ export default async function LearnerOffersPage({
         </section>
       ) : (
         <LearnerPlacementOffers
+          preserveOrder
           extensionRequests={requests.map(row=>({
             offerId:row.request.offerId,status:row.request.status,
             requestType:row.request.requestType,

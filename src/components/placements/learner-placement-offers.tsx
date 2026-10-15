@@ -72,11 +72,12 @@ function formatWhen(value: string | null) {
 }
 
 export function LearnerPlacementOffers({
-  offers,snapshotNowIso,extensionRequests=[],
+  offers,snapshotNowIso,extensionRequests=[],preserveOrder=false,
 }: {
   offers: readonly LearnerPlacementOfferItem[];
   snapshotNowIso:string;
   extensionRequests?:readonly LearnerOfferRequestStatus[];
+  preserveOrder?:boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -89,7 +90,7 @@ export function LearnerPlacementOffers({
   const [extensionAt,setExtensionAt]=useState("");
   const [extensionReason,setExtensionReason]=useState("");
   const [extensionError,setExtensionError]=useState<string|null>(null);
-  const sortedOffers=prioritizeLearnerOffers(offers,snapshotNowIso);
+  const sortedOffers=preserveOrder?[...offers]:prioritizeLearnerOffers(offers,snapshotNowIso);
   const pendingExtensions=learnerPendingOfferExtensions(extensionRequests);
   const preview = confirmOffer
     ? learnerOfferAcceptancePreview({
