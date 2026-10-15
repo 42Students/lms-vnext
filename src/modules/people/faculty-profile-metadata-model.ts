@@ -2,7 +2,8 @@ import { z } from "zod";
 import type { FacultyProfileDocument } from "./faculty-profile-document";
 
 export function facultyMetadataEditableKey(key:string):boolean {
- return key.length>0 && key.length<=120 &&
+ return key.length>0 && key.length<=120 && key===key.trim() &&
+  !["__proto__","constructor","prototype"].includes(key.toLowerCase()) &&
   !/(?:password|secret|token|aadhaar|aadhar|pan.?number|identity|otp)/i.test(key);
 }
 
