@@ -9,10 +9,10 @@ import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {verificationAttentionShortcuts,verificationAttentionShortcutPatch} from "@/modules/verification/attention-shortcuts";
 import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules/verification/selection-model";
-import {previewVerificationBulk} from "@/modules/verification/bulk-preview";
+import {verificationBulkPreviewRows} from "@/modules/verification/bulk-preview-display";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
-import {bulkReviewFailureLabel} from "@/modules/verification/bulk-outcome";
+import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
@@ -25,11 +25,14 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkError,setBulkError]=useState("");
  const [bulkReason,setBulkReason]=useState("");
- const [bulkResult,setBulkResult]=useState<{summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[]}|null>(null);
+ const [bulkResult,setBulkResult]=useState<{summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[];labels:ReturnType<typeof describeBulkReviewOutcomeRows>}|null>(null);
  const selectable=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
+ const preview=bulkAction?verificationBulkPreviewRows(selectedRows,bulkAction):null;
  function choose(row:VerificationQueueCard,checked:boolean){
+  if(bulkBusy)return;
+  setBulkAction(null);
   setSelection(current=>{
    const next=new Set([...current].filter(key=>available.has(key))),key=verificationSelectionKey(row);
    if(checked&&next.size<20)next.add(key);else if(!checked)next.delete(key);
@@ -48,7 +51,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     throw Error(failure.error??"Bulk review was not accepted");
    }
    const data=await response.json() as {summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[]};
-   setBulkResult(data);setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
+   setBulkResult({...data,labels:describeBulkReviewOutcomeRows(data.outcomes,selectedRows)});setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
   }catch(error){setBulkError(error instanceof Error?error.message:"Bulk review failed");}
   finally{setBulkBusy(false);}
  }
@@ -73,21 +76,25 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} disableLocalSearch
-   initialTab={activeTab} initialKind={initialKind}
-   onTabChange={tab=>navigate({tab,page:"1"})}
+   initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NEWEST"?"NEWEST":"OLDEST"}
+   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":""})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
    onReview={row=>setSelected(row)}/>
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
-    <button type="button" onClick={()=>setSelection(selectEligibleVerificationKeys(selectable))} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
-    <button type="button" onClick={()=>{setSelection(new Set());setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
     <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("VERIFY")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
     <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("SEND_BACK")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
    </div>
    {bulkAction&&<div className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
-    <p className="text-sm">{previewVerificationBulk(selectedRows,bulkAction).eligible.length} eligible and {previewVerificationBulk(selectedRows,bulkAction).skipped.length} skipped. No decisions have been saved.</p>
+    <p className="text-sm">{preview?.eligible.length??0} eligible and {preview?.skipped.length??0} skipped. This is a local preview only; the server will recheck each document, role and row version.</p>
+    <ul className="max-h-48 space-y-1 overflow-y-auto text-sm" aria-label="Selected review candidates">
+     {preview?.eligible.map(item=><li key={item.key} className="break-words">{item.name} · {item.section} · version {item.version}</li>)}
+     {preview?.skipped.map(item=><li key={item.key} className="break-words">{item.name} · {item.section}: skipped ({item.reason})</li>)}
+    </ul>
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
      <textarea value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" placeholder="Describe the correction required"/>
@@ -103,9 +110,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </section>}
   {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 rounded-md border p-3">
    <h2 className="font-semibold">Bulk review results</h2>
-   <p className="text-sm">{bulkResult.summary.succeeded} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
-   <ul className="space-y-1 text-sm">{bulkResult.outcomes.map(result=><li key={result.learnerMembershipId+":"+result.section}>
-    {result.section} request {result.learnerMembershipId.slice(0,8)}: {bulkReviewFailureLabel(result.result)}
+   <p className="text-sm">{bulkResult.summary.succeeded} of {bulkResult.summary.attempted} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
+   <ul className="space-y-1 text-sm">{bulkResult.labels.map(result=><li key={result.key}>
+    {result.label} · {result.section}: {result.message}
    </li>)}</ul>
    <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh queue</button>
   </section>}

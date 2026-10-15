@@ -1,22 +1,43 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
 import {VERIFICATION_SEND_BACK_REASONS} from "@/modules/verification/review-reasons";
+import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
+import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
+import {verificationDecisionHistory} from "@/modules/verification/review-decision-history";
+import {verificationDecisionConfirmation} from "@/modules/verification/review-confirmation";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
- documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;}};
+ documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;decidedAt:string|null;}};
 export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId}:{
  row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;apiBase?:string;collegeId?:string;
 }){
+ const closeButton=useRef<HTMLButtonElement>(null);
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
+ const [retryKey,setRetryKey]=useState(0);
  const [saving,setSaving]=useState(false);
+ const [pendingAction,setPendingAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
  const [reason,setReason]=useState<string>(VERIFICATION_SEND_BACK_REASONS[0]);
  const [additional,setAdditional]=useState("");
  const url=`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`;
+ useEffect(()=>{
+  const previouslyFocused=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  closeButton.current?.focus();
+  return ()=>previouslyFocused?.focus();
+ },[]);
+ useEffect(()=>{
+  function onKeyboard(event:KeyboardEvent){
+   if(canDismissVerificationDialog(event.key,saving)){
+    event.preventDefault();event.stopPropagation();onClose();
+   }
+  }
+  window.addEventListener("keydown",onKeyboard);
+  return ()=>window.removeEventListener("keydown",onKeyboard);
+ },[onClose,saving]);
  useEffect(()=>{
   let active=true;
   fetch(url,{cache:"no-store"}).then(async response=>{
@@ -25,9 +46,13 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   }).then(data=>{if(active)setDetail(data);}).catch(e=>{if(active)setError(e instanceof Error?e.message:"Unable to load review");})
     .finally(()=>{if(active)setLoading(false);});
   return ()=>{active=false;};
- },[url]);
+ },[url,retryKey]);
+ function retryReview(){
+  setError("");setDetail(null);setLoading(true);
+  setRetryKey(key=>key+1);
+ }
  async function decide(action:"VERIFY"|"SEND_BACK"){
-  if(!detail||saving)return;
+  if(!detail||saving||pendingAction!==action)return;
   setSaving(true);setError("");
   try{
    const response=await fetch(`${apiBase}/review`,{
@@ -40,7 +65,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     const payload=await response.json().catch(()=>({error:"UNAVAILABLE"})) as {error?:string};
     throw Error(payload.error==="STALE_VERSION"?"This review changed. Close and refresh before deciding.":payload.error??"Decision failed");
    }
-   onSaved();
+   setPendingAction(null);onSaved();
   }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
   finally{setSaving(false);}
  }
@@ -49,11 +74,18 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
    <header className="flex items-start justify-between gap-3 border-b pb-3">
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
-    <button type="button" onClick={onClose} className="rounded-md border px-3 py-2">Close</button>
+    <button type="button" ref={closeButton} disabled={saving} onClick={onClose} className="rounded-md border px-3 py-2 disabled:opacity-50">Close</button>
    </header>
    {loading?<p role="status" className="py-4">Loading submitted details…</p>:null}
-   {error?<p role="alert" className="my-3 rounded-md border p-3">{error}</p>:null}
+   {error?<div role="alert" className="my-3 space-y-2 rounded-md border p-3"><p>{error}</p>
+    {canRetryVerificationReview(error,loading)&&<button type="button" onClick={retryReview}
+     className="rounded-md border px-3 py-2 text-sm">Retry loading review</button>}</div>:null}
    {detail?<div className="space-y-5 py-4">
+    <section className="rounded-md border p-3" aria-label="Previous verification decision">
+     <h3 className="font-semibold">Recorded decision history</h3>
+     <p className="text-sm">Last decision: {verificationDecisionHistory(detail.review).decidedAt??"Not yet decided"}</p>
+     <p className="mt-1 whitespace-pre-wrap break-words text-sm">Last reviewer note: {verificationDecisionHistory(detail.review).note??"No note recorded"}</p>
+    </section>
     <section><h3 className="font-semibold">Submitted versus previously verified</h3>
      <dl className="mt-3 space-y-3">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
       .map(item=><div key={item.key} className="min-w-0 rounded-md border p-3">
@@ -80,9 +112,17 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
        <textarea className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex flex-wrap gap-2">
-      <button type="button" disabled={saving} onClick={()=>void decide("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
-      <button type="button" disabled={saving} onClick={()=>void decide("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
+      <button type="button" disabled={saving} onClick={()=>setPendingAction("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
+      <button type="button" disabled={saving} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
      </div>
+     {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
+      <h3 className="font-semibold">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
+      <p className="break-words text-sm">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
+      <div className="flex flex-wrap gap-2">
+       <button type="button" disabled={saving} onClick={()=>void decide(pendingAction)} className="rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
+       <button type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="rounded-md border px-3 py-2 disabled:opacity-50">Cancel</button>
+      </div>
+     </section>}
      {saving&&<p role="status">Saving decision…</p>}
     </>:<p className="text-sm">This request is already decided. No actions are available.</p>}
    </div>:null}
