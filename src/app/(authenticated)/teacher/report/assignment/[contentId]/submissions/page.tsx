@@ -5,11 +5,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
-  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,
+  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,facultySearchSubmissionReportRows,
   facultySubmissionReportPageQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
 } from "@/modules/courses/faculty-assignment-submissions-model";
 
-type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[];order?:string|string[]};
+type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[]};
 
 export default async function FacultyAssignmentSubmissionsPage({
   params,searchParams,
@@ -31,7 +31,7 @@ export default async function FacultyAssignmentSubmissionsPage({
   const filtered=selectFacultyAssignmentSubmissions(
     report.submissions,query.filter,report.assignment.dueAt,
   );
-  const data=facultySubmissionListPage(facultySortSubmissionReportRows(filtered,query.order),query.page);
+  const data=facultySubmissionListPage(facultySortSubmissionReportRows(facultySearchSubmissionReportRows(filtered,query.q),query.order),query.page);
   const csvHref=facultyReportCsvHref({
     kind:"assignment",assessmentId:report.assignment.id,
     deliveryId:report.assignment.deliveryId,filter:query.filter,
@@ -45,6 +45,19 @@ export default async function FacultyAssignmentSubmissionsPage({
         className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
         Full Section report
       </Link>} />
+    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <input type="hidden" name="deliveryId" value={query.deliveryId}/>
+      {query.filter!=="ALL"?<input type="hidden" name="filter" value={query.filter}/>:null}
+      {query.order!=="NEWEST"?<input type="hidden" name="order" value={query.order}/>:null}
+      <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
+        Find learner submissions
+        <input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
+          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body"/>
+      </label>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+      <Link href={facultySubmissionListHref({...query,q:"",page:1})}
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear search</Link>
+    </form>
     <nav aria-label="Submission grading filters" className="flex flex-wrap gap-2">
       {(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>
         <Link key={filter} href={facultySubmissionListHref({...query,filter,page:1})}

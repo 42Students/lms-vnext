@@ -12,6 +12,7 @@ export const facultySubmissionListQuerySchema=z.object({
 /** Standalone report selectors are strict; the review drawer keeps its API contract. */
 export const facultySubmissionReportPageQuerySchema=facultySubmissionListQuerySchema.extend({
  order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
+ q:z.string().trim().max(120).default(""),
  page:z.union([z.number().int(),z.string().regex(/^[1-9]\d{0,3}$|^10000$/).transform(Number)])
    .pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
@@ -36,11 +37,12 @@ export function facultySubmissionListPage<T>(rows:readonly T[],requested:number)
   return {total,pageSize,totalPages,page,items:rows.slice((page-1)*pageSize,page*pageSize)};
 }
 
-export function facultySubmissionListHref(query:FacultySubmissionListQuery & {order?:"NEWEST"|"OLDEST"}) {
+export function facultySubmissionListHref(query:FacultySubmissionListQuery & {order?:"NEWEST"|"OLDEST";q?:string}) {
   const params=new URLSearchParams({deliveryId:query.deliveryId});
   if(query.filter!=="ALL")params.set("filter",query.filter);
   if(query.page>1)params.set("page",String(query.page));
   if(query.order==="OLDEST")params.set("order","OLDEST");
+  if(query.q?.trim())params.set("q",query.q.trim());
   return "/teacher/report/assignment/"+encodeURIComponent(query.assignmentId)+
     "/submissions?"+params.toString();
 }
@@ -75,4 +77,12 @@ export function facultySortSubmissionReportRows<T extends {id:string;submittedAt
    const diff=Number.isFinite(x)&&Number.isFinite(y)?(order==="NEWEST"?y-x:x-y):0;
    return diff||a.id.localeCompare(b.id);
  });
+}
+
+/** Search the already-authorized rows; contact details are not exported. */
+export function facultySearchSubmissionReportRows<T extends {learnerDisplayName:string|null}>(
+ rows:readonly T[],q:string,
+):T[]{
+ const term=q.trim().toLocaleLowerCase();
+ return term?rows.filter(row=>row.learnerDisplayName?.toLocaleLowerCase().includes(term)):[...rows];
 }
