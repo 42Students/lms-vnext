@@ -31,3 +31,8 @@ export function hasStudentRuleAcknowledgement(data:unknown,module:EditableStuden
  return rule.module===module && rule.enabled===(choice==="INHERIT"?null:choice==="ON") &&
   rule.locked===(choice==="INHERIT"?false:locked) && typeof rule.unchanged==="boolean";
 }
+
+/** Broader locks forbid writing On/Off, but clearing an old member override is allowed. */
+export function canReviewStudentRule(choice:StudentSelection,ancestorLocked:boolean,pending:boolean,unchanged:boolean):boolean {
+ return !pending&&!unchanged&&(!ancestorLocked||choice==="INHERIT");
+}
