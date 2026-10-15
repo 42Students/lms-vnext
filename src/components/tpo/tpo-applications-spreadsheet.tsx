@@ -2,6 +2,7 @@
 import Link from "next/link";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {applicantStage} from "@/modules/placements/tpo-applicant-pipeline-model";
+import {tpoGridTimeLabel} from "@/modules/placements/tpo-grid-time-label";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
@@ -17,7 +18,7 @@ const columns:readonly TpoGridColumn<Row>[]=[
  {key:"application",label:"Application",read:r=>r.applicationStatus},
  {key:"channel",label:"Channel",read:r=>r.channel},
  {key:"eligibility",label:"Eligibility evidence",read:r=>r.eligibilityStatus},
- {key:"submitted",label:"Submitted (IST)",read:r=>new Date(r.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})},
+ {key:"submitted",label:"Submitted (IST)",read:r=>tpoGridTimeLabel(r.submittedAt)},
  {key:"screening",label:"Screening",read:r=>r.screeningStatus??"Pending"},
  {key:"screeningUpdated",label:"Screening updated",read:r=>r.screeningUpdatedAt,exportOnly:true},
 ];
