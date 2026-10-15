@@ -12,4 +12,11 @@ describe("College directory empty-state recovery",()=>{
   expect(source).toContain("Clear filters and view all");
   expect(source).toContain('role="status"');
  });
+ it("clears both structure directories without retaining page or college scope",()=>{
+  expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({}))).toBe("/college/classes");
+  expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({}))).toBe("/college/electives");
+  const source=readFileSync(join(process.cwd(),"src/components/academics/college-structure-directory.tsx"),"utf8");
+  expect(source).toContain("Clear filters and view all");
+  expect(source).toContain('role="status"');
+ });
 });
