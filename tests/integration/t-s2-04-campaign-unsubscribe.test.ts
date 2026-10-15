@@ -55,6 +55,24 @@ describe.skipIf(!enabled)("T-S2-04 staged campaign unsubscribe PostgreSQL",()=>{
   expect(activity?.total).toBe(1);
   // Append-only audit history is intentionally left in the isolated database.
  });
+ it("enforces one recipient digest per campaign, even across two different lead IDs",async()=>{
+  if(!pool)throw new Error("Disposable PostgreSQL required");
+  const ref=randomUUID();
+  const a=await createTpoLead(tpo,{collegeId:SEED_IDS.collegeA,
+   name:"Campaign dedupe A "+ref,email:"first-"+ref+"@example.org"});
+  const b=await createTpoLead(tpo,{collegeId:SEED_IDS.collegeA,
+   name:"Campaign dedupe B "+ref,email:"second-"+ref+"@example.org"});
+  const campaignId=randomUUID(),key="c".repeat(64);
+  await pool.query(`insert into placement_tpo_email_campaigns
+   (id,college_id,created_by_user_id,total_recipients) values($1,$2,$3,1)`,
+   [campaignId,SEED_IDS.collegeA,SEED_IDS.facultyUser]);
+  await pool.query(`insert into placement_tpo_email_campaign_recipients
+   (college_id,campaign_id,lead_id,recipient_key) values($1,$2,$3,$4)`,
+   [SEED_IDS.collegeA,campaignId,a.id,key]);
+  await expect(pool.query(`insert into placement_tpo_email_campaign_recipients
+   (college_id,campaign_id,lead_id,recipient_key) values($1,$2,$3,$4)`,
+   [SEED_IDS.collegeA,campaignId,b.id,key])).rejects.toMatchObject({code:"23505"});
+ });
  it("rejects campaign or recipient swaps using a valid but different signed claim",async()=>{
   if(!pool)throw new Error("Disposable PostgreSQL required");
   process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET=secret;
