@@ -10,9 +10,13 @@ export function filterBatchRegistrations<T extends BatchRegistrationListRow>(
  rows:readonly T[],filter:z.infer<typeof tpoBatchRegistrationFilters>,
 ){
  const search=filter.q.toLocaleLowerCase();
- return rows.filter(row=>(filter.choice==="ALL"||
-  filter.choice==="UNRECORDED"?filter.choice!=="UNRECORDED"||row.choice===null:row.choice===filter.choice)
-  &&(row.name.toLocaleLowerCase().includes(search)||row.membershipId.toLowerCase().includes(search)));
+ return rows.filter(row=>{
+  const matchesChoice=filter.choice==="ALL"||
+   (filter.choice==="UNRECORDED"?row.choice===null:row.choice===filter.choice);
+  const matchesSearch=row.name.toLocaleLowerCase().includes(search)||
+   row.membershipId.toLowerCase().includes(search);
+  return matchesChoice&&matchesSearch;
+ });
 }
 export function paginateBatchRegistrations<T>(items:readonly T[],page:number,pageSize=25){
  return {items:items.slice((page-1)*pageSize,page*pageSize),
