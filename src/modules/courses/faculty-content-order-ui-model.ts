@@ -17,3 +17,10 @@ export function facultyContentOrderDirty(initial:readonly string[],draft:readonl
 export function facultyResetContentOrder<T extends {id:string}>(items:readonly T[]):string[]{
  return items.map(item=>item.id);
 }
+
+/** Reject stale/duplicated draft IDs; the database repeats the full-scope check. */
+export function facultyContentOrderValid(visible:readonly string[],draft:readonly string[]):boolean{
+ const allowed=new Set(visible);
+ return allowed.size===visible.length && draft.length===visible.length &&
+   new Set(draft).size===draft.length && draft.every(id=>allowed.has(id));
+}

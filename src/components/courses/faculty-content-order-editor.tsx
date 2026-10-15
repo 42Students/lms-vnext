@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
-import { facultyMoveContentId, facultyContentOrderDirty, facultyResetContentOrder } from "@/modules/courses/faculty-content-order-ui-model";
+import { facultyMoveContentId, facultyContentOrderDirty, facultyResetContentOrder, facultyContentOrderValid } from "@/modules/courses/faculty-content-order-ui-model";
 
 type Item = {
   id: string;
@@ -45,6 +45,10 @@ function FacultyContentOrderEditorInner({
   }
 
   function save() {
+    if (!facultyContentOrderValid(items.map(item=>item.id),order)) {
+      showToast({tone:"error",title:"Section content changed",description:"Reload this Section before saving its new order."});
+      return;
+    }
     startTransition(async () => {
       try {
         const response = await fetch(
