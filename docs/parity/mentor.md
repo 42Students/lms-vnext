@@ -1592,3 +1592,7 @@ Project access resolves persisted role_kind and can_mutate, projecting observers
 ### PR-S2-11 0084 visibility: project link/note read and write enforcement
 
 `project_resources.visibility` is now a validated create/update field (TEAM or MENTOR_ONLY), defaulting to TEAM. The registered resource list and the separately implemented instance workspace read enforce visibility in SQL for every non-privileged role, including observer/reviewer/QA; only ADMIN and a writable MENTOR can see mentor-only resources. File endpoints require a separate check, and full read-path testing is pending.
+
+### PR-S2-11 0084: signed-file confidentiality (registered runtime)
+
+Learner/observer Project file lists exclude files linked to MENTOR_ONLY resources by SQL NOT EXISTS; direct signed download grants also load and verify the linked resource in the current project and deny a private or inactive resource with a non-leaking STORAGE_NOT_FOUND. Unlinked project uploads keep their existing team-visible behavior. Real DB tenant/leak tests and complete alternative file routes require execution before certifying closure.

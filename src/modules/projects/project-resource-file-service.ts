@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, ne, notExists, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { projectInstances, projectResourceFiles, projectResources } from "@/db/schema";
@@ -278,6 +278,12 @@ export async function listProjectFiles(context: RequestContext, projectIdInput: 
       and(
         eq(projectResourceFiles.projectId, scope.project.id),
         manager ? ne(projectResourceFiles.status, "DELETED") : eq(projectResourceFiles.status, "READY"),
+        manager ? undefined : notExists(getDb().select({id:projectResources.id})
+          .from(projectResources).where(and(
+            eq(projectResources.id,projectResourceFiles.resourceId),
+            eq(projectResources.projectId,scope.project.id),
+            eq(projectResources.visibility,"MENTOR_ONLY"),
+          ))),
       ),
     )
     .orderBy(asc(projectResourceFiles.createdAt));
@@ -357,6 +363,15 @@ export async function issueProjectFileDownloadGrant(
   const row = await loadFile(scope.project.id, fileIdInput);
   if (row.status === "DELETED") throw new StorageFileError("STORAGE_NOT_FOUND");
   const manager = scope.access === "ADMIN" || scope.access === "MENTOR";
+  if(row.resourceId && !manager){
+    // Never issue a signed URL when a linked resource is mentor-only, even if
+    // a caller bypasses the Resources page and guesses a stored file UUID.
+    const [linked]=await getDb().select({visibility:projectResources.visibility,status:projectResources.status})
+      .from(projectResources).where(and(eq(projectResources.id,row.resourceId),
+        eq(projectResources.projectId,scope.project.id))).limit(1);
+    if(!linked||linked.status!=="ACTIVE"||linked.visibility!=="TEAM")
+      throw new StorageFileError("STORAGE_NOT_FOUND");
+  }
   if (row.status !== "READY" && !manager) throw new StorageFileError("STORAGE_NOT_FOUND");
   if (
     row.status !== "READY" ||
