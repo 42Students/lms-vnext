@@ -4,7 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
-import {selectTpoBulkPage,toggleTpoBulkRow,TPO_BULK_UI_LIMIT,
+import {selectTpoBulkPage,toggleTpoBulkRow,isTpoBulkPageSelected,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
 type Action="ELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED";
@@ -81,7 +81,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
    </p></div>
   <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
-    <input type="checkbox" disabled={busy} checked={safeSelected.length===Math.min(rows.length,TPO_BULK_UI_LIMIT)}
+    <input type="checkbox" disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
      onChange={e=>{setSelected(e.target.checked?selectTpoBulkPage(rows.map(row=>row.id)):[]);invalidate();}}/>
     Select first {Math.min(rows.length,TPO_BULK_UI_LIMIT)} current-page rows
    </label>
