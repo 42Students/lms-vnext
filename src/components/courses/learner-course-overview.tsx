@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerUpcomingQuizEligible } from "@/modules/courses/learner-course-upcoming-quiz-model";
 import { learnerCourseHomeCompletion } from "@/modules/courses/learner-course-home-completion-model";
 import { learnerCourseHomeActionLabel } from "@/modules/courses/learner-course-home-action-label-model";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
@@ -136,11 +137,9 @@ export function LearnerCourseOverview({
         })),
       ...lesson.quizzes
         .filter(
-          (item) =>
-            item.progress.status !== "COMPLETED" &&
-            Boolean(item.dueAt) &&
-            item.dueAt!.getTime() >= now &&
-            item.dueAt!.getTime() <= activityCutoff,
+          (item) => learnerUpcomingQuizEligible({
+            status:item.progress.status,dueAt:item.dueAt,
+          },now,activityCutoff),
         )
         .map((item) => ({
           id: item.id,
