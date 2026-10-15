@@ -84,6 +84,24 @@ describe.skipIf(!enabled)("DB09 TPO recruiter grants PostgreSQL", () => {
     )).rows[0];
     expect(audits?.total).toBe(2);
   });
+  it("T-S1-01 refuses duplicate grant reuse when the persisted grant expires, is unverified or lacks DRIVES", async () => {
+    if (!pool) throw new Error("DB required");
+    const created=await fixture();
+    const request={action:"GRANT" as const,confirmed:true,
+      companyRelationshipId:created.relationshipId,email:created.email};
+    const initial=await changeTpoRecruiterGrant(tpo,request);
+    expect(initial.outcome).toBe("granted");
+    const grantId=initial.grantId;
+    await pool.query("update placement_recruiter_college_grants set capabilities=ARRAY['MESSAGES']::text[] where id=$1",[grantId]);
+    await expect(changeTpoRecruiterGrant(tpo,request))
+      .rejects.toBeInstanceOf(TpoRecruiterGrantConflict);
+    await pool.query("update placement_recruiter_college_grants set capabilities=ARRAY['DRIVES']::text[],verification_status='PENDING' where id=$1",[grantId]);
+    await expect(changeTpoRecruiterGrant(tpo,request))
+      .rejects.toBeInstanceOf(TpoRecruiterGrantConflict);
+    await pool.query("update placement_recruiter_college_grants set verification_status='VERIFIED',valid_until=created_at+interval '1 millisecond' where id=$1",[grantId]);
+    await expect(changeTpoRecruiterGrant(tpo,request))
+      .rejects.toBeInstanceOf(TpoRecruiterGrantConflict);
+  });
   it("rejects wrong role and foreign relationship before any grants", async () => {
     if (!pool) throw new Error("DB required");
     const local = await fixture();
