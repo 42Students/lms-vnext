@@ -344,7 +344,11 @@ export function LearnerPlacementOffers({
                   className="text-primary-text underline">Review pending request</Link>
               </p>
             ) : null}
-            {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
+            {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="INVALID" ? (
+              <p role="alert" className="mt-4 text-sm font-semibold text-error">
+                The saved offer dates cannot be verified. Responding is disabled until your placement cell corrects the record.
+              </p>
+            ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
               <p role="status" className="mt-4 text-sm font-semibold text-error">
                 The recorded response deadline has passed. You cannot respond to this offer.
                 Contact your placement cell for clarification.

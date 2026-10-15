@@ -9,9 +9,11 @@ export function learnerOfferResponseTiming(raw:unknown,snapshotNowIso:string){
   // three timing fields against the strict boundary schema.
   const source:Record<string,unknown>=typeof raw==="object"&&raw!==null
     ? raw as Record<string,unknown> : {};
-  const row=learnerOfferResponseTimingSchema.parse({
+  const parsed=learnerOfferResponseTimingSchema.safeParse({
     status:source.status,expiresAt:source.expiresAt,issuedAt:source.issuedAt,
   });
+  if(!parsed.success)return {expired:true,canRespond:false,urgency:"INVALID" as const};
+  const row=parsed.data;
   const now=Date.parse(snapshotNowIso);
   if(!Number.isFinite(now))throw new Error("Invalid server snapshot");
   const until=row.expiresAt===null?null:Date.parse(row.expiresAt)-now;
