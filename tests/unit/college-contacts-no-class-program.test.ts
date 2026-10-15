@@ -5,6 +5,6 @@ describe("College Contacts absent class scoped to selected enrollment",()=>{
  it("permits class-absence in a chosen program, but rejects contradictory section ID",()=>{
   expect(contactAcademicFiltersCompatible(collegeContactsQuerySchema.parse({programId:id,classPresence:"NONE"}))).toBe(true);
   expect(()=>parseCollegeContactsSearchParams({programId:id,classPresence:"NONE",sectionId:id})).toThrow();
-  expect(()=>parseCollegeContactsSearchParams({programId:id,classPresence:"NONE",enrollment:"NONE"})).not.toThrow();
+  expect(()=>parseCollegeContactsSearchParams({programId:id,classPresence:"NONE",enrollment:"NONE"})).toThrow();
  });
 });
