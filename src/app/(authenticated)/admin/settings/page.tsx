@@ -82,7 +82,15 @@ export default async function SuperAdminSettingsPage() {
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <div className="grid min-w-0 gap-3 lg:hidden" aria-label={`${section.title} setting cards`}>
+            {section.items.map(setting=><article key={setting.label} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+              <h3 className="break-words text-sm font-semibold text-foreground">{setting.label}</h3>
+              <p className="mt-2 break-words text-base font-semibold text-foreground">{formatPlatformSettingValue(setting)}</p>
+              <p className="mt-2 text-xs text-body">Origin: {platformSettingOriginLabel(setting.origin)}</p>
+              <p className="mt-1 break-all font-mono text-xs text-muted-foreground">Source: {setting.source}</p>
+            </article>)}
+          </div>
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
             <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
               <thead className="bg-surface-subtle">
                 <tr>
