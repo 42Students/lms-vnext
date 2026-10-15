@@ -37,7 +37,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
    ))
    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED")))
    .for("update").limit(1);
-  if(!job||!can(context,"placements.recruiter.read",{
+  if(!job||!can(context,"placements.recruiter.round.manage",{
    collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
   }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const rounds=await tx.select({
