@@ -5,16 +5,17 @@ import {TPO_REGISTRATION_CHOICES} from "@/modules/placements/tpo-batch-registrat
 export const dynamic="force-dynamic";
 export default async function BatchRegistrations({params,searchParams}:{
  params:Promise<{batchId:string}>;
- searchParams:Promise<{q?:string|string[];choice?:string|string[];page?:string|string[];source?:string|string[]}>}){
+ searchParams:Promise<{q?:string|string[];choice?:string|string[];page?:string|string[];source?:string|string[];recency?:string|string[]}>}){
  const {batchId}=await params,raw=await searchParams;
  const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
- const value={q:first(raw.q),choice:first(raw.choice),page:first(raw.page),source:first(raw.source)};
+ const value={q:first(raw.q),choice:first(raw.choice),page:first(raw.page),source:first(raw.source),recency:first(raw.recency)};
  const ctx=await getCurrentRequestContext();
  const data=await listTpoBatchRegistrationRoster(ctx,batchId,value);
  const url=(page:number)=>{const params=new URLSearchParams();
   if(data.filters.q)params.set("q",data.filters.q);
   if(data.filters.choice!=="ALL")params.set("choice",data.filters.choice);
   if(data.filters.source!=="ALL")params.set("source",data.filters.source);
+  if(data.filters.recency!=="ALL")params.set("recency",data.filters.recency);
   params.set("page",String(page));return "/tpo/batches/"+batchId+"/registrations?"+params.toString();};
  return <main className="min-w-0 space-y-4">
   <h1 className="text-xl font-semibold">{data.batch.name} — Registration choices</h1>
@@ -33,13 +34,14 @@ export default async function BatchRegistrations({params,searchParams}:{
      </select>
     </label>
     <label className="text-sm">Recorded source<select name="source" defaultValue={data.filters.source} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any source</option><option value="SELF">Learner self-service</option><option value="TPO">Placement cell</option><option value="BACKFILL">Backfill</option><option value="UNRECORDED">Not recorded</option></select></label>
+    <label className="text-sm">Last recorded update<select name="recency" defaultValue={data.filters.recency} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any date</option><option value="UPDATED_7_DAYS">Within 7 days</option><option value="OLDER_30_DAYS">Older than 30 days</option><option value="NO_RECORD">No recorded choice</option></select></label>
     <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary">Filter</button>
    </form>
    {data.limited?<p role="status" className="rounded border border-border p-3 text-sm">Limited to the first 500 active learners. Filter totals and CSV describe this sample only.</p>:null}
    <div className="flex flex-wrap items-center justify-between gap-2">
     <p className="text-sm text-muted-foreground">{data.total} matching students in {data.sampleSize} sampled records. Page {data.filters.page}.</p>
     <a href={"/api/placements/tpo/batches/"+batchId+"/registrations/export?"+new URLSearchParams({
-     q:data.filters.q,choice:data.filters.choice,source:data.filters.source,page:String(data.filters.page),
+     q:data.filters.q,choice:data.filters.choice,source:data.filters.source,recency:data.filters.recency,page:String(data.filters.page),
     }).toString()} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">
      Export this 25-row page CSV
     </a>
