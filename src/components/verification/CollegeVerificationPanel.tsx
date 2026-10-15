@@ -8,6 +8,7 @@ import {VerificationExportControl} from "./VerificationExportControl";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {verificationAttentionShortcuts,verificationAttentionShortcutPatch} from "@/modules/verification/attention-shortcuts";
+import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
@@ -15,6 +16,17 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  query:Record<string,string>;tpoCanVerify:boolean;batchChoices:VerificationFilterChoiceList;branchChoices:VerificationFilterChoiceList;classChoices:VerificationFilterChoiceList;
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
+ const [selection,setSelection]=useState<Set<string>>(()=>new Set());
+ const selectable=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
+ const available=new Set(selectable.map(verificationSelectionKey));
+ const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
+ function choose(row:VerificationQueueCard,checked:boolean){
+  setSelection(current=>{
+   const next=new Set([...current].filter(key=>available.has(key))),key=verificationSelectionKey(row);
+   if(checked&&next.size<20)next.add(key);else if(!checked)next.delete(key);
+   return next;
+  });
+ }
  function navigate(patch:Record<string,string>){
   const params=new URLSearchParams(query);
   Object.entries(patch).forEach(([key,value])=>{if(value)params.set(key,value);else params.delete(key);});
@@ -35,10 +47,12 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </nav>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
+   selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose}
    initialTab={activeTab} initialKind={initialKind}
    onTabChange={tab=>navigate({tab,page:"1"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
    onReview={row=>setSelected(row)}/>
+  <p role="status" className="text-sm text-muted-foreground">{selectedRows.length} of 20 requests selected on this page for bulk review.</p>
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
    <label>Sort by <select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option>
