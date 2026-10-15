@@ -1156,3 +1156,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 single-notice audit transaction (PARTIAL):** A Super Admin per-college notice is now inserted in the same PostgreSQL transaction as the high-importance Activity Log publication receipt, mirroring multi-college broadcast attribution. Failure of activity insertion rolls back notice creation; event metadata includes only notice ID and audience type, not message bodies or contacts. Disposable PG verification source authored; runtime/browser acceptance open.
+
+
+**2026-10-15 chat-6 transactional notice audit fixture (AUTHORED, NOT EXECUTED):** Extended disposable DB10 lifecycle fixture to assert exactly one persisted Activity Log publication receipt without notice text, stale no-op delete/restore 409 semantics, and deterministic cleanup of activity and notice fixture rows. Do not interpret authored coverage as executed migration acceptance.

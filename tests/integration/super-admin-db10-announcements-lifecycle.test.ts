@@ -1,5 +1,7 @@
 import {describe,it,expect} from "vitest";
-import {eq} from "drizzle-orm";
+import {and,eq} from "drizzle-orm";
+import {activityEvents} from "@/db/schema/activity";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {createAnnouncement,deleteAnnouncement,listAnnouncementsForAdmin,restoreAnnouncement,updateAnnouncement} from "@/modules/announcements/service";
@@ -25,6 +27,13 @@ describe.skipIf(!enabled)("DB10 announcements registered schema lifecycle (dispo
    });
    id=created.id;
    expect(created.collegeId).toBe(SEED_IDS.collegeA);
+   const receipts=await db.select({id:activityEvents.id,metadata:activityEvents.metadata}).from(activityEvents)
+     .where(and(eq(activityEvents.subjectId,created.id),
+       eq(activityEvents.subjectType,"announcement"),
+       eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_ANNOUNCEMENT_PUBLISHED)));
+   expect(receipts).toHaveLength(1);
+   expect(receipts[0]?.metadata).toMatchObject({noticeId:created.id,receiverType:"COLLEGE"});
+   expect(JSON.stringify(receipts[0]?.metadata)).not.toContain("Scoped test notice");
    const filtered=await listAnnouncementsForAdmin({...admin,adminScope:{collegeId:SEED_IDS.collegeA}},{
     q:"DB10 integration",receiverType:"COLLEGE",visibility:"LIVE",limit:50,
    });
@@ -51,14 +60,19 @@ describe.skipIf(!enabled)("DB10 announcements registered schema lifecycle (dispo
    const deletedOnly=await listAnnouncementsForAdmin({...admin,adminScope:{collegeId:SEED_IDS.collegeA}}, {q:"DB10 integration",visibility:"DELETED",limit:50});
    expect(deletedOnly.items.map(item=>item.id)).toContain(id);
    expect((await listAnnouncementsForAdmin({...admin,adminScope:{collegeId:SEED_IDS.collegeA}},{limit:100})).items.map(item=>item.id)).not.toContain(id);
+   await expect(deleteAnnouncement(admin,id,{expectedVersion:updated.version})).rejects.toMatchObject({code:"STALE_VERSION"});
    const restored=await restoreAnnouncement(admin,id,{expectedVersion:deleted.version});
    expect(restored.deletedAt).toBeNull();
+   await expect(restoreAnnouncement(admin,id,{expectedVersion:deleted.version})).rejects.toMatchObject({code:"STALE_VERSION"});
    await expect(listAnnouncementsForAdmin({...admin,user:{...admin.user,platformStatus:"SUSPENDED"}},{}))
     .rejects.toMatchObject({code:"FORBIDDEN"});
    await expect(listAnnouncementsForAdmin({...admin,user:{...admin.user,systemRoles:[]}},{}))
     .rejects.toMatchObject({code:"FORBIDDEN"});
   }finally{
-   if(id)await db.delete(db10Announcements).where(eq(db10Announcements.id,id));
+   if(id){
+    await db.delete(activityEvents).where(and(eq(activityEvents.subjectId,id),eq(activityEvents.subjectType,"announcement")));
+    await db.delete(db10Announcements).where(eq(db10Announcements.id,id));
+   }
   }
  });
 });
