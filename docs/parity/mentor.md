@@ -1622,3 +1622,8 @@ Fixed the optimistic write conditions for task assignment, task-status transitio
 ### PR-S2-07 registered activity log partial runtime: approval lock and explicit reopen
 
 Approval now writes a separately deduplicated LOCKED activity event, and a mentor/admin can reopen the **exact latest approved submission** through a same-origin, project-row-locked endpoint only while the project is ACTIVE and no evaluation exists. A reopened activity event authorizes one additional learner draft version while preserving immutable APPROVED history. No new schema is required for this part. Attachment metadata and migration-backed delivery event table remain **NOT DONE**; all runtime tests including the direct SQL acceptance have not been executed.
+
+
+### PR-S2-07 confirmed UI + authorized new draft after explicit reopen
+
+Readiness now projects the latest approved submission's durable reopen event and permits only its explicitly reopened state to create a new learner draft. The final-delivery view exposes the legacy Reopen for revision confirmation with required review feedback to an eligible Mentor/Admin, hides it after reopen or evaluation and preserves existing archived/complete denial. Browser and real PostgreSQL verification outstanding; attachment metadata still awaits registration.
