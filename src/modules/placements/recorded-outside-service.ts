@@ -6,6 +6,7 @@ import {colleges,placementCompanyRelationships,placementCompanies,
  activityEvents,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {placementOutsideDriveRecords} from "./recorded-outside-staged-schema";
 import {recordedOutsideDriveSchema} from "./recorded-outside-model";
@@ -52,7 +53,9 @@ async function outsideActor(context:RequestContext,collegeId:string,relationship
    eq(placementCompanyRelationships.companyId,placementRecruiterProfiles.companyId)))
   .where(and(eq(placementRecruiterProfiles.userId,context.user.id),
    eq(placementRecruiterProfiles.status,"ACTIVE"))).limit(1);
- if(!actor)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ if(!actor||!can(context,"placements.recruiter.read",{
+  collegeId,placementCompanyRelationshipId:relationshipId,
+ }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return {relationship,role:"RECRUITER" as const};
 }
 export async function recordOutsideDrive(context:RequestContext,raw:unknown){
