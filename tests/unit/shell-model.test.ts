@@ -95,6 +95,7 @@ describe("authenticated shell model", () => {
       "/admin/placements",
       "/admin/placements/calendar",
       "/admin/recruiters",
+      "/admin/announcements",
     ]);
 
     expect(
@@ -106,6 +107,9 @@ describe("authenticated shell model", () => {
       href: "/admin/placements/calendar",
       icon: "/assets/images/common/calender.svg",
     });
+
+    expect(superAdminNavigation.find((item) => item.href === "/admin/recruiters")).toMatchObject({ label: "Recruiter Accounts" });
+    expect(superAdminNavigation.find((item) => item.href === "/admin/announcements")).toMatchObject({ label: "Announcements" });
 
     expect(superAdminHrefs).not.toContain("/tpo/calendar");
     expect(superAdminHrefs).not.toContain("/college/placements/calendar");
