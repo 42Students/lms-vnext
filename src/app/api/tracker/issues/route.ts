@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const query = parseTrackerIssuesApiQuery(new URL(request.url).searchParams);
     if (!query) return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     const page = await listBugTrackerIssuesForAdmin(context, query);
-    return NextResponse.json(page);
+    return NextResponse.json(page, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
     return bugTrackerApiError(error);
   }
