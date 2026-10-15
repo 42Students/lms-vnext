@@ -7,7 +7,7 @@ import {projectMutation} from "@/components/projects/project-api";
 
 export function SuperAdminTemplateCreateForm(){
  const router=useRouter();
- const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:""});
+ const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:""});
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const edit=(key:keyof typeof values,value:string)=>setValues(old=>({...old,[key]:value}));
@@ -55,6 +55,9 @@ export function SuperAdminTemplateCreateForm(){
   </label>
   <label className="grid gap-1 text-sm font-semibold text-body">First task acceptance criteria (optional)
    <textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
+  </label>
+  <label className="grid gap-1 text-sm font-semibold text-body">First release description (optional)
+   <textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="min-h-24 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
   {error?<p role="alert" className="break-words text-sm text-error-text">{error}</p>:null}
   <div className="flex flex-wrap justify-end gap-3">
