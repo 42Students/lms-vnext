@@ -6,15 +6,19 @@ import { LearnerPlacementRequests } from "@/components/placements/learner-placem
 import { PageHeader } from "@/components/ui/page-header";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
+import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
+import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
+import {learnerPlacementCellOfferEmptyMessage} from "@/modules/placements/learner-placement-cell-offer-empty-model";
 
 export default async function LearnerPlacementCellPage() {
   const context = await getCurrentRequestContext();
-  const [offerRows, requestWorkspace, alerts] = await Promise.all([
+  const [offerRows, requestRead, alertRead] = await Promise.all([
     listOwnPlacementOffers(context),
-    getLearnerPlacementRequestWorkspace(context),
-    getOwnLearnerPlacementAlerts(context),
+    readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context)),
+    readOptionalLearnerAlertSource(()=>getOwnLearnerPlacementAlerts(context)),
   ]);
+  const requestWorkspace=requestRead.value;
   return (
     <div className="space-y-7">
       <PageHeader eyebrow="My Placements" title="Placement cell" description="Your official offer, request and placement-cell support workspace." />
@@ -25,21 +29,40 @@ export default async function LearnerPlacementCellPage() {
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
       </section>
       <nav aria-label="Placement cell resources" className="flex flex-wrap gap-3">
-        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read college notices →</Link>
+        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read all college notices →</Link>
+        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Placement-cell authored notices →</Link>
         <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
       </nav>
-      <LearnerPlacementAlerts alerts={alerts} />
-      <LearnerPlacementOffers
-        extensionRequests={requestWorkspace.requests.map(row=>({
+      {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
+        <section role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          Personal placement alerts are temporarily unavailable. Your official offers and requests remain accessible.
+          <Link href="/learn/my-placements/placement" className="ml-2 font-semibold text-primary-text underline">
+            Retry personal alerts
+          </Link>
+        </section>
+      )}
+      {!requestRead.available ? <p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">Your placement requests are temporarily unavailable. Offers remain viewable, but extension requests are disabled until pending requests can be checked. <Link href="/learn/my-placements/placement" className="font-semibold text-primary-text underline">Retry requests</Link></p> : null}
+      {offerRows.length===0 ? (
+        <section role="status" className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="text-base font-semibold text-foreground">Official offers</h2>
+          <p className="mt-2 text-sm text-body">{learnerPlacementCellOfferEmptyMessage(offerRows.length)}</p>
+          <Link href="/learn/my-placements/applications"
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Review my applications →
+          </Link>
+        </section>
+      ) : <LearnerPlacementOffers
+        extensionsAvailable={requestRead.available}
+        extensionRequests={(requestWorkspace?.requests ?? []).map(row=>({
           offerId:row.request.offerId,status:row.request.status,
           requestType:row.request.requestType,
         }))}
-        snapshotNowIso={new Date().toISOString()} offers={offerRows.map((row) => ({ offerId: row.offer.id, applicationId: row.offer.applicationId, companyName: row.company.name, jobTitle: row.job.title, roleTitle: row.offer.roleTitle, status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN", annualCtcInr: row.offer.annualCtcInr, joiningDate: row.offer.joiningDate, expiresAt: row.offer.expiresAt?.toISOString() ?? null, issuedAt: row.offer.issuedAt.toISOString(), joining: row.joining ? { status: row.joining.status as "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED", joiningDate: row.joining.joiningDate, reason: row.joining.reason } : null }))} />
-      <LearnerPlacementRequests
+        snapshotNowIso={new Date().toISOString()} offers={offerRows.map((row) => ({ offerId: row.offer.id, applicationId: row.offer.applicationId, companyName: row.company.name, jobTitle: row.job.title, roleTitle: row.offer.roleTitle, status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN", annualCtcInr: row.offer.annualCtcInr, joiningDate: row.offer.joiningDate, expiresAt: row.offer.expiresAt?.toISOString() ?? null, issuedAt: row.offer.issuedAt.toISOString(), joining: row.joining ? { status: row.joining.status as "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED", joiningDate: row.joining.joiningDate, reason: row.joining.reason } : null }))} />}
+      {requestWorkspace ? <LearnerPlacementRequests
         requests={requestWorkspace.requests.map((row) => ({ id: row.request.id, requestType: row.request.requestType as "APPLICATION_WITHDRAWAL" | "ROUND_RESCHEDULE" | "OFFER_EXTENSION", status: row.request.status as "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED", reason: row.request.reason, decisionNote: row.request.decisionNote, requestedAt: row.request.requestedAt.toISOString(), decidedAt: row.request.decidedAt?.toISOString() ?? null, roleTitle: row.roleOption.title, jobTitle: row.job.title, companyName: row.company.name, roundName: row.round?.name ?? null, offerRoleTitle: row.offer?.roleTitle ?? null, effectPayload: (row.request.effectPayload ?? {}) as Record<string, unknown> }))}
         rounds={requestWorkspace.rounds.map((row) => ({ applicationId: row.applicationId, roundId: row.roundId, roundName: row.roundName, sequence: row.sequence, roleTitle: row.roleTitle, companyName: row.companyName, scheduledAt: row.scheduledAt?.toISOString() ?? null, timezone: row.timezone, mode: row.mode, venue: row.venue, meetingUrl: row.meetingUrl, exception: row.exception ? { scheduledAt: row.exception.scheduledAt.toISOString(), timezone: row.exception.timezone, mode: row.exception.mode, venue: row.exception.venue, meetingUrl: row.exception.meetingUrl } : null }))}
         offers={requestWorkspace.offers.map((row) => ({ ...row, expiresAt: row.expiresAt?.toISOString() ?? null }))}
-      />
+      /> : null}
     </div>
   );
 }

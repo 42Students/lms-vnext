@@ -16,3 +16,14 @@ describe("learner assessment sorting",()=>{
   expect(learnerAssessmentSort(items,"UNKNOWN").map(x=>x.id)).toEqual(["a","c","b"]);
  });
 });
+
+describe("assessment creation timestamp fallback",()=>{
+ it("sorts corrupted dates after valid historical dates, not at Unix epoch",()=>{
+  const rows=[
+   {id:"invalid",title:"Invalid",createdAt:"not-a-date",dueAt:null},
+   {id:"historical",title:"Historical",createdAt:"1960-01-01T00:00:00Z",dueAt:null},
+  ];
+  expect(learnerAssessmentSort(rows,"CREATED").map(row=>row.id))
+   .toEqual(["historical","invalid"]);
+ });
+});
