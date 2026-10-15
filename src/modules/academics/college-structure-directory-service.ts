@@ -95,6 +95,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.periodEndsOnOrBefore ? lte(academicPeriods.endDate, query.periodEndsOnOrBefore) : undefined,
       query.periodStartsOnOrAfter ? gte(academicPeriods.startDate, query.periodStartsOnOrAfter) : undefined,
       query.deliveryPresence === "HAS_DELIVERIES" ? exists(db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries).where(eq(courseSectionDeliveries.sectionId,sections.id))) : query.deliveryPresence === "NO_DELIVERIES" ? not(exists(db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries).where(eq(courseSectionDeliveries.sectionId,sections.id)))) : undefined,
       query.facultyCoverage === "HAS_FACULTY" ? exists(db.select({id:sectionFacultyAssignments.id}).from(sectionFacultyAssignments).where(and(eq(sectionFacultyAssignments.sectionId,sections.id),isNull(sectionFacultyAssignments.endedAt)))) : query.facultyCoverage === "NO_FACULTY" ? not(exists(db.select({id:sectionFacultyAssignments.id}).from(sectionFacultyAssignments).where(and(eq(sectionFacultyAssignments.sectionId,sections.id),isNull(sectionFacultyAssignments.endedAt))))) : undefined,

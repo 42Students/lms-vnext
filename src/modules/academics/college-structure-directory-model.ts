@@ -11,6 +11,7 @@ export const collegeStructureQuerySchema = z.object({
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
+  periodEndsOnOrBefore: z.iso.date().optional(),
   periodStartsOnOrAfter: z.iso.date().optional(),
   deliveryPresence: z.enum(["ALL","HAS_DELIVERIES","NO_DELIVERIES"]).default("ALL"),
   facultyCoverage: z.enum(["ALL","HAS_FACULTY","NO_FACULTY"]).default("ALL"),
@@ -61,10 +62,10 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "periodStartsOnOrAfter" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
+    if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "periodStartsOnOrAfter" || key === "periodEndsOnOrBefore" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
       result[key] = value;
     }
   }
@@ -108,6 +109,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (kind === "CLASSES" && "facultyCoverage" in query && query.facultyCoverage !== "ALL") params.set("facultyCoverage",query.facultyCoverage);
   if (kind === "CLASSES" && "deliveryPresence" in query && query.deliveryPresence !== "ALL") params.set("deliveryPresence",query.deliveryPresence);
   if (kind === "CLASSES" && "periodStartsOnOrAfter" in query && query.periodStartsOnOrAfter) params.set("periodStartsOnOrAfter",query.periodStartsOnOrAfter);
+  if (kind === "CLASSES" && "periodEndsOnOrBefore" in query && query.periodEndsOnOrBefore) params.set("periodEndsOnOrBefore",query.periodEndsOnOrBefore);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }

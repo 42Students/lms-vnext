@@ -185,4 +185,11 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeClassQuerySchema.safeParse({periodStartsOnOrAfter:"2026-15-41"}).success).toBe(false);
     expect(readCollegeStructureParams({periodStartsOnOrAfter:""})).toEqual({});
   });
+  it("bounds period end date on or before in Class directory and CSV navigation",()=>{
+    const query=collegeClassQuerySchema.parse({periodEndsOnOrBefore:"2026-12-31"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("periodEndsOnOrBefore=2026-12-31");
+    expect(classesExportHref(query)).toContain("periodEndsOnOrBefore=2026-12-31");
+    expect(collegeClassQuerySchema.safeParse({periodEndsOnOrBefore:"2026-15-41"}).success).toBe(false);
+    expect(readCollegeStructureParams({periodEndsOnOrBefore:""})).toEqual({});
+  });
 });
