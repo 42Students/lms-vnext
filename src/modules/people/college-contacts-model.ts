@@ -12,6 +12,7 @@ export const collegeContactsQuerySchema=z.strictObject({
   audience:z.enum(["ALL","FACULTY_ONLY","LEARNER_ONLY","DUAL"]).default("ALL"),
   profile:z.enum(["ALL","PROFILED","UNPROFILED"]).default("ALL"),
   cohortId:z.string().uuid().optional(),
+  programId:z.string().uuid().optional(),
   facultyDepartmentId:z.string().uuid().optional(),
   classPresence:z.enum(["ALL","ASSIGNED","NONE"]).default("ALL"),
   departmentPresence:z.enum(["ALL","ASSIGNED","MISSING"]).default("ALL"),
@@ -46,6 +47,7 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.audience!=="ALL")params.set("audience",filter.audience);
  if(filter.profile!=="ALL")params.set("profile",filter.profile);
  if(filter.cohortId)params.set("cohortId",filter.cohortId);
+ if(filter.programId)params.set("programId",filter.programId);
  if(filter.facultyDepartmentId)params.set("facultyDepartmentId",filter.facultyDepartmentId);
  if(filter.classPresence!=="ALL")params.set("classPresence",filter.classPresence);
  if(filter.departmentPresence!=="ALL")params.set("departmentPresence",filter.departmentPresence);

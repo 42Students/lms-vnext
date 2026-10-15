@@ -24,3 +24,5 @@ describe("College Contacts cohort selector",()=>{it("validates strict cohort UUI
 describe("Contacts faculty department selector",()=>{it("preserves only a valid department UUID in the URL",()=>{const id="00000000-0000-4000-8000-000000000124";expect(collegeContactsHref(collegeContactsQuerySchema.parse({facultyDepartmentId:id}))).toContain("facultyDepartmentId="+id);expect(collegeContactsQuerySchema.safeParse({facultyDepartmentId:"injected"}).success).toBe(false);});});
 
 describe("Clear contacts filters",()=>{it("clears academic and lifecycle facets while preserving the contact tab",()=>{expect(clearedCollegeContactsHref("STUDENT")).toBe("/college/contacts?tab=STUDENT");expect(clearedCollegeContactsHref("ALL")).toBe("/college/contacts");});});
+
+describe("College contact academic program selector",()=>{it("persists a strict program UUID to the server and CSV URL",()=>{const programId="00000000-0000-4000-8000-000000000101";expect(collegeContactsHref(collegeContactsQuerySchema.parse({programId}))).toContain("programId="+programId);expect(collegeContactsQuerySchema.safeParse({programId:"other-college"}).success).toBe(false);});});

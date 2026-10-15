@@ -24,6 +24,10 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(sectionEnrollments.status,"ACTIVE"))));
+ const inProgram=(programId:string)=>exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+  .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+  .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"),eq(programs.id,programId))));
  const inCohort=(cohortId:string)=>exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
   .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
   .innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -42,5 +46,5 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(courseTeachingAssignments.membershipId,collegeMemberships.id),isNull(courseTeachingAssignments.endedAt))));
- return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeClass,inCohort,inFacultyDepartment,activeEnrollment,activeTeaching};
+ return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeClass,inProgram,inCohort,inFacultyDepartment,activeEnrollment,activeTeaching};
 }
