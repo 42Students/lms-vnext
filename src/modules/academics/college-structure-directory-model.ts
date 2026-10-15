@@ -30,6 +30,7 @@ export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
   periodState: z.enum(["ALL","LINKED","UNLINKED"]).optional(),
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
+  programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
   maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
 });

@@ -1238,3 +1238,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 classes PARTIAL:** Class parent program lifecycle selector filters actual college-owned data for paged directory and bounded CSV export. Unit/disposable PG tests authored; execution, browser and exact legacy parity pending.
 
 **2026-10-15 electives PARTIAL:** Elective slot academic period linkage selector filters actual college-owned data for paged directory and bounded CSV export. Unit/disposable PG tests authored; execution, browser and exact legacy parity pending.
+
+**2026-10-15 electives PARTIAL:** Parent program lifecycle filter is implemented from persisted program state with bounded directory and CSV parity. Unit/isolated PostgreSQL assertions authored; executed PG/browser and exact legacy parity outstanding.
