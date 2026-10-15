@@ -27,11 +27,11 @@ export default async function AnnouncementsPage({
         <PageHeader
           eyebrow="Super Admin"
           title="Announcements"
-          description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
+          description="Migration 0076 registers the announcement tables; this environment has not enabled the verified DB10 runtime flag."
         />
         <div role="status" className="rounded-xl border border-border bg-surface p-6">
           <p className="m-0 font-semibold text-foreground">Announcements database is not enabled.</p>
-          <p className="mt-2 text-sm text-body">W01 must promote and replay the DB10 announcement table before this page performs any DB reads or writes.</p>
+          <p className="mt-2 text-sm text-body">Apply and verify migration 0076, then explicitly set DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED. No announcement DB reads or writes are attempted while disabled.</p>
         </div>
       </div>
     );
