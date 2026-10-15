@@ -48,6 +48,7 @@ export interface VerificationTransactionRepository {
   readCurrentSectionForSubmission(
     membershipId: string,
     section: VerificationSection,
+    priorSnapshot?: SafeSnapshot | null,
   ): Promise<{ snapshot: SafeSnapshot; documentsReady: boolean }>;
   /** Must inspect the receipt status and purpose of submitted document IDs. */
   submittedEvidenceIsValid(
@@ -98,7 +99,9 @@ export async function submitOwnVerification(
   }
   return repository.withLockedTransition(membershipId, section, async (existing) => {
     // Source the snapshot from the current server-held profile rather than body JSON.
-    const prepared = await repository.readCurrentSectionForSubmission(membershipId, section);
+    const prepared = await repository.readCurrentSectionForSubmission(
+      membershipId, section, existing?.submittedSnapshot ?? existing?.verifiedSnapshot,
+    );
     return planVerificationSubmission({
       learnerMembershipId: membershipId, section, existing, expectedVersion,
       snapshot: prepared.snapshot, documentsReady: prepared.documentsReady,
