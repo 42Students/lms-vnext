@@ -20,3 +20,8 @@ export function resolveLearnerOfferFocus<T extends {offer:{id:string}}>(
  const index=rows.findIndex(row=>row.offer.id===id.data);
  return {page:index<0?requestedPage:Math.floor(index/pageSize)+1,found:index>=0};
 }
+
+/** Message depends on a syntactically valid focus request, never an unscoped lookup. */
+export function learnerOfferFocusMissing(focus:unknown,found:boolean):boolean{
+ return typeof focus==="string"&&offerIdSchema.safeParse(focus).success&&!found;
+}

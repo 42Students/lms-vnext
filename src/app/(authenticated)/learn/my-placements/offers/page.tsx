@@ -3,7 +3,7 @@ import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
 import {learnerOfferStatusHref,learnerOfferClearFiltersHref,learnerOfferHasActiveFacets} from "@/modules/placements/learner-offers-navigation-model";
-import { resolveLearnerOfferFocus } from "@/modules/placements/learner-offer-deep-link-model";
+import { resolveLearnerOfferFocus, learnerOfferFocusMissing } from "@/modules/placements/learner-offer-deep-link-model";
 import {learnerOfferKindSchema,filterOwnOffersByKind} from "@/modules/placements/learner-offer-kind-model";
 import {learnerJoiningFilterSchema,filterOwnOffersByJoining} from "@/modules/placements/learner-offer-joining-filter-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
@@ -168,6 +168,12 @@ export default async function LearnerOffersPage({
           aria-current={dueOnly?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Awaiting response · next 7 days</Link>
       </nav>
+      {learnerOfferFocusMissing(query.focus,focused.found) ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          The linked offer is not displayed in these results. It may be outside the selected filters or no longer accessible.
+          <Link href="/learn/my-placements/offers" className="ml-2 font-semibold text-primary-text underline">Show all my offers</Link>
+        </p>
+      ) : null}
       {expiringSoon > 0 && view !== "pending" ? (
         <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter})}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
