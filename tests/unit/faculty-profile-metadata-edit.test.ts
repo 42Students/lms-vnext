@@ -1,5 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {facultyMetadataFromDraft} from "@/modules/people/faculty-profile-metadata-model";
+import {updateFacultyProfileSection} from "@/modules/people/faculty-self-section-model";
+import {emptyFacultyProfileDocument} from "@/modules/people/faculty-profile-document";
 import {emptyFacultyProfileDocument} from "@/modules/people/faculty-profile-document";
 import {updateFacultyProfileSection} from "@/modules/people/faculty-self-section-model";
 const id="10000000-0000-4000-8000-000000000004";
@@ -17,5 +19,14 @@ describe("Faculty metadata privacy and typed legacy preservation",()=>{
   expect(()=>facultyMetadataFromDraft({},[row,{...row,id:"10000000-0000-4000-8000-000000000005"}])).toThrow();
   expect(()=>facultyMetadataFromDraft({count:2},[{...row,key:"count"}])).toThrow();
   expect(()=>facultyMetadataFromDraft({},[{...row,key:"aadhaarNumber"}])).toThrow();
+ });
+});
+
+
+describe("Faculty metadata API bypass prevention",()=>{
+ it("refuses forged secret fields beyond the client editor",()=>{
+  expect(()=>updateFacultyProfileSection(emptyFacultyProfileDocument,{
+   section:"metadata",expectedVersion:0,value:{aadhaarNumber:"123456789012"},
+  })).toThrow();
  });
 });
