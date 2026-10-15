@@ -45,13 +45,13 @@ export default async function TrackerIssuesPage({
         <PageHeader
           eyebrow="42 Tracker"
           title="Issues"
-          description="Tracker code is staged but the DB10 migration has not been promoted and verified."
+          description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
         <TrackerAdminNav />
         <div role="status" className="rounded-xl border border-border bg-surface p-6">
           <p className="m-0 font-semibold text-foreground">Tracker database is not enabled.</p>
           <p className="mt-2 text-sm text-body">
-            W01 must register and replay the DB10 tracker tables before this page can read issue data.
+            Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
           </p>
         </div>
       </div>

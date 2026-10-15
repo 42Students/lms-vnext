@@ -33,10 +33,10 @@ export default async function TrackerIssueDetailPage({
   if (!trackerAdminRuntimeEnabled()) {
     return (
       <div className="space-y-6">
-        <PageHeader eyebrow="42 Tracker" title={publicId} description="Tracker database activation is pending." />
+        <PageHeader eyebrow="42 Tracker" title={publicId} description="Migration 0076 is registered; tracker runtime activation is pending." />
         <TrackerAdminNav />
         <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          DB10 tracker migrations are not verified yet. No issue query was executed.
+          Apply migration 0076 and verify DB10_TRACKER_READY=DB10_VERIFIED before this page reads tracker data.
         </p>
       </div>
     );
