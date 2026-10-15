@@ -15,6 +15,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
 import {listFacultyCourseDeliveries} from "./faculty-course-service";
 import {facultyLiveDeliveryLockKey} from "./faculty-live-lock-model";
+import {facultyLivePublishedMutationAllowed} from "./faculty-live-published-policy";
 import {facultyLiveMutationParamsSchema,facultyLiveMutationSchema,
   facultyLiveWindow} from "./faculty-live-mutation-model";
 
@@ -84,7 +85,9 @@ export async function commandFacultyLiveClass(
       if(!current || current.status==="ARCHIVED" ||
         current.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
         throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
-      if(input.action==="CANCEL" && current.status!=="PUBLISHED")
+      // Draft or retired content cannot be rescheduled or cancelled through
+      // the published-session editor, even with a forged version token.
+      if(!facultyLivePublishedMutationAllowed(current.status))
         throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
     }
     if(dateFields){
