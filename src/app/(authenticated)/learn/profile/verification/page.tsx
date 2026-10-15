@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getOwnLearnerVerificationStatus } from "@/modules/placements/learner-verification-status-service";
 import {LearnerVerificationSubmit} from "@/components/profile/learner-verification-submit";
+import {LearnerVerificationWithdraw} from "@/components/profile/learner-verification-withdraw";
 import {learnerVerificationDateLabel,learnerVerificationSubmissionDateFallback} from "@/modules/placements/learner-verification-date-model";
 
 const details = [
@@ -50,6 +51,9 @@ export default async function LearnerVerificationPage() {
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
         <p className="mt-3 text-xs text-muted-foreground">Update profile details and privately uploaded evidence before submitting. The server checks the real stored documents; a pending upload is not sufficient.</p>
+        {row.status === "UPDATE_PENDING" ? <LearnerVerificationWithdraw
+          key={item.section+":"+row.version} section={item.section}
+          expectedVersion={row.version}/> : null}
         {row.canResubmit ? <LearnerVerificationSubmit key={item.section+":"+row.version} section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
         <Link href={item.edit} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
       </section>;

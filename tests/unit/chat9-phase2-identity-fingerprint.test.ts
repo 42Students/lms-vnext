@@ -22,6 +22,14 @@ describe("profile verification salted Aadhaar/PAN fingerprint", () => {
     expect(saltedIdentityFingerprint("AADHAAR","123412341234",b)).not.toBe(original);
     expect(saltedIdentityFingerprint("PAN","123412341234",a)).not.toBe(original);
   });
+  it("does not treat Aadhaar spacing or PAN case as a changed identity",()=>{
+    expect(saltedIdentityFingerprint("AADHAAR","1234 1234 1234",a))
+      .toBe(saltedIdentityFingerprint("AADHAAR","123412341234",a));
+    expect(saltedIdentityFingerprint("PAN","abcde1234f",a))
+      .toBe(saltedIdentityFingerprint("PAN"," ABCDE1234F ",a));
+    expect(saltedIdentityFingerprint("PAN","ABCDE1234G",a))
+      .not.toBe(saltedIdentityFingerprint("PAN","ABCDE1234F",a));
+  });
   it("allows only hex salted metadata and masked numbers in the safe snapshot", () => {
     const safe = safeVerificationSnapshot({
       aadhaarNumber:"XXXXXXXX1234",identityHashSalt:a,
