@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, ne, or } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray, ne, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   projectInstances, projectReleases, projectSprints, projectTasks,
@@ -32,7 +32,7 @@ export async function getMentorSprintProgress(
   }
   const modules = await resolveOptionalModuleAccess(context);
   const empty = (enabled: boolean) => ({
-    enabled, query, ...mentorSprintProgressPage(0, 1),
+    enabled, query, projects:[] as {id:string;title:string}[], ...mentorSprintProgressPage(0, 1),
     items: [] as {
       id: string; title: string; status: string;
       projectId: string; projectTitle: string;
@@ -45,12 +45,26 @@ export async function getMentorSprintProgress(
   const projects = (await listMyProjectInstances(context))
     .filter(row => row.memberRole === "MENTOR" && row.project.status !== "ARCHIVED");
   const ids = projects.map(row => row.project.id);
+  const choices=projects.map(row=>({id:row.project.id,title:row.project.title}));
+  if(query.projectId&&!ids.includes(query.projectId))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if (ids.length === 0) return empty(true);
 
   // Escape pattern metacharacters so the search is literal user text.
   const escaped = query.search.replace(/[\\%_]/g, "\\$&");
   const filters = and(
     inArray(projectSprints.projectId, ids),
+    query.projectId?eq(projectSprints.projectId,query.projectId):undefined,
+    query.taskAttention==="ALL"?undefined:
+      query.taskAttention==="NO_TASKS"?sql`not exists(
+        select 1 from project_tasks mentor_existing_task
+        where mentor_existing_task.sprint_id=${projectSprints.id}
+          and mentor_existing_task.project_id=${projectSprints.projectId}
+      )`:sql`exists(
+        select 1 from project_tasks mentor_pending_task
+        where mentor_pending_task.sprint_id=${projectSprints.id}
+          and mentor_pending_task.project_id=${projectSprints.projectId}
+          and mentor_pending_task.status=${query.taskAttention}::text
+      )`,
     eq(projectInstances.collegeId, membership.collegeId),
     ne(projectInstances.status, "ARCHIVED"),
     eq(projectReleases.projectId, projectInstances.id),
@@ -83,7 +97,11 @@ export async function getMentorSprintProgress(
     .innerJoin(projectInstances, eq(projectInstances.id, projectSprints.projectId))
     .innerJoin(projectReleases, eq(projectReleases.id, projectSprints.releaseId))
     .where(filters)
-    .orderBy(asc(projectInstances.title), asc(projectSprints.sequence), asc(projectSprints.id))
+    .orderBy(
+      ...(query.order==="ACTIVE_FIRST"?[
+        asc(sql<number>`case when ${projectSprints.status}='ACTIVE' then 0 when ${projectSprints.status}='PLANNED' then 1 else 2 end`),
+      ]:[]),
+      asc(projectInstances.title), asc(projectSprints.sequence), asc(projectSprints.id))
     .limit(pagination.pageSize)
     .offset((pagination.page - 1) * pagination.pageSize);
 
@@ -107,7 +125,7 @@ export async function getMentorSprintProgress(
   }
   return {
     enabled: true,
-    query, ...pagination,
+    query, projects:choices,...pagination,
     items: sprints.map(sprint => ({
       ...sprint,
       tasks: summarizeSprintTasks(bySprint.get(sprint.id) ?? []),
