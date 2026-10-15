@@ -141,6 +141,16 @@ export async function CollegeRoleDirectoryWorkspace({
             </select>
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active class / section
+            <select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All classes</option>
+              {selectedDirectoryValueNotListed(result.filter.sectionId,result.sectionOptions.map(row=>row.id)) ?
+                <option value={result.filter.sectionId}>Selected class (outside first 200)</option> : null}
+              {result.sectionOptions.map(row=><option key={row.id} value={row.id}>{row.batchName} · {row.name}</option>)}
+            </select>
+            {result.sectionOptionsTruncated ? <span className="text-xs text-muted-foreground">First 200 classes shown.</span> : null}
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active program
             <select name="programId" defaultValue={result.filter.programId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All programs</option>
