@@ -1192,3 +1192,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Announcements filtered-empty messaging — PARTIAL:** History distinguishes truly empty Super Admin notice inventory from a filtered view with no matches, with actionable reset guidance while preserving compose/broadcast surfaces. No synthetic zero-success after DB10 readiness disabled. Pure tests authored; browser visual acceptance pending.
+
+
+**2026-10-15 chat-6 Readiness no-filter-matches state — PARTIAL:** Readiness page now announces when a valid status/area filter yields zero checks without presenting a false ten-check zero verdict. Overall readiness and raw counts remain computed from all persisted inputs. Responsive content and source test authored; browser/PG proof pending.

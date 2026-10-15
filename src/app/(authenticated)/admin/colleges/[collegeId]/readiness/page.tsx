@@ -210,6 +210,11 @@ export default async function CollegeReadinessPage({
           never counts as passed.
         </p>
 
+        {shownChecks.length===0 ? (
+          <p role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
+            No readiness checks match the selected status and area. The overall tenant readiness verdict above still uses all ten checks.
+          </p>
+        ) : null}
         <ol className="mt-5 space-y-3">
           {shownChecks.map(
             (check, index) => (
