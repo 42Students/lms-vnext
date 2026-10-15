@@ -80,10 +80,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
-  {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:
-   <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
-    <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
-   </Suspense>}
+  {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:null}
+  <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
+   <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
+  </Suspense>
   <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3">
    {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link>:<span/>}
    {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Next</Link>:null}
