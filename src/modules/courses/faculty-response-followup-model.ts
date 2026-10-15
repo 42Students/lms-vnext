@@ -6,7 +6,7 @@ export const facultyResponseFollowUpQuerySchema = z.object({
   page: z.union([z.number().int().min(1).max(10000), z.string().regex(/^[1-9]\d{0,4}$/).transform(Number).pipe(z.number().max(10000))]).default(1),
   deliveryId:z.string().uuid().optional(),
   sort:z.enum(["RECENT_DUE","OLDEST_DUE","TITLE"]).default("RECENT_DUE"),
-  pageSize:z.coerce.number().int().refine(value=>value===5||value===10).default(5),
+  pageSize:z.union([z.literal(5),z.literal(10),z.enum(["5","10"]).transform(Number)]).default(5),
 }).strict();
 export type FacultyResponseFollowUpQuery = z.infer<typeof facultyResponseFollowUpQuerySchema>;
 
