@@ -5,7 +5,8 @@ export const hrRoundFormSchema=z.strictObject({
  name:z.string().trim().min(1).max(100)
   .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid round name"}).optional(),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]).optional(),
- durationMinutes:z.coerce.number().int().min(1).max(1440).optional(),
+ durationMinutes:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
+  .pipe(z.number().int().min(1).max(1440)).optional(),
  roundId:z.string().uuid().optional(),
  expectedUpdatedAt:z.string().datetime({offset:true}).optional(),
 }).superRefine((row,ctx)=>{
