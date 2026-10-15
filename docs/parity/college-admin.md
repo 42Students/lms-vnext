@@ -552,6 +552,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Lesson-to-progress navigation PARTIAL (chat-3, 2026-10-15):** Each visible college-owned lesson links to the progress aggregate filtered by its persisted offering ID, deliberately including archived delivery so the deep-link does not claim absence. The destination revalidates college scope. Unit/PG source authored; real browser and DB acceptance open.
+
 **Maximum authored content bound PARTIAL (chat-3, 2026-10-15):** College Admin can find empty/underpopulated lesson rows using a bounded ceiling, including zero, applied in SQL before count/pagination and matching CSV export. Authored tests await real PG and browser execution; counts are authored metadata only.
 
 **Minimum content-authoring count PARTIAL (chat-3, 2026-10-15):** A bounded, nonzero lower limit on persisted lesson_contents rows filters full college-scoped lesson/CSV sets before paging; all statuses count as authored metadata, not learner availability. Fixtures authored, PostgreSQL/browser runtime proof open.

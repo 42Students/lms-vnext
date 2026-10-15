@@ -141,6 +141,12 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   return params.size ? base + "?" + params.toString() : base;
 }
 
+/** Scoped offering lookups include archived offering records, never inferred learner completion. */
+export function collegeOfferingProgressHref(offeringId:string) {
+  return collegeLearningHref("PROGRESS", collegeProgressQuerySchema.parse({
+    offeringId:z.string().uuid().parse(offeringId), status:"ALL",
+  }));
+}
 export function collegeLearningPageCount(total: number) {
   return Math.max(1, Math.ceil(total / COLLEGE_LEARNING_PAGE_SIZE));
 }
