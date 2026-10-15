@@ -3,6 +3,7 @@ import Link from "next/link";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import { publicPlacementDisclosure } from "@/modules/placements/public-placement-disclosure-model";
+import { getPublicPlacementStatistics } from "@/modules/placements/public-page/read-service";
 
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
@@ -13,10 +14,13 @@ export default async function PublicPlacementsPage() {
   const college = tenant.kind === "college"
     ? await getPublicCollegeBranding(tenant.collegeId)
     : null;
+  const published = tenant.kind === "college" && college
+    ? await getPublicPlacementStatistics(tenant.collegeId)
+    : null;
   const metrics = publicPlacementDisclosure([
-    { label: "Students placed", count: null },
-    { label: "Offers received", count: null },
-    { label: "Recruiting employers", count: null },
+    { label: "Students placed", count: published?.placed ?? null },
+    { label: "Offers received", count: published?.offers ?? null },
+    { label: "Recruiting employers", count: published?.employers ?? null },
   ]);
   return (
     <main className="mx-auto min-h-screen w-full max-w-4xl px-4 py-10 sm:px-8">
@@ -26,7 +30,7 @@ export default async function PublicPlacementsPage() {
           {college?.collegeName ?? "College placements"}
         </h1>
         <p className="max-w-2xl text-sm leading-6 text-body">
-          Placement results will appear when the college has enabled verified public reporting.
+          Placement results appear only if the college has explicitly enabled public reporting and each count meets the minimum disclosure threshold.
           Private student information is never displayed here.
         </p>
       </header>
