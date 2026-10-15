@@ -25,3 +25,7 @@ export function newFacultyExperience():FacultyProfileDocument["experiences"][num
   experienceCertificateDocumentId:null,offerLetterDocumentId:null,
   isPaid:false,salary:""};
 }
+
+export function newFacultyPublication():FacultyProfileDocument["publications"][number]{
+ return {id:crypto.randomUUID(),title:"",journal:"",year:"",doi:"",link:"",authors:"",description:""};
+}
