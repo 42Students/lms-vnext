@@ -36,7 +36,18 @@ export default async function CompanySharePage({
    {result.total} shortlisted applicants · Page {result.page} of {result.totalPages}
   </p>
   {result.rows.length===0?<p>No current shortlist records on this page.</p>:
-   <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+   <>
+    <ul aria-label="Shared applicants" className="space-y-3 sm:hidden">
+     {result.rows.map(row=><li key={row.applicationId}
+      className="min-w-0 rounded-xl border border-border bg-surface p-4">
+      <p className="break-words text-sm font-semibold text-foreground">{row.displayName}</p>
+      <dl className="mt-3 space-y-2 text-xs text-body">
+       <div><dt className="font-semibold">Application</dt><dd className="break-all font-mono">{row.applicationId}</dd></div>
+       <div><dt className="font-semibold">Email</dt><dd className="break-all">{row.email??"Not recorded"}</dd></div>
+      </dl>
+     </li>)}
+    </ul>
+    <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface sm:block">
     <table className="w-full min-w-[30rem] text-left text-sm">
      <thead><tr>{["Application ID","Learner","Email"].map(x=><th key={x}
       className="px-4 py-3" scope="col">{x}</th>)}</tr></thead>
@@ -46,8 +57,9 @@ export default async function CompanySharePage({
       <td className="break-all px-4 py-3">{row.email??"Not recorded"}</td>
      </tr>)}</tbody>
     </table>
-   </div>}
-  <nav className="flex gap-5 text-sm" aria-label="Share pages">
+    </div>
+   </>}
+  <nav className="flex flex-wrap gap-5 text-sm" aria-label="Share pages">
    {result.page>1?<a href={href(result.page-1)}>Previous</a>:null}
    {result.page<result.totalPages?<a href={href(result.page+1)}>Next</a>:null}
   </nav>
