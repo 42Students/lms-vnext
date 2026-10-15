@@ -13,7 +13,7 @@ export default async function TeacherCoursesPage({searchParams}: {
   const context = await getCurrentRequestContext();
   const query=parseFacultyCourseListLocation(await searchParams);
   if(!query)return <div className="space-y-6">
-    <PageHeader eyebrow="Faculty" title="Courses"
+    <PageHeader eyebrow="Faculty" title="My Courses"
       description="Invalid search, teaching-role or page filters." />
     <div role="alert" className="rounded-xl border border-border bg-surface p-5">
       The Course filters could not be understood. No other Section has been loaded.
@@ -39,7 +39,7 @@ export default async function TeacherCoursesPage({searchParams}: {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Faculty"
-        title="Courses"
+        title="My Courses"
         description="Search the courses and exact Sections assigned to you."
       />
       <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} />
