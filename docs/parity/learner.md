@@ -1376,3 +1376,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 round 2 / Learning Path deep links (PARTIAL; L3-006/037):** an exact learner-authorized lesson/item focus now selects its own resource/lecture/assessment/live filter even if the copied URL carried an incompatible filter. Missing/forged item IDs never reveal other lessons. Pure regressions authored; browser Back/Forward and modal verification remain.
 
 **Chat-7 round 2 / Quiz deadline fail-closed policy:** both initial quiz load and live attempt availability now reuse the same deadline guard as final confirmed submission. Malformed deadlines cannot expose an actionable attempt, and exact equality remains allowed. Unit regressions authored; PostgreSQL and real-clock browser verification pending.
+
+**Chat-7 round 2 / Quiz deadline clock:** the attempt now refreshes once per second in the last 60 seconds, every five seconds within ten minutes and every thirty seconds otherwise. The server remains final authority; client controls now catch deadlines without the previous 30-second lag. Unit tests authored, browser timing proof pending.

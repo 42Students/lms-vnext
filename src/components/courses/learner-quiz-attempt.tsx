@@ -13,6 +13,7 @@ import { learnerQuizRefreshFailureMessage } from "@/modules/courses/learner-quiz
 import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
 import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
+import { learnerQuizClockInterval } from "@/modules/courses/learner-quiz-clock-interval-model";
 import { learnerQuizDeadlineDisplay } from "@/modules/courses/learner-quiz-deadline-display-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -185,9 +186,10 @@ export function LearnerQuizAttempt() {
   }, [load]);
 
   useEffect(() => {
-    const handle = window.setInterval(() => setNowMs(Date.now()), 30_000);
-    return () => window.clearInterval(handle);
-  }, []);
+    const nextTick = learnerQuizClockInterval(quiz?.quiz.dueAt ?? null, nowMs);
+    const handle = window.setTimeout(() => setNowMs(Date.now()), nextTick);
+    return () => window.clearTimeout(handle);
+  }, [quiz?.quiz.dueAt, nowMs]);
 
   useEffect(() => {
     if (!learnerQuizDraftCanPersist({storageKey,loadedScopeKey,review,loading,hasQuiz:Boolean(quiz)}) || typeof window === "undefined") return;
