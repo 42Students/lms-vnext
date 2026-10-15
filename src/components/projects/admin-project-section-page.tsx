@@ -20,12 +20,10 @@ export async function AdminProjectSectionPage({
   projectId,
   section,
   basePath,
-  eyebrow,
 }: {
   projectId: string;
   section: string;
   basePath: string;
-  eyebrow: string;
 }) {
   if (!isProjectWorkspaceSection(section)) {
     notFound();
@@ -47,7 +45,6 @@ export async function AdminProjectSectionPage({
       workspace={workspace}
       backHref={basePath}
       backLabel="Projects"
-      eyebrow={eyebrow}
       mode="ADMIN"
       currentMembershipId={
         context.membership?.id ?? null

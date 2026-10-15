@@ -9,10 +9,10 @@ export function learnerProjectListEmptyState(
   matchedCount: number,
 ): LearnerProjectListEmptyState {
   if (assignedCount === 0)
-    return {reason:"NO_ASSIGNMENTS",title:"No Projects yet",
+    return {reason:"NO_ASSIGNMENTS",title:"No projects assigned yet.",
       description:"Projects will appear here after your college assigns you to a Project team."};
   if (matchedCount === 0)
-    return {reason:"FILTERED_EMPTY",title:"No Projects match these filters",
+    return {reason:"FILTERED_EMPTY",title:"No projects match these filters.",
       description:"Clear or change the filters to see other assigned Projects."};
   return {reason:"HAS_RESULTS",title:"Projects",
     description:"Your assigned Project workspaces."};
