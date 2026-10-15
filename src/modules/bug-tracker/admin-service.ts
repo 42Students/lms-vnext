@@ -152,6 +152,7 @@ export async function listBugTrackerIssuesForAdmin(
   }
   if (input.issueType) conditions.push(eq(db10BugReports.issueType, input.issueType));
   if (input.createdFrom) conditions.push(gte(db10BugReports.createdAt,input.createdFrom));
+  if (input.createdBefore) conditions.push(lt(db10BugReports.createdAt,input.createdBefore));
   if (input.q) {
     // Literal substring semantics: '%' and '_' in user input are data, not LIKE wildcards.
     const term=input.q.toLowerCase();

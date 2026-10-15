@@ -28,11 +28,15 @@ export const trackerAdminListSchema = z.object({
   q: z.string().trim().min(1).max(200).optional(),
   issueType: z.string().trim().min(1).max(80).optional(),
   createdFrom: z.date().optional(),
+  createdBefore: z.date().optional(),
   sort: z.enum(["newest", "oldest"]).default("newest"),
   beforeCreatedAt: z.iso.datetime({ offset: true }).transform((x) => new Date(x)).optional(),
   beforeId: z.string().uuid().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
 }).strict().superRefine((value, ctx) => {
+  if(value.createdFrom && value.createdBefore && value.createdFrom >= value.createdBefore){
+    ctx.addIssue({code:"custom",path:["createdBefore"],message:"Invalid IST date interval"});
+  }
   if (Boolean(value.beforeCreatedAt) !== Boolean(value.beforeId)) {
     ctx.addIssue({
       code: "custom",
