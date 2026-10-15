@@ -552,6 +552,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Hidden published content triage PARTIAL (chat-3, 2026-10-15):** Finds persisted PUBLISHED rows with visibleToStudents=false before tenant-scoped paging/CSV; not a learner authorization or playback test. Unit/PG fixtures authored; not executed, browser/legacy acceptance open.
+
 **Content audience facet PARTIAL (chat-3, 2026-10-15):** Lessons can filter registered shared content (NULL delivery) separately from section-bound records before pagination and safe CSV; no student permissions are inferred. Unit and gated PostgreSQL test source added, not executed; browser acceptance open.
 
 **Saved content lifecycle PARTIAL (2026-10-15, chat-3):** Filter saved DRAFT/PUBLISHED/ARCHIVED lesson-content metadata within tenant-owned lessons before paging and capped CSV. This does not imply visibility to a learner. Source tests authored; runtime/legacy/browser acceptance open.
