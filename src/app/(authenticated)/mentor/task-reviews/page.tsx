@@ -11,6 +11,7 @@ import {
 
 type Params = {
   search?: string | string[];
+  projectId?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
   priority?: string | string[];
@@ -29,6 +30,7 @@ export default async function MentorTaskReviewsPage({
   const raw = await searchParams;
   const parsed = mentorTaskReviewQuerySchema.safeParse({
     search: first(raw.search) ?? undefined,
+    projectId: first(raw.projectId) ?? undefined,
     page: first(raw.page) ?? undefined,
     pageSize: first(raw.pageSize) ?? undefined,
     priority: first(raw.priority) ?? undefined,
@@ -74,6 +76,12 @@ export default async function MentorTaskReviewsPage({
           <select name="pageSize" defaultValue={String(data.pageSize)}
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="20">20</option><option value="50">50</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
+          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+            <option value="">All assigned projects</option>
+            {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority

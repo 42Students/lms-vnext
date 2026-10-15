@@ -36,7 +36,7 @@ export async function getMentorTaskReviews(
   const modules = await resolveOptionalModuleAccess(context);
   if (!modules.projects.enabled) {
     return {
-      enabled: false as const, query,
+      enabled: false as const, query, projects: [] as {id:string;title:string}[],
       ...mentorTaskReviewSummary({ total: 0, ...query }),
       items: [] as PendingTaskReview[],
     };
@@ -44,9 +44,12 @@ export async function getMentorTaskReviews(
   const assigned = (await listMyProjectInstances(context))
     .filter(row => row.memberRole === "MENTOR");
   const ids = assigned.map(row => row.project.id);
+  const projects = assigned.map(row => ({id:row.project.id,title:row.project.title}));
+  if (query.projectId && !ids.includes(query.projectId))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if (!ids.length) {
     return {
-      enabled: true as const, query,
+      enabled: true as const, query, projects,
       ...mentorTaskReviewSummary({ total: 0, ...query }),
       items: [] as PendingTaskReview[],
     };
@@ -56,6 +59,7 @@ export async function getMentorTaskReviews(
   const cutoff=query.age==="ALL"?null:new Date(new Date().getTime()-7*86400000);
   const conditions = and(
     inArray(projectTaskSubmissions.projectId, ids),
+    query.projectId?eq(projectTaskSubmissions.projectId,query.projectId):undefined,
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
     cutoff?(query.age==="OLDER_THAN_7_DAYS"
@@ -110,5 +114,5 @@ export async function getMentorTaskReviews(
       ? [desc(priorityRank),desc(projectTaskSubmissions.submittedAt),desc(projectTaskSubmissions.id)]
       : [ordering(projectTaskSubmissions.submittedAt),ordering(projectTaskSubmissions.id)])
   ).limit(page.pageSize).offset((page.page-1)*page.pageSize);
-  return {enabled:true as const,query:{...query,page:page.page},...page,items};
+  return {enabled:true as const,query:{...query,page:page.page},projects,...page,items};
 }
