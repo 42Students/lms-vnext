@@ -73,4 +73,28 @@ it("never treats a learner-only contact as a faculty member missing a department
 it("recognizes unplaced learner contacts and enforces scoped denials",async()=>{const no=await listCollegeContacts(admin,{classPresence:"NONE",tab:"STUDENT",q:ids.u1.slice(0,8)});expect(no.items.some(x=>x.membershipId===ids.m1)).toBe(true);const yes=await listCollegeContacts(admin,{classPresence:"ASSIGNED",tab:"STUDENT",q:ids.u1.slice(0,8)});expect(yes.items.some(x=>x.membershipId===ids.m1)).toBe(false);await expect(listCollegeContacts(wrong,{classPresence:"NONE"})).rejects.toBeInstanceOf(AuthorizationError);});
  it("uses only scoped cohort selectors and excludes unrelated learner memberships",async()=>{const options=await listCollegeContactFilterOptions(admin);expect(options.cohorts.length).toBeLessThanOrEqual(200);const rows=await listCollegeContacts(admin,{cohortId:ids.m2,tab:"STUDENT",q:ids.u1.slice(0,8)});expect(rows.items.some(x=>x.membershipId===ids.m1)).toBe(false);await expect(listCollegeContactFilterOptions(wrong)).rejects.toBeInstanceOf(AuthorizationError);});
  it("does not expose foreign departments or learner-only results in faculty primary-department lookup",async()=>{const options=await listCollegeContactFilterOptions(admin);expect(options.departments.length).toBeLessThanOrEqual(200);const rows=await listCollegeContacts(admin,{facultyDepartmentId:ids.m2,q:ids.u1.slice(0,8)});expect(rows.items.some(x=>x.membershipId===ids.m1)).toBe(false);await expect(listCollegeContacts(wrong,{facultyDepartmentId:ids.m2})).rejects.toBeInstanceOf(AuthorizationError);});
+ it("scopes new program and class contact selectors to authorized college and role",async()=>{
+  const options=await listCollegeContactFilterOptions(admin);
+  expect(options.programs.length).toBeLessThanOrEqual(200);
+  expect(options.sections.length).toBeLessThanOrEqual(200);
+  for(const field of ["programId","sectionId"] as const){
+   const foreign=await listCollegeContacts(admin,{tab:"STUDENT",q:ids.u1.slice(0,8),[field]:SEED_IDS.collegeB});
+   expect(foreign.items.some(row=>row.membershipId===ids.m1)).toBe(false);
+   await expect(listCollegeContacts(wrong,{[field]:SEED_IDS.collegeB})).rejects.toBeInstanceOf(AuthorizationError);
+  }
+  const omitted=await listCollegeContacts(admin,{tab:"STUDENT",q:ids.u1.slice(0,8),enrollment:"NONE"});
+  expect(omitted.items.some(row=>row.membershipId===ids.m1)).toBe(true);
+ });
+ it("does not leak learner-only Contacts via Faculty employment, title or teaching-role searches",async()=>{
+  const selectors=await listCollegeContactFilterOptions(admin);
+  expect(selectors.employmentTypes.length).toBeLessThanOrEqual(100);
+  for(const input of [{employmentType:"VISITING"},{facultyTitleQ:"Professor"},{teachingRole:"PRIMARY"}] as const){
+   const rows=await listCollegeContacts(admin,{q:ids.u1.slice(0,8),...input});
+   expect(rows.items.some(row=>row.membershipId===ids.m1)).toBe(false);
+   await expect(listCollegeContacts(wrong,input)).rejects.toBeInstanceOf(AuthorizationError);
+  }
+  const exportResult=await exportCollegeContactsCsv(admin,{tab:"STUDENT",q:ids.u1.slice(0,8),programId:SEED_IDS.collegeB});
+  expect(exportResult.csv).not.toContain("Contact "+ids.u1.slice(0,8));
+ });
+
 });

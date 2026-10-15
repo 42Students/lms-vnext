@@ -4,7 +4,7 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
 import {profileVerifications,profileVerificationSettings} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
-import {verificationQueueFilters} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
 import {matchesVerificationAttention} from "./attention-filter";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
@@ -12,7 +12,7 @@ import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
-import {matchesWaitingSince} from "./queue-waiting-since";
+import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid} from "./queue-waiting-since";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 import {verificationEnrollmentPredicates} from "./staff-filter-scope";
@@ -24,6 +24,8 @@ export class VerificationQueueLimitError extends Error {
 }
 export async function listCollegeVerificationQueue(context:RequestContext,raw:unknown,superAdminCollegeId?:string) {
  const filter=verificationQueueFilters.parse(raw);
+ if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
+ if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
@@ -40,16 +42,18 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
+   filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
    eq(users.platformStatus,"ACTIVE"),filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
    inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
-   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]),
+   inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]:[filter.waitingState]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
+ .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
  const evaluatedAt=new Date();
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
+  if(!matchesSubmittedFrom(row.submittedAt,filter.submittedFrom))return false;
   const marks=submittedMarksheets(row.submittedSnapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&marks.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&marks.count>0&&marks.missing===0))return false;
@@ -77,7 +81,7 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
   const marks=submittedMarksheets(row.submittedSnapshot);
   const status=row.status as VerificationStatus,section=row.section as VerificationSection;
   const missingMarksheet=section==="EDUCATION"&&marks.missing>0;
-  const flags=verificationAttentionFlags({status,section,submittedAt:row.submittedAt,missingMarksheet},new Date());
+  const flags=verificationAttentionFlags({status,section,submittedAt:row.submittedAt,missingMarksheet},evaluatedAt);
   return {learnerMembershipId:row.membershipId,learnerName:row.name?.trim()||"Learner",
    section,status,version:row.version,submittedAt:row.submittedAt,batchName:byMember.get(row.membershipId)?.batchName??null,branchName:byMember.get(row.membershipId)?.branchName??null,
    missingMarksheet,attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};

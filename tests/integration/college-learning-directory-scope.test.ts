@@ -396,7 +396,7 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
   });
 
   it("lessons departmentCode matches only the registered owning course department",async()=>{
-    const result=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const result=await pool!.query<{code:string}>("SELECT name AS code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const code=result.rows[0]!.code;
     const [yes,no,foreign]=await Promise.all([
       listCollegeLessons(own,{q:name,departmentCode:code}),
@@ -453,7 +453,7 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
   });
 
   it("progress departmentCode only matches owning college course department",async()=>{
-    const data=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const data=await pool!.query<{code:string}>("SELECT name AS code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const code=data.rows[0]!.code;
     const [yes,no,foreign]=await Promise.all([
       listCollegeCourseProgress(own,{q:name,departmentCode:code}),

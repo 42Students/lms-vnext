@@ -1,8 +1,10 @@
 import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
 import { readZeptoMailConfig, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
 import type { OutboundProvider } from "./service";
-import type { OutboundSendRequest } from "./model";
+import {outboundSendSchema,type OutboundSendRequest } from "./model";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
+import {isExotelAcceptedResponse} from "./provider-acceptance-model";
+import {isCampaignTemplateKey} from "./template-boundary-model";
 
 /** Templates are explicitly provisioned; OTP identifiers must never be reused for campaigns. */
 export type OutboundTemplate = {
@@ -28,12 +30,15 @@ export function createOutboundProvider(
   return {
     async send(request: OutboundSendRequest): Promise<boolean> {
       // This guard is inside the provider: callers cannot bypass it by passing an unsafe policy.
+      if (!outboundSendSchema.safeParse(request).success) return false;
       if (!canContactRecipientAtRuntime(request.channel, request.recipient, env)) return false;
       const template = config.templates[request.templateKey];
-      if (!template) return false;
+      if (!template || !isCampaignTemplateKey(request.templateKey)) return false;
       try {
         if (request.channel === "EMAIL") {
-          if (!config.email.token || !template.zeptoTemplateKey) return false;
+          if (!config.email.token || !template.zeptoTemplateKey ||
+              !isCampaignTemplateKey(template.zeptoTemplateKey) ||
+              template.zeptoTemplateKey === config.email.otpTemplateKey) return false;
           const response = await fetchImpl(config.email.apiUrl, {
             method: "POST",
             headers: { Authorization: config.email.token, "Content-Type": "application/json", Accept: "application/json" },
@@ -48,7 +53,8 @@ export function createOutboundProvider(
           return response.ok;
         }
         if (!config.sms.apiKey || !config.sms.apiToken || !/^[A-Za-z0-9_-]+$/.test(config.sms.accountSid) ||
-            !config.sms.dltEntityId || !template.exotelSenderId || !template.exotelDltTemplateId || !template.renderSms) return false;
+            !config.sms.dltEntityId || !template.exotelSenderId || !template.exotelDltTemplateId || !template.renderSms ||
+            template.exotelDltTemplateId === config.sms.otpDltTemplateId) return false;
         const body = template.renderSms(request.variables);
         if (!body.trim() || body.length > 1600) return false;
         const form = new URLSearchParams({
@@ -68,8 +74,7 @@ export function createOutboundProvider(
         });
         if (!response.ok) return false;
         const result = (await response.json()) as { SMSMessage?: { Sid?: string; Status?: string } };
-        return Boolean(result.SMSMessage?.Sid && result.SMSMessage.Status &&
-          !result.SMSMessage.Status.toLowerCase().startsWith("failed"));
+        return isExotelAcceptedResponse(result);
       } catch {
         // No credentials, recipients or rendered messages enter logs.
         return false;
