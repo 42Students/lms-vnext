@@ -60,7 +60,13 @@ export default async function LearnerPlacementApplicationsPage() {
         title="Applications"
         description="Your placement applications and their current journey."
       />
-      <section aria-label="Saved application status summary" className="grid grid-cols-1 gap-3 sm:grid-cols-3">\n        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.total}</strong> recorded applications</p>\n        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.submitted}</strong> still submitted</p>\n        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.withdrawn}</strong> withdrawn</p>\n      </section>\n      <p className="text-xs text-muted-foreground">These are saved application records, not screening decisions or hiring outcomes.</p>\n      <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+      <section aria-label="Saved application status summary" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.total}</strong> recorded applications</p>
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.submitted}</strong> still submitted</p>
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.withdrawn}</strong> withdrawn</p>
+      </section>
+      <p className="text-xs text-muted-foreground">These are saved application records, not screening decisions or hiring outcomes.</p>
+      <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Review all official offers →
       </Link>
       <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
