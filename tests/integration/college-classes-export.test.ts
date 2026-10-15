@@ -151,7 +151,7 @@ describe.skipIf(!enabled)("College classes export persisted PostgreSQL scope",()
     expect(foreign.exported).toBe(0);
   });
   it("exports the exact own-college department code matches only",async()=>{
-    const department=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const department=await pool!.query<{code:string}>("SELECT name AS code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const code=department.rows[0]!.code;
     const [matching,excluded,foreign]=await Promise.all([
       exportCollegeClasses(own,{q:label,departmentCode:code}),
