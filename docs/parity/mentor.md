@@ -1313,3 +1313,8 @@ Mentor assignment/reassignment events can now be selected in the assigned-projec
 ## 2026-10-15 chat-11 — portfolio importance visibility (PARTIAL)
 
 Mentor Activity now renders each matching registered event's stored importance beside its fixed safe event label. Scoped SQL projection explicitly selects the severity, without summaries, actors or metadata, and mobile cards wrap long labels. Unit test authored; source typing, PG and browser checks still OPEN.
+
+
+## 2026-10-15 chat-11 — safe portfolio Activity CSV (PARTIAL)
+
+The assigned Mentor portfolio activity now exports at most 200 existing scoped, filter-matched registered event records. Every bounded database page rechecks currently active Mentor membership, tenant, Projects access and project selection. UTF-8 CSV formula-neutralizes Project titles; safe columns only are event UUID, project title, fixed event label, registered importance and IST time. A truncation row and HTTP omitted-count header reveal excess. No external send or raw summaries, actor identities, contact data or metadata. Source tests authored; disposable PostgreSQL/browser download and security acceptance OPEN.

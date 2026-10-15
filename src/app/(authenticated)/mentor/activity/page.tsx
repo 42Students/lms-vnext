@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
+import {mentorPortfolioActivityExportHref} from "@/modules/projects/mentor-portfolio-activity-export-model";
 import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityFormLayout, mentorActivityImportanceLabel } from "@/modules/projects/mentor-portfolio-model";
 
 type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
@@ -95,7 +96,16 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
         <Link href="/mentor/activity" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
-      <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
+        <Link href={mentorPortfolioActivityExportHref(data.query)} download
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          Export filtered activity CSV (max 200)
+        </Link>
+        {data.total>200?<span role="status" className="text-xs text-body">
+          Export omits {data.total-200} matching records.
+        </span>:null}
+      </div>
       {data.items.length === 0 ? <EmptyState title="No recorded activity"
         description="No persisted events match your assigned projects. Missing events do not imply no work occurred." />
         : <ol className="grid gap-3">{data.items.map(event =>
