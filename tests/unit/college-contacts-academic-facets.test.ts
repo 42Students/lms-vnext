@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {collegeContactsQuerySchema,collegeContactsHref} from "@/modules/people/college-contacts-model";
+import {collegeContactsQuerySchema,collegeContactsHref,clearedCollegeContactsHref} from "@/modules/people/college-contacts-model";
 
 describe("Contact profile availability",()=>{it("round-trips valid facet through filtered contact links and rejects unsupported options",()=>{
  const q=collegeContactsQuerySchema.parse({profile:"UNPROFILED"});expect(collegeContactsHref(q)).toContain("profile=UNPROFILED");expect(collegeContactsQuerySchema.safeParse({profile:"PRIVATE"}).success).toBe(false);
@@ -22,3 +22,5 @@ describe("Learner active-class placement",()=>{it("validates an exact typed filt
 describe("College Contacts cohort selector",()=>{it("validates strict cohort UUIDs, retaining the applied URL choice",()=>{const id="00000000-0000-4000-8000-000000000123";expect(collegeContactsHref(collegeContactsQuerySchema.parse({cohortId:id}))).toContain("cohortId="+id);expect(collegeContactsQuerySchema.safeParse({cohortId:"foreign"}).success).toBe(false);});});
 
 describe("Contacts faculty department selector",()=>{it("preserves only a valid department UUID in the URL",()=>{const id="00000000-0000-4000-8000-000000000124";expect(collegeContactsHref(collegeContactsQuerySchema.parse({facultyDepartmentId:id}))).toContain("facultyDepartmentId="+id);expect(collegeContactsQuerySchema.safeParse({facultyDepartmentId:"injected"}).success).toBe(false);});});
+
+describe("Clear contacts filters",()=>{it("clears academic and lifecycle facets while preserving the contact tab",()=>{expect(clearedCollegeContactsHref("STUDENT")).toBe("/college/contacts?tab=STUDENT");expect(clearedCollegeContactsHref("ALL")).toBe("/college/contacts");});});

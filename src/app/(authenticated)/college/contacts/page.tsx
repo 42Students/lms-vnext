@@ -3,7 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
-import {collegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
+import {collegeContactsHref,clearedCollegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
@@ -131,7 +131,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </select>
    </label>
    <button type="submit" className="min-h-10 rounded-md border px-4 text-sm font-semibold">Apply</button>
-   <Link href={collegeContactsHref({...filter,q:"",status:"ACTIVE",sort:"NAME",page:1})}
+   <Link href={clearedCollegeContactsHref(filter.tab)}
     className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm">Clear filters</Link>
   </form>
   <div className="flex flex-wrap items-center justify-between gap-3">

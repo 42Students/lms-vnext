@@ -59,6 +59,10 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.pageSize!==COLLEGE_CONTACTS_PAGE_SIZE)params.set("pageSize",String(filter.pageSize));
  return "/college/contacts"+(params.size?"?"+params.toString():"");
 }
+/** Reset every query facet, retaining only the intentionally selected contact tab. */
+export function clearedCollegeContactsHref(tab:CollegeContactsQuery["tab"]):string{
+ return collegeContactsHref(collegeContactsQuerySchema.parse({tab}));
+}
 export function parseCollegeContactsSearchParams(raw:Record<string,string|string[]|undefined>){
  const normalized:Record<string,string>={};
  for(const [key,value] of Object.entries(raw)){
