@@ -42,3 +42,11 @@ export function facultyManualGradeUncertainMessage(kind:"GRADE"|"PUBLISH"):strin
   ?"The save could not be verified. It may have succeeded. Refresh current submissions before retrying."
   :"Publication could not be verified. The learner may already see the grade. Refresh before retrying.";
 }
+
+/** The human sees the exact saved score and a bounded excerpt before publication. */
+export function facultyManualGradePublishPrompt(points:number|null,max:number,feedback:string|null):string{
+ const safeScore=points===null?"No score":points+" / "+max;
+ const details=feedback?.trim()?"Feedback: "+feedback.trim().slice(0,120):"No written feedback";
+ return "Publish this saved grade to the learner?\nScore: "+safeScore+"\n"+details+
+ "\nConfirm publication. This action makes the score and feedback learner-visible.";
+}
