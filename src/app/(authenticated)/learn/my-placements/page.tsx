@@ -25,6 +25,9 @@ import {getOwnLearnerPlacementGreeting} from "@/modules/placements/learner-dashb
 import {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
+import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-verification-status-service";
+import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
+import {learnerPlacementVerificationCue} from "@/modules/placements/learner-verification-cue-model";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
 import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service";
@@ -200,6 +203,11 @@ export default async function LearnerPlacementsPage({
     if(error instanceof AuthorizationError)throw error;
     collegeNoticesFailed=true;
   }
+  const verificationRead=await readOptionalLearnerPlacementSource(
+    ()=>getOwnLearnerVerificationStatus(context));
+  const verificationCue=verificationRead.available
+    ? learnerPlacementVerificationCue(verificationRead.value.education.status,verificationRead.value.identity.status)
+    : null;
   const learnerName=await getOwnLearnerPlacementGreeting(context).catch(error=>{
     if(error instanceof AuthorizationError)throw error;
     return null;
@@ -224,6 +232,23 @@ export default async function LearnerPlacementsPage({
         </Link>
       </div>
 
+      <section aria-labelledby="learner-placement-verification"
+        className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="learner-placement-verification" className="text-base font-semibold text-foreground">Profile verification</h2>
+          <Link href="/learn/profile/verification" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+            Review education and identity verification →
+          </Link>
+        </div>
+        <p className="mt-2 text-sm text-body">
+          {verificationCue ? verificationCue.summary :
+            "Your current verification status is temporarily unavailable. Open your profile to retry."}
+        </p>
+        {verificationCue ? <p className="mt-2 text-xs text-muted-foreground">
+          Education: {verificationCue.educationLabel} · Identity: {verificationCue.identityLabel}.
+          This is profile review status, not a placement eligibility decision.
+        </p> : null}
+      </section>
       <section aria-labelledby="learner-college-notice-preview" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Recent college notices</h2>
