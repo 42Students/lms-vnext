@@ -40,6 +40,11 @@ export function mentorTaskReviewHref(query: {
   return "/mentor/task-reviews" + (suffix ? "?" + suffix : "");
 }
 
+/** All controls fit within a 375px viewport without horizontal document scroll. */
+export const mentorTaskReviewMobileLayout="min-w-0 max-w-full space-y-6 overflow-x-clip";
+export const mentorTaskReviewMobileFilters=
+ "flex min-w-0 max-w-full flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_input]:w-full [&_input]:min-w-0 [&_select]:max-w-full [&_select]:min-w-0";
+
 export function mentorTaskReviewSummary(input: {
   total: number; page: number; pageSize: number;
 }) {

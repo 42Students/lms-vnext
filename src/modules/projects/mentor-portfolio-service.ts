@@ -14,7 +14,7 @@ import { mentorProjectActivityEventTypes } from "./mentor-project-activity-model
 import {resolveMentorActivityProjectId} from "./mentor-project-event-attribution";
 import {
   mentorActivityQuerySchema, mentorReviewQuerySchema,
-  pageMentorPortfolio, mentorActivityPagination, mentorActivityProjectTitleMatch, safeMentorProjectEventLabel, selectMentorReviewQueue,
+  pageMentorPortfolio, mentorActivityPagination, mentorPortfolioActivityCutoff, mentorActivityProjectTitleMatch, safeMentorProjectEventLabel, selectMentorReviewQueue,
 } from "./mentor-portfolio-model";
 
 async function requireMentorPortfolio(context: RequestContext) {
@@ -40,7 +40,7 @@ async function requireMentorPortfolio(context: RequestContext) {
 }
 
 /** All reviewed IDs originate from persisted active Mentor project assignments. */
-export async function getMentorReviewQueue(context: RequestContext, rawQuery: unknown) {
+export async function getMentorReviewQueue(context: RequestContext, rawQuery: unknown, now: Date = new Date()) {
   const query = mentorReviewQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
   if (!scope.enabled || !scope.projects.length) {
@@ -54,14 +54,14 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
       (!query.projectId||p.id===query.projectId)).map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(
-    alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age,
+    alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age, now,
   );
   return { enabled: true, query, projects:scope.projects, ...pageMentorPortfolio(items, query) };
 }
 
 /** College-scoped, assigned-project timeline. No raw summaries, metadata or actor PII. */
 export async function getMentorPortfolioActivity(
-  context: RequestContext, rawQuery: unknown,
+  context: RequestContext, rawQuery: unknown, now: Date = new Date(),
 ) {
   const query = mentorActivityQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
@@ -83,8 +83,7 @@ export async function getMentorPortfolioActivity(
   const byId = new Map(selectedProjects.map(project => [project.id, project]));
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
   const types=mentorProjectActivityEventTypes(query.view);
-  const cutoff = query.window==="ALL" ? null :
-    new Date(new Date().getTime() - (query.window==="PAST_7_DAYS"?7:query.window==="PAST_90_DAYS"?90:30)*86400000);
+  const cutoff=mentorPortfolioActivityCutoff(query.window,now);
   const filters = and(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),

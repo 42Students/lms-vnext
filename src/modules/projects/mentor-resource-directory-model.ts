@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {csvSafeCell} from "./mentor-board-review-model";
+import {singleValueMentorFilters} from "./mentor-filter-query";
 export const mentorResourceDirectoryQuerySchema=z.object({
  projectId:z.string().uuid(),
  required:z.enum(["ALL","REQUIRED","OPTIONAL"]).default("ALL"),
@@ -67,9 +68,24 @@ export function mentorResourceDirectoryCsv(rows:readonly {
  id:string;title:string;description:string|null;required:boolean;safeUrl:string|null;
 }[],omitted:number){
  const lines=["Resource ID,Title,Description,Required,HTTPS link available"];
- for(const row of rows)lines.push([row.id,row.title,row.description??"",
+ const bounded=rows.slice(0,200);
+ for(const row of bounded)lines.push([row.id,row.title,row.description??"",
   row.required?"Yes":"No",row.safeUrl?"Yes":"No"].map(csvSafeCell).join(","));
- if(omitted>0)lines.push(["","Truncated",omitted+" additional matching resources","",""]
+ const hidden=Math.max(0,rows.length-bounded.length)+
+  (Number.isSafeInteger(omitted)&&omitted>0?omitted:0);
+ if(hidden>0)lines.push(["","Truncated",hidden+" additional matching resources","",""]
    .map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
+}
+
+/** Strict page-level URL boundary: unknown keys are not silently ignored. */
+export function parseMentorResourceDirectorySearch(
+ projectId:string,raw:Record<string,string|string[]|undefined>,
+):MentorResourceDirectoryQuery|null{
+ const allowed=new Set(["required","link","description","order","search","page"]);
+ if(Object.keys(raw).some(key=>!allowed.has(key)))return null;
+ const values=singleValueMentorFilters(raw);
+ if(!values)return null;
+ const parsed=mentorResourceDirectoryQuerySchema.safeParse({projectId,...values});
+ return parsed.success?parsed.data:null;
 }
