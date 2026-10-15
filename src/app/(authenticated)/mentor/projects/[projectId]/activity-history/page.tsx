@@ -58,6 +58,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="REVIEWS">Review decisions</option>
             <option value="MEETINGS">Meeting decisions</option>
             <option value="TASKS">Task events</option>
+            <option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded within

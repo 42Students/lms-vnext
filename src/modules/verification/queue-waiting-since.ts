@@ -11,3 +11,16 @@ export function matchesWaitingSince(submittedAt:Date,waitingSince:string|undefin
  if(!Number.isFinite(end.getTime()))throw Error("INVALID_WAITING_SINCE");
  return submittedAt.getTime()<=end.getTime();
 }
+
+/** Includes all submissions from the beginning of the given Asia/Kolkata day. */
+export function matchesSubmittedFrom(submittedAt:Date,submittedFrom:string|undefined):boolean {
+ if(!submittedFrom)return true;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(submittedFrom))throw Error("INVALID_SUBMITTED_FROM");
+ const [year,month,day]=submittedFrom.split("-").map(Number);
+ const valid=new Date(Date.UTC(year,month-1,day));
+ if(!Number.isFinite(valid.getTime())||valid.toISOString().slice(0,10)!==submittedFrom)throw Error("INVALID_SUBMITTED_FROM");
+ return submittedAt.getTime()>=new Date(submittedFrom+"T00:00:00+05:30").getTime();
+}
+export function verificationSubmissionWindowValid(filter:{submittedFrom?:string;waitingSince?:string}):boolean {
+ return !(filter.submittedFrom&&filter.waitingSince&&filter.submittedFrom>filter.waitingSince);
+}

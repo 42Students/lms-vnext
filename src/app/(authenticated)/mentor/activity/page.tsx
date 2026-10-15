@@ -5,9 +5,10 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
-import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
+import {mentorPortfolioActivityExportHref} from "@/modules/projects/mentor-portfolio-activity-export-model";
+import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityFormLayout, mentorActivityImportanceLabel } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -15,6 +16,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = mentorActivityQuerySchema.safeParse({
+    search:first(raw.search)??undefined,
     importance: first(raw.importance) ?? undefined,
     window: first(raw.window) ?? undefined,
     order:first(raw.order) ?? undefined,
@@ -36,7 +38,11 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
-      <form action="/mentor/activity" method="get" className="flex min-w-0 flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_select]:min-w-0 [&_select]:max-w-full">
+      <form action="/mentor/activity" method="get" className={mentorActivityFormLayout}>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assigned project title
+          <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
+            placeholder="Search your project names" className="min-h-10 w-full min-w-0 rounded-md border border-border bg-background px-3" />
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded importance
           <select name="importance" defaultValue={data.query.importance}
             className="min-h-10 rounded-md border border-border bg-background px-3">
@@ -62,12 +68,12 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="ALL">All event groups</option>
             <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option>
-            <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option>
+            <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option><option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
           <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
-            <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option><option value="PAST_30_DAYS">Past 30 days</option>
+            <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option><option value="PAST_30_DAYS">Past 30 days</option><option value="PAST_90_DAYS">Past 90 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Chronology
@@ -90,14 +96,26 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
         <Link href="/mentor/activity" className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
-      <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
+        <Link href={mentorPortfolioActivityExportHref(data.query)} download
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          Export filtered activity CSV (max 200)
+        </Link>
+        {data.total>200?<span role="status" className="text-xs text-body">
+          Export omits {data.total-200} matching records.
+        </span>:null}
+      </div>
       {data.items.length === 0 ? <EmptyState title="No recorded activity"
         description="No persisted events match your assigned projects. Missing events do not imply no work occurred." />
         : <ol className="grid gap-3">{data.items.map(event =>
           <li key={event.id} className="rounded-xl border border-border bg-surface p-4">
-            <p className="text-sm font-semibold text-foreground">{event.label}</p>
+            <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+              <p className="min-w-0 break-words text-sm font-semibold text-foreground">{event.label}</p>
+              <span className="text-xs text-muted-foreground">{mentorActivityImportanceLabel(event.importance)}</span>
+            </div>
             <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
-              className="mt-1 block text-sm font-semibold text-primary-text hover:underline">
+              className="mt-1 block break-words text-sm font-semibold text-primary-text hover:underline">
               {event.projectTitle} →
             </Link>
             <time dateTime={event.occurredAt.toISOString()} className="mt-2 block text-xs text-muted-foreground">
