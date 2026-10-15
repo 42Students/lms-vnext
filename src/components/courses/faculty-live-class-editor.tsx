@@ -6,6 +6,7 @@ import {facultyLiveEditorCommand} from "@/modules/courses/faculty-live-editor-co
 import {facultyLiveSaveFeedback} from "@/modules/courses/faculty-live-save-feedback";
 import {facultyLiveEditorDraft} from "@/modules/courses/faculty-live-editor-model";
 import {facultyLiveSessionOption} from "@/modules/courses/faculty-live-session-option";
+import {facultyLiveConfirmText} from "@/modules/courses/faculty-live-confirmation";
 
 type Choice={id:string;title:string;deliveryId:string};
 type Session={
@@ -54,8 +55,7 @@ export function FacultyLiveClassEditor({
     });}catch(caught){
       setError(caught instanceof Error?caught.message:"Invalid live-class details.");return;
     }
-    const verb=action==="CREATE"?"schedule":action==="EDIT"?"reschedule":"cancel";
-    if(!window.confirm("Confirm: "+verb+" this Section live class?"))return;
+    if(!window.confirm(facultyLiveConfirmText(action,chosen,choice?.title??"selected lesson")))return;
     setPending(true);setError(null);
     try{
       const result=await fetch(
