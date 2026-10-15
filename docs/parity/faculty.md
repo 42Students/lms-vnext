@@ -1505,3 +1505,9 @@ This chat-4 batch starts from current `main` and implements the next Faculty Sel
 - **Still OPEN:** orchestrator migration registration and full PostgreSQL execution; desktop/mobile authenticated browser acceptance; Education, Experience, Certifications, Publications, Awards, Languages and Metadata UI; section-scoped upload receipts, identity verification and full legacy profile completeness. The existing contact editing blocker is unchanged.
 
 **Status: PARTIAL only.** Do not relabel the shared matrix or claim live persistence until W01 registers the migration and independent gates verify exact SHA.
+
+## 2026-10-15 source reconciliation against main ea1172d2
+
+The current main/lane comparison and safe integration targets are recorded in the final reconciliation section of `docs/planning/account-surface-parity.md`; it is a source snapshot, not another tracker or runtime acceptance. Existing checkbox evidence is preserved. No required page/family becomes closed from this review.
+
+Earlier follow-up notes saying the visibility migration/admin writer are absent are historical: main now contains registered migration 0061 and `college-content-visibility-service.ts`, its route, confirmed College Admin control and exports. Do not duplicate them. Executed acceptance of the complete producer-to-learner workflow remains required. Main now merged the first staged self-profile editors/API/tests and storage proposal via af54f5b. Chat-4's sampled head `1ecc15ef41f963003383eb47494c78cde199f3c1` still has later repeatable editors/row factories and follow-up section tests. Reconcile the integrated storage proposal with DB-007 before promotion; do not rebuild the integrated first sections. Full profile acceptance remains open.
