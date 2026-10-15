@@ -27,10 +27,10 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
  const recruiterOwned=threads.filter(thread=>thread.recruiterUserId===context.user.id);
  const filtered=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles);
- const visible=filtered.slice(
-  (query.page-1)*HR_CONVERSATION_PAGE_SIZE,query.page*HR_CONVERSATION_PAGE_SIZE,
- );
  const pagination=hrConversationPageBounds(query.page,filtered.length);
+ const visible=filtered.slice(
+  (pagination.page-1)*HR_CONVERSATION_PAGE_SIZE,pagination.page*HR_CONVERSATION_PAGE_SIZE,
+ );
  const counts=visible.length?await getDb().select({
    threadId:placementTpoMessages.threadId,
    unread:sql<number>`count(*)::integer`,
@@ -59,7 +59,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
    lastMessageAt:t.lastMessageAt,createdAt:t.createdAt,
    unread:byThread.get(t.id)??0,
    preview:byPreview.get(t.id)??null,
-  })),pages:pagination.pages,page:query.page,total:filtered.length,
+  })),pages:pagination.pages,page:pagination.page,total:filtered.length,
   first:pagination.first,last:pagination.last,
   unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
 }

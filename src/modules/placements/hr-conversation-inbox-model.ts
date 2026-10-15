@@ -17,6 +17,8 @@ export function filterRecruiterConversations<T extends {jobId:string|null;id:str
 export const HR_CONVERSATION_PAGE_SIZE=20;
 export function hrConversationPageBounds(page:number,total:number){
  const pages=Math.max(1,Math.ceil(total/HR_CONVERSATION_PAGE_SIZE));
- return {pages,first:total?Math.min(total,(page-1)*HR_CONVERSATION_PAGE_SIZE+1):0,
- last:Math.min(total,page*HR_CONVERSATION_PAGE_SIZE)};
+ const currentPage=Math.max(1,Math.min(page,pages));
+ return {page:currentPage,pages,
+  first:total?(currentPage-1)*HR_CONVERSATION_PAGE_SIZE+1:0,
+  last:Math.min(total,currentPage*HR_CONVERSATION_PAGE_SIZE)};
 }
