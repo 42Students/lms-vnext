@@ -40,6 +40,7 @@ import {
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
+import { isPlacementOfferExpiredAt } from "./placement-expiry-staged-policy";
 import {
   canReleaseAnotherHeldOffer,
   minimumOfferResponseDeadline,
@@ -587,9 +588,7 @@ export async function actOnPlacementOffer(
 
   if (
     input.action !== "WITHDRAW" &&
-    current.offer.expiresAt &&
-    now.getTime() >
-      current.offer.expiresAt.getTime()
+    isPlacementOfferExpiredAt(current.offer.expiresAt, now)
   ) {
     throw new PlacementsServiceError(
       "PLACEMENT_OFFER_EXPIRED",
@@ -636,9 +635,7 @@ export async function actOnPlacementOffer(
 
     if (
       input.action !== "WITHDRAW" &&
-      offer.expiresAt &&
-      now.getTime() >
-        offer.expiresAt.getTime()
+      isPlacementOfferExpiredAt(offer.expiresAt, now)
     ) {
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_EXPIRED",
