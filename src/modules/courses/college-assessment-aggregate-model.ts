@@ -7,6 +7,7 @@ export type CollegeAssessmentKind = z.infer<typeof collegeAssessmentKindSchema>;
 export const collegeAssessmentListQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   courseCode: z.string().trim().min(1).max(64).optional(),
+  periodCode:z.string().trim().min(1).max(64).optional(),
   scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
   results:z.enum(["ALL","PUBLISHED","HIDDEN"]).default("ALL"),
   duePresence:z.enum(["ALL","SCHEDULED","UNSCHEDULED"]).default("ALL"),
@@ -50,6 +51,7 @@ export function collegeAssessmentHref(
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.courseCode) params.set("courseCode",query.courseCode);
+  if(query.periodCode)params.set("periodCode",query.periodCode);
   if (query.scope!=="ALL") params.set("scope",query.scope);
   if(kind==="QUIZ"&&query.results!=="ALL")params.set("results",query.results);
   if(query.duePresence!=="ALL")params.set("duePresence",query.duePresence);
