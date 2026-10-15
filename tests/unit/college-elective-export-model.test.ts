@@ -108,4 +108,8 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("periodEndsOnOrBefore=2026-12-31");
    expect(electiveCsvSchema.safeParse({periodEndsOnOrBefore:"2026-13-39"}).success).toBe(false);
  });
+ it("rejects elective semester interval during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({semesterFrom:5,semesterThrough:4}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({semesterFrom:4,semesterThrough:4}).success).toBe(true);
+ });
 });

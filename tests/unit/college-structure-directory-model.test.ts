@@ -263,4 +263,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",q)).toContain("periodEndsOnOrBefore=2026-12-31");
     expect(collegeElectiveQuerySchema.safeParse({periodEndsOnOrBefore:"2026-13-39"}).success).toBe(false);
   });
+ it("rejects elective semester interval on the College Admin electives page",()=>{
+  const invalid=collegeElectiveQuerySchema.safeParse({semesterFrom:5,semesterThrough:4});
+  expect(invalid.success).toBe(false);
+  if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Last semester must not precede first semester"))).toBe(true);
+  expect(collegeElectiveQuerySchema.safeParse({semesterFrom:4,semesterThrough:4}).success).toBe(true);
+ });
 });

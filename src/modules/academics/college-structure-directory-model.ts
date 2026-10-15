@@ -63,9 +63,13 @@ export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend
   maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
 });
 
-export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number }>>(schema:T) {
-  return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
-    {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"});
+export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{
+ minimumCredits?:number;maximumCredits?:number;semesterFrom?:number;semesterThrough?:number;minimumRequiredPicks?:number;maximumAllowedPicks?:number;periodStartsOnOrAfter?:string;periodEndsOnOrBefore?:string;semesterNumber?:number;periodState?:"ALL"|"LINKED"|"UNLINKED";periodCode?:string;periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED";
+}>>(schema:T){
+ return schema.refine(q=>q.minimumCredits===undefined||q.maximumCredits===undefined||q.minimumCredits<=q.maximumCredits,
+  {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"})
+ .refine(q=>q.semesterFrom===undefined||q.semesterThrough===undefined||q.semesterFrom<=q.semesterThrough,
+  {path:["semesterThrough"],message:"Last semester must not precede first semester"});
 }
 export const collegeElectiveQuerySchema = withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema);
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
