@@ -1,6 +1,17 @@
+import {COLLEGE_LEGACY_GROUPS} from "./college-legacy-tabs-model";
+
 export type SuperAdminLegacyTab = Readonly<{label:string;href:string}>;
 export type SuperAdminLegacyGroup = Readonly<{title:string;tabs:readonly SuperAdminLegacyTab[]}>;
 
+
+/** Reuse verbatim College Admin shared group names, remapping only the account prefix. */
+function sharedGroup(index:number):SuperAdminLegacyGroup {
+  const shared=COLLEGE_LEGACY_GROUPS[index];
+  if(!shared)throw new Error("Unknown legacy navigation group");
+  return {title:shared.title,tabs:shared.tabs.map(tab=>({
+    label:tab.label,href:tab.href.replace(/^\/college\//,"/admin/"),
+  }))};
+}
 /** lms-dev-2026 Super Admin grouped navigation. Add groups in the audit's order. */
 export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
   {title:"Tenant Setup",tabs:[
@@ -8,6 +19,7 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
     {label:"Organizations",href:"/admin/organizations"},
     {label:"Colleges",href:"/admin/colleges"},
   ]},
+  sharedGroup(0),
 ];
 
 export function superAdminLegacyNavigationPath(pathname:string):string {
