@@ -10,6 +10,7 @@ export const verificationQueueFilters=z.strictObject({
   attention:z.enum(["ALL","MISSING_MARKSHEET","VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"]).default("ALL"),
   batchId:z.string().uuid().optional(),
   programId:z.string().uuid().optional(),
+  enrollment:z.enum(["ALL","ACTIVE","NONE"]).default("ALL"),
   branchId:z.string().uuid().optional(),
   waitingSince:z.iso.date().optional(),
   submittedFrom:z.iso.date().optional(),
@@ -22,4 +23,9 @@ export type VerificationQueueFilters=z.infer<typeof verificationQueueFilters>;
 /** Exact pending-state triage does not apply to already-decided tabs. */
 export function verificationWaitingStateValid(filter:{tab:string;waitingState:string}):boolean {
  return filter.waitingState==="ALL"||filter.tab==="WAITING";
+}
+
+/** No enrollment cannot coexist with a specific CURRENT academic placement. */
+export function verificationEnrollmentFiltersValid(filter:{enrollment:string;programId?:string;batchId?:string;branchId?:string;sectionId?:string}):boolean{
+ return filter.enrollment!=="NONE"||!(filter.programId||filter.batchId||filter.branchId||filter.sectionId);
 }

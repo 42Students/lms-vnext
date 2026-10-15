@@ -1,11 +1,11 @@
 "use client";
 import {useState} from "react";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-type Fields={waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
-const empty:Fields={waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
+type Fields={enrollment:string;waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
+const empty:Fields={enrollment:"ALL",waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices,programChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList;programChoices?:VerificationFilterChoiceList}){
- const selected=():Fields=>({waitingState:query.waitingState??"ALL",membershipId:query.membershipId??"",q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
+ const selected=():Fields=>({enrollment:query.enrollment??"ALL",waitingState:query.waitingState??"ALL",membershipId:query.membershipId??"",q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
   programId:query.programId??"",sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
@@ -15,6 +15,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
    if(value[key]&&!uuid.test(value[key])){setError(key+" must be a valid UUID");return;}
   }
   if(value.submittedFrom&&value.waitingSince&&value.submittedFrom>value.waitingSince){setError("Start date must not follow the end date");return;}
+  if(value.enrollment==="NONE"&&(value.programId||value.sectionId||value.batchId||value.branchId)){setError("No active enrollment cannot be combined with an academic assignment");return;}
   setError("");onApply(value);
  }
  return <details className="min-w-0 rounded-lg border p-3">
@@ -52,6 +53,11 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     <label className="min-w-0 text-sm">Waiting since (submitted on/before)
      <input type="date" value={fields.waitingSince} onChange={e=>change("waitingSince",e.target.value)}
       className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/></label>
+    <label className="min-w-0 text-sm">Current academic enrollment
+     <select value={fields.enrollment} onChange={e=>change("enrollment",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+      <option value="ALL">Any enrollment</option><option value="ACTIVE">Has active college program enrollment</option><option value="NONE">No active college program enrollment</option>
+     </select>
+    </label>
     <label className="min-w-0 text-sm">Academic program
      <select value={fields.programId} onChange={e=>change("programId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
       <option value="">All programs</option>

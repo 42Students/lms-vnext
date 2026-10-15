@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Active enrollment availability PARTIAL (chat-9):** Verification queue and masked CSV now distinguish students with/without registered active program enrollment, using correlated current-college ownership. Contradictory no-enrollment with exact program/batch/branch/class filters reject at page, service and export boundaries. Unit tests authored; disposable DB and browser verification pending.
+
 **Single-enrollment academic filter correctness PARTIAL (chat-9):** Class+program+batch+branch verification filters now bind to the same current section enrollment and college-owned ancestry instead of accepting unrelated enrollments for the same learner. Queue and CSV share one scoped predicate. Pure query-mode tests authored; a multi-enrollment PostgreSQL negative fixture and browser proof remain required.
 
 **Academic-program verification selector PARTIAL (chat-9):** The queue and capped CSV now share exact current-college active program-enrollment filtering. A persisted college-only program picker is bounded to 200 and retains unknown bookmark IDs without showing another tenant's labels. Pure URL/CSV contract tests authored; PostgreSQL/browser acceptance open.
