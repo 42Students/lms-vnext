@@ -17,6 +17,7 @@ import {
   placementCompanies,
   placementCompanyRelationships,
   placementJobs,
+  placementCollegeRules,
   placementJoiningOutcomes,
   placementOffers,
   placementSeasons,
@@ -84,6 +85,12 @@ export async function getPlacementReportWorkspace(
   );
 
   const db = getDb();
+  const [collegeRules] = await db.select({
+    countsAsPlacedAt: placementCollegeRules.countsAsPlacedAt,
+  }).from(placementCollegeRules)
+    .where(eq(placementCollegeRules.collegeId, college.id)).limit(1);
+  const countsAsPlacedAt = (collegeRules?.countsAsPlacedAt ?? "OFFER_RELEASED") as
+    "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
 
   const seasons = await db
     .select({
@@ -113,6 +120,7 @@ export async function getPlacementReportWorkspace(
   }
 
   const emptyFacts: PlacementReportFacts = {
+    countsAsPlacedAt,
     jobs: [],
     applications: [],
     offers: [],
@@ -263,6 +271,7 @@ export async function getPlacementReportWorkspace(
           jobId: placementApplications.jobId,
           membershipId: placementApplications.membershipId,
           status: placementOffers.status,
+          kind: placementOffers.kind,
           annualCtcInr: placementOffers.annualCtcInr,
           joiningStatus: placementJoiningOutcomes.status,
         })
@@ -372,6 +381,7 @@ export async function getPlacementReportWorkspace(
       jobId: row.jobId,
       membershipId: row.membershipId,
       status: row.status,
+      kind: row.kind,
       annualCtcInr: row.annualCtcInr,
       joiningStatus: row.joiningStatus,
     }));
@@ -418,6 +428,7 @@ export async function getPlacementReportWorkspace(
   }));
 
   const report = summarizePlacementReports({
+    countsAsPlacedAt,
     jobs,
     applications,
     offers,
