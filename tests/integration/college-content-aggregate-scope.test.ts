@@ -198,6 +198,13 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     ]);
     expect(scopedResource.items.map((item) => item.id)).toContain(ids.resource);
     expect(absentCourse.items).toEqual([]);
+    const [matchingPeriod,absentPeriod]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,periodCode:label}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,periodCode:"NO-SUCH-PERIOD"}),
+    ]);
+    expect(matchingPeriod.items.map(item=>item.id)).toContain(ids.resource);
+    expect(absentPeriod.items).toEqual([]);
+    expect((await exportCollegeContentMetadata(adminA,"RESOURCE",{q:label,periodCode:"NO-SUCH-PERIOD"})).csv).not.toContain(label);
     const [sameBatch,missingBatch]=await Promise.all([
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,cohortCode:label}),
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,cohortCode:"not-this-batch"}),

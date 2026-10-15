@@ -54,6 +54,11 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Academic period code (exact)
+            <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
