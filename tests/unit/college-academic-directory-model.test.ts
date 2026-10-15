@@ -27,6 +27,8 @@ describe("College Admin semester and batch read models", () => {
       { termNumber: 25 },
       { minimumCredits: -1 },
       { minimumCredits: 501 },
+      { maximumCredits: 501 },
+      { minimumCredits: 19, maximumCredits: 18 },
     ]) {
       expect(collegeSemesterDirectorySchema.safeParse(invalid).success).toBe(false);
     }
@@ -72,6 +74,8 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("SEMESTERS",{q:"",status:"ALL",page:1,minimumCredits:18}))
       .toContain("minimumCredits=18");
     expect(academicDirectorySearchParams({minimumCredits:""})).toEqual({});
+    expect(academicDirectoryHref("SEMESTERS",{q:"",status:"ALL",page:1,maximumCredits:20})).toContain("maximumCredits=20");
+    expect(academicDirectorySearchParams({maximumCredits:""})).toEqual({});
     expect(semesters.searchParams.has("collegeId")).toBe(false);
     expect(academicDirectoryHref("BATCHES", {
       q: "", status: "ALL", page: 1,

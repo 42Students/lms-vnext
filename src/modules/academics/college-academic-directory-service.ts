@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, gte, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, inArray, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
 import {
@@ -84,6 +84,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.termNumber !== undefined ? eq(programTerms.termNumber, query.termNumber) : undefined,
       query.minimumCredits !== undefined ? gte(programTerms.totalCredits,query.minimumCredits) : undefined,
+      query.maximumCredits !== undefined ? lte(programTerms.totalCredits,query.maximumCredits) : undefined,
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
       query.q ? or(

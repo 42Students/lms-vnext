@@ -12,8 +12,9 @@ export const collegeSemesterDirectorySchema = z.object({
   ...common,
   termNumber: z.coerce.number().int().min(1).max(24).optional(),
   minimumCredits: z.coerce.number().int().min(0).max(500).optional(),
+  maximumCredits: z.coerce.number().int().min(0).max(500).optional(),
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
-}).strict();
+}).strict().refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits, {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"});
 
 export const collegeBatchDirectorySchema = z.object({
   ...common,
@@ -36,6 +37,7 @@ export function academicDirectoryHref(
   if (query.programId) params.set("programId", query.programId);
   if ("termNumber" in query && query.termNumber !== undefined) params.set("termNumber", String(query.termNumber));
   if ("minimumCredits" in query && query.minimumCredits !== undefined) params.set("minimumCredits", String(query.minimumCredits));
+  if ("maximumCredits" in query && query.maximumCredits !== undefined) params.set("maximumCredits", String(query.maximumCredits));
   if ("yearStart" in query && query.yearStart !== undefined) params.set("yearStart", String(query.yearStart));
   if ("currentTerm" in query && query.currentTerm !== undefined) params.set("currentTerm",String(query.currentTerm));
   if (query.status !== "ALL") params.set("status", query.status);
@@ -51,10 +53,10 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "yearStart", "currentTerm", "status", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart", "currentTerm", "status", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
+    if (typeof value === "string" && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
       result[key] = value;
     }
   }
