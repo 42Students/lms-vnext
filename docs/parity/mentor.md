@@ -1318,3 +1318,8 @@ Mentor Activity now renders each matching registered event's stored importance b
 ## 2026-10-15 chat-11 — safe portfolio Activity CSV (PARTIAL)
 
 The assigned Mentor portfolio activity now exports at most 200 existing scoped, filter-matched registered event records. Every bounded database page rechecks currently active Mentor membership, tenant, Projects access and project selection. UTF-8 CSV formula-neutralizes Project titles; safe columns only are event UUID, project title, fixed event label, registered importance and IST time. A truncation row and HTTP omitted-count header reveal excess. No external send or raw summaries, actor identities, contact data or metadata. Source tests authored; disposable PostgreSQL/browser download and security acceptance OPEN.
+
+
+## 2026-10-15 chat-11 — portfolio activity persisted-positive regression (PARTIAL)
+
+The existing isolated PostgreSQL Project task fixture now verifies the registered Project-created activity event appears only for its actual current assigned Mentor, project-title search cannot fabricate matches, export excludes actor and auth fields, and Learner/foreign-college requests are denied. Source-authored but not executed; no release-complete claim.
