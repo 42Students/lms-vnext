@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {tpoEligibilityImportScaffoldHref} from "@/modules/placements/tpo-eligibility-import-scaffold-model";
 import {TpoAcademicImportPreview} from "@/components/tpo/tpo-academic-import-preview";
 import {TpoBatchEligibilityImport} from "@/components/tpo/tpo-batch-eligibility-import";
 import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision";
@@ -20,6 +21,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <a href={"/api/placements/tpo/batches/"+batchId+"/students/export?page="+result.page}
    className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">Export current page CSV</a>
  </div>
+ <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Download blank eligibility import CSV (this page)</a>
  <TpoBatchEligibilityImport batchId={batchId}/>
  <TpoAcademicImportPreview activeIds={result.students.map(s=>s.membershipId)}/>
  <Link href={"/tpo/batches/"+batchId+"/nudge-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Prepare follow-up for unrecorded choices</Link>
