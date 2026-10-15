@@ -36,3 +36,8 @@ export function mentorTaskReviewEvidence(
   if(taskStatus==="IN_REVIEW")return "UNMATCHED";
   return "RECORDED";
 }
+
+export function mentorTaskFeedbackHref(projectId:string,taskId:string){
+  return "/mentor/projects/"+encodeURIComponent(projectId)+"/tasks/"+
+    encodeURIComponent(taskId)+"/feedback";
+}
