@@ -106,7 +106,7 @@ export default async function AnnouncementsPage({
         }
       />
       <SuperAdminCollegeBroadcastForm colleges={targets.filter(target=>target.type==="COLLEGE").map(target=>({id:target.id,label:target.label}))}/>
-      <AnnouncementAdminWorkspace items={items} targets={targets} />
+      <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent/>
       {next ? (
         <div className="flex justify-center">
           <Link href={next} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground">
