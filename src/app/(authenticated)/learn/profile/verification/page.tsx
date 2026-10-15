@@ -20,6 +20,16 @@ export default async function LearnerVerificationPage() {
     <header><h1 className="text-2xl font-semibold text-foreground">Profile verification</h1>
       <p className="mt-2 text-sm text-body">Your own Education and Identity review status. A saved detail does not mean it is verified.</p>
     </header>
+    <section aria-labelledby="own-private-receipts" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <h2 id="own-private-receipts" className="text-base font-semibold text-foreground">Your saved private evidence receipts</h2>
+      <p className="mt-2 text-sm text-body">These counts describe private upload receipts and scan status, not verified documents or proof that a reviewer has accepted them. Rejected, revoked and expired receipts cannot be used for approval.</p>
+      <ul className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
+        {status.evidence.map(item=><li key={item.purpose} className="min-w-0 rounded-lg border border-border p-3">
+          <p className="text-sm font-semibold text-foreground">{item.purpose === "AADHAAR"?"Identity (Aadhaar)":item.purpose === "PAN"?"Identity (PAN)":item.purpose === "MARKSHEET"?"Education marksheets":"Resume"}</p>
+          <p className="mt-1 text-sm text-body">{item.cleanScanCount} clean scans · {item.pendingScanCount} scans pending · {item.recorded} active receipts</p>
+        </li>)}
+      </ul>
+    </section>
     <div className="grid min-w-0 gap-4 sm:grid-cols-2">{details.map(item => {
       const row = status[item.key];
       return <section key={item.key} className="min-w-0 rounded-xl border border-border bg-surface p-5">
