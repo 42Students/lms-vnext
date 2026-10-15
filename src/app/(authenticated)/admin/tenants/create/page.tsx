@@ -24,7 +24,7 @@ export default async function SuperAdminTenantCreateStage(){
   </section>
   <section className="space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Create college">
    <h2 className="text-lg font-semibold">2. College</h2>
-   {creatable.length?<CollegeCreateForm organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>:
+   {creatable.length?<CollegeCreateForm advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>:
     <p role="status" className="text-sm text-body">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</p>}
    <Link href="/admin/colleges" className="text-sm font-semibold text-primary-text underline">Review colleges</Link>
   </section>
