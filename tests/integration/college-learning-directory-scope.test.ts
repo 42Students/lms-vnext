@@ -396,4 +396,15 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(foreign.items).toEqual([]);
   });
 
+  it("progress periodStatus filters persisted college-owned offering parents",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,periodStatus:"PLANNED"}),
+      listCollegeCourseProgress(own,{q:name,periodStatus:"CLOSED"}),
+      listCollegeCourseProgress(otherCollege,{q:name,periodStatus:"PLANNED"}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

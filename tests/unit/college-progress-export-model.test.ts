@@ -29,4 +29,9 @@ describe("college recorded course activity CSV",()=>{
     expect(collegeProgressCsvHref(collegeProgressCsvSchema.parse({cohortStatus:"PLANNED"}))).toContain("cohortStatus=PLANNED");
  });
 
+ it("progress CSV retains valid periodStatus",()=>{
+    expect(collegeProgressCsvSchema.safeParse({periodStatus:"BAD"}).success).toBe(false);
+    expect(collegeProgressCsvHref(collegeProgressCsvSchema.parse({periodStatus:"PLANNED"}))).toContain("periodStatus=PLANNED");
+ });
+
 });
