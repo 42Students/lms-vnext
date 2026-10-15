@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Queue page-boundary recovery PARTIAL (chat-9):** If a filtered queue shrinks after a decision, the College Admin page redirects to the actual last page while preserving every validated filter, chosen page size and sort instead of displaying an empty page. Error and queue-limit rendering now occur outside try/catch. Pure model tests authored; browser and database state-transition verification still open.
+
 **Strict verification CSV query parsing PARTIAL (chat-9):** College Admin export now rejects duplicate filter values and forged tenant parameters rather than silently overwriting them. Only the typed queue filter contract may reach the scoped service; existing formula-safe 1,000-row cap remains. Unit coverage authored; browser and actual runtime acceptance pending.
 
 **Chronological verification queue order PARTIAL (chat-9):** Added typed OLDEST/NEWEST ordering by submitted timestamp with membership-ID ties; the same order is used before queue pagination and capped CSV. Current-college role gate remains enforced; unit plus PG denial checks authored, execution and browser proof open.
