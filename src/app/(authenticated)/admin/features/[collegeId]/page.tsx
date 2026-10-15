@@ -25,6 +25,7 @@ type SearchParams = {
   scope?: string | string[];
   locks?: string | string[];
   storedState?: string | string[];
+  scopeId?: string | string[];
 };
 
 function one(
@@ -49,7 +50,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
   }
 
   const query = await searchParams;
-  if (Array.isArray(query.module) || Array.isArray(query.scope) || Array.isArray(query.locks) || Array.isArray(query.storedState)) notFound();
+  if (Array.isArray(query.module) || Array.isArray(query.scope) || Array.isArray(query.locks) || Array.isArray(query.storedState) || Array.isArray(query.scopeId)) notFound();
   const context = await getCurrentRequestContext();
 
   const result = await getSuperAdminCollegeModuleAccess(
@@ -61,6 +62,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       scope: one(query.scope) || undefined,
       locks: one(query.locks) || undefined,
       storedState: one(query.storedState) || undefined,
+      scopeId: one(query.scopeId) || undefined,
     },
   );
 
@@ -95,6 +97,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
     if (result.scopeFilter) parts.set("scope", result.scopeFilter);
     if (result.lockFilter === "LOCKED") parts.set("locks", "LOCKED");
     if (result.stateFilter !== "ALL") parts.set("storedState", result.stateFilter);
+    if (result.scopeIdFilter) parts.set("scopeId", result.scopeIdFilter);
     if (page > 1) parts.set("page", String(page));
     return base + (parts.size ? "?" + parts.toString() : "");
   };
@@ -199,6 +202,9 @@ export default async function SuperAdminCollegeModuleAccessPage({
           <select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
           </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Exact scope ID (optional)
+          <input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
         </label>
         <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter overrides</button>
         <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
