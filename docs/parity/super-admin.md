@@ -1066,3 +1066,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 invalid tracker finding URL denial (PARTIAL):** Both tracker issue and audit-finding detail (shared entrypoint) now return standard not-found for malformed public IDs rather than propagating validation into a generic server error. Guard contract tests authored; interactive route evidence open.
+
+
+**2026-10-15 chat-6 DB10 announcement account-status denial (PARTIAL):** The shared announcement services now deny suspended/inactive platform actors for admin list, mutation, audience targets and recipient feed, in addition to existing membership and tenant fences. Authored unit contract, negative DB/runtime tests still required.
