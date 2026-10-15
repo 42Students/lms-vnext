@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
-import {facultyManualGradeReceipt} from "@/modules/courses/faculty-manual-grade-receipt";
+import {facultyManualGradeReceipt,beginFacultyManualGradeOperation} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
@@ -83,6 +83,7 @@ function SubmissionGradeCard({
   const [error, setError] =
     useState<string | null>(null);
   const [success, setSuccess] = useState<string|null>(null);
+  const operationInFlight = useRef(false);
 
   async function saveGrade(
     event: FormEvent<HTMLFormElement>,
@@ -112,6 +113,7 @@ function SubmissionGradeCard({
       return;
     }
 
+    if(!beginFacultyManualGradeOperation(operationInFlight))return;
     setSaving(true);
     try {
       const response = await fetch(
@@ -156,6 +158,7 @@ function SubmissionGradeCard({
         "Could not save this grade. Check your connection and try again.",
       );
     } finally {
+      operationInFlight.current=false;
       setSaving(false);
     }
   }
