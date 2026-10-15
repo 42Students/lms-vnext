@@ -479,6 +479,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Course department code filter PARTIAL (2026-10-15):** College Admin lessons now support exact course-owning department code filtering within the authenticated college; URL pagination and CSV preserve this state. Typed URL and same-college PG fixture authored. Execution/browser acceptance pending.
+
 **CORE/ELECTIVE lesson type PARTIAL (2026-10-15):** College Admin lessons can now be filtered by the registered offering CORE/ELECTIVE type before pagination, with stable URL and formula-neutralized CSV. Own-college positive/negative disposable-PG fixture authored; execution and responsive browser acceptance open.
 
 **Batch-code scoping PARTIAL (2026-10-15):** College Admin Lessons aggregate now supports exact persisted batch code filtering, including page state and the formula-safe CSV. Query is confined to same-college course and cohort ancestry; strict validation and a disposable-PG matching/nonmatching fixture authored. Runtime and browser acceptance open.

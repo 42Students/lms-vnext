@@ -106,6 +106,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.offeringStatus === "ALL" ? undefined : eq(courseOfferings.status, query.offeringStatus),
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
+      query.departmentCode?eq(departments.code,query.departmentCode):undefined,
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
