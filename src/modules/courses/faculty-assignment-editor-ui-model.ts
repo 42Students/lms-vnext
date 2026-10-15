@@ -41,3 +41,8 @@ export function facultyAssignmentCommandReceipt(
 export function facultyAssignmentMaySubmit(pending:boolean,locked:boolean){
  return !pending && !locked;
 }
+
+/** Any changed field voids the previously checked confirmation. */
+export function facultyAssignmentConfirmationOnEdit(confirmed:boolean,oldValue:unknown,nextValue:unknown){
+ return Object.is(oldValue,nextValue)?confirmed:false;
+}
