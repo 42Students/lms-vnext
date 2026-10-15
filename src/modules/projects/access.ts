@@ -16,6 +16,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import type { ProjectMemberRole } from "./constants";
+import {mayMutateProjectWithRole,type ProjectMemberRoleKind} from "./member-role-kind-model";
 import { ProjectsServiceError } from "./errors";
 import { loadProjectCollegeScope } from "./scope";
 import { projectInstanceIdSchema } from "./validation";
@@ -105,6 +106,8 @@ export async function requireProjectReadAccess(
       id: projectMembers.id,
       role: projectMembers.role,
       isPrimary: projectMembers.isPrimary,
+      roleKind: projectMembers.roleKind,
+      canMutate: projectMembers.canMutate,
     })
     .from(projectMembers)
     .innerJoin(collegeMemberships,
@@ -141,7 +144,11 @@ export async function requireProjectReadAccess(
   return {
     ...scope,
     member,
-    access: member.role,
+    access: member.role === "LEARNER" && member.roleKind === "LEARNER" && member.canMutate
+      ? "LEARNER" as const
+      : mayMutateProjectWithRole(member.roleKind as ProjectMemberRoleKind,member.canMutate) && member.role === "MENTOR"
+        ? "MENTOR" as const
+        : "OBSERVER" as const,
   };
 }
 

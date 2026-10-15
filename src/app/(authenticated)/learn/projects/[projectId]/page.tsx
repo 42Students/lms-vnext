@@ -107,6 +107,12 @@ export default async function LearnerProjectPage({
   return (
     <div className="space-y-6">
       <LearnerProjectTabs projectId={projectId} />
+      {activeSection === "overview" ? (
+        <Link href={"/learn/projects/" + encodeURIComponent(projectId) + "?tab=delivery"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Final delivery
+        </Link>
+      ) : null}
       {activeSection === "tasks" ? (
         <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} status={status} taskSort={taskSort} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
           shown={boardTasks.length} total={workspace.tasks.length} statusCounts={learnerBoardStatusCounts(workspace.tasks)} priorityCounts={learnerBoardPriorityCounts(workspace.tasks)} />

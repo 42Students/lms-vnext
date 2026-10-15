@@ -1561,3 +1561,54 @@ No entry here is a certified DONE tracker task without executed PostgreSQL, tena
 ## 2026-10-16 PR-S2-02 test migration (P5 lifecycle)
 
 P5 integration cases no longer cast forbidden DONE/IN_REVIEW writes. They assert the typed validation contract and progress through persisted Learner task submissions and Mentor approval. Last-release shipping keeps the project ACTIVE pending explicit approved closeout. DB fixture is authored but **not executed**. Commit: see branch history.
+
+## 2026-10-16 chat-11 Project file UI contract (SOURCE IMPLEMENTED; NOT EXECUTED)
+
+The Projects Resources tab UI adopts the registered project-resource-file endpoints and storage/ui-models presentation rules; grant URLs must be HTTPS, status READY is the only downloadable state, upload size is limited to 50 MiB, and client-supplied declarations match server policy. Source tests are authored, not executed. The protected storage module is unchanged.
+
+## 2026-10-16 chat-11 Project resource file tab — backend connected (PARTIAL)
+
+The registered, tenant-scoped Project Resource File service is now loaded in the existing Learner/Mentor/Admin Resources section without replacing legacy links/notes. Upload controls are hidden for learner, archived/completed projects and users lacking an owning membership; the backend independently enforces permission checks. The client handles signed grant -> exact-header XHR PUT -> complete, progress, retries, metadata editing, delete, and READY-only downloads. Signed grant URLs are never rendered or persisted. Manager error states show failed/quarantined/verifying via src/modules/storage/ui-models. Browser, a real R2 roundtrip, infection scanner readiness, mobile, role-negative, and PostgreSQL acceptance remain **UNRUN**; do not mark family DONE.
+
+## 2026-10-16 chat-11 — stale fixture migration and file UI handoff
+
+Four integration files (eight stale call sites) now use the actual Learner task submission and Mentor approval service flow instead of forbidden \`as never\` direct DONE/IN_REVIEW writes. P5 and P7A also expect ACTIVE after release shipment; explicit approved Mentor closeout owns COMPLETED. The Resources tab now offers the registered file API's presigned PUT workflow to eligible managers and a READY-only read/download projection to learners. File metadata edits, soft delete, progress, failed/blocked/verifying statuses and retry-complete controls are present. Tests for source contracts and fixture migration have been authored.
+
+**Not executed:** TypeScript/typecheck, ESLint, Vitest unit suites, P5/P6B/P7A/adversarial PostgreSQL integration tests, browser/mobile acceptance, upload PUT against an actual provider, scanner certification, complete retry race, tenant/member denial matrix, build. Any compiler/test defects must be resolved before merger certification. PR-S2-04 and PR-S2-07 still require remaining runtime parity; PR-S2-03/08/11 staged schema-dependent behavior cannot be considered complete solely on source files. No tracker task has been marked DONE.
+
+
+### PR-S2-03 registered schema enforcement — task submission (commit in branch history)
+
+With migration 0082 registered, task submission now enforces an exact persisted `assignee_membership_id` match **under the task lock**. Unassigned tasks and submissions from other learners fail closed. This must be paired with assignee selection in task creation/edit and corresponding integration fixture updates; no PostgreSQL acceptance is claimed.
+
+### PR-S2-03 0082 assignment write path
+
+The new mentor/admin PATCH task-assignee mutation validates an active same-project LEARNER membership and college under the project+task row locks, requires expectedUpdatedAt and rejects review-owned/finished tasks. Matching source tests added; PostgreSQL and user interaction remain open.
+
+### PR-S2-08 registered 0083 — enforced role-kind and mutation permission
+
+Project access resolves persisted role_kind and can_mutate, projecting observers/reviewers/QA as read-only even if their base role is MENTOR; project lifecycle mutation requires explicit writable MENTOR/CO_MENTOR status. College Admin add/update services now validate role kinds and prohibit read-only writes, including demoting an active primary. Project member list projects both fields. Test execution and PostgreSQL denial evidence outstanding.
+
+### PR-S2-11 0084 visibility: project link/note read and write enforcement
+
+`project_resources.visibility` is now a validated create/update field (TEAM or MENTOR_ONLY), defaulting to TEAM. The registered resource list and the separately implemented instance workspace read enforce visibility in SQL for every non-privileged role, including observer/reviewer/QA; only ADMIN and a writable MENTOR can see mentor-only resources. File endpoints require a separate check, and full read-path testing is pending.
+
+### PR-S2-11 0084: signed-file confidentiality (registered runtime)
+
+Learner/observer Project file lists exclude files linked to MENTOR_ONLY resources by SQL NOT EXISTS; direct signed download grants also load and verify the linked resource in the current project and deny a private or inactive resource with a non-leaking STORAGE_NOT_FOUND. Unlinked project uploads keep their existing team-visible behavior. Real DB tenant/leak tests and complete alternative file routes require execution before certifying closure.
+
+### PR-S2-03 Mentor/Admin assignee picker (source delivered)
+
+The task board now has the legacy Assignee picker limited to the current project Learner roster and a version-checked assignment PATCH. Integration helper explicitly assigns before submission. Earlier isolated tests that submit without an assignee may need dedicated fixture updates. Real DB/role-negative/browser tests remain unrun.
+
+### PR-S2-04 task extras — PROPOSED / NOT DONE
+
+Prepared migration proposal for blocker_reason, due_date, estimate_points, task_type, scoped comment history and composite (project_id,id) FK; source-only validators and tests are ready. None of this is registered in 0082–0084; write endpoints, comment access filtering, UI and executed PG acceptance must follow migration review. Do not infer task fields or comments work from this staged proposal.
+
+### PR-S2-07 final delivery lock/reopen/attachments — PROPOSED / NOT DONE
+
+Safe immutable lock/reopen history and attachments require additional registered persistence. Proposed project_submissions fields, composite project/submission FK and delivery event table under docs/proposed-migrations; built standalone validation and guard models with tests. No endpoint is wired and the existing APPROVED review is not rewritten or silently reopened. Orchestrator must register schema, add atomic gate to draft creation and implement secure attachment verification before marking done.
+
+### Legacy Projects wording and one-strip audit — partial
+
+Compared Mentor and Learner Project tabs with exact legacy-copy-A labels, and College/Admin project strips with legacy-copy-A/B. Learner section tabs now exclude the non-legacy Final Delivery tab while retaining a separately reachable Final delivery action. Mentor Task Allocation no longer claims the now-registered assignee column is unavailable. College workspace route uses exactly the workspace section strip; Mentor/Learner pages only render their account section strip. Source-level label tests added; full modal/button/page text and browser visual audit remain outstanding.
