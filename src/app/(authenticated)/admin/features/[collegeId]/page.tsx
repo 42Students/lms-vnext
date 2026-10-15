@@ -139,6 +139,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </div>
       </section>
 
+      <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        View audited college module changes →
+      </Link>
       <section className="grid gap-3 md:grid-cols-3">
         {modules.map((decision) => (
           <article
