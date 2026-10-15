@@ -1,5 +1,5 @@
 import {announcementAdminListSchema} from "./validation";
-const keys=new Set(["includeDeleted","beforeCreatedAt","beforeId","limit","q","receiverType","visibility"]);
+const keys=new Set(["includeDeleted","beforeCreatedAt","beforeId","limit","q","receiverType","visibility","pinned"]);
 export function parseAnnouncementAdminApiQuery(params:URLSearchParams){
  const values:Record<string,string>={};
  for(const [key,value] of params){
@@ -11,6 +11,7 @@ export function parseAnnouncementAdminApiQuery(params:URLSearchParams){
   q:values.q?.trim()||undefined,
   receiverType:values.receiverType||undefined,
   visibility:values.visibility||undefined,
+  pinned:values.pinned||undefined,
   beforeCreatedAt:values.beforeCreatedAt||undefined,
   beforeId:values.beforeId||undefined,
   limit:values.limit||undefined,

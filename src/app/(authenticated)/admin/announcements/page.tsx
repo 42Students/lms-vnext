@@ -58,6 +58,7 @@ export default async function AnnouncementsPage({
       q: params.q,
       receiverType: params.receiverType,
       visibility: params.visibility,
+      pinned: params.pinned,
       beforeCreatedAt: params.beforeCreatedAt,
       beforeId: params.beforeId,
       limit: 50,
@@ -100,6 +101,7 @@ export default async function AnnouncementsPage({
         ...(params.q ? { q: params.q } : {}),
         ...(params.receiverType ? {receiverType:params.receiverType} : {}),
         ...(params.visibility ? {visibility:params.visibility} : {}),
+        ...(params.pinned ? {pinned:params.pinned} : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -113,7 +115,7 @@ export default async function AnnouncementsPage({
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
           <Link
-            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}) }).toString()}
+            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}) }).toString()}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
@@ -129,6 +131,11 @@ export default async function AnnouncementsPage({
             <option value="SCHEDULED">Scheduled</option>
             <option value="EXPIRED">Expired</option>
             <option value="DELETED">Deleted only</option>
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-body">Pinned
+          <select name="pinned" defaultValue={params.pinned ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All notices</option><option value="PINNED">Pinned only</option><option value="UNPINNED">Not pinned</option>
           </select>
         </label>
         <label className="text-sm font-semibold text-body">Audience type
@@ -148,6 +155,7 @@ export default async function AnnouncementsPage({
         ...(params.q ? {q:params.q} : {}),
         ...(params.receiverType ? {receiverType:params.receiverType} : {}),
         ...(params.visibility ? {visibility:params.visibility} : {}),
+        ...(params.pinned ? {pinned:params.pinned} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
       }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this filtered page (CSV)</Link>

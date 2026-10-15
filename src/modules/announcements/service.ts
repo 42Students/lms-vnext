@@ -194,6 +194,7 @@ export async function listAnnouncementsForAdmin(context: RequestContext, raw: un
     conditions.push(isNull(db10Announcements.deletedAt));
   }
   if (input.receiverType) conditions.push(eq(db10Announcements.receiverType, input.receiverType));
+  if (input.pinned) conditions.push(eq(db10Announcements.isPinned, input.pinned === "PINNED"));
   if (input.q) {
     const term = input.q.toLowerCase();
     conditions.push(or(

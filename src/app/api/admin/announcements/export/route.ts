@@ -22,7 +22,7 @@ export async function GET(request:Request){
    return Response.json({error:"FORBIDDEN"},{status:403,headers:noStore});
   const page=await listAnnouncementsForAdmin(context,{
    includeDeleted:input.deleted==="1",
-   q:input.q,receiverType:input.receiverType,visibility:input.visibility,
+   q:input.q,receiverType:input.receiverType,visibility:input.visibility,pinned:input.pinned,
    beforeCreatedAt:input.beforeCreatedAt,beforeId:input.beforeId,limit:50,
   });
   return new Response(announcementHistoryCsv(page.items,Date.now()),{headers:{

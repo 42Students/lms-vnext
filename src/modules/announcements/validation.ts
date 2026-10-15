@@ -62,6 +62,7 @@ export const announcementAdminListSchema = z.object({
   q: z.string().trim().min(1).max(120).optional(),
   receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES).optional(),
   visibility: z.enum(["LIVE","SCHEDULED","EXPIRED","DELETED"]).optional(),
+  pinned: z.enum(["PINNED","UNPINNED"]).optional(),
   includeDeleted: booleanQuery.default(false),
   limit: z.coerce.number().int().min(1).max(ANNOUNCEMENT_LIMITS.maximumPageSize).default(ANNOUNCEMENT_LIMITS.defaultPageSize),
   beforeCreatedAt: instant.optional(),
