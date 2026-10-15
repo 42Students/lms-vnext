@@ -11,7 +11,6 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("Super Admin scoped college feat
   const valid=await getSuperAdminCollegeFeatureSnapshot(admin,SEED_IDS.collegeA);
   expect(valid?.rules).toHaveLength(3);
   expect(JSON.stringify(valid)).not.toContain("email");
-  const foreign=await getSuperAdminCollegeFeatureSnapshot({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}},SEED_IDS.collegeA);
-  expect(foreign).toBeNull();
+  await expect(getSuperAdminCollegeFeatureSnapshot({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}},SEED_IDS.collegeA)).rejects.toBeDefined();
  });
 });

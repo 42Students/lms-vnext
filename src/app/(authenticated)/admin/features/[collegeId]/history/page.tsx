@@ -16,7 +16,7 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
  return <div className="space-y-6">
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← College module access</Link>
   <PageHeader eyebrow="Super Admin · Feature Controls" title="College policy change history" description={"Latest audited Projects, Placements and Electives policy edits for "+result.college.name+"."}/>
-  <Link href={collegePolicyHistoryHref(collegeId,result.nextCursor).replace("/history","/history/export")}
+  <Link href={collegePolicyHistoryHref(collegeId,cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null).replace("/history","/history/export")}
     className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
     Export this audited page (CSV)
   </Link>
