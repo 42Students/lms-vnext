@@ -140,7 +140,17 @@ export default async function SuperAdminSettingsPage() {
           </div>
 
           {section.smsTemplates ? (
-            <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+            <>
+            <div className="grid min-w-0 gap-3 lg:hidden" aria-label="SMS source template cards">
+              {section.smsTemplates.map(template=><article key={template.key} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+                <h3 className="break-all text-sm font-semibold">{template.key}</h3>
+                <p className="mt-2 text-sm text-body">{template.purpose}</p>
+                <p className="mt-2 break-words text-xs text-body">Channels: {template.channels.join(", ")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{template.definition==="FIXED_OTP_SOURCE"?"Fixed OTP source template":"Declared intent key; no active sender implied"}</p>
+                <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{template.source}</p>
+              </article>)}
+            </div>
+            <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
               <table className="w-full min-w-[48rem] border-collapse text-left text-sm">
                 <thead className="bg-surface-subtle">
                   <tr>
@@ -190,6 +200,7 @@ export default async function SuperAdminSettingsPage() {
                 </tbody>
               </table>
             </div>
+            </>
           ) : null}
 
           {section.note ? (
