@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -33,6 +33,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [pending,setPending]=useState(false);
  const [detailsFailed,setDetailsFailed]=useState(false);
  const [error,setError]=useState<string|null>(null);
+ const review=facultyQuizDraftReview(questions);
  const availableQuizzes=[...localQuizzes,...quizzes.filter(q=>!localQuizzes.some(local=>local.id===q.id))]
   .filter(q=>q.status!=="ARCHIVED");
  const chosen=availableQuizzes.find(q=>q.id===selected);
@@ -221,6 +222,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <button type="button" disabled={!editable||questions.length>=100}
    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyAppendQuizQuestion(old,{...fresh(),sequence:old.length}));}}
    className="rounded border border-border px-4 py-2 text-sm">Add question</button>
+  <div role="status" aria-live="polite" className="space-y-1 rounded-lg border border-border bg-background p-3 text-sm">
+   <p className="font-semibold">Draft review: {review.questionCount} questions · {review.optionCount} options · {review.totalPoints} total points</p>
+   <p>{review.missingCorrect===0?"Every question has a correct answer selected.":review.missingCorrect+" question(s) need a correct answer."}</p>
+   <p className="text-xs text-muted-foreground">Review these draft values before saving or publishing.</p>
+  </div>
   <label className="flex gap-2 text-sm"><input type="checkbox" checked={confirmed}
    onChange={e=>setConfirmed(e.target.checked)}/>
    I confirm these choices, point totals and the current draft state.
