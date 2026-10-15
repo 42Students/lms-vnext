@@ -29,11 +29,14 @@ export async function listHrDriveProposals(context:RequestContext,raw:unknown={}
    items:[],total:0,page:1,pages:1,limited:false};
  // Recheck persisted ownership and grant with the canonical message reader.
  await readRecruiterThreadMessages(context,thread.id,1);
+ const titleFilter=query.q?sql<boolean>`position(${query.q.toLowerCase()}::text
+  in lower(split_part(${placementTpoMessages.body}, E'\\n', 3)))>0`:undefined;
  const where=and(
   eq(placementTpoMessages.threadId,thread.id),
   eq(placementTpoMessages.senderType,"RECRUITER"),
   eq(placementTpoMessages.senderUserId,context.user.id),
   like(placementTpoMessages.body,"Drive proposal for placement cell discussion — NOT a submitted approval request%"),
+  titleFilter,
  );
  const [count]=await getDb().select({total:sql<number>`count(*)::integer`})
   .from(placementTpoMessages).where(where);
