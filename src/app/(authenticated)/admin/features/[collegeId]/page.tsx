@@ -24,6 +24,7 @@ type SearchParams = {
   module?: string | string[];
   scope?: string | string[];
   locks?: string | string[];
+  storedState?: string | string[];
 };
 
 function one(
@@ -48,7 +49,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
   }
 
   const query = await searchParams;
-  if (Array.isArray(query.module) || Array.isArray(query.scope) || Array.isArray(query.locks)) notFound();
+  if (Array.isArray(query.module) || Array.isArray(query.scope) || Array.isArray(query.locks) || Array.isArray(query.storedState)) notFound();
   const context = await getCurrentRequestContext();
 
   const result = await getSuperAdminCollegeModuleAccess(
@@ -59,6 +60,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       module: one(query.module) || undefined,
       scope: one(query.scope) || undefined,
       locks: one(query.locks) || undefined,
+      storedState: one(query.storedState) || undefined,
     },
   );
 
@@ -92,6 +94,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
     if (result.moduleFilter) parts.set("module", result.moduleFilter);
     if (result.scopeFilter) parts.set("scope", result.scopeFilter);
     if (result.lockFilter === "LOCKED") parts.set("locks", "LOCKED");
+    if (result.stateFilter !== "ALL") parts.set("storedState", result.stateFilter);
     if (page > 1) parts.set("page", String(page));
     return base + (parts.size ? "?" + parts.toString() : "");
   };
@@ -190,6 +193,11 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Lock state
           <select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Stored value
+          <select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
           </select>
         </label>
         <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter overrides</button>

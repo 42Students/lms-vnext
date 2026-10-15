@@ -905,3 +905,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: stored On/Off student-override filter — PARTIAL.** Active college learner search now narrows membership-stored enabled/disabled values (and existing locked/module filter) through typed query + persisted SQL `exists`, with page deep-links retaining the selection. This is *stored* state, not necessarily effective access where an ancestor lock wins. Tests authored, not executed; editable controls/browser parity open.
+
+
+**2026-10-15 chat-6: stored-value hierarchy filter — PARTIAL.** Read-only Super Admin module hierarchy now filters persisted On/Off rules together with module, academic level and lock state, applying exactly the same SQL predicates to page/count and preserving them in pagination. The existing resolver still determines effective learner access; tests authored, not run.

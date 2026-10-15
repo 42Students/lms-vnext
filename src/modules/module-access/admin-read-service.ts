@@ -57,6 +57,7 @@ const detailQuerySchema = z.object({
   module: adminModuleOverrideFilterSchema,
   scope: z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"]).optional(),
   locks: z.enum(["ALL","LOCKED"]).default("ALL"),
+  storedState: z.enum(["ALL","ON","OFF"]).default("ALL"),
   page: z.coerce
     .number()
     .int()
@@ -452,14 +453,13 @@ export async function getSuperAdminCollegeModuleAccess(
 
   const descendantSql =
     scopedDescendantRules(college.id);
-  const baseDescendantFilter = query.module && query.scope
-    ? sql`where module = ${query.module}::text and scope_type = ${query.scope}::text`
-    : query.module ? sql`where module = ${query.module}::text`
-    : query.scope ? sql`where scope_type = ${query.scope}::text` : sql``;
 
-  const descendantFilter = query.locks === "LOCKED"
-    ? sql`${baseDescendantFilter} ${query.module || query.scope ? sql`and` : sql`where`} locked = true`
-    : baseDescendantFilter;
+  const combinedConditions:SQL[]=[];
+  if(query.module) combinedConditions.push(sql`module = ${query.module}::text`);
+  if(query.scope) combinedConditions.push(sql`scope_type = ${query.scope}::text`);
+  if(query.locks === "LOCKED") combinedConditions.push(sql`locked = true`);
+  if(query.storedState !== "ALL") combinedConditions.push(sql`enabled = ${query.storedState === "ON"}`);
+  const descendantFilter = combinedConditions.length ? sql`where ${sql.join(combinedConditions,sql` and `)}` : sql``;
   const [countResult, overrideResult] =
     await Promise.all([
       db.execute<OverrideCountRow>(sql`
@@ -529,6 +529,7 @@ export async function getSuperAdminCollegeModuleAccess(
     moduleFilter: query.module ?? null,
     scopeFilter: query.scope ?? null,
     lockFilter: query.locks,
+    stateFilter: query.storedState,
     pageSize: OVERRIDE_PAGE_SIZE,
     total,
     totalPages: Math.max(
