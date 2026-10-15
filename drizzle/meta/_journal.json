@@ -484,6 +484,13 @@
       "when": 1792054900425,
       "tag": "0068_inbound_mail_messages",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1792054916993,
+      "tag": "0069_platform_broadcasts",
+      "breakpoints": true
     }
   ]
 }
