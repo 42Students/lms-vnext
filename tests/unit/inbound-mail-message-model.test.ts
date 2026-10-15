@@ -8,4 +8,9 @@ describe("inbound mail search",()=>{
  it("normalizes previews without control characters",()=>{
  expect(safeInboundPreview("Hi\n there")).toBe("Hi there");
  });
+ it("validates exact recipient mailbox search and denies duplicate or invalid values",()=>{
+  expect(inboundMailListQuerySchema.parse({recipient:" INFO@EXAMPLE.EDU "}).recipient).toBe("info@example.edu");
+  expect(inboundMailListQuerySchema.safeParse({recipient:["a@example.edu","b@example.edu"]}).success).toBe(false);
+  expect(inboundMailListQuerySchema.safeParse({recipient:"*%other"}).success).toBe(false);
+ });
 });
