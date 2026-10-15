@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-review-history-model";
 import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
 
-type Search = { version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
+type Search = { order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -22,6 +22,7 @@ export default async function MentorReviewHistoryPage({
     decision:first(raw.decision) ?? undefined, search:first(raw.search) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
     version:first(raw.version) ?? undefined,
+    order:first(raw.order) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
@@ -58,6 +59,11 @@ export default async function MentorReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Delivery submission version
           <input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-10 w-36 rounded-md border border-border bg-background px-3"/>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
+          <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
+          </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
         <Link href="/mentor/review-history" className="text-sm text-primary-text underline">Clear</Link>

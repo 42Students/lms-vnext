@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectSubmissionReviews, projectSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -76,7 +76,8 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
       eq(projectSubmissions.id,projectSubmissionReviews.submissionId),
       eq(projectSubmissions.projectId,projectSubmissionReviews.projectId),
     )).where(filter)
-    .orderBy(desc(projectSubmissionReviews.reviewedAt),desc(projectSubmissionReviews.id))
+    .orderBy(query.order==="OLDEST"?asc(projectSubmissionReviews.reviewedAt):desc(projectSubmissionReviews.reviewedAt),
+      query.order==="OLDEST"?asc(projectSubmissionReviews.id):desc(projectSubmissionReviews.id))
     .limit(pagination.pageSize)
     .offset((pagination.page-1)*pagination.pageSize);
   return {enabled:true as const,query,projects,...pagination,items};
