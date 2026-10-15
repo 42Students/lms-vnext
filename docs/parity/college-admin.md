@@ -146,6 +146,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Maximum configured credit filter PARTIAL (2026-10-15):** The semesters directory and CSV now support inclusive upper credit bounds, with invalid minimum/maximum combinations rejected. Scoped PostgreSQL fixture and URL/model tests added; execution and browser/mobile acceptance remain open.
+
 **Persisted minimum-credit filter PARTIAL (2026-10-15):** Semester directory and CSV now filter actual configured totalCredits inclusively before pagination, excluding unconfigured/null totals rather than inferring credits. Blank inputs are not coerced to zero. Unit and triggered-progression-safe PG fixture authored; execution/browser evidence open.
 
 **Capped semester CSV PARTIAL (2026-10-15):** Filtered, college-authorized program terms export through a GET-only endpoint with 1,000-row limit, spreadsheet formula neutralization and explicit truncation headers/footer. Uses existing tenant-scoped pagination and a disposable-PostgreSQL tenant/role fixture; executed PG/browser and exact legacy column acceptance remain outstanding.

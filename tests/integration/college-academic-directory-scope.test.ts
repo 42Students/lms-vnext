@@ -167,6 +167,12 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     ]);
     expect(min18.items.map(r=>r.id)).toContain(ids.term);
     expect(min19.items).toEqual([]);
+    const [max18,max17]=await Promise.all([
+      listCollegeSemesters(adminA,{q:label,maximumCredits:18}),
+      listCollegeSemesters(adminA,{q:label,maximumCredits:17}),
+    ]);
+    expect(max18.items.map(r=>r.id)).toContain(ids.term);
+    expect(max17.items).toEqual([]);
     expect(semestersB.items).toEqual([]);
     const [year2026, year2027] = await Promise.all([
       listCollegeBatches(adminA, { q: label, yearStart: 2026 }),
