@@ -2,7 +2,8 @@ import {it,expect} from "vitest";
 import {facultyFollowUpPageCsv,facultyFollowUpCsvHref} from "@/modules/courses/faculty-followup-export";
 import {facultyResponseFollowUpQuerySchema} from "@/modules/courses/faculty-response-followup-model";
 it("produces only bounded Section-scoped count rows and escapes spreadsheet formulae",()=>{
- const csv=facultyFollowUpPageCsv([{kind:"QUIZ",title:"=1+1",courseName:"Computing",sectionName:"A",dueAt:new Date("2026-10-01"),missingCount:4,hiddenCount:1,missingPreview:[{displayName:"Private Student",rollNumber:"ABC"}]}]);
+ const row={kind:"QUIZ",title:"=1+1",courseName:"Computing",sectionName:"A",dueAt:new Date("2026-10-01"),missingCount:4,hiddenCount:1,missingPreview:[{displayName:"Private Student",rollNumber:"ABC"}]};
+ const csv=facultyFollowUpPageCsv([row]);
  expect(csv).toContain("'=1+1");
  expect(csv).toContain("4");
  expect(csv).not.toContain("Private Student");
