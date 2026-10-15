@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, eq, ilike, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, placementCompanies, placementCompanyRelationships } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -57,7 +57,9 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
     .where(filters.length ? and(...filters) : undefined)
-    .orderBy(asc(placementCompanies.name), asc(colleges.name), asc(placementCompanyRelationships.id))
+    .orderBy(...(query.sort === "RECENT"
+      ? [desc(placementCompanyRelationships.updatedAt),asc(placementCompanyRelationships.id)]
+      : [asc(placementCompanies.name),asc(colleges.name),asc(placementCompanyRelationships.id)]))
     .limit(50).offset((query.page-1)*50),
   ]);
   const total=totalRows[0]?.total ?? 0;
