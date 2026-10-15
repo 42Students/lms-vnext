@@ -1,4 +1,5 @@
 import {verificationQueueFilters} from "./queue-filters";
+import {verificationSubmissionWindowValid} from "./queue-waiting-since";
 export function parseCollegeVerificationPageQuery(raw:Record<string,string|string[]|undefined>){
  const query:Record<string,string>={};
  for(const [key,value] of Object.entries(raw)){
@@ -6,6 +7,6 @@ export function parseCollegeVerificationPageQuery(raw:Record<string,string|strin
   if(value!==undefined&&value!=="")query[key]=value;
  }
  const parsed=verificationQueueFilters.safeParse(query);
- if(!parsed.success)return {success:false as const};
+ if(!parsed.success||!verificationSubmissionWindowValid(parsed.data))return {success:false as const};
  return {success:true as const,data:parsed.data};
 }

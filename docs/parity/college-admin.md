@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**IST lower submission-date filter PARTIAL (chat-9):** Staff queue and capped CSV now support a matching inclusive Asia/Kolkata submitted-from date, with reversed date windows rejected before querying. Bounded URL contract, form feedback and pure date-boundary tests authored; real PostgreSQL/browser verification pending.
+
 **No hidden-row bulk selection PARTIAL (chat-9):** College verification now disables the shared page-local search input while keeping the authorized server-side learner-name filter and status/kind selectors. Consequently select-all and preview address exactly the displayed college-scoped server page; Super Admin and any other consumers retain their existing local-search behavior. Contract tests authored; browser/CI acceptance pending.
 
 **Bulk decision PostgreSQL success+failure fixture PARTIAL (chat-9):** A separate current-college verification fixture is now authored to assert a successful SEND_BACK row-version transition, exactly one activity event, recipient in-app notification, non-leaking foreign-college failure and stale replay without duplicate decision. The same batch includes a JSX duplicate-markup repair caught in source review. Fixture is gated on disposable registered DB04 and has not run here.
