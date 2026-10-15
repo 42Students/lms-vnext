@@ -549,6 +549,8 @@ export const placementEligibilityPolicyInputSchema = z
       .transform((values) => [...new Set(values)])
       .optional()
       .default([]),
+    allowedSectionIds: z.array(z.string().uuid()).max(100)
+      .transform(values => [...new Set(values)]).optional().default([]),
     minCgpa: cgpaSchema.nullable().optional().default(null),
     maxActiveBacklogs: z
       .number()
@@ -582,6 +584,8 @@ export const placementEligibilityPolicyInputSchema = z
       .nullable()
       .optional()
       .default(null),
+    minPctThroughout: percentageSchema
+      .nullable().optional().default(null),
     maxGapYears: z
       .number()
       .int()
@@ -596,6 +600,7 @@ export const placementEligibilityPolicyInputSchema = z
       .transform((values) => [...new Set(values)])
       .optional()
       .default([]),
+    requireVerifiedEvidence: z.boolean().optional().default(false),
     missingEvidencePolicy: z
       .enum(placementMissingEvidencePolicies)
       .optional()

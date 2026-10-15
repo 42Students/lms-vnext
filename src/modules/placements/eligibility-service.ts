@@ -16,6 +16,8 @@ import {
   placementJobEligibilityPolicies,
   placementJobs,
   programs,
+  sections,
+  sectionEnrollments,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -48,6 +50,7 @@ async function validateEligibilityAcademicScope(
   collegeId: string,
   allowedProgramIds: readonly string[],
   allowedCohortIds: readonly string[],
+  allowedSectionIds: readonly string[],
 ) {
   if (allowedProgramIds.length > 0) {
     const rows = await tx
@@ -98,6 +101,22 @@ async function validateEligibilityAcademicScope(
       throw new PlacementsServiceError(
         "PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH",
       );
+    }
+  }
+  if (allowedSectionIds.length) {
+    const rows = await tx.select({ id: sections.id }).from(sections)
+      .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(and(
+        inArray(sections.id, [...allowedSectionIds]),
+        eq(departments.collegeId, collegeId),
+        isNull(departments.archivedAt),
+        eq(sections.status, "ACTIVE"),
+        eq(programs.status, "ACTIVE"),
+      )).for("share");
+    if (rows.length !== new Set(allowedSectionIds).size) {
+      throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH");
     }
   }
 }
@@ -509,6 +528,7 @@ export async function getJobEligibilityPolicy(
       jobId,
       allowedProgramIds: [] as string[],
       allowedCohortIds: [] as string[],
+      allowedSectionIds: [] as string[],
       minCgpa: null as number | null,
       maxActiveBacklogs: null as number | null,
       maxPastBacklogs: null as number | null,
@@ -517,10 +537,12 @@ export async function getJobEligibilityPolicy(
       minDiplomaPercentage: null as number | null,
       minUndergraduatePercentage:
         null as number | null,
+      minPctThroughout: null as number | null,
       maxGapYears: null as number | null,
       allowedPassingYears: [] as number[],
       missingEvidencePolicy:
         "ALLOW_WITH_FLAG" as const,
+      requireVerifiedEvidence: false,
       updatedAt: null as Date | null,
     };
   }
@@ -531,6 +553,7 @@ export async function getJobEligibilityPolicy(
       policy.allowedProgramIds,
     allowedCohortIds:
       policy.allowedCohortIds,
+    allowedSectionIds: policy.allowedSectionIds,
     minCgpa: unscaleHundredths(
       policy.minCgpaHundredths,
     ),
@@ -554,11 +577,13 @@ export async function getJobEligibilityPolicy(
       unscaleHundredths(
         policy.minUndergraduatePctBasisPoints,
       ),
+    minPctThroughout: unscaleHundredths(policy.minPctThroughoutBasisPoints),
     maxGapYears: policy.maxGapYears,
     allowedPassingYears:
       policy.allowedPassingYears,
     missingEvidencePolicy:
       policy.missingEvidencePolicy,
+    requireVerifiedEvidence: policy.requireVerifiedEvidence,
     updatedAt: policy.updatedAt,
   };
 }
@@ -587,6 +612,7 @@ export async function upsertJobEligibilityPolicy(
   const values = {
     allowedProgramIds: input.allowedProgramIds,
     allowedCohortIds: input.allowedCohortIds,
+    allowedSectionIds: input.allowedSectionIds,
     minCgpaHundredths: scaleHundredths(
       input.minCgpa,
     ),
@@ -605,10 +631,12 @@ export async function upsertJobEligibilityPolicy(
       scaleHundredths(
         input.minUndergraduatePercentage,
       ),
+    minPctThroughoutBasisPoints: scaleHundredths(input.minPctThroughout),
     maxGapYears: input.maxGapYears,
     allowedPassingYears: input.allowedPassingYears,
     missingEvidencePolicy:
       input.missingEvidencePolicy,
+    requireVerifiedEvidence: input.requireVerifiedEvidence,
     updatedByUserId: context.user.id,
   };
   const db = getDb();
@@ -627,6 +655,7 @@ export async function upsertJobEligibilityPolicy(
       liveJob.collegeId,
       input.allowedProgramIds,
       input.allowedCohortIds,
+      input.allowedSectionIds,
     );
     const [row] = await tx
       .insert(placementJobEligibilityPolicies)
@@ -841,8 +870,7 @@ export function placementPercentageThroughout(input: {
 
 /**
  * P-S2-01: SOURCE=SELF is never acceptable as verified evidence. This
- * evaluator remains a pure policy contract until a registered per-job
- * require_verified_evidence flag is available.
+ * the verified-only flag is persisted in migration 0089.
  */
 export function evaluatePlacementEvidenceVerification(
   source: "SELF" | "VERIFIED" | null,
@@ -994,6 +1022,34 @@ export async function evaluatePlacementEligibility(
     };
   }
 
+  // P-S2-04: the real migrated section whitelist is an authorization gate,
+  // not an optional evidence warning. INCLUDE cannot override it.
+  if (policy?.allowedSectionIds.length) {
+    const activeSections = enrollment ? await db.select({id: sections.id})
+      .from(sectionEnrollments)
+      .innerJoin(sections, eq(sections.id, sectionEnrollments.sectionId))
+      .where(and(
+        eq(sectionEnrollments.learnerEnrollmentId, enrollment.id),
+        eq(sectionEnrollments.status, "ACTIVE"),
+        eq(sections.status, "ACTIVE"),
+        eq(sections.cohortId, enrollment.cohortId),
+      )) : [];
+    if (!isPlacementJobTargetSection(policy.allowedSectionIds,
+      activeSections.map(row => row.id))) {
+      return { status: "INELIGIBLE", checks: [{
+        criterion: "Cohort", status: "FAIL", actual: null,
+        required: "Eligible cohort", detail: "Cohort is not eligible",
+      }], override: null };
+    }
+  }
+
+  // P-S2-01: SELF academic evidence must never satisfy a verified-only
+  // job. Evaluate this before per-learner INCLUDE overrides.
+  if (policy?.requireVerifiedEvidence &&
+      evaluatePlacementEvidenceVerification((evidence?.source as "SELF" | "VERIFIED" | null | undefined) ?? null, true) !== "PASS") {
+    return { status: "NEEDS_DATA", checks: [], override: null };
+  }
+
   if (override) {
     return {
       status:
@@ -1138,6 +1194,19 @@ export async function evaluatePlacementEligibility(
       policy.minUndergraduatePctBasisPoints,
       "MIN",
       100,
+    );
+  }
+  if (policy.minPctThroughoutBasisPoints !== null) {
+    numericCheck(
+      checks, "Percentage throughout",
+      placementPercentageThroughout({
+        tenthPctBasisPoints: evidence?.tenthPctBasisPoints ?? null,
+        twelfthPctBasisPoints: evidence?.twelfthPctBasisPoints ?? null,
+        diplomaPctBasisPoints: evidence?.diplomaPctBasisPoints ?? null,
+        undergraduatePctBasisPoints: evidence?.undergraduatePctBasisPoints ?? null,
+        isLateralEntry: evidence?.isLateralEntry ?? null,
+      }),
+      policy.minPctThroughoutBasisPoints, "MIN", 100,
     );
   }
   if (policy.maxGapYears !== null) {
