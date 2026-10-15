@@ -24,6 +24,6 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
   {saved?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">
    External drive record saved. It was not published as a job.
   </p>:null}
-  <RecordedOutsideForm collegeId={collegeId} choices={result.choices} registered={result.status==="READY"}/>
+  <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
  </main>;
 }

@@ -9,6 +9,7 @@ import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
 import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName} from "./hr-round-editor-model";
 import {z} from "zod";
+import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 
 export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw:unknown){
  const jobId=z.string().uuid().parse(rawJobId),input=hrRoundFormSchema.parse(raw);
@@ -73,8 +74,10 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
   if(!target)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
   const [result]=await tx.select({id:placementRoundResults.id})
    .from(placementRoundResults).where(eq(placementRoundResults.roundId,target.id)).limit(1);
+  const [attachedSlot]=await tx.select({id:hrInterviewSlots.id}).from(hrInterviewSlots)
+   .where(and(eq(hrInterviewSlots.roundId,target.id),eq(hrInterviewSlots.jobId,job.id))).limit(1);
   if(!canRecruiterEditRound({status:target.status,createdByUserId:target.createdByUserId,
-   recruiterUserId:context.user.id,hasResults:Boolean(result)}) ||
+   recruiterUserId:context.user.id,hasResults:Boolean(result),hasSlots:Boolean(attachedSlot)}) ||
    target.updatedAt.toISOString()!==input.expectedUpdatedAt)
    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
   if(input.name&&duplicateRecruiterRoundName(active,input.name,target.id))
@@ -110,7 +113,7 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
  const jobId=z.string().uuid().parse(jobIdInput);
  const {getRecruiterPlacementWorkspace}=await import("./recruiter-workspace-service");
  await getRecruiterPlacementWorkspace(context,jobId);
- const [rounds,used]=await Promise.all([
+ const [rounds,used,slots]=await Promise.all([
   getDb().select({
    id:placementJobRounds.id,kind:placementJobRounds.kind,name:placementJobRounds.name,
    mode:placementJobRounds.mode,status:placementJobRounds.status,
@@ -122,11 +125,14 @@ export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:un
   getDb().select({roundId:placementRoundResults.roundId})
    .from(placementRoundResults).innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundResults.roundId))
    .where(eq(placementJobRounds.jobId,jobId)).groupBy(placementRoundResults.roundId),
+  getDb().select({roundId:hrInterviewSlots.roundId}).from(hrInterviewSlots)
+   .where(eq(hrInterviewSlots.jobId,jobId)).groupBy(hrInterviewSlots.roundId),
  ]);
  const ids=new Set(used.map(row=>row.roundId));
+ const slotIds=new Set(slots.map(row=>row.roundId));
  return rounds.filter(row=>row.status!=="CANCELLED").map(row=>({
-  ...row,hasResults:ids.has(row.id),
+  ...row,hasResults:ids.has(row.id),hasSlots:slotIds.has(row.id),
   editable:canRecruiterEditRound({status:row.status,createdByUserId:row.createdByUserId,
-   recruiterUserId:context.user.id,hasResults:ids.has(row.id)}),
+   recruiterUserId:context.user.id,hasResults:ids.has(row.id),hasSlots:slotIds.has(row.id)}),
  }));
 }

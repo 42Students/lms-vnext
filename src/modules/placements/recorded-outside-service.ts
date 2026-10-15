@@ -10,7 +10,6 @@ import {can} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {placementOutsideDriveRecords} from "@/db/schema/placement-outside-drives";
 import {recordedOutsideDriveSchema} from "./recorded-outside-model";
-import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
 import {z} from "zod";
 
@@ -60,8 +59,6 @@ async function outsideActor(context:RequestContext,collegeId:string,relationship
 }
 export async function recordOutsideDrive(context:RequestContext,raw:unknown){
  const input=recordedOutsideDriveSchema.parse(raw);
- if(!await placementTableExists("placement_outside_drive_records"))
-  throw new Error("RECORDED_OUTSIDE_NOT_REGISTERED");
  const actor=await outsideActor(context,input.collegeId,input.companyRelationshipId);
  if(actor.role==="RECRUITER"&&!can(context,"placements.recruiter.outside.record",{
   collegeId:actor.relationship.collegeId,
@@ -116,15 +113,13 @@ export async function recordedOutsideChoices(context:RequestContext,rawCollegeId
   try{await outsideActor(context,collegeId,row.id);authorized.push(row);}
   catch(error){if(!(error instanceof PlacementsServiceError))throw error;}
  }
- return {status:await placementTableExists("placement_outside_drive_records")?"READY" as const:"NOT_REGISTERED" as const,
-  choices:authorized};
+ return {status:"READY" as const,choices:authorized};
 }
 
 /** A URL parameter is not evidence a record was saved. Verify against DB. */
 export async function verifyRecordedOutsideConfirmation(context:RequestContext,collegeId:string,rawId:unknown){
  const parsed=z.string().uuid().safeParse(rawId);
- if(!parsed.success||!await placementTableExists("placement_outside_drive_records"))
-  return false;
+ if(!parsed.success)return false;
  const [record]=await getDb().select({
   id:placementOutsideDriveRecords.id,companyRelationshipId:placementOutsideDriveRecords.companyRelationshipId,
  }).from(placementOutsideDriveRecords).where(and(
