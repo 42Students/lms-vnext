@@ -5,6 +5,7 @@ import {
   eq,
   inArray,
   isNull,
+  like,
   ne,
   sql,
 } from "drizzle-orm";
@@ -28,6 +29,7 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import {hrConversationDetailPageWindow} from "./hr-conversation-detail-pagination-model";
+import {formatHrDriveProposal,hrDriveProposalSchema} from "./hr-drive-proposal-model";
 
 const collegeIdSchema = z.string().uuid();
 const userIdSchema = z.string().uuid();
@@ -578,6 +580,7 @@ export async function sendRecruiterThreadMessage(
      threadId:thread.id,senderType:"RECRUITER",senderUserId:context.user.id,
      body,createdAt:now,
    }).returning({id:placementTpoMessages.id});
+   if(!message)throw new Error("RECRUITER_MESSAGE_PERSISTENCE_FAILED");
    await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
     .where(eq(placementTpoMessageThreads.id,thread.id));
    return {id:message.id,threadId:thread.id};
@@ -702,5 +705,53 @@ export async function acknowledgeRecruiterThreads(context:RequestContext,rawIds:
     isNull(placementTpoMessages.readAt),
    )).returning({id:placementTpoMessages.id});
   return {threads:threads.length,acknowledged:changed.length};
+ });
+}
+
+/**
+ * Persists a recruiter-authored proposal in a private placement-cell conversation.
+ * This does NOT create or approve a placement drive or a structured approval request.
+ * Repeated submissionId is replay-safe within the same recruiter/college thread.
+ */
+export async function sendRecruiterDriveProposal(context:RequestContext,raw:unknown){
+ const input=hrDriveProposalSchema.parse(raw);
+ const body=formatHrDriveProposal(input);
+ if(context.recruiter?.status!=="ACTIVE" || context.recruiter.userId!==context.user.id)
+  throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx=>{
+  const grant=await loadActiveRecruiterGrant(tx,context.user.id,input.collegeId,true);
+  if(!grant)throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+  if(input.sourceJobId)await assertJobForThread(
+   tx,input.collegeId,input.sourceJobId,grant.companyRelationshipId,true,
+  );
+  const thread=await getOrCreateThread(tx,input.collegeId,context.user.id,null);
+  // Serializes retries (including concurrent tabs) against this exact thread.
+  const [locked]=await tx.select({id:placementTpoMessageThreads.id})
+   .from(placementTpoMessageThreads)
+   .where(eq(placementTpoMessageThreads.id,thread.id)).for("update").limit(1);
+  if(!locked)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  const prefix="Drive proposal for placement cell discussion — NOT a submitted approval request\n"+
+   "Proposal reference: "+input.submissionId+"\n";
+  const [existing]=await tx.select({
+   id:placementTpoMessages.id,body:placementTpoMessages.body,
+  }).from(placementTpoMessages).where(and(
+   eq(placementTpoMessages.threadId,thread.id),
+   eq(placementTpoMessages.senderType,"RECRUITER"),
+   eq(placementTpoMessages.senderUserId,context.user.id),
+   like(placementTpoMessages.body,prefix+"%"),
+  )).limit(1);
+  if(existing){
+   if(existing.body!==body)throw new Error("DRIVE_PROPOSAL_STALE_SUBMISSION");
+   return {threadId:thread.id,messageId:existing.id,replayed:true};
+  }
+  const now=new Date();
+  const [message]=await tx.insert(placementTpoMessages).values({
+   threadId:thread.id,senderType:"RECRUITER",senderUserId:context.user.id,
+   body,createdAt:now,
+  }).returning({id:placementTpoMessages.id});
+  if(!message)throw new Error("DRIVE_PROPOSAL_PERSISTENCE_FAILED");
+  await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
+   .where(eq(placementTpoMessageThreads.id,thread.id));
+  return {threadId:thread.id,messageId:message.id,replayed:false};
  });
 }
