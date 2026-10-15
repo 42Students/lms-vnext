@@ -3,6 +3,7 @@
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { learnerDiscussionCanPost } from "@/modules/courses/learner-discussion-capability-model";
 import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-submit-guard-model";
 import { learnerDiscussionTimeLabel } from "@/modules/courses/learner-discussion-time-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -50,7 +51,7 @@ export function LearnerCourseDiscussion({
     createdAt: string;
     updatedAt: string;
   } | null>(null);
-  const [canPost, setCanPost] = useState(true);
+  const [canPost, setCanPost] = useState(false);
   const [loading, setLoading] = useState(true);
   const [olderCursor, setOlderCursor] = useState<DiscussionCursor | null>(null);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -94,10 +95,11 @@ export function LearnerCourseDiscussion({
           ? payload.highlightedPinned
           : null,
       );
-      setCanPost(payload.canPost !== false);
+      setCanPost(learnerDiscussionCanPost(payload.canPost));
       setLoadError(false);
       loadedOnce.current = true;
     } catch {
+      setCanPost(false);
       setLoadError(true);
     } finally {
       if (!silent) setLoading(false);
