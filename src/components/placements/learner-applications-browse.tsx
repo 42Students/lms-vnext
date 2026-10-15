@@ -16,9 +16,10 @@ import {learnerApplicationAttention} from "@/modules/placements/learner-applicat
 import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
 import {learnerApplicationPage} from "@/modules/placements/learner-application-pagination-model";
 import {learnerApplicationSelectionMissing} from "@/modules/placements/learner-application-selection-model";
-import { learnerApplicationsCsv } from "@/modules/placements/learner-applications-csv-model";
+import { learnerApplicationsCsv,LEARNER_APPLICATION_CSV_LIMIT } from "@/modules/placements/learner-applications-csv-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
+import {learnerApplicationDateLabel} from "@/modules/placements/learner-application-date-label-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -40,12 +41,7 @@ function humanize(value: string) {
   return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function formatDate(date: Date | null) {
-  if (!date) return "Not available";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle:"medium", timeStyle:"short", timeZone:"Asia/Kolkata",
-  }).format(date);
-}
+const formatDate=learnerApplicationDateLabel;
 
 export function LearnerApplicationsBrowse({
   items,interviewLinks=[],assessmentLinks=[],
@@ -295,6 +291,11 @@ export function LearnerApplicationsBrowse({
             className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
             Export matching applications CSV
           </button>
+        ) : null}
+        {rows.length>LEARNER_APPLICATION_CSV_LIMIT ? (
+          <p role="status" className="w-full text-xs text-muted-foreground">
+            CSV includes the first {LEARNER_APPLICATION_CSV_LIMIT} of {rows.length} matching applications. Narrow your filters to export other records.
+          </p>
         ) : null}
         {(search || view!=="all" || filters.stage!=="all" || sort!=="activity") ? (
           <button type="button"
