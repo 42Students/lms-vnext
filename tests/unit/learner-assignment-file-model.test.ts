@@ -86,7 +86,8 @@ describe("transient assignment file read grants", () => {
     for (const patch of [
       { expiresAt: "2026-10-14T09:59:59Z" }, { expiresAt: "2026-10-14T11:00:00Z" },
       { readUrl: "http://storage.example.test/file" }, { readUrl: "javascript:alert(1)" },
-      { readUrl: "https://user:password@storage.example.test/file" }, { sizeBytes: 0 },
+      { readUrl: "https://user:password@storage.example.test/file" },
+      { readUrl: "https://storage.example.test/file#fragment" }, { sizeBytes: 0 },
     ]) expect(() => validateLearnerAssignmentReadGrant({ grant: { ...read, ...patch } }, now)).toThrow();
   });
 });
