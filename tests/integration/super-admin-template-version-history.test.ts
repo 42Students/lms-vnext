@@ -17,7 +17,7 @@ describe.skipIf(!enabled)("Template version history paging (PG)", () => {
       sprints: [{ key: "s", releaseKey: "r", title: "Sprint", sequence: 0 }],
       tasks: [{ key: "t", sprintKey: "s", title: "Task", priority: "HIGH" as const, sequence: 0 }], resources: [] };
     const made = await createProjectTemplate(admin, { slug: "history-" + randomUUID(), title: "History", blueprint });
-    for (let i = 0; i < 25; i++) await reviseProjectTemplate(admin, made.template.id, { title: "History", blueprint, changeNote: `Revision ${i}` });
+    for (let i = 0; i < 25; i++) await reviseProjectTemplate(admin, made.template.id, { expectedVersion: made.version.version + i, title: "History", blueprint, changeNote: `Revision ${i}` });
     const first = await getSuperAdminTemplateVersionHistory(admin, made.template.id, {});
     expect(first.detail.versions).toHaveLength(25);
     expect(first.detail.versions[0].version).toBe(26);

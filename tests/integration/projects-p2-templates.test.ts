@@ -239,6 +239,7 @@ describe("Projects P2 template persistence", () => {
       superAdmin,
       created.template.id,
       {
+        expectedVersion: created.version.version,
         title: "P2 Version Pinning V2",
         blueprint: blueprint("V2"),
         changeNote: "Second immutable version",

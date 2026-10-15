@@ -94,7 +94,8 @@ export const postgresLockedVerificationTransition: LockedTransition =
       // Authenticated request context alone may be stale after role revocation.
       if (event.actorKind === "LEARNER") {
         if (event.actorUserId !== member.userId ||
-            (event.action !== "SUBMITTED" && event.action !== "UPDATE_SUBMITTED")) {
+            (event.action !== "SUBMITTED" && event.action !== "UPDATE_SUBMITTED" &&
+              event.action !== "WITHDRAWN")) {
           throw new VerificationStateError("NOT_ALLOWED");
         }
       } else {

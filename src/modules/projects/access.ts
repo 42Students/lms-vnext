@@ -14,6 +14,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import type { ProjectMemberRole } from "./constants";
 import { ProjectsServiceError } from "./errors";
 import { loadProjectCollegeScope } from "./scope";
@@ -163,5 +164,14 @@ export async function requireProjectLifecycleAccess(
     );
   }
 
+  return scope;
+}
+
+/** Shared mutation gate for the legacy Admin and Mentor project workspaces. */
+export async function requireProjectLifecycleMutationAccess(context: RequestContext, projectIdInput: string) {
+  const scope = await requireProjectLifecycleAccess(context, projectIdInput);
+  if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+  }
   return scope;
 }

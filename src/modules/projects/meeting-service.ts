@@ -3,19 +3,24 @@ import {
   asc,
   eq,
   inArray,
+  ne,
+  gt,
+  lt,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   projectMeetings,
+  projectInstances,
   projectSprints,
   projectTasks,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
-  requireProjectLifecycleAccess,
+  requireProjectLifecycleMutationAccess,
   requireProjectReadAccess,
 } from "./access";
 import { ProjectsServiceError } from "./errors";
+import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
 import {
   projectMeetingIdSchema,
   projectMeetingTransitionInputSchema,
@@ -163,47 +168,40 @@ export async function requestProjectMeeting(
   projectIdInput: string,
   rawInput: RequestProjectMeetingInput,
 ) {
-  const scope =
-    await requireProjectReadAccess(
-      context,
-      projectIdInput,
-    );
-  ensureMeetingProjectMutable(
-    scope.project.status,
-  );
-
-  if (
-    scope.access !== "LEARNER" ||
-    !context.membership
-  ) {
-    throw new ProjectsServiceError(
-      "PROJECT_MEETING_ACCESS_DENIED",
-    );
+  const scope = await requireProjectReadAccess(context, projectIdInput);
+  ensureMeetingProjectMutable(scope.project.status);
+  if (scope.access !== "LEARNER" || !context.membership) {
+    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   }
-
-  const input =
-    requestProjectMeetingInputSchema.parse(
-      rawInput,
-    );
-
-  const [meeting] = await getDb()
-    .insert(projectMeetings)
-    .values({
+  const input = requestProjectMeetingInputSchema.parse(rawInput);
+  const startsAt = new Date(input.startsAt);
+  const endsAt = new Date(input.endsAt);
+  if (!isFutureProjectMeetingWindow(startsAt, endsAt, Date.now())) {
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  }
+  return getDb().transaction(async (tx) => {
+    const [project] = await tx.select({status:projectInstances.status})
+      .from(projectInstances).where(eq(projectInstances.id, scope.project.id))
+      .for("update").limit(1);
+    if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    ensureMeetingProjectMutable(project.status);
+    const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
+      .where(and(eq(projectMeetings.projectId,scope.project.id),
+        eq(projectMeetings.requestedByMembershipId,context.membership!.id),
+        inArray(projectMeetings.status,["REQUESTED","SCHEDULED"]),
+        lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt)))
+      .limit(1);
+    if (conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
+    const [meeting] = await tx.insert(projectMeetings).values({
       projectId: scope.project.id,
-      status: "REQUESTED",
-      meetingType: "GENERAL",
-      title: input.title,
-      agenda: input.agenda ?? null,
-      startsAt: new Date(input.startsAt),
-      endsAt: new Date(input.endsAt),
-      timeZone: input.timeZone,
-      requestedByMembershipId:
-        context.membership.id,
+      status: "REQUESTED", meetingType: "GENERAL",
+      title: input.title, agenda: input.agenda ?? null,
+      startsAt, endsAt, timeZone: input.timeZone,
+      requestedByMembershipId: context.membership!.id,
       createdByUserId: context.user.id,
-    })
-    .returning();
-
-  return meeting;
+    }).returning();
+    return meeting;
+  });
 }
 
 export async function scheduleProjectMeeting(
@@ -212,90 +210,60 @@ export async function scheduleProjectMeeting(
   meetingIdInput: string | null,
   rawInput: ScheduleProjectMeetingInput,
 ) {
-  const scope =
-    await requireProjectLifecycleAccess(
-      context,
-      projectIdInput,
-    );
-  ensureMeetingProjectMutable(
-    scope.project.status,
-  );
-
-  const input =
-    scheduleProjectMeetingInputSchema.parse(
-      rawInput,
-    );
-  const links = await validateMeetingLinks(
-    scope.project.id,
-    input.linkedSprintId,
-    input.linkedTaskId,
-  );
-  const values = {
-    status: "SCHEDULED" as const,
-    meetingType: input.meetingType ?? "GENERAL",
-    title: input.title,
-    agenda: input.agenda ?? null,
-    startsAt: new Date(input.startsAt),
-    endsAt: new Date(input.endsAt),
-    timeZone: input.timeZone,
-    meetingUrl: input.meetingUrl,
-    scheduledByUserId: context.user.id,
-    scheduledByMembershipId:
-      context.membership?.id ?? null,
-    linkedSprintId: links.linkedSprintId,
-    linkedTaskId: links.linkedTaskId,
-    outcome: null,
-    cancellationNote: null,
-    updatedAt: new Date(),
-  };
-  const db = getDb();
-
-  if (!meetingIdInput) {
-    const [meeting] = await db
-      .insert(projectMeetings)
-      .values({
-        projectId: scope.project.id,
-        ...values,
-        createdByUserId: context.user.id,
-      })
-      .returning();
-
-    return meeting;
-  }
-
-  const existing = await loadMeeting(
-    scope.project.id,
-    meetingIdInput,
-  );
-
-  if (
-    existing.status !== "REQUESTED" &&
-    existing.status !== "SCHEDULED"
-  ) {
-    throw new ProjectsServiceError(
-      "PROJECT_MEETING_INVALID_STATE",
-    );
-  }
-
-  const [meeting] = await db
-    .update(projectMeetings)
-    .set(values)
-    .where(
-      and(
-        eq(projectMeetings.id, existing.id),
-        eq(
-          projectMeetings.projectId,
-          scope.project.id,
-        ),
-        inArray(projectMeetings.status, ["REQUESTED", "SCHEDULED"]),
-      ),
-    )
-    .returning();
-
-  if (!meeting) {
+  const scope = await requireProjectLifecycleMutationAccess(context, projectIdInput);
+  ensureMeetingProjectMutable(scope.project.status);
+  const input = scheduleProjectMeetingInputSchema.parse(rawInput);
+  const startsAt = new Date(input.startsAt);
+  const endsAt = new Date(input.endsAt);
+  if (!isFutureProjectMeetingWindow(startsAt, endsAt, Date.now())) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
-  return meeting;
+  const links = await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
+  return getDb().transaction(async (tx) => {
+    const [project] = await tx.select({status:projectInstances.status})
+      .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
+      .for("update").limit(1);
+    if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    ensureMeetingProjectMutable(project.status);
+    const [existing] = meetingIdInput ? await tx.select().from(projectMeetings)
+      .where(and(eq(projectMeetings.id,projectMeetingIdSchema.parse(meetingIdInput)),
+        eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1) : [null];
+    if (meetingIdInput && !existing) throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+    if (existing && !["REQUESTED","SCHEDULED"].includes(existing.status)) {
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    }
+    const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
+      .where(and(eq(projectMeetings.projectId,scope.project.id),
+        inArray(projectMeetings.status,["SCHEDULED"]),
+        lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt),
+        ...(existing ? [ne(projectMeetings.id,existing.id)] : [])))
+      .limit(1);
+    if (conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
+    const values = {
+      status: "SCHEDULED" as const,
+      meetingType: input.meetingType ?? "GENERAL" as const,
+      title: input.title, agenda: input.agenda ?? null,
+      startsAt, endsAt, timeZone: input.timeZone,
+      meetingUrl: input.meetingUrl,
+      scheduledByUserId: context.user.id,
+      scheduledByMembershipId: context.membership?.id ?? null,
+      linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
+      outcome: null, cancellationNote: null, updatedAt: new Date(),
+    };
+    if (!existing) {
+      const [created] = await tx.insert(projectMeetings).values({
+        projectId:scope.project.id,...values,createdByUserId:context.user.id,
+      }).returning();
+      return created;
+    }
+    const [updated] = await tx.update(projectMeetings).set(values)
+      .where(and(eq(projectMeetings.id,existing.id),
+        eq(projectMeetings.projectId,scope.project.id),
+        inArray(projectMeetings.status,["REQUESTED","SCHEDULED"])))
+      .returning();
+    if (!updated) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    return updated;
+  });
 }
 
 export async function transitionProjectMeeting(

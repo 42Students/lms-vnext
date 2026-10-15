@@ -2,15 +2,19 @@ import {
   and,
   asc,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  learnerProgramEnrollments,
   placementApplications,
   placementCompanyRelationships,
   placementCompanies,
   placementJobRoleOptions,
   placementJobs,
+  placementJobEligibilityPolicies,
+  placementBatchRegistrations,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -18,9 +22,13 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
+import { isPlacementLearnerDebarred } from "./debarment-service";
+import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   evaluatePlacementEligibility,
+  isPlacementJobTargetCohort,
   type PlacementEligibilityResult,
 } from "./eligibility-service";
 
@@ -40,6 +48,14 @@ export async function listLearnerPlacementJobs(
 ) {
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
+  // P-S1-04: a finished placement batch may browse historical drives,
+  // but its learner must not be shown an actionable self-apply control.
+  const participation = await getOwnPlacementParticipationAccess(context);
+  const debarred = await isPlacementLearnerDebarred(
+    membership.collegeId,
+    membership.id,
+    now,
+  );
 
   const rows = await getDb()
     .select({
@@ -129,13 +145,53 @@ export async function listLearnerPlacementJobs(
       asc(placementJobRoleOptions.title),
     );
 
+  // A learner may only discover published jobs targeting the persisted
+  // active academic cohort/program. A duplicate enrollment is ambiguous.
+  const enrollments = await getDb().select({
+    cohortId: learnerProgramEnrollments.cohortId,
+    programId: learnerProgramEnrollments.programId,
+  }).from(learnerProgramEnrollments).where(and(
+    eq(learnerProgramEnrollments.membershipId, membership.id),
+    eq(learnerProgramEnrollments.status, "ACTIVE"),
+  )).limit(2);
+  if (enrollments.length !== 1) return [];
+  const [registration] = await getDb().select({
+    choice: placementBatchRegistrations.choice,
+  }).from(placementBatchRegistrations).where(and(
+    eq(placementBatchRegistrations.collegeId, membership.collegeId),
+    eq(placementBatchRegistrations.cohortId, enrollments[0].cohortId),
+    eq(placementBatchRegistrations.membershipId, membership.id),
+  )).limit(1);
+  const registrationState = resolveSelfApplyRegistrationChoice(
+    registration?.choice === "PLACEMENTS" ? { choice: "PLACEMENTS" } :
+    registration ? { choice: "NOT_INTERESTED" } : null,
+  );
+
+  const policies = rows.length
+    ? await getDb().select({
+        jobId: placementJobEligibilityPolicies.jobId,
+        allowedProgramIds: placementJobEligibilityPolicies.allowedProgramIds,
+        allowedCohortIds: placementJobEligibilityPolicies.allowedCohortIds,
+      }).from(placementJobEligibilityPolicies).where(inArray(
+        placementJobEligibilityPolicies.jobId,
+        [...new Set(rows.map((row) => row.job.id))],
+      ))
+    : [];
+  const policyByJobId = new Map(policies.map((policy) => [policy.jobId, policy]));
+  const targetedRows = rows.filter((row) =>
+    isPlacementJobTargetCohort(
+      policyByJobId.get(row.job.id),
+      enrollments[0]!,
+    ),
+  );
+
   const eligibilityByJob = new Map<
     string,
     Promise<PlacementEligibilityResult>
   >();
 
   return Promise.all(
-    rows.map(async (row) => {
+    targetedRows.map(async (row) => {
       const application =
         row.application?.id
           ? row.application
@@ -179,6 +235,9 @@ export async function listLearnerPlacementJobs(
         eligibility,
         deadlinePassed,
         canApply:
+          registrationState === "CAN_APPLY" &&
+          !debarred &&
+          participation.canSelfApply &&
           !application &&
           !deadlinePassed &&
           (eligibility.status === "ELIGIBLE" ||

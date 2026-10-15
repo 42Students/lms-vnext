@@ -1,0 +1,58 @@
+import "server-only";
+import {and,desc,eq,isNull} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {activityEvents,collegeMemberships,membershipRoles,projectInstances,projectMembers,users} from "@/db/schema";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
+import type {RequestContext} from "@/modules/identity/context";
+import {requireProjectManageAccess} from "./access";
+import {ProjectsServiceError} from "./errors";
+import {restoreProjectInstanceInputSchema,restoredProjectStatus} from "./instance-restore-model";
+
+export async function restoreProjectInstance(context:RequestContext,projectIdInput:string,raw:unknown){
+  const scope=await requireProjectManageAccess(context,projectIdInput);
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const input=restoreProjectInstanceInputSchema.parse(raw);
+  return getDb().transaction(async tx=>{
+    const [project]=await tx.select().from(projectInstances)
+      .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+      .for("update").limit(1);
+    if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
+    if(project.status!=="ARCHIVED"||project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
+      throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    const [mentor]=await tx.select({id:projectMembers.id}).from(projectMembers)
+      .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"MENTOR")))
+      .where(and(eq(projectMembers.projectId,project.id),eq(projectMembers.role,"MENTOR"),
+        eq(projectMembers.isPrimary,true),isNull(projectMembers.endedAt),
+        eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"))).limit(1);
+    if(!mentor)throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    const [lastArchive]=await tx.select({metadata:activityEvents.metadata}).from(activityEvents)
+      .where(and(eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED),
+        eq(activityEvents.subjectType,"project_instance"),eq(activityEvents.subjectId,project.id),
+        eq(activityEvents.collegeId,scope.collegeId)))
+      .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
+    const status=restoredProjectStatus(lastArchive?.metadata?.previousStatus);
+    const now=new Date(Math.max(Date.now(),project.updatedAt.getTime()+1));
+    const [restored]=await tx.update(projectInstances).set({status,archivedAt:null,updatedAt:now})
+      .where(and(eq(projectInstances.id,project.id),eq(projectInstances.collegeId,scope.collegeId),
+        eq(projectInstances.status,"ARCHIVED"),eq(projectInstances.updatedAt,project.updatedAt)))
+      .returning();
+    if(!restored)throw new ProjectsServiceError("PROJECT_INVALID_STATE");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_RESTORED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_instance",subjectId:restored.id,subjectLabel:restored.title,
+      summary:"Project "+restored.title+" restored",
+      metadata:{projectId:restored.id,previousStatus:"ARCHIVED",status:restored.status},
+      groupKey:"projects:instance:"+restored.id,
+      dedupeKey:"projects:instance:"+restored.id+":restored:"+now.toISOString(),
+    });
+    return restored;
+  });
+}

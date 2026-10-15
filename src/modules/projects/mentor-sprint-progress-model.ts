@@ -1,3 +1,4 @@
+import { projectCompletionPercent } from "./progress-percentage-policy";
 import { z } from "zod";
 
 export const mentorSprintProgressQuerySchema = z.object({
@@ -33,7 +34,7 @@ export function summarizeSprintTasks(
     completed,
     inReview,
     blocked,
-    completionPercent: total === 0 ? null : Math.round((completed / total) * 100),
+    completionPercent: projectCompletionPercent(completed, total),
   };
 }
 

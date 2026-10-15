@@ -8,12 +8,12 @@ export function compareMentorProjects(a: OrderableProject,b: OrderableProject,or
 }
 
 /** Invalid or impossible percentages are unmeasured, not ranking signals. */
-function measuredProgress(value:number|undefined):number|undefined {
- return value!==undefined&&Number.isFinite(value)&&value>=0&&value<=100?value:undefined;
+function measuredProgress(value:number|null|undefined):number|undefined {
+ return value!==undefined&&value!==null&&Number.isFinite(value)&&value>=0&&value<=100?value:undefined;
 }
 
 export function compareMentorProjectsByProgress(a:OrderableProject,b:OrderableProject,
- aPercent:number|undefined,bPercent:number|undefined){
+ aPercent:number|null|undefined,bPercent:number|null|undefined){
  const archived=Number(a.status==="ARCHIVED")-Number(b.status==="ARCHIVED");
  if(archived)return archived;
  // Unknown task progress remains unknown, always after measured percentages.
@@ -25,7 +25,7 @@ export function compareMentorProjectsByProgress(a:OrderableProject,b:OrderablePr
 
 /** Highest measured completion first; archived work stays after current work. */
 export function compareMentorProjectsByMostProgress(a:OrderableProject,b:OrderableProject,
- aPercent:number|undefined,bPercent:number|undefined){
+ aPercent:number|null|undefined,bPercent:number|null|undefined){
  const archived=Number(a.status==="ARCHIVED")-Number(b.status==="ARCHIVED");
  if(archived)return archived;
  const left=measuredProgress(aPercent),right=measuredProgress(bPercent);

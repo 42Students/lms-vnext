@@ -5,7 +5,7 @@
  */
 export type VerificationSection = "EDUCATION" | "IDENTITY";
 export type VerificationStatus = "SUBMITTED" | "SENT_BACK" | "VERIFIED" | "UPDATE_PENDING";
-export type VerificationAction = "SUBMITTED" | "UPDATE_SUBMITTED" | "VERIFIED" | "SENT_BACK";
+export type VerificationAction = "SUBMITTED" | "UPDATE_SUBMITTED" | "VERIFIED" | "SENT_BACK" | "WITHDRAWN";
 export type VerificationActorKind = "LEARNER" | "COLLEGE_ADMIN" | "SUPER_ADMIN" | "TPO";
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 export type SafeSnapshot = { [key: string]: JsonValue };
@@ -69,6 +69,10 @@ export function safeVerificationSnapshot(value: unknown): SafeSnapshot {
       if (/^(aadhaarNumber|panNumber|identityNumber|aadhaar|pan)$/i.test(key) &&
           typeof part === "string" && part &&
           !/^[*Xx•-]{4,}[A-Za-z0-9]{0,4}$/.test(part)) {
+        throw new VerificationStateError("UNSAFE_SNAPSHOT");
+      }
+      if (/^(identityHashSalt|aadhaarHash|panHash)$/.test(key) &&
+          typeof part === "string" && !/^[0-9a-f]{64}$/.test(part)) {
         throw new VerificationStateError("UNSAFE_SNAPSHOT");
       }
       if (/(?:Document|Marksheet|Resume)(?:Url|Link|Path)?$/i.test(key) && typeof part === "string" &&
@@ -210,4 +214,33 @@ export function planVerificationReview(input: {
   };
   return { record, event: makeEvent(approved ? "VERIFIED" : "SENT_BACK", existing.section,
     actor, now, expectedVersion, approved ? existing.submittedSnapshot : null, approved ? null : reason) };
+}
+
+/**
+ * Remove only an unreviewed learner UPDATE_PENDING revision, returning to the
+ * previously approved snapshot. The audit event is explicit, not SENT_BACK.
+ * Runtime exposure is gated until the proposed event CHECK migration is live.
+ */
+export function planWithdrawPendingVerification(input: {
+  existing: VerificationRecord;
+  expectedVersion: number;
+  actor: Actor;
+  now: Date;
+}): Transition {
+  const { existing, expectedVersion, actor, now } = input;
+  if (actor.kind !== "LEARNER") throw new VerificationStateError("NOT_ALLOWED");
+  assertVersion(existing, expectedVersion);
+  if (existing.status !== "UPDATE_PENDING" || !existing.verifiedSnapshot || !existing.verifiedAt) {
+    throw new VerificationStateError("INVALID_TRANSITION");
+  }
+  const record: VerificationRecord = {
+    ...existing,
+    status: "VERIFIED",
+    submittedSnapshot: existing.verifiedSnapshot,
+    submittedAt: existing.verifiedAt,
+    note: null,
+    version: expectedVersion + 1,
+  };
+  return { record, event: makeEvent("WITHDRAWN",existing.section,actor,
+    now,expectedVersion,null,null) };
 }

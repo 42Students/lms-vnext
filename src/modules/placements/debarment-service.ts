@@ -66,6 +66,27 @@ function collegeLocalDate(now = new Date()): string {
   return `${value("year")}-${value("month")}-${value("day")}`;
 }
 
+/**
+ * P-S1-02: internal learner self-apply/read gate. Do not expose a debarment
+ * reason or count in a learner response.
+ */
+export async function isPlacementLearnerDebarred(
+  collegeId: string,
+  membershipId: string,
+  now: Date = new Date(),
+): Promise<boolean> {
+  const rows = await getDb().select({
+    liftedAt: placementDebarments.liftedAt,
+    untilDate: placementDebarments.untilDate,
+    untilDrives: placementDebarments.untilDrives,
+    drivesCounted: placementDebarments.drivesCounted,
+  }).from(placementDebarments).where(and(
+    eq(placementDebarments.collegeId, collegeId),
+    eq(placementDebarments.membershipId, membershipId),
+  ));
+  return rows.some((row) => isDebarmentActive(row, collegeLocalDate(now)));
+}
+
 async function lockCollege(tx: Tx, collegeId: string) {
   const [row] = await tx.select({ id: colleges.id })
     .from(colleges).where(eq(colleges.id, collegeId))

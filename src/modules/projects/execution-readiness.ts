@@ -31,7 +31,7 @@ export function deriveProjectExecutionReadiness({
   ).length;
 
   const complete =
-    projectStatus === "COMPLETED" &&
+    (projectStatus === "ACTIVE" || projectStatus === "COMPLETED") &&
     releaseStatuses.length > 0 &&
     sprintStatuses.length > 0 &&
     taskStatuses.length > 0 &&

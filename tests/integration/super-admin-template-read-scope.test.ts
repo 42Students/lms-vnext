@@ -38,7 +38,7 @@ describe.skipIf(!enabled)("Super Admin scoped global template read (PG)", () => 
     }
     await expect(getProjectTemplateDetail(foreign, created.template.id)).rejects.toBeInstanceOf(AuthorizationError);
     await expect(reviseProjectTemplate(scoped, created.template.id, {
-      title: "Forbidden", blueprint: created.version.blueprint,
+      expectedVersion: created.version.version, title: "Forbidden", blueprint: created.version.blueprint,
     })).rejects.toBeInstanceOf(AuthorizationError);
   });
 });

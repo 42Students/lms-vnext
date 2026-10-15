@@ -1,3 +1,5 @@
+**2026-10-16 project resource file backend (PARTIAL, UI pending):** `project_resource_files` and `/api/projects/{projectId}/resource-files` let mentors and admins upload (50 MiB, document types plus Markdown, 200 files per project), edit title/description, delete, and let every project member download through short-lived signed URLs; archived and completed projects reject changes. See `docs/architecture/file-and-video-apis.md`. The existing `/resources` link/note API is unchanged. No UI page changed; the Project file resource uploads matrix row stays MISSING.
+
 # Mentor — Detailed Page Parity Spec
 
 Legacy primary navigation: Projects, Meetings, Notifications.
@@ -1498,3 +1500,44 @@ The future storage integration must supply authenticated same-college list/inten
 Pure Projects-side resource-file UI contracts now reject spoofable filenames, stale callbacks from prior upload attempts, duplicate live metadata and invalid/ambiguous URL filters. The upload state machine keeps transfer/verification pending until an authoritative completion and does not turn an in-progress reset into a successful or cancelled file. File affordance models explain storage readiness, permission and read-only denials without revealing unrelated tenants. These are *not* connected to signed storage APIs; no Project resource upload/download/delete success is claimed. Storage adapter, authenticated persistence, signed endpoints, verification status, audit, end-to-end denial and browser acceptance remain OPEN.
 
 The class-team workspace creator now synchronously prevents duplicate creation requests, stays latched after a successful POST until navigation, locks team controls during submission/roster loading and allows retry after a failed mutation. The Mentor resource directory rejects unknown query keys instead of discarding them, and the metadata CSV formatter independently enforces the 200-row cap with finite omitted-row disclosure. Focused unit tests were authored but have not been executed for this revision; real PostgreSQL, browser/mobile, legacy source comparison, and upstream/downstream parity certification are still pending. No global tracker task was marked DONE; no registered schemas, storage module or AI features were changed.
+
+### Phase 2 logic repairs (chat-11; source implementation, runtime acceptance outstanding)
+
+- PR-S1-01: Final release shipment no longer marks the project COMPLETED; the approved mentor closeout transaction is the single completion path. Unit coverage added; verify against disposable PostgreSQL before closure.
+- PR-S1-02: New learner delivery draft refuses creation when the latest project submission is APPROVED; project row lock serializes this decision with version creation. Source and policy tests added; database acceptance outstanding.
+- PR-S2-02 / PR-S2-14 (task write): PATCH only permits TODO/IN_PROGRESS/BLOCKED, refuses review-owned states, requires expectedUpdatedAt, locks/rechecks records in transaction, and writes the task-status activity event. Source and policy tests added; affected clients and database gates still need execution.
+- PR-S2-03: Staged nullable project-task assignee membership column, FK and index under the migration proposal; **not registered**, so submission enforcement is not yet enabled and the item remains blocked on schema approval, migration replay and active-member scoping.
+- PR-S2-06: Release shipping now rejects a release with no linked sprint before the existing open-sprint gate; closeout remains mentor-only. Source regression test added, database coverage pending.
+ - PR-S2-09: Protect active projects from ending/demoting their primary mentor, and require a primary mentor before sprint activation in both lifecycle paths. Unit policy/source checks added; migration-free transactional PG verification outstanding.
+- PR-S2-12: Task/sprint lifecycle and mentor mutation endpoints share the same centrally-scoped Admin-or-Mentor authorization and Projects module gate; task review and mentor-only final closeout retain their distinct policies. Regression contract test added; tenant negative integration tests outstanding.
+- PR-S2-13: Project requests and schedules reject past windows and overlapping same-project organizer/active meetings under a project lock; mentor reschedules now retain the persisted meeting time zone. Unit window and source tests added; run PostgreSQL concurrency/overlap tests before acceptance.
+- PR-S2-14 (template revise): Versioned template PATCH now requires expectedVersion, locks the template row, compares the persisted version, and CAS-updates before writing a new version. Existing clients must send the new token; API/browser and PostgreSQL concurrency evidence remains outstanding. Archive already uses row-locked transactional state checks.
+- PR-S3 progress cap: Learner, Mentor sprint/task and Admin project progress percentages share a rounded 99% cap until every tracked item is complete. Zero-task progress remains unknown where previously nullable. Pure regression tests added; UI/browser acceptance pending.
+
+## Phase 2 PR-S2-01 — sprint-close policy (source fixed, not parity-certified)
+
+Sprint close has an explicit **NO_CARRY_OVER** policy: open or in-review tasks block closure and remain in their sprint; mentors must review, return or complete those tasks before closing it. The registered `project_tasks.sprint_id NOT NULL` remains unchanged. Both regular and Mentor sprint-close mutation paths share this rule. This is the documented-policy alternative in PR-S2-01; carry-over is not available and no provenance column or hidden task reassignment is claimed. Commit reference: to be resolved from Git history. Browser and real PostgreSQL negative acceptance remain open.
+
+## Phase 2 PR-S2-05 — audited readiness override (source implemented, execution pending)
+
+College Admin may record the legacy **Force unlock (ready)** / **Force block (not ready)** / **Clear override** decisions with a note on both force states. The latest college-scoped registered activity event is the override source of truth, written under the project row lock and exposed on the readiness read API. The submission transaction independently rechecks the effective gate (including FORCE_BLOCK), rather than trusting a client-only readiness flag. Raw task/sprint/release completion remains unaltered. No new table or UI wording is introduced. Commit reference: see Git history. A real PostgreSQL race/tenant-negative test and full UI/browser parity remain OPEN.
+
+## Phase 2 PR-S2-08 — expanded Project member role kinds (STAGED / NOT DONE)
+
+The proposed member model distinguishes MENTOR, CO_MENTOR, OBSERVER, REVIEWER and QA and includes an explicit persisted can_mutate flag. Source-only policy denies all observer/QA/reviewer mutations even when a flag is incorrectly true. Migration SQL is staged only; the existing registered member table and runtime access guards are unchanged. **Do not treat read-only observer accounts as supported until the orchestrator registers the migration, active-role/tenant joins and authorization/service/UI wiring are executed and verified.** Commit reference is in branch history.
+
+## Phase 2 PR-S2-10 — archived Project restoration (source fixed; tests pending execution)
+
+A college-admin-authorized, same-origin POST restores an archived project only after a fresh project-row lock, matching updatedAt token, and a persisted current ACTIVE primary mentor membership and platform user check. The restored state is taken from the latest college-scoped archive activity event (falling back to PLANNED for missing/invalid history), resets archivedAt and writes a restoration event in the same transaction. Source tests added; PostgreSQL races, browser action wiring and role-negative acceptance remain OPEN. Commit reference: branch history.
+
+## Phase 2 PR-S2-11 — resource visibility (STAGED / NOT DONE)
+
+The old LMS says **“Mentor-only resources stay hidden from learners on this project.”** A proposed project_resources.visibility column supports TEAM (existing-resource default) and MENTOR_ONLY, with read policy returning false for LEARNER on mentor-only resources. The SQL, policy and test are staged but **not wired into the active read/write/export APIs**, which cannot safely filter a field that the registered schema does not yet contain. The orchestrator must register the column, enforce writes and tenant/role-scoped reads, then run leak-negative tests. No mentor-only resource capability is claimed before those gates.
+
+## Phase 2 legacy-copy-A Mentor/Projects wording audit (PARTIAL)
+
+The Mentor sidebar already carried the exact legacy visible labels **Projects**, **Meetings**, **Notifications** in the correct order. Its three legacy group assignments are now consistently `learning`. Mentor Projects page title/back-link and core empty states were corrected to the exact legacy strings (“Projects”, “No projects match these filters.”, “No projects assigned yet.”). The shared Mentor project tab strip already has the exact seven documented labels, verified by source regression assertions against legacy-copy-A.md. Broader button/form/modal/table wording, responsive/browser and full source-diff acceptance remain open; this is not a complete wording certificate.
+
+## PR-S1-01 follow-up — remove approval/submission circular dependency
+
+After the single COMPLETED transition was assigned to Mentor closeout, the prior final-delivery submission check still required COMPLETED before submission, leaving no reachable approval path. The submission transaction now uses the same persisted all-releases-shipped, all-sprints-completed, all-tasks-done execution condition that the readiness reader uses; ACTIVE is valid for final-delivery submission and review before mentor closeout. FORCE_BLOCK/UNLOCK remains applied atomically to this checked gate. No project status is fabricated. Unit policy and source checks authored; real DB and UI acceptance pending. Commit reference: Git history.

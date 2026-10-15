@@ -220,6 +220,8 @@ export const projectInstances = pgTable(
       sql`lower(${table.slug})`,
     ),
     uniqueIndex("project_instances_team_group_uq").on(table.teamGroupId),
+    // Parent key for tenant-scoped composite FKs (project_resource_files).
+    uniqueIndex("project_instances_id_college_uq").on(table.id, table.collegeId),
     index("project_instances_college_status_idx").on(
       table.collegeId,
       table.status,
@@ -446,6 +448,7 @@ export const projectResources = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_resources_id_project_uq").on(table.id, table.projectId),
     uniqueIndex("project_resources_project_key_uq").on(
       table.projectId,
       table.templateKey,
