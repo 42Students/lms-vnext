@@ -36,6 +36,14 @@ describe("module access trace against PostgreSQL", () => {
     const locked=await getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{overridesOnly:"locked"});
     expect(locked).not.toBeNull();
     expect(locked!.total).toBeLessThanOrEqual(result!.total);
+    const projectOnly=await getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{overridesOnly:"only",overridesModule:"projects"});
+    expect(projectOnly).not.toBeNull();
+    expect(projectOnly!.total).toBeLessThanOrEqual(result!.total);
+    const storedOff=await getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{overridesOnly:"only",storedValue:"off"});
+    expect(storedOff).not.toBeNull();
+    expect(storedOff!.total).toBeLessThanOrEqual(result!.total);
+    await expect(getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{storedValue:"maybe"})).rejects.toBeDefined();
+    await expect(getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{overridesOnly:"only",overridesModule:"admin"})).rejects.toBeDefined();
     await expect(getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{overridesOnly:"unknown"})).rejects.toBeDefined();
   });
 
