@@ -1,4 +1,5 @@
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
+import {learnerRoadmapHeadline} from "@/modules/courses/learner-roadmap-headline-model";
 import {learnerRoadmapFilterRecoveryNotice} from "@/modules/courses/learner-roadmap-filter-recovery-model";
 import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empty-state-model";
 import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
@@ -668,13 +669,12 @@ export function LearnerCourseWorkspace({
               {workspace.learningPath.title}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
-              {workspace.nextItem
-                ? `Next: ${workspace.nextItem.title}`
-                : summary.itemsMissed > 0
-                  ? "No remaining actionable items"
-                  : summary.itemsTotal > 0
-                    ? "Course work complete"
-                    : "No learning items yet"}
+              {learnerRoadmapHeadline({
+                nextItemTitle:workspace.nextItem?.title??null,
+                itemsMissed:summary.itemsMissed,
+                itemsCompleted:summary.itemsCompleted,
+                itemsTotal:summary.itemsTotal,
+              })}
             </h3>
             <p className="mt-2 text-sm leading-6 text-body">
               {workspace.learningPath.description ??
