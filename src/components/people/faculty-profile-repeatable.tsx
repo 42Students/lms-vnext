@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
-import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches,facultyProfileRepeatableIssue} from "@/modules/people/faculty-profile-repeatable-actions";
+import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches,facultyProfileRepeatableIssue,toggleFacultyProfileCollapsed} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -31,6 +31,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   const [rows, setRows] = useState<T[]>(() => initial.map(row => ({ ...row })));
   const [changed, setChanged] = useState(false);
   const [search,setSearch]=useState("");
+  const [collapsedIds,setCollapsedIds]=useState<string[]>([]);
   const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
     facultyProfileRecordMatches(row,fields.map(field=>field.name),search));
   const sectionIssue=facultyProfileRepeatableIssue(section,rows);
@@ -64,7 +65,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 rounded-lg border border-border p-3 sm:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <button type="button" className="mb-3 min-h-10 rounded-md border border-border px-3 text-sm"
+              aria-expanded={!collapsedIds.includes(row.id)}
+              onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
+              {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
+            </button>
+            {!collapsedIds.includes(row.id)?<div className="grid gap-3 sm:grid-cols-2">
               {fields.map(field => {
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
@@ -88,7 +94,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                   )}
                 </label>;
               })}
-            </div>
+            </div>:null}
             <div className="mt-3 flex flex-wrap gap-2">
               <button type="button" disabled={pending || index===0} onClick={()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
