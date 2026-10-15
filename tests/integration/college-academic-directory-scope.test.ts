@@ -236,4 +236,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(foreign.items).toEqual([]);
   });
 
+  it("mappingState: matches persisted own-college evidence only",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeSemesters(adminA,{q:label,mappingState:"MAPPED"}),
+      listCollegeSemesters(adminA,{q:label,mappingState:"UNMAPPED"}),
+      listCollegeSemesters(adminB,{q:label,mappingState:"MAPPED"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.term);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

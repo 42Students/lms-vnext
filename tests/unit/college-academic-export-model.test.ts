@@ -34,5 +34,10 @@ describe("college semester CSV",()=>{
   expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
  });
 
+ it("mappingState: export uses the same validated filter",()=>{
+  expect(semesterCsvSchema.safeParse({mappingState:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",mappingState:"MAPPED"})).toContain("mappingState=MAPPED");
+ });
+
 });
 

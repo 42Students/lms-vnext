@@ -111,4 +111,9 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
   });
 
+  it("mappingState: validates semester/batch query and pagination",()=>{
+    expect(collegeSemesterDirectorySchema.safeParse({mappingState:"INVALID"}).success).toBe(false);
+    expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({mappingState:"MAPPED"}))).toContain("mappingState=MAPPED");
+  });
+
 });
