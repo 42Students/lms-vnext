@@ -79,3 +79,16 @@ describe("unknown learner quiz deadlines",()=>{
   expect(quizOverviewActionState({...base,dueAt:null},now).review).toBe(false);
  });
 });
+
+describe("published learner results at attempt exhaustion",()=>{
+ it("shows View Result after a released exhausted attempt",()=>{
+  expect(quizOverviewActionState({
+   ...base,attemptsUsed:2,attemptsRemaining:0,resultsPublished:true,
+  },now)).toMatchObject({label:"Results published",action:"View Result",review:true});
+ });
+ it("does not claim an unpublished result",()=>{
+  expect(quizOverviewActionState({
+   ...base,attemptsUsed:2,attemptsRemaining:0,resultsPublished:false,
+  },now).action).toBe("Review attempt");
+ });
+});
