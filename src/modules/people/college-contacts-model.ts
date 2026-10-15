@@ -14,6 +14,9 @@ export const collegeContactsQuerySchema=z.strictObject({
   pageSize:z.coerce.number().int().refine(n=>[10,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
 });
 export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
+export function contactDateWindowValid(filter:{joinedFrom?:string;joinedThrough?:string}):boolean {
+ return !(filter.joinedFrom&&filter.joinedThrough&&filter.joinedFrom>filter.joinedThrough);
+}
 export function contactsIstDayStart(day:string):Date {
  return new Date(day+"T00:00:00+05:30");
 }
@@ -41,5 +44,7 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
   if(Array.isArray(value))throw new Error("INVALID_CONTACT_FILTERS");
   if(value!==undefined&&value!=="")normalized[key]=value;
  }
- return collegeContactsQuerySchema.parse(normalized);
+ const filter=collegeContactsQuerySchema.parse(normalized);
+ if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
+ return filter;
 }

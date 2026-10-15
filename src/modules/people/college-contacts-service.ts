@@ -6,7 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
-import {collegeContactsQuerySchema,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
+import {collegeContactsQuerySchema,contactDateWindowValid,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
 
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
@@ -14,6 +14,7 @@ export type CollegeContactRow={
 };
 export async function listCollegeContacts(context:RequestContext,raw:unknown){
  const filter=collegeContactsQuerySchema.parse(raw);
+ if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  const claim=context.membership;
  if(!claim||claim.status!=="ACTIVE"||!claim.roles.includes("COLLEGE_ADMIN"))
   throw new AuthorizationError("people.manage");
