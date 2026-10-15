@@ -19,7 +19,7 @@ export function verifyClassTeamPreview(
   const seen = new Set<string>();
   const names = new Set<string>();
   for (const group of preview) {
-    const key = group.name.toLocaleLowerCase();
+    const key = group.name.normalize("NFKC").replace(/\s+/gu," ").trim().toLocaleLowerCase("en-IN");
     if (names.has(key)) throw new Error("Duplicate team name");
     names.add(key);
     for (const membershipId of group.membershipIds) {
