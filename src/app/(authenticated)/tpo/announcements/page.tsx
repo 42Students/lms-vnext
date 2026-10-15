@@ -44,6 +44,26 @@ export default async function TpoAnnouncements({searchParams}:Props){
    {result.items.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}</h2>
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{row.message}</p>
+    {tab.data==="yours" && row.senderUserId===context.user.id ?
+     <details className="mt-4 rounded-lg border border-border p-3">
+      <summary className="cursor-pointer text-sm font-semibold text-primary-text">Edit notice</summary>
+      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="mt-3 grid gap-3">
+       <input type="hidden" name="expectedVersion" value={row.version}/>
+       <label className="grid gap-1 text-sm text-body">Title
+        <input name="title" required maxLength={255} defaultValue={row.title}
+         className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+       </label>
+       <label className="grid gap-1 text-sm text-body">Message
+        <textarea name="message" rows={5} required maxLength={10000} defaultValue={row.message}
+         className="rounded-md border border-border bg-surface p-3"/>
+       </label>
+       <label className="flex items-center gap-2 text-sm text-body">
+        <input name="pinned" type="checkbox" defaultChecked={row.isPinned}/> Pinned
+       </label>
+       <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
+       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Save notice edits</button>
+      </form>
+     </details>:null}
     {((tab.data==="yours"&&row.senderUserId===context.user.id)||tab.data==="deleted")?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="mt-4 flex flex-wrap gap-2">
