@@ -260,7 +260,7 @@ export async function listLearnerPlacementJobs(
             upliftPct: rules?.upliftPct ?? 40,
             nextAnnualCtcInr: row.roleOption.minimumAnnualCtcInr ??
               row.job.minimumAnnualCtcInr,
-            isDream: false,
+            isDream: row.job.isDream,
             heldOffers,
           }),
         }),

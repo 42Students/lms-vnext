@@ -6,7 +6,7 @@ import { externalOfferAnnualCtcInr } from "./external-offer-policy";
  *
  * Only official OFFER records that are ISSUED or ACCEPTED count as held.
  * LOIs, declined and withdrawn offers never count. A dream job bypasses the
- * cap, but the persisted isDream job classification needs the staged column.
+ * cap; the persisted placement_jobs.is_dream classification feeds isDream.
  * Unknown CTC fails closed once the ordinary held-offer cap is reached.
  */
 export type HeldPlacementOffer = {

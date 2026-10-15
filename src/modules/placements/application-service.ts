@@ -782,9 +782,7 @@ export async function applyToPlacementJob(
         upliftPct: rules?.upliftPct ?? 40,
         nextAnnualCtcInr: liveRole.minimumAnnualCtcInr ??
           job.minimumAnnualCtcInr,
-        // No registered isDream job column yet; never guess that a job
-        // qualifies for an exemption.
-        isDream: false,
+        isDream: job.isDream,
         heldOffers,
       })) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
