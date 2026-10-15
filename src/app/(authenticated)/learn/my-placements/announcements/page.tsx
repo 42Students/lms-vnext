@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LEARNER_LEGACY_NOTICES_TITLE } from "@/modules/placements/learner-placement-copy-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -65,7 +66,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     <main className="min-w-0 space-y-6">
       <div>
         <Link href="/learn/my-placements" className="text-sm text-primary-text underline">Back to My Placements</Link>
-        <h1 className="mt-3 text-2xl font-semibold text-foreground">Announcements</h1>
+        <h1 className="mt-3 text-2xl font-semibold text-foreground">{LEARNER_LEGACY_NOTICES_TITLE}</h1>
         <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown.</p>
         {hadInvalidNoticeFilters ? <p role="status" className="mt-2 text-sm text-warning">Some notice filters were invalid and have been reset to safe defaults.</p> : null}
       </div>
