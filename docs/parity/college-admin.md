@@ -723,6 +723,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Persisted authored assignment triage PARTIAL (2026-10-15, chat-3):** A college-scoped offering filter checks actual assignment records through paths and lessons before totals and CSV. It does not imply submissions, grading or delivery. Tests authored; PG/browser verification open.
+
 **Offering authored lesson triage PARTIAL (2026-10-15, chat-3):** Filters on persisted lessons attached through learning paths, before college-scoped counts, paging and safe capped CSV. Source tests authored; independent PG/browser acceptance open.
 
 **Published learning path triage PARTIAL (2026-10-15):** The Course Progress offering list now distinguishes registered PUBLISHED learning paths from drafts, archived paths or absent paths. This is an authored structure state, not proof of learner visibility or course completion. Filtered totals, safe CSV, strict schema and disposable-PG fixture are authored; execution/browser acceptance open.
