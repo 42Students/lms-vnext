@@ -38,7 +38,7 @@ export function recruiterOtpMatches(
 }
 export function recruiterOtpUsable(
  challenge:{expiresAt:Date;failedAttempts:number;consumedAt:Date|null;
-   deliveryState:"PENDING"|"SENT"|"FAILED"}, now:Date,
+   deliveryState:string}, now:Date,
 ):boolean {
  return challenge.deliveryState==="SENT" &&
   challenge.consumedAt===null &&
@@ -48,4 +48,14 @@ export function recruiterOtpUsable(
   Number.isInteger(challenge.failedAttempts) &&
   challenge.failedAttempts>=0 &&
   challenge.failedAttempts<RECRUITER_OTP_MAX_FAILURES;
+}
+
+/** Never throw inside a transaction after incrementing failedAttempts:
+ * a throw would rollback the lockout counter. Return DENY and commit. */
+export function recruiterOtpAttemptDecision(
+ challenge:{expiresAt:Date;failedAttempts:number;consumedAt:Date|null;
+  deliveryState:string}, now:Date, digestMatches:boolean,
+):"ACCEPT"|"REJECT"|"LOCKED" {
+ if(!recruiterOtpUsable(challenge,now))return "LOCKED";
+ return digestMatches?"ACCEPT":"REJECT";
 }

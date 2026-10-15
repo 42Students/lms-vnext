@@ -38,3 +38,10 @@ export const recruiterInviteCodesStaged=pgTable("recruiter_invite_code",{
  index("recruiter_invite_code_college_sent_idx").on(t.collegeId,t.sentAt),
  index("recruiter_invite_code_token_active_idx").on(t.tokenHash,t.sentAt),
 ]);
+
+/** T-S1-01: proposed per-college recruiter grant duration, NOT registered. */
+export const recruiterAccessPoliciesStaged=pgTable("placement_recruiter_access_policies",{
+ collegeId:uuid("college_id").primaryKey(),
+ recruiterAccessMonths:integer("recruiter_access_months").notNull(),
+ updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+});
