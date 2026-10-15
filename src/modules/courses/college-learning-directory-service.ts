@@ -105,6 +105,8 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.contentAudience==="SHARED"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),sql`${lessonContents.deliveryId} IS  NULL`))):
+        query.contentAudience==="SECTION"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),sql`${lessonContents.deliveryId} IS NOT NULL`))):undefined,
       query.lessonName ? eq(courseLessons.name, query.lessonName) : undefined,
       query.sequenceThrough !== undefined ? sql`${courseLessons.sequence} <= ${query.sequenceThrough - 1}` : undefined,
       query.sequenceFrom !== undefined ? sql`${courseLessons.sequence} >= ${query.sequenceFrom - 1}` : undefined,
