@@ -11,19 +11,18 @@ export function ProjectArchiveControl({
   projectId,
   projectTitle,
   status,
+  expectedUpdatedAt,
 }: {
   projectId: string;
   projectTitle: string;
   status: string;
+  expectedUpdatedAt: string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
 
-  if (status === "ARCHIVED") {
-    return null;
-  }
 
   async function archive() {
     setPending(true);
@@ -52,6 +51,46 @@ export function ProjectArchiveControl({
     } finally {
       setPending(false);
     }
+  }
+
+  async function restore() {
+    setPending(true);
+    try {
+      await projectMutation(
+        `/api/projects/${encodeURIComponent(projectId)}/restore`,
+        "POST",
+        { expectedUpdatedAt },
+      );
+      setOpen(false);
+      showToast({ tone: "success", title: "Workspace restored" });
+      router.refresh();
+    } catch {
+      showToast({ tone: "error", title: "Failed to restore workspace" });
+    } finally {
+      setPending(false);
+    }
+  }
+
+  if (status === "ARCHIVED") {
+    return (
+      <>
+        <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
+          Restore
+        </Button>
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          title="Restore this workspace?"
+          description="Restore workspace, members, meetings, tasks, sprints and resources with their edits."
+          footer={
+            <>
+              <Button variant="secondary" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
+              <Button disabled={pending} onClick={() => void restore()}>Restore</Button>
+            </>
+          }
+        />
+      </>
+    );
   }
 
   return (

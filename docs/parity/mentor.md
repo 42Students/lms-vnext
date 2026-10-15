@@ -1543,3 +1543,15 @@ After the single COMPLETED transition was assigned to Mentor closeout, the prior
 ## Phase 2 PR-S2-05 College Admin override UI (implemented, not browser-verified)
 
 College and Super Admin per-workspace readiness deep links now resolve to a scoped readiness view and submit the audited override endpoint using the exact legacy labels for state, note, confirmation, success and failure. The list's obsolete “override is not persisted” banner was removed and a legacy **Manage** action added. Real PostgreSQL, permission-negative, lifecycle, mobile/browser and keyboard verification remains OPEN.
+
+## Phase 2 commit map — branch implementation only (NOT parity/DB acceptance)
+
+- PR-S1-01: d6187c6b (follow-up closeout dependency correction; original single-path commit 2886991)
+- PR-S2-01: b0fffc2d (explicit documented NO_CARRY_OVER policy)
+- PR-S2-05: 9583486a (audited override and submission gate); 5deaff27 (College/Admin readiness UI)
+- PR-S2-08: f899d992 (staged member kind schema/policy; runtime NOT DONE)
+- PR-S2-10: d5111a4e (restore transaction); admin archived-workspace action in subsequent branch commit
+- PR-S2-11: 8e9abd6d (staged visibility schema/policy; runtime NOT DONE)
+- Mentor/Projects copy audit: b488ab04 (sidebar grouping, headings and empty states; full copy audit OPEN)
+
+No entry here is a certified DONE tracker task without executed PostgreSQL, tenant-negative, regression and browser acceptance. PR-S2-03 task assignment remains staged and unenforced.
