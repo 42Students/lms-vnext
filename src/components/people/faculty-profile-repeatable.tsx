@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileCanReorderVisible} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -66,6 +66,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           className="mt-1.5 w-full rounded-md border border-border bg-background p-3" placeholder="Search section fields"/>
       </label>:null}
       {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No matching records. Clear search to restore the full list.</p>:null}
+      {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
         {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 rounded-lg border border-border p-3 sm:p-4">
@@ -101,10 +102,10 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
               })}
             </div>:null}
             <div className="mt-3 flex flex-wrap gap-2">
-              <button type="button" disabled={pending || index===0} onClick={()=>{
+              <button type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
               }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</button>
-              <button type="button" disabled={pending || index===rows.length-1} onClick={()=>{
+              <button type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index+1));setChanged(true);
               }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" down"}>Move down</button>
             </div>
