@@ -10,7 +10,7 @@ import {projectRecruiterVisibleShortlist} from "../tpo-shareable-shortlist-model
 import {companyShareTablesReady} from "./readiness";
 import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "./staged-schema";
 import {companyShareTokenSchema,hashCompanyShareToken} from "./token-model";
-import {publicApplicantSearchSchema,escapeLiteralApplicantSearch} from "./public-filter-model";
+import {publicApplicantSearchSchema,escapeLiteralApplicantSearch,clampCompanySharePage} from "./public-filter-model";
 
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 export type PublicCompanyApplicantShare =
@@ -73,16 +73,17 @@ export async function getPublicCompanyApplicantShare(
      eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId)).where(filter);
   const total=counter?.total??0;
+  const pagination=clampCompanySharePage(page.data,total);
   const isCsv=eventKind==="CSV";
   const records=await source().orderBy(asc(users.displayName),asc(placementApplications.id))
-   .limit(isCsv?500:25).offset(isCsv?0:(page.data-1)*25);
+   .limit(isCsv?500:25).offset(isCsv?0:(pagination.page-1)*25);
   await tx.insert(views).values({
    shareId:grant.shareId,collegeId:grant.collegeId,eventKind,
   });
   return {
    kind:"READY" as const,title:grant.title,
    rows:projectRecruiterVisibleShortlist(records),
-   total,page:isCsv?1:page.data,totalPages:Math.max(1,Math.ceil(total/25)),
+   total,page:isCsv?1:pagination.page,totalPages:pagination.totalPages,
    truncated:isCsv&&total>500,search:search.data,
   };
  });

@@ -11,3 +11,9 @@ export function companyShareApplicantHref(token:string,page:number,search:string
  const suffix=query.toString();
  return "/company-share/"+encodeURIComponent(token)+(suffix?"?"+suffix:"");
 }
+
+/** An expired/out-of-range link should not pretend that a later page exists. */
+export function clampCompanySharePage(requestedPage:number,total:number){
+ const totalPages=Math.max(1,Math.ceil(Math.max(0,total)/25));
+ return {page:Math.max(1,Math.min(requestedPage,totalPages)),totalPages};
+}
