@@ -42,7 +42,7 @@ describe("TPO More navigation", () => {
 
     expect(destinations).toEqual([
       "/tpo/students",
-      "/tpo/students/requests",
+      "/tpo/requests",
       "/tpo/calendar",
       "/tpo/reports",
       "/tpo/notifications",
