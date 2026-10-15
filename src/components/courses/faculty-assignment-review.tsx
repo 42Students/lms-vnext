@@ -195,14 +195,11 @@ function SubmissionGradeCard({
         return;
       }
 
-      const payload =
-        (await response.json()) as {
-          submission: Submission;
-        };
+      const saved = facultyManualGradeReceipt(await response.json(),submission,"PUBLISH",maxPoints);
       setSuccess("Grade state saved. Refresh the report to verify visibility.");
       onUpdated({
         ...submission,
-        ...payload.submission,
+        ...saved,
         learnerDisplayName:
           submission.learnerDisplayName,
         learnerEmail:
