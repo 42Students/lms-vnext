@@ -11,7 +11,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions}:{rows:r
  const active=selected.length?selected:permitted;
  const display=chosenTpoGridColumns(columns,active);
  function choose(keys:string[]){
-  const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:keys.length===permitted.length?"":keys.join(",")});
+  const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:keys.length===permitted.length?"":keys.join(",")},false);
   router.replace(pathname+(next.size?"?"+next.toString():""));
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
