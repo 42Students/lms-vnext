@@ -5,6 +5,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-service";
 import { TpoBellPanel } from "@/components/tpo/tpo-bell-panel";
 import { TPO_TOPBAR_QUICK_LINKS } from "@/modules/placements/tpo-topbar-links";
+import { TpoFindShortcut } from "@/components/tpo/tpo-find-shortcut";
 export default async function TpoLayout({children}:Readonly<{children:React.ReactNode}>){
  const context=await getCurrentRequestContext();
  if (
@@ -20,7 +21,7 @@ export default async function TpoLayout({children}:Readonly<{children:React.Reac
  }));
  return <div className="min-w-0 space-y-4">
   <div className="flex min-w-0 flex-wrap items-center justify-end gap-3" aria-label="TPO quick access">
-   <Link href="/tpo/find" className="min-h-11 inline-flex items-center text-sm text-primary-text underline">Find a student, recruiter or company</Link>
+   <TpoFindShortcut/>
    <details className="relative">
      <summary className="min-h-11 cursor-pointer rounded-md border border-border px-3 py-2 text-sm text-primary-text">+ New</summary>
      <nav aria-label="Create placement work" className="absolute right-0 z-20 min-w-44 rounded-md border border-border bg-surface p-2 shadow-lg">

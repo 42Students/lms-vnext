@@ -8,15 +8,18 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
+import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 
 export const tpoNoticeCreateSchema=z.object({
  title:z.string().trim().min(1).max(255),
  message:z.string().trim().min(1).max(10000),
  pinned:z.boolean().default(false),
+ sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict();
 
 export async function createTpoNotice(context:RequestContext,raw:unknown){
  const data=tpoNoticeCreateSchema.parse(raw);
+ const schedule=parseTpoNoticeSchedule(data,new Date());
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
@@ -29,6 +32,7 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
    organizationId:college.organizationId,collegeId:college.id,
    receiverType:"COLLEGE",receiverId:college.id,senderUserId:context.user.id,
    senderType:"TPO",title:data.title,message:data.message,isPinned:data.pinned,
+   scheduledAt:schedule.scheduledAt,expiresAt:schedule.expiresAt,
   }).returning({id:db10Announcements.id,version:db10Announcements.version});
   if(!notice)throw new Error("NOTICE_CREATE_FAILED");
   await tx.insert(activityEvents).values({
