@@ -13,6 +13,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultySubmissionListHref } from "@/modules/courses/faculty-assignment-submissions-model";
+import {facultyAiGradingHref} from "@/modules/courses/faculty-ai-grading-links";
 
 export default async function FacultyAssignmentReportPage({
   params,
@@ -50,6 +51,11 @@ export default async function FacultyAssignmentReportPage({
         description={`${assignment.courseName} · ${assignment.sectionName} · ${assignment.lessonName}`}
       />
       <div className="flex flex-wrap items-center gap-3">
+        <Link href={facultyAiGradingHref({
+          assignmentId:assignment.id,deliveryId:assignment.deliveryId,page:1,
+         })} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          AI grading review (suggestions disabled)
+        </Link>
         <FacultyReportCsvDownload
           href={facultyReportCsvHref({
             kind:"assignment",assessmentId:assignment.id,deliveryId:assignment.deliveryId,
