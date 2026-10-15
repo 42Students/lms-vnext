@@ -14,7 +14,7 @@ export async function GET(request:Request,{params}:RouteContext){
     const {projectId}=await params;
     const url=new URL(request.url);
     const filters=singleValueMentorExportFilters(url.searchParams,[
-      "importance","view","window",
+      "importance","view","window","order",
     ]);
     if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
     const query=mentorProjectActivityQuerySchema.parse({
