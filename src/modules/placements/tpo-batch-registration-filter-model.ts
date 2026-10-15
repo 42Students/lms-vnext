@@ -11,7 +11,7 @@ export const tpoBatchRegistrationFilters=z.object({
 }).strict();
 export type BatchRegistrationListRow={membershipId:string;name:string;choice:string|null};
 export function filterBatchRegistrations<T extends BatchRegistrationListRow>(
- rows:readonly T[],filter:z.infer<typeof tpoBatchRegistrationFilters>,
+ rows:readonly T[],filter:Pick<z.infer<typeof tpoBatchRegistrationFilters>,"q"|"choice"|"page">,
 ){
  const search=filter.q.toLocaleLowerCase();
  return rows.filter(row=>{

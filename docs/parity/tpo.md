@@ -2137,3 +2137,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / registration event history review filters — PARTIAL:** A scoped history drill-in can filter latest immutable registration events by SELF/TPO/BACKFILL and initial-versus-subsequent transition, while preserving limited-sample notice. Filters cannot change or infer consent; browser acceptance open.
 
 **Chat-2 / immutable registration-history filtered export — PARTIAL:** GET reuses the persisted TPO+active-cohort-learner authorization and bounded latest-100 DB08 event service; exports only before/after choice, source and UTC date, formula-safe with no-store, truncation header and no consent versions, actors, IDs, phones or email. Missing DB negative tests and browser acceptance remain open.
+
+**Chat-2 registration filter compatibility repair:** The shared base choice/name filter now retains the previous q/choice/page call signature despite the expanded page query Zod schema, while accepting the expanded parsed object by structural typing. Authored regression demonstrates both call patterns; execution remains open.
