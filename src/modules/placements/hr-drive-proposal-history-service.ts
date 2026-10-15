@@ -4,7 +4,7 @@ import {getDb} from "@/db/client";
 import {placementTpoMessageThreads,placementTpoMessages} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
 import {listHrConversations} from "./hr-conversation-inbox-service";
-import {readRecruiterThreadMessages} from "./tpo-messaging-service";
+import {verifyRecruiterGeneralThreadAccess} from "./tpo-messaging-service";
 import {hrDriveProposalHistoryQuerySchema,hrProposalHistoryWindow,HR_PROPOSAL_PAGE_SIZE,previewHrDriveProposalMessage} from "./hr-drive-proposal-history-model";
 
 /**
@@ -28,7 +28,7 @@ export async function listHrDriveProposals(context:RequestContext,raw:unknown={}
   return {status:"READY" as const,collegeId:inbox.collegeId,choices:inbox.choices,
    items:[],total:0,page:1,pages:1,limited:false};
  // Recheck persisted ownership and grant with the canonical message reader.
- await readRecruiterThreadMessages(context,thread.id,1);
+ await verifyRecruiterGeneralThreadAccess(context,thread.id,inbox.collegeId);
  const titleFilter=query.q?sql<boolean>`position(${query.q.toLowerCase()}::text
   in lower(split_part(${placementTpoMessages.body}, E'\\n', 3)))>0`:undefined;
  const where=and(
