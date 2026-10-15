@@ -6,6 +6,7 @@ import {
   type AnnouncementTarget,
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import {SuperAdminCollegeBroadcastForm} from "@/components/announcements/super-admin-college-broadcast-form";
 import {
   listAnnouncementsForAdmin,
   listAnnouncementTargetOptions,
@@ -104,6 +105,7 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
+      <SuperAdminCollegeBroadcastForm colleges={targets.filter(target=>target.type==="COLLEGE").map(target=>({id:target.id,label:target.label}))}/>
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
         <div className="flex justify-center">
