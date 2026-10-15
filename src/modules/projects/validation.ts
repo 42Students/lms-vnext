@@ -273,6 +273,7 @@ export const publishableProjectTemplateBlueprintSchema =
 
 export const reviseProjectTemplateInputSchema = z
   .object({
+    expectedVersion: projectTemplateVersionSchema,
     title: titleSchema,
     summary: z.string().trim().min(1).max(2000).optional(),
     blueprint: projectTemplateBlueprintSchema,
