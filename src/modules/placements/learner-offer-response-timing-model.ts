@@ -15,7 +15,7 @@ export function learnerOfferResponseTiming(raw:unknown,snapshotNowIso:string){
   const now=Date.parse(snapshotNowIso);
   if(!Number.isFinite(now))throw new Error("Invalid server snapshot");
   const until=row.expiresAt===null?null:Date.parse(row.expiresAt)-now;
-  const expired=until!==null&&until<0;
+  const expired=until!==null&&until<=0;
   const canRespond=row.status==="ISSUED"&&!expired;
   return {expired,canRespond,
     urgency:row.status!=="ISSUED"?"RESOLVED" as const:
