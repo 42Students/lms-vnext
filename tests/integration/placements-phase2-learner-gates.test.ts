@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
+import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { loadPlacementHeldOfferFacts } from "@/modules/placements/held-offer-facts-service";
 import { isPlacementLearnerDebarred } from "@/modules/placements/debarment-service";
@@ -72,9 +73,15 @@ async function clean() {
   await pool.query("DELETE FROM placement_jobs");
   await pool.query("DELETE FROM placement_company_relationships");
   await pool.query("DELETE FROM placement_companies");
+  if (extraCohorts.length) {
+    await pool.query("DELETE FROM cohorts WHERE id = ANY($1::uuid[])", [extraCohorts]);
+    extraCohorts.length = 0;
+  }
 }
 
-async function makeJob(title: string) {
+const extraCohorts: string[] = [];
+
+async function makeJob(title: string, beforePublish?: (jobId: string) => Promise<void>) {
   const uid = randomUUID();
   const company = await createPlacementCompany(tpo, {
     collegeId: SEED_IDS.collegeA,
@@ -88,6 +95,7 @@ async function makeJob(title: string) {
     employmentType: "FULL_TIME", workMode: "HYBRID",
     applicationMode: "INTERNAL",
   });
+  if (beforePublish) await beforePublish(job.id);
   await publishPlacementJob(tpo, job.id);
   return job;
 }
@@ -189,6 +197,43 @@ describe("Section A: placement write/read integration boundaries", () => {
     )).toBe(false);
     expect((await listLearnerPlacementJobs(learner))
       .find(row => row.job.id === job.id)?.canApply).toBe(true);
+  });
+
+
+  it("P-S1-03 enforces target cohort in both discovery and apply", async () => {
+    const enrollment = await pool.query<{ program_id:string; cohort_id:string }>(
+      "SELECT program_id,cohort_id FROM learner_program_enrollments WHERE membership_id=$1 AND status='ACTIVE' LIMIT 1",
+      [SEED_IDS.learnerCollegeAMembership],
+    );
+    const own = enrollment.rows[0]!;
+    const period = await pool.query<{start_period_id:string}>(
+      "SELECT start_period_id FROM cohorts WHERE id=$1", [own.cohort_id],
+    );
+    const foreignCohortId = randomUUID();
+    extraCohorts.push(foreignCohortId);
+    await pool.query(`
+      INSERT INTO cohorts(id,program_id,name,code,start_period_id)
+      VALUES($1,$2,$3,$4,$5)
+    `, [foreignCohortId, own.program_id, "Other class "+foreignCohortId,
+         "P2-"+foreignCohortId,period.rows[0]!.start_period_id]);
+
+    const restricted = await makeJob("Other cohort only", async (jobId) => {
+      await upsertJobEligibilityPolicy(tpo, jobId, {
+        allowedCohortIds:[foreignCohortId],
+      });
+    });
+    expect((await listLearnerPlacementJobs(learner))
+      .some(row => row.job.id === restricted.id)).toBe(false);
+    await expect(applyToPlacementJob(learner, restricted.id, {}))
+      .rejects.toMatchObject({code:"PLACEMENT_APPLICATION_INELIGIBLE"});
+
+    const matching = await makeJob("Own cohort", async (jobId) => {
+      await upsertJobEligibilityPolicy(tpo, jobId, {
+        allowedCohortIds:[own.cohort_id],
+      });
+    });
+    expect((await listLearnerPlacementJobs(learner))
+      .some(row => row.job.id === matching.id)).toBe(true);
   });
 
 
