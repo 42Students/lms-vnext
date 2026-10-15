@@ -713,6 +713,7 @@ export function ProjectWorkspace({
                                       membershipId:member.membershipId,displayName:member.displayName,
                                     }))}
                                   />
+                                ) : null}
                                 {mode === "MENTOR" ? (
                                   <MentorTaskStatusTransition
                                     projectId={workspace.project.id}
