@@ -56,5 +56,8 @@ export function updateFacultyProfileSection(
   if(patch.section==="education" && !facultyReceiptIdsUnchanged(
     current.education,next.education,["certificateDocumentId"],
   ))throw new Error("Private education document receipts cannot be changed");
+  if(patch.section==="certifications" && !facultyReceiptIdsUnchanged(
+    current.certifications,next.certifications,["certificateDocumentId"],
+  ))throw new Error("Private certification document receipts cannot be changed");
   return next;
 }
