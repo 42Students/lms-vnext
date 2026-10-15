@@ -1,5 +1,6 @@
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import { learnerAssessmentSubmittedLinkHref } from "@/modules/courses/learner-assessment-submitted-link-model";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -61,7 +62,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : <AssignmentFileOpenControl key={item.submissionId}
           submissionId={item.submissionId} enabled={assignmentFilesRuntimeEnabled()} />}
         {item.gradePublished ? <div className="rounded-lg bg-surface-subtle p-4">
-          <p className="font-semibold text-foreground">Published grade: {item.pointsAwarded ?? 0} / {item.maxPoints}</p>
+          <p className="font-semibold text-foreground">Published grade: {learnerAssignmentPublishedGradeLabel(item.pointsAwarded,item.maxPoints)}</p>
           <p className="mt-2 whitespace-pre-wrap break-words">{item.feedback || "No written feedback was provided."}</p>
         </div> : <p>Grade and feedback are not published yet.</p>}
       </div> : <div className="mt-3">
