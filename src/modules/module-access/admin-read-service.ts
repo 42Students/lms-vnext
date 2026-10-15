@@ -56,6 +56,7 @@ export const adminFeatureQuerySchema =
 const detailQuerySchema = z.object({
   module: adminModuleOverrideFilterSchema,
   scope: z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"]).optional(),
+  locks: z.enum(["ALL","LOCKED"]).default("ALL"),
   page: z.coerce
     .number()
     .int()
@@ -451,11 +452,14 @@ export async function getSuperAdminCollegeModuleAccess(
 
   const descendantSql =
     scopedDescendantRules(college.id);
-  const descendantFilter = query.module && query.scope
+  const baseDescendantFilter = query.module && query.scope
     ? sql`where module = ${query.module}::text and scope_type = ${query.scope}::text`
     : query.module ? sql`where module = ${query.module}::text`
     : query.scope ? sql`where scope_type = ${query.scope}::text` : sql``;
 
+  const descendantFilter = query.locks === "LOCKED"
+    ? sql`${baseDescendantFilter} ${query.module || query.scope ? sql`and` : sql`where`} locked = true`
+    : baseDescendantFilter;
   const [countResult, overrideResult] =
     await Promise.all([
       db.execute<OverrideCountRow>(sql`
@@ -524,6 +528,7 @@ export async function getSuperAdminCollegeModuleAccess(
     page: query.page,
     moduleFilter: query.module ?? null,
     scopeFilter: query.scope ?? null,
+    lockFilter: query.locks,
     pageSize: OVERRIDE_PAGE_SIZE,
     total,
     totalPages: Math.max(
