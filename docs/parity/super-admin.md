@@ -896,3 +896,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Settings inventory search (PARTIAL):** Super Admin can now filter the existing safe, non-secret source/college policy inventory by typed section and setting/source text. This is an in-memory filter over already-authorized reads; credentials and raw environment config remain unavailable. Unit tests authored, not executed; legacy mutable settings still absent and page is not DONE.
+
+
+**2026-10-15 chat-6 locked descendant hierarchy filter (PARTIAL):** The selected-college module hierarchy now filters persisted locked rows, composed safely with module and academic scope predicates in both the SQL count and page queries. UI/typed enum/pagination and PostgreSQL fixture authored; tests not executed. No authority to change lock state, and effective learner results still require the resolver trace.

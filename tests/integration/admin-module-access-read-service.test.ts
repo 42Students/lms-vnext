@@ -57,6 +57,11 @@ describe("module access admin read against PostgreSQL", () => {
     expect(result).not.toBeNull();
     expect(result!.scopeFilter).toBe("MEMBERSHIP");
     expect(result!.descendants.every(r=>r.scopeType==="MEMBERSHIP"&&r.module==="projects")).toBe(true);
+    const locked=await getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{scope:"MEMBERSHIP",module:"projects",locks:"LOCKED"});
+    expect(locked).not.toBeNull();
+    expect(locked!.descendants.every(row=>row.locked)).toBe(true);
+    expect(locked!.total).toBeLessThanOrEqual(result!.total);
+    await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{locks:"UNKNOWN"})).rejects.toBeDefined();
     await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{scope:"GLOBAL"})).rejects.toBeDefined();
   });
 
