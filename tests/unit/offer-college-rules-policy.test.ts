@@ -37,9 +37,20 @@ describe("P-S2-06 offer response minimum", () => {
       new Date("2026-10-12T06:30:00.000Z"), 1,
     ).toISOString()).toBe("2026-10-12T07:30:00.000Z");
   });
+  it("does not credit partial Sunday hours across midnight in India",()=>{
+    // 18 October 2026 23:30 IST is Sunday; the full hour starts Monday 00:00.
+    expect(minimumOfferResponseDeadline(
+      new Date("2026-10-18T18:00:00.000Z"),1,
+    ).toISOString()).toBe("2026-10-18T19:30:00.000Z");
+    // Saturday 23:30 IST contributes its first 30 minutes and Monday the rest.
+    expect(minimumOfferResponseDeadline(
+      new Date("2026-10-17T18:00:00.000Z"),1,
+    ).toISOString()).toBe("2026-10-18T19:00:00.000Z");
+  });
   it("rejects invalid response rules instead of producing an unsafe deadline", () => {
     expect(() => minimumOfferResponseDeadline(new Date(), 0)).toThrow();
     expect(() => minimumOfferResponseDeadline(new Date(), 1.5)).toThrow();
+    expect(() => minimumOfferResponseDeadline(new Date("invalid"), 1)).toThrow();
   });
 });
 

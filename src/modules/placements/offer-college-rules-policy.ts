@@ -29,17 +29,29 @@ export function minimumOfferResponseDeadline(
   issuedAt: Date,
   minimumResponseHours: number,
 ): Date {
-  if (!Number.isSafeInteger(minimumResponseHours) || minimumResponseHours < 1) {
+  if (!Number.isSafeInteger(minimumResponseHours) ||
+      minimumResponseHours < 1 || minimumResponseHours > 24 * 366 ||
+      !Number.isFinite(issuedAt.getTime())) {
     throw new Error("Invalid minimum response hours");
   }
+  // Credit the exact elapsed milliseconds within each IST civil day. A whole
+  // hour ending at Monday 00:30 can contain 30 minutes of Sunday, which must
+  // NOT be counted toward the minimum response window.
+  const dayMs = 86_400_000, indiaOffsetMs = 330 * 60_000;
   let cursor = issuedAt.getTime();
-  let remaining = minimumResponseHours;
-  while (remaining > 0) {
-    cursor += 60 * 60 * 1000;
-    // IST never observes DST; shifting to the local clock makes getUTCDay
-    // deterministic even when the caller runs in another timezone.
-    const istDay = new Date(cursor + 330 * 60 * 1000).getUTCDay();
-    if (istDay !== 0) remaining -= 1;
+  let remainingMs = minimumResponseHours * 3_600_000;
+  while (remainingMs > 0) {
+    const local = cursor + indiaOffsetMs;
+    const day = new Date(local).getUTCDay();
+    const elapsed = ((local % dayMs) + dayMs) % dayMs;
+    const untilMidnight = dayMs - elapsed;
+    if (day === 0) {
+      cursor += untilMidnight;
+      continue;
+    }
+    const credit = Math.min(untilMidnight, remainingMs);
+    cursor += credit;
+    remainingMs -= credit;
   }
   return new Date(cursor);
 }
