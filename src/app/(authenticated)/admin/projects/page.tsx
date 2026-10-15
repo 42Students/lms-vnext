@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -101,6 +102,8 @@ export default async function SuperAdminProjectsPage({
           />
         }
       />
+
+      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/admin/projects/workspaces/new">Split class into teams / Add whole class</Link></div>
 
       <ProjectAdminFilters query={query} />
 
