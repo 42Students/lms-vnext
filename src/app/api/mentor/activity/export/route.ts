@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-service";
 import {mentorActivityQuerySchema} from "@/modules/projects/mentor-portfolio-model";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorPortfolioActivityCsv} from "@/modules/projects/mentor-portfolio-activity-export-model";
 export const runtime="nodejs";
 
@@ -10,17 +11,12 @@ export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
-  const query=mentorActivityQuerySchema.parse({
-   projectId:params.get("projectId")??undefined,
-   projectStatus:params.get("projectStatus")??undefined,
-   assignment:params.get("assignment")??undefined,
-   search:params.get("search")??undefined,
-   order:params.get("order")??undefined,
-   window:params.get("window")??undefined,
-   importance:params.get("importance")??undefined,
-   view:params.get("view")??undefined,
-   page:1,pageSize:50,
-  });
+  const filters=singleValueMentorExportFilters(params,[
+   "projectId","projectStatus","assignment","search","order",
+   "window","importance","view",
+  ]);
+  if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
+  const query=mentorActivityQuerySchema.parse({...filters,page:1,pageSize:50});
   const context=await getCurrentRequestContext();
   const first=await getMentorPortfolioActivity(context,query);
   if(!first.enabled) return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
