@@ -1482,3 +1482,5 @@ Learner ledger CLOSED status is claimed from these changes.
 **2026-10-15 chat-5 parity hardening — applications date order (PARTIAL):** oldest-submitted filtering now consistently puts malformed stored dates after known submissions with a deterministic application-ID tie-break. Authorization/source queries remain unchanged; large-list browser acceptance is still required.
 
 **2026-10-15 chat-5 parity hardening — L14 application stage (PARTIAL):** a stage no longer present among the learner's own persisted applications is explicitly identified and falls back to all stages without discarding other search/view/sort facets. Browser Back/Forward and source-query acceptance pending.
+
+**2026-10-15 chat-5 parity hardening — L29 inbox pinned preview (PARTIAL):** pinned college announcements now obey the selected domain, search and unread-personal filters, so the Job/Unread tabs no longer display unrelated announcement cards above filtered results. No read-state mutation is inferred; mobile/browser verification outstanding.

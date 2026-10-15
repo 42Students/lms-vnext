@@ -74,9 +74,9 @@ export function LearnerNotificationsInbox({
     () => learnerNotificationCategoryCounts(combined),
     [combined],
   );
-  const pinnedAnnouncements=useMemo(()=>learnerPinnedAnnouncementPreview(combined),[combined]);
   const visible = useMemo(() => filterLearnerInbox(combined,{category:active,unread,q:search}),
     [combined,active,unread,search]);
+  const pinnedAnnouncements=useMemo(()=>learnerPinnedAnnouncementPreview(visible),[visible]);
   const unreadPersonalCount=learnerNotificationPendingCount(personal);
   const mobileSummary=learnerNotificationMobileFilterSummary({category:active,unread,q:search},visible.length);
   async function markAllRead(){
@@ -188,7 +188,7 @@ export function LearnerNotificationsInbox({
               </button>
             </li>)}
           </ul>
-          {combined.filter(item=>item.source==="ANNOUNCEMENT"&&item.pinned).length>pinnedAnnouncements.length
+          {visible.filter(item=>item.source==="ANNOUNCEMENT"&&item.pinned).length>pinnedAnnouncements.length
             ? <p className="mt-2 text-xs text-muted-foreground">Additional pinned announcements remain in the list below.</p>:null}
         </section>
       ):null}
