@@ -10,6 +10,7 @@ export function electiveCsvHref(q:{
  academicYearState?:"ALL"|"RECORDED"|"MISSING";
  offeringState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
  choiceMode?:"ALL"|"FLEXIBLE"|"FIXED";
+ slotName?:string;
  programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
 }){
  const p=new URLSearchParams();
@@ -25,6 +26,7 @@ export function electiveCsvHref(q:{
  if(q.offeringState&&q.offeringState!=="ALL")p.set("offeringState",q.offeringState);
  if(q.academicYearState&&q.academicYearState!=="ALL")p.set("academicYearState",q.academicYearState);
  if(q.periodCode)p.set("periodCode",q.periodCode);
+ if(q.slotName)p.set("slotName",q.slotName);
  return "/api/academics/college-electives-export"+(p.size?"?"+p.toString():"");
 }
 export function renderElectivesCsv(rows:readonly {
