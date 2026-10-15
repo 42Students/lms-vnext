@@ -2061,3 +2061,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / batch eligibility import scaffold (PARTIAL):** A college/TPO-scoped GET now exports the currently authorized 25-row membership UUID list in the exact existing import CSV shape with intentionally blank decisions, no learner PII beyond IDs, no mutation, and private/no-store response headers. Operators must review/edit and use the existing confirmed preview/commit API; large-list and legacy wizard parity remain open.
 
 **Chat-2 / eligibility import review export (PARTIAL):** The existing server-confirmed preview can now be copied locally as formula-neutralized CSV outcomes, omitting optimistic version tokens and contact PII; copying never commits an import. Full legacy import undo UX and browser/PG acceptance remain open.
+
+**Chat-2 academic CSV validation hardening:** The preview parser now rejects blank/scientific notation numeric cells rather than coercing blank grades/backlogs to zero, and its typed match function retains the parsed fields used by the client preview. Unit cases authored; executed TypeScript/Vitest/browser results remain open.
