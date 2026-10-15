@@ -2079,3 +2079,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / Drive Day all-attendance-unrecorded — PARTIAL:** Added a filter for live rounds with at least one roster member and no persisted attendance decisions; empty rounds are excluded. Kept unresolved sort backward-compatible with earlier tests omitting unknown; no fictional ABSENT statuses.
 
 **Chat-2 / Drive Day live attendance KPI strip — PARTIAL:** Aggregates only fetched, college-authorized, max-20 live rounds before search/issue filters; separately shows explicit absent, WAITING and UNKNOWN without implying an all-college denominator.
+
+**Chat-2 / Drive Day scheduled-time awareness — PARTIAL:** Live cards now show calculated elapsed and scheduled remaining minutes using the single server snapshot timestamp, with unknowns left blank and explicit notice that schedule end is not actual completion.
