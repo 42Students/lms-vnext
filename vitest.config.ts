@@ -5,6 +5,8 @@ import { defineConfig } from "vitest/config";
 const root = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  // tsconfig uses JSX preserve for Next.js; Vitest must emit runnable JSX in TSX imports.
+  esbuild: { jsx: "automatic" },
   test: {
     environment: "node",
     include: ["tests/unit/**/*.test.ts"],
