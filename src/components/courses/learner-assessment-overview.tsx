@@ -23,6 +23,7 @@ import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type L
 import { learnerAssessmentActionCounts } from "@/modules/courses/learner-assessment-action-counts-model";
 import { learnerAssessmentActiveCourse } from "@/modules/courses/learner-assessment-active-course-model";
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
+import { learnerAssessmentSubmittedLinkHref } from "@/modules/courses/learner-assessment-submitted-link-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
 type CourseChoice = {
@@ -534,9 +535,9 @@ export function LearnerAssessmentOverview({
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Submitted link
                     </p>
-                    {selectedAssignment.submissionUrl.startsWith("https://") ? (
+                    {learnerAssessmentSubmittedLinkHref(selectedAssignment.submissionUrl) ? (
                       <a
-                        href={selectedAssignment.submissionUrl}
+                        href={learnerAssessmentSubmittedLinkHref(selectedAssignment.submissionUrl)!}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="mt-2 block break-all text-sm font-semibold text-primary-text underline"
