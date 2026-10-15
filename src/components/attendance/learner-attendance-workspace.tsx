@@ -14,6 +14,7 @@ import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, L
 import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner-attendance-history-link-model";
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { learnerAttendanceRecoveryProjection } from "@/modules/attendance/learner-attendance-recovery-model";
+import { learnerAttendanceThresholdReached } from "@/modules/attendance/learner-attendance-threshold-model";
 import { learnerAttendanceStatusTone } from "@/modules/attendance/learner-attendance-status-tone-model";
 import { learnerAttendanceExactAbsences } from "@/modules/attendance/learner-attendance-exact-absence-model";
 import { learnerAttendanceOrderSchema, sortLearnerAttendanceHistory, type LearnerAttendanceOrder } from "@/modules/attendance/learner-attendance-history-order-model";
@@ -415,8 +416,7 @@ export function LearnerAttendanceWorkspace({
             tone={
               summary.percentage === null
                 ? "neutral"
-                : summary.percentage >=
-                    threshold
+                : learnerAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
                   ? "success"
                   : "error"
             }
