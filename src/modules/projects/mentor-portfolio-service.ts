@@ -67,6 +67,7 @@ export async function getMentorPortfolioActivity(
   if (query.projectId && !scope.projects.some(p=>p.id===query.projectId))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const selectedProjects=scope.projects.filter(p=>(query.projectStatus==="ALL"||p.status===query.projectStatus)&&
+    (query.assignment==="ALL"||(query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
     (!query.projectId||p.id===query.projectId));
   if (!scope.enabled || !selectedProjects.length) {
     return {

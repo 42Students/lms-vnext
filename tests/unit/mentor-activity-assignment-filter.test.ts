@@ -1,0 +1,3 @@
+import{it,expect}from"vitest";import{mentorActivityQuerySchema as schema,mentorPortfolioHref as href}from"@/modules/projects/mentor-portfolio-model";
+it("uses registered primary/supporting values only",()=>{expect(schema.parse({assignment:"SUPPORTING"}).assignment).toBe("SUPPORTING");expect(schema.safeParse({assignment:"ADMIN"}).success).toBe(false)});
+it("retains assignment scope in paging URL",()=>expect(href("activity",{assignment:"SUPPORTING",page:2})).toContain("assignment=SUPPORTING"));
