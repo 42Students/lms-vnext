@@ -4,17 +4,17 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { accountActionCopy } from "./college-account-copy";
+import { accountActionCopy, type AccountMenuVariant } from "./college-account-copy";
 
 export function AccountActions({
   showNotifications = true,
-  legacyCollege = false,
+  variant = "other",
 }: {
   showNotifications?: boolean;
-  legacyCollege?: boolean;
+  variant?: AccountMenuVariant;
 }) {
   const router = useRouter();
-  const copy = accountActionCopy(legacyCollege);
+  const copy = accountActionCopy(variant);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -45,19 +45,21 @@ export function AccountActions({
           Notifications
         </Link>
       ) : null}
-      <Link
-        href={copy.accountHref}
-        className="inline-flex min-h-9 items-center justify-center rounded-md px-2 text-sm sm:px-3 font-semibold text-foreground transition hover:bg-muted"
-      >
-        {copy.accountLabel}
-      </Link>
+      {copy.accountHref ? (
+        <Link
+          href={copy.accountHref}
+          className="inline-flex min-h-9 items-center justify-center rounded-md px-2 text-sm sm:px-3 font-semibold text-foreground transition hover:bg-muted"
+        >
+          {copy.accountLabel}
+        </Link>
+      ) : null}
       <Button
         variant="ghost"
         size="sm"
         disabled={pending}
         onClick={signOut}
       >
-        {pending && !legacyCollege ? "Signing out…" : copy.signOutLabel}
+        {copy.signOutLabel}
       </Button>
       {error ? (
         <p role="alert" className="mt-1 text-xs font-medium text-error">

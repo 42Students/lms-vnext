@@ -568,6 +568,34 @@
       "when": 1792091165545,
       "tag": "0080_storage_files_video_assets",
       "breakpoints": true
+    },
+    {
+      "idx": 81,
+      "version": "7",
+      "when": 1792093683964,
+      "tag": "0081_profile_verification_withdraw_action",
+      "breakpoints": true
+    },
+    {
+      "idx": 82,
+      "version": "7",
+      "when": 1792093743287,
+      "tag": "0082_project_task_assignee",
+      "breakpoints": true
+    },
+    {
+      "idx": 83,
+      "version": "7",
+      "when": 1792093761776,
+      "tag": "0083_project_member_kinds",
+      "breakpoints": true
+    },
+    {
+      "idx": 84,
+      "version": "7",
+      "when": 1792093886635,
+      "tag": "0084_project_resource_visibility",
+      "breakpoints": true
     }
   ]
 }

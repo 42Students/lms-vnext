@@ -31,6 +31,6 @@ describe("college group tabs exact legacy navigation labels",()=>{
   });
   it("never exposes foreign-scope Companies routes as a college tab",()=>{
     expect(COLLEGE_LEGACY_GROUPS.flatMap(g=>g.tabs).every(t=>t.href.startsWith("/college/"))).toBe(true);
-    expect(COLLEGE_LEGACY_GROUPS[3]?.tabs.map(t=>t.label)).toEqual(["Drives","Interviews"]);
+    expect(COLLEGE_LEGACY_GROUPS[3]?.tabs.map(t=>t.label)).toEqual(["Drives","Companies","Interviews","Analytics"]);
   });
 });

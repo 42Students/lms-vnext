@@ -31,8 +31,8 @@ export type TpoDriveCancelDecision =
 
 /**
  * Cancellation is the audited, stronger sibling of closure: the drive moves
- * to CLOSED and every still-open round is cancelled. Issued offers and
- * applications are retained; accepted offers block cancellation because a
+ * to CLOSED and every still-open round is cancelled. Still-issued offers
+ * are withdrawn atomically; accepted offers block cancellation because a
  * learner has already committed.
  */
 export function evaluateTpoDriveCancellation(
@@ -52,4 +52,9 @@ export function evaluateTpoDriveCancellation(
   }
   if (current.acceptedOffers > 0) return "BLOCKED_ACCEPTED_OFFERS";
   return "ALLOW";
+}
+
+/** P-S2-12: only unaccepted issued offers are revocable during cancellation. */
+export function isIssuedOfferCancelable(status: string): boolean {
+  return status === "ISSUED";
 }

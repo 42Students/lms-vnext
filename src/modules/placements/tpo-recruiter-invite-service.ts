@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges,
@@ -9,6 +9,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
 import {
   createRecruiterInviteCredential,
+  isRecruiterInviteFirstOpen,
   isRecruiterInviteTokenShape,
   recruiterInviteTokenHash,
   requireRecruiterInviteUsable,
@@ -201,6 +202,49 @@ export async function previewRecruiterInvite(
       row.lead.inviteSentAt!.getTime() + 7 * 24 * 60 * 60 * 1000,
     ),
   };
+}
+
+/**
+ * T-S2-03: first actual browser open is a separate, same-origin POST.
+ * GET preview stays read-only; retries or React StrictMode cannot double-log.
+ * Never consume the invite token or expose its hash in the response.
+ */
+export async function recordRecruiterInviteFirstOpen(
+  token: string, now: Date = new Date(),
+): Promise<{ recorded: boolean }> {
+  if (!isRecruiterInviteTokenShape(token)) return invalidPublicInvite();
+  const hash = recruiterInviteTokenHash(token);
+  return getDb().transaction(async (tx) => {
+    const [lead] = await tx.select().from(placementTpoLeads)
+      .where(eq(placementTpoLeads.inviteTokenHash, hash))
+      .for("update").limit(1);
+    if (!lead) return invalidPublicInvite();
+    try {
+      requireRecruiterInviteUsable(token, policyState(lead), now);
+    } catch {
+      return invalidPublicInvite();
+    }
+    if (!isRecruiterInviteFirstOpen(lead.inviteClickedAt)) {
+      return { recorded: false };
+    }
+    const [changed] = await tx.update(placementTpoLeads).set({
+      inviteClickedAt: now,
+      updatedAt: now,
+    }).where(and(
+      eq(placementTpoLeads.id, lead.id),
+      eq(placementTpoLeads.inviteTokenHash, hash),
+      isNull(placementTpoLeads.inviteClickedAt),
+    )).returning({ id: placementTpoLeads.id });
+    if (!changed) return { recorded: false };
+    await tx.insert(placementTpoLeadActivities).values({
+      collegeId: lead.collegeId,
+      leadId: lead.id,
+      type: "SYSTEM", isSystem: true,
+      note: "Invite link opened",
+      createdAt: now,
+    });
+    return { recorded: true };
+  });
 }
 
 async function mutatePublicInvite(

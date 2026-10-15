@@ -11,7 +11,7 @@ const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value
 export default async function InboundMailPage({searchParams}:{searchParams:Promise<Params>}) {
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
- const header=<PageHeader eyebrow="Super Admin" title="Inbound Mail" description="Private incoming messages. No automatic replies or outbound sends are performed."/>;
+ const header=<PageHeader eyebrow="Super Admin" title="Inbound mail" description="Private incoming messages. No automatic replies or outbound sends are performed."/>;
  if(context.adminScope?.organizationId||context.adminScope?.collegeId) return <div className="space-y-6">{header}
   <div role="status" className="rounded-xl border border-border bg-surface p-5">Switch to global Super Admin scope to inspect inbound messages. Incoming mail is not mapped to a verified college yet.</div></div>;
  const params=await searchParams;

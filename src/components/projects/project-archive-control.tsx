@@ -88,7 +88,11 @@ export function ProjectArchiveControl({
               <Button disabled={pending} onClick={() => void restore()}>Restore</Button>
             </>
           }
-        />
+        >
+          <p className="m-0 text-sm leading-6 text-body">
+            Archived workspaces can be reopened with all of their content.
+          </p>
+        </Dialog>
       </>
     );
   }

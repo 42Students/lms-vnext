@@ -15,7 +15,7 @@ const context: RequestContext = {
 describe("Super Admin Recruiter Accounts navigation", () => {
   it("links the renamed recruiter directory once", () => {
     const accounts = getShellNavigation(context).filter((item) =>
-      item.label === "Recruiter Accounts",
+      item.label === "Recruiter accounts",
     );
     expect(accounts).toHaveLength(1);
     expect(accounts[0]?.href).toBe("/admin/recruiters");

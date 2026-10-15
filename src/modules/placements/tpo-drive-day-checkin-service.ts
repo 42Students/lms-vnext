@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents, collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRounds, placementJobs, placementRoundAttendance,
+  placementJobRounds, placementJobs, placementRoundAttendance, placementDebarments,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -13,6 +13,7 @@ import { dateInIndia } from "./drive-day-coordinator-service";
 import { placementRoundIdSchema } from "./validation";
 import { tpoDriveDayCheckInSchema, decideTpoAttendanceTransition } from "./tpo-drive-day-checkin-model";
 import { PlacementsServiceError } from "./errors";
+import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 
 export class TpoAttendanceStaleError extends Error {
   constructor() { super("TPO_DRIVE_DAY_ATTENDANCE_STALE"); this.name = "TpoAttendanceStaleError"; }
@@ -52,7 +53,10 @@ export async function confirmTpoDriveDayCheckIn(
         dateInIndia(round.scheduledAt) !== dateInIndia(new Date())) {
       throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
     }
-    const [candidate] = await tx.select({ id: placementApplications.id })
+    const [candidate] = await tx.select({
+      id: placementApplications.id,
+      membershipId: placementApplications.membershipId,
+    })
       .from(placementApplications)
       .innerJoin(placementApplicationScreenings,
         eq(placementApplicationScreenings.applicationId, placementApplications.id))
@@ -65,6 +69,16 @@ export async function confirmTpoDriveDayCheckIn(
         eq(collegeMemberships.collegeId, collegeId), eq(collegeMemberships.status, "ACTIVE")))
       .for("share").limit(1);
     if (!candidate) throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_CANDIDATE_NOT_FOUND");
+    if (input.status === "PRESENT") {
+      // P-S1-02: being on the existing shortlist never overrides a later ban.
+      const bans = await tx.select().from(placementDebarments).where(and(
+        eq(placementDebarments.collegeId, collegeId),
+        eq(placementDebarments.membershipId, candidate.membershipId),
+      )).for("share");
+      if (hasActivePlacementDebarment(bans, new Date())) {
+        throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_CANDIDATE_NOT_FOUND");
+      }
+    }
     const [prior] = await tx.select().from(placementRoundAttendance)
       .where(and(eq(placementRoundAttendance.roundId, roundId),
         eq(placementRoundAttendance.applicationId, input.applicationId)))

@@ -42,3 +42,20 @@ describe("P-S2-06 offer response minimum", () => {
     expect(() => minimumOfferResponseDeadline(new Date(), 1.5)).toThrow();
   });
 });
+
+describe("P-S1-05 learner held-offer application boundary", () => {
+  it("does not require uplift below the cap", () => {
+    expect(canReleaseAnotherHeldOffer({
+      maxHeldOffers: 2, upliftPct: 40,
+      heldOffers: [{ annualCtcInr: 400_000 }],
+      annualCtcInr: null, isDreamDrive: false,
+    })).toBe(true);
+  });
+  it("blocks applications with unknown CTC at the held-offer cap", () => {
+    expect(canReleaseAnotherHeldOffer({
+      maxHeldOffers: 1, upliftPct: 40,
+      heldOffers: [{ annualCtcInr: 400_000 }],
+      annualCtcInr: null, isDreamDrive: false,
+    })).toBe(false);
+  });
+});

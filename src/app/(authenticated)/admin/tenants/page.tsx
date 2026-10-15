@@ -14,7 +14,7 @@ export default async function TenantDirectory({searchParams}:{
  const raw=await searchParams;
  const parsed=tenantLifecycleQuerySchema.safeParse({q:raw.q,organizationId:raw.organizationId,status:raw.status,page:raw.page});
  if(!parsed.success) return <div className="space-y-4">
-  <PageHeader eyebrow="Super Admin" title="Tenant directory" />
+  <PageHeader eyebrow="Super Admin" title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
    action={<Link href="/admin/tenants" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
@@ -22,7 +22,7 @@ export default async function TenantDirectory({searchParams}:{
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
  return <div className="space-y-5">
-  <PageHeader eyebrow="Super Admin · Platform" title="Tenant directory"
+  <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />} />
   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Tenant Setup · Create / Set up →</Link>
