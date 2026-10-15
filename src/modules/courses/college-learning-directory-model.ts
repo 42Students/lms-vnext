@@ -26,15 +26,6 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   pathId:z.string().uuid().optional(),
   offeringId:z.string().uuid().optional(),
   lessonId:z.string().uuid().optional(),
-  liveEvidence:z.enum(["ALL","HAS_LIVE","NO_LIVE"]).default("ALL"),
-  resourceEvidence:z.enum(["ALL","HAS_RESOURCE","NO_RESOURCE"]).default("ALL"),
-  videoEvidence:z.enum(["ALL","HAS_VIDEO","NO_VIDEO"]).default("ALL"),
-  hiddenPublished:z.enum(["ALL","HAS_HIDDEN","NO_HIDDEN"]).default("ALL"),
-  contentAudience:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
-  lessonName: z.string().trim().min(1).max(255).optional(),
-  sequenceThrough: z.coerce.number().int().min(1).max(10000).optional(),
-  sequenceFrom: z.coerce.number().int().min(1).max(10000).optional(),
-  contentLifecycle: z.enum(["ALL","DRAFT","PUBLISHED","ARCHIVED"]).default("ALL"),
   contentType: z.enum(["ALL","RESOURCE","VIDEO","YOUTUBE","LIVE_CLASS"]).default("ALL"),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
@@ -70,16 +61,6 @@ export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
   archivedContentState:z.enum(["ALL","HAS_ARCHIVED","NO_ARCHIVED"]).default("ALL"),
   draftContentState:z.enum(["ALL","HAS_DRAFT","NO_DRAFT"]).default("ALL"),
   offeringId:z.string().uuid().optional(),
-  sectionContentState:z.enum(["ALL","HAS_SECTION","NO_SECTION"]).default("ALL"),
-  sharedContentState:z.enum(["ALL","HAS_SHARED","NO_SHARED"]).default("ALL"),
-  hiddenContentState:z.enum(["ALL","HAS_HIDDEN","NO_HIDDEN"]).default("ALL"),
-  publishedContentState:z.enum(["ALL","HAS_PUBLISHED","NO_PUBLISHED"]).default("ALL"),
-  videoContentState:z.enum(["ALL","HAS_VIDEO","NO_VIDEO"]).default("ALL"),
-  liveClassPresence:z.enum(["ALL","HAS_LIVE","NO_LIVE"]).default("ALL"),
-  resourcePresence:z.enum(["ALL","HAS_RESOURCES","NO_RESOURCES"]).default("ALL"),
-  quizPresence:z.enum(["ALL","HAS_QUIZZES","NO_QUIZZES"]).default("ALL"),
-  assignmentPresence:z.enum(["ALL","HAS_ASSIGNMENTS","NO_ASSIGNMENTS"]).default("ALL"),
-  lessonPresence:z.enum(["ALL","HAS_LESSONS","NO_LESSONS"]).default("ALL"),
   departmentCode:z.string().trim().min(1).max(64).optional(),
   courseStatus:z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   periodStatus:z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
@@ -130,25 +111,6 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if(kind==="PROGRESS"&&"offeringId" in query&&query.offeringId)params.set("offeringId",query.offeringId);
   if(kind==="LESSONS"&&"offeringId" in query&&query.offeringId)params.set("offeringId",query.offeringId);
   if(kind==="LESSONS"&&"lessonId" in query&&query.lessonId)params.set("lessonId",query.lessonId);
-  if(kind==="PROGRESS"&&"sectionContentState" in query&&query.sectionContentState!=="ALL")params.set("sectionContentState",query.sectionContentState);
-  if(kind==="PROGRESS"&&"sharedContentState" in query&&query.sharedContentState!=="ALL")params.set("sharedContentState",query.sharedContentState);
-  if(kind==="PROGRESS"&&"hiddenContentState" in query&&query.hiddenContentState!=="ALL")params.set("hiddenContentState",query.hiddenContentState);
-  if(kind==="PROGRESS"&&"publishedContentState" in query&&query.publishedContentState!=="ALL")params.set("publishedContentState",query.publishedContentState);
-  if(kind==="PROGRESS"&&"videoContentState" in query&&query.videoContentState!=="ALL")params.set("videoContentState",query.videoContentState);
-  if(kind==="LESSONS"&&"liveEvidence" in query&&query.liveEvidence!=="ALL")params.set("liveEvidence",query.liveEvidence);
-  if(kind==="LESSONS"&&"resourceEvidence" in query&&query.resourceEvidence!=="ALL")params.set("resourceEvidence",query.resourceEvidence);
-  if(kind==="LESSONS"&&"videoEvidence" in query&&query.videoEvidence!=="ALL")params.set("videoEvidence",query.videoEvidence);
-  if(kind==="LESSONS"&&"hiddenPublished" in query&&query.hiddenPublished!=="ALL")params.set("hiddenPublished",query.hiddenPublished);
-  if(kind==="LESSONS"&&"contentAudience" in query&&query.contentAudience!=="ALL")params.set("contentAudience",query.contentAudience);
-  if(kind==="PROGRESS"&&"liveClassPresence" in query&&query.liveClassPresence!=="ALL")params.set("liveClassPresence",query.liveClassPresence);
-  if(kind==="PROGRESS"&&"resourcePresence" in query&&query.resourcePresence!=="ALL")params.set("resourcePresence",query.resourcePresence);
-  if(kind==="PROGRESS"&&"quizPresence" in query&&query.quizPresence!=="ALL")params.set("quizPresence",query.quizPresence);
-  if(kind==="PROGRESS"&&"assignmentPresence" in query&&query.assignmentPresence!=="ALL")params.set("assignmentPresence",query.assignmentPresence);
-  if(kind==="PROGRESS"&&"lessonPresence" in query&&query.lessonPresence!=="ALL")params.set("lessonPresence",query.lessonPresence);
-  if (kind === "LESSONS" && "lessonName" in query && query.lessonName) params.set("lessonName", query.lessonName);
-  if (kind === "LESSONS" && "sequenceThrough" in query && query.sequenceThrough !== undefined) params.set("sequenceThrough", String(query.sequenceThrough));
-  if (kind === "LESSONS" && "sequenceFrom" in query && query.sequenceFrom !== undefined) params.set("sequenceFrom", String(query.sequenceFrom));
-  if (kind === "LESSONS" && "contentLifecycle" in query && query.contentLifecycle !== "ALL") params.set("contentLifecycle", query.contentLifecycle);
   if (kind === "LESSONS" && "contentType" in query && query.contentType !== "ALL") params.set("contentType", query.contentType);
   if (kind === "PROGRESS" && "departmentName" in query && query.departmentName) params.set("departmentName",query.departmentName);
   if(kind==="PROGRESS"&&"activityState" in query&&query.activityState!=="ALL")params.set("activityState",query.activityState);
