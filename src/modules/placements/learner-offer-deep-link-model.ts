@@ -17,7 +17,8 @@ export function resolveLearnerOfferFocus<T extends {offer:{id:string}}>(
 ):{page:number;found:boolean}{
  const id=typeof focus==="string"?offerIdSchema.safeParse(focus):null;
  if(!id?.success)return {page:requestedPage,found:false};
- const index=rows.findIndex(row=>row.offer.id===id.data);
+ if(!Number.isSafeInteger(pageSize)||pageSize<1)throw new Error("INVALID_OFFER_PAGE_SIZE");
+ const index=rows.findIndex(row=>row.offer.id.toLowerCase()===id.data.toLowerCase());
  return {page:index<0?requestedPage:Math.floor(index/pageSize)+1,found:index>=0};
 }
 
