@@ -24,11 +24,12 @@ describe("college video metadata CSV",()=>{
   const csv=renderCollegeContentMetadataCsv([{
    title:"=title",contentType:"VIDEO",status:"PUBLISHED",courseName:"+course",
    courseCode:"CS1",cohortName:"2026",periodName:"Year",lessonName:"Unit",
-   learningPathTitle:"Path",deliveryId:null,durationSeconds:120,
+   learningPathTitle:"Path",deliveryId:null,durationSeconds:120,visibleToStudents:false,
   }],true);
   expect(csv).toContain("\"'=title\"");
   expect(csv).toContain("\"'+course\"");
   expect(csv).toContain("EXPORT TRUNCATED");
+  expect(csv).toContain("Visible to students");
   expect(csv).not.toContain("Storage key");
   const live=renderCollegeLiveClassCsv([{
    title:"=unsafe",status:"PUBLISHED",courseName:"Course",courseCode:"CS",cohortName:"2026",
