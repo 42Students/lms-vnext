@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,desc,eq,exists,gte,ilike,inArray,lt,or,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,exists,gte,ilike,inArray,lt,not,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -45,6 +45,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.audience==="LEARNER_ONLY"?and(learner,sql`not (${faculty})`):
    filter.audience==="DUAL"?and(faculty,learner):undefined,
    filter.profile==="PROFILED"?or(and(learner,academic.learnerProfile),and(faculty,academic.facultyProfile)):filter.profile==="UNPROFILED"?or(and(learner,not(academic.learnerProfile)),and(faculty,not(academic.facultyProfile))):undefined,
+   filter.enrollment==="ACTIVE"?and(learner,academic.activeEnrollment):filter.enrollment==="NONE"?and(learner,not(academic.activeEnrollment)):undefined,
    search?or(
     ilike(users.displayName,search),
     // Only staff who are not also learners may be located by email.
