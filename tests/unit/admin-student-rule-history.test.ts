@@ -47,4 +47,11 @@ describe("Super Admin student rule audit projection",()=>{
   const id="92b172ff-3817-44bf-9b48-e9afab2e93d0";
   expect(studentRuleHistoryExportHref(id,id,null,"projects","","","")).toContain("/history/export?module=projects");
  });
+ it("guards formulas after leading whitespace and keeps ordinary letters intact",()=>{
+  const csv=studentRuleHistoryCsv([{occurredAt:new Date("2026-10-15T00:00:00Z"),module:"electives",change:"  =IMPORTXML(1)",actorName:"Aaron"}]);
+  expect(csv).toContain("'  =IMPORTXML(1)");
+  expect(csv).toContain("Aaron");
+  expect(csv).toContain("\r\n");
+  expect(csv).not.toContain("\\r\\n");
+ });
 });
