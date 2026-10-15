@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Missing-marksheet attention triage PARTIAL (chat-9):** Added typed, server-side EDUCATION missing-marksheet selector shared with same-scope capped CSV, evaluated before 25-row pagination and with full-view counts. Unit positive/negative and gated PostgreSQL denial fixtures authored; real runtime/375px/browser acceptance open.
+
 **Native class picker PARTIAL (chat-9):** Class UUID text input replaced by current-college ACTIVE section choices with batch/class names, bounded list, truncation and bookmarked-selection preservation. Existing same-college ACTIVE section-enrollment predicate remains authoritative; foreign class detail is never selected. Tests authored but not executed on disposable PostgreSQL/browser.
 
 **Native branch picker PARTIAL (chat-9):** Replaced raw department UUID entry with a bounded, name-labeled selector of current-college nonarchived departments; unknown bookmarked UUIDs remain visible but never disclose another tenant name. Existing correlated learner enrollment predicate is unchanged. PostgreSQL actor-denial fixture and unit coverage authored; actual runtime/browser acceptance outstanding.

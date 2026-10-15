@@ -5,6 +5,7 @@ export const verificationQueueFilters=z.strictObject({
   sectionId:z.string().uuid().optional(),
   kind:z.enum(["EDUCATION","IDENTITY"]).optional(),
   marksheets:z.enum(["ANY","MISSING","PRESENT"]).default("ANY"),
+  attention:z.enum(["ALL","MISSING_MARKSHEET"]).default("ALL"),
   batchId:z.string().uuid().optional(),
   branchId:z.string().uuid().optional(),
   waitingSince:z.iso.date().optional(),

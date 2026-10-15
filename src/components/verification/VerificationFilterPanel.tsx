@@ -1,11 +1,11 @@
 "use client";
 import {useState} from "react";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-type Fields={q:string;marksheets:string;waitingSince:string;sectionId:string;batchId:string;branchId:string};
-const empty:Fields={q:"",marksheets:"ANY",waitingSince:"",sectionId:"",batchId:"",branchId:""};
+type Fields={q:string;marksheets:string;attention:string;waitingSince:string;sectionId:string;batchId:string;branchId:string};
+const empty:Fields={q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList}){
- const selected=():Fields=>({q:query.q??"",marksheets:query.marksheets??"ANY",waitingSince:query.waitingSince??"",
+ const selected=():Fields=>({q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",
   sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
@@ -29,6 +29,11 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
       className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
       <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">Present</option>
      </select></label>
+    <label className="min-w-0 text-sm">Needs a closer look
+     <select value={fields.attention} onChange={e=>change("attention",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+      <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option>
+     </select>
+    </label>
     <label className="min-w-0 text-sm">Waiting since (submitted on/before)
      <input type="date" value={fields.waitingSince} onChange={e=>change("waitingSince",e.target.value)}
       className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/></label>
