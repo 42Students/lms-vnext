@@ -1406,3 +1406,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / Course Attendance exact status and threshold (L4 PARTIAL):** `Absent` now counts only sessions explicitly marked ABSENT, with Late/Medical/Excused disclosed separately. Threshold badges use exact present-to-marked counts rather than rounded percentages, while unmarked/future sessions remain excluded. No attendance writes; pure tests authored, DB/browser acceptance open.
 
 **Chat-7 follow-up / Aggregate Assignments and Quizzes date resilience (L6/L7 PARTIAL):** malformed persisted creation/deadline strings display `Date unavailable` rather than an untrusted raw value or crashing the list, while null deadlines remain `No deadline`. Same date renderer covers assignment detail drawer and quiz list. Unit tests authored; responsive browser proof outstanding.
+
+**Chat-7 follow-up / Course Attendance current-month navigation (L4 PARTIAL):** learners can return to the server-derived IST current month from historical attendance without losing the own Course delivery or mutating attendance. Unit regression authored; mobile/browser acceptance open.
