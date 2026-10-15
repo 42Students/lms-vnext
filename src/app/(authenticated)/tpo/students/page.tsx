@@ -2,7 +2,7 @@ import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import { redirect } from "next/navigation";
-import {tpoStudentUrlError,tpoStudentEmptyRecoveryHref} from "@/modules/placements/tpo-students-url-guard";
+import {tpoStudentUrlError,tpoStudentEmptyRecoveryHref,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -146,7 +146,7 @@ export default async function TpoStudentsPage({
             Invalid Students filters
           </h2>
           <p className="mt-2 text-sm text-body">
-            {urlError ?? "One or more filters are invalid. No student data was loaded."}
+            {urlError ?? tpoStudentFilterMessage(raw)}
           </p>
           <Link
             href="/tpo/students"
