@@ -30,6 +30,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       cohortStatus:first(params.cohortStatus),
       periodStatus:first(params.periodStatus),
       courseStatus:first(params.courseStatus),
+      departmentCode:first(params.departmentCode)||undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );

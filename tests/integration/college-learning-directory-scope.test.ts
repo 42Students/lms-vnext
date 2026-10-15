@@ -418,4 +418,17 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(foreign.items).toEqual([]);
   });
 
+  it("progress departmentCode only matches owning college course department",async()=>{
+    const data=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const code=data.rows[0]!.code;
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,departmentCode:code}),
+      listCollegeCourseProgress(own,{q:name,departmentCode:"NONEXISTENT-DEPT"}),
+      listCollegeCourseProgress(otherCollege,{q:name,departmentCode:code}),
+    ]);
+    expect(yes.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
