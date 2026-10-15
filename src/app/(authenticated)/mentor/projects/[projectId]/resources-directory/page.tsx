@@ -3,26 +3,21 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
-import {mentorResourceDirectoryHref,mentorResourceDirectoryQuerySchema}
+import {mentorResourceDirectoryHref,parseMentorResourceDirectorySearch}
  from "@/modules/projects/mentor-resource-directory-model";
-import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-resource-directory-layout-model";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
 }){
  const [{projectId},raw]=await Promise.all([params,searchParams]);
- const values=singleValueMentorFilters(raw);
- const parsed=values?mentorResourceDirectoryQuerySchema.safeParse({
-  projectId,required:values.required,link:values.link,description:values.description,
-  order:values.order,search:values.search,page:values.page,
- }):null;
- if(!parsed?.success)return <section role="alert" className="space-y-3">
+ const parsed=parseMentorResourceDirectorySearch(projectId,raw);
+ if(!parsed)return <section role="alert" className="space-y-3">
   <h1>Invalid resource filters</h1>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
    className="text-primary-text underline">Clear invalid filters</Link>
  </section>;
- const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed.data);
+ const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed);
  const base="/mentor/projects/"+encodeURIComponent(projectId);
  const current=mentorResourceDirectoryHref({...data.query,page:1});
  const filters=current.includes("?")?"?"+current.split("?")[1]:"";
