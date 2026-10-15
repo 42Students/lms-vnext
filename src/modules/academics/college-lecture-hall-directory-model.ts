@@ -3,7 +3,7 @@ import { z } from "zod";
 /** GET-only filters; the college is always resolved from the signed-in membership. */
 export const COLLEGE_LECTURE_HALL_PAGE_SIZE = 25;
 
-export const collegeLectureHallFiltersSchema = z.object({
+export const collegeLectureHallFiltersBaseSchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   roomType: z.enum([
@@ -20,7 +20,16 @@ export const collegeLectureHallFiltersSchema = z.object({
   maximumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   upcoming: z.enum(["ALL","YES","NO"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
-}).strict().refine(q => q.minimumCapacity === undefined || q.maximumCapacity === undefined || q.minimumCapacity <= q.maximumCapacity, { path: ["maximumCapacity"], message: "Maximum seats must not be below minimum seats" });
+}).strict();
+
+export function withCollegeLectureHallCapacityCheck<T extends z.ZodType<{ minimumCapacity?: number; maximumCapacity?: number }>>(schema: T) {
+  return schema.refine(
+    (q) => q.minimumCapacity === undefined || q.maximumCapacity === undefined || q.minimumCapacity <= q.maximumCapacity,
+    { path: ["maximumCapacity"], message: "Maximum seats must not be below minimum seats" },
+  );
+}
+
+export const collegeLectureHallFiltersSchema = withCollegeLectureHallCapacityCheck(collegeLectureHallFiltersBaseSchema);
 
 export type CollegeLectureHallFilters = z.infer<typeof collegeLectureHallFiltersSchema>;
 

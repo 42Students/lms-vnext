@@ -1,7 +1,7 @@
-import {collegeLectureHallFiltersSchema} from "./college-lecture-hall-directory-model";
+import {collegeLectureHallFiltersBaseSchema,withCollegeLectureHallCapacityCheck} from "./college-lecture-hall-directory-model";
 import {buildCollegeDirectoryCsv,exportParams} from "./college-directory-export-model";
 export const LECTURE_HALLS_EXPORT_CAP=1000;
-export const lectureHallsCsvSchema=collegeLectureHallFiltersSchema.omit({page:true});
+export const lectureHallsCsvSchema=withCollegeLectureHallCapacityCheck(collegeLectureHallFiltersBaseSchema.omit({page:true}));
 export {exportParams};
 export function lectureHallsCsvHref(q:{
  q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";

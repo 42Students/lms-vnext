@@ -27,7 +27,9 @@ export function facultyReportStudentPage(
       left.name.localeCompare(right.name) ||
       left.id.localeCompare(right.id),
     );
-  const size = Number.isInteger(pageSize) && pageSize > 0 ? pageSize : FACULTY_REPORT_PAGE_SIZE;
+  const size = Number.isInteger(pageSize) && pageSize > 0
+    ? Math.min(pageSize, 100)
+    : FACULTY_REPORT_PAGE_SIZE;
   const pages = Math.max(1, Math.ceil(filtered.length / size));
   const page = Math.min(Math.max(1, Number.isFinite(requestedPage) ? Math.floor(requestedPage) : 1), pages);
   return {
