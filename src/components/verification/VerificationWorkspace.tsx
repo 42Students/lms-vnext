@@ -9,14 +9,14 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,loading=false,error=null,onRetry,onReview}:{
- rows:readonly VerificationQueueCard[];loading?:boolean;error?:string|null;
+export function VerificationWorkspace({rows,counts:authoritativeCounts,loading=false,error=null,onRetry,onReview}:{
+ rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
 }){
  const [tab,setTab]=useState<VerificationTab>("WAITING");
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">("ALL");
  const [query,setQuery]=useState("");
- const counts=useMemo(()=>verificationTabCounts(rows),[rows]);
+ const counts=useMemo(()=>authoritativeCounts??verificationTabCounts(rows),[authoritativeCounts,rows]);
  const visible=useMemo(()=>orderVerificationQueue(rows.filter(row=>
   verificationTab(row)===tab&&(kind==="ALL"||row.section===kind)&&
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
@@ -48,7 +48,7 @@ export function VerificationWorkspace({rows,loading=false,error=null,onRetry,onR
   {loading?<p role="status">Loading verification requests…</p>:
    error?<div role="alert" className="space-y-2"><p>Unable to load verification requests: {error}</p>
     {onRetry&&<button type="button" className="rounded-md border px-3 py-2" onClick={onRetry}>Retry</button>}</div>:
-   visible.length===0?<p role="status" className="rounded-md border p-4">No matching verification requests.</p>:
+   visible.length===0?<p role="status" className="rounded-md border p-4">No matching verification requests on this page.</p>:
    <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-lg border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
