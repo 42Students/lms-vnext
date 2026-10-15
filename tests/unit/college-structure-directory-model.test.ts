@@ -110,4 +110,9 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({choiceMode:"FLEXIBLE"}))).toContain("choiceMode=FLEXIBLE");
   });
 
+  it("offeringState validates persisted elective evidence and navigation",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({offeringState:"ASSUMED"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({offeringState:"HAS_ACTIVE"}))).toContain("offeringState=HAS_ACTIVE");
+  });
+
 });

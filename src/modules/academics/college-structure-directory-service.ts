@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
+import { exists } from "drizzle-orm";
 import { ne, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -194,6 +195,8 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.semesterNumber !== undefined ? eq(electiveSlots.semesterNumber, query.semesterNumber) : undefined,
+      query.offeringState === "HAS_ACTIVE" ? exists(db.select({id:electiveOfferings.id}).from(electiveOfferings).innerJoin(courses,eq(courses.id,electiveOfferings.courseId)).innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId))).where(and(eq(electiveOfferings.slotId,electiveSlots.id),eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt)))) :
+        query.offeringState === "NONE_ACTIVE" ? not(exists(db.select({id:electiveOfferings.id}).from(electiveOfferings).innerJoin(courses,eq(courses.id,electiveOfferings.courseId)).innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId))).where(and(eq(electiveOfferings.slotId,electiveSlots.id),eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt))))) : undefined,
       query.choiceMode === "FLEXIBLE" ? ne(electiveSlots.minPick,electiveSlots.maxPick) :
         query.choiceMode === "FIXED" ? not(ne(electiveSlots.minPick,electiveSlots.maxPick)) : undefined,
       query.minimumCredits !== undefined ? gte(electiveSlots.credits,query.minimumCredits) : undefined,
