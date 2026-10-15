@@ -64,11 +64,11 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           onChange={(event) => setName(event.target.value)}
           required
           maxLength={255}
-          placeholder="e.g. 42 Education Trust"
+          placeholder="e.g., ABC University"
         />
       </div>
       <Button type="submit" disabled={pending || !name.trim()}>
-        {pending ? "Creating…" : "Create organization"}
+        {pending ? "Creating…" : "Create Organization"}
       </Button>
       {error ? (
         <p role="alert" className="m-0 text-xs font-semibold text-error sm:w-full">
