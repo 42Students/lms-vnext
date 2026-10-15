@@ -9,7 +9,12 @@ export const facultySubmissionListQuerySchema=z.object({
   filter:facultySubmissionFilterSchema.default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
-export const facultySubmissionReportSearchSchema = facultySubmissionListQuerySchema.omit({assignmentId:true});
+/** Standalone report selectors are strict; the review drawer keeps its API contract. */
+export const facultySubmissionReportPageQuerySchema=facultySubmissionListQuerySchema.extend({
+ page:z.union([z.number().int(),z.string().regex(/^[1-9]\d{0,3}$|^10000$/).transform(Number)])
+   .pipe(z.number().int().min(1).max(10000)).default(1),
+}).strict();
+export const facultySubmissionReportSearchSchema=facultySubmissionReportPageQuerySchema.omit({assignmentId:true});
 export type FacultySubmissionListQuery=z.infer<typeof facultySubmissionListQuerySchema>;
 
 export function selectFacultyAssignmentSubmissions<T extends {
