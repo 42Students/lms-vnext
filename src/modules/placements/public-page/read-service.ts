@@ -2,7 +2,7 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, organizations } from "@/db/schema";
-import { publicPlacementPageSettings } from "./staged-schema";
+import { placementPublicPageSettings as publicPlacementPageSettings } from "@/db/schema";
 import { publicPlacementTableReady } from "./readiness";
 import { publicMetricRelease } from "@/modules/placements/public-metric-release";
 import {publicIndependentPlacementCount} from "./independent-count-model";
