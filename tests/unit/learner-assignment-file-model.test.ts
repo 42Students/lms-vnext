@@ -55,7 +55,19 @@ describe("learner assignment private-file boundary", () => {
     expect(uploaded).toEqual({ receiptId: receipt, originalName: "proof.pdf", expiresAt: grant.expiresAt });
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(fetcher.mock.calls[0]?.[0]).toBe("/api/courses/assignments/assignment/file-upload");
-    expect(fetcher.mock.calls[1]).toEqual([grant.uploadUrl, expect.objectContaining({ method: "PUT", credentials: "omit", body: file, headers: grant.requiredHeaders })]);
+    expect(fetcher.mock.calls[1]).toEqual([grant.uploadUrl, expect.objectContaining({ method: "PUT", credentials: "omit", redirect: "error", body: file, headers: grant.requiredHeaders })]);
+  });
+  it("rejects a receipt when the upload grant expires during transfer", async () => {
+    const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
+    const start = Date.parse("2026-10-15T10:00:00Z");
+    const expiresAt = new Date(start + 100).toISOString();
+    const clock = vi.fn().mockReturnValueOnce(start).mockReturnValueOnce(start).mockReturnValueOnce(start + 150);
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json({ grant: { ...grant, expiresAt } }))
+      .mockResolvedValueOnce(new Response(null, { status: 200 }));
+    await expect(transferLearnerAssignmentFile("assignment", delivery, file,
+      new AbortController().signal, fetcher, clock)).rejects.toThrow("expired before confirmation");
+    expect(clock).toHaveBeenCalledTimes(3);
   });
   it("does not PUT bytes after a rejected, mismatched or expired grant", async () => {
     const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
@@ -64,11 +76,23 @@ describe("learner assignment private-file boundary", () => {
       { ...grant, expiresAt: "2000-01-01T00:00:00Z" },
       { ...grant, requiredHeaders: { "content-type": "text/html" } },
       { ...grant, requiredHeaders: { ...grant.requiredHeaders, "x-amz-meta-expected-size": "999" } },
+      { ...grant, requiredHeaders: Object.fromEntries(Object.entries(grant.requiredHeaders).filter(([key]) => key !== "x-amz-meta-expected-size")) },
     ]) {
       const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(Response.json({ grant: bad }));
       await expect(transferLearnerAssignmentFile("assignment", delivery, file, new AbortController().signal, fetcher)).rejects.toThrow();
       expect(fetcher).toHaveBeenCalledTimes(1);
     }
+  });
+  it("fails closed when object storage responds with a redirect", async () => {
+    const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json({ grant }))
+      .mockRejectedValueOnce(new TypeError("redirect blocked"));
+    await expect(transferLearnerAssignmentFile("assignment", delivery, file,
+      new AbortController().signal, fetcher)).rejects.toThrow("redirect blocked");
+    expect(fetcher.mock.calls[1]?.[1]).toEqual(expect.objectContaining({
+      credentials: "omit", redirect: "error", method: "PUT",
+    }));
   });
   it("does not report a ready receipt when signed PUT fails", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(Response.json({ grant }))

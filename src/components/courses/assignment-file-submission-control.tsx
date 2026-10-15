@@ -6,6 +6,7 @@ import { learnerAssignmentFileAccept, learnerAssignmentFilePayload } from "@/mod
 import { transferLearnerAssignmentFile } from "./assignment-file-transfer";
 import { selectLearnerAssignmentFile } from "@/modules/courses/learner-assignment-file-selection-model";
 import { courseApiError } from "./learner-course-api";
+import { learnerFileUploadMayCancel } from "@/modules/courses/learner-file-action-cancel-model";
 
 type UploadedFile = Awaited<ReturnType<typeof transferLearnerAssignmentFile>>;
 export function AssignmentFileSubmissionControl({ assignmentId, deliveryId, onBusyChange, onSubmitted }: {
@@ -14,6 +15,7 @@ export function AssignmentFileSubmissionControl({ assignmentId, deliveryId, onBu
   const [file, setFile] = useState<File | null>(null);
   const [uploaded, setUploaded] = useState<UploadedFile | null>(null);
   const [busy, setBusy] = useState(false);
+  const [activeAction,setActiveAction] = useState<"UPLOAD"|"SUBMIT"|null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lock = useRef(false);
@@ -28,7 +30,7 @@ export function AssignmentFileSubmissionControl({ assignmentId, deliveryId, onBu
     }
     lock.current = true;
     const controller = new AbortController(); pending.current = controller;
-    setBusy(true); onBusyChange(true); setError(null);
+    setBusy(true); setActiveAction(action); onBusyChange(true); setError(null);
     try {
       if (action === "UPLOAD" && file) {
         const receipt = await transferLearnerAssignmentFile(assignmentId, deliveryId, file, controller.signal);
@@ -49,7 +51,7 @@ export function AssignmentFileSubmissionControl({ assignmentId, deliveryId, onBu
     } catch (failure) {
       if (!controller.signal.aborted) setError(failure instanceof Error ? failure.message : "The file action failed. Try again.");
     } finally {
-      lock.current = false; pending.current = null; setBusy(false); onBusyChange(false);
+      lock.current = false; pending.current = null; setBusy(false); setActiveAction(null); onBusyChange(false);
     }
   }
   return <section aria-label="Assignment file submission" className="mt-4 space-y-3">
@@ -60,6 +62,11 @@ export function AssignmentFileSubmissionControl({ assignmentId, deliveryId, onBu
     </label>
     <p className="text-xs leading-5 text-muted-foreground">Choose one supported document, image or ZIP file up to 50 MB. Uploading does not submit the assignment. Files must pass security checks before final submission.</p>
     <Button type="button" disabled={busy || !file} onClick={() => void perform("UPLOAD")}>{busy && !uploaded ? "Uploading…" : "Upload file"}</Button>
+    {learnerFileUploadMayCancel(activeAction) ? (
+      <Button type="button" onClick={() => {pending.current?.abort();setError("Upload cancelled. Your assignment has not been submitted.");}}>
+        Cancel upload
+      </Button>
+    ) : null}
     {uploaded ? <div className="space-y-3 rounded-lg border border-border bg-surface p-3">
       <p role="status" className="break-words text-sm text-body">Uploaded: {uploaded.originalName}. Confirm below to submit it.</p>
       <label className="flex min-h-11 items-start gap-2 text-sm text-body">

@@ -7,6 +7,7 @@ import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-sched
 import { filterLearnerScheduleByKind, type LearnerScheduleKind } from "@/modules/academics/learner-schedule-kind-filter-model";
 import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-schedule-upcoming-model";
 import { learnerScheduleResetFilters } from "@/modules/academics/learner-schedule-filter-reset-model";
+import { learnerScheduleSelectedDeliveries } from "@/modules/academics/learner-schedule-selected-deliveries-model";
 import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock-model";
 import { learnerScheduleDayAfterShift } from "@/modules/academics/learner-schedule-shift-day-model";
 import { learnerScheduleAnchorForView } from "@/modules/academics/learner-schedule-view-anchor-model";
@@ -265,9 +266,7 @@ export function LearnerClassSchedule({
     return ()=>window.clearInterval(id);
   },[]);
   const [selectedDeliveryIds, setSelectedDeliveryIds] =
-    useState(() =>
-      initialSelectedDeliveryIds ? [...initialSelectedDeliveryIds] : courses.map((course) => course.deliveryId),
-    );
+    useState(() => learnerScheduleSelectedDeliveries(courses,initialSelectedDeliveryIds));
 
   const filteredEvents = useMemo(
     () =>
