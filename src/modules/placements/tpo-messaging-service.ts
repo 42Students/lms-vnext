@@ -380,34 +380,20 @@ export async function openRecruiterMessageThread(
   context: RequestContext,
   input: { collegeId: string; jobId?: string | null },
 ) {
-  const actor = await readActor(context, input.collegeId);
-  if (actor.type !== "RECRUITER" || !actor.recruiterUserId) {
+  const collegeId = collegeIdSchema.parse(input.collegeId);
+  const jobId = input.jobId ? jobIdSchema.parse(input.jobId) : null;
+  if (context.recruiter?.status !== "ACTIVE" ||
+      context.recruiter.userId !== context.user.id)
     throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
-  }
-  const job = await assertJobForThread(
-    getDb(),
-    actor.collegeId,
-    input.jobId,
-    actor.companyRelationshipId,
-  );
-  return getDb().transaction(async (tx) => {
-    const persisted = await mutationActor(tx, context, actor.collegeId);
-    if (persisted.type !== "RECRUITER" || !persisted.recruiterUserId) {
-      throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
-    }
-    const lockedJob = await assertJobForThread(
-      tx,
-      persisted.collegeId,
-      job?.id ?? null,
-      persisted.companyRelationshipId,
-      true,
+  // Never choose TPO permissions when a person holds both TPO and recruiter roles.
+  // The persisted employer/college grant is authoritative within this transaction.
+  return getDb().transaction(async tx => {
+    const grant = await loadActiveRecruiterGrant(tx, context.user.id, collegeId, true);
+    if (!grant) throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+    const job = await assertJobForThread(
+      tx, collegeId, jobId, grant.companyRelationshipId, true,
     );
-    return getOrCreateThread(
-      tx,
-      persisted.collegeId,
-      persisted.recruiterUserId,
-      lockedJob?.id ?? null,
-    );
+    return getOrCreateThread(tx, collegeId, context.user.id, job?.id ?? null);
   });
 }
 
