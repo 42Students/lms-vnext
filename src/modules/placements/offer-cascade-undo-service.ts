@@ -1,7 +1,7 @@
 /**
  * P-S1-06: compensation for an accepted offer's atomic cascade.
- * Integration is gated on the proposed status-history migration; no route
- * exposes this service until the orchestrator registers/validates the DDL.
+ * Migrated status-history columns and reversal transitions now exist in 0088.
+ * API exposure still requires orchestrator integration and concurrency acceptance.
  */
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -53,6 +53,7 @@ export async function undoPlacementOfferCascade(
       .where(eq(placementOffers.id, offerId)).for("update").limit(1);
     const acceptedHistory = await tx.select({
       reason: placementOfferStatusHistory.reason,
+      cascadeId: placementOfferStatusHistory.cascadeId,
       toStatus: placementOfferStatusHistory.toStatus,
     }).from(placementOfferStatusHistory).where(
       eq(placementOfferStatusHistory.offerId, offerId),
@@ -76,6 +77,7 @@ export async function undoPlacementOfferCascade(
         eq(placementJobs.id, placementApplications.jobId))
       .where(and(
         eq(placementOfferStatusHistory.toStatus, "DECLINED"),
+        eq(placementOfferStatusHistory.cascadeId, cascadeId),
         eq(placementOfferStatusHistory.reason, `placed elsewhere; cascade:${cascadeId}`),
         eq(placementApplications.membershipId, owner.membershipId),
         eq(placementJobs.collegeId, owner.collegeId),
@@ -90,6 +92,7 @@ export async function undoPlacementOfferCascade(
       .innerJoin(placementJobs,
         eq(placementJobs.id, placementApplications.jobId))
       .where(and(
+        eq(placementApplicationStatusHistory.cascadeId, cascadeId),
         eq(placementApplicationStatusHistory.reason, `placed elsewhere; cascade:${cascadeId}`),
         eq(placementApplications.membershipId, owner.membershipId),
         eq(placementJobs.collegeId, owner.collegeId),
@@ -101,6 +104,9 @@ export async function undoPlacementOfferCascade(
       .from(placementJoiningHistory)
       .where(eq(placementJoiningHistory.offerId, offerId)).limit(1);
 
+    if (acceptedHistory[0]?.cascadeId !== cascadeId) {
+      throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+    }
     assertUndoablePlacementCascadeSnapshot({
       acceptedStatus: accepted?.status ?? null,
       acceptedHistoryReason: acceptedHistory[0]?.reason ?? null,
@@ -141,7 +147,7 @@ export async function undoPlacementOfferCascade(
       await tx.insert(placementApplicationStatusHistory).values({
         applicationId: row.applicationId, fromStatus: "WITHDRAWN",
         toStatus: "SUBMITTED", actorUserId: context.user.id,
-        reason: `cascade-undo:${cascadeId}`,
+        reason: `cascade-undo:${cascadeId}`, cascadeId,
       });
     }
     for (const row of siblingOfferHistory) {
@@ -152,7 +158,7 @@ export async function undoPlacementOfferCascade(
       await tx.insert(placementOfferStatusHistory).values({
         offerId: row.offerId, fromStatus: "DECLINED",
         toStatus: "ISSUED", actorUserId: context.user.id,
-        reason: `cascade-undo:${cascadeId}`,
+        reason: `cascade-undo:${cascadeId}`, cascadeId,
       });
     }
     if (joining) {
@@ -164,7 +170,7 @@ export async function undoPlacementOfferCascade(
     }).where(eq(placementOffers.id, offerId));
     await tx.insert(placementOfferStatusHistory).values({
       offerId, fromStatus: "ACCEPTED", toStatus: "ISSUED",
-      actorUserId: context.user.id, reason: `cascade-undo:${cascadeId}`,
+      actorUserId: context.user.id, reason: `cascade-undo:${cascadeId}`, cascadeId,
     });
     return { cascadeId, alreadyUndone: false,
       restoredApplications: siblingApplicationHistory.length,

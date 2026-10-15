@@ -703,6 +703,7 @@ export async function actOnPlacementOffer(
           actorUserId:
             context.user.id,
           reason: `cascade:${cascadeId}`,
+          cascadeId,
         });
 
       await tx
@@ -756,6 +757,7 @@ export async function actOnPlacementOffer(
           toStatus: "DECLINED",
           actorUserId: context.user.id,
           reason: `placed elsewhere; cascade:${cascadeId}`,
+          cascadeId,
         });
       }
 
@@ -776,6 +778,7 @@ export async function actOnPlacementOffer(
             toStatus: "WITHDRAWN" as const,
             actorUserId: context.user.id,
             reason: `placed elsewhere; cascade:${cascadeId}`,
+            cascadeId,
           })),
         );
       }
