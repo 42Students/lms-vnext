@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads} from "@/db/schema/tpo-internal";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -22,7 +22,7 @@ export async function createTpoInternalThread(context:RequestContext,raw:unknown
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
   });
-  const [recipient]=await tx.select({id:collegeMemberships.id})
+  const [recipient]=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
    .from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
@@ -37,12 +37,19 @@ export async function createTpoInternalThread(context:RequestContext,raw:unknown
    invitedMembershipId:recipient.id,topic:input.topic,
   }).returning({id:placementTpoInternalThreads.id});
   if(!thread)throw new Error("TEAM_THREAD_CREATE_FAILED");
-  await tx.insert(activityEvents).values({
+  const [event]=await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
    actorUserId:context.user.id,actorMembershipId:own.id,
    module:"PLACEMENTS",eventType:"placements.tpo_team.thread_created",
    subjectType:"team_thread",subjectId:thread.id,
    summary:"Private TPO team thread created",metadata:{threadId:thread.id},
+  }).returning({id:activityEvents.id});
+  if(!event)throw new Error("TEAM_THREAD_CREATE_FAILED");
+  await tx.insert(inAppNotifications).values({
+   userId:recipient.userId,eventId:event.id,
+   title:"Private TPO conversation invitation",
+   body:"A TPO colleague started a private conversation with you.",
+   actionHref:"/tpo/team/"+thread.id,
   });
   return thread;
  });
