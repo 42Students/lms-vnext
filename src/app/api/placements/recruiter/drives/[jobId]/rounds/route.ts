@@ -15,7 +15,7 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
  const input=hrRoundFormSchema.safeParse({
   action:form.get("action"),
   kind:form.get("kind")||undefined,name:form.get("name")||undefined,
-  mode:form.get("mode")||undefined,
+  mode:form.has("mode")?(form.get("mode")||null):undefined,
   durationMinutes:form.get("durationMinutes")||undefined,
   roundId:form.get("roundId")||undefined,
   expectedUpdatedAt:form.get("expectedUpdatedAt")||undefined,
