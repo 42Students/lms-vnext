@@ -38,3 +38,20 @@ describe("overdue assignment action signal", () => {
     expect(value.overdueAssignments).toBe(1);
   });
 });
+
+describe("Course card future deadlines",()=>{
+ it("does not show missed/completed quiz as a next due action",()=>{
+  const now=new Date("2026-10-15T10:00:00Z");
+  const lessons=[{contents:[],assignments:[],quizzes:[
+   {title:"Missed",dueAt:new Date("2026-10-17T10:00:00Z"),progress:{status:"MISSED"}},
+   {title:"Available",dueAt:new Date("2026-10-18T10:00:00Z"),progress:{status:"NOT_STARTED"}},
+  ]}];
+  expect(learnerCourseListSignals(lessons,{itemsTotal:2,overallPercent:0},now).nextDue?.title).toBe("Available");
+ });
+ it("does not crash when a persisted quiz deadline is malformed",()=>{
+  const lessons=[{contents:[],assignments:[],quizzes:[
+   {title:"Invalid",dueAt:new Date(NaN),progress:{status:"NOT_STARTED"}},
+  ]}];
+  expect(learnerCourseListSignals(lessons,{itemsTotal:1,overallPercent:0},new Date("2026-10-15")).nextDue).toBeNull();
+ });
+});

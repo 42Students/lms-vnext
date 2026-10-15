@@ -13,3 +13,10 @@ export function filterPlatformInventory(sections:readonly PlatformSettingsSectio
   smsTemplates:section.smsTemplates?.filter(t=>[t.key,t.purpose,t.source].some(value=>value.toLocaleLowerCase("en-IN").includes(needle))),
  })).filter(section=>!needle||section.items.length>0||(section.smsTemplates?.length??0)>0);
 }
+
+/** Reject unrecognized and repeated URL fields instead of silently ignoring a filter. */
+export function parseAdminInventoryQuery(raw:Record<string,string|string[]|undefined>):AdminInventoryFilter|null {
+ if(Object.keys(raw).some(key=>key!=="q"&&key!=="section"))return null;
+ const parsed=adminInventoryFilterSchema.safeParse(raw);
+ return parsed.success?parsed.data:null;
+}

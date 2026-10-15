@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { learnerDiscussionListResponse } from "@/modules/courses/learner-discussion-response-model";
 import {
   createCourseDiscussionMessage,
   listCourseDiscussionMessages,
@@ -30,12 +31,9 @@ export async function GET(
         Object.fromEntries(new URL(request.url).searchParams.entries()),
       );
 
-    return NextResponse.json({
-      accessMode: result.accessMode,
-      canPost: result.canPost,
-      messages: result.messages,
-      nextCursor: result.nextCursor,
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    return NextResponse.json(learnerDiscussionListResponse(result), {
+      headers: { "Cache-Control": "private, no-store" },
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }

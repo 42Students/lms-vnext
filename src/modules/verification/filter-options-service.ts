@@ -33,3 +33,12 @@ export async function listVerificationClassOptions(context:RequestContext):Promi
   .orderBy(asc(cohorts.name),asc(sections.name),asc(sections.id)).limit(201);
  return {items:rows.slice(0,200).map(r=>({id:r.id,label:r.cohortName+" · "+r.sectionName})),truncated:rows.length>200};
 }
+
+/** Up to 200 persisted programs in the actor's current college; no supplied tenant scope. */
+export async function listVerificationProgramOptions(context:RequestContext):Promise<VerificationFilterChoiceList>{
+ const scope=await requireCollegeVerificationActor(context);
+ const rows=await getDb().select({id:programs.id,name:programs.name})
+  .from(programs).innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,scope.collegeId)))
+  .orderBy(asc(programs.name),asc(programs.id)).limit(201);
+ return {items:rows.slice(0,200).map(r=>({id:r.id,label:r.name})),truncated:rows.length>200};
+}

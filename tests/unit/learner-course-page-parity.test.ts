@@ -107,7 +107,7 @@ describe("learner Course page parity contract", () => {
     expect(attendance).toContain('type="month"');
     expect(attendance).toContain("Previous month");
     expect(attendance).toContain("Next month");
-    expect(attendance).toContain("SCHEDULED");
+    expect(read("src/modules/attendance/learner-course-attendance-tone-model.ts")).toContain("SCHEDULED");
     expect(attendance).toContain("attendanceHeadroom");
     expect(discussion).toContain('method: "POST"');
     expect(discussion).toContain('method: "DELETE"');

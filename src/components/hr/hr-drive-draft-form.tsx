@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
+import {isHrDriveProposalResponse} from "@/modules/placements/hr-drive-proposal-response-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
 import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
@@ -26,14 +28,20 @@ export function HrDriveDraftForm({
   initial,
   sourceJobTitle,
   storageKey,
+  collegeId,
+  sourceJobId,
 }: {
   initial: HrDriveDraft;
   sourceJobTitle: string | null;
   storageKey:string;
+  collegeId:string;
+  sourceJobId:string|null;
 }) {
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
+  const [submitting,setSubmitting] = useState(false);
+  const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const result = hrDriveDraftSchema.safeParse(draft);
   const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
   const selectOptions = [
@@ -72,6 +80,52 @@ export function HrDriveDraftForm({
       setNotice("Validated draft copied to clipboard. It has not been submitted.");
     } catch {
       setNotice("Clipboard unavailable. Your draft has not been submitted.");
+    }
+  }
+
+  async function sendProposalForDiscussion(){
+    if(submitting)return;
+    const valid=hrDriveDraftSchema.safeParse(draft);
+    if(!valid.success){
+      setShowPreview(true);
+      setNotice("Complete the draft requirements before sending a proposal message.");
+      return;
+    }
+    const signature=JSON.stringify([collegeId,sourceJobId,valid.data]);
+    const next=nextHrProposalAttempt(attempted.current,signature,()=>crypto.randomUUID());
+    attempted.current=next;
+    setSubmitting(true);
+    setNotice("Submitting this proposal as a private placement-cell message...");
+    try {
+      const response=await fetch("/api/placements/recruiter/drives/proposal",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        credentials:"same-origin",
+        body:JSON.stringify({
+          collegeId,sourceJobId:sourceJobId??undefined,
+          submissionId:next.submissionId,draft:valid.data,
+        }),
+      });
+      const body:unknown=await response.json().catch(()=>null);
+      if(!response.ok){
+        const error=body&&typeof body==="object"&&"error" in body?
+          String((body as {error:unknown}).error):"UNKNOWN_ERROR";
+        setNotice(error==="PROPOSAL_TOO_LONG"
+          ?"The proposal exceeds the 4,000-character message limit. Shorten the description or round names."
+          :error==="STALE_SUBMISSION"
+            ?"This proposal reference was already used with different content. Edit and retry your draft."
+            :"The placement cell did not receive the proposal. Check college access and try again. ("+error+")");
+        return;
+      }
+      if(!isHrDriveProposalResponse(body)){
+        setNotice("Submission returned no valid persisted-message receipt. Check conversations before retrying.");
+        return;
+      }
+      window.location.assign("/hr/conversations/"+body.threadId);
+    }catch{
+      setNotice("Could not confirm the message. Your draft remains here; retrying the same draft is safe.");
+    }finally{
+      setSubmitting(false);
     }
   }
 
@@ -211,11 +265,17 @@ export function HrDriveDraftForm({
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="font-semibold text-foreground">What students will see · local preview</h2>
         <p className="mt-1 text-sm text-body">
-          This draft stays in this browser session and is not saved or sent for approval.
+          This draft is local until you explicitly send a private proposal message. Messaging is not an approval or publication.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <button type="button" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
             onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</button>
+          <button type="button" disabled={!result.success||submitting}
+            aria-busy={submitting}
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
+            onClick={() => void sendProposalForDiscussion()}>
+            {submitting?"Sending proposal message...":"Send proposal to placement cell (message only)"}
+          </button>
           <button type="button" disabled={!result.success}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
             onClick={() => void copyPreview()}>Copy validated draft</button>
@@ -279,7 +339,7 @@ export function HrDriveDraftForm({
         ) : null}
         {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
         <p className="mt-3 text-xs text-muted-foreground">
-          Send for Approval, Fix and Resend, file attachments and messaging remain unavailable until the registered request workflow is ready.
+          Formal Send for Approval, Fix and Resend, file attachments, and tracked request decisions remain unavailable. A proposal message creates a discussion only.
         </p>
       </section>
     </div>
