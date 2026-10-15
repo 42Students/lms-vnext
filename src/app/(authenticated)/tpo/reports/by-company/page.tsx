@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { buildTpoCompanyReportLinks } from "@/modules/placements/tpo-company-report-links-model";
+import {tpoCompanyPageCsvHref} from "@/modules/placements/tpo-company-page-csv-model";
 import { companyReportViewSchema, paginateCompanyReport, companyReportViewHref } from "@/modules/placements/tpo-company-report-view-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -57,7 +58,14 @@ export default async function TpoByCompanyReportPage({
         eyebrow="TPO · Reports"
         title="Placement by company"
         description="Compare companies by drives, applicants, accepted offers, unique placed learners and accepted full-time packages."
-        actions={<ReportCsvLink workspace={workspace} kind="by-company" />}
+        actions={<div className="flex flex-wrap items-center gap-2">
+          <ReportCsvLink workspace={workspace} kind="by-company" />
+          <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
+            jobId:workspace.selectedJobId??undefined,q:view.query.q,sort:view.query.sort,page:view.page})}
+            className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Export visible companies CSV
+          </a>
+        </div>}
       />
 
       <ReportNavigation workspace={workspace} />
@@ -75,7 +83,7 @@ export default async function TpoByCompanyReportPage({
           </select>
         </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
       </form>
-      <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and CSV retain the selected full season/drive scope.</p>
+      <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
 
       <ReportTable
