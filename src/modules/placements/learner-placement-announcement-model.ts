@@ -29,7 +29,7 @@ export function learnerNoticeAudienceLabel(value:string):string|null{
  }
 }
 export function learnerPlacementNoticeFeed(rows: readonly LearnerPlacementNoticeSource[]) {
-  return rows.map((row) => ({
+  return rows.filter(row=>Number.isFinite(row.createdAt.getTime())).map((row) => ({
     id: row.id,
     title: row.title,
     message: row.message,
