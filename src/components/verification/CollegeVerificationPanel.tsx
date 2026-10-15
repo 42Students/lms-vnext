@@ -23,6 +23,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const [bulkAction,setBulkAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkError,setBulkError]=useState("");
+ const [bulkReason,setBulkReason]=useState("");
  const [bulkResult,setBulkResult]=useState<{summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[]}|null>(null);
  const selectable=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const available=new Set(selectable.map(verificationSelectionKey));
@@ -46,7 +47,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     throw Error(failure.error??"Bulk review was not accepted");
    }
    const data=await response.json() as {summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[]};
-   setBulkResult(data);setSelection(new Set());setBulkAction(null);router.refresh();
+   setBulkResult(data);setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
   }catch(error){setBulkError(error instanceof Error?error.message:"Bulk review failed");}
   finally{setBulkBusy(false);}
  }
@@ -86,6 +87,14 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    {bulkAction&&<div className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
     <p className="text-sm">{previewVerificationBulk(selectedRows,bulkAction).eligible.length} eligible and {previewVerificationBulk(selectedRows,bulkAction).skipped.length} skipped. No decisions have been saved.</p>
+    {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
+     <textarea value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
+      className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" placeholder="Describe the correction required"/>
+     <span className="mt-1 block text-xs">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
+    </label>}
+    {bulkAction==="SEND_BACK"&&<button type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
+      onClick={()=>void executeBulk("SEND_BACK",bulkReason)} className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">
+      {bulkBusy?"Sending decisions…":"Confirm send back selected"}</button>}
     {bulkAction==="VERIFY"&&<button type="button" disabled={bulkBusy||selectedRows.length===0} onClick={()=>void executeBulk("VERIFY")}
      className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">{bulkBusy?"Saving reviews…":"Confirm verify selected"}</button>}
     <button type="button" disabled={bulkBusy} onClick={()=>setBulkAction(null)} className="rounded-md border px-3 py-2 text-sm">Cancel preview</button>
