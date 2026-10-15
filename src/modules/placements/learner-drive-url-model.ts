@@ -17,9 +17,15 @@ export function readLearnerDriveUrl(raw:string):{
   filters:LearnerJobBrowseFilters;page:number;
 } {
   const query=new URLSearchParams(raw.startsWith("?")?raw.slice(1):raw);
-  const parsed=learnerDriveUrlSchema.safeParse(Object.fromEntries(query.entries()));
-  if(!parsed.success)return {filters:{...DEFAULT_LEARNER_JOB_FILTERS},page:1};
-  const v=parsed.data;
+  const safe: Record<string,string> = {};
+  for (const key of ["q","type","loc","sort","eligible","soon","availability","page"]) {
+    const values = query.getAll(key);
+    if (values.length === 1 && learnerDriveUrlSchema.safeParse({ [key]: values[0] }).success) {
+      safe[key] = values[0]!;
+    }
+  }
+  // Never accept tenant selectors or duplicate facets; valid independent filters survive.
+  const v=learnerDriveUrlSchema.parse(safe);
   return {filters:{
     search:v.q,employmentType:v.type,location:v.loc,sort:v.sort,
     eligibleOnly:v.eligible==="1",closingSoon:v.soon==="1",availability:v.availability,
