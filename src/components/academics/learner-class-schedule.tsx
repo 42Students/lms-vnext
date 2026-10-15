@@ -7,6 +7,11 @@ import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-sched
 import { filterLearnerScheduleByKind, type LearnerScheduleKind } from "@/modules/academics/learner-schedule-kind-filter-model";
 import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-schedule-upcoming-model";
 import { learnerScheduleResetFilters } from "@/modules/academics/learner-schedule-filter-reset-model";
+import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock-model";
+import { learnerScheduleDayAfterShift } from "@/modules/academics/learner-schedule-shift-day-model";
+import { learnerScheduleAnchorForView } from "@/modules/academics/learner-schedule-view-anchor-model";
+import { learnerScheduleTodayDay } from "@/modules/academics/learner-schedule-today-day-model";
+import { learnerScheduleWeekdayExportAvailable } from "@/modules/academics/learner-schedule-weekday-export-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -276,7 +281,8 @@ export function LearnerClassSchedule({
     () => calendarDays(anchor, view),
     [anchor, view],
   );
-  const now = new Date();
+  // One scheduled clock drives upcoming-only, Today and Next summaries.
+  const now = learnerScheduleClock(filterNowMs);
   const calendarToday = calendarMode === "IST" ? learnerIstScheduleToday(now) : now;
   function scheduleEventsForDay(rows: readonly LearnerScheduleEvent[], day: Date) {
     return calendarMode === "IST" ? eventsForLearnerIstScheduleDay(rows, day) : eventsForLocalDay(rows, day);
@@ -301,11 +307,7 @@ export function LearnerClassSchedule({
   function movePeriod(direction:-1|1) {
     const next=shiftCalendarAnchor(anchor,view,direction);
     setAnchor(next);
-    if(view==="month") {
-      const year=next.getFullYear();
-      const month=String(next.getMonth()+1).padStart(2,"0");
-      setChosenDay(year+"-"+month+"-01");
-    }
+    setChosenDay(learnerScheduleDayAfterShift(next,view));
   }
 
 
@@ -395,7 +397,7 @@ export function LearnerClassSchedule({
               size="sm"
               variant="secondary"
               onClick={() =>
-                { const instant=new Date(); const next=calendarMode === "IST" ? learnerIstScheduleToday(instant) : instant; setAnchor(next); setChosenDay(calendarMode === "IST" ? localDayKey(next) : istCalendarDay(instant)); }
+                { const instant=new Date(); const next=calendarMode === "IST" ? learnerIstScheduleToday(instant) : instant; setAnchor(next); setChosenDay(learnerScheduleTodayDay(instant,calendarMode)); }
               }
             >
               Today
@@ -417,12 +419,10 @@ export function LearnerClassSchedule({
             View
             <Select
               value={view}
-              onChange={(event) =>
-                setView(
-                  event.target
-                    .value as LearnerScheduleView,
-                )
-              }
+              onChange={(event) => {
+                setAnchor(learnerScheduleAnchorForView(chosenDay,anchor));
+                setView(event.target.value as LearnerScheduleView);
+              }}
               className="min-w-28"
             >
               <option value="month">
@@ -595,6 +595,17 @@ export function LearnerClassSchedule({
                     {agenda.map(event=><EventCard key={event.id} event={event} courseBasePath={courseBasePath}/>)}
                   </div> : <p className="mt-2 text-sm text-muted-foreground">No classes on this day.</p>}
                 </section>
+              </div>
+            ) : null}
+            {courseBasePath === "/learn/courses" && learnerScheduleWeekdayExportAvailable(view,calendarMode,agenda.length) ? (
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-subtle p-3" aria-label="Selected day class export">
+                <p className="min-w-0 text-sm font-semibold text-body">{chosenDay} · {agenda.length} authorized sessions</p>
+                <a download={"classes-"+chosenDay+".ics"}
+                  href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
+                  className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                  Download selected day (.ics)
+                </a>
+                {dayIcs.truncated ? <p className="w-full text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
               </div>
             ) : null}
             <div className={view==="month" ? "hidden" : "mt-5 hidden md:block"}>

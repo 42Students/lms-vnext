@@ -253,3 +253,16 @@ export function explainLearnerModuleAccess(
     };
   });
 }
+
+/** Distinguish a stored membership rule from the effective resolution result. */
+export function membershipOverrideSummary(modules:readonly LearnerModuleTrace[]) {
+ return modules.map(item=>{
+  const membership=item.steps.find(step=>step.level==="MEMBERSHIP");
+  return {module:item.module,label:item.label,
+   stored:membership?.source==="PERSISTED"?membership.value:null,
+   locked:membership?.source==="PERSISTED"&&membership.locked===true,
+   ignored:membership?.ignored===true,
+   winner:membership?.winner===true,
+  };
+ });
+}

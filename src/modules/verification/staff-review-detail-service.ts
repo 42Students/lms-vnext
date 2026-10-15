@@ -7,9 +7,10 @@ import type {RequestContext} from "@/modules/identity/context";
 import {VerificationStateError,type VerificationSection,type VerificationStatus} from "@/modules/profile-verification/domain";
 import {verificationDocumentManifest} from "./document-manifest";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
+import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 
-export async function getCollegeVerificationDetail(context:RequestContext,membershipId:string,section:VerificationSection){
- const scope=await requireCollegeVerificationActor(context);
+export async function getCollegeVerificationDetail(context:RequestContext,membershipId:string,section:VerificationSection,superAdminCollegeId?:string){
+ const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const [record]=await getDb().select({
   learnerMembershipId:collegeMemberships.id,learnerName:users.displayName,
