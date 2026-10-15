@@ -3,7 +3,7 @@ import { z } from "zod";
 export const mentorProjectActivityQuerySchema=z.object({
   projectId:z.string().uuid(),
   importance:z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
-  view:z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM"]).default("ALL"),
+  view:z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM","DELIVERIES"]).default("ALL"),
   window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","LAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
@@ -29,6 +29,10 @@ export function mentorProjectActivityEventTypes(view:MentorProjectActivityQuery[
   if(view==="EVALUATIONS")return ["projects.evaluation.recorded"];
   if(view==="REVIEWS")return [
     "projects.task.reviewed","projects.delivery.reviewed",
+  ];
+  if(view==="DELIVERIES")return [
+    "projects.delivery.draft_created","projects.delivery.draft_updated",
+    "projects.delivery.submitted","projects.delivery.reviewed",
   ];
   if(view==="MEETINGS")return [
     "projects.meeting.decided","projects.meeting.notes_updated",
