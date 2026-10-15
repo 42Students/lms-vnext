@@ -74,7 +74,7 @@ export function AdminScopeSwitcher({
         onChange={(event) => switchScope(event.target.value)}
         className="min-h-10 py-0"
       >
-        <option value="">All platform</option>
+        <option value="">All colleges</option>
         {choices.organizations.length > 0 ? (
           <optgroup label="Organizations">
             {choices.organizations.map((organization) => (

@@ -544,7 +544,7 @@ test.describe("Core tenant browser acceptance", () => {
 
     await page.goto("/dashboard");
     const switcher = page.getByLabel(
-      "Active college membership",
+      "Switch workspace",
     );
     await expect(switcher).toHaveValue(
       SEED_IDS.facultyCollegeAMembership,
@@ -592,7 +592,7 @@ test.describe("Core tenant browser acceptance", () => {
     );
     await page
       .getByLabel(
-        "Active college membership",
+        "Switch workspace",
       )
       .selectOption(
         SEED_IDS.facultyCollegeAMembership,
