@@ -1374,3 +1374,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 round 2 / Course Home overdue next action (PARTIAL):** unsubmitted published assignments with past due dates are now offered as the first actionable Course Home step with an explicit late-submission notice and exact lesson/item link. Future-only update feed remains chronological. Model tests authored; saved data, legacy visual and browser parity still required.
 
 **Chat-7 round 2 / Learning Path deep links (PARTIAL; L3-006/037):** an exact learner-authorized lesson/item focus now selects its own resource/lecture/assessment/live filter even if the copied URL carried an incompatible filter. Missing/forged item IDs never reveal other lessons. Pure regressions authored; browser Back/Forward and modal verification remain.
+
+**Chat-7 round 2 / Quiz deadline fail-closed policy:** both initial quiz load and live attempt availability now reuse the same deadline guard as final confirmed submission. Malformed deadlines cannot expose an actionable attempt, and exact equality remains allowed. Unit regressions authored; PostgreSQL and real-clock browser verification pending.

@@ -133,9 +133,9 @@ export function LearnerQuizAttempt() {
       requireLearnerQuizResponseId(quizId, quizBody.quiz?.quiz?.id);
       if (!learnerQuizRequestCurrent(signal)) return;
       const loadedAtMs = Date.now();
-      const deadlinePassed = quizBody.quiz?.quiz?.dueAt
-        ? new Date(quizBody.quiz.quiz.dueAt).getTime() < loadedAtMs
-        : false;
+      const deadlinePassed = !learnerQuizSubmitDeadlineOpen(
+        quizBody.quiz?.quiz?.dueAt ?? null, loadedAtMs,
+      );
       const mustReview =
         reviewRequested ||
         quizBody.quiz?.quiz?.status === "CLOSED" ||
@@ -208,7 +208,7 @@ export function LearnerQuizAttempt() {
     [latestAttempt],
   );
   const duePassed = quiz?.quiz.dueAt && nowMs > 0
-    ? new Date(quiz.quiz.dueAt).getTime() < nowMs
+    ? !learnerQuizSubmitDeadlineOpen(quiz.quiz.dueAt, nowMs)
     : false;
   const attemptable = Boolean(
     quiz &&
