@@ -4,8 +4,8 @@ import { projectCompanyShareAudit } from "./audit-history-model";
 import {tpoCompanyAuditKindSchema} from "./audit-kind-model";
 import {companyShareAuditPageSchema,COMPANY_SHARE_AUDIT_PAGE_SIZE,COMPANY_SHARE_AUDIT_EXPORT_LIMIT} from "./audit-page-model";
 import { getDb } from "@/db/client";
-import { collegeMemberships, membershipRoles, placementJobs, users } from "@/db/schema";
-import { AuthorizationError } from "@/modules/permissions/policy";
+import {placementJobs} from "@/db/schema";
+import {requirePersistedTpoMembership} from "../tpo-persisted-actor-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
@@ -25,30 +25,9 @@ export class CompanyShareError extends Error {
     super(code);
   }
 }
-async function requirePersistedShareOfficer(context:RequestContext, collegeId:string){
-  const membershipId=context.membership?.id;
-  if(!membershipId)throw new AuthorizationError("placements.manage");
-  const [actor]=await getDb().select({id:collegeMemberships.id})
-    .from(collegeMemberships)
-    .innerJoin(membershipRoles,and(
-      eq(membershipRoles.membershipId,collegeMemberships.id),
-      eq(membershipRoles.role,"TPO"),
-    ))
-    .innerJoin(users,and(
-      eq(users.id,collegeMemberships.userId),
-      eq(users.platformStatus,"ACTIVE"),
-    ))
-    .where(and(
-      eq(collegeMemberships.id,membershipId),
-      eq(collegeMemberships.collegeId,collegeId),
-      eq(collegeMemberships.userId,context.user.id),
-      eq(collegeMemberships.status,"ACTIVE"),
-    )).limit(1);
-  if(!actor)throw new AuthorizationError("placements.manage");
-}
 async function tpoJob(context: RequestContext, jobId: string) {
   const college = await requireTpoReadCollege(context);
-  await requirePersistedShareOfficer(context,college.id);
+  await requirePersistedTpoMembership(context,college.id);
   const [job] = await getDb().select({
     id: placementJobs.id, collegeId: placementJobs.collegeId,
     status: placementJobs.status,
