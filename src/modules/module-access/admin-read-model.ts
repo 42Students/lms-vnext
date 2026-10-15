@@ -87,6 +87,7 @@ export function adminFeaturesHref(filters: {
   storedState?: "ALL"|"ON"|"OFF";
   locks?: "ALL"|"LOCKED";
   presence?: "ANY"|"HAS_RULE"|"NO_RULE";
+  recent?: "ALL"|"7D"|"30D"|"90D";
 }): string {
   const params = new URLSearchParams();
 
@@ -103,6 +104,7 @@ export function adminFeaturesHref(filters: {
   if (filters.storedState && filters.storedState !== "ALL") params.set("storedState", filters.storedState);
   if (filters.locks === "LOCKED") params.set("locks", "LOCKED");
   if (filters.presence && filters.presence !== "ANY") params.set("presence", filters.presence);
+  if (filters.recent && filters.recent !== "ALL") params.set("recent",filters.recent);
 
   const query = params.toString();
 

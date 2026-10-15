@@ -39,7 +39,7 @@ import type {
 import {adminModuleOverrideFilterSchema} from "./admin-override-filter-model";
 
 export {adminFeatureQuerySchema} from "./admin-feature-query";
-import {adminFeatureQuerySchema} from "./admin-feature-query";
+import {adminFeatureQuerySchema,featureRuleCutoff} from "./admin-feature-query";
 
 const detailQuerySchema = z.object({
   module: adminModuleOverrideFilterSchema,
@@ -194,13 +194,15 @@ export async function listSuperAdminFeatureControls(
     );
   }
 
-  if (query.module || query.storedState !== "ALL" || query.locks === "LOCKED" || query.presence !== "ANY") {
+  const cutoff=featureRuleCutoff(query.recent,new Date());
+  if (query.module || query.storedState !== "ALL" || query.locks === "LOCKED" || query.presence !== "ANY" || cutoff) {
     const matchRule=sql`exists (
       select 1 from module_access_rules rule
       where rule.scope_type = 'COLLEGE' and rule.scope_id = ${colleges.id}
       ${query.module ? sql`and rule.module::text = ${query.module}::text` : sql``}
       ${query.storedState !== "ALL" ? sql`and rule.enabled = ${query.storedState === "ON"}` : sql``}
       ${query.locks === "LOCKED" ? sql`and rule.locked = true` : sql``}
+      ${cutoff ? sql`and rule.updated_at >= ${cutoff}` : sql``}
     )`;
     conditions.push(query.presence === "NO_RULE" ? sql`not (${matchRule})` : matchRule);
   }
@@ -263,6 +265,7 @@ export async function listSuperAdminFeatureControls(
     stateFilter: query.storedState,
     lockFilter: query.locks,
     presenceFilter: query.presence,
+    recentFilter: query.recent,
     page: query.page,
     pageSize: COLLEGE_PAGE_SIZE,
     total,

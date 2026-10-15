@@ -995,3 +995,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 feature matrix no-rule inspection (PARTIAL):** Explicit stored COLLEGE-rule absence can now be found per selected module, with contradictory locked/value selectors rejected rather than interpreted as inherited Off. Exact scoped NOT EXISTS affects both count and page. Authored tests; DB/browser pending.
+
+
+**2026-10-15 chat-6 recent persisted college-rule changes (PARTIAL):** Optional 7/30/90-day rule updated-at windows use one server clock and SQL predicate for both totals/page. A missing rule cannot also be recent, so that combination is rejected. No event-history or workflow-causation claim; tests authored, execution pending.
