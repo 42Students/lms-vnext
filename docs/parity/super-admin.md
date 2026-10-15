@@ -812,3 +812,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 New Template increment 2 (PARTIAL):** Draft composer now exposes Low/Medium/High/Critical first-task priority instead of hardcoding Medium, validating through existing schema. Zod create schema and existing same-origin server writer remain authoritative. Source unit tests are authored, not executed; exact legacy editor/browser and PostgreSQL acceptance remain open.
+
+
+**2026-10-15 chat-6 New Template increment 3 (PARTIAL):** First-task acceptance criteria now round-trip into the initial template blueprint, rather than disappearing from create. Zod create schema and existing same-origin server writer remain authoritative. Source unit tests are authored, not executed; exact legacy editor/browser and PostgreSQL acceptance remain open.
