@@ -2115,3 +2115,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / decision-history filtered CSV — PARTIAL:** New TPO-scoped read-only GET reuses the authorized latest 100 cohort history events and validated kind/after-state filters, returns formula-safe metadata-only rows, no-store headers and explicit 503 if storage is missing; cannot certify full historical export or independent PG/browser acceptance.
 
 **Chat-2 / safe batch history undo affordance — PARTIAL:** History uses the existing source-backed newest, unreversed cohort action hint before applying view filters, suppressing stale old Undo controls; server DB08 transactional CAS remains authoritative for every attempted reversal. Real PG race tests and browser acceptance still open.
+
+**Chat-2 batch Students pager compatibility:** Optional filter parameters retain the pre-existing q-only URL builder contract, while explicit newer filters remain serializable. Regression test added to prevent TypeScript mismatch on pre-existing callers. CI execution pending.
