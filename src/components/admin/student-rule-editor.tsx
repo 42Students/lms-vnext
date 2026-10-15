@@ -15,13 +15,37 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
  const [confirming,setConfirming]=useState(false);
  const [pending,setPending]=useState(false);
  const [feedback,setFeedback]=useState("");
+ const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/rules";
  const noChange=(choice==="INHERIT"&&observed===null)||
   (choice!=="INHERIT"&&observed!==null&&observed.enabled===(choice==="ON")&&observed.locked===nextLocked);
+ async function reload(){
+  setPending(true);
+  setFeedback("");
+  try{
+   const response=await fetch(endpoint,{method:"GET",cache:"no-store"});
+   const data:unknown=await response.json().catch(()=>null);
+   if(!response.ok||!data||typeof data!=="object"||!("rules" in data)||!Array.isArray(data.rules)){
+    setFeedback("Latest rule could not be loaded.");return;
+   }
+   const rule=(data.rules as unknown[]).find(row=>row!==null&&typeof row==="object"&&"module" in row&&row.module===module);
+   if(!rule||typeof rule!=="object"||!("enabled" in rule)||!("locked" in rule)) {
+    setFeedback("Latest module state is unavailable.");return;
+   }
+   const state=rule.enabled===null?null:
+    typeof rule.enabled==="boolean"&&typeof rule.locked==="boolean"?{enabled:rule.enabled,locked:rule.locked}:null;
+   setObserved(state);
+   setChoice(state===null?"INHERIT":state.enabled?"ON":"OFF");
+   setNextLocked(state?.locked??false);
+   setFeedback("Latest stored state loaded.");
+   router.refresh();
+  }catch{setFeedback("Could not recheck the persisted rule.");}
+  finally{setPending(false);}
+ }
  async function apply(){
   setPending(true);
   setFeedback("");
   try{
-   const response=await fetch("/api/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/rules",{
+   const response=await fetch(endpoint,{
     method:"PUT",headers:{"content-type":"application/json"},
     body:JSON.stringify(studentRulePayload(module,choice,nextLocked,observed)),
    });
@@ -55,7 +79,10 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
     disabled={blocked||pending||choice==="INHERIT"}/>
    Lock this membership rule
   </label>
-  <Button disabled={blocked||pending||noChange} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
+  <div className="flex flex-wrap gap-2">
+   <Button disabled={blocked||pending||noChange} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
+   <Button disabled={pending} variant="ghost" onClick={()=>{void reload();}}>Recheck stored rule</Button>
+  </div>
   {feedback?<p role="status" className="text-xs leading-5 text-body">{feedback}</p>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Confirm learner module access change"
    description={studentRuleChangeSummary(module,choice,nextLocked)}
