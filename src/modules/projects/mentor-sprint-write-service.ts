@@ -3,6 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, ne, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { mayCloseProjectSprint } from "./sprint-close-policy";
 import { projectInstances, projectReleases, projectSprints, projectTasks, projectMembers } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -132,7 +133,8 @@ export async function transitionMentorProjectSprint(
         .where(and(eq(projectTasks.projectId,scope.project.id),
           eq(projectTasks.sprintId,sprint.id),ne(projectTasks.status,"DONE")))
         .limit(1);
-      if(openTask) throw new ProjectsServiceError("PROJECT_SPRINT_HAS_OPEN_TASKS");
+      if(!mayCloseProjectSprint(openTask ? 1 : 0))
+        throw new ProjectsServiceError("PROJECT_SPRINT_HAS_OPEN_TASKS");
     }
     const status=input.action==="COMPLETE"?"COMPLETED":"ACTIVE";
     const now=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
