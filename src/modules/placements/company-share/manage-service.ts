@@ -6,7 +6,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
-import { placementCompanyApplicantShares as shares } from "./staged-schema";
+import { placementCompanyApplicantShares as shares } from "@/db/schema/placement-company-shares";
 import { isShareableJob } from "./scope-model";
 import {
   companyShareExpiry, companyShareIssueSchema,
