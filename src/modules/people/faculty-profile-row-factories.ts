@@ -13,3 +13,8 @@ export function newFacultyEducation(): FacultyProfileDocument["education"][numbe
     score:"",description:"",certificateDocumentId:null,
   };
 }
+
+export function newFacultyCertification():FacultyProfileDocument["certifications"][number]{
+ return {id:crypto.randomUUID(),authority:"",name:"",certificationDate:"",
+  validityDate:"",certificateLink:"",certificateDocumentId:null,description:""};
+}
