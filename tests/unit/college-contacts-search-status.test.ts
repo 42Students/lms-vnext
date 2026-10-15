@@ -14,3 +14,10 @@ describe("contacts reverse-name order",()=>{it("keeps requested reverse order th
  const filter=collegeContactsQuerySchema.parse({sort:"NAME_DESC"});
  expect(filter.sort).toBe("NAME_DESC");
 });});
+
+describe("contact role audience",()=>{it("supports exact faculty-only, learner-only and mixed-grant membership filtering",()=>{
+ for(const audience of ["FACULTY_ONLY","LEARNER_ONLY","DUAL"]){
+  expect(collegeContactsQuerySchema.parse({audience}).audience).toBe(audience);
+ }
+ expect(collegeContactsQuerySchema.safeParse({audience:"TPO"}).success).toBe(false);
+});});
