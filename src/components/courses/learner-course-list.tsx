@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
 import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
 import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
 import { Fragment, useMemo, useState } from "react";
@@ -162,9 +163,8 @@ export function LearnerCourseList({
 
   const selectedPeriod =
     periods.find((period) => period.id === selectedPeriodId) ?? periods[0];
-  const totalCredits = periodRows.reduce(
-    (sum, row) => sum + (row.course.credits ?? 0),
-    0,
+  const creditSummary = learnerCourseCreditSummary(
+    periodRows.map((row) => row.course.credits),
   );
 
   return (
@@ -302,10 +302,15 @@ export function LearnerCourseList({
           <span className="rounded-full bg-muted px-3 py-1.5">
             {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
           </span>
-          {totalCredits > 0 ? (
+          {creditSummary.recordedCount > 0 ? (
             <span className="rounded-full bg-muted px-3 py-1.5">
-              {totalCredits} Credits
+              {creditSummary.credits} recorded credits
+              {creditSummary.missingCount > 0
+                ? ` · ${creditSummary.missingCount} course credit values unavailable`
+                : ""}
             </span>
+          ) : creditSummary.missingCount > 0 ? (
+            <span className="rounded-full bg-muted px-3 py-1.5">Credits not recorded</span>
           ) : null}
         </div>
       </section>
