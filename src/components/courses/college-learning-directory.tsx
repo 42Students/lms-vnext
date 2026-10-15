@@ -461,6 +461,12 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               </select>
             </label>
           ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact lesson ID
+              <input name="lessonId" defaultValue={data.query.lessonId??""} placeholder="Lesson UUID"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
