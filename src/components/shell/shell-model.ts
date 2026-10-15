@@ -20,6 +20,14 @@ export type ShellNavItem = {
   group?: "learning" | "tracking" | "career" | "account" | "operate" | "coordinate" | "insights" | "administration";
 };
 
+/** User-approved TPO section headings, shared by desktop and mobile. */
+export const TPO_SECTION_LABELS = {
+  operate: "Operate",
+  coordinate: "Coordinate",
+  insights: "Insights",
+  administration: "Administration",
+} as const;
+
 const dashboard: ShellNavItem = {
   label: "Dashboard",
   href: "/dashboard",

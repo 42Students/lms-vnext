@@ -7,12 +7,7 @@ import { usePathname } from "next/navigation";
 import { cx } from "@/lib/class-names";
 import type { ShellNavItem } from "./shell-model";
 
-const TPO_SECTION_LABELS = {
-  operate: "Operate",
-  coordinate: "Coordinate",
-  insights: "Insights",
-  administration: "Administration",
-} as const;
+import { TPO_SECTION_LABELS } from "./shell-model";
 function tpoSectionLabel(item: ShellNavItem): string | null {
   if (!item.href.startsWith("/tpo/") || !item.group ||
     !(item.group in TPO_SECTION_LABELS)) return null;
