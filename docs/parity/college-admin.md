@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Bulk decision PostgreSQL success+failure fixture PARTIAL (chat-9):** A separate current-college verification fixture is now authored to assert a successful SEND_BACK row-version transition, exactly one activity event, recipient in-app notification, non-leaking foreign-college failure and stale replay without duplicate decision. The same batch includes a JSX duplicate-markup repair caught in source review. Fixture is gated on disposable registered DB04 and has not run here.
+
 **Per-item bulk results PARTIAL (chat-9):** Bulk decisions display server-returned succeeded/failed counts and each public-safe outcome, including stale-version, unavailable target and missing-document failures. Successful HTTP transport never implies every learner was verified. An explicit refresh button rechecks the server queue; integration/browser acceptance remains open.
 
 
