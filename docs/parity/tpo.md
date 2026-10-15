@@ -2019,3 +2019,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 2026-10-15 / Drive Day explicit no-show filter — PARTIAL:** TPO-only live rounds can be filtered to those with persisted explicit ABSENT/no-show evidence, without treating WAITING or unknown attendance as absence. The first-20-round source cap is preserved and disclosed; browser acceptance remains open.
 
 **Chat-2 2026-10-15 / Drive Day pending attendance focus — PARTIAL:** A separate filter highlights live rounds with positively recorded pending attendance; unknown and absent are separate categories. Filtered counts represent only the server's explicitly capped live-round snapshot, not all historical rounds.
+
+**Chat-2 2026-10-15 / Drive Day attention sort — PARTIAL:** The TPO live, college-scoped 20-round snapshot offers validated original schedule order or descending pending/no-show counts, with deterministic name/ID ties and no client-mutated source data. Browser and real-PostgreSQL parity remain open.
