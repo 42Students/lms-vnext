@@ -3,6 +3,7 @@ import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-mode
 export const tpoBatchRegistrationFilters=z.object({
  q:z.string().trim().max(100).default(""),
  choice:z.union([tpoRegistrationChoiceSchema,z.literal("UNRECORDED"),z.literal("ALL")]).default("ALL"),
+ source:z.enum(["ALL","SELF","TPO","BACKFILL","UNRECORDED"]).default("ALL"),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type BatchRegistrationListRow={membershipId:string;name:string;choice:string|null};

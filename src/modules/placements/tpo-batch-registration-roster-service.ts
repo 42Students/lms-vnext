@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
+import {filterTpoBatchRegistrationSource} from "./tpo-batch-registration-source-model";
 import {filterBatchRegistrations,paginateBatchRegistrations,tpoBatchRegistrationFilters} from "./tpo-batch-registration-filter-model";
 const MAX_ACTIVE_LEARNERS=500;
 export async function listTpoBatchRegistrationRoster(ctx:RequestContext,cohortId:string,raw:unknown){
@@ -43,7 +44,7 @@ export async function listTpoBatchRegistrationRoster(ctx:RequestContext,cohortId
    choice:reg?tpoRegistrationChoiceSchema.parse(reg.choice):null,
    source:reg?.source??null,updatedAt:reg?.updatedAt.toISOString()??null};
  });
- const filtered=filterBatchRegistrations(roster,filters);
+ const filtered=filterTpoBatchRegistrationSource(filterBatchRegistrations(roster,filters),filters.source);
  const page=paginateBatchRegistrations(filtered,filters.page);
  return {batch,ready:true,limited,filters,items:page.items,hasMore:page.hasMore,
    total:page.total,sampleSize:sample.length};
