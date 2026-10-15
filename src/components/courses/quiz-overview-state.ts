@@ -20,10 +20,19 @@ export function quizOverviewActionState(
   const dueMillis = item.dueAt
     ? Date.parse(item.dueAt)
     : Number.POSITIVE_INFINITY;
+  const deadlineUnknown = item.dueAt !== null && !Number.isFinite(dueMillis);
   const expired = Number.isFinite(dueMillis) && dueMillis < now;
   const closed = item.status !== "PUBLISHED";
   const exhausted = item.attemptsRemaining <= 0;
 
+  if (deadlineUnknown) {
+    return {
+      label: "Deadline unavailable",
+      tone: "warning" as const,
+      action: "View quiz",
+      review: true,
+    };
+  }
   if (closed && item.resultsPublished && item.attemptsUsed > 0) {
     return {
       label: "Results published",

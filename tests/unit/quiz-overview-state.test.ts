@@ -70,3 +70,12 @@ describe("zero remaining learner quiz attempts",()=>{
   expect(result).toMatchObject({label:"No attempts remaining",action:"View quiz",review:true});
  });
 });
+
+describe("unknown learner quiz deadlines",()=>{
+ it("fails closed on malformed persisted timestamps but not a real null deadline",()=>{
+  expect(quizOverviewActionState({...base,dueAt:"not-a-date"},now)).toMatchObject({
+   label:"Deadline unavailable",review:true,
+  });
+  expect(quizOverviewActionState({...base,dueAt:null},now).review).toBe(false);
+ });
+});
