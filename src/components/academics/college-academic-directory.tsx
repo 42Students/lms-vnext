@@ -229,13 +229,16 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           {data.total} matching {semesters ? "program terms" : "cohorts"}
         </p>
         {data.items.length === 0 ? (
-          <p className="p-6 text-sm text-body">
+          <div role="status" className="space-y-2 p-6 text-sm text-body">
+           <p>
             {data.total === 0
               ? semesters
                 ? "No program terms match these filters. An academic period is not substituted for an unconfigured semester."
                 : "No cohorts match these filters. Batch membership or progression is not inferred from other records."
               : "No records exist on this page. Select an earlier page."}
-          </p>
+           </p>
+           <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
+          </div>
         ) : (
           <table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
