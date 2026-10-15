@@ -4,7 +4,7 @@ import { getDb } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
-import { tpoBlockedDates, tpoJobTypes, tpoPrepReadiness } from "./staged-schema";
+import { placementTpoBlockedDates as tpoBlockedDates, placementTpoJobTypes as tpoJobTypes, placementTpoPrepReadiness as tpoPrepReadiness } from "@/db/schema/tpo-configuration";
 
 export async function getTpoJobTypes(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
