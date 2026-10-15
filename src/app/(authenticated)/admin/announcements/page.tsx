@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   AnnouncementAdminWorkspace,
@@ -20,6 +22,9 @@ export default async function AnnouncementsPage({
   searchParams: Promise<{ deleted?: string; beforeCreatedAt?: string; beforeId?: string }>;
 }) {
   const context = await getCurrentRequestContext();
+  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") {
+    redirect("/dashboard");
+  }
   const params = await searchParams;
 
   if (!announcementsRuntimeEnabled()) {

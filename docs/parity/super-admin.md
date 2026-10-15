@@ -1039,3 +1039,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 - Readiness remains gated by `DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED` and `DB10_TRACKER_READY=DB10_VERIFIED`. The migration must be **applied and independently replay/verified** in the target environment before setting either flag. Registered SQL is not execution evidence. Do not mark these surfaces DONE or imply external sending.
 
 **Still open for acceptance:** execute targeted Vitest, typecheck, disposable PostgreSQL migration 0076 replay/real transaction and role/tenant negatives, same-origin route tests, browser review/consent and stale-version flows, pagination/CSV privacy, and compare the DEV-ONLY legacy surfaces against approved oracle SHAs. No change to authoritative DATABASE tracker counts.
+
+
+**2026-10-15 chat-6 DB10 notices route fence (PARTIAL):** The Super Admin announcement UI now checks both role and active platform account before reporting feature flags or reading tenant notices. Source/unit contract authored; scoped browser verification remains open.
