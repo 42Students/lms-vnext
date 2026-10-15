@@ -6,9 +6,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorReviewQueue } from "@/modules/projects/mentor-portfolio-service";
 import { mentorPortfolioHref, mentorReviewQuerySchema } from "@/modules/projects/mentor-portfolio-model";
+import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
-function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorReviewsPage({
   searchParams,
@@ -16,16 +16,11 @@ export default async function MentorReviewsPage({
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const raw = await searchParams;
-  const parsed = mentorReviewQuerySchema.safeParse({
-    search: first(raw.search) ?? undefined,
-    projectStatus: first(raw.projectStatus) ?? undefined,
-    projectId:first(raw.projectId) ?? undefined,
-    assignment:first(raw.assignment) ?? undefined,
-    order: first(raw.order) ?? undefined,
-    age: first(raw.age) ?? undefined,
-    page: first(raw.page) ?? undefined,
-    pageSize: first(raw.pageSize) ?? undefined,
-  });
+  const parsed = mentorReviewQuerySchema.safeParse(singleValueMentorFilters({
+    search:raw.search,projectStatus:raw.projectStatus,projectId:raw.projectId,
+    assignment:raw.assignment,order:raw.order,age:raw.age,
+    page:raw.page,pageSize:raw.pageSize,
+  }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid review filters</h1>
     <Link href="/mentor/reviews" className="text-primary-text underline">Clear filters</Link>
