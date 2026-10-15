@@ -25,3 +25,10 @@ export function learnerAttemptResultLabel(attempt:{
   if(attempt.score===null || attempt.maxScore===null) return "Score unavailable";
   return String(attempt.score) + " / " + String(attempt.maxScore) + " points";
 }
+/** Quiz results use the college's India-local date convention on all devices. */
+export function learnerQuizAttemptDateLabel(value:Date):string {
+ if(!Number.isFinite(value.getTime()))return "Date unavailable";
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+ }).format(value);
+}
