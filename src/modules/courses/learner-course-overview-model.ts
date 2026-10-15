@@ -22,6 +22,9 @@ export function learnerCourseListSignals(
       .map(item=>({title:item.title,dueAt:item.dueAt!,kind:"Quiz" as const})),
   ]).filter(item=>item.dueAt.getTime()>=now.getTime())
     .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime());
-  return {percentage,lastActivity,nextDue:due[0]
+  const overdueAssignments=lessons.flatMap(lesson=>lesson.assignments)
+    .filter(item=>!item.submittedAt && item.dueAt &&
+      Number.isFinite(item.dueAt.getTime()) && item.dueAt.getTime()<now.getTime()).length;
+  return {percentage,lastActivity,overdueAssignments,nextDue:due[0]
     ? {title:due[0].title,kind:due[0].kind,dueAt:due[0].dueAt.toISOString()} : null};
 }

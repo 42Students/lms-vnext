@@ -1348,3 +1348,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 semester selection correction (2026-10-15):** initial/stale Course filters prefer the latest term with an active authorized Learner course; if none remains active, the newest accessible historical term is selected. No client-clock inference. Unit tests authored, browser proof pending.
 
 **Chat-7 progress display correction (2026-10-15):** a non-finite upstream completion percentage is now shown as unavailable instead of `NaN%`; valid values are bounded to 0–100. Unit tests authored; runtime acceptance pending.
+
+**Chat-7 assignment attention (2026-10-15):** active Course cards now call out the count of published overdue but still-unsubmitted assignments, keeping overdue items out of the future-only Next due slot. Past-semester cards remain read-only. No invented attempt or grade state. Unit tests authored; browser proof pending.
