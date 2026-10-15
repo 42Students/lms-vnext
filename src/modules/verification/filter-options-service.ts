@@ -14,3 +14,11 @@ export async function listVerificationBatchOptions(context:RequestContext):Promi
   .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id)).limit(201);
  return {items:rows.slice(0,200).map(r=>({id:r.id,label:r.program+" · "+r.name})),truncated:rows.length>200};
 }
+
+export async function listVerificationBranchOptions(context:RequestContext):Promise<VerificationFilterChoiceList>{
+ const scope=await requireCollegeVerificationActor(context);
+ const rows=await getDb().select({id:departments.id,name:departments.name})
+  .from(departments).where(and(eq(departments.collegeId,scope.collegeId),isNull(departments.archivedAt)))
+  .orderBy(asc(departments.name),asc(departments.id)).limit(201);
+ return {items:rows.slice(0,200).map(r=>({id:r.id,label:r.name})),truncated:rows.length>200};
+}
