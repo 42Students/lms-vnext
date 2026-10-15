@@ -30,7 +30,7 @@ export function facultyQuizDraftIssue(
     text:string;correct:boolean;sequence:number;
   }[]}[],
 ):string|null{
- if(!title.trim())return "Enter a Quiz title.";
+ if(!title.trim() || title.trim().length > 255)return "Enter a Quiz title (up to 255 characters).";
  const normalized=questions.map((q,i)=>({...q,sequence:i,
    options:q.options.map((o,j)=>({...o,sequence:j}))}));
  const valid=createCourseQuizInputSchema.shape.questions.safeParse(normalized);
@@ -131,7 +131,7 @@ export function facultyQuizDraftLoadAllowsAction(
  failed:boolean,status:string|undefined,
  action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE",
 ):boolean {
- return !(failed&&status==="DRAFT"&&(action==="EDIT"||action==="PUBLISH"));
+ return !(failed&&(status==="DRAFT"||status===undefined)&&(action==="EDIT"||action==="PUBLISH"));
 }
 
 /** Validate the complete editable Quiz metadata before asking for confirmation. */

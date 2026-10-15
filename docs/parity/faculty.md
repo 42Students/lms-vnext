@@ -1470,3 +1470,12 @@ The Quiz editor now consumes the authoritative `{quiz}` response after successfu
 
 ## 2026-10-15 R6 Faculty Contacts detail return context — PARTIAL
 Public Contact cards now preserve only validated directory search, page and page-size selectors in their details link, and the Back to Contacts action restores the same filtered directory. Duplicate, foreign or malformed query fields are discarded instead of being propagated. No private contact fields or role claims are included in URLs. Pure URL tests authored; browser acceptance pending.
+
+
+## 2026-10-15 Faculty scoped follow-up — PARTIAL, not accepted
+
+- **Lesson visibility:** staged pure reader policy and administrator-only command input under `src/modules/courses/faculty-lesson-visibility-model.ts`; proposed `docs/proposed-migrations/faculty-lesson-visibility.sql` is NOT registered. No routes or production reads are wired, and no learner/faculty browser acceptance exists. Leave Blueprint scheduling/visibility unchecked.
+- **Persisted Faculty scope:** the shared delivery-access reader now checks live user status, college membership and persisted FACULTY role before authorizing a teaching assignment. A disposable PostgreSQL revocation/suspension test was authored, but not run; it must pass before claims of complete revocation coverage.
+- **Report accuracy and bounds:** source-only fractional percentage bucketing, average calculation, CSV row cap and report page-size guards have targeted unit tests authored. No UI/mobile or full export acceptance claimed.
+- **Quiz and Contacts:** tightened draft title length, unknown-status draft failure guard, and contact detail selectors with targeted unit tests. Still not full authoring/Contacts page parity.
+- **Unverified:** no local test, typecheck, database migration or browser gate was executed in this tool environment. All existing unchecked Faculty page criteria remain OPEN; no DONE changes.
