@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, ne, or } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray, ne, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   projectInstances, projectReleases, projectSprints, projectTasks,
@@ -54,6 +54,12 @@ export async function getMentorSprintProgress(
   const filters = and(
     inArray(projectSprints.projectId, ids),
     query.projectId?eq(projectSprints.projectId,query.projectId):undefined,
+    query.taskAttention==="ALL"?undefined:sql`exists(
+      select 1 from project_tasks mentor_pending_task
+      where mentor_pending_task.sprint_id=${projectSprints.id}
+        and mentor_pending_task.project_id=${projectSprints.projectId}
+        and mentor_pending_task.status=${query.taskAttention}::text
+    )`,
     eq(projectInstances.collegeId, membership.collegeId),
     ne(projectInstances.status, "ARCHIVED"),
     eq(projectReleases.projectId, projectInstances.id),
