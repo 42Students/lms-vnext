@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicationUrlError} from "@/modules/placements/tpo-applications-url-guard";
+import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
@@ -80,6 +81,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
+  {data.rows.length>0?<TpoBulkActionPanel key={"applications:"+jobId+":"+data.page+":"+data.stage+":"+data.search}
+    target="APPLICATIONS" jobId={jobId}
+    rows={data.rows.map(row=>({id:row.id,
+      label:(row.student??"Applicant")+" · "+row.role}))}/>:null}
   {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:null}
   <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
    <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
