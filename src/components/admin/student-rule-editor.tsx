@@ -3,7 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
-import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
+import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
 export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,blocked}:{
  collegeId:string;membershipId:string;module:EditableStudentModule;
  stored:boolean|null;locked:boolean;blocked:boolean;
@@ -47,6 +47,9 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
     const code=data&&typeof data==="object"&&"error" in data?String(data.error):"REQUEST_FAILED";
     setFeedback(code==="STALE_RULE"?"The stored rule changed. Reload this page before editing.":code==="ANCESTOR_LOCKED"?"A broader locked rule prevents this change.":"Change failed ("+code+").");
     return;
+   }
+   if(!hasStudentRuleAcknowledgement(data,module,choice,nextLocked)){
+    setFeedback("Server response did not confirm the intended rule. Recheck before another change.");return;
    }
    const updated=choice==="INHERIT"?null:{enabled:choice==="ON",locked:nextLocked};
    setObserved(updated);
