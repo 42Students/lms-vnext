@@ -57,6 +57,7 @@ describe("College Admin assignment and quiz aggregate model", () => {
     expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({results:"HIDDEN"}))).toContain("results=HIDDEN");
     expect(()=>parseCollegeAssessmentQuery("ASSIGNMENT",{results:"HIDDEN"})).toThrow();
     expect(collegeAssessmentHref("ASSIGNMENT",collegeAssessmentListQuerySchema.parse({scope:"SECTION"}))).toContain("scope=SECTION");
+    expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({}))).toBe("/college/quizzes");
     expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({courseCode:"CS&42"}))).toContain("courseCode=CS%2642");
     expect(collegeAssessmentHref("ASSIGNMENT", {
       q: "", status: "ALL", scope:"ALL", results:"ALL", duePresence:"ALL", dueWindow:"ALL", page: 1,
