@@ -333,7 +333,7 @@ export function ProjectWorkspace({
             detail="Releases shipped."
           />
           <Metric
-            label="Final delivery"
+            label="Final submission"
             value={
               readiness.finalSubmission.latest
                 ? label(
@@ -358,7 +358,7 @@ export function ProjectWorkspace({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="m-0 text-base font-semibold text-foreground">
-                Your final delivery
+                Your final submission
               </h2>
 
             </div>
@@ -756,7 +756,7 @@ export function ProjectWorkspace({
       {show("delivery") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Final delivery
+            Final submission
           </h2>
 
         </div>
