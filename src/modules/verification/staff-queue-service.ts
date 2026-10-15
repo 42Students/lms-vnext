@@ -12,7 +12,7 @@ import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
-import {matchesWaitingSince} from "./queue-waiting-since";
+import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid} from "./queue-waiting-since";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 import {verificationEnrollmentPredicates} from "./staff-filter-scope";
@@ -24,6 +24,7 @@ export class VerificationQueueLimitError extends Error {
 }
 export async function listCollegeVerificationQueue(context:RequestContext,raw:unknown,superAdminCollegeId?:string) {
  const filter=verificationQueueFilters.parse(raw);
+ if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
@@ -50,6 +51,7 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
+  if(!matchesSubmittedFrom(row.submittedAt,filter.submittedFrom))return false;
   const marks=submittedMarksheets(row.submittedSnapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&marks.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&marks.count>0&&marks.missing===0))return false;

@@ -1,11 +1,11 @@
 "use client";
 import {useState} from "react";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-type Fields={q:string;marksheets:string;attention:string;waitingSince:string;sectionId:string;batchId:string;branchId:string};
-const empty:Fields={q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",sectionId:"",batchId:"",branchId:""};
+type Fields={q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;sectionId:string;batchId:string;branchId:string};
+const empty:Fields={q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList}){
- const selected=():Fields=>({q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",
+ const selected=():Fields=>({q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
   sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
@@ -14,6 +14,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   for(const key of ["sectionId","batchId","branchId"] as const){
    if(value[key]&&!uuid.test(value[key])){setError(key+" must be a valid UUID");return;}
   }
+  if(value.submittedFrom&&value.waitingSince&&value.submittedFrom>value.waitingSince){setError("Start date must not follow the end date");return;}
   setError("");onApply(value);
  }
  return <details className="min-w-0 rounded-lg border p-3">
@@ -33,6 +34,10 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
      <select value={fields.attention} onChange={e=>change("attention",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
       <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option><option value="VERIFIED_DETAILS_CHANGED">Updated verified details</option><option value="WAITING_OVER_WEEK">Waiting over a week</option>
      </select>
+    </label>
+    <label className="min-w-0 text-sm">Submitted on or after (IST)
+     <input type="date" value={fields.submittedFrom} onChange={e=>change("submittedFrom",e.target.value)}
+      className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>
     </label>
     <label className="min-w-0 text-sm">Waiting since (submitted on/before)
      <input type="date" value={fields.waitingSince} onChange={e=>change("waitingSince",e.target.value)}
