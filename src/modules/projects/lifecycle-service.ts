@@ -553,6 +553,9 @@ export async function updateProjectTaskStatus(
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     }
 
+    // 0090: entering BLOCKED requires a persisted blocker reason.
+    if (input.status==="BLOCKED" && !lockedTask.blockerReason?.trim())
+      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const now = new Date(Math.max(Date.now(), lockedTask.updatedAt.getTime() + 1));
     const [updated] = await tx.update(projectTasks).set({
       status: input.status,

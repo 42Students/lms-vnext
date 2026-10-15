@@ -72,6 +72,10 @@ export async function updateMentorTaskDetails(
     const [updated]=await tx.update(projectTasks).set({
       title:input.title,description:input.description,
       acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
+      ...(input.blockerReason!==undefined?{blockerReason:input.blockerReason}:{}),
+      ...(input.dueDate!==undefined?{dueDate:input.dueDate}:{}),
+      ...(input.estimatePoints!==undefined?{estimatePoints:input.estimatePoints}:{}),
+      ...(input.taskType!==undefined?{taskType:input.taskType}:{}),
       updatedAt:now,
     }).where(and(
       eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
