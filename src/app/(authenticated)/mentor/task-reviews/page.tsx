@@ -9,6 +9,7 @@ import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query
 import {
   mentorTaskReviewHref, mentorTaskReviewExportHref,
   mentorTaskReviewQuerySchema, mentorTaskReviewTargetHref,
+  mentorTaskReviewMobileLayout, mentorTaskReviewMobileFilters,
 } from "@/modules/projects/mentor-task-review-model";
 
 type Params = {
@@ -41,7 +42,7 @@ export default async function MentorTaskReviewsPage({
   </section>;
 
   const data = await getMentorTaskReviews(context, parsed.data);
-  return <div className="space-y-6">
+  return <div className={mentorTaskReviewMobileLayout}>
     <PageHeader eyebrow="Mentor · Projects" title="Task reviews"
       description="Submitted project tasks waiting for review across your assigned projects."
       actions={<div className="flex flex-wrap items-center gap-3">
@@ -59,7 +60,7 @@ export default async function MentorTaskReviewsPage({
       Projects access is disabled for this membership. No task data was loaded.
     </section> : <>
       <form method="get" action="/mentor/task-reviews"
-        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        className={mentorTaskReviewMobileFilters}>
         <label className="grid gap-1 text-sm font-semibold text-body">
           Task or project
           <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
@@ -137,7 +138,7 @@ export default async function MentorTaskReviewsPage({
             description={data.total > 0
               ? "This page is outside the matching result range. Return to page 1."
               : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."} />
-        : <div className="grid gap-3">{data.items.map(item =>
+        : <div className="grid min-w-0 gap-3">{data.items.map(item =>
           <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-sm font-semibold text-foreground">{item.taskTitle}</p>
             <p className="mt-1 text-sm text-body">
@@ -153,6 +154,11 @@ export default async function MentorTaskReviewsPage({
               Open exact task review →
             </Link>
           </article>)}</div>}
+      {data.total>0&&data.items.length===0?
+        <Link href={mentorTaskReviewHref({...data.query,page:1})}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+          Return to first matching page
+        </Link>:null}
       <nav aria-label="Task review pagination" className="flex items-center justify-between gap-3">
         <p className="text-sm text-body">Page {data.page} of {data.totalPages}</p>
         <div className="flex gap-3">
