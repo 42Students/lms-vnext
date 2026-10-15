@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {tpoShareableShortlistCsv} from "@/modules/placements/tpo-shareable-shortlist-model";
+import {companyShareCsvResponseHeaders} from "@/modules/placements/company-share/export-headers-model";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export async function GET(request:Request,{params}:{params:Promise<{token:string}>}){
@@ -10,12 +11,6 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
   status:404,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"},
  });
  return new Response("\uFEFF"+tpoShareableShortlistCsv(result.rows,result.truncated),{
-  status:200,headers:{
-   "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="company-shortlisted-applicants.csv"',
-   "Cache-Control":"private, no-store",
-   "X-Content-Type-Options":"nosniff",
-   "Referrer-Policy":"no-referrer",
-  },
+  status:200,headers:companyShareCsvResponseHeaders(),
  });
 }
