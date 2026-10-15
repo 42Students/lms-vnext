@@ -132,3 +132,10 @@ export function collegeContactsPageRange(page:number,pageSize:number,total:numbe
  if(total<=0)return {first:0,last:0};
  return {first:Math.min(total,(page-1)*pageSize+1),last:Math.min(total,page*pageSize)};
 }
+
+/** URL-backed count intentionally excludes pagination, sorting and the selected tab. */
+export function activeCollegeContactFilterCount(filter:CollegeContactsQuery):number{
+ const params=new URL(collegeContactsHref(filter),"https://college.invalid").searchParams;
+ for(const key of ["tab","page","pageSize","sort"])params.delete(key);
+ return [...params.keys()].length;
+}
