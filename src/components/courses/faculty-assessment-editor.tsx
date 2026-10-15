@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch } from "@/modules/courses/faculty-assessment-editor-model";
+import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive } from "@/modules/courses/faculty-assessment-editor-model";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -132,10 +132,10 @@ export function FacultyAssessmentEditor({
   }
 
   async function deleteAssessment() {
-    if (saving || deleting) return;
+    if (saving || deleting || !facultyAssessmentCanArchive(assessment.kind,assessment.status)) return;
     if (
       !window.confirm(
-        `Delete this ${assessment.kind.toLowerCase()} from active Course surfaces? Existing historical attempts/submissions will be preserved.`,
+        `Archive this ${assessment.kind.toLowerCase()} from active Course surfaces? Existing historical attempts/submissions will be preserved.`,
       )
     ) {
       return;
@@ -209,15 +209,15 @@ export function FacultyAssessmentEditor({
         }
         footer={
           <>
-            <Button
+            {facultyAssessmentCanArchive(assessment.kind,assessment.status) ? <Button
               variant="danger"
               disabled={saving || deleting}
               onClick={deleteAssessment}
             >
               {deleting
                 ? "Deleting…"
-                : "Delete"}
-            </Button>
+                : "Archive"}
+            </Button> : null}
             <Button
               type="submit"
               form={`faculty-assessment-edit-${assessment.id}`}

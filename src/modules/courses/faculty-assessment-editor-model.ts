@@ -9,3 +9,9 @@ export function facultyAssessmentLimitPatch(
  if(status==="DRAFT")return {maxAttempts:value};
  return {};
 }
+
+/** Archive is not deletion; an archived assessment is immutable. */
+export function facultyAssessmentCanArchive(kind:"QUIZ"|"ASSIGNMENT",status:string){
+ if(kind==="QUIZ")return ["DRAFT","PUBLISHED","CLOSED"].includes(status);
+ return status==="DRAFT"||status==="PUBLISHED";
+}
