@@ -3,6 +3,8 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10Announcements } from "@/db/schema/db10-announcements";
+import { activityEvents } from "@/db/schema/activity";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { colleges } from "@/db/schema/colleges";
 import { departments } from "@/db/schema/departments";
 import {
@@ -156,19 +158,35 @@ export async function createAnnouncement(context: RequestContext, raw: unknown) 
   const scope = await resolveTarget(input.receiverType, input.receiverId);
   requireManage(context, scope);
   assertSchedule(input.scheduledAt ?? null, input.expiresAt ?? null);
-  const [created] = await getDb().insert(db10Announcements).values({
-    ...scope,
-    receiverType: input.receiverType,
-    receiverId: input.receiverId,
-    title: input.title,
-    message: input.message,
-    senderUserId: context.user.id,
-    senderType: senderType(context),
-    scheduledAt: input.scheduledAt ?? null,
-    expiresAt: input.expiresAt ?? null,
-    isPinned: input.isPinned,
-  }).returning();
-  return created;
+  return getDb().transaction(async tx => {
+    const [created] = await tx.insert(db10Announcements).values({
+      ...scope,
+      receiverType: input.receiverType,
+      receiverId: input.receiverId,
+      title: input.title,
+      message: input.message,
+      senderUserId: context.user.id,
+      senderType: senderType(context),
+      scheduledAt: input.scheduledAt ?? null,
+      expiresAt: input.expiresAt ?? null,
+      isPinned: input.isPinned,
+    }).returning();
+    if (isSuperAdmin(context)) {
+      await tx.insert(activityEvents).values({
+        collegeId: scope.collegeId,
+        organizationId: scope.organizationId,
+        actorUserId: context.user.id,
+        module: "PLATFORM",
+        eventType: ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_ANNOUNCEMENT_PUBLISHED,
+        subjectType: "announcement",
+        subjectId: created.id,
+        importance: "HIGH",
+        summary: "Super Admin published an in-app college notice",
+        metadata: { noticeId: created.id, receiverType: input.receiverType },
+      });
+    }
+    return created;
+  });
 }
 
 export async function listAnnouncementsForAdmin(context: RequestContext, raw: unknown = {}) {
