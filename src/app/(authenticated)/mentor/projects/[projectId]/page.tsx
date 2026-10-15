@@ -110,7 +110,8 @@ export default async function MentorProjectPage({
         workspace={workspace}
         backHref="/mentor/projects"
         backLabel="Projects"
-        eyebrow="Mentor Project"
+
+
         mode="MENTOR"
         currentMembershipId={
           context.membership?.id ?? null

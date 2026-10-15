@@ -140,7 +140,8 @@ export default async function LearnerProjectPage({
       workspace={shownWorkspace}
       backHref="/learn/projects"
       backLabel="Projects"
-      eyebrow="Learner Project"
+
+
       mode="LEARNER"
       currentMembershipId={
         context.membership?.id ?? null

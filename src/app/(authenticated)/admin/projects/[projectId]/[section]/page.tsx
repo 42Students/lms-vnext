@@ -14,7 +14,8 @@ export default async function SuperAdminProjectSectionRoute({
       projectId={projectId}
       section={section}
       basePath="/admin/projects"
-      eyebrow="Super Admin Project"
+
+
     />
   );
 }
