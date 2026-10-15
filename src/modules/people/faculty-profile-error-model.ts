@@ -6,6 +6,7 @@ export function facultyProfileSaveFailure(code:string|undefined,status:number):s
  if(code==="FACULTY_PROFILE_VERSION_CONFLICT")return "Your profile changed since you opened it. Reload the latest version before editing again.";
  if(code==="PRIVATE_IDENTITY_STORAGE_NOT_READY")return "Private profile storage is not available. Nothing was saved.";
  if(code==="REQUEST_TOO_LARGE"||status===413)return "This profile change is too large. Shorten the text or remove extra records.";
+ if(status===409)return "Your profile was updated in another session. Reload and review the latest profile before editing again.";
  if(status===403)return "Your permission to edit this profile is unavailable. No changes were saved.";
  if(status===401)return "Your sign-in has expired. Sign in again before editing your profile.";
  if(status===429)return "Profile requests are being limited. Avoid repeated saves and try again later.";
