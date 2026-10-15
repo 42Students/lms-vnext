@@ -14,6 +14,7 @@ import { LearnerPlacementPreferences } from "@/components/placements/learner-pla
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { LearnerPlacementsDashboard } from "@/components/placements/learner-placements-dashboard";
 import { LearnerPlacementPartialAlert } from "@/components/placements/learner-placement-partial-alert";
+import { getOwnLearnerRecentCollegeNotices } from "@/modules/placements/learner-dashboard-college-notices-service";
 import { learnerDashboardPartialState, type PlacementDashboardAvailability }
   from "@/modules/placements/learner-dashboard-partial-model";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -191,6 +192,14 @@ export default async function LearnerPlacementsPage({
 
   const display=learnerDashboardPartialState(availability,dashboard);
   const applicationFunnel=journeyBundle ? learnerPlacementApplicationFunnel(journeyRows) : null;
+  let collegeNotices:Awaited<ReturnType<typeof getOwnLearnerRecentCollegeNotices>>=null;
+  let collegeNoticesFailed=false;
+  try {
+    collegeNotices=await getOwnLearnerRecentCollegeNotices(context);
+  }catch(error){
+    if(error instanceof AuthorizationError)throw error;
+    collegeNoticesFailed=true;
+  }
   const learnerName=await getOwnLearnerPlacementGreeting(context).catch(error=>{
     if(error instanceof AuthorizationError)throw error;
     return null;
@@ -215,6 +224,21 @@ export default async function LearnerPlacementsPage({
         </Link>
       </div>
 
+      <section aria-labelledby="learner-college-notice-preview" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <h2 id="learner-college-notice-preview" className="text-base font-semibold text-foreground">Recent college notices</h2>
+          <Link href="/learn/my-placements/announcements"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View all visible notices →</Link>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">These are notices visible to your college membership, not necessarily placement-cell announcements.</p>
+        {collegeNoticesFailed ? <p role="alert" className="mt-3 text-sm text-body">College notices are temporarily unavailable. Your other placement information is unchanged.</p>
+          : collegeNotices===null ? <p className="mt-3 text-sm text-body">The college notice feed is not enabled.</p>
+          : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No currently visible college notices.</p>
+          : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="rounded-lg border border-border px-3 py-2">
+              <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>
+              <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(notice.createdAt))}</time>
+            </li>)}</ul>}
+      </section>
       <LearnerPlacementPartialAlert missing={display.failed} />
       <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} />
 
