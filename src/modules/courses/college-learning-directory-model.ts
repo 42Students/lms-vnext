@@ -21,6 +21,11 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   sequenceThrough: z.coerce.number().int().min(1).max(10000).optional(),
   sequenceFrom: z.coerce.number().int().min(1).max(10000).optional(),
   contentLifecycle: z.enum(["ALL","DRAFT","PUBLISHED","ARCHIVED"]).default("ALL"),
+  maxContentCount:z.coerce.number().int().min(0).max(1000).optional(),
+  minContentCount:z.coerce.number().int().min(1).max(1000).optional(),
+  pathId:z.string().uuid().optional(),
+  offeringId:z.string().uuid().optional(),
+  lessonId:z.string().uuid().optional(),
   contentType: z.enum(["ALL","RESOURCE","VIDEO","YOUTUBE","LIVE_CLASS"]).default("ALL"),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
@@ -53,6 +58,9 @@ export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
   quizPresence:z.enum(["ALL","HAS_QUIZZES","NO_QUIZZES"]).default("ALL"),
   assignmentPresence:z.enum(["ALL","HAS_ASSIGNMENTS","NO_ASSIGNMENTS"]).default("ALL"),
   lessonPresence:z.enum(["ALL","HAS_LESSONS","NO_LESSONS"]).default("ALL"),
+  archivedContentState:z.enum(["ALL","HAS_ARCHIVED","NO_ARCHIVED"]).default("ALL"),
+  draftContentState:z.enum(["ALL","HAS_DRAFT","NO_DRAFT"]).default("ALL"),
+  offeringId:z.string().uuid().optional(),
   departmentCode:z.string().trim().min(1).max(64).optional(),
   courseStatus:z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   periodStatus:z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
@@ -95,6 +103,14 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if (kind === "LESSONS" && "sequenceThrough" in query && query.sequenceThrough !== undefined) params.set("sequenceThrough", String(query.sequenceThrough));
   if (kind === "LESSONS" && "sequenceFrom" in query && query.sequenceFrom !== undefined) params.set("sequenceFrom", String(query.sequenceFrom));
   if (kind === "LESSONS" && "contentLifecycle" in query && query.contentLifecycle !== "ALL") params.set("contentLifecycle", query.contentLifecycle);
+  if(kind==="PROGRESS"&&"archivedContentState" in query&&query.archivedContentState!=="ALL")params.set("archivedContentState",query.archivedContentState);
+  if(kind==="PROGRESS"&&"draftContentState" in query&&query.draftContentState!=="ALL")params.set("draftContentState",query.draftContentState);
+  if(kind==="LESSONS"&&"maxContentCount" in query&&query.maxContentCount!==undefined)params.set("maxContentCount",String(query.maxContentCount));
+  if(kind==="LESSONS"&&"minContentCount" in query&&query.minContentCount!==undefined)params.set("minContentCount",String(query.minContentCount));
+  if(kind==="LESSONS"&&"pathId" in query&&query.pathId)params.set("pathId",query.pathId);
+  if(kind==="PROGRESS"&&"offeringId" in query&&query.offeringId)params.set("offeringId",query.offeringId);
+  if(kind==="LESSONS"&&"offeringId" in query&&query.offeringId)params.set("offeringId",query.offeringId);
+  if(kind==="LESSONS"&&"lessonId" in query&&query.lessonId)params.set("lessonId",query.lessonId);
   if (kind === "LESSONS" && "contentType" in query && query.contentType !== "ALL") params.set("contentType", query.contentType);
   if (kind === "PROGRESS" && "departmentName" in query && query.departmentName) params.set("departmentName",query.departmentName);
   if(kind==="PROGRESS"&&"activityState" in query&&query.activityState!=="ALL")params.set("activityState",query.activityState);
@@ -125,6 +141,18 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   return params.size ? base + "?" + params.toString() : base;
 }
 
+/** Scoped offering lookups include archived offering records, never inferred learner completion. */
+export function collegeOfferingProgressHref(offeringId:string) {
+  return collegeLearningHref("PROGRESS", collegeProgressQuerySchema.parse({
+    offeringId:z.string().uuid().parse(offeringId), status:"ALL",
+  }));
+}
+/** Reuses the authenticated lesson aggregate rather than a new unscoped detail read. */
+export function collegeOfferingLessonsHref(offeringId:string) {
+  return collegeLearningHref("LESSONS", collegeLessonQuerySchema.parse({
+    offeringId:z.string().uuid().parse(offeringId), status:"ALL",
+  }));
+}
 export function collegeLearningPageCount(total: number) {
   return Math.max(1, Math.ceil(total / COLLEGE_LEARNING_PAGE_SIZE));
 }

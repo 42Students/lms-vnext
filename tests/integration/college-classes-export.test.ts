@@ -61,4 +61,105 @@ describe.skipIf(!enabled)("College classes export persisted PostgreSQL scope",()
     await expect(exportCollegeClasses(wrongRole,{})).rejects.toBeInstanceOf(AuthorizationError);
     await expect(exportCollegeClasses(own,{collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
   });
+  it("exports only matching own-college academic period status records",async()=>{
+    const found=await pool!.query<{status:string}>("SELECT status FROM academic_periods WHERE id=$1",[id.period]);const actual=found.rows[0]!.status;const otherStatus=actual==="CLOSED"?"ACTIVE":"CLOSED";
+    const ownRows=await exportCollegeClasses(own,{q:label,periodLifecycle:actual});
+    const missingRows=await exportCollegeClasses(own,{q:label,periodLifecycle:otherStatus});
+    const foreignRows=await exportCollegeClasses(other,{q:label,periodLifecycle:actual});
+    expect(ownRows.csv).toContain(label);
+    expect(missingRows.exported).toBe(0);
+    expect(foreignRows.exported).toBe(0);
+  });
+  it("exports only matching exact program code in its own college",async()=>{
+    const [included,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,programCode:label}),
+      exportCollegeClasses(own,{q:label,programCode:"NOT-MATCHED"}),
+      exportCollegeClasses(other,{q:label,programCode:label}),
+    ]);
+    expect(included.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("exports only matching exact class name in its own college",async()=>{
+    const [included,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,className:label}),
+      exportCollegeClasses(own,{q:label,className:"NOT-MATCHED"}),
+      exportCollegeClasses(other,{q:label,className:label}),
+    ]);
+    expect(included.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("exports only matching exact cohort name in its own college",async()=>{
+    const [included,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,cohortName:label}),
+      exportCollegeClasses(own,{q:label,cohortName:"NOT-MATCHED"}),
+      exportCollegeClasses(other,{q:label,cohortName:label}),
+    ]);
+    expect(included.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("keeps saved section schedule evidence in scoped CSV filters",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,schedulePresence:"NO_EVENTS"}),
+      exportCollegeClasses(own,{q:label,schedulePresence:"HAS_EVENTS"}),
+      exportCollegeClasses(other,{q:label,schedulePresence:"NO_EVENTS"}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("keeps current section faculty assignments evidence in scoped CSV filters",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,facultyCoverage:"NO_FACULTY"}),
+      exportCollegeClasses(own,{q:label,facultyCoverage:"HAS_FACULTY"}),
+      exportCollegeClasses(other,{q:label,facultyCoverage:"NO_FACULTY"}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("keeps authored section course deliveries evidence in scoped CSV filters",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,deliveryPresence:"NO_DELIVERIES"}),
+      exportCollegeClasses(own,{q:label,deliveryPresence:"HAS_DELIVERIES"}),
+      exportCollegeClasses(other,{q:label,deliveryPresence:"NO_DELIVERIES"}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("uses period start date on or after for capped college CSV",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,periodStartsOnOrAfter:"2026-07-01"}),
+      exportCollegeClasses(own,{q:label,periodStartsOnOrAfter:"2026-07-02"}),
+      exportCollegeClasses(other,{q:label,periodStartsOnOrAfter:"2026-07-01"}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("uses period end date on or before for capped college CSV",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,periodEndsOnOrBefore:"2026-12-31"}),
+      exportCollegeClasses(own,{q:label,periodEndsOnOrBefore:"2026-12-30"}),
+      exportCollegeClasses(other,{q:label,periodEndsOnOrBefore:"2026-12-31"}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
+  it("exports the exact own-college department code matches only",async()=>{
+    const department=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const code=department.rows[0]!.code;
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,departmentCode:code}),
+      exportCollegeClasses(own,{q:label,departmentCode:"NO-MATCHING-DEPARTMENT"}),
+      exportCollegeClasses(other,{q:label,departmentCode:code}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
 });

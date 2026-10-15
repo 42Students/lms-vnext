@@ -16,7 +16,7 @@ import {
   db10BugReportActivities,
   db10BugReportAttachments,
   db10BugReports,
-} from "@/db/schema/db10-bug-tracker.draft";
+} from "@/db/schema/db10-bug-tracker";
 import {
   isSuperAdmin,
   type RequestContext,

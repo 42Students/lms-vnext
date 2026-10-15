@@ -2,7 +2,8 @@
 import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileNeedsReload,facultyProfileSaveFailure} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired,facultyProfileSavedStatus} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { advanceFacultySectionRevision } from "@/modules/people/faculty-section-revision-model";
@@ -33,36 +34,47 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
  const [version,setVersion]=useState(initialVersion);
  const [sectionRevisions,setSectionRevisions]=useState<Partial<Record<FacultySelfSection,number>>>({});
  const [pending,setPending]=useState(false);
+ const [savingSection,setSavingSection]=useState<FacultySelfSection|null>(null);
  const saveInFlight=useRef(false);
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  const [needsReload,setNeedsReload]=useState(false);
  async function save(section:FacultySelfSection,value:unknown){
   if(!beginFacultyProfileSave(saveInFlight))return;
-  setPending(true);setError(null);setSuccess(null);setNeedsReload(false);
+  setSavingSection(section);setPending(true);setError(null);setSuccess(null);setNeedsReload(false);
   try{
    const response=await fetch("/api/people/faculty-self-document",{
     method:"PATCH",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({section,value,expectedVersion:version}),
    });
    if(!response.ok){
-    const problem=await response.json().catch(()=>({error:"UNKNOWN"})) as {error?:string};
-    setNeedsReload(facultyProfileNeedsReload(problem.error));
-    setError(facultyProfileSaveFailure(problem.error,response.status));return;
+    const problem:unknown=await response.json().catch(()=>null);
+    const code=facultyProfileErrorCode(problem);
+    setNeedsReload(facultyProfileReloadRequired(code,response.status));
+    setError(facultyProfileSaveFailure(code,response.status));return;
    }
-   const result=await response.json() as {document:FacultyProfileDocument;version:number};
+   const result=facultyProfileSaveReceipt(await response.json(),version);
    setDocument(result.document);setVersion(result.version);
    setSectionRevisions(current=>advanceFacultySectionRevision(current,section));
-   setSuccess("Profile saved.");
-  }catch{setError("Unable to connect. Your unsaved changes remain in this form.");}
-  finally{saveInFlight.current=false;setPending(false);}
+   setSuccess(facultyProfileSavedStatus(section,result.version));
+  }catch(error){
+   if(error instanceof FacultyProfileSaveResponseError){
+    setNeedsReload(true);
+    setError(facultyProfileUnconfirmedSaveMessage());
+   }else setError("Unable to verify the save. The server may have received your request; check the latest profile before retrying.");
+  }
+  finally{saveInFlight.current=false;setPending(false);setSavingSection(null);}
  }
  return <div className="space-y-5">
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
   {error?<div role="alert" className="space-y-2 rounded-md border border-border p-3 text-sm text-error">
    <p>{error}</p>
-   {needsReload?<button type="button" onClick={()=>window.location.reload()} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">Reload latest profile</button>:null}
+   {needsReload?<button type="button" onClick={()=>{
+    if(window.confirm("Reload the latest Faculty profile? Any unsaved changes in every section will be lost."))window.location.reload();
+   }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">Reload latest profile</button>:null}
   </div>:null}
+  {pending&&savingSection?<p role="status" className="rounded-md border border-border p-3 text-sm text-foreground">
+    Saving {facultyProfileSaveSectionLabel(savingSection)}…</p>:null}
   {success?<p role="status" className="rounded-md border border-border p-3 text-sm text-foreground">{success}</p>:null}
   <nav aria-label="Profile sections" className="rounded-xl border border-border bg-surface p-4">
     <p className="mb-3 text-sm font-semibold text-foreground">Jump to a profile section</p>
