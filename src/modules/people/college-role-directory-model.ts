@@ -21,7 +21,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   titlePresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
   departmentPresence: z.enum(["ALL", "ASSIGNED", "MISSING"]).default("ALL"),
   employmentType: z.string().trim().min(1).max(128).optional(),
-  sort: z.enum(["NAME", "NEWEST", "OLDEST"]).default("NAME"),
+  sort: z.enum(["NAME", "NAME_DESC", "NEWEST", "OLDEST"]).default("NAME"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().refine(n => [10,25,50].includes(n)).default(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
 }).strict();
