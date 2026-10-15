@@ -826,6 +826,18 @@ export function placementPercentageThroughout(input: {
     ? Math.min(...(required as number[])) : null;
 }
 
+/**
+ * P-S2-01: SOURCE=SELF is never acceptable as verified evidence. This
+ * evaluator remains a pure policy contract until a registered per-job
+ * require_verified_evidence flag is available.
+ */
+export function evaluatePlacementEvidenceVerification(
+  source: "SELF" | "VERIFIED" | null,
+  requireVerifiedEvidence: boolean,
+): "PASS" | "MISSING" {
+  return !requireVerifiedEvidence || source === "VERIFIED" ? "PASS" : "MISSING";
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
