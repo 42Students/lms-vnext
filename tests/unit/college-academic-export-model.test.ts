@@ -39,5 +39,10 @@ describe("college semester CSV",()=>{
   expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",mappingState:"MAPPED"})).toContain("mappingState=MAPPED");
  });
 
+ it("expectedEndState: export uses the same validated filter",()=>{
+  expect(batchCsvSchema.safeParse({expectedEndState:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",expectedEndState:"UNSET"})).toContain("expectedEndState=UNSET");
+ });
+
 });
 
