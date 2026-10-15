@@ -794,3 +794,48 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 - **College Branding — PARTIAL:** Authorized preview adds navigation to college overview and, only when the college matches the selected admin safety scope, the web-address verification manager. It explicitly distinguishes stored preview evidence from actual sign-in appearance. Image upload/edit/desktop/mobile acceptance remains open.
 - **Platform & auth settings — PARTIAL:** Added read-only /admin/settings/auth posture checklist linked from Platform Settings. Shows privileged MFA requirement, tenant-host isolation, session/CSRF, privileged network restrictions and OTP-source evidence as deployment-managed or runtime-unverified, never falsely enabled. No auth source/config, secret, environment, signing key or cookie logic was changed. Auth settings editing and verified enforcement remain MISSING.
 - **Organizations / Colleges / Readiness mobile actions — PARTIAL:** Both onboarding lists now have responsive cards preserving current scoped management actions. Failed/unknown Readiness checks link to established setup pages, with the host check pointing to the exact selected-college domain manager. Source-authored helper tests, PostgreSQL, lint, typecheck and browser acceptance still require orchestrator verification.
+
+
+### 2026-10-15 chat-6 round 8 — MISSING-first Super Admin increments (PARTIAL, not gate certified)
+
+- **New Template — PARTIAL:** The previously absent `/admin/projects/templates/new` now has a full-page, mobile-friendly draft composer backed by the pre-existing same-origin `/api/projects/templates` POST and registered project-template writer. Initial release → sprint → task keys, fields and lengths are parsed by the canonical Zod create schema; one connected draft version is created, with submit/error/pending states, cancel and a successful detail redirect. The catalogue Create action opens this page for `project-template.manage` users. Unselected/global edit scope remains enforced by the existing policy. Execution, full legacy multi-step editor, attachments, and PG/browser acceptance remain open.
+- **Template Overview — PARTIAL:** Added the explicit legacy `/admin/projects/templates/[templateId]/overview` alias, which validates template UUID and project-template.read before redirecting to the existing canonical overview; current detail view and tabs stay unchanged. Browser acceptance remains open.
+- **Tenant Setup Create — PARTIAL:** Added `/admin/tenants/create` with an ordered Organization → College → Set up workflow; the actual forms and permissioned existing mutation APIs are reused, and the college picker contains only authorized active organizations. Linked Create and Set up without changing the selected safety scope or auto-selecting another college. Full onboarding lifecycle/progress and cross-tenant PG/browser certification remain open.
+- **Platform Settings groups — PARTIAL:** The non-secret settings/value/origin/source inventory and the fixed SMS/intent source-template inventory now show mobile cards, retaining existing desktop tables, provenance labels and explicit provider/delivery caveats. Setting edits/provider delivery remain outside scope and are not implied to work.
+- **Company curation — PARTIAL:** Added separate same-normalized-name candidate detection for distinct company IDs, with repeated college relationships deduplicated by ID. The view is read-only, uses only rows already filtered by the Super Admin service, warns when its 200-record cap truncates evidence, and does not verify, merge, create aliases or infer company identity from a name alone. Pure model unit tests authored.
+- **Module Access / Feature Controls legacy delta — PARTIAL:** Existing selected-college module hierarchy now calls out Placements effective college-only On/Off behavior, non-destructive disable impact, and the fact that lower-scope placement rules are ignored by the production resolver. No new module-access edit is advertised.
+- **Readiness Gate — PARTIAL:** Explicit force-dynamic readiness refresh link reopens the selected-college persisted-data evaluator; it does not assert live DNS, OTP or end-to-end application readiness.
+- **Validation:** Added pure unit tests for valid draft blueprint construction, malformed slug/task denial and distinct company identity detection. These tests, TypeScript, ESLint, integration PG and 375px browser gates have **not** been run. The global planning matrix is unchanged; all affected rows retain open operational gaps.
+
+
+**2026-10-15 chat-6 selected-college setup readiness (PARTIAL):** The Set up stage now reads the existing authorized persisted readiness evaluator and distinguishes failed, unknown, inconsistent, absent, and 10/10 checklist evidence. Its direct gate link supports re-evaluation; it does not equate database checks with DNS/login or launch authorization. Added pure regression tests. Auto-select after create, execution/PG, browser/keyboard and legacy sequencing remain open.
+
+
+**2026-10-15 chat-6 New Template increment 2 (PARTIAL):** Draft composer now exposes Low/Medium/High/Critical first-task priority instead of hardcoding Medium, validating through existing schema. Zod create schema and existing same-origin server writer remain authoritative. Source unit tests are authored, not executed; exact legacy editor/browser and PostgreSQL acceptance remain open.
+
+
+**2026-10-15 chat-6 New Template increment 3 (PARTIAL):** First-task acceptance criteria now round-trip into the initial template blueprint, rather than disappearing from create. Zod create schema and existing same-origin server writer remain authoritative. Source unit tests are authored, not executed; exact legacy editor/browser and PostgreSQL acceptance remain open.
+
+
+**2026-10-15 chat-6 New Template 4 (PARTIAL):** First release description now persists on the initial blueprint with bounds checking. Canonical create writer unchanged. Regression tests authored, not executed; multi-entry legacy editor/browser and PG acceptance remain OPEN.
+
+
+**2026-10-15 chat-6 New Template 5 (PARTIAL):** First sprint description now persists in the connected release-to-sprint blueprint. Canonical create writer unchanged. Regression tests authored, not executed; multi-entry legacy editor/browser and PG acceptance remain OPEN.
+
+
+**2026-10-15 chat-6 New Template 6 (PARTIAL):** Draft task instructions now survive to the task blueprint; task key and parent sprint remain stable. No migration or permissions changed. Tests authored but not run; the richer legacy editor, PG and browser gate remain open.
+
+
+**2026-10-15 chat-6 New Template 7 (PARTIAL):** Overview description now persists independently of the existing template summary and goal. No migration or permissions changed. Tests authored but not run; the richer legacy editor, PG and browser gate remain open.
+
+
+**2026-10-15 chat-6 New Template 8 (PARTIAL):** Initial template resource creation accepts one title+HTTP(S) URL pair, enforces both-or-neither and the canonical resource blueprint schema, and never invents a file upload. Unit tests cover valid and unsafe schemes; authored, not executed. Full multi-resource management, file uploads and PG/browser parity remain open.
+
+
+**2026-10-15 chat-6 hierarchy module filter (PARTIAL):** Selected-college stored descendant rules now have a strict module filter applied to both total count and page query, with URL-retained pagination and reset. Only resolver-supported Projects, Placements and Electives are selectable; effective decisions and authorization remain unchanged. Unit tests authored but not run; editing, PostgreSQL role/scope and browser acceptance open.
+
+
+**2026-10-15 chat-6 Inbound Mail recipient filter (PARTIAL):** The global-only staged inbox now supports exact recipient mailbox filtering using normalized validated email and SQL lower-case equality (not wildcard lookup). The status/search/pagination links retain the recipient; duplicate recipient params are rejected. Authorization and missing-table unavailable state remain unchanged, with no outbound delivery or tenant mapping guessed. Pure and mocked-repository tests authored but not executed. Registered migration, real PG integration, mailbox webhook, retention and browser acceptance remain OPEN.
+
+
+**2026-10-15 chat-6 hierarchy filter PG fixture follow-up (PARTIAL):** Added disposable-PostgreSQL regression covering per-module count-vs-row filtering, invalid module rejection, and non-admin denial. Multiple `module` query params are rejected before service invocation. Test is committed but NOT executed; real PG and browser acceptance remain open.
