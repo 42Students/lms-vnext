@@ -656,3 +656,80 @@ Current-oracle re-audit found that Learner Projects and Placements cannot be sta
 <!-- W45 TPO route audit (PARTIAL): all 42 currently implemented TPO page.tsx leaf routes were checked for route-local loading.tsx and error.tsx. Missing boundaries were added with retry behavior; read-only tables and the two new pages preserve explicit zero/unavailable semantics. This is not browser validation or an executed data-state test. -->
 
 | TPO Recruiter Access | `recruiters` | `/tpo/settings/recruiters` | PARTIAL — TPO-only confirmed recruiter grants and revocations from registered grant/profile tables with duplicate active grants guarded by profile row locks, optimistic revoke snapshots and transactional immutable activity. Only existing users linked to active college company relationships are eligible. Invitation/provisioning and browser/PG acceptance remain open. | PARTIAL |
+
+## 8. Legacy delta additions (audit 2026-10-15)
+
+Source: docs/planning/legacy-delta-audit-2026-10-15.md (current legacy prod-2026 and lms-dev-2026 sources compared with this matrix). Rows marked DEV-ONLY exist only on the legacy dev branch; MISSING means not yet built in vNext.
+
+### College Admin (append to section 4.4 People or 4.5)
+
+| Surface | Legacy route | vNext route | Notes | Status |
+|---|---|---|---|---|
+| Profile verification queue | `/college-admin/verification` | `/college/verification` | Staff queue for learner Education/Identity verification: Waiting / Sent back / Verified views with counts, needs-a-closer-look links (marksheet missing, update to verified details, waiting over a week), filters (section, kind, marksheets, batch, branch, waiting since), review drawer with values beside signed-link marksheets/resume/Aadhaar-PAN last four, Verify, Send back with reason, bulk verify/send back/message, export. Includes toggle for whether the placement cell may verify. Needs private-document signed links and student notifications. | MISSING |
+| Verification: placement cell permission toggle | `/college-admin/verification` header switch | `/college/verification` | `tpoCanVerify` setting; TPO verification route is hidden/blocked when off. | MISSING |
+| Create workspace: split class into teams | `/college-admin/projects/workspaces/new` (mode Teams) | `/college/projects/workspaces/new` | Team size (default 5), order by roll or seeded shuffle, preview adjustable before create, team sizes differ by at most one; plus Add a whole class. Shared with Super Admin. | MISSING |
+
+### Super Admin
+
+| Surface | Legacy route | vNext route | Notes | Status |
+|---|---|---|---|---|
+| Profile verification (scoped college) | `/superadmin/verification` | `/admin/colleges/[collegeId]/verification` | Same workspace as College Admin for the college chosen in scope picker; info alert until a college is chosen. | MISSING |
+| Recruiter accounts (renamed from HR Accounts) | `/superadmin/recruiters` | `/admin/hr` (alias `/admin/recruiters`) | Legacy renamed HR to Recruiter; confirm route alias and labels; behavior as rows for HR Accounts. | PARTIAL |
+
+### TPO
+
+| Surface | Legacy route | vNext route | Notes | Status |
+|---|---|---|---|---|
+| Verification queue | `/tpo/verification` | `/tpo/verification` | Same workspace, available only when college admin allows; add Send-a-message bulk action; export; Retry state. | MISSING |
+| Batches list | `/tpo/batches` | `/tpo/batches` | Cards per batch with state, eligible/ineligible/not-decided bar, journey counts, one Next step; KPI strip; search; filters; Undo last decision. | MISSING |
+| Batch detail: Students eligibility grid | `/tpo/batches/[batchId]` Students tab | `/tpo/batches/[batchId]` | Who is in (batch, classes, individuals), eligibility grid with inline decision and ineligible reason, bulk actions with preview and undo, WhatsApp prepared messages. | MISSING |
+| Batch detail: Rules tab | `/tpo/batches/[batchId]` Rules tab | `/tpo/batches/[batchId]?tab=rules` | Per-batch placement rules (BatchRulesTab) and drive job type. | MISSING |
+| Batch detail: History tab and undo | `/tpo/batches/[batchId]` History tab | `/tpo/batches/[batchId]?tab=history` | Decision history timeline, exact undo of last action, Mark finished / Reopen batch. | MISSING |
+| Batch eligibility import | batch Students action | `/tpo/batches/[batchId]` | Import preview (matched / can't use) then commit. | MISSING |
+| Batch invite / remind | batch Next step | `/tpo/batches/[batchId]` | Invite batch with deadline, remind. External sending needs owner decision. | MISSING |
+| Settings: Job types | `/tpo/settings?tab=jobtypes` | `/tpo/settings/job-types` | Own job types, counts-as-placed flag, switch off unused. | MISSING |
+| Settings: After college outcomes | `/tpo/settings?tab=outcomes` | `/tpo/settings/outcomes` | Fixed NAAC/NIRF outcome list with own labels; drives Students After-college column and Outcomes report. | MISSING |
+| Settings: Prep readiness | `/tpo/settings?tab=prep` | `/tpo/settings/prep` | Courses defining readiness bar; Students marks below-bar as needing prep. | MISSING |
+| Settings: Blocked dates | `/tpo/settings?tab=blocked` | `/tpo/settings/blocked-dates` | Exam weeks/holidays; scheduling and Calendar warn on collision. | MISSING |
+| Settings: regrouped navigation | `/tpo/settings` 3 groups | `/tpo/settings` | Season/trusted/templates/notifications merged into Recruiters/Rules/Notices; redirect map MOVED. | PARTIAL |
+| Bulk-actions engine | all TPO tables | shared component | Preview who goes and who is skipped by reason, run, per-row failures, exact undo, one audit line. | MISSING |
+| Spreadsheet grid and filter panel | all TPO tables | shared component | Column chooser, header filters, URL-kept side panel, inline edit, export-only columns. | MISSING |
+| Drive recorded from outside platform | TPO drive form / drives filter | `/tpo/placements/new` | `recordedOutside` flag, "Recorded from outside" filter, skipped by reminder actions. | MISSING |
+| Calm Home (Next up + six rows) | `/tpo/home` | `/tpo` | One Next up card, six rows with attention dots, clear state. | PARTIAL |
+| TPO bell panel and record finder | top bar | `/tpo` shell | Drawer with per-person read state; finder over records only. | MISSING |
+| After college column/filter | `/tpo/students` | `/tpo/students` | Five choices incl. higher studies, entrepreneurship, competitive exams, looking for job, not decided. | MISSING |
+| Coding platform profiles | student profile, TPO panel, Students filter | `/tpo/students` | Coding-platform links and filter. | MISSING |
+
+### HR / Recruiter
+
+| Surface | Legacy route | vNext route | Notes | Status |
+|---|---|---|---|---|
+| Route rename HR to Recruiter | `/recruiter/*` (home, drives, drives/new, drives/[jobId], calendar, messages, company, profile) | `/hr/*` | Legacy deleted `/hr/*`; every HR row maps to `/recruiter/*`. Decide alias. | PARTIAL |
+| Recruiter invite (renamed) | `/recruiter-invite/[token]` | `/recruiter-invite/[token]` | Name, designation, mobile, join; Not hiring this season; Stop contacting me. vNext route exists (check `/hr-invite` still present). | PARTIAL |
+| Today task deep links | `/recruiter/home` | `/hr` home | Typed tasks: sent-back drive to `/recruiter/drives/new?fix=`, review applicants to `...?tab=applicants&review=1`, messages. | MISSING |
+| Focused applicant review | drive Applicants `review=1` | job workspace | Step-through review with rating notes. | MISSING |
+
+### Shared / public (DEV-ONLY; confirm oracle first)
+
+| Surface | Legacy route | vNext route | Notes | Status |
+|---|---|---|---|---|
+| College public link join | `/college-join/[token]` | none | Work email + code, company from email, ALREADY_JOINED state. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Company join link | `/company-join/[token]` | none | Company-specific link with email code. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Public placements page | `/placements` | none | Public numbers (min 5) and Recruit from us form. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Campaign unsubscribe | `/campaign-unsubscribe/[token]` | none | Confirm button; opening link does not unsubscribe. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+
+### TPO / Super Admin / Learner (DEV-ONLY)
+
+| Surface | Legacy route | vNext route | Notes | Status |
+|---|---|---|---|---|
+| TPO announcements | `/tpo/announcements` | none | Compose with audience preview, edit/delete/undo, remind, unread list, From 42 tab. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Super Admin announcements | `/superadmin/announcements` | none | Pinned/link/show-until to all or selected colleges. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Learner placement announcements | `/learn/my-placements/announcements` | none | Read-only notices tab. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| TPO Team | `/tpo/team` | none | Conversations and People tabs, internal only. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Drive change requests / discussion | TPO drive and recruiter drive | none | College vs company change requests, invite reviewer, internal notes. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Engage Campaigns | `/tpo/recruiters` | none | Email chosen recruiters, sent history. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Inbound mail | `/superadmin/inbound-mail` | none | Inbound mail list with drawer. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Company curation | superadmin section | none | Verify, merge, aliases, domains. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| College sign-in methods and subdomain | superadmin sections | `/admin/domains` | Replaces TenantDomains. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+| Audit findings | `/tracker/audit-findings` | none | Findings board. (DEV-ONLY: exists on legacy lms-dev-2026 only; owner confirms oracle) | MISSING |
+
