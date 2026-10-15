@@ -143,6 +143,12 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
     expect(active.items.map(row=>row.id)).toContain(ids.offering);
     expect(archived.items).toEqual([]);
     expect(elective.items).toEqual([]);
+    const [sameCode, differentCode] = await Promise.all([
+      listCollegeSemesterCourseMappings(admin,{q:code,courseCode:code}),
+      listCollegeSemesterCourseMappings(admin,{q:code,courseCode:"not-that-course"}),
+    ]);
+    expect(sameCode.items.map(row=>row.id)).toContain(ids.offering);
+    expect(differentCode.items).toEqual([]);
     expect(ownCourses.items.find(item => item.id === ids.offering)).toMatchObject({
       courseName: code, courseCode: code, cohortName: code, programName: code,
       programId: ids.program, periodName: code, periodCode: code,

@@ -89,6 +89,7 @@ export async function listCollegeSemesterCourseMappings(
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.periodId ? eq(academicPeriods.id, query.periodId) : undefined,
+      query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.type !== "ALL" ? eq(courseOfferings.type, query.type) : undefined,
       query.status !== "ALL" ? eq(courseOfferings.status,query.status) : undefined,
       query.q ? or(
