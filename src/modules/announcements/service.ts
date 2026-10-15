@@ -2,7 +2,7 @@ import {
   and, desc, eq, gt, isNull, lt, or, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { db10Announcements } from "@/db/schema/db10-announcements.draft";
+import { db10Announcements } from "@/db/schema/db10-announcements";
 import { colleges } from "@/db/schema/colleges";
 import { departments } from "@/db/schema/departments";
 import {
