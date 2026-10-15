@@ -2,15 +2,18 @@ import {
   and,
   asc,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  learnerProgramEnrollments,
   placementApplications,
   placementCompanyRelationships,
   placementCompanies,
   placementJobRoleOptions,
   placementJobs,
+  placementJobEligibilityPolicies,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -21,6 +24,7 @@ import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   evaluatePlacementEligibility,
+  isPlacementJobTargetCohort,
   type PlacementEligibilityResult,
 } from "./eligibility-service";
 
@@ -129,13 +133,42 @@ export async function listLearnerPlacementJobs(
       asc(placementJobRoleOptions.title),
     );
 
+  // A learner may only discover published jobs targeting the persisted
+  // active academic cohort/program. A duplicate enrollment is ambiguous.
+  const enrollments = await getDb().select({
+    cohortId: learnerProgramEnrollments.cohortId,
+    programId: learnerProgramEnrollments.programId,
+  }).from(learnerProgramEnrollments).where(and(
+    eq(learnerProgramEnrollments.membershipId, membership.id),
+    eq(learnerProgramEnrollments.status, "ACTIVE"),
+  )).limit(2);
+  if (enrollments.length !== 1) return [];
+
+  const policies = rows.length
+    ? await getDb().select({
+        jobId: placementJobEligibilityPolicies.jobId,
+        allowedProgramIds: placementJobEligibilityPolicies.allowedProgramIds,
+        allowedCohortIds: placementJobEligibilityPolicies.allowedCohortIds,
+      }).from(placementJobEligibilityPolicies).where(inArray(
+        placementJobEligibilityPolicies.jobId,
+        [...new Set(rows.map((row) => row.job.id))],
+      ))
+    : [];
+  const policyByJobId = new Map(policies.map((policy) => [policy.jobId, policy]));
+  const targetedRows = rows.filter((row) =>
+    isPlacementJobTargetCohort(
+      policyByJobId.get(row.job.id),
+      enrollments[0]!,
+    ),
+  );
+
   const eligibilityByJob = new Map<
     string,
     Promise<PlacementEligibilityResult>
   >();
 
   return Promise.all(
-    rows.map(async (row) => {
+    targetedRows.map(async (row) => {
       const application =
         row.application?.id
           ? row.application
