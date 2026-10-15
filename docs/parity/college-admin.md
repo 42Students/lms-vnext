@@ -770,6 +770,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 
 ## Page: Faculty
+**Faculty employment-type bookmark retention PARTIAL (chat-9):** A selected employment-type URL filter remains visible when it is outside the bounded first 100 options. No new values or records are inferred; persisted college-filtered SQL and strict 128-character bound remain authoritative. Unit/source authored, execution pending.
 **Bounded Faculty department bookmark retention PARTIAL (chat-9):** Current-college department option lists retain a previously selected filter UUID beyond the first 200 via a neutral placeholder and preserve server-side college ownership checks. Unit/source authored; 375px and PG/browser acceptance open.
 **Persisted College Admin roster guard PARTIAL (chat-9):** Faculty and Students listing now executes its actor SHARE-lock/role/college recheck and paged academic joins inside one read transaction, rejecting forged or revoked membership claims without cross-college leakage. Isolated PostgreSQL forged-admin fixture authored; real DB/browser execution outstanding.
 **Reverse-name role directory sort PARTIAL (chat-9):** Persisted-name Z–A ordering with case-folded comparison and membership-ID tie-break now applies before paging in both Faculty and Students. Strict URL handling and pure URL regression authored; PG/browser acceptance open.
