@@ -1,6 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
+import {restoreFacultyTextDraft} from "@/modules/people/faculty-profile-draft-actions";
 
 export type FacultyProfileTextField = {
   name:string; label:string; maxLength:number;
@@ -37,6 +38,9 @@ export function FacultyProfileTextSection({
        onChange={event=>setDraft(current=>({...current,[field.name]:event.target.value}))}/>}
    </label>)}
   </div>
+  {changed?<button type="button" disabled={pending} className="mr-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
+    onClick={()=>{if(!window.confirm("Discard unsaved changes to "+title+"?"))return;
+      setDraft(restoreFacultyTextDraft(initial));}}>Discard edits</button>:null}
   <button type="submit" disabled={!changed||pending}
    className="min-h-11 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
    {pending?"Saving…":"Save "+title}
