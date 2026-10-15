@@ -2,6 +2,8 @@ import {randomUUID} from "node:crypto";
 import {beforeAll,afterAll,describe,it,expect} from "vitest";
 import {Pool} from "pg";
 import {getDb,closeDatabaseConnection} from "@/db/client";
+import {eq} from "drizzle-orm";
+import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import {publishVerifiedEducation} from "@/modules/profile-verification/academic-publication";
 import {
@@ -36,6 +38,12 @@ const edu=(tenth:string,pg:boolean)=>({
 });
 async function publish(snapshot:ReturnType<typeof edu>,version:number){
  await getDb().transaction(async tx=>{
+  // Simulate the same atomic verified snapshot + publication write as the
+  // real verification transaction writer, without bypassing any cache.
+  await tx.update(profileVerifications).set({
+   submittedSnapshot:snapshot,verifiedSnapshot:snapshot,
+   rowVersion:version,verifiedAt:new Date(),
+  }).where(eq(profileVerifications.id,ids.record));
   await publishVerifiedEducation(tx,{
    verificationId:ids.record,membershipId:ids.member,collegeId:SEED_IDS.collegeA,
    verifiedSnapshot:snapshot,version,reviewerId:SEED_IDS.facultyUser,verifiedAt:new Date(),
@@ -101,7 +109,7 @@ describe.skipIf(!enabled)("T-S2-09 verified publication refreshes real eligibili
   const second=await evaluatePlacementEligibility(tpo,jobId,ids.member);
   expect(second.status).toBe("INELIGIBLE");
   expect(second.checks).toEqual(expect.arrayContaining([
-   expect.objectContaining({criterion:"10th",status:"FAIL"}),
+   expect.objectContaining({criterion:"10th percentage",status:"FAIL"}),
   ]));
   const marks=await pool!.query(
    "select level,source_snapshot_version from profile_verification_academic_marks where learner_membership_id=$1::uuid",
