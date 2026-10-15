@@ -53,6 +53,7 @@ export type ModuleTraceFilters = {
   q?: string;
   page?: number;
   membershipId?: string;
+  overridesOnly?: "all" | "only";
 };
 
 export function adminModuleTraceHref(
@@ -74,6 +75,9 @@ export function adminModuleTraceHref(
 
   if (filters.membershipId) {
     params.set("membershipId", filters.membershipId);
+  }
+  if (filters.overridesOnly === "only") {
+    params.set("overridesOnly", "only");
   }
 
   const query = params.toString();

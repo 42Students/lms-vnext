@@ -29,6 +29,13 @@ describe("module access trace against PostgreSQL", () => {
     expect(result).not.toBeNull();
   });
 
+  it("queries persisted member overrides without returning other colleges",async()=>{
+    const result=await getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{overridesOnly:"only"});
+    expect(result).not.toBeNull();
+    expect(result!.learners.length).toBeLessThanOrEqual(25);
+    await expect(getSuperAdminLearnerAccessTrace(superAdmin,SEED_IDS.collegeA,{overridesOnly:"unknown"})).rejects.toBeDefined();
+  });
+
   it("traces a seeded learner of the same college", async () => {
     const result = await getSuperAdminLearnerAccessTrace(superAdmin, SEED_IDS.collegeA, {
       membershipId: SEED_IDS.learnerCollegeAMembership,

@@ -68,6 +68,7 @@ export default async function SuperAdminLearnerAccessTracePage({
   }
 
   const paramsValue = await searchParams;
+  if (Array.isArray(paramsValue.overridesOnly)) notFound();
 
   const membershipId =
     one(paramsValue.membershipId);
@@ -83,6 +84,7 @@ export default async function SuperAdminLearnerAccessTracePage({
   const parsed =
     adminModuleTraceQuerySchema.safeParse({
       q: one(paramsValue.q) || undefined,
+      overridesOnly: one(paramsValue.overridesOnly) || undefined,
       page:
         one(paramsValue.page) || undefined,
       membershipId:
@@ -198,6 +200,12 @@ export default async function SuperAdminLearnerAccessTracePage({
             />
           </label>
 
+          <label className="grid gap-2 text-sm font-semibold text-body">Learner scope
+            <select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+              <option value="all">All active learners</option>
+              <option value="only">Only students with stored overrides</option>
+            </select>
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -278,6 +286,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                             {
                               q: query.q,
                               page,
+                              overridesOnly: query.overridesOnly,
                               membershipId:
                                 learner.membershipId,
                             },
@@ -318,6 +327,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                   {
                     q: query.q,
                     page: page - 1,
+                    overridesOnly: query.overridesOnly,
                     membershipId:
                       query.membershipId,
                   },
@@ -335,6 +345,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                   {
                     q: query.q,
                     page: page + 1,
+                    overridesOnly: query.overridesOnly,
                     membershipId:
                       query.membershipId,
                   },
