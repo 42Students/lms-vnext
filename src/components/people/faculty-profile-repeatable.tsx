@@ -50,7 +50,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
     if (changed && !pending && !missingRequired && !sectionIssue) void onSave(section, rows);
   }
   return (
-    <form id={facultyProfileAnchor(section as "awards"|"publications"|"experiences"|"certifications"|"education"|"languages")} aria-label={title} onSubmit={submit}
+    <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
       className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
       <div>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>

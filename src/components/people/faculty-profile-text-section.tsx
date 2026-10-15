@@ -22,7 +22,7 @@ export function FacultyProfileTextSection({
   event.preventDefault();
   if(!pending && changed)void onSave(section,draft);
  }
- return <form id={facultyProfileAnchor(section as "about"|"personalDetails"|"address"|"socialProfiles")} onSubmit={submit} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label={title}>
+ return <form id={facultyProfileAnchor(section)} onSubmit={submit} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label={title}>
   <div>
    <h2 className="text-lg font-semibold text-foreground">{title}</h2>
    <p className="mt-1 text-sm text-muted-foreground">{description}</p>
