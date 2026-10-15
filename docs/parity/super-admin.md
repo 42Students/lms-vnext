@@ -965,3 +965,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 source correction:** Moved mutation Zod contract to the pure module for isolated Vitest imports, removed the invalid union-property unit assertion, and made malformed JSON return a deterministic 400 rather than an unhandled server error. Real execution remains open.
+
+
+**2026-10-15 chat-6 disposable PG positive regression (source-authored):** Added isolated temporary learner fixture verifying audited SET → locked SET → INHERIT, stale expected-state denial, no-op suppression and cleanup. This integration test is not yet executed and no successful migration/runtime/browser gate is claimed.
