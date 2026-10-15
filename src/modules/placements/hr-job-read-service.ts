@@ -71,7 +71,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .where(where),
     db.select({
-      id: placementOffers.id, status: placementOffers.status, role: placementOffers.roleTitle,
+      id: placementOffers.id, kind: placementOffers.kind, status: placementOffers.status, role: placementOffers.roleTitle,
       annualCtcInr: placementOffers.annualCtcInr, joiningDate: placementOffers.joiningDate,
       issuedAt: placementOffers.issuedAt, expiresAt: placementOffers.expiresAt,
       applicationId: placementOffers.applicationId,

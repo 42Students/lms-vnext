@@ -20,6 +20,7 @@ export type LearnerPlacementOfferItem = {
   companyName: string;
   jobTitle: string;
   roleTitle: string;
+  kind?: "OFFER" | "LOI";
   status:
     | "ISSUED"
     | "ACCEPTED"
@@ -224,6 +225,7 @@ export function LearnerPlacementOffers({
                   {item.companyName}
                 </p>
                 <h3 className="mt-1 text-lg font-semibold text-foreground">
+                  {item.kind === "LOI" ? "Letter of intent · " : ""}
                   {item.roleTitle}
                 </h3>
                 <p className="mt-1 text-sm text-body">

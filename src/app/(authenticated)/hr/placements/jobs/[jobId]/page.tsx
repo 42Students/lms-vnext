@@ -319,7 +319,7 @@ export default async function HrPlacementJobPage({
               Export offers CSV
             </Link>
           </div>
-          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. LOI is not stored in the registered schema.</p>
+          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
@@ -335,7 +335,7 @@ export default async function HrPlacementJobPage({
           </div>
           <section className="space-y-2 rounded-lg border border-border bg-surface-secondary p-4">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
-            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, LOI and offer issue workflows remain with the placement team.</p>
+            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, letter-of-intent and offer issue workflows remain with the placement team.</p>
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
           </section>
@@ -354,7 +354,7 @@ export default async function HrPlacementJobPage({
             <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
               <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
               <p className="mt-1 text-sm text-body">{offer.role}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2"><StatusBadge>{offer.status}</StatusBadge>
+              <div className="mt-2 flex flex-wrap items-center gap-2">{offer.kind === "LOI" ? <StatusBadge tone="info">Letter of intent</StatusBadge> : null}<StatusBadge>{offer.status}</StatusBadge>
                 {offer.annualCtcInr != null ? <span className="text-sm text-body">{formatCtc(offer.annualCtcInr)}</span> : null}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">Issued {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(offer.issuedAt)} · Joining {offer.joiningDate ?? "Not set"}</p>
