@@ -12,7 +12,7 @@ import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules
 import {previewVerificationBulk} from "@/modules/verification/bulk-preview";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
-import {bulkReviewFailureLabel} from "@/modules/verification/bulk-outcome";
+import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
@@ -25,7 +25,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkError,setBulkError]=useState("");
  const [bulkReason,setBulkReason]=useState("");
- const [bulkResult,setBulkResult]=useState<{summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[]}|null>(null);
+ const [bulkResult,setBulkResult]=useState<{summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[];labels:ReturnType<typeof describeBulkReviewOutcomeRows>}|null>(null);
  const selectable=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
@@ -48,7 +48,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     throw Error(failure.error??"Bulk review was not accepted");
    }
    const data=await response.json() as {summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[]};
-   setBulkResult(data);setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
+   setBulkResult({...data,labels:describeBulkReviewOutcomeRows(data.outcomes,selectedRows)});setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
   }catch(error){setBulkError(error instanceof Error?error.message:"Bulk review failed");}
   finally{setBulkBusy(false);}
  }
@@ -103,9 +103,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </section>}
   {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 rounded-md border p-3">
    <h2 className="font-semibold">Bulk review results</h2>
-   <p className="text-sm">{bulkResult.summary.succeeded} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
-   <ul className="space-y-1 text-sm">{bulkResult.outcomes.map(result=><li key={result.learnerMembershipId+":"+result.section}>
-    {result.section} request {result.learnerMembershipId.slice(0,8)}: {bulkReviewFailureLabel(result.result)}
+   <p className="text-sm">{bulkResult.summary.succeeded} of {bulkResult.summary.attempted} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
+   <ul className="space-y-1 text-sm">{bulkResult.labels.map(result=><li key={result.key}>
+    {result.label} · {result.section}: {result.message}
    </li>)}</ul>
    <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh queue</button>
   </section>}
