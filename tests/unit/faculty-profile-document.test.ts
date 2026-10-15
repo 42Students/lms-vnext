@@ -140,3 +140,13 @@ describe("Faculty certification chronology", () => {
     expect(facultyProfileDocumentSchema.safeParse({ certifications: [{ ...certification, validityDate: "2027-10-15" }] }).success).toBe(true);
   });
 });
+
+
+describe("Faculty education dates", () => {
+  it("rejects reversed years and current degree with graduation year", () => {
+    const education = { id, institutionName: "College", startYear: "2026", endYear: "2024" };
+    expect(facultyProfileDocumentSchema.safeParse({ education: [education] }).success).toBe(false);
+    expect(facultyProfileDocumentSchema.safeParse({ education: [{ ...education, endYear: "", isCurrentlyPursuing: true }] }).success).toBe(true);
+    expect(facultyProfileDocumentSchema.safeParse({ education: [{ ...education, endYear: "2027", isCurrentlyPursuing: true }] }).success).toBe(false);
+  });
+});
