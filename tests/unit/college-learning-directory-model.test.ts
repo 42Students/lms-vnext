@@ -247,4 +247,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("liveClassPresence=NO_LIVE");
   });
 
+  it("preserves actual shared versus section lesson-content audience in CSV",()=>{
+    expect(collegeLessonQuerySchema.safeParse({contentAudience:"LEARNER"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({contentAudience:"SECTION"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("contentAudience=SECTION");
+    expect(lessonsCsvHref(q)).toContain("contentAudience=SECTION");
+  });
+
 });

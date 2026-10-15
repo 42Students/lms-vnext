@@ -12,6 +12,7 @@ export const collegeLearningQuerySchema = z.object({
 }).strict();
 export type CollegeLearningQuery = z.infer<typeof collegeLearningQuerySchema>;
 export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
+  contentAudience:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
   lessonName: z.string().trim().min(1).max(255).optional(),
   sequenceThrough: z.coerce.number().int().min(1).max(10000).optional(),
   sequenceFrom: z.coerce.number().int().min(1).max(10000).optional(),
@@ -66,6 +67,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if(kind==="LESSONS"&&"contentAudience" in query&&query.contentAudience!=="ALL")params.set("contentAudience",query.contentAudience);
   if(kind==="PROGRESS"&&"liveClassPresence" in query&&query.liveClassPresence!=="ALL")params.set("liveClassPresence",query.liveClassPresence);
   if(kind==="PROGRESS"&&"resourcePresence" in query&&query.resourcePresence!=="ALL")params.set("resourcePresence",query.resourcePresence);
   if(kind==="PROGRESS"&&"quizPresence" in query&&query.quizPresence!=="ALL")params.set("quizPresence",query.quizPresence);
