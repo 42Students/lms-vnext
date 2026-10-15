@@ -52,10 +52,12 @@ export function AnnouncementAdminWorkspace({
   items,
   targets,
   requiresPublicationConsent=false,
+  emptyMessage="No announcements in this view.",
 }: {
   items: readonly AnnouncementAdminItem[];
   targets: readonly AnnouncementTarget[];
   requiresPublicationConsent?:boolean;
+  emptyMessage?:string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -255,7 +257,7 @@ export function AnnouncementAdminWorkspace({
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
         {items.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">No announcements in this view.</p>
+          <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">{emptyMessage}</p>
         ) : (
           items.map((item) => {
             const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;

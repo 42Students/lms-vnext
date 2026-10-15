@@ -17,6 +17,7 @@ import {
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { parseSuperAdminAnnouncementParams } from "@/modules/announcements/super-admin-list-query";
 import { announcementVisibilityAt } from "@/modules/announcements/visibility-model";
+import {announcementHistoryEmptyMessage} from "@/modules/announcements/admin-history-empty-model";
 import { ANNOUNCEMENT_SENDER_TYPES } from "@/modules/announcements/validation";
 
 export default async function AnnouncementsPage({
@@ -169,7 +170,10 @@ export default async function AnnouncementsPage({
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
       }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
-      <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent/>
+      <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent
+        emptyMessage={announcementHistoryEmptyMessage({
+          hasFilters:Boolean(params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted),
+        })}/>
       {next ? (
         <div className="flex justify-center">
           <Link href={next} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground">
