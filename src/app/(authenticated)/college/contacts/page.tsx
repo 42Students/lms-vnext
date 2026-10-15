@@ -49,6 +49,14 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <Link href={collegeContactsHref({...filter,q:"",status:"ACTIVE",sort:"NAME",page:1})}
     className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm">Clear filters</Link>
   </form>
+  <div className="flex flex-wrap items-center justify-between gap-3">
+   <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
+   <Link href={"/api/college/contacts/export?"+new URLSearchParams({
+    tab:filter.tab,q:filter.q,status:filter.status,sort:filter.sort,
+   }).toString()} className="inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold">
+    Export filtered contacts CSV
+   </Link>
+  </div>
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    {results.items.length===0?<p className="rounded-lg border p-4 text-sm">No matching contacts in this college.</p>:
