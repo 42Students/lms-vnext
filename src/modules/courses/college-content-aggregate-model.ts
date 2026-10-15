@@ -11,7 +11,7 @@ export const collegeContentQuerySchema = z.object({
   programCode: z.string().trim().min(1).max(64).optional(),
   cohortCode:z.string().trim().min(1).max(64).optional(),
   periodCode: z.string().trim().min(1).max(64).optional(),
-  departmentCode: z.string().trim().min(1).max(64).optional(),
+  departmentName: z.string().trim().min(1).max(255).optional(),
   offeringType: z.enum(["ALL","CORE","ELECTIVE"]).optional(),
   lessonStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   pathStatus: z.enum(["ALL",...LEARNING_PATH_STATUSES]).optional(),
@@ -38,7 +38,7 @@ export function collegeContentHref(kind: CollegeContentKind, query: CollegeConte
   if (kind !== "LIVE_CLASS" && query.programCode) params.set("programCode",query.programCode);
   if(kind!=="LIVE_CLASS"&&query.cohortCode)params.set("cohortCode",query.cohortCode);
   if(kind!=="LIVE_CLASS"&&query.periodCode)params.set("periodCode",query.periodCode);
-  if(kind!=="LIVE_CLASS"&&query.departmentCode)params.set("departmentCode",query.departmentCode);
+  if(kind!=="LIVE_CLASS"&&query.departmentName)params.set("departmentName",query.departmentName);
   if(kind!=="LIVE_CLASS"&&query.offeringType&&query.offeringType!=="ALL")params.set("offeringType",query.offeringType);
   if(kind!=="LIVE_CLASS"&&query.lessonStatus&&query.lessonStatus!=="ALL")params.set("lessonStatus",query.lessonStatus);
   if(kind!=="LIVE_CLASS"&&query.pathStatus&&query.pathStatus!=="ALL")params.set("pathStatus",query.pathStatus);
@@ -71,7 +71,7 @@ export function collegeContentSearchParams(
   params: Record<string, string | string[] | undefined>,
 ) {
   const raw: Record<string, string> = {};
-  for (const key of ["q", "courseCode", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentCode", "offeringType", "lessonStatus", "status", "format", "scope", "visibility", "offeringStatus", "page"] as const) {
+  for (const key of ["q", "courseCode", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentName", "offeringType", "lessonStatus", "status", "format", "scope", "visibility", "offeringStatus", "page"] as const) {
     const value = params[key];
     if (typeof value === "string") raw[key] = value;
     else if (value !== undefined) return null;

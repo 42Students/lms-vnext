@@ -19,7 +19,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   periodCode: z.string().trim().min(1).max(64).optional(),
   pathStatus: z.enum(["ALL",...LEARNING_PATH_STATUSES]).default("ALL"),
   offeringType: z.enum(["ALL","CORE","ELECTIVE"]).optional(),
-  departmentCode: z.string().trim().min(1).max(64).optional(),
+  departmentName: z.string().trim().min(1).max(255).optional(),
   contentPresence: z.enum(["ALL","HAS_CONTENT","EMPTY"]).optional(),
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
@@ -41,7 +41,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if ("periodCode" in query && query.periodCode) params.set("periodCode",query.periodCode);
   if ("cohortCode" in query && query.cohortCode) params.set("cohortCode",query.cohortCode);
   if (kind === "LESSONS" && "contentPresence" in query && query.contentPresence && query.contentPresence!=="ALL")params.set("contentPresence",query.contentPresence);
-  if (kind === "LESSONS" && "departmentCode" in query && query.departmentCode) params.set("departmentCode",query.departmentCode);
+  if (kind === "LESSONS" && "departmentName" in query && query.departmentName) params.set("departmentName",query.departmentName);
   if (kind === "LESSONS" && "offeringType" in query && query.offeringType && query.offeringType!=="ALL") params.set("offeringType",query.offeringType);
   if (kind === "LESSONS" && "pathStatus" in query && query.pathStatus !== "ALL") params.set("pathStatus",query.pathStatus);
   if (kind === "LESSONS" && "offeringStatus" in query && query.offeringStatus !== "ALL")
