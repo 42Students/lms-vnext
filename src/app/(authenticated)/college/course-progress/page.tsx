@@ -27,6 +27,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       completionEvidence:first(params.completionEvidence),learningPathPresence:first(params.learningPathPresence),publishedPathPresence:first(params.publishedPathPresence),
       offeringType:first(params.offeringType)||undefined,
       programStatus:first(params.programStatus),
+      cohortStatus:first(params.cohortStatus),
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
