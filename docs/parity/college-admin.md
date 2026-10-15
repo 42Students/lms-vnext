@@ -1250,3 +1250,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 Batches PARTIAL:** Batch active learner evidence now filters only persisted own-college learner enrollments, with URL/CSV and unit/isolated-PG assertions. Exact legacy UI and executed PG/browser acceptance still open.
 
 **2026-10-15 Classes PARTIAL:** Class academic period code uses a bounded exact code match on a registered same-college academic relation, with matching CSV, navigation and isolated-PG tests authored; execution/browser/legacy comparison remains open.
+
+**2026-10-15 Classes PARTIAL:** Class exact section code uses a bounded exact code match on a registered same-college academic relation, with matching CSV, navigation and isolated-PG tests authored; execution/browser/legacy comparison remains open.

@@ -99,4 +99,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({periodCode:"A&26"}))).toContain("periodCode=A%2626");
   });
 
+  it("classCode is an exact bounded class code filter, not arbitrary SQL",()=>{
+    expect(collegeClassQuerySchema.safeParse({classCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({classCode:""})).toEqual({});
+    expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({classCode:"A&26"}))).toContain("classCode=A%2626");
+  });
+
 });
