@@ -4,6 +4,7 @@ import { COURSE_OFFERING_STATUSES, COURSE_OFFERING_TYPES, COURSE_TEACHING_ROLES 
 export const COLLEGE_MAPPING_PAGE_SIZE = 25;
 
 export const semesterCourseQuerySchema = z.object({
+  courseCode: z.string().trim().min(1).max(64).optional(),
   type: z.enum(["ALL", ...COURSE_OFFERING_TYPES]).default("ALL"),
   status: z.enum(["ALL", ...COURSE_OFFERING_STATUSES]).default("ALL"),
   q: z.string().trim().max(100).default(""),
@@ -13,6 +14,8 @@ export const semesterCourseQuerySchema = z.object({
 }).strict();
 
 export const facultyAssignmentQuerySchema = z.object({
+  courseCode: z.string().trim().min(1).max(64).optional(),
+  sectionCode: z.string().trim().min(1).max(64).optional(),
   role: z.enum(["ALL", ...COURSE_TEACHING_ROLES]).default("ALL"),
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ENDED"]).default("ACTIVE"),
@@ -45,9 +48,12 @@ export function collegeMappingHref(
   if ("programId" in query && query.programId) params.set("programId", query.programId);
   if ("periodId" in query && query.periodId) params.set("periodId", query.periodId);
   if ("type" in query && query.type !== "ALL") params.set("type", query.type);
+  if ("courseCode" in query && query.courseCode) params.set("courseCode", query.courseCode);
   if ("status" in query && (kind === "SEMESTER_COURSES"
     ? query.status !== "ALL" : query.status !== "ACTIVE")) params.set("status", query.status);
   if ("role" in query && query.role !== "ALL") params.set("role", query.role);
+  if ("courseCode" in query && query.courseCode) params.set("courseCode",query.courseCode);
+  if ("sectionCode" in query && query.sectionCode) params.set("sectionCode",query.sectionCode);
   if (query.page !== 1) params.set("page", String(query.page));
   const encoded = params.toString();
   return encoded ? base + "?" + encoded : base;

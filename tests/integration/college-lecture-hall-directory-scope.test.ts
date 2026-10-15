@@ -85,6 +85,12 @@ describe.skipIf(!enabled)("College Admin lecture hall directory scoped PostgreSQ
     expect(filtered.items.map((item) => item.id)).toContain(hall.id);
     expect(filtered.pagination.total).toBeGreaterThanOrEqual(1);
     expect(filtered.pagination.limit).toBe(25);
+    const [unused, busy] = await Promise.all([
+      listLectureHalls(own,{collegeId:SEED_IDS.collegeA,q:hallName,upcoming:"NO"}),
+      listLectureHalls(own,{collegeId:SEED_IDS.collegeA,q:hallName,upcoming:"YES"}),
+    ]);
+    expect(unused.items.map(row=>row.id)).toContain(hall.id);
+    expect(busy.items).toEqual([]);
     const [fits, tooSmall] = await Promise.all([
       listLectureHalls(own, { collegeId: SEED_IDS.collegeA, q: hallName, minimumCapacity: 38 }),
       listLectureHalls(own, { collegeId: SEED_IDS.collegeA, q: hallName, minimumCapacity: 39 }),

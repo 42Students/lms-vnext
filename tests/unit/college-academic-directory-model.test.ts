@@ -27,6 +27,8 @@ describe("College Admin semester and batch read models", () => {
       { termNumber: 25 },
       { minimumCredits: -1 },
       { minimumCredits: 501 },
+      { maximumCredits: 501 },
+      { minimumCredits: 19, maximumCredits: 18 },
     ]) {
       expect(collegeSemesterDirectorySchema.safeParse(invalid).success).toBe(false);
     }
@@ -34,12 +36,14 @@ describe("College Admin semester and batch read models", () => {
 
   it("accepts only defined cohort lifecycles", () => {
     expect(collegeBatchDirectorySchema.parse({})).toEqual({
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", progression: "ALL", page: 1,
     });
     expect(collegeBatchDirectorySchema.parse({
       status: "COMPLETED", page: "3",
-    })).toEqual({ q: "", status: "COMPLETED", page: 3 });
+    })).toEqual({ q: "", status: "COMPLETED", progression:"ALL", page: 3 });
     expect(collegeBatchDirectorySchema.safeParse({ status: "INACTIVE" }).success).toBe(false);
+    expect(collegeBatchDirectorySchema.safeParse({progression:"UNKNOWN"}).success).toBe(false);
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({progression:"MISSING"}))).toContain("progression=MISSING");
     expect(collegeBatchDirectorySchema.safeParse({ collegeId: "foreign" }).success).toBe(false);
     expect(collegeBatchDirectorySchema.safeParse({ yearStart: 1899 }).success).toBe(false);
     expect(collegeBatchDirectorySchema.safeParse({ currentTerm: 0 }).success).toBe(false);
@@ -72,6 +76,8 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("SEMESTERS",{q:"",status:"ALL",page:1,minimumCredits:18}))
       .toContain("minimumCredits=18");
     expect(academicDirectorySearchParams({minimumCredits:""})).toEqual({});
+    expect(academicDirectoryHref("SEMESTERS",{q:"",status:"ALL",page:1,maximumCredits:20})).toContain("maximumCredits=20");
+    expect(academicDirectorySearchParams({maximumCredits:""})).toEqual({});
     expect(semesters.searchParams.has("collegeId")).toBe(false);
     expect(academicDirectoryHref("BATCHES", {
       q: "", status: "ALL", page: 1,

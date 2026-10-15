@@ -146,6 +146,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semesters
+**Maximum configured credit filter PARTIAL (2026-10-15):** The semesters directory and CSV now support inclusive upper credit bounds, with invalid minimum/maximum combinations rejected. Scoped PostgreSQL fixture and URL/model tests added; execution and browser/mobile acceptance remain open.
+
 **Persisted minimum-credit filter PARTIAL (2026-10-15):** Semester directory and CSV now filter actual configured totalCredits inclusively before pagination, excluding unconfigured/null totals rather than inferring credits. Blank inputs are not coerced to zero. Unit and triggered-progression-safe PG fixture authored; execution/browser evidence open.
 
 **Capped semester CSV PARTIAL (2026-10-15):** Filtered, college-authorized program terms export through a GET-only endpoint with 1,000-row limit, spreadsheet formula neutralization and explicit truncation headers/footer. Uses existing tenant-scoped pagination and a disposable-PostgreSQL tenant/role fixture; executed PG/browser and exact legacy column acceptance remain outstanding.
@@ -184,6 +186,8 @@ Legacy contract:
 - [ ] Load/error/empty states match.
 
 ## Page: Semester–Course Mapping
+**Exact saved course-code filter PARTIAL (2026-10-15):** College Admin persisted offering mappings now accept bounded exact course-code matching before totals and pagination, carried into CSV and URL state. Positive/empty PostgreSQL fixture and validation tests authored; numbered-term legacy semantics and browser acceptance remain open.
+
 **Persisted offering lifecycle filter PARTIAL (2026-10-15):** Course-mapping directory and CSV can now filter exact ACTIVE/ARCHIVED offering states before college-scoped pagination, independently of CORE/ELECTIVE type. Uses the authoritative offering-state enum, strict URL schema, safe export retention and gated own-college PG fixture assertions. Numbered program-term mapping and executed/browser parity remain open.
 
 **Offering mapping CSV PARTIAL (2026-10-15):** Own-college academic-period offerings can be exported with the same persisted program/period/type filters as the directory, formula-safe capped 1,000 rows, truncation headers and status fields. This is explicitly *not* the separate numbered-term curriculum mapping export. Gated PostgreSQL in-test-fixture success/foreign/wrong-role coverage authored; runtime and legacy column acceptance open.
@@ -205,6 +209,8 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+**Progression record availability PARTIAL (2026-10-15):** The batch directory now distinguishes registered progression rows from absent records rather than inferring progression; the filter applies to pagination and CSV, with strict enum input and tenant-scoped PG assertions. Trigger-created progression is respected; execution/mobile acceptance open.
+
 **Recorded term progression filter PARTIAL (2026-10-15):** Batch view and capped CSV can isolate the exact migrated currentTermNumber from cohort_progression_state with 1–24 validation, same-college count/pagination and no inferred progression for missing rows. PostgreSQL fixture uses main\u0027s ON CONFLICT trigger-safe pattern; real execution/browser proof remains outstanding.
 
 **Capped batch CSV PARTIAL (2026-10-15):** Batch catalogue now exports current-college, filter-matched persisted program/progression and active counts in a spreadsheet-neutralized CSV (1,000 max, explicit truncation headers/footer). The in-test-fixture PostgreSQL suite includes own/foreign/wrong-role export assertions; executed CI, mobile and legacy export column parity remain outstanding.
@@ -250,6 +256,10 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Unconfigured capacity filter PARTIAL (2026-10-15):** Admin Classes now distinguish NULL configured class capacity from numeric seat counts before pagination/export. Filter state is URL-persistent and strictly validated; own-college fixture checks genuine unset rows rather than treating them as zero. Acceptance pending.
+
+**Batch-code filter PARTIAL (2026-10-15):** Classes now support an exact batch/cohort-code filter against persisted in-college records. Filter state is preserved in pagination and the capped CSV, with bounded input and own-college PostgreSQL fixture assertions. Browser/mobile acceptance still open.
+
 **Configured upper-seat threshold PARTIAL (2026-10-15):** Classes list and capped CSV now support inclusive maximum configured Section capacity, separate from minimum capacity and registered active enrollment counts. Null capacities are not treated as zero; typed URL, blank-field and isolated PG boundary tests authored. Runtime/browser acceptance remains open.
 
 **Class capacity filter PARTIAL (2026-10-15):** Admin Classes directory and capped CSV export now share strict minimum-configured-capacity filtering against saved Section capacity (unknown/null does not match), with URL retention and PG fixture for boundary inclusivity. No real PG/browser gates run; recurring scheduling and full parity remain open.
@@ -324,6 +334,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Upcoming-schedule filter PARTIAL (2026-10-15):** Administrators can isolate rooms with or without any future SCHEDULED class. The database predicate applies before pagination and capped CSV export; missing sessions are never interpreted as occupancy. Bounded choices and PostgreSQL fixture added; real execution/mobile review remain open.
+
 **Maximum configured seats filter PARTIAL (2026-10-15):** College Admin rooms support an inclusive maximum-capacity bound, alongside the existing minimum, across the list, pagination and filter-matched CSV. Contradictory bounds are rejected. Added unit and disposable-PostgreSQL fixture assertions; execution and mobile/browser acceptance remain pending.
 
 **Lecture hall CSV PARTIAL (2026-10-15):** The filter-matched College Admin hall directory exports up to 1,000 authorized room rows including configured seats/department/upcoming persisted scheduled-class count, neutralized for spreadsheet formulas with truncation indicators. CSV does not disclose scheduling contacts or personal data. Gated existing hall fixture adds own/foreign/role assertions; executed and UI/browser proof remain open.
@@ -352,6 +364,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Elective maximum credit filter PARTIAL (2026-10-15):** Inclusive upper credit-bound filtering now applies to persisted elective slots in the college directory and capped CSV; combined contradictory credit bounds fail validation, URL pagination retains the bound. Unit test added; scoped PG/browser execution remains outstanding.
+
 **Minimum configured-credit selector PARTIAL (2026-10-15):** Elective slot catalogue and capped CSV now filter by saved slot credits before pagination; bounded numeric input and blank-value handling distinguish unconfigured filters from invalid zero. Unit and isolated PG positive/negative thresholds authored; browser and runtime gates open.
 
 **Elective slot CSV PARTIAL (2026-10-15):** College Admin can export selected current-college slot search/program/status/semester matches with recorded pick limits and offerings, capped at 1,000 rows, formula-neutralized and explicit truncation. The isolated PostgreSQL own/foreign/wrong-role fixture is extended for this endpoint. This does not imply learner selections or finalized enrollment; executed acceptance remains open.
@@ -622,6 +636,10 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Faculty Assignment
+**Exact class-code filter PARTIAL (2026-10-15):** Faculty teaching assignments now support an exact persisted section code predicate in the college-scoped query, page state and bounded CSV; strict Zod and isolated PG fixtures authored. Runtime/browser evidence and legacy edit parity remain open.
+
+**Exact course code filter PARTIAL (2026-10-15):** College Admin teaching assignments now filter by the saved course code before pagination, with the same filter carried to spreadsheet-safe capped CSV. Validation, URL round-trip and in-test PostgreSQL own/empty assertions authored; browser/mobile checks open.
+
 **Teaching roster CSV PARTIAL (2026-10-15):** Matching persisted assignments can be exported as a 1,000-row formula-neutralized CSV with role/lifecycle, offering/class and IST-labeled timestamps (UTC ISO evidence is preserved), explicit truncation and no Faculty/learner contacts. Uses the signed-in College Admin roster query with existing tenant/role tests extended to export. Runtime/legacy/browser checks remain outstanding.
 
 **Teaching-role filter PARTIAL (2026-10-15):** Faculty assignments can be narrowed to PRIMARY, CO_TEACHER or TA using the authoritative teaching-role enum and current-college persisted assignments. Model and isolated PG fixtures cover valid/invalid roles and role-specific matches. Executed PG/browser proof and remaining mutation/legacy behavior are not closed.
