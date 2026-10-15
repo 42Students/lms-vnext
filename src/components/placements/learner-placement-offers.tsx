@@ -16,6 +16,7 @@ import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
 import { StatusBadge } from "@/components/ui/status-badge";
 import {learnerOffersCsv} from "@/modules/placements/learner-offers-csv-model";
 import {learnerOfferCtc} from "@/modules/placements/learner-offer-ctc-model";
+import {learnerOfferDisplayDate} from "@/modules/placements/learner-offer-display-date-model";
 import { useToast } from "@/components/ui/toast";
 
 export type LearnerPlacementOfferItem = {
@@ -68,12 +69,7 @@ function formatMoney(value: number | null) {
 }
 
 function formatWhen(value: string | null) {
-  if (!value) return null;
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return learnerOfferDisplayDate(value);
 }
 
 export function LearnerPlacementOffers({
@@ -317,7 +313,7 @@ export function LearnerPlacementOffers({
                 <span className="font-semibold text-foreground">
                   Issued:
                 </span>{" "}
-                {formatWhen(item.issuedAt)}
+                {formatWhen(item.issuedAt) ?? "Date unavailable"}
               </p>
               <p className="m-0">
                 <span className="font-semibold text-foreground">
