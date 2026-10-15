@@ -112,3 +112,20 @@ export async function recordedOutsideChoices(context:RequestContext,rawCollegeId
  return {status:await placementTableExists("placement_outside_drive_records")?"READY" as const:"NOT_REGISTERED" as const,
   choices:authorized};
 }
+
+/** A URL parameter is not evidence a record was saved. Verify against DB. */
+export async function verifyRecordedOutsideConfirmation(context:RequestContext,collegeId:string,rawId:unknown){
+ const parsed=z.string().uuid().safeParse(rawId);
+ if(!parsed.success||!await placementTableExists("placement_outside_drive_records"))
+  return false;
+ const [record]=await getDb().select({
+  id:placementOutsideDriveRecords.id,companyRelationshipId:placementOutsideDriveRecords.companyRelationshipId,
+ }).from(placementOutsideDriveRecords).where(and(
+  eq(placementOutsideDriveRecords.id,parsed.data),
+  eq(placementOutsideDriveRecords.collegeId,collegeId),
+  eq(placementOutsideDriveRecords.recordedByUserId,context.user.id),
+ )).limit(1);
+ if(!record)return false;
+ try{await outsideActor(context,collegeId,record.companyRelationshipId);return true;}
+ catch(error){if(error instanceof PlacementsServiceError)return false;throw error;}
+}
