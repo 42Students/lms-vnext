@@ -26,7 +26,7 @@ export function TpoBulkActionPreview({ rows, outcomes = [], busy = false, onConf
     {outcomes.length > 0 ? <div aria-live="polite" className="text-sm">
       <p>{counts.updated} updated; {counts.skipped} skipped; {counts.failed} failed.</p>
       <ul className="break-all">{outcomes.map((row, i) => <li key={row.id + ":" + i}>
-        {row.id}: {row.status}{row.reason ? " — " + row.reason : ""}
+        Row {i + 1}: {row.status}{row.reason ? " — " + row.reason : ""}
       </li>)}</ul>
     </div> : null}
   </section>;
