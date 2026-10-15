@@ -1208,3 +1208,8 @@ Added an isolated registered PostgreSQL regression for TODO, DONE and no-task Sp
 ## 2026-10-15 chat-11 — review-age-postgres isolated DB regression (PARTIAL)
 
 Added a persisted Project-state and deliberately backdated review fixture for assigned Mentor review history, with older-than-30 vs last-30 contrast and learner/foreign project denials. The disposable PostgreSQL test is source-authored only; runtime/legacy acceptance is pending.
+
+
+## 2026-10-15 chat-11 new round — safe-external-project-links (PARTIAL)
+
+The shared Project workspace now rejects credential-bearing, non-HTTP(S), malformed and oversized external URL values before rendering source/demo/resource/meeting links. Existing clean HTTP(S) links remain usable. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
