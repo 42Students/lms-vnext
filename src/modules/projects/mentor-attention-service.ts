@@ -19,9 +19,10 @@ import { currentPendingMentorSubmissions } from "./mentor-latest-review-model";
 export async function listMyMentorProjectAttention(
   context: RequestContext, now: Date = new Date(),
 ) {
-  if (!hasActiveMembership(context) || !hasMembershipRole(context,"MENTOR")) {
+  if (!hasActiveMembership(context) || !hasMembershipRole(context,"MENTOR") || !context.membership) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
+  const membership=context.membership!;
   const rows=(await listMyProjectInstances(context))
     .filter(row=>row.memberRole==="MENTOR");
   if (!rows.length) return [];
@@ -53,6 +54,8 @@ export async function listMyMentorProjectAttention(
       groupKey:activityEvents.groupKey,occurredAt:activityEvents.occurredAt,
     }).from(activityEvents).where(and(
       eq(activityEvents.module,"PROJECTS"),
+      eq(activityEvents.collegeId,membership.collegeId),
+      eq(activityEvents.organizationId,membership.organizationId),
       or(...ids.map(id=>like(activityEvents.groupKey,"project:"+id+"%"))),
     )).orderBy(desc(activityEvents.occurredAt)),
     getDb().select({
