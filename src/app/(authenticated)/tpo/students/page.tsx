@@ -570,11 +570,10 @@ export default async function TpoStudentsPage({
               </Link>
             </div>
           </div>
-        ) : (
-          <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-            <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
-          </Suspense>
-        )}
+        ) : null}
+        <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
+          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
+        </Suspense>
 
         {manageAllowed ? (
           <TpoStudentsBulkAdd
