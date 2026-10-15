@@ -314,3 +314,9 @@ export function facultyMoveQuizQuestionToEdge<T>(items:readonly T[],index:number
  if(index<0||index>=items.length)return [...items];
  return facultyMoveQuizQuestion(items,index,edge==="FIRST"?0:items.length-1);
 }
+
+/** Add an unchecked option next to its alternatives while retaining the answer key. */
+export function facultyInsertQuizOptionAfter<T>(options:readonly T[],index:number,newOption:T):T[]{
+ if(options.length>=20||index<0||index>=options.length)return [...options];
+ const next=[...options];next.splice(index+1,0,newOption);return next;
+}
