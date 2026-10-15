@@ -1400,3 +1400,53 @@ branch, not yet executed. These are incremental source parity improvements, **no
 closure: legacy UI comparison, real PostgreSQL paths, tenant/role negatives, keyboard,
 mobile-browser and cutover-oracle acceptance remain open. No migration or task completion
 is claimed.
+
+## 2026-10-15 chat-11 Mentor history and export follow-up (PARTIAL)
+
+The Mentor pending Task review CSV now carries the same exact-project, current-assignment,
+version, submission-age, priority, title and ordering filters as the displayed review queue.
+Activity UI and Mentor CSV reads reject duplicated or unrecognized export query keys rather
+than silently collapsing contradictory selections. The exact-project Project Activity history
+reads registered events with optional last-90-day and older-than-30-day windows, deterministic
+newest/oldest ordering and bounded 20/50-page selection; its export preserves chronology and
+caps rows at 200. The portfolio Activity filters have additional zero-min-width guards to
+address measured mobile/desktop overflow, but visual validation remains open. Pure tests were
+authored alongside item commits; no successful TypeScript, Vitest, disposable PostgreSQL or
+browser execution has yet been observed on these commits. They do NOT change the active
+DATABASE tracker, certify Projects parity, or enable unsupported file uploads.
+
+## 2026-10-15 chat-11 final-delivery audit and Mentor timeline (PARTIAL)
+
+Final Project delivery draft creation, draft revision, submission and review now
+write fixed-label, same-transaction, college/organization-scoped activity events.
+Only project ID, version and (for review) decision are recorded in metadata;
+private URLs, free-text notes, feedback and member identities are omitted. The
+existing Projects Activity timeline permits a distinct Final Deliveries filter
+at exact-project and assigned-Mentor portfolio levels. Stalled-project activity
+lookup additionally restricts recorded events to the authenticated college and
+organization; exact-project history resolves direct Project subjects separately
+from metadata-linked subordinate events. A disposable PostgreSQL positive
+regression is authored against the existing P6B final-delivery fixture and
+asserts versions, reviewer decisions and private-data exclusion, but **has
+not executed** in this session. CI, tenant-negative, browser/legacy and all
+clone-family acceptance remain open; no tracker DONE change is implied.
+
+
+## 2026-10-15 chat-11 — bulk-actions handoff and Mentor safety pass (PARTIAL)
+
+The TPO bulk engine now connects the Students roster and drive-applicant pipeline to
+current-page selection, a five-minute actor-and-version-bound server preview, generic
+non-PII preview labels, and explicit same-origin POST confirmation through existing
+college-scoped audited single-record writers. Direct service calls also enforce the
+DB09 flag. Selection identity, changed-page preview invalidation, permission/DB
+errors and responsive controls have regression tests authored. The existing TPO
+integration suite includes scoped audit, replay and foreign-Mentor negatives.
+**No passing execution of the current revision is established:** the matrix row
+must remain PARTIAL pending Vitest, disposable DB, keyboard/mobile and independent
+acceptance. This temporary TPO work was explicitly assigned to chat-11; chat-9
+owns its separately implemented grid/column panel.
+
+Mentor Project history now includes deleted/completed/readiness lifecycle events,
+small-screen-safe history/review filters, and a full filter reset including page size.
+Those improvements are source-level parity only; browser and persisted PostgreSQL
+validation remain OPEN. No official tracker task was marked DONE.

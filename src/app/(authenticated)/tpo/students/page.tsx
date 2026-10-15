@@ -7,6 +7,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
+import { TpoBulkActionPanel } from "@/components/tpo/tpo-bulk-action-panel";
 import { listPlacementJobs } from "@/modules/placements/job-service";
 import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
 import { can, requirePermission } from "@/modules/permissions/policy";
@@ -576,6 +577,13 @@ export default async function TpoStudentsPage({
             <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
           </Suspense>
         )}
+
+        {manageAllowed ? (
+          <TpoBulkActionPanel key={"students:"+roster.page+":"+query.search+":"+query.journeyState}
+            target="STUDENTS"
+            rows={roster.items.map(student=>({id:student.membershipId,
+              label:student.displayName+" · "+student.branchName}))}/>
+        ) : null}
 
         {manageAllowed ? (
           <TpoStudentsBulkAdd
