@@ -8,6 +8,9 @@ import { createPlacementJob, publishPlacementJob } from "@/modules/placements/jo
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import {undoPlacementOfferCascade} from "@/modules/placements/offer-cascade-undo-service";
+import {getPublicPlacementStatistics} from "@/modules/placements/public-page/read-service";
+import { minimumOfferResponseDeadline } from "@/modules/placements/offer-college-rules-policy";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { loadPlacementHeldOfferFacts } from "@/modules/placements/held-offer-facts-service";
@@ -239,6 +242,52 @@ describe("Section A: placement write/read integration boundaries", () => {
   });
 
 
+  it("P-S2-06 applies persisted college response hours without crediting Sunday partial hours",async()=>{
+    await pool.query(`
+      INSERT INTO placement_college_rules (college_id,min_response_hours)
+      VALUES ($1,1) ON CONFLICT (college_id)
+      DO UPDATE SET min_response_hours=excluded.min_response_hours
+    `,[SEED_IDS.collegeA]);
+    const row=(await pool.query<{min_response_hours:number}>(
+      "SELECT min_response_hours FROM placement_college_rules WHERE college_id=$1",
+      [SEED_IDS.collegeA],
+    )).rows[0];
+    expect(row?.min_response_hours).toBe(1);
+    const issuedAt=new Date("2026-10-18T18:00:00.000Z"); // Sunday 23:30 IST
+    const deadline=minimumOfferResponseDeadline(issuedAt,row!.min_response_hours);
+    expect(deadline.toISOString()).toBe("2026-10-18T19:30:00.000Z");
+    expect(deadline.getTime()-issuedAt.getTime()).toBe(90*60_000);
+  });
+
+  it("T-S2-08 hides median/highest CTC when five offers belong to just one learner",async()=>{
+    await pool.query(`
+      INSERT INTO placement_public_page_settings (college_id,enabled,population_count,published_at)
+      VALUES ($1,true,5,now()) ON CONFLICT (college_id)
+      DO UPDATE SET enabled=true,population_count=5,published_at=now()
+    `,[SEED_IDS.collegeA]);
+    try{
+      for(let i=0;i<5;i++){
+        const job=await makeJob("CTC privacy "+i);
+        const app=await applyToPlacementJob(learner,job.id,{});
+        await pool.query(`
+          INSERT INTO placement_offers
+           (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
+          VALUES ($1,1,'OFFER','ISSUED','Privacy engineer',$2,$3,now()+interval '7 days')
+        `,[app.id,500_000+i*10_000,SEED_IDS.facultyUser]);
+      }
+      const pub=await getPublicPlacementStatistics(SEED_IDS.collegeA);
+      expect(pub?.offers).toBe(5);
+      expect(pub?.medianCtcInr).toBeNull();
+      expect(pub?.highestCtcInr).toBeNull();
+      expect(pub?.placed).toBeNull(); // one distinct placed learner
+    }finally{
+      await pool.query(`
+        UPDATE placement_public_page_settings SET enabled=false,published_at=null
+        WHERE college_id=$1
+      `,[SEED_IDS.collegeA]);
+    }
+  });
+
   it("P-S1-07 persists exactly-once expiry and rejects acceptance at the deadline", async () => {
     // This is a real registered-DDL acceptance test, not a staged-schema mock.
     // An absent migration is an explicit failing prerequisite.
@@ -289,6 +338,40 @@ describe("Section A: placement write/read integration boundaries", () => {
     expect(next.rows[0]?.id).toBeTruthy();
   });
 
+
+  it("P-S1-07 concurrent sweep skips a locked offer then expires it once on release",async()=>{
+    const job=await makeJob("Expiry locked concurrency");
+    const application=await applyToPlacementJob(learner,job.id,{});
+    const now=new Date();
+    const stored=await pool.query<{id:string}>(`
+      INSERT INTO placement_offers
+        (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,issued_at,expires_at)
+      VALUES ($1,1,'OFFER','ISSUED','Lock engineer',1000000,$2,$3,$4)
+      RETURNING id
+    `,[application.id,SEED_IDS.facultyUser,new Date(now.getTime()-86_400_000),new Date(now.getTime()-1000)]);
+    const offerId=stored.rows[0]!.id;
+    const blocker=await pool.connect();
+    try{
+      await blocker.query("BEGIN");
+      await blocker.query("SELECT id FROM placement_offers WHERE id=$1 FOR UPDATE",[offerId]);
+      expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser,now)).toBe(0);
+    }finally{
+      await blocker.query("ROLLBACK");
+      blocker.release();
+    }
+    const [first,second]=await Promise.all([
+      sweepExpiredPlacementOffers(SEED_IDS.facultyUser,now),
+      sweepExpiredPlacementOffers(SEED_IDS.facultyUser,now),
+    ]);
+    expect(first+second).toBe(1);
+    expect((await pool.query<{status:string}>(
+      "SELECT status FROM placement_offers WHERE id=$1",[offerId],
+    )).rows[0]?.status).toBe("EXPIRED");
+    expect((await pool.query<{n:number}>(
+      "SELECT count(*)::int n FROM placement_offer_status_history WHERE offer_id=$1 AND to_status='EXPIRED'",
+      [offerId],
+    )).rows[0]?.n).toBe(1);
+  });
 
   it("P-S1-06 accept cascade declines sibling offers and withdraws sibling applications atomically", async () => {
     const first = await makeJob("Accepted primary");
@@ -349,6 +432,26 @@ describe("Section A: placement write/read integration boundaries", () => {
       WHERE offer_id=$1 AND to_status='DECLINED'
     `, [siblingId]);
     expect(count.rows[0]?.count).toBe(1);
+
+    // An explicit TPO compensation restores the accepted offer and all
+    // cohort-scoped cascade effects in a single transaction.
+    const undone=await undoPlacementOfferCascade(tpo,chosenId,token);
+    expect(undone).toMatchObject({
+      cascadeId:token,alreadyUndone:false,restoredApplications:1,restoredOffers:1,
+    });
+    const restored=(await pool.query<{id:string;status:string}>(
+      "SELECT id,status FROM placement_offers WHERE id=ANY($1::uuid[])",
+      [[chosenId,siblingId]],
+    )).rows;
+    expect(restored.find(x=>x.id===chosenId)?.status).toBe("ISSUED");
+    expect(restored.find(x=>x.id===siblingId)?.status).toBe("ISSUED");
+    expect((await pool.query<{status:string;withdrawn_at:Date|null}>(
+      "SELECT status,withdrawn_at FROM placement_applications WHERE id=$1",
+      [applicationB.id],
+    )).rows[0]).toMatchObject({status:"SUBMITTED",withdrawn_at:null});
+    expect(await undoPlacementOfferCascade(tpo,chosenId,token))
+      .toMatchObject({alreadyUndone:true,restoredApplications:0,restoredOffers:0});
+    await expect(undoPlacementOfferCascade(tpo,chosenId,randomUUID())).rejects.toBeDefined();
   });
 
 

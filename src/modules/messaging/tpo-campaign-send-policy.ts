@@ -28,7 +28,8 @@ export function assertCampaignRecipientCap(total:number):number {
 export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:string}>(
   candidates:readonly T[],
 ):{recipientIds:string[];suppressed:Record<Exclude<ReturnType<typeof campaignRecipientDisposition>,"ELIGIBLE">|"DUPLICATE",number>} {
-  assertCampaignRecipientCap(candidates.length);
+  // The 500 limit is on unique eligible recipients, not the whole CRM roster.
+  // A roster with 600 unsubscribed contacts and 1 eligible lead is sendable.
   const suppressed={NO_EMAIL:0,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:0};
   const seen=new Set<string>();
   const recipientIds:string[]=[];
@@ -38,6 +39,7 @@ export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:
     const email=row.emailNorm!.trim().toLowerCase();
     if(seen.has(email)){suppressed.DUPLICATE++;continue;}
     seen.add(email);
+    assertCampaignRecipientCap(recipientIds.length+1);
     recipientIds.push(row.id);
   }
   return {recipientIds,suppressed};

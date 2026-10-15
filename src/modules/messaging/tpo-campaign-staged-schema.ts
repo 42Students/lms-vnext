@@ -1,4 +1,5 @@
-/** T-S2-04: NOT REGISTERED. No service imports; orchestrator owns migration. */
+/** T-S2-04: NOT REGISTERED. Referenced by the gated staged unsubscribe service;
+ * orchestrator owns the only production migration and privacy approval. */
 import {index,integer,pgTable,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
 export const placementTpoEmailCampaignsStaged=pgTable("placement_tpo_email_campaigns",{
   id:uuid("id").defaultRandom().primaryKey(),
@@ -23,5 +24,6 @@ export const placementTpoEmailRecipientsStaged=pgTable("placement_tpo_email_camp
   createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
   uniqueIndex("tpo_email_recipient_campaign_lead_uq").on(t.campaignId,t.leadId),
+  uniqueIndex("tpo_email_recipient_campaign_key_uq").on(t.campaignId,t.recipientKey),
   index("tpo_email_recipient_college_campaign_idx").on(t.collegeId,t.campaignId),
 ]);

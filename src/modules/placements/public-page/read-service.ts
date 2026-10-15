@@ -10,6 +10,7 @@ import { publicPlacementTableReady } from "./readiness";
 import { publicMetricRelease } from "@/modules/placements/public-metric-release";
 import {publicIndependentPlacementCount} from "./independent-count-model";
 import {publicPublicationFresh} from "./publication-freshness-model";
+import {publicSalaryMetricsAllowed} from "./salary-privacy-model";
 
 /** A college-scoped, opt-in PUBLIC aggregate only. No identity or offer rows are queried. */
 export async function getPublicPlacementStatistics(collegeId:string){
@@ -44,7 +45,8 @@ export async function getPublicPlacementStatistics(collegeId:string){
         then ${placementApplications.membershipId} end)::integer`,
       releasedStudents: sql<number>`count(distinct ${placementApplications.membershipId})::integer`,
       employers: sql<number>`count(distinct ${placementCompanyRelationships.companyId})::integer`,
-      ctcCount: sql<number>`count(${placementOffers.annualCtcInr})::integer`,
+      ctcStudentCount: sql<number>`count(distinct case when ${placementOffers.annualCtcInr} is not null
+        then ${placementApplications.membershipId} end)::integer`,
       medianCtc: sql<number | null>`percentile_cont(0.5) within group
         (order by ${placementOffers.annualCtcInr})`,
       highestCtc: sql<number | null>`max(${placementOffers.annualCtcInr})`,
@@ -81,7 +83,7 @@ export async function getPublicPlacementStatistics(collegeId:string){
     placed:publicMetricRelease({...input,count:placedCount}),
     offers:publicIndependentPlacementCount(actual?.offers ?? 0,row.population),
     employers:publicIndependentPlacementCount(actual?.employers ?? 0,row.population),
-    medianCtcInr: (actual?.ctcCount ?? 0) >= 5 ? Number(actual?.medianCtc ?? 0) : null,
-    highestCtcInr: (actual?.ctcCount ?? 0) >= 5 ? Number(actual?.highestCtc ?? 0) : null,
+    medianCtcInr: publicSalaryMetricsAllowed(actual?.ctcStudentCount ?? 0,row.population) ? Number(actual?.medianCtc ?? 0) : null,
+    highestCtcInr: publicSalaryMetricsAllowed(actual?.ctcStudentCount ?? 0,row.population) ? Number(actual?.highestCtc ?? 0) : null,
   };
 }

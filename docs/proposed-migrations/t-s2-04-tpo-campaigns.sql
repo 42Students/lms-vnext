@@ -30,7 +30,9 @@ create table placement_tpo_email_campaign_recipients (
   placement_tpo_email_campaigns(college_id,id) on delete restrict,
  foreign key(college_id,lead_id) references
   placement_tpo_leads(college_id,id) on delete restrict,
- unique(campaign_id,lead_id)
+ unique(campaign_id,lead_id),
+ -- Stop duplicate provider sends when different leads normalize to the same email.
+ unique(campaign_id,recipient_key)
 );
 create index tpo_email_recipient_college_campaign_idx
  on placement_tpo_email_campaign_recipients(college_id,campaign_id);
@@ -38,3 +40,8 @@ create index tpo_email_recipient_college_campaign_idx
 -- Cross-row max-500 must be transactionally enforced by a campaign row lock,
 -- not just total_recipients. Verify recipient suppression immediately before send,
 -- record provider acceptance (not mailbox delivery), and audit every event.
+
+-- Orchestrator review: recipient_key must be the keyed HMAC of a normalized
+-- email with a service secret separate from invitation and global opt-out keys.
+-- Do not activate the delivery route until worker retries, concurrency, global
+-- suppression, consent, and immutable EMAIL activity audits have PG acceptance.
