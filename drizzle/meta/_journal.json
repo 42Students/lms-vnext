@@ -512,6 +512,13 @@
       "when": 1792062175842,
       "tag": "0072_placement_public_page",
       "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1792062749355,
+      "tag": "0073_placement_public_joins",
+      "breakpoints": true
     }
   ]
 }
