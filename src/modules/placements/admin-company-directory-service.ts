@@ -66,7 +66,7 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   const total=totalRows[0]?.total ?? 0;
   return {
     query, scope: { collegeId: selected?.collegeId ?? null, organizationId: selected?.organizationId ?? null },
-    ...projectAdminCompanies(results), truncated: total > results.length, cap: 50,
+    ...projectAdminCompanies(results), truncated: query.page * 50 < total, cap: 50,
     total, totalPages: Math.max(1,Math.ceil(total/50)),
   };
 }
