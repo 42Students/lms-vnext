@@ -1165,3 +1165,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 readiness strict URL contract — PARTIAL:** Selected-college readiness checks now reject unrelated, repeated or malformed status/area parameters instead of silently ignoring them; blank native-select defaults normalize to ALL. Scoped database lookup remains authoritative; no readiness count is fabricated. Pure tests authored; execution pending.
+
+
+**2026-10-15 chat-6 scoped college actions — PARTIAL:** College edit/archive actions are now rendered only when `college.manage` is granted for that persisted row's organization and college, on both mobile cards and desktop rows. Read-only setup/readiness links remain. Explicit Super Admin scope and disabled-role tests authored; no mutation/browsing acceptance claim.
