@@ -1400,3 +1400,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / Course-card timestamp resilience (L1 PARTIAL):** malformed persisted activity or due timestamps no longer throw during Learner Course-card render; legitimate dates are shown in IST. Model regression authored; browser and integration evidence open.
 
 **Chat-7 follow-up / Course-card progress bounds (L1-012 PARTIAL verification):** Learner Course progress labels and aria-valuenow now use one guarded measured-percent projection; empty paths remain unmeasured, corrupt/non-finite values never render into progressbar ARIA or CSS. Pure tests authored; executed/browser evidence pending.
+
+**Chat-7 follow-up / Course Attendance IST month and timestamps (L4-015/018 PARTIAL):** server-provided default month and recorded session grouping now use Asia/Kolkata, including sessions crossing midnight UTC; mobile and desktop attendance date/time labels follow the same zone. No status mutation, external storage or new query. Pure timezone-boundary tests authored; responsive/browser verification pending.
