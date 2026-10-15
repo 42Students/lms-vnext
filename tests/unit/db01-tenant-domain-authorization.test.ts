@@ -200,7 +200,7 @@ describe("DB01 tenant-domain authorization and identity-state regression", () =>
       noMembership: true, systemRoles: ["SUPER_ADMIN"],
     }), DOMAIN_B, s.repository);
     expect(s.remove).toHaveBeenCalledTimes(1);
-    expect(s.remove).toHaveBeenCalledWith(DOMAIN_B);
+    expect(s.remove).toHaveBeenCalledWith(DOMAIN_B, undefined);
   });
 
   it("allows an active admin to select a verified primary in their own college", async () => {

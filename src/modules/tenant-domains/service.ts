@@ -59,7 +59,7 @@ export interface TenantDomainRepository {
     input: VerificationResult & { checkedAt: Date },
   ): Promise<TenantDomainView>;
   setPrimary(domainId: string): Promise<TenantDomainView>;
-  deleteDomain(domainId: string): Promise<void>;
+  deleteDomain(domainId: string, confirmationHost?: string): Promise<void>;
   resolveVerifiedHost(host: string): Promise<ResolvedTenantHost | null>;
 }
 
@@ -67,7 +67,8 @@ export type TenantDomainServiceErrorCode =
   | "COLLEGE_NOT_FOUND"
   | "DOMAIN_NOT_FOUND"
   | "HOST_CONFLICT"
-  | "DOMAIN_NOT_VERIFIED";
+  | "DOMAIN_NOT_VERIFIED"
+  | "PRIMARY_HOST_CONFIRMATION_REQUIRED";
 
 export class TenantDomainServiceError extends Error {
   constructor(public readonly code: TenantDomainServiceErrorCode) {
@@ -217,6 +218,7 @@ export async function deleteTenantDomain(
   context: RequestContext,
   domainIdInput: string,
   repository: TenantDomainRepository,
+  confirmationHost?: string,
 ) {
   const domain = await loadAuthorizedDomain(
     context,
@@ -224,7 +226,10 @@ export async function deleteTenantDomain(
     repository,
   );
 
-  await repository.deleteDomain(domain.id);
+  if (domain.isPrimary && confirmationHost !== domain.host) {
+    throw new TenantDomainServiceError("PRIMARY_HOST_CONFIRMATION_REQUIRED");
+  }
+  await repository.deleteDomain(domain.id, confirmationHost);
 }
 
 export async function resolveTenantFromHost(

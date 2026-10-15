@@ -1349,3 +1349,26 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 - **L18/L29 notices (PARTIAL):** scoped DB10 college announcements show safe persisted sender and audience labels (including TPO only when actual senderType is TPO), and support pinned/newest/oldest sort over the authorized capped feed. The Placements dashboard offers a read-only, at-most-three-notice preview behind existing active learner membership, central placements.read and DB10 readiness; on source failure it does not present a false zero. The announcements page independently tolerates non-authorization failures of personal placement alerts while preserving college notices and continues to throw AuthorizationError for non-leaking denial. This is not a new TPO placement-only producer nor a durable per-learner college-notice read receipt; upstream workflow/PG/mobile acceptance remains open.
 - **L30 profile coding links (PARTIAL):** the learner's own saved coding platform metadata viewer ignores spoofed duplicate host entries when a later matching platform URL is valid, always using the existing exact HTTPS host normalization. No external account ownership verification or recruiter-side filter is implied.
 - **Tests/closure:** focused pure unit regressions were authored for each of the 11 implemented items (plus a correction for the normalizer's canonical trailing-slash behavior) and committed individually, but no disposable PostgreSQL, full TypeScript/lint, CI, desktop/mobile or cross-role acceptance was executed here. `CLOSED` remains inappropriate. Section 8 public joins, recruiter enquiry and official placement-only publishing remain unresolved. No new tables, migrations, permissions, APIs or mutation handlers were introduced by this batch.
+
+
+## 2026-10-15 chat-7 course thumbnail read path (PARTIAL; L1-021)
+
+Learner Course cards now read the existing verified-gated authored thumbnail via the already-authorized course list, validating an HTTPS URL and using the bundled fallback for unavailable/invalid records. The `DB05_COURSE_DISPLAY_READY` gate remains disabled until registered migration acceptance; no new schema was introduced. L1-021 remains GAP until a real authored thumbnail is persisted, fetched and browser-compared with the legacy card on desktop and mobile.
+
+**Chat-7 course-search correction (2026-10-15):** overlong pasted queries retain their normalized first 100 characters instead of silently returning every Course; the UI now caps input at 100. Pure tests authored; browser/CI proof outstanding.
+
+**Chat-7 semester selection correction (2026-10-15):** initial/stale Course filters prefer the latest term with an active authorized Learner course; if none remains active, the newest accessible historical term is selected. No client-clock inference. Unit tests authored, browser proof pending.
+
+**Chat-7 progress display correction (2026-10-15):** a non-finite upstream completion percentage is now shown as unavailable instead of `NaN%`; valid values are bounded to 0–100. Unit tests authored; runtime acceptance pending.
+
+**Chat-7 assignment attention (2026-10-15):** active Course cards now call out the count of published overdue but still-unsubmitted assignments, keeping overdue items out of the future-only Next due slot. Past-semester cards remain read-only. No invented attempt or grade state. Unit tests authored; browser proof pending.
+
+**Chat-7 Course time display (2026-10-15):** Overview activity and Learning Path class/assessment timestamps use one fixed Asia/Kolkata formatter; invalid timestamps are hidden rather than printed as authoritative schedules. Pure tests authored; mobile/timezone browser acceptance pending.
+
+**Chat-7 discussion timestamp clarity (2026-10-15):** all Learner Course discussion timestamps now show year and IST timezone and fail to `Time unavailable` for malformed stored dates, avoiding client-local discrepancies. Pure tests authored; desktop/mobile browser acceptance still open.
+
+**Chat-7 Learning Path percentage truth (2026-10-15):** a published path with no trackable items shows `Not measured` rather than a fabricated 0%; tracked zero remains 0%. Non-finite metrics also fail closed. Pure tests authored; mobile/CI/browser evidence still pending (L3-002).
+
+**Chat-7 Learning Path compact-item dialog (2026-10-15; L3-037 PARTIAL):** published content, assignment and quiz rows now show compact summaries opening native, keyboard-dismissable, focus-contained dialogs. The existing authorized actions/players mount only while opened; exact lesson/item deep links auto-open the corresponding dialog. The family remains PARTIAL until side-by-side legacy-modal, mobile/keyboard and actual interaction-regression verification.
+
+**Chat-7 standalone quiz deadline display (2026-10-15):** quiz-attempt deadline labels use the persisted instant in Asia/Kolkata (including midnight crossing) and distinguish missing from malformed deadline data. Server submission fencing remains unchanged. Unit tests authored; mobile/browser/clock-edge acceptance still pending.

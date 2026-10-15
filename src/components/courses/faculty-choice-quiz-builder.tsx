@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -18,6 +18,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
 }){
  const router=useRouter();
  const choiceRequest=useRef(0);
+ const mutationInFlight=useRef(false);
  const [success,setSuccess]=useState<string|null>(null);
  const [selected,setSelected]=useState("");
  const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);
@@ -32,6 +33,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [pending,setPending]=useState(false);
  const [detailsFailed,setDetailsFailed]=useState(false);
  const [error,setError]=useState<string|null>(null);
+ const review=facultyQuizDraftReview(questions);
  const availableQuizzes=[...localQuizzes,...quizzes.filter(q=>!localQuizzes.some(local=>local.id===q.id))]
   .filter(q=>q.status!=="ARCHIVED");
  const chosen=availableQuizzes.find(q=>q.id===selected);
@@ -55,12 +57,32 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   }catch(e){if(token===choiceRequest.current){setError(e instanceof Error?e.message:"Quiz details unavailable");setQuestions([]);setDetailsFailed(true);}}
   finally{if(token===choiceRequest.current)setPending(false);}
  }
+ function chooseWithDraftProtection(id:string){
+  if(facultyQuizSwitchNeedsConfirmation(dirtyDraft,selected,id) &&
+    !window.confirm("Discard unsaved Quiz edits and switch to another Quiz?"))return;
+  void choose(id);
+ }
+ function resetDraft(){
+  if(!facultyQuizMayResetDraft(dirtyDraft,pending))return;
+  if(!window.confirm("Discard unsaved Quiz changes and restore the saved version?"))return;
+  void choose(selected);
+ }
+ function copyToNewDraft(){
+  if(!facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed))return;
+  if(dirtyDraft && !window.confirm("Copy the current unsaved Quiz changes into a new draft?"))return;
+  setSelected("");setTitle(facultyQuizCopyTitle(title));setConfirmed(false);
+  setDirtyDraft(true);setError(null);
+  setSuccess("Quiz copied to an unsaved draft. Review and select Create draft to save it.");
+ }
  function updateQuestion(i:number,fn:(q:Question)=>Question){
   setQuestions(old=>old.map((q,n)=>n===i?fn(q):q));setConfirmed(false);setDirtyDraft(true);
  }
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE"){
   if(!confirmed){setError("Confirm the action before saving.");return;}
   if(pending)return;
+  if(action==="EDIT" && !facultyQuizCanSaveChanges(chosen?.status,dirtyDraft,detailsFailed,pending)){
+    setError("Nothing to save. Change a Quiz field before saving.");return;
+  }
   if(action==="PUBLISH" && !facultyQuizCanPublishSavedDraft(chosen?.status,dirtyDraft,detailsFailed)){
     setError("Save the draft changes and reload the current Quiz before publishing.");return;
   }
@@ -89,6 +111,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     "Close this published Section Quiz? New learner attempts stop; existing attempts and grades remain." :
     "Confirm "+action.toLowerCase()+" for this Section Quiz?";
   if(!window.confirm(warning))return;
+  if(!facultyBeginQuizWrite(mutationInFlight))return;
   setError(null);setSuccess(null);setPending(true);
   try{
    const body=(action==="PUBLISH"||action==="CLOSE"||action==="ARCHIVE")?{
@@ -100,9 +123,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
        :{quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt}),
      title,description:description||null,dueAt:authoringDueInstant(dueAt),
      maxAttempts,
-     ...(action==="CREATE" || chosen?.status==="DRAFT" ? {questions:questions.map((q,i)=>({
-      ...q,sequence:i,options:q.options.map((o,j)=>({...o,sequence:j})),
-     }))} : {}),
+     ...(action==="CREATE" || chosen?.status==="DRAFT" ? {questions:facultyQuizNormalizeQuestions(questions)} : {}),
    };
    const res=await fetch("/api/courses/faculty/quizzes/"+encodeURIComponent(deliveryId)+"/command",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
@@ -124,17 +145,19 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    }
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}
-  finally{setPending(false);}
+  finally{mutationInFlight.current=false;setPending(false);}
  }
  return <section className="min-w-0 w-full max-w-full space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Choice-question quiz builder</h2>
   <label className="grid min-w-0 gap-1 text-sm">Quiz
-   <select value={selected} disabled={pending} onChange={e=>void choose(e.target.value)}
+   <select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
     <option value="">Create new draft</option>
     {availableQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
    </select></label>
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
+  {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
+   <button type="button" onClick={copyToNewDraft} className="rounded border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</button>:null}
   {!chosen?<label className="grid min-w-0 gap-1 text-sm">Lesson
    <select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
@@ -184,6 +207,13 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>
      Correct
     </label>
+    <button type="button" disabled={j===0} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j-1)}))}
+     aria-label={"Move answer "+(j+1)+" up in question "+(i+1)} className="rounded border border-border px-2 py-1 text-xs">↑</button>
+    <button type="button" disabled={j===q.options.length-1} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j+1)}))}
+     aria-label={"Move answer "+(j+1)+" down in question "+(i+1)} className="rounded border border-border px-2 py-1 text-xs">↓</button>
+    <button type="button" disabled={q.options.length>=20}
+     onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j)}))}
+     aria-label={"Duplicate answer "+(j+1)+" in question "+(i+1)} className="rounded border border-border px-2 py-1 text-xs">Duplicate</button>
     <button type="button" disabled={q.options.length<=2}
      onClick={()=>updateQuestion(i,old=>({...old,options:facultyRemoveQuizOption(old,j)}))}
      className="rounded border border-border px-2 py-1 text-xs">Remove</button>
@@ -191,6 +221,15 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <button type="button" disabled={q.options.length>=20}
     onClick={()=>updateQuestion(i,old=>({...old,options:[...old.options,{text:"",correct:false,sequence:old.options.length}]}))}
     className="rounded border border-border px-3 py-2 text-sm">Add option</button>
+   <div className="flex flex-wrap gap-2">
+    <button type="button" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i-1));}}
+     className="rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" up"}>Move up</button>
+    <button type="button" disabled={i===questions.length-1} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestion(old,i,i+1));}}
+     className="rounded border border-border px-3 py-2 text-sm" aria-label={"Move question "+(i+1)+" down"}>Move down</button>
+   </div>
+   <button type="button" disabled={questions.length>=100}
+    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i));}}
+    className="rounded border border-border px-3 py-2 text-sm" aria-label={"Duplicate question "+(i+1)}>Duplicate question</button>
    <button type="button" disabled={questions.length<=1}
     onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyRemoveQuizQuestion(old,i));}}
     className="ml-2 rounded border border-border px-3 py-2 text-sm">Remove question</button>
@@ -198,6 +237,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <button type="button" disabled={!editable||questions.length>=100}
    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyAppendQuizQuestion(old,{...fresh(),sequence:old.length}));}}
    className="rounded border border-border px-4 py-2 text-sm">Add question</button>
+  <div role="status" aria-live="polite" className="space-y-1 rounded-lg border border-border bg-background p-3 text-sm">
+   <p className="font-semibold">Draft review: {review.questionCount} questions · {review.optionCount} options · {review.totalPoints} total points</p>
+   <p>{review.missingCorrect===0?"Every question has a correct answer selected.":review.missingCorrect+" question(s) need a correct answer."}</p>
+   <p className="text-xs text-muted-foreground">Review these draft values before saving or publishing.</p>
+  </div>
   <label className="flex gap-2 text-sm"><input type="checkbox" checked={confirmed}
    onChange={e=>setConfirmed(e.target.checked)}/>
    I confirm these choices, point totals and the current draft state.
@@ -212,11 +256,12 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     </button> : null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-3">
+   {facultyQuizMayResetDraft(dirtyDraft,pending)?<button type="button" onClick={resetDraft}
+    className="rounded border border-border px-4 py-2 text-sm">Discard unsaved edits</button>:null}
    {!chosen?<button type="button" disabled={!confirmed||pending||!lessonId}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>:
     <>
-    <button type="button" disabled={!confirmed||pending||!facultyQuizMetadataEditable(chosen.status)||
-      (chosen.status==="DRAFT"&&detailsFailed)}
+    <button type="button" disabled={!confirmed||!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</button>
     <button type="button" disabled={!confirmed||pending||!facultyQuizCanPublishSavedDraft(chosen.status,dirtyDraft,detailsFailed)}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>

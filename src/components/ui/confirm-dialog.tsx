@@ -13,6 +13,7 @@ export function ConfirmDialog({
   cancelLabel = "Cancel",
   confirmVariant = "danger",
   pending = false,
+  confirmDisabled = false,
   onConfirm,
   children,
 }: {
@@ -24,6 +25,7 @@ export function ConfirmDialog({
   cancelLabel?: string;
   confirmVariant?: "primary" | "danger";
   pending?: boolean;
+  confirmDisabled?: boolean;
   onConfirm: () => void;
   children?: ReactNode;
 }) {
@@ -44,7 +46,7 @@ export function ConfirmDialog({
           </Button>
           <Button
             variant={confirmVariant}
-            disabled={pending}
+            disabled={pending || confirmDisabled}
             onClick={onConfirm}
           >
             {pending ? "Working…" : confirmLabel}

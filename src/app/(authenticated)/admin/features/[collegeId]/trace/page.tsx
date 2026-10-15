@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import {strictTraceRouteParams} from "@/modules/module-access/admin-trace-route-params";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -28,13 +29,6 @@ type SearchParams = Record<
   string | string[] | undefined
 >;
 
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function scopeLabel(level: string): string {
   if (level === "DEFAULT") {
@@ -68,9 +62,11 @@ export default async function SuperAdminLearnerAccessTracePage({
   }
 
   const paramsValue = await searchParams;
+  const strictParams = strictTraceRouteParams(paramsValue);
+  if (!strictParams) notFound();
 
   const membershipId =
-    one(paramsValue.membershipId);
+    strictParams.membershipId;
 
   if (
     membershipId &&
@@ -82,9 +78,10 @@ export default async function SuperAdminLearnerAccessTracePage({
 
   const parsed =
     adminModuleTraceQuerySchema.safeParse({
-      q: one(paramsValue.q) || undefined,
+      q: strictParams.q || undefined,
+      overridesOnly: strictParams.overridesOnly || undefined,
       page:
-        one(paramsValue.page) || undefined,
+        strictParams.page || undefined,
       membershipId:
         membershipId || undefined,
     });
@@ -198,6 +195,13 @@ export default async function SuperAdminLearnerAccessTracePage({
             />
           </label>
 
+          <label className="grid gap-2 text-sm font-semibold text-body">Learner scope
+            <select name="overridesOnly" defaultValue={query.overridesOnly} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+              <option value="all">All active learners</option>
+              <option value="only">Only students with stored overrides</option>
+              <option value="locked">Only students with locked overrides</option>
+            </select>
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -278,6 +282,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                             {
                               q: query.q,
                               page,
+                              overridesOnly: query.overridesOnly,
                               membershipId:
                                 learner.membershipId,
                             },
@@ -318,6 +323,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                   {
                     q: query.q,
                     page: page - 1,
+                    overridesOnly: query.overridesOnly,
                     membershipId:
                       query.membershipId,
                   },
@@ -335,6 +341,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                   {
                     q: query.q,
                     page: page + 1,
+                    overridesOnly: query.overridesOnly,
                     membershipId:
                       query.membershipId,
                   },
