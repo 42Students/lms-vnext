@@ -21,7 +21,6 @@ Managed platform services:
 - Cloud Run: application hosting
 - Identity Platform: authentication
 - Cloud Storage: files
-- Vertex AI: only for features that require AI
 ```
 
 Cloud Tasks, Cloud Scheduler, Cloud Run Jobs, Redis, or other services are not baseline dependencies. Add them only when an observed workload requires them.
