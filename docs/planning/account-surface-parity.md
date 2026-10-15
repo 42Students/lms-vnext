@@ -350,7 +350,7 @@ Projects landing route: `/superadmin/projects`.
 | Surface | Legacy | Status |
 | --- | --- | --- |
 | Templates list | `/superadmin/projects/templates` | PARTIAL — `/admin/projects/templates` exists with the catalogue and lifecycle controls. Exact legacy parity and browser acceptance remain open. |
-| New Template | `/superadmin/projects/templates/new` | MISSING |
+| New Template | `/superadmin/projects/templates/new` | PARTIAL — Draft composer uses the existing authorized template POST; full legacy multi-section editing and acceptance remain open. |
 | Template Overview | `/superadmin/projects/templates/[templateId]` + `/overview` | PARTIAL — `/admin/projects/templates/[templateId]` exists with tabs for the read-only sub-views. Exact legacy parity and browser acceptance remain open. |
 | Template Sprints | `/superadmin/projects/templates/[templateId]/sprints` | DONE |
 | Template Tasks | `/superadmin/projects/templates/[templateId]/tasks` | DONE |
