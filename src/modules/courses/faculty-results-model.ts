@@ -65,3 +65,15 @@ export function facultyRecordedResponseRate(eligible: number, responded: number)
       eligible <= 0 || responded < 0 || responded > eligible) return null;
   return Math.round(responded / eligible * 100);
 }
+
+/** Never silently accept duplicate or unknown filtering selectors from Next searchParams. */
+export function parseFacultyResultsSearchParams(raw:Record<string,string|string[]|undefined>){
+ const allowed=new Set(["kind","status","deliveryId","search","page"]);
+ if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
+  return facultyResultsQuerySchema.safeParse({kind:"INVALID"});
+ return facultyResultsQuerySchema.safeParse({
+  kind:raw.kind||undefined,status:raw.status||undefined,
+  deliveryId:raw.deliveryId||undefined,search:raw.search??undefined,
+  page:raw.page||undefined,
+ });
+}
