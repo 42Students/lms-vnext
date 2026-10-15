@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,exists,not,sql,isNull} from "drizzle-orm";
+import {and,eq,exists,sql,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,facultyProfiles,learnerProgramEnrollments,programs,departments,courseTeachingAssignments,courseSectionDeliveries,courseOfferings,courses,sectionEnrollments,sections,cohorts} from "@/db/schema";
 export function collegeContactAcademicScope(collegeId:string){
