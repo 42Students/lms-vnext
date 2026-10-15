@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Previous reviewer decision visibility PARTIAL (chat-9):** The authorized review drawer now displays the persisted last decision timestamp in IST and the stored correction note, explicitly labeling absent history. It does not invent earlier history or expose these fields through the public roster. Pure projection coverage authored; private read/browser acceptance open.
+
 **Verification drawer keyboard dismissal PARTIAL (chat-9):** The private review drawer restores focus to the opener, focuses Close on entry and handles Escape. Dismissal is disabled while a decision request is in flight, avoiding an ambiguous discarded view. Pure keyboard-state tests authored; focus-trap and mobile browser acceptance remain open.
 
 **Review drawer recovery PARTIAL (chat-9):** Authorized staff can explicitly retry an unsuccessful private verification-detail read without closing the drawer, clearing stale error/detail state before the new GET. No automatic repeated private reads or false success. Unit regression authored; browser/network acceptance remains open.

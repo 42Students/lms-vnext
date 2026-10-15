@@ -5,10 +5,11 @@ import {verificationSnapshotComparison} from "@/modules/verification/snapshot-co
 import {VERIFICATION_SEND_BACK_REASONS} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
+import {verificationDecisionHistory} from "@/modules/verification/review-decision-history";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
- documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;}};
+ documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;decidedAt:string|null;}};
 export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId}:{
  row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;apiBase?:string;collegeId?:string;
 }){
@@ -78,6 +79,11 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     {canRetryVerificationReview(error,loading)&&<button type="button" onClick={retryReview}
      className="rounded-md border px-3 py-2 text-sm">Retry loading review</button>}</div>:null}
    {detail?<div className="space-y-5 py-4">
+    <section className="rounded-md border p-3" aria-label="Previous verification decision">
+     <h3 className="font-semibold">Recorded decision history</h3>
+     <p className="text-sm">Last decision: {verificationDecisionHistory(detail.review).decidedAt??"Not yet decided"}</p>
+     <p className="mt-1 whitespace-pre-wrap break-words text-sm">Last reviewer note: {verificationDecisionHistory(detail.review).note??"No note recorded"}</p>
+    </section>
     <section><h3 className="font-semibold">Submitted versus previously verified</h3>
      <dl className="mt-3 space-y-3">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
       .map(item=><div key={item.key} className="min-w-0 rounded-md border p-3">
