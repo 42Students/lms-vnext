@@ -31,7 +31,9 @@ export const collegeContactsQuerySchema=z.strictObject({
   pageSize:z.coerce.number().int().refine(n=>[10,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
 });
 export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
-export function contactAcademicFiltersCompatible(filter:{teaching:string;teachingRole:string}):boolean {
+export function contactAcademicFiltersCompatible(filter:{teaching:string;teachingRole:string;enrollment:string;cohortId?:string;programId?:string;sectionId?:string;classPresence:string}):boolean {
+ if(filter.enrollment==="NONE"&&(filter.cohortId||filter.programId||filter.sectionId||filter.classPresence==="ASSIGNED"))return false;
+ if(filter.classPresence==="NONE"&&filter.sectionId)return false;
  return !(filter.teaching==="NONE"&&filter.teachingRole!=="ALL");
 }
 export function contactDateWindowValid(filter:{joinedFrom?:string;joinedThrough?:string}):boolean {
