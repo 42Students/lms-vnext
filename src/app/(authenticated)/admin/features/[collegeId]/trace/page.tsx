@@ -80,6 +80,8 @@ export default async function SuperAdminLearnerAccessTracePage({
     adminModuleTraceQuerySchema.safeParse({
       q: strictParams.q || undefined,
       overridesOnly: strictParams.overridesOnly || undefined,
+      overridesModule: strictParams.overridesModule || undefined,
+      storedValue: strictParams.storedValue || undefined,
       page:
         strictParams.page || undefined,
       membershipId:
@@ -202,6 +204,16 @@ export default async function SuperAdminLearnerAccessTracePage({
               <option value="locked">Only students with locked overrides</option>
             </select>
           </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Stored override module
+            <select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+              <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Stored rule state
+            <select name="storedValue" defaultValue={query.storedValue} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+              <option value="all">Stored On or Off</option><option value="on">Stored On only</option><option value="off">Stored Off only</option>
+            </select>
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -283,6 +295,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                               q: query.q,
                               page,
                               overridesOnly: query.overridesOnly,
+                              overridesModule: query.overridesModule,
+                              storedValue: query.storedValue,
                               membershipId:
                                 learner.membershipId,
                             },
@@ -372,6 +386,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                 : ""}
             </p>
 
+            <Link href={`/admin/features/${encodeURIComponent(college.id)}?scope=MEMBERSHIP&scopeId=${encodeURIComponent(selected.membershipId)}`}
+              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               Resolution checks the current membership,
               section, cohort, program, department,
@@ -383,6 +399,10 @@ export default async function SuperAdminLearnerAccessTracePage({
             </p>
           </div>
 
+          <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
+            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Inspect membership overrides and locks →
+          </Link>
           <section className="min-w-0 rounded-xl border border-border bg-surface p-5" aria-label="Student overrides and locks">
             <h3 className="text-base font-semibold text-foreground">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
