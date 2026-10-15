@@ -5,7 +5,7 @@
  * - applications: distinct currently submitted application IDs
  * - offers: distinct issued offer IDs, including subsequently withdrawn offers
  * - accepted offers: offers whose CURRENT status is ACCEPTED
- * - placed learners: distinct learners holding an accepted offer
+ * - placed learners: distinct learners with accepted FULL_TIME offers
  * - packages: best accepted FULL_TIME annual CTC per learner
  *
  * Historical status transitions are not inferred from current status.
@@ -252,8 +252,11 @@ export function summarizePlacementReports(
     jobsById,
   );
 
+  // P-S2-05: internships remain accepted offers but never make a learner
+  // placed for placement-rate/drive/company statistics.
   const studentsPlaced = distinct(
-    accepted.map((offer) => offer.membershipId),
+    accepted.filter((offer) => jobsById.get(offer.jobId)?.employmentType === "FULL_TIME")
+      .map((offer) => offer.membershipId),
   );
 
   const applicants = distinct(
@@ -415,7 +418,7 @@ export function summarizePlacementReports(
       ).length,
       placed: distinct(
         jobOffers
-          .filter((offer) => offer.status === "ACCEPTED")
+          .filter((offer) => offer.status === "ACCEPTED" && job.employmentType === "FULL_TIME")
           .map((offer) => offer.membershipId),
       ).length,
     };
@@ -463,7 +466,8 @@ export function summarizePlacementReports(
         offers: companyOffers.length,
         acceptedOffers: companyAccepted.length,
         placed: distinct(
-          companyAccepted.map((offer) => offer.membershipId),
+          companyAccepted.filter((offer) => jobsById.get(offer.jobId)?.employmentType === "FULL_TIME")
+            .map((offer) => offer.membershipId),
         ).length,
         averagePackageInr: roundAverage(companyPackages),
         highestPackageInr:
@@ -698,7 +702,7 @@ export function summarizePlacementReportDetails(input: {
 
   const placedMemberships = new Set(
     offers
-      .filter((offer) => offer.status === "ACCEPTED")
+      .filter((offer) => offer.status === "ACCEPTED" && offer.employmentType === "FULL_TIME")
       .map((offer) => offer.membershipId),
   );
 

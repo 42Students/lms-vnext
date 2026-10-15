@@ -274,3 +274,17 @@ describe("placement report aggregations", () => {
     ).toBe('"Company","Offers"\r\n"\'=UNTRUSTED()","2"');
   });
 });
+
+
+describe("P-S2-05 accepted internships are not full-time placements", () => {
+  it("keeps internship accepted in funnel without marking internship-only learners placed", () => {
+    const onlyIntern = summarizePlacementReports({
+      ...fixtures,
+      offers: fixtures.offers.filter((offer) => offer.jobId === "drive-b"),
+    });
+    expect(onlyIntern.metrics.acceptedOffers).toBe(1);
+    expect(onlyIntern.metrics.studentsPlaced).toBe(0);
+    expect(onlyIntern.byDrive.find((drive) => drive.jobId === "drive-b")?.placed).toBe(0);
+    expect(onlyIntern.byCompany.find((company) => company.companyId === "company-b")?.placed).toBe(0);
+  });
+});
