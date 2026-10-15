@@ -1097,7 +1097,7 @@ test.describe("Placements browser regression", () => {
     ).toBeVisible();
     await expect(
       page.getByLabel(
-        "Active college membership",
+        "Switch workspace",
       ),
     ).toHaveCount(0);
 
