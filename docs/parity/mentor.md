@@ -1561,3 +1561,7 @@ No entry here is a certified DONE tracker task without executed PostgreSQL, tena
 ## 2026-10-16 PR-S2-02 test migration (P5 lifecycle)
 
 P5 integration cases no longer cast forbidden DONE/IN_REVIEW writes. They assert the typed validation contract and progress through persisted Learner task submissions and Mentor approval. Last-release shipping keeps the project ACTIVE pending explicit approved closeout. DB fixture is authored but **not executed**. Commit: see branch history.
+
+## 2026-10-16 chat-11 Project file UI contract (SOURCE IMPLEMENTED; NOT EXECUTED)
+
+The Projects Resources tab UI adopts the registered project-resource-file endpoints and storage/ui-models presentation rules; grant URLs must be HTTPS, status READY is the only downloadable state, upload size is limited to 50 MiB, and client-supplied declarations match server policy. Source tests are authored, not executed. The protected storage module is unchanged.
