@@ -1129,3 +1129,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 soft-delete stale-retry guard — PARTIAL:** An already-deleted announcement cannot acknowledge a stale delete as successful; the caller version is checked after authorization even for no-op repeat requests. Source-only regression test added; transactional PostgreSQL/browser acceptance pending.
+
+
+**2026-10-15 chat-6 DB10 restoration stale-retry guard — PARTIAL:** Already-restored announcements still enforce caller expectedVersion; concurrent edits cannot be mistaken for an accepted no-op restore. Source regression authored, DB/browser execution pending.
