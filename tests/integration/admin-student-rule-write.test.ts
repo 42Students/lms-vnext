@@ -35,24 +35,24 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("Super Admin student rule write 
    await db.insert(membershipRoles).values({membershipId,role:"LEARNER"});
    const before=await getSuperAdminLearnerAccessTrace(context,SEED_IDS.collegeA,{membershipId});
    expect(before?.selected).not.toBeNull();
-   const module=before?.selected?.modules.some(row=>row.module==="projects"&&row.winnerLocked&&row.winnerLevel!=="MEMBERSHIP")
+   const moduleKey=before?.selected?.modules.some(row=>row.module==="projects"&&row.winnerLocked&&row.winnerLevel!=="MEMBERSHIP")
     ?"electives":"projects";
    const first=await writeSuperAdminStudentRule(context,SEED_IDS.collegeA,membershipId,
-    {action:"SET",module,enabled:false,locked:false,expected:null});
+    {action:"SET",module:moduleKey,enabled:false,locked:false,expected:null});
    expect(first).toMatchObject({enabled:false,locked:false,unchanged:false});
    const stored=await db.select({enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked}).from(moduleAccessRules)
-    .where(and(eq(moduleAccessRules.scopeType,"MEMBERSHIP"),eq(moduleAccessRules.scopeId,membershipId),eq(moduleAccessRules.module,module)));
+    .where(and(eq(moduleAccessRules.scopeType,"MEMBERSHIP"),eq(moduleAccessRules.scopeId,membershipId),eq(moduleAccessRules.module,moduleKey)));
    expect(stored).toEqual([{enabled:false,locked:false}]);
    await expect(writeSuperAdminStudentRule(context,SEED_IDS.collegeA,membershipId,
-    {action:"SET",module,enabled:true,locked:false,expected:null})).rejects.toMatchObject({code:"STALE_RULE"});
+    {action:"SET",module:moduleKey,enabled:true,locked:false,expected:null})).rejects.toMatchObject({code:"STALE_RULE"});
    const locked=await writeSuperAdminStudentRule(context,SEED_IDS.collegeA,membershipId,
-    {action:"SET",module,enabled:false,locked:true,expected:{enabled:false,locked:false}});
+    {action:"SET",module:moduleKey,enabled:false,locked:true,expected:{enabled:false,locked:false}});
    expect(locked).toMatchObject({locked:true,unchanged:false});
    const noChange=await writeSuperAdminStudentRule(context,SEED_IDS.collegeA,membershipId,
-    {action:"SET",module,enabled:false,locked:true,expected:{enabled:false,locked:true}});
+    {action:"SET",module:moduleKey,enabled:false,locked:true,expected:{enabled:false,locked:true}});
    expect(noChange).toMatchObject({unchanged:true});
    const inherited=await writeSuperAdminStudentRule(context,SEED_IDS.collegeA,membershipId,
-    {action:"INHERIT",module,expected:{enabled:false,locked:true}});
+    {action:"INHERIT",module:moduleKey,expected:{enabled:false,locked:true}});
    expect(inherited).toMatchObject({enabled:null,unchanged:false});
    const audits=await db.select({id:activityEvents.id}).from(activityEvents)
     .where(and(eq(activityEvents.subjectId,membershipId),

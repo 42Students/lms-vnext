@@ -20,7 +20,8 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
  const input=studentRuleWriteInput.parse(raw);
  const traced=await getSuperAdminLearnerAccessTrace(context,collegeId,{membershipId});
  if(!traced?.selected)return null;
- const moduleTrace=traced.selected.modules.find(item=>item.module===input.module);
+ const selectedLearner=traced.selected;
+ const moduleTrace=selectedLearner.modules.find(item=>item.module===input.module);
  if(input.action==="SET" && moduleTrace?.winnerLocked && moduleTrace.winnerLevel!=="MEMBERSHIP")
    throw new StudentRuleConflict("ANCESTOR_LOCKED");
  return getDb().transaction(async tx=>{
@@ -42,7 +43,7 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
   if(input.action==="SET"){
    // Re-evaluate persisted ancestor locks under row locks as close to the write as possible.
    // Existing ancestor rows cannot be concurrently updated while this transaction commits.
-   const ancestorScopes=traced.selected.chain.filter(scope=>scope.scopeType!=="MEMBERSHIP");
+   const ancestorScopes=selectedLearner.chain.filter(scope=>scope.scopeType!=="MEMBERSHIP");
    const parentRules=ancestorScopes.length===0?[]:await tx.select({locked:moduleAccessRules.locked})
     .from(moduleAccessRules).where(and(eq(moduleAccessRules.module,input.module),
      or(...ancestorScopes.map(scope=>and(eq(moduleAccessRules.scopeType,scope.scopeType),
