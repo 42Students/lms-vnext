@@ -47,7 +47,7 @@ export default async function TpoTeamPage({searchParams}:{
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
       conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
        <li key={row.id} className="rounded-md border border-border p-3">
-        <p className="break-words font-semibold text-foreground">{row.topic}</p>
+        <Link className="block break-words font-semibold text-primary-text" href={"/tpo/team/"+row.id}>{row.topic}</Link>
         <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
        </li>)}</ul>:
        <p role="status" className="mt-2 text-sm text-body">No private team conversations are available to your active membership.</p>}
