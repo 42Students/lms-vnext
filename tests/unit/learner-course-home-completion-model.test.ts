@@ -16,3 +16,12 @@ describe("learner Course Home completion",()=>{
   expect(learnerCourseHomeCompletion({itemsTotal:4,itemsCompleted:4,itemsMissed:0,readOnly:false}).title).toBe("Course work complete");
  });
 });
+
+describe("Course Home mixed missed and actionable work",()=>{
+ it("does not falsely say no actionable work while another item is available",()=>{
+  const outcome=learnerCourseHomeCompletion({
+   itemsTotal:4,itemsCompleted:1,itemsMissed:1,hasNextAction:true,readOnly:false,
+  });
+  expect(outcome.title).toBe("Continue learning");
+ });
+});
