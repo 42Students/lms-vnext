@@ -1230,3 +1230,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 batches PARTIAL:** Batch planned end period evidence: persisted college-scoped directory/CSV filter with validation and scoped PostgreSQL test authored (not executed). Legacy/browser verification remains open.
 
 **2026-10-15 batches PARTIAL:** Batch recorded academic year evidence: persisted college-scoped directory/CSV filter with validation and scoped PostgreSQL test authored (not executed). Legacy/browser verification remains open.
+
+**2026-10-15 batches PARTIAL:** Parent program ACTIVE/ARCHIVED state is filterable in college-scoped batch list/pagination/CSV. Authored unit and isolated DB assertions; runtime/browser and legacy comparison pending.

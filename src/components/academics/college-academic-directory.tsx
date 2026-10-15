@@ -174,6 +174,15 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
               </select>
             </label>
           ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Parent program lifecycle
+              <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All parent programs</option>
+                <option value="ACTIVE">Active</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter

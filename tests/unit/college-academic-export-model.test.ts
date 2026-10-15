@@ -49,5 +49,10 @@ describe("college semester CSV",()=>{
   expect(academicExportHref("BATCHES",{q:"",status:"ALL",academicYearState:"RECORDED"})).toContain("academicYearState=RECORDED");
  });
 
+ it("retains batch parent program lifecycle for CSV",()=>{
+  expect(batchCsvSchema.safeParse({programStatus:"CLOSED"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
 });
 

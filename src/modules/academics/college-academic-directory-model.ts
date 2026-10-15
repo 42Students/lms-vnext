@@ -31,6 +31,7 @@ export const collegeBatchDirectorySchema = z.object({
   yearStart: z.coerce.number().int().min(1900).max(9998).optional(),
   currentTerm: z.coerce.number().int().min(1).max(24).optional(),
   progression: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
+  programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   expectedEndState: z.enum(["ALL","SET","UNSET"]).optional(),
   academicYearState: z.enum(["ALL","RECORDED","UNRECORDED"]).optional(),
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),

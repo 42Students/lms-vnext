@@ -269,4 +269,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(foreign.items).toEqual([]);
   });
 
+  it("filters batches by college-owned parent program status",async()=>{
+    const [own,archived,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,programStatus:"ACTIVE"}),
+      listCollegeBatches(adminA,{q:label,programStatus:"ARCHIVED"}),
+      listCollegeBatches(adminB,{q:label,programStatus:"ACTIVE"}),
+    ]);
+    expect(own.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(archived.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
