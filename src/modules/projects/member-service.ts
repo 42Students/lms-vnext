@@ -768,8 +768,14 @@ export async function endProjectMember(
     const now = new Date();
     const [ended] = await tx.update(projectMembers)
       .set({ endedAt: now, isPrimary: false, updatedAt: now })
-      .where(eq(projectMembers.id, member.id)).returning();
-    return ended!;
+      .where(and(eq(projectMembers.id, fresh.id),
+        eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
+      .returning();
+    if(!ended)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ENDED",{
+      projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+    },ended));
+    return ended;
   });
 }
 
