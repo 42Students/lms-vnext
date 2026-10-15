@@ -1,3 +1,4 @@
+import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-empty-state-model";
 import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
@@ -62,6 +63,7 @@ export default async function LearnerOffersPage({
   const order=sortParsed.success?sortParsed.data:"priority";
   const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
   const paginated = paginateOwnOffers(sorted,requestedPage,15);
+  const emptyState = learnerOffersEmptyState(offers.counts.all, Boolean(searchTerm) || dueOnly || kind !== "all" || joiningFilter !== "all");
   const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
     ...(view!=="all"?{status:view}:{}),...(searchTerm?{q:searchTerm}:{}),
     ...(dueOnly?{due:"1"}:{}),...(order!=="priority"?{sort:order}:{}),...(kind!=="all"?{kind}:{}),...(joiningFilter!=="all"?{joining:joiningFilter}:{}),page:String(page),
@@ -167,15 +169,8 @@ export default async function LearnerOffersPage({
       ) : null}
       {visibleOffers.length === 0 ? (
         <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
-          <h2 className="text-base font-semibold text-foreground">
-            {offers.counts.all === 0 ? "No offers recorded" : (searchTerm || dueOnly) ? "No matching offers" : "No offers in this view"}
-          </h2>
-          <p className="mt-2 text-sm text-body">
-            {offers.counts.all === 0
-              ? "Official offers will appear after the placement team issues them. A round result is not an offer."
-              : (searchTerm || dueOnly) ? "No own persisted offer matches these filters. Clear them to restore the selected status."
-              : "No persisted offer currently matches this status. Choose another status to see other offers."}
-          </p>
+          <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
+          <p className="mt-2 text-sm text-body">{emptyState.description}</p>
           {offers.counts.all > 0 ? (
             <Link href="/learn/my-placements/offers"
               className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
