@@ -1308,3 +1308,8 @@ Both assigned Mentor portfolio and exact-project event readers now support sprin
 ## 2026-10-15 chat-11 — mentor-assignment-change-events (PARTIAL)
 
 Mentor assignment/reassignment events can now be selected in the assigned-project portfolio and exact-project audit screens using the registered projects.mentor.reassigned taxonomy. Current Mentor grants and tenant scoping, no actor PII, no raw audit metadata, and bounded SQL filters are retained. Test authored, runtime/legacy/browser verification OPEN.
+
+
+## 2026-10-15 chat-11 — portfolio importance visibility (PARTIAL)
+
+Mentor Activity now renders each matching registered event's stored importance beside its fixed safe event label. Scoped SQL projection explicitly selects the severity, without summaries, actors or metadata, and mobile cards wrap long labels. Unit test authored; source typing, PG and browser checks still OPEN.

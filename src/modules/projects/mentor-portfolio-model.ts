@@ -116,3 +116,14 @@ export function mentorActivityPagination(total:number, requested:number, pageSiz
 export function mentorActivityProjectTitleMatch(title:string,search:string){
  return title.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"));
 }
+
+/** Registered event severity, never private audit metadata. */
+export function mentorActivityImportanceLabel(importance:string){
+ switch(importance){
+  case "LOW":return "Low importance";
+  case "NORMAL":return "Normal importance";
+  case "HIGH":return "High importance";
+  case "CRITICAL":return "Critical importance";
+  default:return "Importance not classified";
+ }
+}

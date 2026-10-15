@@ -74,7 +74,7 @@ export async function getMentorPortfolioActivity(
     return {
       enabled: scope.enabled, query, projects:scope.projects, page: 1, pageSize: query.pageSize,
       total: 0, totalPages: 1,
-      items: [] as { id: string; projectId: string; projectTitle: string; label: string; occurredAt: Date }[],
+      items: [] as { id: string; projectId: string; projectTitle: string; label: string; importance:string; occurredAt: Date }[],
     };
   }
   const membership = context.membership!;
@@ -104,7 +104,7 @@ export async function getMentorPortfolioActivity(
   const rows=await db.select({
       id: activityEvents.id, eventType: activityEvents.eventType,
       subjectId: activityEvents.subjectId, subjectType: activityEvents.subjectType,
-      metadataProjectId, occurredAt: activityEvents.occurredAt,
+      metadataProjectId, importance:activityEvents.importance, occurredAt: activityEvents.occurredAt,
     }).from(activityEvents).where(filters)
       .orderBy(query.order==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
         query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
@@ -115,7 +115,7 @@ export async function getMentorPortfolioActivity(
     const project = id ? byId.get(id) : null;
     return project ? [{
       id: row.id, projectId: project.id, projectTitle: project.title,
-      label: safeMentorProjectEventLabel(row.eventType), occurredAt: row.occurredAt,
+      label: safeMentorProjectEventLabel(row.eventType), importance:row.importance, occurredAt: row.occurredAt,
     }] : [];
   });
   return {
