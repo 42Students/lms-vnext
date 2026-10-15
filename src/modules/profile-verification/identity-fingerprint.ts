@@ -13,5 +13,10 @@ export function saltedIdentityFingerprint(
   kind: "AADHAAR" | "PAN", number: string, salt: string,
 ): string {
   if (!/^[0-9a-f]{64}$/.test(salt)) throw new Error("Invalid identity fingerprint salt");
-  return createHash("sha256").update(kind + ":" + salt + ":" + number).digest("hex");
+  // Formatting does not change the underlying identity number. Normalize
+  // locally; never persist or log this cleartext representation.
+  const canonical=kind==="AADHAAR"
+    ?number.replace(/[^0-9]/g,"")
+    :number.trim().toUpperCase();
+  return createHash("sha256").update(kind + ":" + salt + ":" + canonical).digest("hex");
 }

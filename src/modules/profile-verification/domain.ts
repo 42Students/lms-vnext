@@ -219,7 +219,8 @@ export function planVerificationReview(input: {
 /**
  * Remove only an unreviewed learner UPDATE_PENDING revision, returning to the
  * previously approved snapshot. The audit event is explicit, not SENT_BACK.
- * Runtime exposure is gated until the proposed event CHECK migration is live.
+ * Registered migration 0081 permits the WITHDRAWN event; the locked writer
+ * keeps the original approved snapshot and audit history.
  */
 export function planWithdrawPendingVerification(input: {
   existing: VerificationRecord;

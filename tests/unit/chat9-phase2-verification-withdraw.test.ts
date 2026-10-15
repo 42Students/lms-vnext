@@ -12,7 +12,7 @@ const record: VerificationRecord = {
   decidedByUserId:"staff",decidedByName:"Staff",note:null,version:4,
 };
 
-describe("UPDATE_PENDING withdrawal, pending registered event constraint", () => {
+describe("UPDATE_PENDING withdrawal with registered event migration 0081", () => {
   it("restores prior verified snapshot without publishing new grades", () => {
     const result = planWithdrawPendingVerification({existing:record,expectedVersion:4,actor,now:date});
     expect(result.record.status).toBe("VERIFIED");
