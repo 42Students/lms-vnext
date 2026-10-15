@@ -1263,3 +1263,98 @@ The Mentor Resources tab now distinguishes valid required external links, valid 
 ## 2026-10-15 chat-11 — service-integrated Mentor workspace evidence (PARTIAL)
 
 The existing scope-checked getProjectWorkspaceView service now derives Sprint task status totals, active Team role counts and latest recorded delivery version from the already loaded registered rows in a pure shared model. Mentor and other account renderers consume in-request facts without duplicate database reads or invented workload metrics. Source-authored unit verification covers composition; isolated PostgreSQL, TypeScript, lint, Vitest and responsive browser gates remain unexecuted.
+
+
+## 2026-10-15 chat-11 — real PostgreSQL Mentor workspace evidence fixture (PARTIAL)
+
+The existing seeded disposable-PostgreSQL task-create integration suite now asserts tenant-scoped Team membership counts, Sprint task totals before/after a persisted Mentor task creation, absence of fabricated delivery history and a foreign-college denial through the actual shared workspace service. This test is source-authored but has not been executed in this connector environment; all browser and CI acceptance gates remain open.
+
+
+## 2026-10-15 chat-11 — responsive-portfolio-activity-filters (PARTIAL)
+
+Replaced the previously overflowing wrapping form with a single-column narrow viewport grid and shrinkable labels/select controls; long project names wrap inside cards. Known orchestrator 375px/desktop overflow defect targeted, but browser measurement still required. Pure tests authored; independent PostgreSQL, unit, lint, typecheck, browser and legacy-oracle acceptance remain open. Mentor activity remains PARTIAL.
+
+
+## 2026-10-15 chat-11 — bounded-portfolio-activity-pagination (PARTIAL)
+
+Scoped count now executes before the page read and requested pages clamp to the last real page; avoids an empty page 9999 with misleading navigation for active Mentor portfolios. Pure tests authored; independent PostgreSQL, unit, lint, typecheck, browser and legacy-oracle acceptance remain open. Mentor activity remains PARTIAL.
+
+
+## 2026-10-15 chat-11 — search-assigned-project-activity (PARTIAL)
+
+Added literal trimmed project-title search over already authorized active Mentor project assignments, with strict 120-character Zod validation and URL-preserved pagination. No raw private event summary search or cross-tenant title discovery. Pure tests authored; independent PostgreSQL, unit, lint, typecheck, browser and legacy-oracle acceptance remain open. Mentor activity remains PARTIAL.
+
+
+## 2026-10-15 chat-11 — older-than-30-days-portfolio-events (PARTIAL)
+
+Mentor Activity can isolate genuinely older persisted events with a SQL strict-before 30-day cutoff, versus last-30-day inclusive window. Uses only scoped, fixed-label events. Unit source cases authored; runtime, database, 375px/desktop browser and complete legacy producers remain unverified.
+
+
+## 2026-10-15 chat-11 — past-90-days-portfolio-events (PARTIAL)
+
+Added rolling 90-day selection for registered Mentor events, applied by timestamp before bounded SQL count, ordering and pagination. Unit source cases authored; runtime, database, 375px/desktop browser and complete legacy producers remain unverified.
+
+
+## 2026-10-15 chat-11 — evaluation-events-mentor-activity (PARTIAL)
+
+Both assigned-project portfolio and exact-project activity screens can isolate actual registered evaluation events via fixed event-type SQL allowlists; raw rubrics, student data and metadata stay private. Unit source cases authored; runtime, database, 375px/desktop browser and complete legacy producers remain unverified.
+
+
+## 2026-10-15 chat-11 — mentor-sprint-change-events (PARTIAL)
+
+Both assigned Mentor portfolio and exact-project event readers now support sprint changes filtered to projects.sprint.updated. Existing active membership/college/role SQL gates and redacted event labels remain; unit tests authored, not executed. Browser and legacy event producer verification still open.
+
+
+## 2026-10-15 chat-11 — mentor-assignment-change-events (PARTIAL)
+
+Mentor assignment/reassignment events can now be selected in the assigned-project portfolio and exact-project audit screens using the registered projects.mentor.reassigned taxonomy. Current Mentor grants and tenant scoping, no actor PII, no raw audit metadata, and bounded SQL filters are retained. Test authored, runtime/legacy/browser verification OPEN.
+
+
+## 2026-10-15 chat-11 — portfolio importance visibility (PARTIAL)
+
+Mentor Activity now renders each matching registered event's stored importance beside its fixed safe event label. Scoped SQL projection explicitly selects the severity, without summaries, actors or metadata, and mobile cards wrap long labels. Unit test authored; source typing, PG and browser checks still OPEN.
+
+
+## 2026-10-15 chat-11 — safe portfolio Activity CSV (PARTIAL)
+
+The assigned Mentor portfolio activity now exports at most 200 existing scoped, filter-matched registered event records. Every bounded database page rechecks currently active Mentor membership, tenant, Projects access and project selection. UTF-8 CSV formula-neutralizes Project titles; safe columns only are event UUID, project title, fixed event label, registered importance and IST time. A truncation row and HTTP omitted-count header reveal excess. No external send or raw summaries, actor identities, contact data or metadata. Source tests authored; disposable PostgreSQL/browser download and security acceptance OPEN.
+
+
+## 2026-10-15 chat-11 — portfolio activity persisted-positive regression (PARTIAL)
+
+The existing isolated PostgreSQL Project task fixture now verifies the registered Project-created activity event appears only for its actual current assigned Mentor, project-title search cannot fabricate matches, export excludes actor and auth fields, and Learner/foreign-college requests are denied. Source-authored but not executed; no release-complete claim.
+
+
+## 2026-10-15 chat-11 — persisted Resource activity lifecycle (PARTIAL)
+
+Registered safe Resource created/updated/archived Project activity event taxonomy, fixed non-PII labels, and Resource group filters across cross-project and exact-project Mentor activity. The next source commits wire the real transactional resource write producers. This mirrors the legacy activity category without exposing resource URLs, file content, actor details or raw audit metadata. Browser, PostgreSQL and legacy second-pass evidence remain OPEN.
+
+
+## 2026-10-15 chat-11 — transactional resource create audit (PARTIAL)
+
+The registered Project resource create write now emits `projects.resource.created` within its existing scoped database transaction. Event failures roll back the resource mutation, with project/college/organization IDs and no URL/description/private payload in event metadata. Scoped Mentor Activity filters display only the fixed label. Pure payload test authored; database execution and browser acceptance remain OPEN.
+
+
+## 2026-10-15 chat-11 — transactional resource update audit (PARTIAL)
+
+The registered Project resource update write now emits `projects.resource.updated` within its existing scoped database transaction. Event failures roll back the resource mutation, with project/college/organization IDs and no URL/description/private payload in event metadata. Scoped Mentor Activity filters display only the fixed label. Pure payload test authored; database execution and browser acceptance remain OPEN.
+
+
+## 2026-10-15 chat-11 — transactional resource archive audit (PARTIAL)
+
+The registered Project resource archive write now emits `projects.resource.archived` within its existing scoped database transaction. Event failures roll back the resource mutation, with project/college/organization IDs and no URL/description/private payload in event metadata. Scoped Mentor Activity filters display only the fixed label. Pure payload test authored; database execution and browser acceptance remain OPEN.
+
+
+## 2026-10-15 chat-11 — resource-positive-event-lifecycle (PARTIAL)
+
+Source regression in existing seeded disposable PostgreSQL suite for Resource activity producer. Verifies real tenant-scoped actor/audit data, safe Mentor event labels, and denied mutations with no phantom events. Tests have not been executed; no DONE or legacy source fidelity certification.
+
+
+## 2026-10-15 chat-11 — resource-cross-role-write-denials (PARTIAL)
+
+Source regression in existing seeded disposable PostgreSQL suite for Resource activity producer. Verifies real tenant-scoped actor/audit data, safe Mentor event labels, and denied mutations with no phantom events. Tests have not been executed; no DONE or legacy source fidelity certification.
+
+
+## 2026-10-15 chat-11 — registered Project Team activity (PARTIAL)
+
+Added fixed-label, registered Team membership add/change/end activity event types and safe TEAM selectors on both Mentor project and cross-project feeds. Activity filters still require current persisted Mentor assignment; labels disclose neither member name, contact, actor identity nor raw metadata. Producer commits follow and independent PostgreSQL/browser execution is pending.
