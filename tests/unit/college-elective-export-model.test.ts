@@ -68,4 +68,9 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("departmentCode=A%2626");
    expect(electiveCsvSchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
  });
+ it("Minimum required elective choices is retained in elective CSV validation",()=>{
+   const q=electiveCsvSchema.parse({minimumRequiredPicks:1});
+   expect(electiveCsvHref(q)).toContain("minimumRequiredPicks=1");
+   expect(electiveCsvSchema.safeParse({minimumRequiredPicks:1001}).success).toBe(false);
+ });
 });

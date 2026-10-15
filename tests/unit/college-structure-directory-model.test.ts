@@ -217,4 +217,11 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeElectiveQuerySchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
     expect(readCollegeStructureParams({departmentCode:""})).toEqual({});
   });
+  it("Minimum required elective choices uses bounded saved values and URL persistence",()=>{
+    const q=collegeElectiveQuerySchema.parse({minimumRequiredPicks:1});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("minimumRequiredPicks=1");
+    expect(collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:-1}).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:1001}).success).toBe(false);
+    expect(readCollegeStructureParams({minimumRequiredPicks:""})).toEqual({});
+  });
 });

@@ -496,6 +496,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Minimum required elective choices PARTIAL (chat-3, 2026-10-15):** College Admin can filter by persisted elective minPick with inclusive numerical constraints, validated in URL and CSV export, scoped by the owning College. Authored unit and isolated-PG positive/negative fixtures; executed database/browser acceptance and full legacy parity outstanding.
+
 **Elective owning department code PARTIAL (chat-3, 2026-10-15):** Exact, bounded persisted Electives matching now applies before pagination, carries through URL navigation and the scoped capped CSV export. Unit and isolated PostgreSQL own/foreign/absent fixtures authored, pending execution and browser/oracle parity.
 
 **Exact elective program code PARTIAL (chat-3, 2026-10-15):** Exact, bounded persisted Electives matching now applies before pagination, carries through URL navigation and the scoped capped CSV export. Unit and isolated PostgreSQL own/foreign/absent fixtures authored, pending execution and browser/oracle parity.
