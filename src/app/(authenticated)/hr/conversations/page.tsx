@@ -76,6 +76,20 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
    </p>
+   {result.unreadInView>0?<form method="post"
+     action="/api/placements/recruiter/conversations/acknowledge"
+     className="flex flex-wrap items-center gap-3">
+     {result.items.filter(row=>row.unread>0).map(row=>
+      <input key={row.id} type="hidden" name="threadId" value={row.id}/>)}
+     <input type="hidden" name="returnTo" value={hrConversationsHref({
+      collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,
+      sort:parsed.data.sort,scope:parsed.data.scope,page:result.page,
+     })}/>
+     <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Mark visible unread conversations as read
+     </button>
+     <span className="text-xs text-muted-foreground">Only incoming placement-cell messages on this page.</span>
+    </form>:null}
    <p className="text-sm text-body">Showing {result.first}–{result.last} of {result.total} conversations</p>
    {result.items.length?<ol className="space-y-3">
     {result.items.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
