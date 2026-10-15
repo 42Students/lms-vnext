@@ -138,7 +138,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
             {groups.length>1?<label className="min-w-24 text-xs">Team
               <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} value={index} onChange={event=>{
-                try{setGroups(current=>moveMemberBalanced(current,id,Number(event.target.value)));setError("");}
+                try{const updated=moveMemberBalanced(groups,id,Number(event.target.value));setGroups(updated);setError("");}
                 catch(e){setError(e instanceof Error?e.message:"Cannot move learner");}
               }}>
                 {groups.map((g,i)=><option key={i} value={i}>{g.name}</option>)}

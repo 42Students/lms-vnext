@@ -46,17 +46,17 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         .where(and(eq(sectionEnrollments.sectionId,section.id),eq(sectionEnrollments.status,"ACTIVE"),
           eq(learnerProgramEnrollments.status,"ACTIVE"),eq(collegeMemberships.collegeId,scope.id),
           eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
-        .orderBy(asc(collegeMemberships.id)).for("share").limit(2001);
-      if (!rows.length || rows.length>2000) throw new Error("CLASS_ROSTER_SIZE_UNSUPPORTED");
+        .orderBy(asc(collegeMemberships.id)).limit(2001);
+      if (!rows.length || rows.length>2000) throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_UNSUPPORTED");
       const members=rows.map(r=>({membershipId:r.membershipId,rollNumber:(r.rollNumber||r.registrationNumber||r.membershipId).slice(0,80)}))
         .sort((a,b)=>a.rollNumber.localeCompare(b.rollNumber,undefined,{numeric:true})||a.membershipId.localeCompare(b.membershipId));
-      if (new Set(members.map(m=>m.membershipId)).size !== members.length) throw new Error("CLASS_ROSTER_DUPLICATE");
+      if (new Set(members.map(m=>m.membershipId)).size !== members.length) throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_DUPLICATE");
       // CAS before any work, including a possible retry with the same base slug.
-      if (classRosterRevision(section.id,members)!==input.rosterRevision) throw new Error("CLASS_ROSTER_STALE");
-      if (previewVersion(input.teams)!==input.expectedPreviewVersion) throw new Error("TEAM_PREVIEW_STALE");
+      if (classRosterRevision(section.id,members)!==input.rosterRevision) throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_STALE");
+      if (previewVersion(input.teams)!==input.expectedPreviewVersion) throw new ProjectsServiceError("PROJECT_TEAM_PREVIEW_STALE");
       const groups=verifyClassTeamPreview(input.teams,members.map(m=>m.membershipId));
       const capacity=classTeamCapacity(groups);
-      if (!capacity.balanced) throw new Error("TEAM_SIZE_IMBALANCE");
+      if (!capacity.balanced) throw new ProjectsServiceError("PROJECT_TEAM_UNBALANCED");
       const plans=planClassTeamWorkspaceNames(input.baseTitle,input.baseSlug,groups);
 
       const [assigned]=await tx.select({
