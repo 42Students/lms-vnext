@@ -911,3 +911,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: scoped UUID drill-in — PARTIAL.** Super Admin hierarchy allows exact scoped UUID only when the academic scope type is explicitly selected and validated. Learner access-trace links into its own membership record for stored-rule review; SQL still joins each rule to persisted college ownership. Authored PostgreSQL tests, not executed; no write/edit capability or final drawer parity claimed.
+
+
+**2026-10-15 chat-6: readiness check status filtering — PARTIAL.** Selected-college Readiness Gate can focus on failures, unknowns or passes while its ten-source overall verdict and totals are never recalculated from a filtered subset. Scope remains Super Admin + college, filter strict Zod; unit tests authored, unexecuted. Runtime/browser acceptance open.
