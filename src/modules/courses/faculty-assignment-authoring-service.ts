@@ -1,9 +1,10 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {assignmentSubmissions,courseAssignments,courseSectionDeliveries} from "@/db/schema";
+import {assignmentSubmissions,courseAssignments,courseSectionDeliveries,
+ collegeMemberships,membershipRoles,courseTeachingAssignments,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -42,6 +43,23 @@ export async function commandFacultyAssignment(
         .where(eq(courseSectionDeliveries.id,deliveryId)).for("update").limit(1);
       if(!liveDelivery||liveDelivery.endedAt)
         throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+      // Recheck persisted actor and teaching rights *inside* the mutation transaction.
+      // A stale authenticated context cannot bypass role removal or suspension.
+      const [liveFaculty]=await tx.select({id:courseTeachingAssignments.id})
+        .from(courseTeachingAssignments)
+        .innerJoin(collegeMemberships,eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
+        .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"FACULTY")))
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .where(and(eq(courseTeachingAssignments.deliveryId,deliveryId),
+          eq(courseTeachingAssignments.membershipId,membership.id),
+          isNull(courseTeachingAssignments.endedAt),
+          eq(collegeMemberships.userId,context.user.id),
+          eq(collegeMemberships.collegeId,delivery.collegeId),
+          eq(collegeMemberships.status,"ACTIVE"),
+          eq(users.platformStatus,"ACTIVE")))
+        .for("share").limit(1);
+      if(!liveFaculty)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
       let result:typeof courseAssignments.$inferSelect;
       let changedFields:string[]=[];
       let eventType:string;

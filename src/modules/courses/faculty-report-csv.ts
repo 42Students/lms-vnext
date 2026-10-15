@@ -2,7 +2,6 @@ import { z } from "zod";
 
 const csvRowSchema = z.object({
   name: z.string().max(500),
-  email: z.string().nullable(),
   status: z.enum(["SUBMITTED", "NOT_SUBMITTED", "ATTEMPTED", "NOT_ATTEMPTED"]),
   score: z.string().nullable(),
   percent: z.number().min(0).max(100).nullable(),
