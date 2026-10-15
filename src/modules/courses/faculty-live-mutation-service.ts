@@ -1,11 +1,11 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,eq,inArray,isNull,ne,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   courseLearningPaths,courseLessons,lessonContents,
-  courseTeachingAssignments,courseSectionDeliveries,
+  courseTeachingAssignments,courseSectionDeliveries,sectionScheduleEvents,
 } from "@/db/schema";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
@@ -99,6 +99,17 @@ export async function commandFacultyLiveClass(
           current?ne(lessonContents.id,current.id):undefined,
         )).limit(1);
       if(overlaps.length)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+      // Legacy Section events and this instructor's other timetabled classes
+      // are real occupancy; do not schedule an overlapping video meeting.
+      const busy=await tx.select({id:sectionScheduleEvents.id})
+        .from(sectionScheduleEvents).where(and(
+          eq(sectionScheduleEvents.status,"SCHEDULED"),
+          or(eq(sectionScheduleEvents.sectionId,owned.sectionId),
+            eq(sectionScheduleEvents.facultyMembershipId,membership.id)),
+          sql`${sectionScheduleEvents.startsAt} < ${new Date(dateFields.endsAt)}`,
+          sql`${sectionScheduleEvents.endsAt} > ${new Date(dateFields.startsAt)}`,
+        )).limit(1);
+      if(busy.length)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
     }
     let updated:typeof lessonContents.$inferSelect|undefined;
     const now=new Date(Math.max(Date.now(),(current?.updatedAt.getTime()??0)+1));
