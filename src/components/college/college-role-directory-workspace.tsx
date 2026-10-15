@@ -13,6 +13,7 @@ import {
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
   parseCollegeRoleDirectorySearchParams,
+  assertCompatibleCollegeRoleDirectoryFilters,
   canonicalCollegeRoleDirectoryHref,
   selectedDirectoryValueNotListed,
   type CollegeDirectoryKind,
@@ -44,6 +45,7 @@ export async function CollegeRoleDirectoryWorkspace({
   let filter: ReturnType<typeof parseCollegeRoleDirectorySearchParams>;
   try {
     filter = parseCollegeRoleDirectorySearchParams(await searchParams);
+    assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
   } catch {
     return (
       <div className="space-y-5">

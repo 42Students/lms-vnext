@@ -125,3 +125,13 @@ export function roleDirectoryDateWindowValid(window: {joinedFrom?:string;joinedT
 /** Inclusive IST calendar day lower bound and exclusive next-day upper bound. */
 export function roleDirectoryIstDayStart(day: string): Date {return new Date(day+"T00:00:00+05:30");}
 export function roleDirectoryNextIstDayStart(day: string): Date {return new Date(roleDirectoryIstDayStart(day).getTime()+86400000);}
+
+/** Impossible combinations should be rejected, not rendered as a misleading empty college roster. */
+export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirectoryKind, filter: CollegeRoleDirectoryQuery): void {
+  if (kind === "FACULTY" && filter.teaching === "NONE" && filter.teachingRole !== "ALL") {
+    throw new RangeError("FACULTY_TEACHING_FILTER_CONFLICT");
+  }
+  if (kind === "LEARNER" && filter.enrollment === "NONE" && (filter.cohortId || filter.classPresence === "ASSIGNED")) {
+    throw new RangeError("LEARNER_ENROLLMENT_FILTER_CONFLICT");
+  }
+}

@@ -6,6 +6,7 @@ import {
   parseCollegeRoleDirectorySearchParams,
   canonicalCollegeRoleDirectoryHref,
   selectedDirectoryValueNotListed,
+  assertCompatibleCollegeRoleDirectoryFilters,
   roleDirectoryDateWindowValid,
   roleDirectoryIstDayStart,
   roleDirectoryNextIstDayStart,
@@ -178,5 +179,20 @@ describe("Role-directory IST join date range",()=>{
   const filters=collegeRoleDirectoryQuerySchema.parse({joinedFrom:"2026-10-14",joinedThrough:"2026-10-15",page:2});
   expect(collegeRoleDirectoryHref("FACULTY",filters)).toContain("joinedFrom=2026-10-14&joinedThrough=2026-10-15");
   expect(collegeRoleDirectoryQuerySchema.safeParse({joinedFrom:"2026-02-30"}).success).toBe(false);
+ });
+});
+
+describe("Contradictory role-directory filters",()=>{
+ it("rejects Faculty no-teaching paired with a specific active teaching role",()=>{
+  const bad=collegeRoleDirectoryQuerySchema.parse({teaching:"NONE",teachingRole:"TA"});
+  expect(()=>assertCompatibleCollegeRoleDirectoryFilters("FACULTY",bad)).toThrow("FACULTY_TEACHING_FILTER_CONFLICT");
+  expect(()=>assertCompatibleCollegeRoleDirectoryFilters("FACULTY",collegeRoleDirectoryQuerySchema.parse({teaching:"NONE"}))).not.toThrow();
+ });
+ it("rejects no-active-enrollment with an active batch or class",()=>{
+  for(const input of [{enrollment:"NONE",classPresence:"ASSIGNED"},
+   {enrollment:"NONE",cohortId:"40000000-0000-4000-8000-000000000009"}]){
+    expect(()=>assertCompatibleCollegeRoleDirectoryFilters("LEARNER",collegeRoleDirectoryQuerySchema.parse(input))).toThrow("LEARNER_ENROLLMENT_FILTER_CONFLICT");
+  }
+  expect(()=>assertCompatibleCollegeRoleDirectoryFilters("LEARNER",collegeRoleDirectoryQuerySchema.parse({enrollment:"NONE",classPresence:"NONE"}))).not.toThrow();
  });
 });

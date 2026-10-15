@@ -24,6 +24,7 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
   collegeRoleDirectoryQuerySchema,
+  assertCompatibleCollegeRoleDirectoryFilters,
   roleDirectoryDateWindowValid,
   roleDirectoryIstDayStart,
   roleDirectoryNextIstDayStart,
@@ -43,6 +44,7 @@ export async function listCollegeRoleDirectory(
 ) {
   const filter = collegeRoleDirectoryQuerySchema.parse(rawFilter);
   if (!roleDirectoryDateWindowValid(filter)) throw new RangeError("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
+  assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
   if (
     !context.membership ||
     !hasMembershipRole(context, "COLLEGE_ADMIN") ||
