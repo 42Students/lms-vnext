@@ -22,7 +22,7 @@ export const mentorActivityQuerySchema = z.object({
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS","PAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
-  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS"]).default("ALL"),
+  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES"]).default("ALL"),
   ...paging,
 }).strict();
 
@@ -66,6 +66,9 @@ export function safeMentorProjectEventLabel(eventType: string): string {
     case "projects.mentor.reassigned": return "Mentor reassigned";
     case "projects.readiness.overridden": return "Readiness decision updated";
     case "projects.sprint.updated": return "Sprint details updated";
+    case "projects.resource.created": return "Project resource added";
+    case "projects.resource.updated": return "Project resource updated";
+    case "projects.resource.archived": return "Project resource archived";
     case "projects.task.created": return "Project task created";
     case "projects.task.details_updated": return "Task details updated";
     case "projects.task.submitted": return "Task submission";
