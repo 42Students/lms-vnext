@@ -1492,3 +1492,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** missing progression versus academic year filter rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.
 
 **College Admin Semesters filter validation PARTIAL (2026-10-15 chat-3):** Recorded credits cannot simultaneously be required by a numeric bound and classified as UNSET. Shared page/CSV refinement and regression cases authored, execution/browser/oracle acceptance pending.
+
+**College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** elective semester interval rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
