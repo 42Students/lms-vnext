@@ -3,6 +3,11 @@
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { learnerDiscussionCanPost } from "@/modules/courses/learner-discussion-capability-model";
+import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-submit-guard-model";
+import { createLearnerDiscussionHistoryFlight } from "@/modules/courses/learner-discussion-history-flight-model";
+import { learnerDiscussionRefreshIsCurrent } from "@/modules/courses/learner-discussion-refresh-order-model";
+import { learnerDiscussionDraftValid, LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH } from "@/modules/courses/learner-discussion-message-limit-model";
 import { learnerDiscussionTimeLabel } from "@/modules/courses/learner-discussion-time-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -49,7 +54,7 @@ export function LearnerCourseDiscussion({
     createdAt: string;
     updatedAt: string;
   } | null>(null);
-  const [canPost, setCanPost] = useState(true);
+  const [canPost, setCanPost] = useState(false);
   const [loading, setLoading] = useState(true);
   const [olderCursor, setOlderCursor] = useState<DiscussionCursor | null>(null);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -66,6 +71,9 @@ export function LearnerCourseDiscussion({
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
+  const postLocked = useRef(false);
+  const historyFlight = useRef(createLearnerDiscussionHistoryFlight());
+  const latestRefreshId = useRef(0);
   const loadedOnce = useRef(false);
   const previousMessages = useRef<DiscussionMessage[]>([]);
   const forceBottomOnNextLoad = useRef(false);
@@ -73,6 +81,7 @@ export function LearnerCourseDiscussion({
   const locallyDeletedIds = useRef(new Set<string>());
 
   const load = useCallback(async (silent = false) => {
+    const refreshId = ++latestRefreshId.current;
     if (!silent && !loadedOnce.current) setLoading(true);
     try {
       const response = await fetch(
@@ -81,6 +90,7 @@ export function LearnerCourseDiscussion({
       );
       if (!response.ok) throw new Error("discussion_load_failed");
       const payload = await response.json();
+      if (!learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) return;
       const received = Array.isArray(payload.messages) ? payload.messages as DiscussionMessage[] : [];
       const incoming = received.filter((row) => !locallyDeletedIds.current.has(row.id));
       setMessages((previous) => loadedOnce.current
@@ -92,18 +102,21 @@ export function LearnerCourseDiscussion({
           ? payload.highlightedPinned
           : null,
       );
-      setCanPost(payload.canPost !== false);
+      setCanPost(learnerDiscussionCanPost(payload.canPost));
       setLoadError(false);
       loadedOnce.current = true;
     } catch {
-      setLoadError(true);
+      if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) {
+        setCanPost(false);
+        setLoadError(true);
+      }
     } finally {
-      if (!silent) setLoading(false);
+      if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) setLoading(false);
     }
   }, [deliveryId]);
 
   const loadOlder = useCallback(async () => {
-    if (!olderCursor || loadingOlder) return;
+    if (!olderCursor || !historyFlight.current.begin()) return;
     setLoadingOlder(true);
     setOlderError(false);
     try {
@@ -132,9 +145,10 @@ export function LearnerCourseDiscussion({
     } catch {
       setOlderError(true);
     } finally {
+      historyFlight.current.end();
       setLoadingOlder(false);
     }
-  }, [deliveryId, loadingOlder, olderCursor]);
+  }, [deliveryId, olderCursor]);
 
   useEffect(() => {
     // Defer initial fetch to avoid synchronous cascading state updates.
@@ -219,8 +233,9 @@ export function LearnerCourseDiscussion({
   async function submit(event?: FormEvent) {
     event?.preventDefault();
     const messageText = draft.trim();
-    if (!messageText || posting) return;
+    if (!learnerDiscussionMayPost(messageText,canPost,postLocked.current) || !learnerDiscussionDraftValid(messageText)) return;
 
+    postLocked.current = true;
     setPosting(true);
     try {
       const response = await fetch(
@@ -250,6 +265,7 @@ export function LearnerCourseDiscussion({
     } catch(e) {
       setModerationError(e instanceof Error?e.message:"Could not post reply.");
     } finally {
+      postLocked.current = false;
       setPosting(false);
     }
   }
@@ -564,7 +580,7 @@ export function LearnerCourseDiscussion({
               }
             }}
             rows={3}
-            maxLength={4000}
+            maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
             className="mt-1.5 w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
           />
@@ -572,9 +588,9 @@ export function LearnerCourseDiscussion({
             <span className="text-xs text-muted-foreground">
               <span className="sm:hidden">Tap Post to send · Enter adds a new line</span>
               <span className="hidden sm:inline">Enter to send · Shift+Enter for a new line</span>
-              {" · "}{draft.length}/4000
+              {" · "}{draft.length}/{LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             </span>
-            <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!draft.trim() || posting}>
+            <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Posting…" : "Post"}
             </Button>
           </div>
