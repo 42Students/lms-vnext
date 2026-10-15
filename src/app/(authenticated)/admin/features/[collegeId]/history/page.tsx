@@ -16,6 +16,10 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
  return <div className="space-y-6">
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← College module access</Link>
   <PageHeader eyebrow="Super Admin · Feature Controls" title="College policy change history" description={"Latest audited Projects, Placements and Electives policy edits for "+result.college.name+"."}/>
+  <Link href={collegePolicyHistoryHref(collegeId,result.nextCursor).replace("/history","/history/export")}
+    className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+    Export this audited page (CSV)
+  </Link>
   {result.items.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">No college feature policy changes have been recorded.</p>:
    <ol className="space-y-3">{result.items.map(item=><li key={item.id} className="rounded-lg border border-border bg-surface p-4">
     <p className="font-semibold text-foreground">{item.module}</p><p className="mt-1 text-sm text-body">{item.change}</p>
