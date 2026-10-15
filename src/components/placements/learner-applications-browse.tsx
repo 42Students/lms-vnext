@@ -16,6 +16,7 @@ import {learnerApplicationAttention} from "@/modules/placements/learner-applicat
 import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
 import {learnerApplicationPage} from "@/modules/placements/learner-application-pagination-model";
 import {learnerApplicationSelectionMissing} from "@/modules/placements/learner-application-selection-model";
+import { learnerApplicationsCsv } from "@/modules/placements/learner-applications-csv-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
@@ -162,6 +163,18 @@ export function LearnerApplicationsBrowse({
     ? interviewLinks.find(link=>link.applicationId===selected.applicationId)??null
     : null;
 
+  function downloadOwnApplications(){
+    const csv=learnerApplicationsCsv(rows);
+    const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+    try{
+      const link=document.createElement("a");
+      link.href=url;
+      link.download="my-placement-applications.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } finally {URL.revokeObjectURL(url);}
+  }
   return (
     <div className="space-y-5">
       {learnerApplicationSelectionMissing(items,url.applicationId) ? (
@@ -277,6 +290,12 @@ export function LearnerApplicationsBrowse({
       </section>
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
         <p role="status">{rows.length} of {items.length} applications</p>
+        {rows.length>0 ? (
+          <button type="button" onClick={downloadOwnApplications}
+            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            Export matching applications CSV
+          </button>
+        ) : null}
         {(search || view!=="all" || filters.stage!=="all" || sort!=="activity") ? (
           <button type="button"
             onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
