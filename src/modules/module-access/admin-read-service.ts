@@ -40,7 +40,7 @@ import type {
 import {adminModuleOverrideFilterSchema} from "./admin-override-filter-model";
 
 export {adminFeatureQuerySchema} from "./admin-feature-query";
-import {adminFeatureQuerySchema,featureRuleCutoff} from "./admin-feature-query";
+import {adminFeatureQuerySchema,featureRuleCutoff,boundedAdminFeaturePage} from "./admin-feature-query";
 
 const detailQuerySchema = z.object({
   module: adminModuleOverrideFilterSchema,
@@ -203,32 +203,25 @@ export async function listSuperAdminFeatureControls(
   const where = and(...conditions);
   const db = getDb();
 
-  const [totals, collegeRows] = await Promise.all([
-    db
-      .select({
-        total: count(),
-      })
-      .from(colleges)
-      .where(where),
-    db
-      .select({
-        id: colleges.id,
-        organizationId: colleges.organizationId,
-        name: colleges.name,
-        code: colleges.code,
-        status: colleges.status,
-      })
-      .from(colleges)
-      .where(where)
-      .orderBy(
-        query.sort === "CODE" ? asc(colleges.code) : query.sort === "CODE_DESC" ? desc(colleges.code) : query.sort === "NAME_DESC" ? desc(colleges.name) : asc(colleges.name),
-        asc(colleges.id),
-      )
-      .limit(COLLEGE_PAGE_SIZE)
-      .offset(
-        (query.page - 1) * COLLEGE_PAGE_SIZE,
-      ),
-  ]);
+  const [totals] = await db.select({total:count()}).from(colleges).where(where);
+  const total=totals?.total ?? 0;
+  const effectivePage=boundedAdminFeaturePage(query.page,total,COLLEGE_PAGE_SIZE);
+  const collegeRows=await db
+    .select({
+      id:colleges.id,
+      organizationId:colleges.organizationId,
+      name:colleges.name,
+      code:colleges.code,
+      status:colleges.status,
+    })
+    .from(colleges)
+    .where(where)
+    .orderBy(
+      query.sort === "CODE" ? asc(colleges.code) : query.sort === "CODE_DESC" ? desc(colleges.code) : query.sort === "NAME_DESC" ? desc(colleges.name) : asc(colleges.name),
+      asc(colleges.id),
+    )
+    .limit(COLLEGE_PAGE_SIZE)
+    .offset((effectivePage-1)*COLLEGE_PAGE_SIZE);
 
   for (const college of collegeRows) {
     requirePermission(context, "college.read", {
@@ -239,8 +232,6 @@ export async function listSuperAdminFeatureControls(
 
   const rules =
     await loadCollegeAncestorRules(collegeRows);
-
-  const total = totals[0]?.total ?? 0;
 
   return {
     items: collegeRows.map((college) => ({
@@ -261,7 +252,7 @@ export async function listSuperAdminFeatureControls(
     presenceFilter: query.presence,
     recentFilter: query.recent,
     searchField: query.searchField,
-    page: query.page,
+    page: effectivePage,
     pageSize: COLLEGE_PAGE_SIZE,
     total,
     totalPages: Math.max(

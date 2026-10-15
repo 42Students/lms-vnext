@@ -1007,3 +1007,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 strict feature matrix URL contract (PARTIAL):** Rejects repeated filters and unknown query keys before loading scoped college data. Previously first duplicate value was silently chosen and out-of-range array page values could be coerced. Pure tests authored, execution/browser pending.
+
+
+**2026-10-15 chat-6 feature matrix stale-page recovery (PARTIAL):** Search/filter now counts first, clamps stale page bookmarks to its last available page and then fetches the matching scoped row slice instead of presenting a false empty result. Request-level count/query racing changes remain a PostgreSQL/browser acceptance issue; pure boundary tests authored.

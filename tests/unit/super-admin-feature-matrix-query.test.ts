@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {adminFeatureQuerySchema,featureRuleCutoff,parseAdminFeaturePageParams} from "@/modules/module-access/admin-feature-query";
+import {adminFeatureQuerySchema,featureRuleCutoff,parseAdminFeaturePageParams,boundedAdminFeaturePage} from "@/modules/module-access/admin-feature-query";
 import {adminFeaturesHref} from "@/modules/module-access/admin-read-model";
 describe("Super Admin feature matrix query",()=>{
  it("accepts code sorting and rejects unrecognized sort modes",()=>{
@@ -51,5 +51,10 @@ describe("Super Admin feature matrix query",()=>{
   expect(parseAdminFeaturePageParams({module:["projects","electives"]})).toBeNull();
   expect(parseAdminFeaturePageParams({q:"A",credential:"unexpected"})).toBeNull();
   expect(parseAdminFeaturePageParams({module:"projects",sort:"CODE_DESC"})).toMatchObject({module:"projects",sort:"CODE_DESC"});
+ });
+ it("clamps stale feature bookmarks without changing the selected filtered count",()=>{
+  expect(boundedAdminFeaturePage(999,21,20)).toBe(2);
+  expect(boundedAdminFeaturePage(3,0,20)).toBe(1);
+  expect(boundedAdminFeaturePage(1,21,20)).toBe(1);
  });
 });
