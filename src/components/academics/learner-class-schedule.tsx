@@ -7,6 +7,7 @@ import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-sched
 import { filterLearnerScheduleByKind, type LearnerScheduleKind } from "@/modules/academics/learner-schedule-kind-filter-model";
 import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-schedule-upcoming-model";
 import { learnerScheduleResetFilters } from "@/modules/academics/learner-schedule-filter-reset-model";
+import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -276,7 +277,8 @@ export function LearnerClassSchedule({
     () => calendarDays(anchor, view),
     [anchor, view],
   );
-  const now = new Date();
+  // One scheduled clock drives upcoming-only, Today and Next summaries.
+  const now = learnerScheduleClock(filterNowMs);
   const calendarToday = calendarMode === "IST" ? learnerIstScheduleToday(now) : now;
   function scheduleEventsForDay(rows: readonly LearnerScheduleEvent[], day: Date) {
     return calendarMode === "IST" ? eventsForLearnerIstScheduleDay(rows, day) : eventsForLocalDay(rows, day);
