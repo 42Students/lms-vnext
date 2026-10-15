@@ -4,6 +4,8 @@ import {useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
 import {TpoVerificationSwitch} from "./TpoVerificationSwitch";
+import {VerificationExportControl} from "./VerificationExportControl";
+import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,query}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
@@ -21,9 +23,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  return <div className="min-w-0 space-y-4">
   <TpoVerificationSwitch/>
   <div className="flex flex-wrap items-center justify-end gap-2">
-   <a href={`/api/college/verification/export?${exportQuery.toString()}`} className="rounded-md border px-3 py-2 text-sm">Export CSV</a>
+   <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <button type="button" onClick={()=>router.refresh()} className="rounded-md border px-3 py-2 text-sm">Refresh</button>
   </div>
+  <VerificationFilterPanel query={query} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    initialTab={activeTab} initialKind={initialKind}
    onTabChange={tab=>navigate({tab,page:"1"})}
