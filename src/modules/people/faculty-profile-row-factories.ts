@@ -29,3 +29,7 @@ export function newFacultyExperience():FacultyProfileDocument["experiences"][num
 export function newFacultyPublication():FacultyProfileDocument["publications"][number]{
  return {id:crypto.randomUUID(),title:"",journal:"",year:"",doi:"",link:"",authors:"",description:""};
 }
+
+export function newFacultyAward():FacultyProfileDocument["awards"][number]{
+ return {id:crypto.randomUUID(),title:"",year:"",description:"",awardedBy:""};
+}
