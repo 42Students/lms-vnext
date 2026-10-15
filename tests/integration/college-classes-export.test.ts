@@ -130,4 +130,14 @@ describe.skipIf(!enabled)("College classes export persisted PostgreSQL scope",()
     expect(excluded.exported).toBe(0);
     expect(foreign.exported).toBe(0);
   });
+  it("uses period start date on or after for capped college CSV",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,periodStartsOnOrAfter:"2026-07-01"}),
+      exportCollegeClasses(own,{q:label,periodStartsOnOrAfter:"2026-07-02"}),
+      exportCollegeClasses(other,{q:label,periodStartsOnOrAfter:"2026-07-01"}),
+    ]);
+    expect(matching.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
 });

@@ -367,6 +367,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Period start date on or after PARTIAL (chat-3, 2026-10-15):** Inclusive ISO calendar-date filtering uses persisted academic-period start boundary, not inferred class or attendance dates. Page/CSV selector and unit/isolated PostgreSQL tenant regression fixtures authored; runtime/browser validation remains open.
+
 **Authored section course deliveries PARTIAL (chat-3, 2026-10-15):** New persisted Section relationship presence/absence triage queries courseSectionDeliveries under College Admin's own-program/college joins. No missing event, assignment or course record is invented. Filter carries into paging/capped CSV; strict unit and isolated PostgreSQL own/foreign fixtures authored. Runtime/browser verification remains open.
 
 **Current section Faculty assignments PARTIAL (chat-3, 2026-10-15):** New persisted Section relationship presence/absence triage queries sectionFacultyAssignments under College Admin's own-program/college joins. No missing event, assignment or course record is invented. Filter carries into paging/capped CSV; strict unit and isolated PostgreSQL own/foreign fixtures authored. Runtime/browser verification remains open.

@@ -380,4 +380,14 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(present.items).toEqual([]);
     expect(foreign.items).toEqual([]);
   });
+  it("Period start date on or after filters persisted own-college academic date",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,periodStartsOnOrAfter:"2026-07-01"}),
+      listCollegeClasses(adminA,{q:key,periodStartsOnOrAfter:"2026-07-02"}),
+      listCollegeClasses(adminB,{q:key,periodStartsOnOrAfter:"2026-07-01"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
 });
