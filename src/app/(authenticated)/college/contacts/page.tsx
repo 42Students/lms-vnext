@@ -60,6 +60,9 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <label className="min-w-0 flex-1 basis-32 text-sm">Joined on or after (IST)
     <input name="joinedFrom" type="date" defaultValue={filter.joinedFrom??""} className="mt-1 block min-h-10 w-full rounded-md border bg-background px-3"/>
    </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Joined through (IST)
+    <input name="joinedThrough" type="date" defaultValue={filter.joinedThrough??""} className="mt-1 block min-h-10 w-full rounded-md border bg-background px-3"/>
+   </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Sort
     <select name="sort" defaultValue={filter.sort} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
      <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="NEWEST">Newest joined</option><option value="OLDEST">Longest-serving</option>
@@ -77,7 +80,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
-    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,sort:filter.sort,
+    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,sort:filter.sort,
    }).toString()} className="inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold">
     Export filtered contacts CSV
    </Link>

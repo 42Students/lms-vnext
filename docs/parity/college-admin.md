@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Contact joined-through filter PARTIAL (2026-10-15, chat-9):** The read-only contact tabs support inclusive IST end-day filtering, persisted in URLs and exports with a next-midnight exclusive DB bound. Cross-college isolation and privacy masks are unchanged; runtime/browser acceptance pending.
+
+
 **Contacts joined-from IST filter PARTIAL (2026-10-15, chat-9):** Contacts can limit memberships to a validated inclusive local calendar day lower bound, converted to Asia/Kolkata midnight and applied in college-scoped SQL before count/paging/CSV. Browser and real-DB acceptance remain open.
 
 

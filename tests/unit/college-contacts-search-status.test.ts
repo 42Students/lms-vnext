@@ -1,4 +1,4 @@
-import {describe,it,expect} from "vitest";import {collegeContactsQuerySchema} from "@/modules/people/college-contacts-model";describe("contact server filters",()=>{it("accepts typed status and sorting",()=>{expect(collegeContactsQuerySchema.parse({status:"ENDED",sort:"NEWEST"})).toMatchObject({status:"ENDED",sort:"NEWEST"});});});
+import {describe,it,expect} from "vitest";import {collegeContactsQuerySchema,contactsIstDayStart,contactsNextIstDayStart} from "@/modules/people/college-contacts-model";describe("contact server filters",()=>{it("accepts typed status and sorting",()=>{expect(collegeContactsQuerySchema.parse({status:"ENDED",sort:"NEWEST"})).toMatchObject({status:"ENDED",sort:"NEWEST"});});});
 describe("contacts account state",()=>{it("validates account lifecycle independently of college membership",()=>{
  const filter=collegeContactsQuerySchema.parse({status:"ACTIVE",accountStatus:"DISABLED"});
  expect(filter.accountStatus).toBe("DISABLED");
@@ -31,4 +31,10 @@ describe("contact name initial",()=>{it("only accepts a single normalized A–Z 
 describe("contacts minimum join date",()=>{it("rejects forged dates and accepts an exact calendar date",()=>{
  expect(collegeContactsQuerySchema.parse({joinedFrom:"2026-10-15"}).joinedFrom).toBe("2026-10-15");
  expect(collegeContactsQuerySchema.safeParse({joinedFrom:"2026-13-40"}).success).toBe(false);
+});});
+
+describe("contact inclusive IST end date",()=>{it("uses next midnight as an exclusive end",()=>{
+ expect(contactsIstDayStart("2026-10-15").toISOString()).toBe("2026-10-14T18:30:00.000Z");
+ expect(contactsNextIstDayStart("2026-10-31").toISOString()).toBe("2026-10-31T18:30:00.000Z");
+ expect(collegeContactsQuerySchema.safeParse({joinedThrough:"invalid"}).success).toBe(false);
 });});
