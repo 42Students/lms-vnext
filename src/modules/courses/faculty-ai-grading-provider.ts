@@ -1,4 +1,9 @@
-import type {AiGradingRubric} from "./faculty-ai-grading-model";
+import {z} from "zod";
+import {aiGradingRubricSchema,aiGradingRubricForMaximum,type AiGradingRubric} from "./faculty-ai-grading-model";
+export const aiGradingProviderInputSchema=z.object({
+ text:z.string().min(1).max(50000).refine(value=>Boolean(value.trim())),
+ rubric:aiGradingRubricSchema,maxPoints:z.number().int().min(1).max(10000),
+}).strict();
 export type AiGradingProviderInput={
  text:string;rubric:AiGradingRubric;maxPoints:number;
 };
@@ -16,5 +21,7 @@ export const disabledAiGradingProvider:AiGradingProvider={
 };
 export async function requestAiGradingSuggestion(provider:AiGradingProvider,input:AiGradingProviderInput){
  if(!provider.enabled)throw new AiGradingProviderDisabled();
- return provider.suggest(input);
+ const checked=aiGradingProviderInputSchema.parse(input);
+ aiGradingRubricForMaximum(checked.rubric,checked.maxPoints);
+ return provider.suggest(checked);
 }
