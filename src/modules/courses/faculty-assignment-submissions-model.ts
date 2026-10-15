@@ -9,7 +9,15 @@ export const facultySubmissionListQuerySchema=z.object({
   filter:facultySubmissionFilterSchema.default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
-export const facultySubmissionReportSearchSchema = facultySubmissionListQuerySchema.omit({assignmentId:true});
+/** Standalone report selectors are strict; the review drawer keeps its API contract. */
+export const facultySubmissionReportPageQuerySchema=facultySubmissionListQuerySchema.extend({
+ order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
+ q:z.string().trim().max(120).default(""),
+ publication:z.enum(["ALL","PUBLISHED","PRIVATE"]).default("ALL"),
+ page:z.union([z.number().int(),z.string().regex(/^[1-9]\d{0,3}$|^10000$/).transform(Number)])
+   .pipe(z.number().int().min(1).max(10000)).default(1),
+}).strict();
+export const facultySubmissionReportSearchSchema=facultySubmissionReportPageQuerySchema.omit({assignmentId:true});
 export type FacultySubmissionListQuery=z.infer<typeof facultySubmissionListQuerySchema>;
 
 export function selectFacultyAssignmentSubmissions<T extends {
@@ -30,10 +38,13 @@ export function facultySubmissionListPage<T>(rows:readonly T[],requested:number)
   return {total,pageSize,totalPages,page,items:rows.slice((page-1)*pageSize,page*pageSize)};
 }
 
-export function facultySubmissionListHref(query:FacultySubmissionListQuery) {
+export function facultySubmissionListHref(query:FacultySubmissionListQuery & {order?:"NEWEST"|"OLDEST";q?:string;publication?:"ALL"|"PUBLISHED"|"PRIVATE"}) {
   const params=new URLSearchParams({deliveryId:query.deliveryId});
   if(query.filter!=="ALL")params.set("filter",query.filter);
   if(query.page>1)params.set("page",String(query.page));
+  if(query.order==="OLDEST")params.set("order","OLDEST");
+  if(query.q?.trim())params.set("q",query.q.trim());
+  if(query.publication && query.publication!=="ALL")params.set("publication",query.publication);
   return "/teacher/report/assignment/"+encodeURIComponent(query.assignmentId)+
     "/submissions?"+params.toString();
 }
@@ -57,4 +68,77 @@ export function facultySubmissionReviewApiHref(raw: unknown) {
   if (query.filter !== "ALL") params.set("filter",query.filter);
   if (query.page > 1) params.set("page",String(query.page));
   return "/api/courses/faculty/assignments/"+encodeURIComponent(query.deliveryId)+"/submissions?"+params.toString();
+}
+
+/** Presentation ordering applies after the authorized review filter. */
+export function facultySortSubmissionReportRows<T extends {id:string;submittedAt:Date}>(
+ rows:readonly T[],order:"NEWEST"|"OLDEST",
+):T[]{
+ return [...rows].sort((a,b)=>{
+   const x=a.submittedAt.getTime(),y=b.submittedAt.getTime();
+   const diff=Number.isFinite(x)&&Number.isFinite(y)?(order==="NEWEST"?y-x:x-y):0;
+   return diff||a.id.localeCompare(b.id);
+ });
+}
+
+/** Search the already-authorized rows; contact details are not exported. */
+export function facultySearchSubmissionReportRows<T extends {learnerDisplayName:string|null}>(
+ rows:readonly T[],q:string,
+):T[]{
+ const term=q.trim().toLocaleLowerCase();
+ return term?rows.filter(row=>row.learnerDisplayName?.toLocaleLowerCase().includes(term)):[...rows];
+}
+
+/** Publication privacy belongs to the persisted gradePublished bit. */
+export function facultyFilterSubmissionPublication<T extends {gradePublished:boolean}>(
+ rows:readonly T[],mode:"ALL"|"PUBLISHED"|"PRIVATE",
+):T[]{
+ return rows.filter(row=>mode==="ALL"||(mode==="PUBLISHED"?row.gradePublished:!row.gradePublished));
+}
+
+export function facultySubmissionReportEmptyState(query:{
+ filter:FacultySubmissionFilter;q:string;publication:"ALL"|"PUBLISHED"|"PRIVATE";
+},sourceCount:number){
+ if(sourceCount===0)return {
+  title:"No submissions received",
+  description:"Learners have not submitted work for this assignment in your authorized Section.",
+ };
+ if(query.q)return {
+  title:"No learner names match",
+  description:"Clear the name search or change the selected submission filters.",
+ };
+ if(query.publication==="PUBLISHED")return {
+  title:"No published grades match",
+  description:"Learner-visible grades may not have been released for these submissions.",
+ };
+ if(query.publication==="PRIVATE")return {
+  title:"No private grades match",
+  description:"No matching submission currently has an unpublished grade.",
+ };
+ if(query.filter==="LATE")return {
+  title:"No late submissions match",
+  description:"No recorded submission was after the persisted assignment due time.",
+ };
+ if(query.filter==="UNGRADED")return {
+  title:"No submissions need grading",
+  description:"All matching persisted work has a recorded grade, or there are no matching rows.",
+ };
+ if(query.filter==="GRADED")return {
+  title:"No graded submissions match",
+  description:"No matching persisted submissions have a recorded grade.",
+ };
+ return {title:"No matching submissions",description:"No persisted submissions match the selected filters."};
+}
+
+/**
+ * The existing server-owned CSV supports only the saved grade/timing filter.
+ * Avoid claiming that this page's name, privacy and ordering controls affect it.
+ */
+export function facultySubmissionCsvScopeNote(query:{
+ q:string;publication:"ALL"|"PUBLISHED"|"PRIVATE";order:"NEWEST"|"OLDEST";
+}):string {
+ const extras=Boolean(query.q.trim())||query.publication!=="ALL"||query.order!=="NEWEST";
+ return extras
+ ? "CSV includes the authorized Section and selected grading/timing filter; name search, grade visibility and date ordering apply to this page only."
+ : "CSV includes the authorized Section and selected grading/timing filter, not just this page.";
 }

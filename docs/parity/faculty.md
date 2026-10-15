@@ -1667,3 +1667,63 @@ This round adds **12 independently committed, pushed Faculty-only manual grading
 - Twelve focused tests are authored at `tests/unit/faculty-manual-grading-round14-{1..12}.test.ts`. All grade/publish requests continue through existing authenticated, same-origin-guarded, tenant-scoped, transactional routes; this round changed no permission definitions, schema, migration, or other account.
 
 **Acceptance limits:** the remote code was pushed and source wiring inspected, but TypeScript/ESLint/Vitest, disposable PostgreSQL role denial, grading concurrency, and authenticated browser acceptance were not executed here. Source-only assertions are not independent acceptance evidence. Existing tracker and release gate statuses remain unchanged.
+
+## 2026-10-15 Faculty assessment results and overdue follow-up parity — PARTIAL (chat-4 round 15)
+
+**Before → after:** Faculty's existing `/teacher/results` and `/teacher/response-followups` pages relied on fixed 5-row report expansion, limited filter/sort controls, silently accepted duplicate query selectors, lacked a bounded aggregate export, and treated a forged/stale teaching-Section selector as an empty result rather than a scoped denial. This round begins with the latest `main` merged to `chatgpt/chat-4` and uses the current persisted teaching-scope report readers.
+
+**15 separately pushed Faculty feature commits** add:
+- Both pages reject repeated and unexpected URL selectors rather than silently accepting the first. Invalid filters have a clear reset path.
+- Assessment results support stable title/due-date sorting, exact course-code/Section-code search, published overdue versus upcoming/undated filters, and 5/10-row bounded pagination. Legacy result links keep their defaults; the report reader honors the chosen page size without reading extra assessments.
+- Overdue follow-ups support filtering by a persisted current teaching Section, oldest/recent-due or title sorting, and 5/10 assessment expansion without unbounded missing-roster queries.
+- Both report readers now refuse unknown, foreign or stale teaching-Section IDs against the current authorized teaching-section list, with a non-leaking `FACULTY_TEACHING_SCOPE_REQUIRED` denial. The established report readers continue a second authorization check per assessment.
+- New **GET-only** CSV endpoints export **the visible bounded page only**, with active Faculty Section checks and no learner names, rolls, emails, phones, individual grades, feedback or submission content. Explicit no-store/nosniff headers and formula-cell escaping protect spreadsheet imports. Exports reflect the same applied sort, filter, page and page size as the visible report; their CSV tests also verify that incidental private roster preview fields are not emitted.
+- Focused new unit tests live in `tests/unit/faculty-results-round15-{1..8,14}.test.ts` and `tests/unit/faculty-followups-round15-{9..13,15}.test.ts`. The suite files are source-authored and **not executed** in this chat. No new database tables, background processing, outbound notifications, grade writes or migration changes were added.
+
+**Still open:** 375px mobile/browser verification of filter and export controls, real authenticated PostgreSQL positive and forged/foreign role denials, test/lint/typecheck/build execution at the final SHA, and legacy page-by-page visual and interaction comparison. The sole tracker and existing DONE/PARTIAL matrix statuses were not advanced. The previously retired assessment-only route remains excluded. This is a functional source improvement, **not acceptance closure**.
+
+
+## 2026-10-15 chat-4 source-hardening round — PARTIAL, not acceptance
+After merging main at `99b89077`, fifteen individually pushed Faculty results and response-follow-up fixes address canonical page and page-size validation, bounded pagination and learner previews, CSV malformed timestamps/control characters/counts and grade averages, distinct zero/unknown handling, filtered/unassigned empty states and invalid due-date ranking. Unit regressions were authored for each source fix. The report services continue to use the existing current Faculty membership/teaching-Section authorization and authorized aggregate read paths; no outbound messages, private learner CSV fields or new tables were introduced. These are **source changes only** in a connector-only session: no Vitest, typecheck, ESLint, PostgreSQL or authenticated desktop/mobile browser suite was executed here. The related Faculty Results/Follow-ups parity is therefore **PARTIAL**, and no page, master matrix row, tracker task or release gate is newly CLOSED. Required next evidence: actual test/build execution at this branch SHA, live tenant/role denial and revoked-Section negative paths, browser empty/filter/CSV/mobile checks and legacy oracle comparison.
+
+
+## 2026-10-15 chat-4 Blueprint and assignment editor hardening — PARTIAL (round 16)
+After merging main, this branch pushed 14 separate item commits, each paired with a focused unit regression (tests/unit/faculty-blueprint-round16-{1..14}.test.ts).
+- Faculty Blueprint content edit rejects credential-bearing and loopback HTTPS URLs and noncanonical YouTube durations in the existing client form; server-side authorization remains authoritative.
+- Unsaved content edit detection disables no-op writes, requires confirmation to discard unsaved data, prevents dismissal during save, and verifies the exact persisted content-edit receipt before reporting success.
+- Section content ordering now uses bounded stable-ID movement, no-op detection, restoration of original persisted order, complete ID-set validation, and exact API receipt verification before success and refresh.
+- Quiz metadata editor no longer offers mutations of immutable published/closed attempt limits.
+- Assignment publishing now prompts Faculty to save unsaved form changes first; draft title, text length and point validations happen before mutation.
+All changes use pre-existing Faculty-authorized services/route guards. PARTIAL, not DONE: this source-only round has not executed TypeScript/ESLint/Vitest, PostgreSQL scope-denial and optimistic-version tests, authenticated mobile/desktop flows, or frozen legacy comparison. Content order still depends on its DB05 registered-runtime gate. No new database tables were introduced, and no tracker or shared matrix acceptance status was changed.
+
+
+## 2026-10-15 Faculty authoring transaction and uncertainty recovery — PARTIAL (chat-4 round 17)
+
+**Scope and owner decisions:** Continue parity only for Faculty Courses, Blueprint metadata, assignments and quiz metadata. Automated assessment features remain retired. Video storage/signing is owned by a separate backend agent; this round does not call unregistered upload APIs or claim video-management parity.
+
+This branch contains twelve new, independently pushed source items: scoped assignment mutation receipt verification, synchronous duplicate-command lock, confirmation reset on edits, unsaved-draft switch confirmation, explicit archive confirmation, expired-deadline preflight, safe machine-coded error recovery, no-op draft-save prevention, synchronous Blueprint content-save lock, archive-action visibility and truthful labels, assessment metadata edit receipt verification, and assessment archive receipt verification. Each has a corresponding `tests/unit/faculty-assignment-round17-*.test.ts`, `faculty-content-round17-9.test.ts` or `faculty-assessment-round17-*.test.ts` test.
+
+**Acceptance remains OPEN:** Unit tests were authored but have not executed in this connector workflow; no TypeScript, ESLint, disposable PostgreSQL, cross-role or browser/mobile acceptance was executed. Existing server authorization, mutation/origin checks and DB constraints are unchanged. A malformed response is an uncertain write, not proof of rollback; refresh before retrying. All affected parity rows remain PARTIAL, and no master matrix row or official task was promoted.
+
+
+## 2026-10-15 Faculty grading review and lesson-video UI contracts — PARTIAL (chat-4 round 18)
+
+**Before → after:** Assignment submission review now checks every returned row against the exact requested assignment and Section before rendering, distinguishes review-filter empty states, and invalidates in-flight fetch results when the review drawer closes. These improvements reuse existing authenticated service and GET routes, without introducing new permissions or mutation handlers.
+
+**Video management preparation (pure models only):** The new `src/modules/courses/faculty-video-management-model.ts` defines the future backend adapter: strict secret-free video metadata (content, lesson, Section, processing and publication statuses, duration and optimistic timestamp), own-lesson shared/Section listing, status badges, safe title/status filters, stable ordering, no-video/processing/no-match messages, replace eligibility and confirmation, upload-session-only replacement intent, history-preserving archive confirmation, effective visibility labels, gated visibility intent, compact action availability, spreadsheet-safe scoped metadata export, and rejection of stale status replies. `tests/unit/faculty-video-round18-4.test.ts` through `faculty-video-round18-17.test.ts` cover these contract behaviors; assignment-review tests are `faculty-review-round18-1.test.ts` through `round18-3.test.ts`.
+
+**Integration contract:** These shapes are provisional UI projections, not a storage API declaration. The storage owner must provide an authenticated, college/role- and current-teaching-Section-scoped list/replace/archive/visibility service, authoritative status vocabulary and updated-at version, short-lived signed playback/upload flow, persisted asset lineage, activity audit, and deny-by-default learner access. Adapt actual backend responses to the strict projection once those services exist. This builder did not touch `src/modules/storage`, upload/signing endpoints, database migrations, or production storage. No live upload or playback actions are claimed.
+
+**Evidence:** All items are remote source commits and unit tests are authored, not executed here. TypeScript/ESLint/Vitest, disposable PostgreSQL, permission-denial verification, responsive authenticated browser journeys, video upload and playback acceptance, and full legacy comparison remain open. All Faculty parity rows and the official tracker stay unchanged; no DONE claim is made.
+
+
+**Round 18 follow-up:** The submission review drawer now maps authentication, scope-denial, throttling and outage statuses to bounded non-leaking messages. The video list filter is a strict, length-bounded model contract. These are independently committed tests (items 18 and 19); acceptance remains PARTIAL.
+
+
+## 2026-10-15 Faculty report drill-down filtering — PARTIAL (chat-4 round 19)
+
+The existing exact-delivery Faculty Quiz attempt page now validates canonical pagination and supports oldest/newest ordering, scoped learner-name search, and the authorized latest-per-learner versus all-attempts view. The page preserves these selectors through reset, sort and pagination while question-accuracy metrics remain based on the latest attempt per learner. Four focused Vitest regression files are authored under `tests/unit/faculty-quiz-round19-{1..4}.test.ts`.
+
+The existing exact-Section Assignment submissions report now validates canonical pagination without changing its API drawer schema, supports oldest/newest ordering, name search of authorized submissions, private-versus-published grade visibility, more specific no-result descriptions, responsive/wrapping navigation, and truthful text about which filters the existing server-authorized CSV includes. Six focused unit regressions are authored at `tests/unit/faculty-submissions-round19-{5..10}.test.ts`. The CSV still re-evaluates Section permissions server-side and does not accept the page-only name/grade-visibility/sort fields.
+
+**PARTIAL acceptance:** These are source-authored, separately pushed page/model changes with tests written but not executed in this connector session. Do not mark any Faculty parity row or tracker task DONE until Vitest, TypeScript, ESLint, auth/foreign Section database checks, desktop/mobile browser and legacy UI parity are independently proven. No AI code, storage backend or migration was modified.

@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
-import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
+import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, facultySubmissionReviewEmptyLabel, facultyReviewRequestCurrent, facultySubmissionReviewFailure, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
 import {
   assignmentSubmissionActions,
@@ -419,17 +419,19 @@ export function FacultyAssignmentReview({
       const response = await fetch(facultySubmissionReviewApiHref({
         assignmentId,deliveryId,filter:next.filter,page:next.page,
       }),{cache:"no-store"});
-      if (!response.ok) throw new Error(await courseApiError(response));
+      if (!response.ok) throw new Error(facultySubmissionReviewFailure(response.status) ?? await courseApiError(response));
       const parsed = facultySubmissionReviewResponseSchema.safeParse(await response.json());
       if (!parsed.success) throw new Error("The submission list could not be read. Refresh and try again.");
       const payload = parsed.data;
-      if (sequence !== loadSequence.current) return;
+      if (!facultySubmissionReviewMatchesScope(payload,assignmentId,deliveryId))
+        throw new Error("The submission list belongs to a different Section. Reload this assignment.");
+      if (!facultyReviewRequestCurrent(sequence,loadSequence.current)) return;
       setSubmissions(payload.items);setPagination(payload);setPage(payload.page);
     } catch (caught) {
-      if (sequence === loadSequence.current) setError(caught instanceof Error ? caught.message :
+      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setError(caught instanceof Error ? caught.message :
         "Could not load Assignment submissions. Check your connection and try again.");
     } finally {
-      if (sequence === loadSequence.current) setLoading(false);
+      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setLoading(false);
     }
   }
 
@@ -443,7 +445,10 @@ export function FacultyAssignmentReview({
       </div>
       <Drawer
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(nextOpen)=>{
+          if(!nextOpen){loadSequence.current+=1;setLoading(false);}
+          setOpen(nextOpen);
+        }}
         title="Assignment submissions"
         description="Review authorized Section work. Grades stay private until explicitly published."
       >
@@ -503,7 +508,7 @@ export function FacultyAssignmentReview({
       submissions &&
       submissions.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          No learner submissions match this filter.
+          {facultySubmissionReviewEmptyLabel(filter)}
         </p>
       ) : null}
 

@@ -5,18 +5,18 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
-  facultySubmissionListHref,facultySubmissionListPage,
-  facultySubmissionListQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
+  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,facultySearchSubmissionReportRows,facultyFilterSubmissionPublication,facultySubmissionReportEmptyState,facultySubmissionCsvScopeNote,
+  facultySubmissionReportPageQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
 } from "@/modules/courses/faculty-assignment-submissions-model";
 
-type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[]};
+type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];publication?:string|string[]};
 
 export default async function FacultyAssignmentSubmissionsPage({
   params,searchParams,
 }:{params:Promise<{contentId:string}>;searchParams:Promise<Params>}) {
   const [{contentId},raw]=await Promise.all([params,searchParams]);
   const search=facultySubmissionReportSearchSchema.safeParse(raw);
-  const parsed=facultySubmissionListQuerySchema.safeParse({
+  const parsed=facultySubmissionReportPageQuerySchema.safeParse({
     assignmentId:contentId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
@@ -31,7 +31,8 @@ export default async function FacultyAssignmentSubmissionsPage({
   const filtered=selectFacultyAssignmentSubmissions(
     report.submissions,query.filter,report.assignment.dueAt,
   );
-  const data=facultySubmissionListPage(filtered,query.page);
+  const data=facultySubmissionListPage(facultySortSubmissionReportRows(facultySearchSubmissionReportRows(facultyFilterSubmissionPublication(filtered,query.publication),query.q),query.order),query.page);
+  const empty=facultySubmissionReportEmptyState(query,report.submissions.length);
   const csvHref=facultyReportCsvHref({
     kind:"assignment",assessmentId:report.assignment.id,
     deliveryId:report.assignment.deliveryId,filter:query.filter,
@@ -45,6 +46,20 @@ export default async function FacultyAssignmentSubmissionsPage({
         className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
         Full Section report
       </Link>} />
+    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <input type="hidden" name="deliveryId" value={query.deliveryId}/>
+      {query.filter!=="ALL"?<input type="hidden" name="filter" value={query.filter}/>:null}
+      {query.order!=="NEWEST"?<input type="hidden" name="order" value={query.order}/>:null}
+      {query.publication!=="ALL"?<input type="hidden" name="publication" value={query.publication}/>:null}
+      <label className="grid min-w-0 flex-1 basis-56 gap-1 text-sm font-semibold text-body">
+        Find learner submissions
+        <input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
+          className="min-h-11 w-full rounded-md border border-border bg-background px-3 text-body"/>
+      </label>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
+      <Link href={facultySubmissionListHref({...query,q:"",page:1})}
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear search</Link>
+    </form>
     <nav aria-label="Submission grading filters" className="flex flex-wrap gap-2">
       {(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>
         <Link key={filter} href={facultySubmissionListHref({...query,filter,page:1})}
@@ -55,16 +70,35 @@ export default async function FacultyAssignmentSubmissionsPage({
           {filter==="ALL"?"All":filter==="GRADED"?"Graded":filter==="UNGRADED"?"Ungraded":"Late"}
         </Link>)}
     </nav>
+    <nav aria-label="Grade publication visibility" className="flex flex-wrap gap-2">
+      {(["ALL","PUBLISHED","PRIVATE"] as const).map(mode=>
+        <Link key={mode} href={facultySubmissionListHref({...query,publication:mode,page:1})}
+          aria-current={query.publication===mode?"page":undefined}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          {mode==="ALL"?"All grades":mode==="PUBLISHED"?"Published grades":"Private grades"}
+        </Link>)}
+    </nav>
+    <nav aria-label="Submission date order" className="flex flex-wrap gap-2">
+      <Link href={facultySubmissionListHref({...query,order:"NEWEST",page:1})}
+        aria-current={query.order==="NEWEST"?"page":undefined}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Newest first</Link>
+      <Link href={facultySubmissionListHref({...query,order:"OLDEST",page:1})}
+        aria-current={query.order==="OLDEST"?"page":undefined}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Oldest first</Link>
+    </nav>
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">
         {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
-      <Link href={csvHref} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
-        Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
-      </Link>
+      <div className="min-w-0 space-y-1">
+        <Link href={csvHref} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
+        </Link>
+        <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>
+      </div>
     </div>
-    {data.items.length===0?<EmptyState title="No matching submissions"
-      description="No persisted submissions match this grading/timing filter. Missing responses have no grade and appear only in the full Section report." />
+    {data.items.length===0?<EmptyState title={empty.title}
+      description={empty.description} />
       :<ol className="grid gap-3">
         {data.items.map(row=>{
           const late=report.assignment.dueAt!==null&&
@@ -89,15 +123,15 @@ export default async function FacultyAssignmentSubmissionsPage({
           </li>;
         })}
       </ol>}
-    <nav aria-label="Submission pages" className="flex justify-between gap-3">
+    <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
       <span className="text-sm text-muted-foreground">
         Page {data.page} of {data.totalPages}
       </span>
       <div className="flex gap-3">
         {data.page>1?<Link href={facultySubmissionListHref({...query,page:data.page-1})}
-          className="text-sm font-semibold text-primary-text">Previous</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>:null}
         {data.page<data.totalPages?<Link href={facultySubmissionListHref({...query,page:data.page+1})}
-          className="text-sm font-semibold text-primary-text">Next</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>:null}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

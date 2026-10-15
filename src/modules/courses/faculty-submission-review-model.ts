@@ -28,3 +28,33 @@ export function facultySubmissionReviewResponse(data: {
     learnerDisplayName:row.learnerDisplayName,learnerEmail:row.learnerEmail,
   }))});
 }
+
+/** A corrupted cross-Section review response must not enter the Faculty UI. */
+export function facultySubmissionReviewMatchesScope(
+ payload:FacultySubmissionReviewResponse, assignmentId:string,deliveryId:string,
+):boolean {
+ return payload.items.every(row=>row.assignmentId===assignmentId&&row.deliveryId===deliveryId);
+}
+
+export function facultySubmissionReviewEmptyLabel(filter:"ALL"|"UNGRADED"|"GRADED"|"LATE"):string {
+ switch(filter){
+ case "ALL":return "No learner submissions have been received for this assignment.";
+ case "UNGRADED":return "No submissions are waiting for grading.";
+ case "GRADED":return "No submissions have been graded yet.";
+ case "LATE":return "No submissions matched the late-submission filter.";
+ }
+}
+
+/** A closed drawer cannot accept results from a previously dispatched request. */
+export function facultyReviewRequestCurrent(request:number, latest:number):boolean {
+ return Number.isSafeInteger(request)&&request===latest;
+}
+
+/** Never expose scope/tenant details through a failed read. */
+export function facultySubmissionReviewFailure(status:number):string|null {
+ if(status===401)return "Your session has expired. Sign in again before reviewing submissions.";
+ if(status===403||status===404)return "These submissions are no longer available to this teaching Section.";
+ if(status===429)return "Too many review requests. Retry after a short interval.";
+ if(status>=500)return "The review service is temporarily unavailable. Retry later.";
+ return null;
+}

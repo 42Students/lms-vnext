@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
+import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive, facultyAssessmentEditReceiptMatches, facultyAssessmentArchiveReceiptMatches } from "@/modules/courses/faculty-assessment-editor-model";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -108,16 +109,18 @@ export function FacultyAssessmentEditor({
           description:
             description.trim() || null,
           dueAt: authoringDueInstant(dueAt),
-          ...(assessment.kind ===
-          "ASSIGNMENT"
-            ? { maxPoints: number }
-            : { maxAttempts: number }),
+          ...facultyAssessmentLimitPatch(assessment.kind,assessment.status,number),
         }),
       });
       if (!response.ok) {
         setError(
           await courseApiError(response),
         );
+        return;
+      }
+      const receipt:unknown=await response.json().catch(()=>null);
+      if(!facultyAssessmentEditReceiptMatches(assessment.kind,assessment.id,assessment.status,cleanTitle,receipt)){
+        setError("The save result could not be verified. Reload this Section before retrying.");
         return;
       }
       setOpen(false);
@@ -134,10 +137,10 @@ export function FacultyAssessmentEditor({
   }
 
   async function deleteAssessment() {
-    if (saving || deleting) return;
+    if (saving || deleting || !facultyAssessmentCanArchive(assessment.kind,assessment.status)) return;
     if (
       !window.confirm(
-        `Delete this ${assessment.kind.toLowerCase()} from active Course surfaces? Existing historical attempts/submissions will be preserved.`,
+        `Archive this ${assessment.kind.toLowerCase()} from active Course surfaces? Existing historical attempts/submissions will be preserved.`,
       )
     ) {
       return;
@@ -165,6 +168,11 @@ export function FacultyAssessmentEditor({
         setError(
           await courseApiError(response),
         );
+        return;
+      }
+      const receipt:unknown=await response.json().catch(()=>null);
+      if(!facultyAssessmentArchiveReceiptMatches(assessment.kind,assessment.id,assessment.title,receipt)){
+        setError("The archive result could not be verified. Reload this Section before trying again.");
         return;
       }
       setOpen(false);
@@ -211,15 +219,15 @@ export function FacultyAssessmentEditor({
         }
         footer={
           <>
-            <Button
+            {facultyAssessmentCanArchive(assessment.kind,assessment.status) ? <Button
               variant="danger"
               disabled={saving || deleting}
               onClick={deleteAssessment}
             >
               {deleting
                 ? "Deleting…"
-                : "Delete"}
-            </Button>
+                : "Archive"}
+            </Button> : null}
             <Button
               type="submit"
               form={`faculty-assessment-edit-${assessment.id}`}
@@ -291,11 +299,14 @@ export function FacultyAssessmentEditor({
                   : 20
               }
               value={points}
+              disabled={!facultyAssessmentLimitEditable(assessment.kind,assessment.status)}
               onChange={(event) =>
                 setPoints(event.target.value)
               }
               required
             />
+            {!facultyAssessmentLimitEditable(assessment.kind,assessment.status) ?
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">The published Quiz attempt limit is locked; you can still edit its title, description and due date.</span> : null}
           </label>
 
           {error ? (
