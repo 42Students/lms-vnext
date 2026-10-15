@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
+import { facultyMoveContentId } from "@/modules/courses/faculty-content-order-ui-model";
 
 type Item = {
   id: string;
@@ -39,21 +40,7 @@ function FacultyContentOrderEditorInner({
   );
 
   function move(index: number, delta: number) {
-    setOrder((current) => {
-      const nextIndex = index + delta;
-      if (
-        nextIndex < 0 ||
-        nextIndex >= current.length
-      ) {
-        return current;
-      }
-      const next = [...current];
-      [next[index], next[nextIndex]] = [
-        next[nextIndex]!,
-        next[index]!,
-      ];
-      return next;
-    });
+    setOrder(current => facultyMoveContentId(current,index,delta));
   }
 
   function save() {
