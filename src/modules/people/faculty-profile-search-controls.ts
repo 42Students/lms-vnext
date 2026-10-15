@@ -7,3 +7,8 @@ export function facultyProfileActiveSearch(query:string,recordCount:number,minim
 export function facultyProfileCanReorderVisible(total:number,visible:number):boolean{
  return total===visible;
 }
+
+/** Immediately reveal the newly added draft by resetting a narrower search. */
+export function facultyProfileSearchAfterInsertion(_previous:string):string{
+ return "";
+}
