@@ -350,4 +350,15 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(foreign.items).toEqual([]);
   });
 
+  it("lessons courseStatus narrows persisted tenant-owned parent rows",async()=>{
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,courseStatus:"ACTIVE"}),
+      listCollegeLessons(own,{q:name,courseStatus:"ARCHIVED"}),
+      listCollegeLessons(otherCollege,{q:name,courseStatus:"ACTIVE"}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

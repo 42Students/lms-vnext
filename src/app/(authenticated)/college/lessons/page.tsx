@@ -29,6 +29,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       programStatus:first(params.programStatus),
       cohortStatus:first(params.cohortStatus),
       periodStatus:first(params.periodStatus),
+      courseStatus:first(params.courseStatus),
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );

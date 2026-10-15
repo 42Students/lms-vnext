@@ -1266,3 +1266,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **Chat-3 College Admin Lessons PARTIAL:** Parent batch lifecycle is filtered against registered, college-fenced cohorts.status before pagination and CSV export. Unit and isolated PostgreSQL regression source authored; execution, browser and exact legacy parity still open.
 
 **College Admin Lessons PARTIAL:** Academic period lifecycle uses a registered same-college parent lifecycle column (academicPeriods.status) before paging and CSV. Unit and isolated-PostgreSQL tests authored; runtime/browser/oracle evidence remains open.
+
+**College Admin Lessons PARTIAL:** Parent course lifecycle uses a registered same-college parent lifecycle column (courses.status) before paging and CSV. Unit and isolated-PostgreSQL tests authored; runtime/browser/oracle evidence remains open.
