@@ -2005,3 +2005,39 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 2026-10-15 / Batch program filter — PARTIAL:** A strictly bounded program query now filters only the already-authorized college cohort names; the selector comes from that college's persisted programs. No academic classifications or placement eligibility are inferred; full legacy/browsers remain open.
 
 **Chat-2 2026-10-15 / Batch department filter — PARTIAL:** Added independent URL-validated department selection over authorized cohorts; program, lifecycle, search and name-sort filters compose without mutating the source roster. Browser/large-list legacy parity is still open.
+
+**Chat-2 2026-10-15 / Batch deadline filter — PARTIAL:** Eligible invited, unfinished batches can be filtered by exact upcoming seven-day, past-due or not-recorded deadline; unregistered lifecycle storage explicitly disables the filter. This does not infer invitations, reminder delivery, or timezone/date-only policy.
+
+**Chat-2 2026-10-15 / Deadline sort — PARTIAL:** Batch directory sorting now orders recorded deadline timestamps asc/desc with unknown deadlines last and deterministic secondary name/ID order. Missing dates are not replaced with invented ones; browser/legacy acceptance remains open.
+
+**Chat-2 2026-10-15 / Batch directory paging — PARTIAL:** Validated 12/24/48-item page sizes, nonnegative bounded page indexes, preserved URL filter navigation and out-of-range recovery over the already-authorized cohort snapshot. It remains a bounded UI slice, not database-level pagination; larger-cohort performance and browser acceptance remain open.
+
+**Chat-2 2026-10-15 / Batch deadline presentation — PARTIAL:** Each cohort card now displays a real registered lifecycle deadline formatted in IST, an explicit no-deadline status, or unavailable when lifecycle storage cannot be read. No reminder, eligibility or consent is inferred.
+
+**Chat-2 2026-10-15 / Batch next-action navigation — PARTIAL:** Per-batch primary links now use actual planning/invited/finished lifecycle facts to label the appropriate follow-up; all navigate to the existing authorized batch workspace. Unknown lifecycle state remains Review cohort, never an implied sent invitation.
+
+**Chat-2 2026-10-15 / Drive Day explicit no-show filter — PARTIAL:** TPO-only live rounds can be filtered to those with persisted explicit ABSENT/no-show evidence, without treating WAITING or unknown attendance as absence. The first-20-round source cap is preserved and disclosed; browser acceptance remains open.
+
+**Chat-2 2026-10-15 / Drive Day pending attendance focus — PARTIAL:** A separate filter highlights live rounds with positively recorded pending attendance; unknown and absent are separate categories. Filtered counts represent only the server's explicitly capped live-round snapshot, not all historical rounds.
+
+**Chat-2 2026-10-15 / Drive Day attention sort — PARTIAL:** The TPO live, college-scoped 20-round snapshot offers validated original schedule order or descending pending/no-show counts, with deterministic name/ID ties and no client-mutated source data. Browser and real-PostgreSQL parity remain open.
+
+**Chat-2 global Requests / 2026-10-15 — PARTIAL:** `/tpo/requests` now displays a dedicated TPO-only, college-authorized pending decision inbox with status/search/page controls and existing confirmed same-origin transactional Approve/Reject actions. The writer remains the already-established request endpoint; no outbound sends. Missing legacy company-level change requests, browser/PG tests and large-list SQL pagination still block complete parity.
+
+**Chat-2 request-kind view — PARTIAL:** The global queue filters persisted application withdrawal, round reschedule, and offer-extension requests before pagination, with a strict URL allowlist. This still excludes unmigrated company request types.
+
+**Chat-2 global Requests sort — PARTIAL:** The authorized request result is now sorted oldest/newest before pagination with immutable deterministic ID ties; no browser/runtime certification claimed.
+
+**Chat-2 aged Requests — PARTIAL:** Global queue supports validated requests older than 7 × 24 hours, evaluated from the server clock before pagination; this is a triage filter, not a promised SLA, expiry or fabricated deadline.
+
+**Chat-2 Requests status tabs — PARTIAL:** Status controls now include authoritative college-wide persisted status totals independent of the current page, with no inferred zero for unavailable external request categories. Full browser parity remains open.
+
+**Chat-2 Requests elapsed age — PARTIAL:** Each visible request displays a deterministic hours/days age from one server render clock, explicitly not a business SLA or overdue policy. Original requested timestamp remains visible in IST.
+
+**Chat-2 request context navigation — PARTIAL:** Each global request now deep-links to the persisted round, offer/joining workspace or drive according to its recorded type and target IDs. These links confer no extra permissions; missing targets safely fall back to the drive.
+
+**Chat-2 global Requests CSV — PARTIAL:** GET `/api/placements/tpo/requests/export` reuses live scoped TPO authorization and URL filters; exports only the current bounded 25/50/100-row page, no request reason or decision note, with CSV formula neutralization and no-store headers. Full legacy/all-results export, real PG/browser execution and privacy certification remain open.
+
+**Chat-2 global Requests navigation — PARTIAL:** The TPO More/Work Requests destination now leads to the functional global pending decision inbox rather than the Students-specific list. The existing Students Requests tab remains available; full legacy navigation/browser checks are open.
+
+**Chat-2 TPO Home Requests attention — PARTIAL:** TPO Home now shows a college-scoped SQL COUNT of persisted pending learner requests and prioritizes the decision inbox when the existing job queue has no next-up task. The count service independently verifies a currently active persisted TPO membership via the existing actor guard; no private request payload is loaded for the dashboard. Full home legacy/DB/browser parity remains open.
