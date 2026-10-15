@@ -199,6 +199,9 @@ const expectedOwnActors = {
   "placements.recruiter.result.stage": [
     "recruiter",
   ],
+  "placements.recruiter.note": [
+    "recruiter",
+  ],
   "activity.read": [
     "superadmin",
     "collegeAdmin",
@@ -336,6 +339,12 @@ describe("platform permission matrix", () => {
         "placements.recruiter.result.stage",
         otherResource,
       ),
+    ).toBe(false);
+    expect(
+      can(contexts.recruiter, "placements.recruiter.note", ownResource),
+    ).toBe(true);
+    expect(
+      can(contexts.recruiter, "placements.recruiter.note", otherResource),
     ).toBe(false);
   });
 
