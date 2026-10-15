@@ -7,6 +7,7 @@ import {aiGradingSelectionSchema} from "@/modules/courses/faculty-ai-grading-mod
 import {getFacultyAiGradingReview} from "@/modules/courses/faculty-ai-grading-service";
 import {facultyAiGradingHref,facultyAiGradingReportHref} from "@/modules/courses/faculty-ai-grading-links";
 import {FacultyAiGradingWorkbench} from "@/components/courses/faculty-ai-grading-workbench";
+import {disabledAiGradingProvider} from "@/modules/courses/faculty-ai-grading-provider";
 export const dynamic="force-dynamic";
 type Params={assignmentId?:string|string[];deliveryId?:string|string[];submissionId?:string|string[];page?:string|string[]};
 function onlyOne(value:string|string[]|undefined):string|undefined{
@@ -60,6 +61,7 @@ export default async function FacultyAiGradingPage({searchParams}:{searchParams:
   </section>
   {data.selected?<FacultyAiGradingWorkbench key={data.selected.id+"-"+data.selected.version}
    selection={{assignmentId:data.assignment.id,deliveryId:data.assignment.deliveryId,submissionId:data.selected.id,page:data.page}}
+   providerEnabled={disabledAiGradingProvider.enabled}
    maxPoints={data.assignment.maxPoints} submission={data.selected}/>:null}
  </div>;
 }
