@@ -61,12 +61,13 @@ export function browseLearnerApplications<T extends LearnerApplicationBrowseItem
   items: readonly T[],
   filters: LearnerApplicationBrowseFilters,
 ): T[] {
-  const needle = filters.search.trim().toLocaleLowerCase();
+  const normalize=(text:string)=>text.trim().replace(/\s+/gu," ").toLocaleLowerCase("en");
+  const needle = normalize(filters.search);
   return items.filter((item) => {
     if (filters.view === "progress" && learnerApplicationIsComplete(item)) return false;
     if (filters.view === "completed" && !learnerApplicationIsComplete(item)) return false;
     if (filters.stage !== "all" && learnerApplicationStage(item) !== filters.stage) return false;
-    return !needle || (item.companyName + " " + item.jobTitle).toLocaleLowerCase().includes(needle);
+    return !needle || normalize(item.companyName + " " + item.jobTitle).includes(needle);
   }).sort((a,b) => {
     if (filters.sort === "company") {
       return companyNameCollator.compare(a.companyName.trim(),b.companyName.trim()) ||
