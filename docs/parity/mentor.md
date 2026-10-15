@@ -1263,3 +1263,8 @@ The Mentor Resources tab now distinguishes valid required external links, valid 
 ## 2026-10-15 chat-11 — service-integrated Mentor workspace evidence (PARTIAL)
 
 The existing scope-checked getProjectWorkspaceView service now derives Sprint task status totals, active Team role counts and latest recorded delivery version from the already loaded registered rows in a pure shared model. Mentor and other account renderers consume in-request facts without duplicate database reads or invented workload metrics. Source-authored unit verification covers composition; isolated PostgreSQL, TypeScript, lint, Vitest and responsive browser gates remain unexecuted.
+
+
+## 2026-10-15 chat-11 — real PostgreSQL Mentor workspace evidence fixture (PARTIAL)
+
+The existing seeded disposable-PostgreSQL task-create integration suite now asserts tenant-scoped Team membership counts, Sprint task totals before/after a persisted Mentor task creation, absence of fabricated delivery history and a foreign-college denial through the actual shared workspace service. This test is source-authored but has not been executed in this connector environment; all browser and CI acceptance gates remain open.
