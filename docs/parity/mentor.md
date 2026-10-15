@@ -1503,3 +1503,4 @@ The class-team workspace creator now synchronously prevents duplicate creation r
 
 - PR-S1-01: Final release shipment no longer marks the project COMPLETED; the approved mentor closeout transaction is the single completion path. Unit coverage added; verify against disposable PostgreSQL before closure.
 - PR-S1-02: New learner delivery draft refuses creation when the latest project submission is APPROVED; project row lock serializes this decision with version creation. Source and policy tests added; database acceptance outstanding.
+- PR-S2-02 / PR-S2-14 (task write): PATCH only permits TODO/IN_PROGRESS/BLOCKED, refuses review-owned states, requires expectedUpdatedAt, locks/rechecks records in transaction, and writes the task-status activity event. Source and policy tests added; affected clients and database gates still need execution.
