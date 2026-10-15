@@ -4,10 +4,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manage-service";
 import {tpoCompanyAuditKindSchema,tpoCompanyAuditHref,tpoCompanyAuditExportHref} from "@/modules/placements/company-share/audit-kind-model";
+import {companyShareAuditPageSchema,companyShareAuditPageHref} from "@/modules/placements/company-share/audit-page-model";
 export const dynamic="force-dynamic";
 export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  params:Promise<{jobId:string}>;
- searchParams:Promise<{kind?:string|string[]}>;
+ searchParams:Promise<{kind?:string|string[];page?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -16,7 +17,10 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  const rawKind=Array.isArray(search.kind)?search.kind[0]:search.kind;
  const parsed=tpoCompanyAuditKindSchema.safeParse(rawKind??"ALL");
  const kind=parsed.success?parsed.data:"ALL";
- const result=await listTpoCompanyShareAudit(context,jobId,kind);
+ const rawPage=Array.isArray(search.page)?search.page[0]:search.page;
+ const parsedPage=companyShareAuditPageSchema.safeParse(rawPage??1);
+ const auditPage=parsedPage.success?parsedPage.data:1;
+ const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
  return <div className="space-y-5">
   <Link href={back} className="text-sm font-semibold text-primary-text underline">
@@ -50,8 +54,12 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
     </tr>)}</tbody>
    </table>
   </div>}
-  {result.limited?<p role="status" className="text-sm text-body">
-   Only the 100 most recent access events are shown.
-  </p>:null}
+  {result.ready?<nav aria-label="Access history pages" className="flex flex-wrap gap-4 text-sm">
+   <span>Audit page {result.page}, up to 25 events per page</span>
+   {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
+    className="font-semibold text-primary-text underline">Previous</Link>:null}
+   {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
+    className="font-semibold text-primary-text underline">Next</Link>:null}
+  </nav>:null}
  </div>;
 }
