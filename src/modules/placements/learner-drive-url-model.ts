@@ -38,13 +38,15 @@ export function learnerDriveQueryWithChanges(
   const query=new URLSearchParams();
   const prev=new URLSearchParams(current);
   for(const key of allowed){
-    const value=prev.get(key);
-    if(value)query.set(key,value);
+    const values=prev.getAll(key);
+    if(values.length===1 && values[0] &&
+       learnerDriveUrlSchema.safeParse({ [key]: values[0] }).success) query.set(key,values[0]);
   }
   for(const [key,value] of Object.entries(changes)){
     if(!allowed.includes(key))continue;
     if(!value||value==="all")query.delete(key);
-    else query.set(key,value);
+    else if(learnerDriveUrlSchema.safeParse({ [key]: value }).success)query.set(key,value);
+    else query.delete(key);
   }
   if(!Object.prototype.hasOwnProperty.call(changes,"page"))query.delete("page");
   return query.toString();
