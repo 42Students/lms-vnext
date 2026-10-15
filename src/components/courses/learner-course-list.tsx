@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
 import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -155,6 +156,9 @@ export function LearnerCourseList({
       />
     );
   }
+
+  const safeCardProgress = (row: LearnerCourseListRow) =>
+    learnerCourseCardProgress(row.summary.overallPercent,row.summary.itemsTotal);
 
   const selectedPeriod =
     periods.find((period) => period.id === selectedPeriodId) ?? periods[0];
@@ -409,20 +413,20 @@ export function LearnerCourseList({
                             Progress
                           </span>
                           <span className="text-xs font-bold text-foreground">
-                            {row.summary.overallPercent === null ? "Not available" : row.summary.overallPercent+"%"}
+                            {safeCardProgress(row) === null ? "Not available" : safeCardProgress(row)+"%"}
                           </span>
                         </div>
-                        {row.summary.overallPercent !== null ? <div
+                        {safeCardProgress(row) !== null ? <div
                           className="h-2 overflow-hidden rounded-full bg-muted"
                           role="progressbar"
                           aria-label="Course progress"
                           aria-valuemin={0}
                           aria-valuemax={100}
-                          aria-valuenow={row.summary.overallPercent}
+                          aria-valuenow={safeCardProgress(row)!}
                         >
                           <div
                             className="h-full rounded-full bg-primary"
-                            style={{ width: `${row.summary.overallPercent}%` }}
+                            style={{ width: `${safeCardProgress(row)}%` }}
                           />
                         </div> : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
                         {!row.readOnly && row.overdueAssignments ? (
