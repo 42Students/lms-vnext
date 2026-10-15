@@ -926,3 +926,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: company website-completeness filter — PARTIAL.** Employer directory distinguishes recorded nonblank website URL from missing/whitespace-only metadata with scoped SQL and strict Zod. Count, pagination and page CSV use the same filter. This is not network verification or trust certification. Tests authored, not executed.
+
+
+**2026-10-15 chat-6: recently changed company relationships — PARTIAL.** Super Admin Companies now supports 7/30/90-day server-side `updated_at` windows. The time window is calculated once per scoped database request and applied to both count and page; current query and CSV link retain selection. No event-history claim or guessed change types. Unit and disposable-PG tests authored, not executed.

@@ -12,6 +12,7 @@ export const adminCompaniesQuerySchema = z.strictObject({
   searchField: z.enum(["NAME","DOMAIN"]).default("NAME"),
   owner: z.enum(["ALL","ASSIGNED","UNASSIGNED"]).default("ALL"),
   website: z.enum(["ALL","HAS_WEBSITE","MISSING_WEBSITE"]).default("ALL"),
+  changedWithin: z.enum(["ALL","7","30","90"]).default("ALL"),
 });
 export type AdminCompanyRow = {
   relationshipId: string; companyId: string; name: string; collegeId: string;
