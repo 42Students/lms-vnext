@@ -21,6 +21,7 @@ export const trackerAdminListSchema = z.object({
   status: z.enum(BUG_STATUSES).optional(),
   severity: z.enum(BUG_SEVERITIES).optional(),
   accountRole: z.enum(BUG_ACCOUNT_ROLES).optional(),
+  resolution: z.enum(["UNRESOLVED",...BUG_RESOLUTIONS] as const).optional(),
   environment: z.enum(BUG_ENVIRONMENTS).optional(),
   q: z.string().trim().min(1).max(200).optional(),
   sort: z.enum(["newest", "oldest"]).default("newest"),
