@@ -9,6 +9,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {randomUUID} from "node:crypto";
+import {projectTeamAuditInput} from "./mentor-team-audit-model";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -659,7 +661,7 @@ export async function addProjectMember(
         .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
       if (input.role === "LEARNER" && project?.teamGroupId)
         throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
-      return tx.insert(projectMembers).values({
+      const [created]=await tx.insert(projectMembers).values({
         projectId: scope.project.id,
         membershipId: input.membershipId,
         role: input.role,
@@ -667,6 +669,11 @@ export async function addProjectMember(
         roleLabel: input.roleLabel ?? null,
         createdByUserId: context.user.id,
       }).returning();
+      if(!created)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ADDED",{
+        projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+      },created));
+      return [created];
     });
     return member;
   } catch (error) {
