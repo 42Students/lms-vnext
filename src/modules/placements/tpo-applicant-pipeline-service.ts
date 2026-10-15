@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
   placementJobs, users } from "@/db/schema";
@@ -7,7 +7,8 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
-import { tpoApplicantPipelinePage, tpoApplicantPipelineParams } from "./tpo-applicant-pipeline-model";
+import { requireTpoJobActor } from "./tpo-job-write-base";
+import { tpoApplicantPipelinePage, tpoApplicantPipelineParams,tpoApplicantSubmittedSince } from "./tpo-applicant-pipeline-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoApplicantPipeline(context: RequestContext, raw: unknown) {
   const membership = context.membership;
@@ -21,13 +22,19 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   const input=tpoApplicantPipelineParams.parse(raw);
   await requirePlacementManageScope(context,collegeId);
   const db=getDb();
+  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
   const [job]=await db.select({id:placementJobs.id,title:placementJobs.title,status:placementJobs.status})
     .from(placementJobs)
     .where(and(eq(placementJobs.id,input.jobId),eq(placementJobs.collegeId,collegeId),
       isNull(placementJobs.archivedAt))).limit(1);
   if(!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const projection=await db.transaction(async tx=>{
-   const scope=and(eq(placementApplications.jobId,job.id),input.search?or(
+   const since=tpoApplicantSubmittedSince(input.submittedWithin,new Date());
+   const scope=and(eq(placementApplications.jobId,job.id),
+    since?gte(placementApplications.submittedAt,since):undefined,
+    input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
+    input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
+    input.search?or(
     ilike(users.displayName,tpoApplicantExportSearchPattern(input.search)),
     ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(input.search))):undefined);
    const stage=sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
@@ -74,12 +81,14 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       eq(placementApplicationScreenings.applicationId,placementApplications.id))
     .where(and(scope,input.stage==="ALL"?undefined:input.stage==="SUBMITTED"?
      eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
-    .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
+    .orderBy(input.sort==="OLDEST"?asc(placementApplications.submittedAt):
+      input.sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
+      placementApplications.id)
     .limit(pagination.pageSize).offset(pagination.offset);
    return {counts:totals,...pagination,rows:records.map(row=>({
     ...row,submittedAt:row.submittedAt.toISOString(),
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,...projection};
 }

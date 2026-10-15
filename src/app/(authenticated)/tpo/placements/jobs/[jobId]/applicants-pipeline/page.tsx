@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { applicantStage } from "@/modules/placements/tpo-applicant-pipeline-model";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {TpoApplicantReviewDrawer} from "@/components/placements/tpo-applicant-review-drawer";
-type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[]}>};
+type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -15,15 +15,19 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  const {jobId}=await params;const query=await searchParams;
  const data=await getTpoApplicantPipeline(context,{jobId,...(first(query.stage)?{stage:first(query.stage)}:{}),
    ...(first(query.search)?{search:first(query.search)}:{}),
+   ...(first(query.channel)?{channel:first(query.channel)}:{}),
+   ...(first(query.eligibility)?{eligibility:first(query.eligibility)}:{}),
+   ...(first(query.sort)?{sort:first(query.sort)}:{}),
+   ...(first(query.submittedWithin)?{submittedWithin:first(query.submittedWithin)}:{}),
    ...(first(query.page)?{page:first(query.page)}:{})});
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  function pageHref(page:number){return {pathname:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline",
-  query:{stage:data.stage,search:data.search,page}};}
+  query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin,page}};}
  return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Drive applicants" title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
   <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-primary-text hover:underline">← Drive</Link>
-  <Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search}}}
+  <Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}
    className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
    Preview capped applications CSV
   </Link>
@@ -43,6 +47,25 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    <label className="min-w-40 flex-1 text-sm font-semibold text-body">Student or role
     <input name="search" defaultValue={data.search} maxLength={100}
      className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/></label>
+   <label className="min-w-32 flex-1 text-sm font-semibold text-body">Application channel
+    <select name="channel" defaultValue={data.channel} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="ALL">All channels</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
+    </select></label>
+   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Eligibility evidence
+    <select name="eligibility" defaultValue={data.eligibility} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="ALL">All evidence states</option><option value="ELIGIBLE">Eligible</option>
+     <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · evidence missing</option>
+    </select></label>
+   <label className="min-w-32 flex-1 text-sm font-semibold text-body">Order by
+    <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
+     <option value="LEARNER_NAME">Learner name</option>
+    </select></label>
+   <label className="min-w-36 flex-1 text-sm font-semibold text-body">Submitted window
+    <select name="submittedWithin" defaultValue={data.submittedWithin} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
+     <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
+    </select></label>
    <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
