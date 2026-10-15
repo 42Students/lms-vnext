@@ -45,9 +45,7 @@ export default async function LearnerQuizzesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="All Quizzes"
-        description="Every published quiz across your active Courses, with attempt and result status."
       />
       <LearnerAssessmentOverview
         courses={overview.courses}

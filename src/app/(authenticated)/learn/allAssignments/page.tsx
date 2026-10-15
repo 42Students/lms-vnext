@@ -63,9 +63,7 @@ export default async function LearnerAssignmentsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Learner"
         title="All Assignments"
-        description="Every published assignment across your active Courses, with submission and grade status."
       />
       <LearnerAssessmentOverview
         fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
