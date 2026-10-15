@@ -8,13 +8,14 @@ import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-s
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
 export const dynamic="force-dynamic";
-type Search={attention?:string|string[];status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
+type Search={projectId?:string|string[];attention?:string|string[];status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
   const raw=await searchParams;
   const parsed=mentorCalendarFiltersSchema.safeParse({
+    projectId:first(raw.projectId)??undefined,
     attention:first(raw.attention)??undefined,
     status:first(raw.status)??undefined,type:first(raw.type)??undefined,
     projectState:first(raw.projectState)??undefined,
@@ -47,6 +48,15 @@ export default async function MentorCalendarPage({searchParams}:{
           <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
           <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
           <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
+        <select name="projectId" defaultValue={parsed.data.projectId??""}
+          className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+          <option value="">All projects with meetings</option>
+          {[...new Map(meetings.map(row=>[row.projectId,row.projectTitle])).entries()]
+            .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
+            .map(([id,title])=><option key={id} value={id}>{title}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
@@ -86,7 +96,7 @@ export default async function MentorCalendarPage({searchParams}:{
     </form>
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <Link href={"/api/mentor/calendar/export?"+new URLSearchParams({
-        attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
+        projectId:parsed.data.projectId??"",attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
         projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
       }).toString()} download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">

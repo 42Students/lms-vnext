@@ -1,0 +1,5 @@
+import {it,expect} from "vitest";import{mentorCalendarFiltersSchema as schema,mentorCalendarFilterHref as href,filterMentorCalendar as filter}from"@/modules/projects/mentor-calendar-filter-model";
+const id="10000000-0000-4000-8000-000000000001";const other="10000000-0000-4000-8000-000000000002";
+const item={id:"m",projectId:id,projectTitle:"Mine",projectStatus:"ACTIVE",title:"Meeting",status:"REQUESTED"as const,startsAt:"2026-10-16T09:00:00Z",endsAt:"2026-10-16T10:00:00Z",timeZone:"Asia/Kolkata",meetingUrl:null,linkedSprintTitle:null};
+it("filters only registered same-project meeting rows",()=>expect(filter([item,{...item,id:"two",projectId:other}],schema.parse({projectId:id}),new Date("2026-10-15")).map(x=>x.id)).toEqual(["m"]));
+it("uses shaped UUID selector, retains in href, rejects invalid shape",()=>{const q=schema.parse({projectId:id});expect(href(q)).toContain("projectId="+id);expect(schema.safeParse({projectId:"elsewhere"}).success).toBe(false);expect(schema.parse({projectId:""}).projectId).toBeUndefined()});
