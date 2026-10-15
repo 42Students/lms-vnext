@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   ADMIN_MODULE_LABELS,
   adminFeaturesHref,
+  adminFeatureExportHref,
   describeModuleDecision,
   collegeModuleCardSummary,
   type AdminModuleDecision,
@@ -185,6 +186,13 @@ export default async function SuperAdminFeaturesPage({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             College module matrix
           </h2>
+          <Link href={adminFeatureExportHref({
+            q:result.q,page:result.page,sort:result.sort,module:result.moduleFilter??undefined,
+            storedState:result.stateFilter,locks:result.lockFilter,presence:result.presenceFilter,
+            recent:result.recentFilter,searchField:result.searchField,
+          })} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            Export current page (CSV)
+          </Link>
           <p className="m-0 text-sm text-muted-foreground">
             {result.total === 0
               ? "No matching active colleges"
@@ -355,7 +363,7 @@ export default async function SuperAdminFeaturesPage({
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner's effective access. Source: module_access_rules and the existing
+        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner's effective access. The CSV includes only the current permissioned page (up to 20 colleges) and excludes contacts. Source: module_access_rules and the existing
         optional-module resolver. A persisted global,
         organization or college rule can override the
         source defaults. This matrix shows college-level

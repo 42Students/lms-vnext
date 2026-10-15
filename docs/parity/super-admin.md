@@ -1010,3 +1010,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 feature matrix stale-page recovery (PARTIAL):** Search/filter now counts first, clamps stale page bookmarks to its last available page and then fetches the matching scoped row slice instead of presenting a false empty result. Request-level count/query racing changes remain a PostgreSQL/browser acceptance issue; pure boundary tests authored.
+
+
+**2026-10-15 chat-6 matrix CSV page export (PARTIAL):** New authorized Super Admin GET exports exactly the strict-filtered and currently permissioned page (max 20 colleges), effective source-labelled module decisions, formula-neutralized strings and row/total headers with private no-store caching. No recruiter/learner contacts or global raw rule dump. Unit tests authored, PG/browser/download evidence pending.
