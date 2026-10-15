@@ -1,0 +1,25 @@
+"use client";
+import Link from "next/link";
+import {usePathname} from "next/navigation";
+import {superAdminLegacyGroupForPath,superAdminLegacyTabActive} from
+  "@/modules/people/super-admin-legacy-tabs-model";
+
+/** One route-aware strip for the active Super Admin group; never a second strip. */
+export function SuperAdminLegacyGroupTabs(){
+  const pathname=usePathname();
+  const group=superAdminLegacyGroupForPath(pathname);
+  if(!group)return null;
+  return <nav aria-label={group.title}
+    className="w-full min-w-0 overflow-x-auto border-b border-border bg-surface px-4 sm:px-6">
+    <h2 className="pt-3 text-base font-semibold text-foreground">{group.title}</h2>
+    <div className="flex min-w-max items-center gap-1 py-2 sm:gap-2">
+      {group.tabs.map(tab=><Link key={tab.href} href={tab.href}
+        aria-current={superAdminLegacyTabActive(pathname,tab.href)?"page":undefined}
+        className={superAdminLegacyTabActive(pathname,tab.href)
+          ?"rounded-md bg-primary-subtle px-3 py-2 text-sm font-semibold text-primary-text"
+          :"rounded-md px-3 py-2 text-sm font-medium text-body hover:bg-primary-subtle"}>
+        {tab.label}
+      </Link>)}
+    </div>
+  </nav>;
+}

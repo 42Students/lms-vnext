@@ -1,6 +1,6 @@
 import Link from "next/link";
 type SettingsKey="season"|"rules"|"job-types"|"after-college"|"prep-readiness"|"blocked-dates"|"see"|"team"|"trusted"|"branding"|"notifications"|"recruiters"|"templates"|"notices";
-const GROUPS=[
+export const TPO_SETTINGS_NAV_GROUPS=[
  {title:"Placement policy",items:[
   {id:"rules",label:"Placement rules",href:"/tpo/settings/rules"},
   {id:"job-types",label:"Job types",href:"/tpo/settings/job-types"},
@@ -18,11 +18,12 @@ const GROUPS=[
   {id:"notices",label:"Student notices",href:"/tpo/settings/notices"},
   {id:"see",label:"What companies see",href:"/tpo/settings/see"},
   {id:"branding",label:"Branding",href:"/tpo/settings/branding"},
+  {id:"more",label:"More",href:"/tpo/more"},
  ]},
 ] as const;
 export function TpoSettingsNav({active}:{active:SettingsKey}){
  return <nav aria-label="TPO placement settings sections" className="min-w-0 space-y-4">
-  {GROUPS.map(group=><section key={group.title} aria-label={group.title} className="space-y-2">
+  {TPO_SETTINGS_NAV_GROUPS.map(group=><section key={group.title} aria-label={group.title} className="space-y-2">
    <h2 className="text-sm font-semibold text-muted-foreground">{group.title}</h2>
    <div className="flex flex-wrap gap-2">{group.items.map(item=><Link key={item.id} href={item.href}
     aria-current={active===item.id?"page":undefined}

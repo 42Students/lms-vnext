@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
+import {
+  SUPER_ADMIN_LEGACY_GROUPS, superAdminLegacyGroupForPath,
+} from "@/modules/people/super-admin-legacy-tabs-model";
 import { getShellNavigation } from "@/components/shell/shell-model";
 
 const superAdmin: RequestContext = {
@@ -24,7 +27,6 @@ describe("Super Admin legacy label fixes that do not orphan pages (superAdminNav
     "People",
     "Placements",
     "Projects",
-    "Recruiter accounts",
   ])("sidebar has the exact legacy label %s", (label) => {
     expect(labels).toContain(label);
   });
@@ -40,6 +42,11 @@ describe("Super Admin legacy label fixes that do not orphan pages (superAdminNav
     expect(labels).not.toContain(label);
   });
 
+  it("keeps the exact legacy label Recruiter accounts as a Placements tab", () => {
+    expect(SUPER_ADMIN_LEGACY_GROUPS.find(g => g.title === "Placements")?.tabs)
+      .toContainEqual({ label: "Recruiter accounts", href: "/admin/recruiters" });
+  });
+
   it("page headings use the legacy titles", () => {
     expect(src("dashboard/page.tsx")).toContain('title="Overview"');
     expect(src("admin/tenants/page.tsx")).toContain('title="Tenant Setup"');
@@ -51,21 +58,25 @@ describe("Super Admin legacy label fixes that do not orphan pages (superAdminNav
   });
 
   it("keeps every pre-existing Super Admin destination linked (nothing orphaned)", () => {
-    const hrefs = getShellNavigation(superAdmin).map((i) => i.href);
+    const hrefs = [
+      ...getShellNavigation(superAdmin).map((i) => i.href),
+      ...SUPER_ADMIN_LEGACY_GROUPS.flatMap((g) => g.tabs.map((t) => t.href)),
+    ];
     for (const href of [
       "/admin/organizations",
       "/admin/colleges",
       "/admin/departments",
-      "/admin/academics",
       "/admin/lecture-halls",
       "/admin/attendance",
       "/admin/recruiters",
       "/admin/announcements",
-      "/admin/domains",
-      "/tracker/audit-findings",
       "/admin/placements/calendar",
     ]) {
       expect(hrefs).toContain(href);
+    }
+    // Owned by a group via its canonical tab (sidebar row replaced by a group row).
+    for (const href of ["/admin/domains", "/admin/academics"]) {
+      expect(superAdminLegacyGroupForPath(href), href).toBeDefined();
     }
   });
 });

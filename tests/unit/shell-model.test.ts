@@ -1,3 +1,4 @@
+import { SUPER_ADMIN_LEGACY_GROUPS } from "@/modules/people/super-admin-legacy-tabs-model";
 import { describe, expect, it } from "vitest";
 import type { MembershipRole } from "@/modules/identity/constants";
 import type { RequestContext } from "@/modules/identity/context";
@@ -69,20 +70,11 @@ describe("authenticated shell model", () => {
   it("gives SUPER_ADMIN the platform administration navigation", () => {
     const shellContext = context(null, ["SUPER_ADMIN"]);
 
-    expectInOrder(labels(shellContext), [
-      "Overview",
-      "Organizations",
-      "Colleges",
-      "Profile verification",
-      "Feature Controls",
-      "Departments",
-      "Academics",
-      "Courses & Content",
-      "Projects",
-      "Placements",
-      "People",
-      "Domains",
-      "Activity Log",
+    // chat-9 13-row legacy sidebar; Organizations/Colleges/Domains etc. live in group tabs.
+    expect(labels(shellContext)).toEqual([
+      "Overview", "Tenant Setup", "Feature Controls", "Module Access",
+      "Tenant Settings", "Activity Log", "Inbound mail", "Academic Setup",
+      "Courses & Content", "People", "Profile verification", "Placements", "Projects",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe("Super Admin");
   });
@@ -94,38 +86,25 @@ describe("authenticated shell model", () => {
 
     expectInOrder(superAdminHrefs, [
       "/admin/placements",
-      "/admin/placements/calendar",
-      "/admin/recruiters",
-      "/admin/announcements",
-      "/admin/inbound-mail",
+      "/admin/projects/templates",
     ]);
 
-    expect(
-      superAdminNavigation.find(
-        (item) => item.href === "/admin/placements/calendar",
-      ),
-    ).toMatchObject({
-      label: "Placement Interview Calendar",
-      href: "/admin/placements/calendar",
-      icon: "/assets/images/common/calender.svg",
+    // The interview calendar is now the Placements group's "Interviews" tab.
+    const placementsGroup = SUPER_ADMIN_LEGACY_GROUPS.find(g => g.title === "Placements");
+    expect(placementsGroup?.tabs).toContainEqual({
+      label: "Interviews", href: "/admin/placements/calendar",
+    });
+    expect(placementsGroup?.tabs).toContainEqual({
+      label: "Recruiter accounts", href: "/admin/recruiters",
+    });
+    expect(placementsGroup?.tabs).toContainEqual({
+      label: "Announcements", href: "/admin/announcements",
     });
 
     expect(superAdminHrefs).toContain("/admin/verification");
-    expect(superAdminHrefs).toContain("/tracker/audit-findings");
+    expect(superAdminHrefs).toContain("/admin/inbound-mail");
     expect(superAdminHrefs).not.toContain("/tpo/calendar");
     expect(superAdminHrefs).not.toContain("/college/placements/calendar");
-
-    const scopedSuperAdmin: RequestContext = {
-      ...superAdminContext,
-      adminScope: {
-        organizationId: "organization-1",
-        collegeId: "college-1",
-      },
-    };
-
-    expect(hrefs(scopedSuperAdmin)).toContain(
-      "/admin/placements/calendar",
-    );
 
     const tpoHrefs = hrefs(context(["TPO"]));
     expect(tpoHrefs).toContain("/tpo/calendar");
@@ -318,7 +297,7 @@ describe("authenticated shell model", () => {
       "/hr/home", "/hr/drives", "/hr/calendar", "/hr/messages", "/hr/company",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
-      "Employer Recruiter",
+      "Recruiter",
     );
   });
 
@@ -329,8 +308,8 @@ describe("authenticated shell model", () => {
       "Dashboard",
       "Courses",
       "Placement eligibility",
-      "Engage",
-      "Drives",
+      "Recruiter Leads",
+      "Placement Operations",
       "Students",
       "Calendar",
     ]);
@@ -521,19 +500,15 @@ describe("authenticated shell model", () => {
     expect(navHrefs).toContain("/teacher/courses");
   });
 
-  it("keeps exact dev legacy learner sidebar even with a Drive Day coordinator assignment", () => {
-    const navigation = getShellNavigation(
-      context(["LEARNER"]),
-      { projectsEnabled: true, placementsEnabled: false, driveDayEnabled: true },
-    );
-    expect(navigation.map(item => item.label)).toEqual([
+  it("does not add a non-legacy Drive Day row to the learner sidebar",()=>{
+    const navigation=getShellNavigation(context(["LEARNER"]),{
+      projectsEnabled:true,placementsEnabled:false,driveDayEnabled:true,
+    });
+    expect(navigation.map(item=>item.label)).toEqual([
       "Courses","Quizzes","Assignments","Class Schedule","Attendance",
       "Projects","Notifications","Profile",
     ]);
-    expect(navigation.map(item => item.href)).not.toContain("/tpo/drive-day");
-    // The Drive Day route and access policy remain intact; only the extra
-    // learner sidebar entry was absent from legacy-copy-A studentNavigationMenu.
+    expect(navigation.map(item=>item.href)).not.toContain("/tpo/drive-day");
   });
-
 
 });

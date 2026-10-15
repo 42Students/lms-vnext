@@ -1,4 +1,5 @@
 import { canReleaseAnotherHeldOffer } from "./offer-college-rules-policy";
+import { externalOfferAnnualCtcInr } from "./external-offer-policy";
 
 /**
  * P-S1-05: Legacy college held-offer cap with the higher-CTC uplift exception.
@@ -49,4 +50,34 @@ export function canShowLearnerSelfApply(input: {
     !input.deadlinePassed && input.heldOfferEligible &&
     (input.eligibilityStatus === "ELIGIBLE" ||
      input.eligibilityStatus === "ELIGIBLE_WITH_MISSING_EVIDENCE");
+}
+
+/**
+ * T-S1-04: only placement-cell verified, non-revoked outside offers count
+ * toward college-held offer caps. Unknown CTC still consumes a held slot;
+ * it cannot manufacture salary uplift.
+ */
+export function verifiedExternalHeldOffers(rows: readonly {
+ status: string;
+ reviewedByUserId: string | null;
+ reviewedAt: Date | null;
+ revokedAt: Date | null;
+ ctcLpa: string | null;
+}[]): HeldPlacementOffer[] {
+ return rows.filter(row => row.status === "VERIFIED" &&
+   row.reviewedByUserId !== null && row.reviewedAt !== null &&
+   row.revokedAt === null).map(row => {
+   const amount = externalOfferAnnualCtcInr({
+     status: "VERIFIED",
+     reviewedByUserId: row.reviewedByUserId,
+     reviewedAt: row.reviewedAt,
+     revokedAt: row.revokedAt,
+     ctcLpa: row.ctcLpa,
+   });
+   return {
+     kind: "OFFER", status: "ACCEPTED",
+     annualCtcInr: amount !== null &&
+       amount <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(amount) : null,
+   };
+ });
 }

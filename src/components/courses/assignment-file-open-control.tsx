@@ -54,6 +54,8 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
           headers: { "Content-Type": "application/json" }, body: JSON.stringify({ disposition: "attachment" }) },
       );
       if (!response.ok) throw new Error(await storageApiError(response));
+      // Event-handler only (async click); the purity rule misreads this closure as render.
+      // eslint-disable-next-line react-hooks/purity
       const grant = parseFileDownloadGrant(await response.json(), Date.now());
       if (grant.file.id !== fileId) throw new Error("The file permission did not match the requested file.");
       if (controller.signal.aborted) return;

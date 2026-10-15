@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {mentorTaskReviewTokenMatches} from "./mentor-task-review-token-model";
+import {maySubmitAssignedProjectTask} from "./task-assignee-policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { can } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -111,9 +112,12 @@ export async function submitProjectTask(
         .limit(1);
 
       if (!task) {
-        throw new ProjectsServiceError(
-          "PROJECT_TASK_NOT_FOUND",
-        );
+        throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
+      }
+      // PR-S2-03: only the persisted, explicitly assigned learner may submit.
+      // Null is an unassigned task, not a grant to every project member.
+      if (!maySubmitAssignedProjectTask(task.assigneeMembershipId, context.membership?.id ?? null)) {
+        throw new ProjectsServiceError("PROJECT_TASK_SUBMISSION_ACCESS_DENIED");
       }
 
       const [sprint] = await tx

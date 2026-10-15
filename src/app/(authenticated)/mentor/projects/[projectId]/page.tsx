@@ -106,13 +106,6 @@ export default async function MentorProjectPage({
           Recorded project activity →
         </Link>
       </div>
-      {tab === "performance" ? (
-        <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
-          Legacy Task Allocation includes persisted task assignees and workload balancing.
-          DB07 vNext does not yet persist task assignee fields, so the task execution view
-          is available here but reassignment is intentionally not fabricated.
-        </section>
-      ) : null}
       <ProjectWorkspace
         workspace={workspace}
         backHref="/mentor/projects"

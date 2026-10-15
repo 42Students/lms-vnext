@@ -339,6 +339,8 @@ export const addProjectMemberInputSchema = z
     membershipId: z.string().uuid(),
     role: z.enum(PROJECT_MEMBER_ROLES),
     isPrimary: z.boolean().default(false),
+    roleKind: z.enum(["LEARNER","MENTOR","CO_MENTOR","OBSERVER","REVIEWER","QA"]).optional(),
+    canMutate: z.boolean().optional(),
     roleLabel: z
       .string()
       .trim()
@@ -349,7 +351,9 @@ export const addProjectMemberInputSchema = z
   .strict()
   .refine(
     (input) =>
-      !input.isPrimary || input.role === "MENTOR",
+      (!input.isPrimary || (input.role === "MENTOR" && (input.roleKind === undefined || input.roleKind === "MENTOR") && input.canMutate !== false)) &&
+      (input.roleKind === undefined || input.roleKind === "OBSERVER" || input.roleKind === "REVIEWER" || input.roleKind === "QA" || (input.role === "MENTOR" ? ["MENTOR","CO_MENTOR"].includes(input.roleKind) : input.roleKind === "LEARNER")) &&
+      (!["OBSERVER","REVIEWER","QA"].includes(input.roleKind ?? "") || input.canMutate !== true),
     {
       message:
         "Only a Project mentor can be primary",
@@ -360,6 +364,8 @@ export const addProjectMemberInputSchema = z
 export const updateProjectMemberInputSchema = z
   .object({
     isPrimary: z.boolean().optional(),
+    roleKind: z.enum(["LEARNER","MENTOR","CO_MENTOR","OBSERVER","REVIEWER","QA"]).optional(),
+    canMutate: z.boolean().optional(),
     roleLabel: z
       .string()
       .trim()
@@ -372,7 +378,7 @@ export const updateProjectMemberInputSchema = z
   .refine(
     (input) =>
       input.isPrimary !== undefined ||
-      input.roleLabel !== undefined,
+      input.roleLabel !== undefined || input.roleKind !== undefined || input.canMutate !== undefined,
     {
       message: "At least one member field is required",
     },
@@ -652,6 +658,7 @@ export const createProjectResourceInputSchema = z
       .nullable()
       .optional(),
     required: z.boolean().optional(),
+    visibility: z.enum(["TEAM","MENTOR_ONLY"]).optional(),
   })
   .strict()
   .refine(
@@ -677,6 +684,7 @@ export const updateProjectResourceInputSchema = z
       .nullable()
       .optional(),
     required: z.boolean().optional(),
+    visibility: z.enum(["TEAM","MENTOR_ONLY"]).optional(),
   })
   .strict()
   .refine(

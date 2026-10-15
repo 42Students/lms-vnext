@@ -13,7 +13,6 @@ import {
   placementCompanies,
   placementJobRoleOptions,
   placementJobs,
-  placementOffers,
   placementCollegeRules,
   placementJobEligibilityPolicies,
   placementBatchRegistrations,
@@ -27,6 +26,7 @@ import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
 import { canAddPlacementHeldOffer, canShowLearnerSelfApply } from "./held-offer-policy";
+import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
@@ -195,19 +195,9 @@ export async function listLearnerPlacementJobs(
     upliftPct: placementCollegeRules.upliftPct,
   }).from(placementCollegeRules)
     .where(eq(placementCollegeRules.collegeId, membership.collegeId)).limit(1);
-  const heldOffers = await getDb().select({
-    kind: placementOffers.kind,
-    status: placementOffers.status,
-    annualCtcInr: placementOffers.annualCtcInr,
-  }).from(placementOffers)
-    .innerJoin(placementApplications,
-      eq(placementApplications.id, placementOffers.applicationId))
-    .innerJoin(placementJobs,
-      eq(placementJobs.id, placementApplications.jobId))
-    .where(and(
-      eq(placementApplications.membershipId, membership.id),
-      eq(placementJobs.collegeId, membership.collegeId),
-    ));
+  const heldOffers = await loadPlacementHeldOfferFacts(
+    membership.collegeId, membership.id,
+  );
 
   const eligibilityByJob = new Map<
     string,
