@@ -1,3 +1,4 @@
+import {classesExportHref} from "@/modules/academics/college-classes-export-model";
 import { describe, expect, it } from "vitest";
 import {
   classCapacityLabel,
@@ -132,4 +133,134 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(readCollegeStructureParams({periodCode:["A","B"]})).toBeNull();
   });
 
+  it("validates and carries academic period status through class paging and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({periodLifecycle:"ACTIVE"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("periodLifecycle=");
+    expect(classesExportHref(query)).toContain("periodLifecycle=");
+    expect(collegeClassQuerySchema.safeParse({periodLifecycle:"INVALID"}).success).toBe(false);
+  });
+  it("validates and carries exact program code in class pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({programCode:"A&26"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("programCode=A%2626");
+    expect(classesExportHref(query)).toContain("programCode=A%2626");
+    expect(collegeClassQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({programCode:""})).toEqual({});
+  });
+  it("validates and carries exact class name in class pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({className:"A&26"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("className=A%2626");
+    expect(classesExportHref(query)).toContain("className=A%2626");
+    expect(collegeClassQuerySchema.safeParse({className:"x".repeat(256)}).success).toBe(false);
+    expect(readCollegeStructureParams({className:""})).toEqual({});
+  });
+  it("validates and carries exact cohort name in class pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({cohortName:"A&26"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("cohortName=A%2626");
+    expect(classesExportHref(query)).toContain("cohortName=A%2626");
+    expect(collegeClassQuerySchema.safeParse({cohortName:"x".repeat(256)}).success).toBe(false);
+    expect(readCollegeStructureParams({cohortName:""})).toEqual({});
+  });
+  it("Saved section schedule validates persisted evidence and retains class/export filters",()=>{
+    const query=collegeClassQuerySchema.parse({schedulePresence:"NO_EVENTS"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("schedulePresence=NO_EVENTS");
+    expect(classesExportHref(query)).toContain("schedulePresence=NO_EVENTS");
+    expect(collegeClassQuerySchema.safeParse({schedulePresence:"INFERRED"}).success).toBe(false);
+  });
+  it("Current section Faculty assignments validates persisted evidence and retains class/export filters",()=>{
+    const query=collegeClassQuerySchema.parse({facultyCoverage:"NO_FACULTY"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("facultyCoverage=NO_FACULTY");
+    expect(classesExportHref(query)).toContain("facultyCoverage=NO_FACULTY");
+    expect(collegeClassQuerySchema.safeParse({facultyCoverage:"INFERRED"}).success).toBe(false);
+  });
+  it("Authored section course deliveries validates persisted evidence and retains class/export filters",()=>{
+    const query=collegeClassQuerySchema.parse({deliveryPresence:"NO_DELIVERIES"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("deliveryPresence=NO_DELIVERIES");
+    expect(classesExportHref(query)).toContain("deliveryPresence=NO_DELIVERIES");
+    expect(collegeClassQuerySchema.safeParse({deliveryPresence:"INFERRED"}).success).toBe(false);
+  });
+  it("bounds period start date on or after in Class directory and CSV navigation",()=>{
+    const query=collegeClassQuerySchema.parse({periodStartsOnOrAfter:"2026-07-01"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("periodStartsOnOrAfter=2026-07-01");
+    expect(classesExportHref(query)).toContain("periodStartsOnOrAfter=2026-07-01");
+    expect(collegeClassQuerySchema.safeParse({periodStartsOnOrAfter:"2026-15-41"}).success).toBe(false);
+    expect(readCollegeStructureParams({periodStartsOnOrAfter:""})).toEqual({});
+  });
+  it("bounds period end date on or before in Class directory and CSV navigation",()=>{
+    const query=collegeClassQuerySchema.parse({periodEndsOnOrBefore:"2026-12-31"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("periodEndsOnOrBefore=2026-12-31");
+    expect(classesExportHref(query)).toContain("periodEndsOnOrBefore=2026-12-31");
+    expect(collegeClassQuerySchema.safeParse({periodEndsOnOrBefore:"2026-15-41"}).success).toBe(false);
+    expect(readCollegeStructureParams({periodEndsOnOrBefore:""})).toEqual({});
+  });
+  it("validates exact department code and retains it in scoped pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({departmentCode:"CS&IT"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("departmentCode=CS%26IT");
+    expect(classesExportHref(query)).toContain("departmentCode=CS%26IT");
+    expect(collegeClassQuerySchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({departmentCode:""})).toEqual({});
+  });
+  it("Exact elective slot name is bounded and persists in elective page links",()=>{
+    const query=collegeElectiveQuerySchema.parse({slotName:"A&26"});
+    expect(collegeStructureHref("ELECTIVES",query)).toContain("slotName=A%2626");
+    expect(collegeElectiveQuerySchema.safeParse({slotName:"x".repeat(151)}).success).toBe(false);
+    expect(readCollegeStructureParams({slotName:""})).toEqual({});
+  });
+  it("Exact elective program code is bounded and persists in elective page links",()=>{
+    const query=collegeElectiveQuerySchema.parse({programCode:"A&26"});
+    expect(collegeStructureHref("ELECTIVES",query)).toContain("programCode=A%2626");
+    expect(collegeElectiveQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({programCode:""})).toEqual({});
+  });
+  it("Elective owning department code is bounded and persists in elective page links",()=>{
+    const query=collegeElectiveQuerySchema.parse({departmentCode:"A&26"});
+    expect(collegeStructureHref("ELECTIVES",query)).toContain("departmentCode=A%2626");
+    expect(collegeElectiveQuerySchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({departmentCode:""})).toEqual({});
+  });
+  it("Minimum required elective choices uses bounded saved values and URL persistence",()=>{
+    const q=collegeElectiveQuerySchema.parse({minimumRequiredPicks:1});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("minimumRequiredPicks=1");
+    expect(collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:-1}).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:1001}).success).toBe(false);
+    expect(readCollegeStructureParams({minimumRequiredPicks:""})).toEqual({});
+  });
+  it("Maximum allowed elective choices uses bounded saved values and URL persistence",()=>{
+    const q=collegeElectiveQuerySchema.parse({maximumAllowedPicks:2});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("maximumAllowedPicks=2");
+    expect(collegeElectiveQuerySchema.safeParse({maximumAllowedPicks:0}).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({maximumAllowedPicks:1001}).success).toBe(false);
+    expect(readCollegeStructureParams({maximumAllowedPicks:""})).toEqual({});
+  });
+  it("Semester from uses bounded saved values and URL persistence",()=>{
+    const q=collegeElectiveQuerySchema.parse({semesterFrom:1});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("semesterFrom=1");
+    expect(collegeElectiveQuerySchema.safeParse({semesterFrom:0}).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({semesterFrom:25}).success).toBe(false);
+    expect(readCollegeStructureParams({semesterFrom:""})).toEqual({});
+  });
+  it("validates semester through and preserves page filters",()=>{
+    const q=collegeElectiveQuerySchema.parse({semesterThrough:1});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("semesterThrough=");
+    expect(collegeElectiveQuerySchema.safeParse({semesterThrough:0}).success).toBe(false);
+  });
+  it("validates linked academic-period lifecycle and preserves page filters",()=>{
+    const q=collegeElectiveQuerySchema.parse({periodLifecycle:"ACTIVE"});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("periodLifecycle=");
+    expect(collegeElectiveQuerySchema.safeParse({periodLifecycle:"INFERRED"}).success).toBe(false);
+  });
+  it("validates elective description availability and preserves page filters",()=>{
+    const q=collegeElectiveQuerySchema.parse({descriptionPresence:"MISSING"});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("descriptionPresence=");
+    expect(collegeElectiveQuerySchema.safeParse({descriptionPresence:"INFERRED"}).success).toBe(false);
+  });
+  it("validates elective linked period starts on or after for the elective directory",()=>{
+    const q=collegeElectiveQuerySchema.parse({periodStartsOnOrAfter:"2026-07-01"});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("periodStartsOnOrAfter=2026-07-01");
+    expect(collegeElectiveQuerySchema.safeParse({periodStartsOnOrAfter:"2026-13-39"}).success).toBe(false);
+  });
+  it("validates elective linked period ends on or before for the elective directory",()=>{
+    const q=collegeElectiveQuerySchema.parse({periodEndsOnOrBefore:"2026-12-31"});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("periodEndsOnOrBefore=2026-12-31");
+    expect(collegeElectiveQuerySchema.safeParse({periodEndsOnOrBefore:"2026-13-39"}).success).toBe(false);
+  });
 });
