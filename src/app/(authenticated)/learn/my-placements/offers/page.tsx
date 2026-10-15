@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
+import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
@@ -21,7 +22,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 export default async function LearnerOffersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[]; q?: string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[] }>;
 }) {
   const query = await searchParams;
   const requested = typeof query.status === "string" ? query.status : "all";
@@ -29,12 +30,14 @@ export default async function LearnerOffersPage({
   const view = validView.success ? validView.data : "all";
   const parsedSearch = learnerOffersSearchSchema.safeParse(query.q ?? "");
   const searchTerm = parsedSearch.success ? parsedSearch.data : "";
+  const dueOnly = query.due === "1";
   const context = await getCurrentRequestContext();
   const [offers,requests] = await Promise.all([
     getOwnLearnerOfferBrowse(context,view),listOwnPlacementRequests(context),
   ]);
-  const visibleOffers = searchOwnOffers(offers.items, searchTerm);
   const snapshotNowIso = new Date().toISOString();
+  const searchedOffers = searchOwnOffers(offers.items, searchTerm);
+  const visibleOffers = dueOnly ? ownOffersDueWithinWeek(searchedOffers,Date.parse(snapshotNowIso)) : searchedOffers;
   const expiringSoon = learnerOffersExpiringSoon(offers.items.map(row => ({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
   })), Date.parse(snapshotNowIso));
@@ -69,6 +72,7 @@ export default async function LearnerOffersPage({
       </nav>
       <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
         {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
+        {dueOnly ? <input type="hidden" name="due" value="1" /> : null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search my offers
           <input name="q" type="search" maxLength={80} defaultValue={searchTerm}
@@ -78,6 +82,14 @@ export default async function LearnerOffersPage({
         {searchTerm ? <Link href={view === "all" ? "/learn/my-placements/offers" : "/learn/my-placements/offers?status="+view}
           className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
+      <nav aria-label="Offer deadline filter" className="flex flex-wrap gap-3 text-sm">
+        <Link href={"/learn/my-placements/offers" + (view==="all"?"":"?status="+view)}
+          aria-current={!dueOnly?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">All deadlines</Link>
+        <Link href={"/learn/my-placements/offers?"+(view==="all"?"":"status="+view+"&")+"due=1"}
+          aria-current={dueOnly?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Awaiting response · next 7 days</Link>
+      </nav>
       {expiringSoon > 0 && view !== "pending" ? (
         <Link href="/learn/my-placements/offers?status=pending"
           className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -92,12 +104,12 @@ export default async function LearnerOffersPage({
       {visibleOffers.length === 0 ? (
         <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">
-            {offers.counts.all === 0 ? "No offers recorded" : searchTerm ? "No matching offers" : "No offers in this view"}
+            {offers.counts.all === 0 ? "No offers recorded" : (searchTerm || dueOnly) ? "No matching offers" : "No offers in this view"}
           </h2>
           <p className="mt-2 text-sm text-body">
             {offers.counts.all === 0
               ? "Official offers will appear after the placement team issues them. A round result is not an offer."
-              : searchTerm ? "No own persisted offer matches this search. Clear it to restore the full selected status."
+              : (searchTerm || dueOnly) ? "No own persisted offer matches these filters. Clear them to restore the selected status."
               : "No persisted offer currently matches this status. Choose another status to see other offers."}
           </p>
           {offers.counts.all > 0 ? (
