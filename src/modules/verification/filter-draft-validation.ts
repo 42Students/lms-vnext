@@ -5,7 +5,8 @@ import {verificationSubmissionWindowValid} from "./queue-waiting-since";
 
 /** Match the server's refusal rules before navigating away from a filled queue form. */
 export function verificationFilterDraftError(query:Record<string,string>):string|null {
- const parsed=verificationQueueFilters.safeParse(query);
+ const normalized=Object.fromEntries(Object.entries(query).filter(([,value])=>value!==""));
+ const parsed=verificationQueueFilters.safeParse(normalized);
  if(!parsed.success)return "One or more filter values are invalid";
  const value=parsed.data;
  if(!verificationSubmissionWindowValid(value))return "Start date must not follow the end date";

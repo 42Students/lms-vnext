@@ -13,6 +13,9 @@ describe("verification form and server share filter refusal rules",()=>{
   expect(verificationFilterDraftError({enrollment:"NONE",programId:"022a400d-47d5-4574-8b79-c98cba999000"})).toMatch(/enrollment/);
   expect(verificationFilterDraftError({attention:"WAITING_OVER_WEEK",ageBand:"WITHIN_48_HOURS"})).toMatch(/conflict/);
  });
+ it("normalizes optional blank date and academic selectors from the form",()=>{
+  expect(verificationFilterDraftError({waitingSince:"",submittedFrom:"",programId:"",sectionId:"",kind:"",q:""})).toBeNull();
+ });
  it("permits a valid updated-details waiting request",()=>{
   expect(verificationFilterDraftError({tab:"WAITING",waitingState:"UPDATE_PENDING",attention:"VERIFIED_DETAILS_CHANGED"})).toBeNull();
  });
