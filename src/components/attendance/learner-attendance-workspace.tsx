@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {learnerAttendanceUrlRecoveryNotice} from "@/modules/attendance/learner-attendance-url-recovery-model";
 import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-attendance-month-navigation-model";
 
 import {
@@ -184,6 +185,10 @@ export function LearnerAttendanceWorkspace({
   }, courses, defaultMonth);
   const deliveryId = filters.deliveryId;
   const month = parseMonth(filters.month);
+  const urlNotice=learnerAttendanceUrlRecoveryNotice({
+    deliveryId:params.get("deliveryId"),month:params.get("month"),
+    status:params.get("status"),order:params.get("order"),
+  },courses);
   const historyFilter = learnerAttendanceHistoryFilterSchema.catch("ALL").parse(params.get("status") ?? "ALL");
   const historyOrder=learnerAttendanceOrderSchema.catch("NEWEST").parse(params.get("order")??"NEWEST");
 
@@ -266,6 +271,7 @@ export function LearnerAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
+      {urlNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{urlNotice}</p> : null}
       <section className="rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <label className="w-full max-w-sm text-xs font-semibold text-body">
