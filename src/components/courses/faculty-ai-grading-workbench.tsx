@@ -5,6 +5,7 @@ import {aiGradingRubricForMaximum,type AiGradingSelection,type AiGradingRubric} 
 import {facultyAiGradingReportHref} from "@/modules/courses/faculty-ai-grading-links";
 import {verifyFacultyAiGradingResult} from "@/modules/courses/faculty-ai-grading-result";
 import {facultyAiGradingEvidenceReviewed,toggleFacultyAiGradingReview} from "@/modules/courses/faculty-ai-grading-review";
+import {facultyAiGradingReviewReceipt} from "@/modules/courses/faculty-ai-grading-audit";
 
 type Selected={
  id:string;version:number;submissionType:string;gradingStatus:string;
@@ -28,6 +29,7 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
  const [reviewedEvidence,setReviewedEvidence]=useState<string[]>([]);
  const [draftPoints,setDraftPoints]=useState("");
  const [draftFeedback,setDraftFeedback]=useState("");
+ const [receiptStatus,setReceiptStatus]=useState<string|null>(null);
  function parseRubric():AiGradingRubric|null{
   try{
    const result=aiGradingRubricForMaximum(JSON.parse(rubricText) as unknown,maxPoints);
@@ -63,6 +65,24 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
   }catch{
    setProviderStatus("Could not verify a suggestion response. No grade was changed.");
   }finally{setRequesting(false);}
+ }
+ function downloadReviewReceipt(){
+  if(!reviewed||!suggestion||!submission.eligible)return;
+  const rubric=parseRubric();
+  if(!rubric)return;
+  try{
+   const receipt=facultyAiGradingReviewReceipt({
+    reviewedAt:new Date().toISOString(),assignmentId:selection.assignmentId,
+    deliveryId:selection.deliveryId,submissionId:selection.submissionId,
+    submissionVersion:submission.version,rubric,suggestion,reviewedEvidence,
+    humanDraftPoints:Number(draftPoints),
+   });
+   const blob=new Blob([JSON.stringify(receipt,null,2)],{type:"application/json"});
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement("a");a.href=url;a.download="faculty-grading-review.json";
+   document.body.append(a);a.click();a.remove();URL.revokeObjectURL(url);
+   setReceiptStatus("Local review receipt exported. It is not a server-side audit record or a published grade.");
+  }catch{setReceiptStatus("Review receipt unavailable. Check all evidence and draft points.");}
  }
  function validateRubric(event:FormEvent<HTMLFormElement>){
   event.preventDefault();parseRubric();
@@ -129,6 +149,9 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
      maxLength={3000} rows={4} className="mt-1 w-full rounded-md border border-border p-3"/>
    </label>
    <p className="text-sm text-muted-foreground">This draft is not saved and is never published. Transfer reviewed details manually using the official grading controls.</p>
+   <button type="button" onClick={downloadReviewReceipt}
+    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold">Export redacted review receipt</button>
+   {receiptStatus?<p role="status" className="text-sm text-body">{receiptStatus}</p>:null}
   </section>:null}
   <Link href={facultyAiGradingReportHref(selection)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
    Open official Faculty grading report
