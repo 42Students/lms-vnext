@@ -6,6 +6,7 @@ import {
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { mayCloseProjectSprint } from "./sprint-close-policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { allowedMentorTaskTransition } from "./mentor-task-transition-model";
@@ -331,7 +332,7 @@ export async function completeProjectSprint(
       .for("update")
       .limit(1);
 
-    if (openTask) {
+    if (!mayCloseProjectSprint(openTask ? 1 : 0)) {
       throw new ProjectsServiceError(
         "PROJECT_SPRINT_HAS_OPEN_TASKS",
       );
