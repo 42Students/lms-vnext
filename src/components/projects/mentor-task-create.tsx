@@ -20,6 +20,10 @@ export function MentorTaskCreate({
   const [description,setDescription]=useState("");
   const [criteria,setCriteria]=useState("");
   const [priority,setPriority]=useState<"LOW"|"MEDIUM"|"HIGH"|"CRITICAL">("MEDIUM");
+  const [estimate,setEstimate]=useState("");
+  const [taskType,setTaskType]=useState("");
+  const [dueDate,setDueDate]=useState("");
+  const [blockerReason,setBlockerReason]=useState("");
   const valid=title.trim().length>0&&title.trim().length<=200&&
     description.length<=4000&&criteria.length<=4000;
   async function create(){
@@ -30,6 +34,8 @@ export function MentorTaskCreate({
         sprintId,title:title.trim(),description:description.trim()||null,
         acceptanceCriteria:criteria.trim()||null,
         priority,expectedSprintUpdatedAt:updatedAt,
+        estimatePoints:estimate!==""?Number(estimate):null,
+        taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
       showToast({tone:"success",title:"Project task created"});
       setOpen(false);setTitle("");setDescription("");setCriteria("");setPriority("MEDIUM");
@@ -42,7 +48,7 @@ export function MentorTaskCreate({
   return <>
     <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Add task</Button>
     <Dialog open={open} onOpenChange={setOpen} title="Confirm new task"
-      description="Creates a TODO task in this Sprint and records an audit event. Assignee, estimate and workload tracking are unavailable until their registered storage is added."
+      description="Creates a TODO task in this Sprint and records an audit event."
       footer={<>
         <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button disabled={busy||!valid} onClick={()=>void create()}>
@@ -66,9 +72,25 @@ export function MentorTaskCreate({
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </select>
         </label>
-        <p className="text-xs text-muted-foreground">
-          This action cannot assign Learners or record estimates; the Board remains the source of truth.
-        </p>
+        <label className="grid gap-1 text-sm font-semibold text-body">Estimate
+          <Input inputMode="numeric" type="number" min={0} max={1000} value={estimate}
+            onChange={e=>setEstimate(e.target.value)}/>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Type
+          <select value={taskType} onChange={e=>setTaskType(e.target.value)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">Not specified</option><option value="STORY">Story</option>
+            <option value="BUG">Bug</option><option value="CHORE">Chore</option>
+            <option value="SPIKE">Spike</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Due date
+          <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Blocker reason
+          <Textarea value={blockerReason} maxLength={4000}
+            onChange={e=>setBlockerReason(e.target.value)}/>
+        </label>
       </div>
     </Dialog>
   </>;

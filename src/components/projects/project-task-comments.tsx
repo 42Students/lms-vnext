@@ -1,0 +1,48 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Textarea} from "@/components/ui/textarea";
+import {projectMutation} from "./project-api";
+type Comment={id:string;body:string;createdAt:string;authorMembershipId:string};
+export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
+ projectId:string;taskId:string;updatedAt:string;canPost:boolean;
+}){
+ const router=useRouter();const [open,setOpen]=useState(false);
+ const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
+ const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
+ const url="/api/projects/"+encodeURIComponent(projectId)+"/tasks/"+encodeURIComponent(taskId)+"/comments";
+ async function show(){
+  setBusy(true);setError(null);
+  try{
+   const result=await fetch(url,{cache:"no-store",credentials:"same-origin"});
+   if(!result.ok)throw new Error("Could not load comments");
+   const data=await result.json() as {comments:Comment[]};
+   setRows(data.comments);setOpen(true);
+  }catch(caught){setError(caught instanceof Error?caught.message:"Could not load comments");}
+  finally{setBusy(false);}
+ }
+ async function post(){
+  if(!body.trim())return;
+  setBusy(true);setError(null);
+  try{
+   await projectMutation(url,"POST",{body:body.trim(),expectedTaskUpdatedAt:updatedAt});
+   setBody("");await show();router.refresh();
+  }catch(caught){setError(caught instanceof Error?caught.message:"Could not add comment");}
+  finally{setBusy(false);}
+ }
+ return <div className="mt-2 space-y-2">
+   <Button size="sm" variant="secondary" onClick={()=>open?setOpen(false):void show()}>
+     Comments
+   </Button>
+   {open?<div className="space-y-2 rounded border border-border p-3">
+     {rows.map(row=><p key={row.id} className="whitespace-pre-wrap text-sm text-body">{row.body}</p>)}
+     {canPost?<label className="grid gap-1 text-sm text-body">Comments
+       <Textarea maxLength={4000} value={body} disabled={busy}
+         onChange={e=>setBody(e.target.value)}/>
+     </label>:null}
+     {canPost?<Button size="sm" disabled={busy||!body.trim()} onClick={()=>void post()}>Add comment</Button>:null}
+   </div>:null}
+   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+ </div>;
+}
