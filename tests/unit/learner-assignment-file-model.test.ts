@@ -59,15 +59,15 @@ describe("learner assignment private-file boundary", () => {
   });
   it("rejects a receipt when the upload grant expires during transfer", async () => {
     const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
+    const start = Date.parse("2026-10-15T10:00:00Z");
+    const expiresAt = new Date(start + 100).toISOString();
+    const clock = vi.fn().mockReturnValueOnce(start).mockReturnValueOnce(start).mockReturnValueOnce(start + 150);
     const fetcher = vi.fn<typeof fetch>()
-      .mockResolvedValueOnce(Response.json({ grant: { ...grant,
-        expiresAt: new Date(Date.now() + 100).toISOString() } }))
-      .mockImplementationOnce(async () => {
-        await new Promise(resolve => setTimeout(resolve, 150));
-        return new Response(null, { status: 200 });
-      });
+      .mockResolvedValueOnce(Response.json({ grant: { ...grant, expiresAt } }))
+      .mockResolvedValueOnce(new Response(null, { status: 200 }));
     await expect(transferLearnerAssignmentFile("assignment", delivery, file,
-      new AbortController().signal, fetcher)).rejects.toThrow("expired before confirmation");
+      new AbortController().signal, fetcher, clock)).rejects.toThrow("expired before confirmation");
+    expect(clock).toHaveBeenCalledTimes(3);
   });
   it("does not PUT bytes after a rejected, mismatched or expired grant", async () => {
     const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
