@@ -17,12 +17,13 @@ export async function GET(request:Request){
    headers:{"Cache-Control":"private, no-store"}});
   const query=mentorReviewQuerySchema.parse({...filters,page:1,pageSize:50});
   const context=await getCurrentRequestContext();
-  const first=await getMentorReviewQueue(context,query);
+  const snapshotAt=new Date();
+  const first=await getMentorReviewQueue(context,query,snapshotAt);
   if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403,
    headers:{"Cache-Control":"private, no-store"}});
   const rows=[...first.items];
   for(let page=2;page<=Math.min(first.totalPages,4);page++){
-   const next=await getMentorReviewQueue(context,{...query,page});
+   const next=await getMentorReviewQueue(context,{...query,page},snapshotAt);
    if(!next.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403,
     headers:{"Cache-Control":"private, no-store"}});
    rows.push(...next.items);

@@ -40,7 +40,7 @@ async function requireMentorPortfolio(context: RequestContext) {
 }
 
 /** All reviewed IDs originate from persisted active Mentor project assignments. */
-export async function getMentorReviewQueue(context: RequestContext, rawQuery: unknown) {
+export async function getMentorReviewQueue(context: RequestContext, rawQuery: unknown, now: Date = new Date()) {
   const query = mentorReviewQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
   if (!scope.enabled || !scope.projects.length) {
@@ -54,7 +54,7 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
       (!query.projectId||p.id===query.projectId)).map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(
-    alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age,
+    alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age, now,
   );
   return { enabled: true, query, projects:scope.projects, ...pageMentorPortfolio(items, query) };
 }
