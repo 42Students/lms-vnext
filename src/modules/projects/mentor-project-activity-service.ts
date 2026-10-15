@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, gte, lt, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, lt, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -60,7 +60,8 @@ export async function getMentorProjectActivityHistory(
     importance:activityEvents.importance,
     occurredAt:activityEvents.occurredAt,
   }).from(activityEvents).where(filters)
-    .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id))
+    .orderBy(query.order==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
+      query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
     .limit(paging.pageSize).offset((paging.page-1)*paging.pageSize);
   return {
     enabled:true as const,title:scope.project.title,query,...paging,

@@ -8,14 +8,14 @@ import {
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 
-type Params={importance?:string|string[];view?:string|string[];window?:string|string[];page?:string|string[]};
+type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[]};
 
 export default async function MentorProjectActivityHistoryPage({
   params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}) {
   const [{projectId},raw]=await Promise.all([params,searchParams]);
   const filters=singleValueMentorFilters({
-    importance:raw.importance,view:raw.view,window:raw.window,page:raw.page,
+    importance:raw.importance,view:raw.view,window:raw.window,order:raw.order,page:raw.page,
   });
   const parsed=mentorProjectActivityQuerySchema.safeParse(
     filters ? {projectId,...filters} : null,
@@ -71,10 +71,17 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="OLDER_THAN_30_DAYS">Older than 30×24 hours</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Chronology
+          <select name="order" defaultValue={data.query.order}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="NEWEST">Newest recorded first</option>
+            <option value="OLDEST">Oldest recorded first</option>
+          </select>
+        </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
-        <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",page:1})}
+        <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",page:1})}
           className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
       <p className="text-sm text-body">
@@ -82,8 +89,8 @@ export default async function MentorProjectActivityHistoryPage({
       </p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/projects/"+encodeURIComponent(projectId)+
-          "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"?"":"?"+
-            new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window}).toString())}
+          "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
+            new URLSearchParams({importance:data.query.importance,view:data.query.view,window:data.query.window,order:data.query.order}).toString())}
           download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export recorded events CSV (max 200)
         </Link>
