@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**In-flight bulk selection lock PARTIAL (chat-9):** Verification row checkboxes now disable while a bulk decision is in progress, in addition to the existing select/clear and confirmation guards, preventing changes to the submitted set during asynchronous processing. Pure selection state checks authored; browser interaction acceptance pending.
+
 **Stale single-decision recovery PARTIAL (chat-9):** After a row-version conflict the drawer now invalidates the stale snapshot and disables further decisions until the reviewer explicitly reloads the fresh private detail. No stale replay or blind success is presented. Source contracts authored; actual DB concurrency/browser acceptance outstanding.
 
 **Waiting-only verification attention cues PARTIAL (chat-9):** Updated-details and overdue-waiting triage now reject decided tabs at the page, query service and CSV boundaries. Navigating to a decided tab clears only incompatible attention selections while preserving supported filters. Pure parser contract tests authored; browser acceptance pending.
