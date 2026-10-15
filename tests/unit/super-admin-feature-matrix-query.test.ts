@@ -17,4 +17,9 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.safeParse({storedState:"INHERIT"}).success).toBe(false);
   expect(adminFeaturesHref({module:"projects",storedState:"OFF",page:3})).toContain("storedState=OFF");
  });
+ it("finds persisted locked college module rules without inferring all learner access",()=>{
+  expect(adminFeatureQuerySchema.parse({locks:"LOCKED"}).locks).toBe("LOCKED");
+  expect(adminFeatureQuerySchema.safeParse({locks:"UNLOCKED"}).success).toBe(false);
+  expect(adminFeaturesHref({locks:"LOCKED",page:2})).toContain("locks=LOCKED");
+ });
 });

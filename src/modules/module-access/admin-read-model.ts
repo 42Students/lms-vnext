@@ -85,6 +85,7 @@ export function adminFeaturesHref(filters: {
   sort?: "NAME"|"CODE";
   module?: "projects"|"placements"|"electives";
   storedState?: "ALL"|"ON"|"OFF";
+  locks?: "ALL"|"LOCKED";
 }): string {
   const params = new URLSearchParams();
 
@@ -99,6 +100,7 @@ export function adminFeaturesHref(filters: {
   if (filters.sort === "CODE") params.set("sort", "CODE");
   if (filters.module) params.set("module", filters.module);
   if (filters.storedState && filters.storedState !== "ALL") params.set("storedState", filters.storedState);
+  if (filters.locks === "LOCKED") params.set("locks", "LOCKED");
 
   const query = params.toString();
 
