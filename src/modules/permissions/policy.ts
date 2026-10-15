@@ -25,6 +25,7 @@ export type PlatformPermission =
   | "placements.manage"
   | "placements.recruiter.read"
   | "placements.recruiter.result.stage"
+  | "placements.recruiter.note"
   | "activity.read"
   | "project-template.read"
   | "project-template.manage"
@@ -126,7 +127,8 @@ export function can(
 
   if (
     permission === "placements.recruiter.read" ||
-    permission === "placements.recruiter.result.stage"
+    permission === "placements.recruiter.result.stage" ||
+    permission === "placements.recruiter.note"
   ) {
     return hasRecruiterGrant(context, resource);
   }

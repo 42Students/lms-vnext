@@ -3,8 +3,7 @@ export type HrOfferRead = {
   joiningStatus:string|null;
 };
 /**
- * All values are persisted offer rows, not unique learners. LOI has no registered
- * record type and therefore cannot be fabricated by this read-only model.
+ * All values are persisted offer rows (kind OFFER or LOI), not unique learners.
  */
 export function buildHrOfferOverview(
   offers: readonly HrOfferRead[], now: Date,
