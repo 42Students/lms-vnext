@@ -7,7 +7,9 @@ const label:Record<LearnerVerificationState,string>={
 export function learnerPlacementVerificationCue(education:LearnerVerificationState,identity:LearnerVerificationState){
  const both=education==="VERIFIED"&&identity==="VERIFIED";
  const needsChange=education==="SENT_BACK"||identity==="SENT_BACK";
- return {educationLabel:label[education],identityLabel:label[identity],
+ const editHref=education==="SENT_BACK"?"/learn/profile?section=education":
+  identity==="SENT_BACK"?"/learn/profile?section=identity":null;
+ return {educationLabel:label[education],identityLabel:label[identity],editHref,
   summary:both?"Education and identity are verified. Placement eligibility is assessed separately.":
    needsChange?"A reviewer sent back at least one profile section. Review the reason and correct your details.":
    "Education and identity have not both been verified. Check each section for the next action.",
