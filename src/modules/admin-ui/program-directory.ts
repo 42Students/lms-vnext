@@ -7,6 +7,17 @@ export type AdminProgramRow = {
   durationTerms: number;
 };
 
+export function programDurationYearsLabel(durationTerms:number) {
+  const years=durationTerms/2;
+  return `${years} ${years===1?"year":"years"} (${durationTerms} ${durationTerms===1?"term":"terms"})`;
+}
+
+export function legacyDurationYearsToTerms(years:number) {
+  const terms=years*2;
+  if(!Number.isInteger(terms)||terms<1||terms>24)return null;
+  return terms;
+}
+
 export function filterAdminPrograms(
   rows: readonly AdminProgramRow[],
   query: string,
