@@ -293,4 +293,8 @@ describe("College Admin classes/electives read-only filters", () => {
   if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Unlinked electives cannot be filtered by a linked academic period"))).toBe(true);
   expect(collegeElectiveQuerySchema.safeParse({periodState:"LINKED",periodLifecycle:"ACTIVE"}).success).toBe(true);
  });
+ it("rejects reversed class period date bounds",()=>{
+  expect(collegeClassQuerySchema.safeParse({periodStartsOnOrAfter:"2026-12-30",periodEndsOnOrBefore:"2026-12-29"}).success).toBe(false);
+  expect(collegeClassQuerySchema.safeParse({periodStartsOnOrAfter:"2026-12-29",periodEndsOnOrBefore:"2026-12-30"}).success).toBe(true);
+ });
 });

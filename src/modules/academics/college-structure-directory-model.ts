@@ -32,11 +32,13 @@ export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
   maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
 
-export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number;maximumCapacity?:number;capacityState:"ALL"|"CONFIGURED"|"UNSET"}>>(schema:T){
+export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number;maximumCapacity?:number;capacityState:"ALL"|"CONFIGURED"|"UNSET";periodStartsOnOrAfter?:string;periodEndsOnOrBefore?:string}>>(schema:T){
   return schema.refine(q=>q.minimumCapacity===undefined||q.maximumCapacity===undefined||q.minimumCapacity<=q.maximumCapacity,
     {path:["maximumCapacity"],message:"Maximum class capacity must not be below minimum"})
     .refine(q=>q.capacityState!=="UNSET"||(q.minimumCapacity===undefined&&q.maximumCapacity===undefined),
-      {path:["capacityState"],message:"Unconfigured class capacity cannot be combined with numeric capacity bounds"});
+      {path:["capacityState"],message:"Unconfigured class capacity cannot be combined with numeric capacity bounds"})
+    .refine(q=>q.periodStartsOnOrAfter===undefined||q.periodEndsOnOrBefore===undefined||q.periodStartsOnOrAfter<=q.periodEndsOnOrBefore,
+      {path:["periodEndsOnOrBefore"],message:"Class period end limit cannot precede start limit"});
 }
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
