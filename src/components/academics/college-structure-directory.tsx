@@ -179,6 +179,15 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                 placeholder="Exact registered code" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Elective selection choice constraints
+              <select name="choiceMode" defaultValue={data.query.choiceMode ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All slots</option>
+                <option value="FLEXIBLE">Minimum and maximum differ</option>
+                <option value="FIXED">Exact selection count</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

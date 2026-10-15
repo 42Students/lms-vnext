@@ -265,4 +265,15 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("choiceMode finds only registered own-college elective evidence",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,choiceMode:"FLEXIBLE"}),
+      listCollegeElectives(adminA,{q:key,choiceMode:"FIXED"}),
+      listCollegeElectives(adminB,{q:key,choiceMode:"FLEXIBLE"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

@@ -1252,3 +1252,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 Classes PARTIAL:** Class academic period code uses a bounded exact code match on a registered same-college academic relation, with matching CSV, navigation and isolated-PG tests authored; execution/browser/legacy comparison remains open.
 
 **2026-10-15 Classes PARTIAL:** Class exact section code uses a bounded exact code match on a registered same-college academic relation, with matching CSV, navigation and isolated-PG tests authored; execution/browser/legacy comparison remains open.
+
+**2026-10-15 Electives PARTIAL:** Elective selection choice constraints reflects persisted, tenant-scoped min/max choice constraints, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
