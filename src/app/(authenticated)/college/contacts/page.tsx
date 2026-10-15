@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {hasMembershipRole} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {collegeContactPageRoleCounts,activeCollegeContactFilterCount,collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
@@ -11,13 +12,14 @@ type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export default async function CollegeContactsPage({searchParams}:{searchParams:Promise<RawSearch>}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
  catch(error){return <div className="space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
   <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
- const context=await getCurrentRequestContext();
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
  const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));
  const range=collegeContactsPageRange(filter.page,results.pageSize,results.total);
