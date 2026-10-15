@@ -54,6 +54,7 @@ export type ModuleTraceFilters = {
   page?: number;
   membershipId?: string;
   overridesOnly?: "all" | "only" | "locked";
+  overridesModule?: OptionalModuleKey;
 };
 
 export function adminModuleTraceHref(
@@ -80,6 +81,7 @@ export function adminModuleTraceHref(
     params.set("overridesOnly", filters.overridesOnly);
   }
 
+  if (filters.overridesModule) params.set("overridesModule",filters.overridesModule);
   const query = params.toString();
 
   return query ? `${base}?${query}` : base;

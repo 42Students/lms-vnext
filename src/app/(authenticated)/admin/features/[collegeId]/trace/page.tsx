@@ -80,6 +80,7 @@ export default async function SuperAdminLearnerAccessTracePage({
     adminModuleTraceQuerySchema.safeParse({
       q: strictParams.q || undefined,
       overridesOnly: strictParams.overridesOnly || undefined,
+      overridesModule: strictParams.overridesModule || undefined,
       page:
         strictParams.page || undefined,
       membershipId:
@@ -202,6 +203,11 @@ export default async function SuperAdminLearnerAccessTracePage({
               <option value="locked">Only students with locked overrides</option>
             </select>
           </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Stored override module
+            <select name="overridesModule" defaultValue={query.overridesModule ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+              <option value="">Any module</option><option value="projects">Projects</option><option value="electives">Electives</option><option value="placements">Placements (ignored below college)</option>
+            </select>
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -283,6 +289,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                               q: query.q,
                               page,
                               overridesOnly: query.overridesOnly,
+                    overridesModule: query.overridesModule,
+                              overridesModule: query.overridesModule,
                               membershipId:
                                 learner.membershipId,
                             },

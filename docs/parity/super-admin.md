@@ -899,3 +899,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 locked descendant hierarchy filter (PARTIAL):** The selected-college module hierarchy now filters persisted locked rows, composed safely with module and academic scope predicates in both the SQL count and page queries. UI/typed enum/pagination and PostgreSQL fixture authored; tests not executed. No authority to change lock state, and effective learner results still require the resolver trace.
+
+
+**2026-10-15 chat-6 round: targeted learner override module filter — PARTIAL.** Persisted active-learner override queue can narrow to Projects/Electives/Placements stored rules, paired with existing all/only/locked modes. The SQL `exists` stays college-scoped by each verified membership; links preserve the selector and Zod disallows unknown modules. Placements membership rules are displayed as stored-but-ignored, never effective. Tests authored, not executed; editing/drawer and browser acceptance open.
