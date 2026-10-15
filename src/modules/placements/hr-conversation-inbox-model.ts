@@ -4,6 +4,7 @@ export const hrConversationQuerySchema=z.object({
  q:z.string().trim().max(120).default(""),
  page:z.coerce.number().int().min(1).max(10000).default(1),
  unreadOnly:z.enum(["true","false"]).default("false"),
+ sort:z.enum(["LATEST","OLDEST"]).default("LATEST"),
 }).strict();
 export function filterRecruiterConversations<T extends {jobId:string|null;id:string}>(
  threads:readonly T[], jobIds:ReadonlySet<string>, query:string,
@@ -27,3 +28,14 @@ export function hrConversationPageBounds(page:number,total:number){
 export function onlyUnreadRecruiterThreads<T extends {id:string}>(
  rows:readonly T[],unreadIds:ReadonlySet<string>,enabled:boolean,
 ):T[]{return enabled?rows.filter(row=>unreadIds.has(row.id)):[...rows];}
+
+export function orderRecruiterConversations<T extends {
+ id:string;lastMessageAt:Date|null;createdAt:Date;
+}>(rows:readonly T[],order:"LATEST"|"OLDEST"):T[]{
+ return [...rows].sort((a,b)=>{
+  const left=(a.lastMessageAt??a.createdAt).getTime();
+  const right=(b.lastMessageAt??b.createdAt).getTime();
+  const delta=order==="LATEST"?right-left:left-right;
+  return delta||a.id.localeCompare(b.id);
+ });
+}
