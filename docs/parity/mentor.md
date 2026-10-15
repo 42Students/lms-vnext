@@ -1479,3 +1479,8 @@ application action registration is separately gated by
 `DB09_TPO_API_READY=DB09_VERIFIED`; do not claim it available merely because
 UI and handlers exist. No database migration, global tracker DONE or legacy
 parity checkbox is changed here.
+
+
+## 2026-10-15 chat-11 — class-team and Mentor progress hardening (PARTIAL)
+
+The class-team creation preview now rejects duplicate learner IDs, visually duplicate Unicode team names, over-capacity rosters and formula-like CSV cells; it exposes missing class/template prerequisites, a refresh path after roster drift and client-side slug validation. The Mentor project ordering now treats invalid completion values as unmeasured, retaining archived-last and deterministic ties. Mentor review export truncation counts are finite and bounded. All are source-authored with focused Vitest cases. They are NOT release-certified: isolated PostgreSQL writes/denials, TS/lint/full unit, browser 375px, frozen-legacy comparison and original tracker gates remain open.
