@@ -523,6 +523,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**Student visibility CSV column PARTIAL (2026-10-15):** Capped Video and Resource metadata export now explicitly labels the persisted Visible-to-students boolean as Yes/No instead of inferring visibility from publication. Metadata never includes private media keys or URLs. Formula-safe export unit assertions authored; runtime/browser verification open.
+
 **Owning-offering lifecycle filter PARTIAL (2026-10-15):** RESOURCE metadata now supports a separate offering ACTIVE/ARCHIVED selector, server-enforced inside the own-college ancestry joins before pagination and capped download. Own/missing lifecycle fixture authored; private notes and storage keys still omitted. Browser/DB execution open.
 
 **Resource metadata CSV PARTIAL (2026-10-15):** Own-college RESOURCE authoring metadata can be exported with matching search/status/course/scope filters and 1,000-row cap, spreadsheet-formula neutralization and truncation disclosure. Private text notes, URLs, keys and meeting links are not returned. Tenant and wrong-role PG fixture assertions authored; executed/browser parity remains open.
