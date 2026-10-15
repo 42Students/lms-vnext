@@ -135,6 +135,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Recorded learner activity
+              <select name="activityState" defaultValue={data.query.activityState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="RECORDED">Has activity rows</option><option value="UNRECORDED">No recorded activity</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch / cohort code (exact)
               <input name="cohortCode" type="search" maxLength={64}
                 defaultValue={data.query.cohortCode??""}

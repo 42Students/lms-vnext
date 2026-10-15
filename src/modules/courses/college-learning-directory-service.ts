@@ -107,6 +107,8 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
       query.departmentName?eq(departments.name,query.departmentName):undefined,
+      query.activityState==="RECORDED"?persistedContentActivity:
+        query.activityState==="UNRECORDED"?not(persistedContentActivity):undefined,
       query.contentPresence&&query.contentPresence!=="ALL" ?
         (query.contentPresence==="HAS_CONTENT" ? exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))) :
           not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))))) : undefined,
@@ -152,6 +154,13 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
   const query = collegeProgressQuerySchema.parse(raw);
   const collegeId = requireCollegeCoursesRead(context);
   const db = getDb();
+  const persistedContentActivity=exists(db.select({id:learnerContentProgress.id}).from(learnerContentProgress)
+    .innerJoin(lessonContents,eq(lessonContents.id,learnerContentProgress.lessonContentId))
+    .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+    .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerContentProgress.membershipId),eq(collegeMemberships.collegeId,collegeId)))
+    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
+    .where(eq(courseLearningPaths.offeringId,courseOfferings.id)));
   const scoped = db.select({
     offeringId: aliased(courseOfferings.id, "offering_id_alias"),
     offeringStatus: aliased(courseOfferings.status, "offering_status_alias"),
