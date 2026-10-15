@@ -59,6 +59,7 @@ export type TpoStudentSource = {
   verifiedExternalOfferCount: number;
   ambiguousSection: boolean;
   afterCollegeOutcome?: AfterCollegeOutcome | null;
+  afterCollegeUpdatedAt?: string | null;
 };
 
 export type TpoStudentReadinessSignal =
@@ -291,6 +292,7 @@ export function deriveTpoStudent(
     placed,
     journeyState,
     afterCollegeOutcome: source.afterCollegeOutcome ?? null,
+    afterCollegeUpdatedAt: source.afterCollegeUpdatedAt ?? null,
     bestSoFar,
     maximumAppliedRoundSequence,
     ambiguousSection: source.ambiguousSection,
