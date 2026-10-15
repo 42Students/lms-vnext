@@ -878,3 +878,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Company status separation (PARTIAL):** Company and college-relationship lifecycle filters can now be inspected independently; default MATCH retains previous status behavior. One status cannot silently stand in for the other; typed query, page links and PostgreSQL predicates match. Source tests authored but not executed; archive lifecycle/browser parity remains open.
+
+
+**2026-10-15 chat-6 Companies stable sorting (PARTIAL):** Sorted-by-name and recently-updated relationship modes now use server-side stable SQL ordering, with UUID tie-breaks, strict Zod enum and filter-preserving pages. Does not claim a historical activity timeline. Unit/PG tests authored, unrun; browser/performance acceptance open.
