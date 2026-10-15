@@ -55,6 +55,7 @@ export default async function AnnouncementsPage({
     listAnnouncementsForAdmin(context, {
       includeDeleted,
       q: params.q,
+      receiverType: params.receiverType,
       beforeCreatedAt: params.beforeCreatedAt,
       beforeId: params.beforeId,
       limit: 50,
@@ -101,6 +102,7 @@ export default async function AnnouncementsPage({
     ? "/admin/announcements?" + new URLSearchParams({
         ...(includeDeleted ? { deleted: "1" } : {}),
         ...(params.q ? { q: params.q } : {}),
+        ...(params.receiverType ? {receiverType:params.receiverType} : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -114,7 +116,7 @@ export default async function AnnouncementsPage({
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
           <Link
-            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}) }).toString()}
+            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}) }).toString()}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
@@ -123,6 +125,12 @@ export default async function AnnouncementsPage({
       />
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
+        <label className="text-sm font-semibold text-body">Audience type
+          <select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All audiences</option>
+            {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
+          </select>
+        </label>
         <label className="min-w-[14rem] flex-1 text-sm font-semibold text-body">Search announcement title or message
           <input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Literal phrase" className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
         </label>

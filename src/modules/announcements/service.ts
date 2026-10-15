@@ -177,6 +177,7 @@ export async function listAnnouncementsForAdmin(context: RequestContext, raw: un
   if (scope.collegeId) conditions.push(eq(db10Announcements.collegeId, scope.collegeId));
   if (scope.organizationId) conditions.push(eq(db10Announcements.organizationId, scope.organizationId));
   if (!input.includeDeleted) conditions.push(isNull(db10Announcements.deletedAt));
+  if (input.receiverType) conditions.push(eq(db10Announcements.receiverType, input.receiverType));
   if (input.q) {
     const term = input.q.toLowerCase();
     conditions.push(or(

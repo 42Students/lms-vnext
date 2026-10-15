@@ -1090,3 +1090,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 announcements literal search (PARTIAL):** Super Admin notices now support bounded title/message substring search, protected from SQL wildcard expansion by `position(...)`; server-side filtering occurs before cursor paging, search is carried into Older/Include deleted links, and malformed query states fail closed. Authored pure validation tests; runtime/PG/browser evidence remains open.
+
+
+**2026-10-15 chat-6 DB10 announcement audience filter (PARTIAL):** Super Admin history now filters persisted `receiver_type` before page limit and retains the exact filter across deleted/search/cursor links. Invalid audience enum values are rejected at UI/API boundaries. Unit tests authored, browser/PG still pending.
