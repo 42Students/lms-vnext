@@ -8,7 +8,7 @@ import {
  disabledAiGradingProvider,requestAiGradingSuggestion,
  type AiGradingProvider,
 } from "./faculty-ai-grading-provider";
-import {validateAiGradingSuggestion} from "./faculty-ai-grading-suggestion";
+import {validateAiGradingSuggestion,assertAiGradingProviderProvenance} from "./faculty-ai-grading-suggestion";
 
 /** Runs only after the canonical scoped review reader verifies current teaching scope.
  * Provider response remains ephemeral; this service NEVER writes or publishes grades. */
@@ -28,6 +28,7 @@ export async function getFacultyAiGradingSuggestion(
   text:selected.textContent,rubric,maxPoints:data.assignment.maxPoints,
  });
  const suggestion=validateAiGradingSuggestion(rawSuggestion,rubric,selected.textContent);
+ assertAiGradingProviderProvenance(suggestion.provider,provider.id);
  return {
   suggestion,
   source:{

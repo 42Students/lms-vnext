@@ -25,3 +25,8 @@ export function validateAiGradingSuggestion(raw:unknown,rubric:unknown,submissio
  }
  return {...result,proposedScore};
 }
+
+/** A provider must not claim a different provenance for an otherwise valid result. */
+export function assertAiGradingProviderProvenance(actual:string,expected:string):void{
+ if(actual!==expected)throw new Error("AI_GRADING_PROVIDER_MISMATCH");
+}
