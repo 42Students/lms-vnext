@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -432,13 +433,13 @@ export function LearnerCourseList({
                         <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
                           <p className="m-0">
                             Last recorded activity: {row.lastActivity
-                              ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.lastActivity))
+                              ? learnerCourseCardDate(row.lastActivity) ?? "Unavailable"
                               : "Not recorded"}
                           </p>
                           <p className="m-0">
                             Next due: {row.nextDue
                               ? row.nextDue.kind+" · "+row.nextDue.title+" · "+
-                                new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.nextDue.dueAt))
+                                (learnerCourseCardDate(row.nextDue.dueAt) ?? "Date unavailable")
                               : "No upcoming due dates"}
                           </p>
                         </div>
