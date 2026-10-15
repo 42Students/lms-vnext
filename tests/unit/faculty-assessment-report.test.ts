@@ -115,3 +115,12 @@ describe("W02 Faculty assessment legacy report analytics", () => {
     });
   });
 });
+
+
+describe("Faculty fractional grade bands", () => {
+  it("does not lose fractional percentages between labeled ranges", () => {
+    const bands = buildScoreDistribution([59.9, 69.4, 79.5, 89.5, 99.9]);
+    expect(bands.reduce((sum, bucket) => sum + bucket.count, 0)).toBe(5);
+    expect(bands.map(bucket => bucket.count)).toEqual([1, 1, 1, 1, 1]);
+  });
+});

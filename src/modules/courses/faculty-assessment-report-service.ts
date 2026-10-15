@@ -28,9 +28,12 @@ export function buildScoreDistribution(
   ];
   for (const percent of percentages) {
     if (!Number.isFinite(percent) || percent < 0 || percent > 100) continue;
+    // Fractional scores are common when questions have weighted points;
+    // do not lose 89.5% between integer-labeled histogram buckets.
+    const rounded = Math.round(percent);
     const bucket = buckets.find(
       (candidate) =>
-        percent >= candidate.min && percent <= candidate.max,
+        rounded >= candidate.min && rounded <= candidate.max,
     );
     if (bucket) bucket.count += 1;
   }
