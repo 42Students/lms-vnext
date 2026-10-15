@@ -85,6 +85,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Course department code (exact)
+              <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Learning path lifecycle
               <select name="pathStatus" defaultValue={data.query.pathStatus}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
