@@ -5,6 +5,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
 import { getTpoBatch, listTpoBatches, listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { decidePlacementParticipation, undoPlacementParticipation } from "@/modules/placements/batch-participation-service";
+import { getTpoBatchEligibilitySummary } from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const url=process.env.TEST_DATABASE_URL;
@@ -12,8 +13,8 @@ if(!url||process.env.DATABASE_URL!==url||
  process.env.DB08_ISOLATED_TEST_DATABASE!=="1"||process.env.DB08_MIGRATION_APPLIED!=="1")
  throw new Error("TPO batch PG tests require disposable DB08 isolated PostgreSQL and applied migration");
 const pool=new Pool({connectionString:url,max:4});
-const fixtures:{users:string[];memberships:string[];programs:string[];periods:string[];cohorts:string[]}={
- users:[],memberships:[],programs:[],periods:[],cohorts:[]
+const fixtures:{users:string[];memberships:string[];programs:string[];periods:string[];cohorts:string[];enrollments:string[]}={
+ users:[],memberships:[],programs:[],periods:[],cohorts:[],enrollments:[]
 };
 async function actor(collegeId:string,role:"TPO"|"LEARNER"):Promise<RequestContext>{
  const userId=randomUUID(),membershipId=randomUUID();
@@ -35,6 +36,7 @@ async function cohort(collegeId:string){
 }
 afterEach(async()=>{
  await pool.query("TRUNCATE TABLE placement_eligibility_events");
+ if(fixtures.enrollments.length)await pool.query("DELETE FROM learner_program_enrollments WHERE id=ANY($1::uuid[])",[fixtures.enrollments]);
  if(fixtures.cohorts.length){
   await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='COHORT' AND scope_id=ANY($1::uuid[])",[fixtures.cohorts]);
   await pool.query("DELETE FROM placement_batch_lifecycles WHERE cohort_id=ANY($1::uuid[])",[fixtures.cohorts]);
@@ -66,6 +68,27 @@ describe("TPO batch workspace DB08 scope and stale-version gates",()=>{
   expect((await listTpoBatchHistory(ctx,id)).events).toHaveLength(1);
   await undoPlacementParticipation(ctx,{collegeId:SEED_IDS.collegeA,actionId:made.actionId});
   expect((await getTpoBatch(ctx,id)).decision.status).toBe("NOT_DECIDED");
+ });
+ it("summarizes inherited cohort decisions and learner overrides without leaking foreign data",async()=>{
+  const owner=await actor(SEED_IDS.collegeA,"TPO");
+  const foreign=await actor(SEED_IDS.collegeB,"TPO");
+  const learner=await actor(SEED_IDS.collegeA,"LEARNER");
+  const cohortId=await cohort(SEED_IDS.collegeA);
+  const enrollmentId=randomUUID();fixtures.enrollments.push(enrollmentId);
+  await pool.query("INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id) VALUES ($1::uuid,$2::uuid,$3::uuid,$4::uuid)",
+   [enrollmentId,learner.membership!.id,fixtures.programs[fixtures.programs.length-1],cohortId]);
+  await decidePlacementParticipation(owner,{collegeId:SEED_IDS.collegeA,changes:[
+   {scopeType:"COHORT",scopeId:cohortId,status:"ELIGIBLE"},
+  ]});
+  const first=await getTpoBatchEligibilitySummary(owner,cohortId);
+  expect(first.summary).toMatchObject({eligible:1,ineligible:0,undecided:0,needsReview:0,complete:true});
+  await decidePlacementParticipation(owner,{collegeId:SEED_IDS.collegeA,changes:[
+   {scopeType:"MEMBERSHIP",scopeId:learner.membership!.id,status:"INELIGIBLE",reason:"Higher studies"},
+  ]});
+  const second=await getTpoBatchEligibilitySummary(owner,cohortId);
+  expect(second.summary).toMatchObject({eligible:0,ineligible:1,undecided:0,needsReview:0});
+  await expect(getTpoBatchEligibilitySummary(foreign,cohortId)).rejects.toBeDefined();
+  await expect(getTpoBatchEligibilitySummary(learner,cohortId)).rejects.toBeDefined();
  });
  it("denies another college with no cohort details disclosed",async()=>{
   const owner=await actor(SEED_IDS.collegeA,"TPO");
