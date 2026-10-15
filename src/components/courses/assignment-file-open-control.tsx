@@ -1,55 +1,98 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { validateLearnerAssignmentReadGrant } from "@/modules/courses/learner-assignment-file-model";
-import { courseApiError } from "./learner-course-api";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { fileStatusDescriptor, formatFileSize } from "@/modules/storage/ui-models";
+import {
+  parseFileDownloadGrant, parseSubmissionFiles, storageApiError,
+  type SubmissionFile,
+} from "@/modules/courses/learner-storage-ui-model";
 
-type ReadGrant = ReturnType<typeof validateLearnerAssignmentReadGrant>;
-export function AssignmentFileOpenControl({ submissionId, enabled }: { submissionId: string; enabled: boolean }) {
-  const [grant, setGrant] = useState<ReadGrant | null>(null);
-  const [busy, setBusy] = useState(false);
+/** Submitted files are discovered through the new private-file API. Signed URLs
+ * are used once on demand, never put in React state or persistent storage. */
+export function AssignmentFileOpenControl({ submissionId, enabled }: {
+  submissionId: string; enabled: boolean;
+}) {
+  const [files, setFiles] = useState<SubmissionFile[]>([]);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const lock = useRef(false);
   const pending = useRef<AbortController | null>(null);
-  useEffect(() => () => { pending.current?.abort(); }, []);
-  useEffect(() => {
-    if (!grant) return;
-    const timer = window.setTimeout(() => setGrant(null), Math.max(0, Date.parse(grant.expiresAt) - Date.now()));
-    return () => window.clearTimeout(timer);
-  }, [grant]);
 
-  async function prepare() {
-    if (!enabled || lock.current) return;
-    lock.current = true; setBusy(true); setError(null); setGrant(null);
-    const controller = new AbortController(); pending.current = controller;
+  useEffect(() => {
+    const controller = new AbortController();
+    pending.current = controller;
+    async function load() {
+      if (!enabled) return;
+      try {
+        const response = await fetch(
+          `/api/courses/assignment-submissions/${encodeURIComponent(submissionId)}/files`,
+          { credentials: "same-origin", cache: "no-store", signal: controller.signal },
+        );
+        if (!response.ok) throw new Error(await storageApiError(response));
+        if (!controller.signal.aborted) setFiles(parseSubmissionFiles(await response.json()));
+      } catch (failure) {
+        if (!controller.signal.aborted) setError(failure instanceof Error ? failure.message : "Could not load your submitted files.");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+    void load();
+    if (!enabled) queueMicrotask(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [submissionId, enabled]);
+
+  async function download(fileId: string) {
+    if (busyId) return;
+    const controller = new AbortController();
+    pending.current = controller; setBusyId(fileId); setError(null);
     try {
-      const response = await fetch(`/api/courses/assignment-submissions/${encodeURIComponent(submissionId)}/file`, {
-        credentials: "same-origin", cache: "no-store", signal: controller.signal,
-      });
-      if (!response.ok) throw new Error(await courseApiError(response));
-      const next = validateLearnerAssignmentReadGrant(await response.json(), Date.now());
-      if (!controller.signal.aborted) setGrant(next);
+      const response = await fetch(
+        `/api/courses/assignment-submission-files/${encodeURIComponent(fileId)}/download-grant`,
+        { method: "POST", credentials: "same-origin", cache: "no-store", signal: controller.signal,
+          headers: { "Content-Type": "application/json" }, body: JSON.stringify({ disposition: "attachment" }) },
+      );
+      if (!response.ok) throw new Error(await storageApiError(response));
+      // Event-handler only (async click); the purity rule misreads this closure as render.
+      // eslint-disable-next-line react-hooks/purity
+      const grant = parseFileDownloadGrant(await response.json(), Date.now());
+      if (grant.file.id !== fileId) throw new Error("The file permission did not match the requested file.");
+      if (controller.signal.aborted) return;
+      // An ephemeral navigation only: never render, save, or log the signed URL.
+      const link = document.createElement("a");
+      link.href = grant.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.referrerPolicy = "no-referrer";
+      link.download = grant.file.originalName;
+      document.body.append(link);
+      link.click();
+      link.remove();
     } catch (failure) {
-      if (!controller.signal.aborted) setError(failure instanceof Error ? failure.message : "The file could not be opened. Try again.");
+      if (!controller.signal.aborted) setError(failure instanceof Error ? failure.message : "File download failed. Try again.");
     } finally {
-      pending.current = null; lock.current = false; setBusy(false);
+      pending.current = null; setBusyId(null);
     }
   }
+
   if (!enabled) return <p className="text-sm text-muted-foreground">File viewing is currently unavailable. Your submitted record remains saved.</p>;
-  return <section aria-label="Submitted assignment file" className="mt-3 space-y-3">
-    <Button type="button" disabled={busy} onClick={() => void prepare()}>{busy ? "Preparing file…" : grant ? "Prepare a new file link" : "Prepare file link"}</Button>
-    {grant ? <div className="space-y-2 rounded-lg border border-border bg-surface p-3">
-      <p className="break-words text-sm text-body">{grant.originalName} · {(grant.sizeBytes / 1024).toFixed(1)} KB</p>
-      <Link href={grant.readUrl} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer" prefetch={false}
-        onClick={event => {
-          if (Date.parse(grant.expiresAt) <= Date.now()) {
-            event.preventDefault(); setGrant(null); setError("File link expired. Prepare a new link.");
-          }
-        }} className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto">Open submitted file ↗</Link>
-      <p className="text-xs text-muted-foreground">This private link expires shortly. Prepare another link if it expires.</p>
-    </div> : null}
+  return <section aria-label="Submitted assignment files" className="mt-3 space-y-3">
+    {loading ? <p role="status" className="text-sm text-muted-foreground">Loading submitted files…</p> : null}
+    {!loading && !error && files.length === 0 ? <p role="status" className="text-sm text-muted-foreground">No submitted files are available.</p> : null}
+    <ul className="space-y-2">
+      {files.map(file => {
+        const descriptor = fileStatusDescriptor(file.status);
+        return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface p-3">
+          <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
+          <span title={descriptor.detail}><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
+          {descriptor.usable ? <Button type="button" variant="secondary" size="sm"
+            disabled={busyId !== null} onClick={() => void download(file.id)}>
+            {busyId === file.id ? "Preparing file…" : "Download"}
+          </Button> : null}
+        </li>;
+      })}
+    </ul>
     {error ? <p role="alert" className="break-words text-sm font-semibold text-error">{error}</p> : null}
   </section>;
 }

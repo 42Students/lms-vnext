@@ -13,6 +13,7 @@ import {
   allowedExtensionsFor,
   allowedMimeTypesFor,
   guessContentTypeFromName,
+  validateStorageDeclaration,
   type StorageFileKind,
 } from "./file-policy";
 import { STORAGE_FILE_ERROR_STATUS, type StorageFileErrorCode } from "./file-errors";
@@ -26,6 +27,7 @@ export {
   allowedExtensionsFor,
   allowedMimeTypesFor,
   guessContentTypeFromName,
+  validateStorageDeclaration,
 };
 export type { StorageFileKind };
 
