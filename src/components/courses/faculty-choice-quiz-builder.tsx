@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -18,6 +18,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
 }){
  const router=useRouter();
  const choiceRequest=useRef(0);
+ const mutationInFlight=useRef(false);
  const [success,setSuccess]=useState<string|null>(null);
  const [selected,setSelected]=useState("");
  const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);
@@ -94,6 +95,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     "Close this published Section Quiz? New learner attempts stop; existing attempts and grades remain." :
     "Confirm "+action.toLowerCase()+" for this Section Quiz?";
   if(!window.confirm(warning))return;
+  if(!facultyBeginQuizWrite(mutationInFlight))return;
   setError(null);setSuccess(null);setPending(true);
   try{
    const body=(action==="PUBLISH"||action==="CLOSE"||action==="ARCHIVE")?{
@@ -129,7 +131,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    }
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}
-  finally{setPending(false);}
+  finally{mutationInFlight.current=false;setPending(false);}
  }
  return <section className="min-w-0 w-full max-w-full space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Choice-question quiz builder</h2>
