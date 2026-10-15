@@ -2,6 +2,8 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   check,
+  date,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -380,6 +382,11 @@ export const projectTasks = pgTable(
       () => collegeMemberships.id,
       { onDelete: "restrict" },
     ),
+    /** PR-S2-04: required when status is BLOCKED (enforced in the service). */
+    blockerReason: text("blocker_reason"),
+    dueDate: date("due_date", { mode: "string" }),
+    estimatePoints: integer("estimate_points"),
+    taskType: varchar("task_type", { length: 16 }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -392,6 +399,10 @@ export const projectTasks = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_tasks_project_id_id_uq").on(
+      table.projectId,
+      table.id,
+    ),
     uniqueIndex("project_tasks_project_key_uq").on(
       table.projectId,
       table.templateKey,
@@ -418,6 +429,59 @@ export const projectTasks = pgTable(
     check(
       "project_tasks_status_ck",
       sql`${table.status} in ('TODO', 'IN_PROGRESS', 'BLOCKED', 'IN_REVIEW', 'DONE')`,
+    ),
+    check(
+      "project_tasks_estimate_points_ck",
+      sql`${table.estimatePoints} is null or (${table.estimatePoints} >= 0 and ${table.estimatePoints} <= 1000)`,
+    ),
+    check(
+      "project_tasks_task_type_ck",
+      sql`${table.taskType} is null or ${table.taskType} in ('STORY', 'BUG', 'CHORE', 'SPIKE')`,
+    ),
+  ],
+);
+
+/** PR-S2-04: task comments; composite FK keeps comments in the task's project. */
+export const projectTaskComments = pgTable(
+  "project_task_comments",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    taskId: uuid("task_id").notNull(),
+    authorMembershipId: uuid("author_membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      name: "project_task_comments_project_task_fk",
+      columns: [table.projectId, table.taskId],
+      foreignColumns: [projectTasks.projectId, projectTasks.id],
+    }).onDelete("restrict"),
+    index("project_task_comments_task_time_idx").on(
+      table.taskId,
+      table.createdAt,
+    ),
+    check(
+      "project_task_comments_body_ck",
+      sql`length(trim(${table.body})) between 1 and 4000`,
     ),
   ],
 );
