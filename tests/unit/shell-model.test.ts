@@ -94,7 +94,7 @@ describe("authenticated shell model", () => {
     expectInOrder(superAdminHrefs, [
       "/admin/placements",
       "/admin/placements/calendar",
-      "/admin/hr",
+      "/admin/recruiters",
     ]);
 
     expect(
