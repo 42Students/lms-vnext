@@ -3,9 +3,10 @@
 export function searchLearnerNotices<T extends {
  title:string;message:string;senderLabel?:string|null;audienceLabel?:string|null
 }>(rows:readonly T[],query:string):T[]{
- const term=query.trim().toLocaleLowerCase("en");
+ const normalize=(text:string)=>text.trim().replace(/\s+/gu," ").toLocaleLowerCase("en");
+ const term=normalize(query);
  if(!term)return [...rows];
  return rows.filter(row=>
   [row.title,row.message,row.senderLabel,row.audienceLabel]
-   .some(value=>value?.toLocaleLowerCase("en").includes(term)??false));
+   .some(value=>value!==undefined&&value!==null&&normalize(value).includes(term)));
 }
