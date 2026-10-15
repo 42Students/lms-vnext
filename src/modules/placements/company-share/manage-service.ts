@@ -13,7 +13,7 @@ import { placementCompanyApplicantShares as shares, placementCompanyApplicantSha
 import { companyShareAuditTotals } from "./audit-model";
 import {canIssueCompanyApplicantShare} from "./issue-policy";
 import { companyShareStatusSchema } from "./status-model";
-import {companyShareLinkPageSchema,COMPANY_SHARE_PAGE_SIZE} from "./link-page-model";
+import {companyShareLinkPageSchema,COMPANY_SHARE_PAGE_SIZE,clampCompanyShareLinksPage} from "./link-page-model";
 import { isShareableJob } from "./scope-model";
 import {
   companyShareExpiry, companyShareIssueSchema,
@@ -85,17 +85,15 @@ export async function listTpoCompanyApplicantShares(
     status==="ACTIVE"?and(isNull(shares.revokedAt),gt(shares.expiresAt,now)):
     status==="EXPIRED"?and(isNull(shares.revokedAt),lte(shares.expiresAt,now)):
     status==="REVOKED"?isNotNull(shares.revokedAt):undefined);
-  const [totals,links]=await Promise.all([
-    getDb().select({total:count()}).from(shares).where(filter),
-    getDb().select({
+  const [totals]=await getDb().select({total:count()}).from(shares).where(filter);
+  const total=totals?.total??0;
+  const pagination=clampCompanyShareLinksPage(page,total);
+  const links=await getDb().select({
       id:shares.id,expiresAt:shares.expiresAt,revokedAt:shares.revokedAt,
       createdAt:shares.createdAt,
     }).from(shares).where(filter)
       .orderBy(desc(shares.createdAt),desc(shares.id))
-      .limit(COMPANY_SHARE_PAGE_SIZE).offset((page-1)*COMPANY_SHARE_PAGE_SIZE),
-  ]);
-  const total=totals[0]?.total??0;
-  const totalPages=Math.max(1,Math.ceil(total/COMPANY_SHARE_PAGE_SIZE));
+      .limit(COMPANY_SHARE_PAGE_SIZE).offset((pagination.page-1)*COMPANY_SHARE_PAGE_SIZE);
   const ids=links.map(link=>link.id);
   const stats=ids.length?await getDb().select({
     shareId:views.shareId,eventKind:views.eventKind,count:count(),
@@ -103,7 +101,7 @@ export async function listTpoCompanyApplicantShares(
     eq(views.collegeId,college.id),inArray(views.shareId,ids),
   )).groupBy(views.shareId,views.eventKind):[];
   const byId=companyShareAuditTotals(stats);
-  return {ready:true,page,total,totalPages,links:links.map(link=>({
+  return {ready:true,page:pagination.page,total,totalPages:pagination.totalPages,links:links.map(link=>({
     ...link, audit:byId.get(link.id)??{views:0,exports:0},
   }))};
 }
