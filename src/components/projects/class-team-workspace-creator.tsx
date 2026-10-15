@@ -86,12 +86,14 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   async function create() {
     if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     createInFlight.current=true;
+    let created=false;
     setPending(true);setError("");setNotice("");
     try {
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
         baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,expectedPreviewVersion:previewVersion(groups),
       }) as {created:{projectId:string}[]};
+      created=true;
       setNotice(result.created.length+" Project workspaces created.");
       if(result.created.length===1)router.push(basePath+"/"+result.created[0].projectId);
       else router.push(basePath);
@@ -99,8 +101,12 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     } catch(e) {
       setError(classTeamCreationFeedback(e));
     } finally {
-      createInFlight.current=false;
-      setPending(false);
+      // After a successful POST, keep Create locked until navigation unmounts this form.
+      // Releasing the latch would allow a second request while router.push is pending.
+      if(!created){
+        createInFlight.current=false;
+        setPending(false);
+      }
     }
   }
   return <div className="space-y-6">
