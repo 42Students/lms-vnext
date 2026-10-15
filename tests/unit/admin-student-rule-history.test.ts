@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {safeStudentRuleHistory,studentRuleHistoryCursorSchema,studentRuleHistoryHref,studentRuleHistoryExportHref}
-import {studentRuleHistoryCsv} from "@/modules/module-access/admin-student-rule-history-export" from "@/modules/module-access/admin-student-rule-history-model";
+import {safeStudentRuleHistory,studentRuleHistoryCursorSchema,studentRuleHistoryHref,studentRuleHistoryExportHref} from "@/modules/module-access/admin-student-rule-history-model";
+import {studentRuleHistoryCsv} from "@/modules/module-access/admin-student-rule-history-export";
 describe("Super Admin student rule audit projection",()=>{
  it("only projects valid values and omits arbitrary metadata",()=>{
   const output=safeStudentRuleHistory([{id:"1",occurredAt:new Date("2026-10-15T00:00:00Z"),summary:"",
