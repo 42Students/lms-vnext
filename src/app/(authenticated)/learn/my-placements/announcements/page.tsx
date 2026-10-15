@@ -19,6 +19,7 @@ import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optio
 import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
 import {learnerNoticePageWasClamped} from "@/modules/placements/learner-notice-page-recovery-model";
 import {filterLearnerNoticesBySource} from "@/modules/placements/learner-notice-source-filter-model";
+import {learnerNoticeEmptyLabel} from "@/modules/placements/learner-notice-empty-label-model";
 import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing, learnerNoticeRecoveryHref } from "@/modules/placements/learner-notice-deep-link-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
@@ -154,7 +155,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </div>
       ) : notices.length === 0 ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          {pinnedOnly && allNotices.length > 0 ? "No pinned notices match this filter." : "No current notices match these filters or are visible to your membership."}
+          {learnerNoticeEmptyLabel(allNotices.length,pinnedOnly,source)}
         </p>
       ) : (
         <ul className="min-w-0 space-y-3">
@@ -196,6 +197,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {unreadOnly?<input type="hidden" name="unread" value="1"/>:null}
         {queryText?<input type="hidden" name="q" value={queryText}/>:null}
         {sortKey!=="pinned"?<input type="hidden" name="sort" value={sortKey}/>:null}
+        {source==="placement-cell"?<input type="hidden" name="source" value={source}/>:null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-semibold text-foreground">
           Search loaded personal alerts
           <input type="search" name="alertQ" defaultValue={alertQ} maxLength={80}
