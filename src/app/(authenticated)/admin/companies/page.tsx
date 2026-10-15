@@ -14,7 +14,7 @@ export default async function SuperAdminCompaniesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, status: params.status, companyStatus: params.companyStatus, trust: params.trust, sort: params.sort, searchField: params.searchField, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId,
+    q: params.q, status: params.status, companyStatus: params.companyStatus, trust: params.trust, sort: params.sort, searchField: params.searchField, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId, companyId: params.companyId,
   });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
@@ -30,6 +30,10 @@ export default async function SuperAdminCompaniesPage({
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies"
       description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
+    {data.query.companyId ? <section role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+      Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
+      <Link href="/admin/companies" className="font-semibold text-primary-text underline">Show all employers</Link>
+    </section> : null}
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
         <input name="q" defaultValue={data.query.q} placeholder="Search companies"
@@ -68,6 +72,7 @@ export default async function SuperAdminCompaniesPage({
           <option value="NAME">Company name</option><option value="RECENT">Recently changed relationship</option>
         </select>
       </label>
+      {data.query.companyId ? <input type="hidden" name="companyId" value={data.query.companyId}/> : null}
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
@@ -113,11 +118,15 @@ export default async function SuperAdminCompaniesPage({
           {row.trusted ? <StatusBadge tone="success">Trusted</StatusBadge> : null}
         </div>
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
+        <Link className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline"
+          href={"/admin/companies?" + new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL"}).toString()}>
+          Review this employer&apos;s relationships →
+        </Link>
       </article>)}
     </div> : <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
-      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
+      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
       {data.query.page < data.totalPages ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,trust:data.query.trust,page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
     </nav>
     <Link href="/admin/placements" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Placement operations</Link>

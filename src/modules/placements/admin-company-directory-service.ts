@@ -18,6 +18,7 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   });
   const filters: SQL[] = [];
   if(query.collegeId) filters.push(eq(colleges.id,query.collegeId));
+  if(query.companyId) filters.push(eq(placementCompanies.id,query.companyId));
   if (selected?.collegeId) {
     if (query.collegeId && query.collegeId !== selected.collegeId) throw new AuthorizationError("placements.read");
     filters.push(eq(colleges.id, selected.collegeId));

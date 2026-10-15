@@ -7,6 +7,7 @@ export const adminCompaniesQuerySchema = z.strictObject({
   trust: z.enum(["ALL", "TRUSTED", "UNTRUSTED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   collegeId: z.uuid().optional(),
+  companyId: z.uuid().optional(),
   sort: z.enum(["NAME","RECENT"]).default("NAME"),
   searchField: z.enum(["NAME","DOMAIN"]).default("NAME"),
 });

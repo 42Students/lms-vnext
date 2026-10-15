@@ -21,6 +21,7 @@ describe("Super Admin company directory projection", () => {
     expect(adminCompaniesQuerySchema.safeParse({sort:"RANDOM"}).success).toBe(false);
     expect(adminCompaniesQuerySchema.parse({searchField:"DOMAIN"}).searchField).toBe("DOMAIN");
     expect(adminCompaniesQuerySchema.safeParse({searchField:"EMAIL"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.safeParse({companyId:"unknown"}).success).toBe(false);
     expect(adminCompaniesQuerySchema.parse({companyStatus:"ARCHIVED"}).companyStatus).toBe("ARCHIVED");
     expect(adminCompaniesQuerySchema.safeParse({companyStatus:"DISABLED"}).success).toBe(false);
     expect(adminCompaniesQuerySchema.parse({page:"2"}).page).toBe(2);
