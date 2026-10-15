@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -44,6 +44,10 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   if(action==="CREATE" || action==="EDIT"){
     const issue=facultyAssignmentDraftIssue({title,description,maxPoints});
     if(issue){setError(issue);return;}
+  }
+  if(action==="PUBLISH" && existing){
+    const publishIssue=facultyAssignmentPublishIssue(existing.dueAt,new Date());
+    if(publishIssue){setError(publishIssue);return;}
   }
   if(action==="PUBLISH" && existing && facultyAssignmentDraftDirty(existing,
     {title,description,dueAt,maxPoints})){
