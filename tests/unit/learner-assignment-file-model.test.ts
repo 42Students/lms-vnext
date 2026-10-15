@@ -57,6 +57,18 @@ describe("learner assignment private-file boundary", () => {
     expect(fetcher.mock.calls[0]?.[0]).toBe("/api/courses/assignments/assignment/file-upload");
     expect(fetcher.mock.calls[1]).toEqual([grant.uploadUrl, expect.objectContaining({ method: "PUT", credentials: "omit", redirect: "error", body: file, headers: grant.requiredHeaders })]);
   });
+  it("rejects a receipt when the upload grant expires during transfer", async () => {
+    const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json({ grant: { ...grant,
+        expiresAt: new Date(Date.now() + 100).toISOString() } }))
+      .mockImplementationOnce(async () => {
+        await new Promise(resolve => setTimeout(resolve, 150));
+        return new Response(null, { status: 200 });
+      });
+    await expect(transferLearnerAssignmentFile("assignment", delivery, file,
+      new AbortController().signal, fetcher)).rejects.toThrow("expired before confirmation");
+  });
   it("does not PUT bytes after a rejected, mismatched or expired grant", async () => {
     const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
     for (const bad of [

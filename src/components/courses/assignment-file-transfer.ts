@@ -25,5 +25,8 @@ export async function transferLearnerAssignmentFile(
     method: "PUT", credentials: "omit", redirect: "error", signal, headers: grant.requiredHeaders, body: file,
   });
   if (!uploaded.ok) throw new Error("The file could not be uploaded. Your assignment has not been submitted.");
+  if (Date.parse(grant.expiresAt) <= Date.now()) {
+    throw new Error("Upload permission expired before confirmation. Upload the file again.");
+  }
   return { receiptId: grant.receiptId, originalName: grant.originalName, expiresAt: grant.expiresAt };
 }
