@@ -255,3 +255,12 @@ export function facultyQuizCanSaveChanges(status:string|undefined,dirty:boolean,
 export function facultyQuizMayResetDraft(dirty:boolean,pending:boolean){
  return dirty&&!pending;
 }
+
+/** Copies a scoped instructor-readable Quiz only into an unsaved local draft. */
+export function facultyQuizCanCopyToDraft(status:string|undefined,hasBank:boolean,pending:boolean,loadFailed:boolean){
+ return !pending&&!loadFailed&&hasBank&&["DRAFT","PUBLISHED","CLOSED"].includes(status??"");
+}
+export function facultyQuizCopyTitle(original:string):string{
+ const prefix="Copy of ";
+ return prefix+original.trim().slice(0,255-prefix.length);
+}
