@@ -327,6 +327,7 @@ export async function restoreAnnouncement(
   const { expectedVersion } = announcementVersionSchema.parse(raw);
   const current = await loadAnnouncement(id);
   requireManage(context, current);
+  requireCurrentAnnouncementVersion(current.version, expectedVersion);
   if (!current.deletedAt) return current;
   const now = new Date();
   const [restored] = await getDb()
