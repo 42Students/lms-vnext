@@ -1400,3 +1400,17 @@ branch, not yet executed. These are incremental source parity improvements, **no
 closure: legacy UI comparison, real PostgreSQL paths, tenant/role negatives, keyboard,
 mobile-browser and cutover-oracle acceptance remain open. No migration or task completion
 is claimed.
+
+## 2026-10-15 chat-11 Mentor history and export follow-up (PARTIAL)
+
+The Mentor pending Task review CSV now carries the same exact-project, current-assignment,
+version, submission-age, priority, title and ordering filters as the displayed review queue.
+Activity UI and Mentor CSV reads reject duplicated or unrecognized export query keys rather
+than silently collapsing contradictory selections. The exact-project Project Activity history
+reads registered events with optional last-90-day and older-than-30-day windows, deterministic
+newest/oldest ordering and bounded 20/50-page selection; its export preserves chronology and
+caps rows at 200. The portfolio Activity filters have additional zero-min-width guards to
+address measured mobile/desktop overflow, but visual validation remains open. Pure tests were
+authored alongside item commits; no successful TypeScript, Vitest, disposable PostgreSQL or
+browser execution has yet been observed on these commits. They do NOT change the active
+DATABASE tracker, certify Projects parity, or enable unsupported file uploads.
