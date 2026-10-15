@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {learnerVerificationStatus} from "@/modules/placements/learner-verification-status-model";it("never converts missing record into verified",()=>{const x=learnerVerificationStatus("EDUCATION",null);expect(x.status).toBe("NOT_SUBMITTED");expect(x.version).toBe(0);});

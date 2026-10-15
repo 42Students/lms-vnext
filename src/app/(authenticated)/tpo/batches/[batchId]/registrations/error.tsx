@@ -1,0 +1,1 @@
+"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert"><p>Cannot load registration choices.</p><button onClick={reset} className="rounded border px-3 py-2">Retry</button></section>;}

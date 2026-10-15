@@ -18,7 +18,7 @@ const detailPage = readFileSync(
 
 describe("W03 super-admin project template UI contract", () => {
   it("can create a valid release-sprint-task baseline", () => {
-    expect(listPage).toContain("CreateProjectTemplateControl");
+    expect(listPage).toContain("/admin/projects/templates/new");
     expect(controls).toContain('"/api/projects/templates"');
     expect(controls).toContain('key: "release-1"');
     expect(controls).toContain('releaseKey: "release-1"');

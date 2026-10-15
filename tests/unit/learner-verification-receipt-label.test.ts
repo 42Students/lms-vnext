@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {learnerPrivateEvidenceSummary as f} from "@/modules/placements/learner-private-evidence-model";it("preserves zero as no recorded private receipt, not a denial",()=>{expect(f([],new Date("2026-10-15T00:00:00Z"))).toHaveLength(4);expect(f([],new Date("2026-10-15T00:00:00Z")).every(x=>x.recorded===0)).toBe(true);});

@@ -1,0 +1,4 @@
+import{it,expect}from"vitest";import{mentorAttentionProjectOptions as options}from"@/modules/projects/mentor-attention-kind-model";
+const alert={projectId:"owned",key:"a",kind:"REVIEW"as const,title:"Do not use this",description:"=Formula: Unsafe",href:"/mentor",occurredAt:"2026-10-15T10:00:00Z"};
+it("builds selector names from persisted authorized assignments only",()=>expect(options([alert],[{id:"owned",title:"Project Alpha"},{id:"unrelated",title:"Private"}])).toEqual([{id:"owned",title:"Project Alpha"}]));
+it("hides alerts for projects missing from the trusted assigned roster",()=>expect(options([{...alert,projectId:"foreign"}],[{id:"owned",title:"Mine"}])).toEqual([]));

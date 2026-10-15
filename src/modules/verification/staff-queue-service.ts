@@ -1,10 +1,14 @@
 import "server-only";
-import {and,asc,eq,ilike,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,ilike,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
-import {profileVerifications} from "@/db/schema/profile-verification";
+import {profileVerifications,profileVerificationSettings} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import {verificationQueueFilters} from "./queue-filters";
+import {verificationSortDirection} from "./sort-model";
+import {matchesVerificationAttention} from "./attention-filter";
+import {verificationLearnerNamePattern} from "./queue-name-pattern";
+import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
@@ -22,6 +26,8 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  const filter=verificationQueueFilters.parse(raw);
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
+ const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
+ const tpoCanVerify=effectiveTpoVerifierSetting(setting);
  // Cap the working set and FAIL LOUDLY rather than silently reporting
  // truncated counts. Indexed DB-side paging is a later optimization.
  const rows=await getDb().select({
@@ -34,23 +40,26 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
-   eq(users.platformStatus,"ACTIVE"),inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
+   eq(users.platformStatus,"ACTIVE"),filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
+   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
    inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
+ .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
+ const evaluatedAt=new Date();
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
   const marks=submittedMarksheets(row.submittedSnapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&marks.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&marks.count>0&&marks.missing===0))return false;
-  return true;
+  return matchesVerificationAttention({status:row.status as VerificationStatus,section:row.section as VerificationSection,
+   submittedAt:row.submittedAt,missingMarksheet:row.section==="EDUCATION"&&marks.missing>0},filter.attention,evaluatedAt);
  });
  const counts=verificationTabCounts(filtered.map(r=>({status:r.status as VerificationStatus})));
  const pageRows=filtered.filter(r=>verificationTab({status:r.status as VerificationStatus})===filter.tab);
- const start=(filter.page-1)*25;
- const sliced=pageRows.slice(start,start+25);
+ const start=(filter.page-1)*filter.pageSize;
+ const sliced=pageRows.slice(start,start+filter.pageSize);
  const enrollmentIds=sliced.map(row=>row.membershipId);
  const enrollments=enrollmentIds.length?await getDb().select({
   membershipId:learnerProgramEnrollments.membershipId,
@@ -73,5 +82,5 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    section,status,version:row.version,submittedAt:row.submittedAt,batchName:byMember.get(row.membershipId)?.batchName??null,branchName:byMember.get(row.membershipId)?.branchName??null,
    missingMarksheet,attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
  });
- return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+25<pageRows.length,filter};
+ return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+filter.pageSize<pageRows.length,filter,tpoCanVerify};
 }

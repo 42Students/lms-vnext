@@ -2,6 +2,7 @@
 import {useMemo,useState} from "react";
 import {verificationTab,verificationTabCounts,type VerificationTab} from "@/modules/verification/queue-tabs";
 import {orderVerificationQueue} from "@/modules/verification/queue-order";
+import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import type {VerificationRecord} from "@/modules/profile-verification/domain";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
@@ -9,9 +10,11 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
+ selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
+ disableLocalSearch?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
@@ -34,10 +37,10 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
     </button>)}
   </nav>
   <div className="flex flex-wrap gap-2">
-   <label className="min-w-0 flex-1 text-sm">Search learners
+   {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
     <input aria-label="Search learners" className="mt-1 block w-full min-w-0 rounded-md border bg-background px-3 py-2"
      value={query} onChange={e=>setQuery(e.target.value)} placeholder="Learner, batch or branch"/>
-   </label>
+   </label>}
    <label className="text-sm">Kind
     <select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
      className="mt-1 block w-full rounded-md border bg-background px-3 py-2">
@@ -52,6 +55,12 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-lg border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
+     {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
+      <label className="mt-2 flex items-center gap-2 text-sm">
+       <input type="checkbox" aria-label={"Select "+row.learnerName+" "+row.section}
+        checked={selectedKeys?.has(verificationSelectionKey(row))??false}
+        onChange={e=>onSelectionChange(row,e.target.checked)}/>Select for bulk review
+      </label>}
      <p className="text-sm text-muted-foreground">{row.section==="EDUCATION"?"Education":"Identity"} · {row.batchName??"No batch"} · {row.branchName??"No branch"}</p>
      <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}

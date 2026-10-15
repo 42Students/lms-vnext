@@ -1,9 +1,8 @@
-import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
+import {canPreviewCampaignUnsubscribe} from "@/modules/placements/public-unsubscribe-preview-service";
 import {PageHeader} from "@/components/ui/page-header";
 export default async function CampaignUnsubscribe({params}:{params:Promise<{token:string}>}){
  const {token}=await params;
- // eslint-disable-next-line react-hooks/purity -- async server component; token expiry needs the request-time clock
- const claim=verifyUnsubscribeToken(token,process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
+ const claim=await canPreviewCampaignUnsubscribe(token);
  return <main className="mx-auto max-w-lg space-y-6 px-4 py-10">
   <PageHeader eyebrow="42Students" title="Campaign email preferences" />
   {!claim?<p role="alert" className="text-sm text-body">This confirmation link is invalid or expired. No preference was changed.</p>:

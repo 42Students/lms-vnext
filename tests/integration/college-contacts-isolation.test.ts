@@ -4,7 +4,7 @@ import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {listCollegeContacts} from "@/modules/people/college-contacts-service";
+import {getCollegeContactById,listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {exportCollegeContactsCsv} from "@/modules/people/college-contacts-export-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -39,6 +39,13 @@ describe.skipIf(!enabled)("read-only college contact isolation",()=>{
   expect(found.items.some(x=>x.membershipId===ids.m1)).toBe(true);
   expect(found.items.some(x=>x.membershipId===ids.m2)).toBe(false);
   expect(found.items.find(x=>x.membershipId===ids.m1)?.email).not.toContain("contact-");
+ });
+ it("opens only same-college public contact detail with learner details masked",async()=>{
+  const own=await getCollegeContactById(admin,ids.m1);
+  expect(own?.membershipId).toBe(ids.m1);
+  expect(own?.email).not.toContain("contact-"+ids.u1+"@");
+  expect(await getCollegeContactById(admin,ids.m2)).toBeNull();
+  await expect(getCollegeContactById(wrong,ids.m1)).rejects.toBeInstanceOf(AuthorizationError);
  });
  it("denies wrong-role access, even for a same-college claim",async()=>{
   await expect(listCollegeContacts(wrong,{})).rejects.toBeInstanceOf(AuthorizationError);

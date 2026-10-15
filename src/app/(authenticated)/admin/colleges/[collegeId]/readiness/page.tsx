@@ -55,6 +55,8 @@ function overallLabel(
   }
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function CollegeReadinessPage({
   params,
 }: {
@@ -112,6 +114,18 @@ export default async function CollegeReadinessPage({
           </StatusBadge>
         }
       />
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+        >
+          Recheck persisted readiness →
+        </Link>
+        <p className="text-xs text-muted-foreground">
+          Reopening the page recalculates the current database checklist. It cannot verify live DNS propagation, login delivery, or end-to-end teaching and placement workflows.
+        </p>
+      </div>
 
       <section
         aria-label="Readiness summary"

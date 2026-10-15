@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
+import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
+import { learnerQuizRouteScopeCurrent } from "@/modules/courses/learner-quiz-route-scope-model";
+import { learnerQuizDraftCanPersist } from "@/modules/courses/learner-quiz-autosave-scope-model";
+import { learnerQuizRefreshFailureMessage } from "@/modules/courses/learner-quiz-refresh-failure-model";
+import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
+import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -91,6 +97,7 @@ export function LearnerQuizAttempt() {
   const deliveryId = params.get("deliveryId") ?? "";
   const reviewRequested = params.get("review") === "true";
   const [quiz, setQuiz] = useState<QuizPayload | null>(null);
+  const [loadedScopeKey,setLoadedScopeKey]=useState<string|null>(null);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [step, setStep] = useState(0);
@@ -109,8 +116,10 @@ export function LearnerQuizAttempt() {
     : "";
   const submitLockKey = storageKey ? `${storageKey}:submit-lock` : "";
 
-  async function load() {
+  const load = useCallback(async (signal?: AbortSignal, afterSubmit = false) => {
     if (!quizId || !deliveryId) {
+      setLoadedScopeKey(storageKey);
+      setQuiz(null);
       setError("This quiz link is incomplete. Open the quiz again from All Quizzes.");
       setLoading(false);
       return;
@@ -120,13 +129,15 @@ export function LearnerQuizAttempt() {
     try {
       const query = `deliveryId=${encodeURIComponent(deliveryId)}`;
       const [quizResponse, attemptsResponse] = await Promise.all([
-        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}?${query}`, { cache: "no-store" }),
-        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}/my-attempts?${query}`, { cache: "no-store" }),
+        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}?${query}`, { cache: "no-store", signal }),
+        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}/my-attempts?${query}`, { cache: "no-store", signal }),
       ]);
       if (!quizResponse.ok) throw new Error(await messageFrom(quizResponse, "Unable to load this quiz."));
       if (!attemptsResponse.ok) throw new Error(await messageFrom(attemptsResponse, "Unable to load your attempts."));
       const quizBody = await quizResponse.json();
       const attemptsBody = await attemptsResponse.json();
+      requireLearnerQuizResponseId(quizId, quizBody.quiz?.quiz?.id);
+      if (!learnerQuizRequestCurrent(signal)) return;
       const loadedAtMs = Date.now();
       const deadlinePassed = quizBody.quiz?.quiz?.dueAt
         ? new Date(quizBody.quiz.quiz.dueAt).getTime() < loadedAtMs
@@ -159,21 +170,25 @@ export function LearnerQuizAttempt() {
       setReview(mustReview);
       setNowMs(loadedAtMs);
       setQuiz(quizBody.quiz);
+      setLoadedScopeKey(storageKey);
       setAttempts(Array.isArray(attemptsBody.attempts) ? attemptsBody.attempts : []);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to load this quiz.");
+      if (learnerQuizRequestCurrent(signal)) {
+        if (!afterSubmit) setQuiz(null);
+        setLoadedScopeKey(storageKey);
+        setError(learnerQuizRefreshFailureMessage(afterSubmit,cause));
+      }
     } finally {
-      setLoading(false);
+      if (learnerQuizRequestCurrent(signal)) setLoading(false);
     }
-  }
+  }, [quizId, deliveryId, reviewRequested, storageKey]);
 
   useEffect(() => {
-    // Defer the load callback outside the effect's synchronous phase.
-    const handle = window.setTimeout(() => void load(), 0);
-    return () => window.clearTimeout(handle);
-    // quiz/delivery identify a fresh attempt surface.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quizId, deliveryId]);
+    const controller = new AbortController();
+    // Defer the initial load without synchronously setting state in an effect.
+    const handle = window.setTimeout(() => void load(controller.signal), 0);
+    return () => { controller.abort(); window.clearTimeout(handle); };
+  }, [load]);
 
   useEffect(() => {
     const handle = window.setInterval(() => setNowMs(Date.now()), 30_000);
@@ -181,13 +196,13 @@ export function LearnerQuizAttempt() {
   }, []);
 
   useEffect(() => {
-    if (!storageKey || review || loading || typeof window === "undefined") return;
+    if (!learnerQuizDraftCanPersist({storageKey,loadedScopeKey,review,loading,hasQuiz:Boolean(quiz)}) || typeof window === "undefined") return;
     try {
       window.sessionStorage.setItem(storageKey, JSON.stringify({ answers, step }));
     } catch {
       // Private browsing/quota should not block the attempt.
     }
-  }, [answers, step, storageKey, review, loading]);
+  }, [answers, step, storageKey, loadedScopeKey, review, loading, quiz]);
 
   const questions = quiz?.questions ?? [];
   const current = questions[step] ?? null;
@@ -294,7 +309,7 @@ export function LearnerQuizAttempt() {
       setConfirmedSubmissionQuizId(quiz.quiz.id);
       // Session storage may be blocked; a confirmed server write is never a failed submission.
       try { window.sessionStorage.removeItem(storageKey); } catch { /* local cleanup is best effort */ }
-      await load();
+      await load(undefined, true);
       setReview(true);
       setStep(0);
       router.replace(
@@ -319,8 +334,8 @@ export function LearnerQuizAttempt() {
     }
   }
 
-  if (loading) {
-    return <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">Loading quiz…</div>;
+  if (loading || !learnerQuizRouteScopeCurrent(storageKey,loadedScopeKey)) {
+    return <div role="status" className="rounded-xl border border-border bg-surface p-8 text-sm text-body">Loading quiz…</div>;
   }
 
   if (error && !quiz) {
@@ -374,7 +389,7 @@ export function LearnerQuizAttempt() {
                 <div className="mt-3 space-y-2">
                   {question.options.map((option) => {
                     const isSelected = selected.has(option.id);
-                    const correct = latestAttempt?.resultsVisible ? option.correct === true : false;
+                    const correct = canReviewLearnerQuizCorrectAnswers(quiz.quiz.resultsPublished,latestAttempt?.resultsVisible === true) && option.correct === true;
                     return (
                       <div key={option.id} className="flex items-start gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm">
                         <span aria-hidden="true">{correct ? "✓" : isSelected ? "•" : "○"}</span>
