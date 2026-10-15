@@ -23,6 +23,7 @@ import {
 type SearchParams = {
   journeyState?: string | string[];
   afterCollege?: string | string[];
+  codingPlatform?: string | string[];
   branchId?: string | string[];
   search?: string | string[];
   page?: string | string[];
@@ -45,6 +46,7 @@ function studentsHref(
   filters: {
     journeyState?: string;
     afterCollege?: string;
+    codingPlatform?: string;
     branchId?: string;
     search?: string;
     page?: number;
@@ -59,6 +61,7 @@ function studentsHref(
   }
 
   if (filters.afterCollege) params.set("afterCollege",filters.afterCollege);
+  if (filters.codingPlatform) params.set("codingPlatform",filters.codingPlatform);
 
   if (filters.branchId) {
     params.set("branchId", filters.branchId);
@@ -127,6 +130,7 @@ export default async function TpoStudentsPage({
     collegeId: context.membership.collegeId,
     journeyState: first(raw.journeyState) || undefined,
     afterCollege: first(raw.afterCollege) || undefined,
+    codingPlatform: first(raw.codingPlatform) || undefined,
     branchId: first(raw.branchId) || undefined,
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
@@ -197,6 +201,7 @@ export default async function TpoStudentsPage({
     {
       journeyState: query.journeyState,
       afterCollege: query.afterCollege,
+      codingPlatform: query.codingPlatform,
       branchId: query.branchId,
       search: query.search,
     },
@@ -206,6 +211,7 @@ export default async function TpoStudentsPage({
   const currentFilters = {
     journeyState: query.journeyState,
     afterCollege: query.afterCollege,
+    codingPlatform: query.codingPlatform,
     branchId: query.branchId,
     search: query.search,
     pageSize: query.pageSize,
@@ -513,6 +519,15 @@ export default async function TpoStudentsPage({
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            Coding profile
+            <select name="codingPlatform" defaultValue={query.codingPlatform??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="">All coding profiles</option>
+              <option value="GITHUB">Linked GitHub profile</option>
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Branch
             <select
               name="branchId"
@@ -623,6 +638,10 @@ export default async function TpoStudentsPage({
                       >
                         View placement history →
                       </Link>
+                      {student.codingGithubUrl?<a href={student.codingGithubUrl} target="_blank" rel="noopener noreferrer"
+                        className="mt-2 block break-all text-xs font-semibold text-primary-text underline">
+                        GitHub coding profile ↗
+                      </a>:null}
                     </td>
 
                     <td className="px-4 py-4">
