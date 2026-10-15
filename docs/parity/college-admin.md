@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Waiting-only verification attention cues PARTIAL (chat-9):** Updated-details and overdue-waiting triage now reject decided tabs at the page, query service and CSV boundaries. Navigating to a decided tab clears only incompatible attention selections while preserving supported filters. Pure parser contract tests authored; browser acceptance pending.
+
 **Identity/Education evidence-filter guard PARTIAL (chat-9):** An Identity-only queue cannot silently apply marksheet-present/missing or missing-marksheet triage. Page, service and CSV reject impossible combinations, and switching the visible kind to Identity clears the incompatible fields. Model tests authored; PG/browser acceptance pending.
 
 **Verification card decision-state clarity PARTIAL (chat-9):** The shared queue now clearly labels new SUBMITTED and updated UPDATE_PENDING items with the appropriate review action, while VERIFIED/SENT_BACK cards say View decision rather than suggesting another write. Pure presentation unit cases authored; 375px browser and end-to-end permission acceptance open.

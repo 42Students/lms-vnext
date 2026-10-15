@@ -5,7 +5,7 @@ import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
-import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid,verificationSectionEvidenceFiltersValid} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid,verificationSectionEvidenceFiltersValid,verificationWaitingAttentionValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
 import {verificationSqlSections} from "./queue-kind";
 import {matchesVerificationAttention} from "./attention-filter";
@@ -30,6 +30,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
  if(!verificationAgeBandValid(filter))throw Error("INVALID_VERIFICATION_AGE_BAND");
  if(!verificationSectionEvidenceFiltersValid(filter))throw Error("INVALID_VERIFICATION_SECTION_EVIDENCE_FILTERS");
+ if(!verificationWaitingAttentionValid(filter))throw Error("INVALID_VERIFICATION_ATTENTION_TAB");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const dateBounds=verificationSubmittedSqlBounds(filter);
