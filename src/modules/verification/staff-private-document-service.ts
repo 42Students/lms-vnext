@@ -6,9 +6,11 @@ import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import type {RequestContext} from "@/modules/identity/context";
 import {VerificationStateError,type VerificationSection} from "@/modules/profile-verification/domain";
 import {getCollegeVerificationDetail} from "./staff-review-detail-service";
+import {requireCollegeVerificationActor} from "./staff-auth";
 
 export async function openCollegeVerificationDocument(context:RequestContext,
  membershipId:string,section:VerificationSection,receiptId:string){
+ const scope=await requireCollegeVerificationActor(context);
  const detail=await getCollegeVerificationDetail(context,membershipId,section);
  if(!detail.documents.some(doc=>doc.receiptId===receiptId))
    throw new VerificationStateError("NOT_ALLOWED");
@@ -16,10 +18,8 @@ export async function openCollegeVerificationDocument(context:RequestContext,
   .where(and(eq(profilePrivateDocumentReceipts.id,receiptId),
    eq(profilePrivateDocumentReceipts.owningMembershipId,membershipId))).limit(1);
  if(!receipt||receipt.scanStatus!=="CLEAN"||receipt.revokedAt||
-   receipt.retentionUntil&&receipt.retentionUntil<=new Date())
+   (receipt.retentionUntil!==null&&receipt.retentionUntil<=new Date()))
    throw new VerificationStateError("NOT_ALLOWED");
  return createPrivateReadGrant({objectKey:receipt.privateObjectKey,
-  collegeId:(await import("./staff-auth")).requireCollegeVerificationActor
-    ? (await (await import("./staff-auth")).requireCollegeVerificationActor(context)).collegeId : "",
-  ownerMembershipId:membershipId});
+   collegeId:scope.collegeId,ownerMembershipId:membershipId});
 }
