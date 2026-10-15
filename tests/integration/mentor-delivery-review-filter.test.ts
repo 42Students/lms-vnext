@@ -100,6 +100,18 @@ describe("Mentor final delivery feedback-filtered review history — PostgreSQL"
   })]);
   const history=await getMentorReviewHistory(mentor,{search:"Export project",decision:"CHANGES_REQUESTED"});
   expect(history.items.some(item=>item.projectId===project.id)).toBe(true);
+  const selected=await getMentorReviewHistory(mentor,{
+    projectId:project.id,version:1,order:"OLDEST",window:"LAST_30_DAYS",
+  });
+  expect(selected.items).toEqual([expect.objectContaining({
+    projectId:project.id,version:1,decision:"CHANGES_REQUESTED",
+  })]);
+  const missingVersion=await getMentorReviewHistory(mentor,{
+    projectId:project.id,version:2,
+  });
+  expect(missingVersion.total).toBe(0);
+  await expect(getMentorReviewHistory(mentor,{projectId:randomUUID()}))
+    .rejects.toBeDefined();
   const missing=await getMentorReviewHistory(mentor,{search:"%no-project-match",decision:"ALL"});
   expect(missing.items.some(item=>item.projectId===project.id)).toBe(false);
   await expect(getMentorReviewHistory(learner,{search:"Export project"})).rejects.toBeDefined();
