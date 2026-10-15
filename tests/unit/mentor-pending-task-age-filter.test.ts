@@ -1,0 +1,3 @@
+import{it,expect}from"vitest";import{mentorTaskReviewQuerySchema as schema,mentorTaskReviewHref as href}from"@/modules/projects/mentor-task-review-model";
+it("keeps version-safe pending review aging",()=>{expect(schema.parse({age:"OLDER_THAN_7_DAYS"}).age).toBe("OLDER_THAN_7_DAYS");expect(href({age:"OLDER_THAN_7_DAYS",page:2})).toContain("age=OLDER_THAN_7_DAYS")});
+it("rejects unregistered aging selectors",()=>expect(schema.safeParse({age:"CUSTOM"}).success).toBe(false));

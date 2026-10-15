@@ -14,6 +14,7 @@ type Params = {
   page?: string | string[];
   pageSize?: string | string[];
   priority?: string | string[];
+  age?: string | string[];
   version?: string | string[];
   order?: string | string[];
 };
@@ -31,6 +32,7 @@ export default async function MentorTaskReviewsPage({
     page: first(raw.page) ?? undefined,
     pageSize: first(raw.pageSize) ?? undefined,
     priority: first(raw.priority) ?? undefined,
+    age: first(raw.age) ?? undefined,
     version: first(raw.version) ?? undefined,
     order: first(raw.order) ?? undefined,
   });
@@ -85,6 +87,11 @@ export default async function MentorTaskReviewsPage({
           <input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
             className="min-h-10 w-32 rounded-md border border-border bg-background px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Waiting since
+          <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option>
+          </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
           <select name="order" defaultValue={data.query.order}
