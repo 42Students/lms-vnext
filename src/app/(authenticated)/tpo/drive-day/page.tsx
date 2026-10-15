@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import {filterTpoLiveRoundSearch,tpoLiveRoundSearchSchema} from "@/modules/placements/tpo-live-round-search-model";
 import { tpoDriveDaySortSchema, sortTpoDriveDayRows } from "@/modules/placements/tpo-drive-day-sort-model";
 import { tpoDriveDayIssueSchema, filterTpoDriveDayIssues } from "@/modules/placements/tpo-drive-day-issue-filter-model";
 import { getTpoLiveDriveDaySummary } from "@/modules/placements/tpo-live-drive-day-service";
@@ -22,7 +23,7 @@ function formatWhen(
   }).format(value);
 }
 
-export default async function DriveDayPage({searchParams}:{searchParams:Promise<{issue?:string|string[];sort?:string|string[]}>}) {
+export default async function DriveDayPage({searchParams}:{searchParams:Promise<{issue?:string|string[];sort?:string|string[];q?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
   if (!context.membership ||
@@ -34,17 +35,20 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
   // TPO-only staff see a scoped operational snapshot, not a coordinator roster.
   if (hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "LEARNER")) {
     const raw=await searchParams;
+    const search=tpoLiveRoundSearchSchema.safeParse(Array.isArray(raw.q)?raw.q[0]:raw.q);
+    if(!search.success)return <section role="alert">Invalid search. <Link href="/tpo/drive-day">Clear filters</Link></section>;
     const issue=tpoDriveDayIssueSchema.safeParse(Array.isArray(raw.issue)?raw.issue[0]:raw.issue);
     const sort=tpoDriveDaySortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
     if(!sort.success)return <section role="alert">Invalid Drive Day sorting. <Link href="/tpo/drive-day">Clear filters</Link></section>;
     if(!issue.success)return <section role="alert">Invalid Drive Day filter. <Link href="/tpo/drive-day">Clear filters</Link></section>;
     const snapshot = await getTpoLiveDriveDaySummary(context);
-    const liveRows=sortTpoDriveDayRows(filterTpoDriveDayIssues(snapshot.rows,issue.data),sort.data);
+    const liveRows=sortTpoDriveDayRows(filterTpoDriveDayIssues(filterTpoLiveRoundSearch(snapshot.rows,search.data),issue.data),sort.data);
     return (
       <div className="space-y-6">
         <PageHeader eyebrow="TPO · Drive Day" title="Live rounds"
           description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
         <form action="/tpo/drive-day" method="get" className="flex flex-wrap gap-3">
+          <label className="text-sm">Search live rounds<input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"/></label>
           <label className="text-sm">Attendance focus<select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option></select></label>
           <label className="text-sm">Prioritize<select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option></select></label>
           <button type="submit" className="self-end min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>

@@ -2067,3 +2067,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 academic CSV parser correction:** Repaired regex-literal escapes so numeric validation recognizes actual decimal digits and decimal separators (not literal backslash sequences); blank/scientific values still reject. This is a source correction, not executed-test certification.
 
 **Chat-2 academic preview typing correction:** The client state now carries complete parsed academic preview rows (CGPA/backlogs + match flag) instead of the erased generic return type. Runtime build and browser acceptance still unexecuted.
+
+**Chat-2 2026-10-15 / Live Drive Day search — PARTIAL:** TPO-only live, already-scoped and capped rounds can be filtered by company/job/round name with a validated 100-character URL term. This does not expand the 20-round sample or expose coordinator-only learner rosters. Runtime/browser verification pending.
