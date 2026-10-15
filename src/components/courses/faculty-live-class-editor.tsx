@@ -2,7 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
-import {authoringDueInstant} from "@/modules/courses/faculty-authoring-datetime-model";
+import {facultyLiveEditorCommand} from "@/modules/courses/faculty-live-editor-command";
 import {facultyLiveEditorDraft} from "@/modules/courses/faculty-live-editor-model";
 
 type Choice={id:string;title:string;deliveryId:string};
@@ -45,19 +45,16 @@ export function FacultyLiveClassEditor({
   }
   async function save(){
     if(!deliveryId||pending||!ready)return;
+    let payload:ReturnType<typeof facultyLiveEditorCommand>;
+    try{payload=facultyLiveEditorCommand({
+      action,lessonId,selected:chosen,title,meetingUrl,startsAt,endsAt,
+    });}catch(caught){
+      setError(caught instanceof Error?caught.message:"Invalid live-class details.");return;
+    }
     const verb=action==="CREATE"?"schedule":action==="EDIT"?"reschedule":"cancel";
     if(!window.confirm("Confirm: "+verb+" this Section live class?"))return;
     setPending(true);setError(null);
     try{
-      const payload=action==="CANCEL" ?
-        {action,contentId:chosen?.id,expectedUpdatedAt:chosen?.expectedUpdatedAt,confirm:true} :
-        {
-          action, ...(action==="CREATE"?{lessonId}:{contentId:chosen?.id,
-            expectedUpdatedAt:chosen?.expectedUpdatedAt}),
-          title,meetingUrl,
-          startsAt:authoringDueInstant(startsAt),
-          endsAt:authoringDueInstant(endsAt),confirm:true,
-        };
       const result=await fetch(
         "/api/courses/faculty/live-classes/"+encodeURIComponent(deliveryId)+"/command",
         {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)},
