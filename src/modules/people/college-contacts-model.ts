@@ -10,6 +10,16 @@ export const collegeContactsQuerySchema=z.strictObject({
   status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
   accountStatus:z.enum(["ALL","ACTIVE","DISABLED"]).default("ALL"),
   audience:z.enum(["ALL","FACULTY_ONLY","LEARNER_ONLY","DUAL"]).default("ALL"),
+  profile:z.enum(["ALL","PROFILED","UNPROFILED"]).default("ALL"),
+  cohortId:z.string().uuid().optional(),
+  facultyDepartmentId:z.string().uuid().optional(),
+  classPresence:z.enum(["ALL","ASSIGNED","NONE"]).default("ALL"),
+  departmentPresence:z.enum(["ALL","ASSIGNED","MISSING"]).default("ALL"),
+  titlePresence:z.enum(["ALL","PRESENT","MISSING"]).default("ALL"),
+  registrationPresence:z.enum(["ALL","PRESENT","MISSING"]).default("ALL"),
+  rollPresence:z.enum(["ALL","PRESENT","MISSING"]).default("ALL"),
+  teaching:z.enum(["ALL","ASSIGNED","NONE"]).default("ALL"),
+  enrollment:z.enum(["ALL","ACTIVE","NONE"]).default("ALL"),
   sort:z.enum(["NAME","NAME_DESC","NEWEST","OLDEST"]).default("NAME"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
   pageSize:z.coerce.number().int().refine(n=>[10,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
@@ -34,10 +44,24 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.status!=="ACTIVE")params.set("status",filter.status);
  if(filter.accountStatus!=="ALL")params.set("accountStatus",filter.accountStatus);
  if(filter.audience!=="ALL")params.set("audience",filter.audience);
+ if(filter.profile!=="ALL")params.set("profile",filter.profile);
+ if(filter.cohortId)params.set("cohortId",filter.cohortId);
+ if(filter.facultyDepartmentId)params.set("facultyDepartmentId",filter.facultyDepartmentId);
+ if(filter.classPresence!=="ALL")params.set("classPresence",filter.classPresence);
+ if(filter.departmentPresence!=="ALL")params.set("departmentPresence",filter.departmentPresence);
+ if(filter.titlePresence!=="ALL")params.set("titlePresence",filter.titlePresence);
+ if(filter.registrationPresence!=="ALL")params.set("registrationPresence",filter.registrationPresence);
+ if(filter.rollPresence!=="ALL")params.set("rollPresence",filter.rollPresence);
+ if(filter.teaching!=="ALL")params.set("teaching",filter.teaching);
+ if(filter.enrollment!=="ALL")params.set("enrollment",filter.enrollment);
  if(filter.sort!=="NAME")params.set("sort",filter.sort);
  if(filter.page!==1)params.set("page",String(filter.page));
  if(filter.pageSize!==COLLEGE_CONTACTS_PAGE_SIZE)params.set("pageSize",String(filter.pageSize));
  return "/college/contacts"+(params.size?"?"+params.toString():"");
+}
+/** Reset every query facet, retaining only the intentionally selected contact tab. */
+export function clearedCollegeContactsHref(tab:CollegeContactsQuery["tab"]):string{
+ return collegeContactsHref(collegeContactsQuerySchema.parse({tab}));
 }
 export function parseCollegeContactsSearchParams(raw:Record<string,string|string[]|undefined>){
  const normalized:Record<string,string>={};
