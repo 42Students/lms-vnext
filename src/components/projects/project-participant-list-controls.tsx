@@ -17,7 +17,7 @@ export type ProjectParticipantListQuery = {
     | "MENTOR_ANY_ATTENTION"
     | "MENTOR_NO_ATTENTION"
     | "LEARNER_ACTION";
-  work?: "BLOCKED" | "NO_TASKS" | "HAS_OPEN_TASKS";
+  work?: "BLOCKED" | "NO_TASKS" | "HAS_OPEN_TASKS" | "ALL_DONE";
   sort?: "RECENT" | "TITLE" | "PROGRESS";
   page?: number;
   pageSize?: number;
@@ -131,6 +131,7 @@ export function ProjectParticipantListControls({
             <option value="">All task coverage</option>
             <option value="NO_TASKS">No tracked tasks</option>
             <option value="HAS_OPEN_TASKS">Open tasks recorded</option>
+            <option value="ALL_DONE">All recorded tasks done</option>
           </select>
         </label>
       ) : null}
