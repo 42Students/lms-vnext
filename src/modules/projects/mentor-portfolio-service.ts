@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, lt, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import {
@@ -13,7 +13,7 @@ import { listMyMentorProjectAttention } from "./mentor-attention-service";
 import { mentorProjectActivityEventTypes } from "./mentor-project-activity-model";
 import {
   mentorActivityQuerySchema, mentorReviewQuerySchema,
-  pageMentorPortfolio, safeMentorProjectEventLabel, selectMentorReviewQueue,
+  pageMentorPortfolio, mentorActivityPagination, mentorActivityProjectTitleMatch, safeMentorProjectEventLabel, selectMentorReviewQueue,
 } from "./mentor-portfolio-model";
 
 async function requireMentorPortfolio(context: RequestContext) {
@@ -68,12 +68,13 @@ export async function getMentorPortfolioActivity(
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const selectedProjects=scope.projects.filter(p=>(query.projectStatus==="ALL"||p.status===query.projectStatus)&&
     (query.assignment==="ALL"||(query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
-    (!query.projectId||p.id===query.projectId));
+    (!query.projectId||p.id===query.projectId)&&
+    mentorActivityProjectTitleMatch(p.title,query.search));
   if (!scope.enabled || !selectedProjects.length) {
     return {
       enabled: scope.enabled, query, projects:scope.projects, page: 1, pageSize: query.pageSize,
       total: 0, totalPages: 1,
-      items: [] as { id: string; projectId: string; projectTitle: string; label: string; occurredAt: Date }[],
+      items: [] as { id: string; projectId: string; projectTitle: string; label: string; importance:string; occurredAt: Date }[],
     };
   }
   const membership = context.membership!;
@@ -82,12 +83,14 @@ export async function getMentorPortfolioActivity(
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
   const types=mentorProjectActivityEventTypes(query.view);
   const cutoff = query.window==="ALL" ? null :
-    new Date(new Date().getTime() - (query.window==="PAST_7_DAYS"?7:30)*86400000);
+    new Date(new Date().getTime() - (query.window==="PAST_7_DAYS"?7:query.window==="PAST_90_DAYS"?90:30)*86400000);
   const filters = and(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
     eq(activityEvents.organizationId, membership.organizationId),
-    cutoff?gte(activityEvents.occurredAt,cutoff):undefined,
+    cutoff?(query.window==="OLDER_THAN_30_DAYS"
+      ?lt(activityEvents.occurredAt,cutoff)
+      :gte(activityEvents.occurredAt,cutoff)):undefined,
     query.importance === "ALL" ? undefined : eq(activityEvents.importance,query.importance),
     types?inArray(activityEvents.eventType,types):undefined,
     or(
@@ -96,29 +99,26 @@ export async function getMentorPortfolioActivity(
     ),
   );
   const db = getDb();
-  const [summary, rows] = await Promise.all([
-    db.select({ total: count() }).from(activityEvents).where(filters),
-    db.select({
+  const [summary] = await db.select({total:count()}).from(activityEvents).where(filters);
+  const paging=mentorActivityPagination(Number(summary?.total??0),query.page,query.pageSize);
+  const rows=await db.select({
       id: activityEvents.id, eventType: activityEvents.eventType,
       subjectId: activityEvents.subjectId, subjectType: activityEvents.subjectType,
-      metadataProjectId, occurredAt: activityEvents.occurredAt,
+      metadataProjectId, importance:activityEvents.importance, occurredAt: activityEvents.occurredAt,
     }).from(activityEvents).where(filters)
       .orderBy(query.order==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
         query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
-      .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
-  ]);
-  const total = Number(summary[0]?.total ?? 0);
+      .limit(paging.pageSize).offset((paging.page - 1) * paging.pageSize);
   const items = rows.flatMap(row => {
     const id = row.subjectType === "project" && byId.has(row.subjectId)
       ? row.subjectId : row.metadataProjectId;
     const project = id ? byId.get(id) : null;
     return project ? [{
       id: row.id, projectId: project.id, projectTitle: project.title,
-      label: safeMentorProjectEventLabel(row.eventType), occurredAt: row.occurredAt,
+      label: safeMentorProjectEventLabel(row.eventType), importance:row.importance, occurredAt: row.occurredAt,
     }] : [];
   });
   return {
-    enabled: true, query, projects:scope.projects, page: query.page, pageSize: query.pageSize,
-    total, totalPages: Math.max(1, Math.ceil(total / query.pageSize)), items,
+    enabled: true, query, projects:scope.projects, ...paging, items,
   };
 }
