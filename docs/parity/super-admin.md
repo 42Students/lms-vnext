@@ -1132,3 +1132,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 restoration stale-retry guard — PARTIAL:** Already-restored announcements still enforce caller expectedVersion; concurrent edits cannot be mistaken for an accepted no-op restore. Source regression authored, DB/browser execution pending.
+
+
+**2026-10-15 chat-6 DB10 pinned/unpinned announcement history (PARTIAL):** Persisted pin status filters before pagination and carries into page bookmarks, deleted toggle, and capped CSV. Strict URL/API schema rejects invalid selection; source unit authored, execution pending.
