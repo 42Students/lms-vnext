@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import {tpoLiveRoundVenueLabel} from "@/modules/placements/tpo-live-round-venue-model";
 import {tpoLiveRoundJobHref} from "@/modules/placements/tpo-live-round-job-link-model";
 import {tpoLiveCsvHref} from "@/modules/placements/tpo-live-drive-day-csv-model";
 import {tpoLiveRoundTiming} from "@/modules/placements/tpo-live-round-timing-model";
@@ -89,6 +90,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                         timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
                       }) : "unknown"
                     } IST</p>
+                    <p className="text-xs text-muted-foreground">{tpoLiveRoundVenueLabel(round.venue)}</p>
                     {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground">Elapsed {tpoLiveRoundTiming(round,snapshot.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
                   </div>
                   <div className="flex flex-wrap gap-2"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm text-primary-text">Open drive</Link>

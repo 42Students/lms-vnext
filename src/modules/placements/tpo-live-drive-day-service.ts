@@ -52,6 +52,7 @@ export async function getTpoLiveDriveDaySummary(context: RequestContext, now: Da
       companyName: roster.companyName,
       jobTitle: roster.job.title,
       jobId: roster.job.id,
+      venue: roster.round.venue,
       scheduledAt: round.scheduledAt?.toISOString() ?? null,
       durationMinutes: round.durationMinutes,
       counts: summarizeTpoLiveAttendance(roster.counts),
