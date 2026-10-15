@@ -35,3 +35,10 @@ export function beginFacultyManualGradeOperation(lock:{current:boolean}):boolean
  if(lock.current)return false;
  lock.current=true;return true;
 }
+
+/** Timeout or invalid success receipt cannot prove a grade was rolled back. */
+export function facultyManualGradeUncertainMessage(kind:"GRADE"|"PUBLISH"):string{
+ return kind==="GRADE"
+  ?"The save could not be verified. It may have succeeded. Refresh current submissions before retrying."
+  :"Publication could not be verified. The learner may already see the grade. Refresh before retrying.";
+}

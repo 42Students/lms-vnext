@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
-import {facultyManualGradeReceipt,beginFacultyManualGradeOperation} from "@/modules/courses/faculty-manual-grade-receipt";
+import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
@@ -154,9 +154,7 @@ function SubmissionGradeCard({
           submission.learnerEmail,
       });
     } catch {
-      setError(
-        "Could not save this grade. Check your connection and try again.",
-      );
+      setError(facultyManualGradeUncertainMessage("GRADE"));
     } finally {
       operationInFlight.current=false;
       setSaving(false);
