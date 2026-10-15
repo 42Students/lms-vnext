@@ -5,6 +5,7 @@ import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import { publicPlacementDisclosure } from "@/modules/placements/public-placement-disclosure-model";
 import { getPublicPlacementStatistics } from "@/modules/placements/public-page/read-service";
 import { readOptionalPublicPlacementData } from "@/modules/placements/public-page/optional-read-model";
+import { publicPageAvailabilityMessage } from "@/modules/placements/public-page/public-page-availability-model";
 
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
@@ -12,9 +13,10 @@ import { readOptionalPublicPlacementData } from "@/modules/placements/public-pag
  */
 export default async function PublicPlacementsPage() {
   const tenant = await resolveRequestTenant((await headers()).get("host"));
-  const college = tenant.kind === "college"
-    ? await getPublicCollegeBranding(tenant.collegeId)
+  const brandRead=tenant.kind==="college"
+    ? await readOptionalPublicPlacementData(()=>getPublicCollegeBranding(tenant.collegeId))
     : null;
+  const college=brandRead?.available?brandRead.value:null;
   const publicRead = tenant.kind === "college" && college
     ? await readOptionalPublicPlacementData(()=>getPublicPlacementStatistics(tenant.collegeId))
     : null;
@@ -41,6 +43,11 @@ export default async function PublicPlacementsPage() {
           College-published figures last updated{" "}
           <time dateTime={published.publishedAt}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(published.publishedAt))}</time>.
           Individual records are never displayed here.
+        </p>
+      ) : null}
+      {brandRead && !brandRead.available ? (
+        <p role="status" className="mt-6 rounded-lg border border-border bg-surface p-4 text-sm text-body">
+          {publicPageAvailabilityMessage("branding")}
         </p>
       ) : null}
       {publicRead && !publicRead.available ? (
