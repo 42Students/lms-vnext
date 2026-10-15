@@ -1,0 +1,8 @@
+ALTER TABLE "placement_recruiter_college_grants" ADD COLUMN "valid_until" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "placement_recruiter_college_grants" ADD COLUMN "capabilities" text[] DEFAULT ARRAY['DRIVES']::text[] NOT NULL;--> statement-breakpoint
+ALTER TABLE "placement_recruiter_college_grants" ADD COLUMN "verification_status" varchar(24) DEFAULT 'PENDING' NOT NULL;--> statement-breakpoint
+ALTER TABLE "placement_recruiter_college_grants" ADD COLUMN "revoke_reason" text;--> statement-breakpoint
+CREATE INDEX "placement_recruiter_grant_validity_idx" ON "placement_recruiter_college_grants" USING btree ("recruiter_user_id","valid_until") WHERE "placement_recruiter_college_grants"."status" = 'ACTIVE';--> statement-breakpoint
+ALTER TABLE "placement_recruiter_college_grants" ADD CONSTRAINT "placement_recruiter_grant_verification_ck" CHECK ("placement_recruiter_college_grants"."verification_status" in ('PENDING', 'VERIFIED', 'REJECTED'));--> statement-breakpoint
+ALTER TABLE "placement_recruiter_college_grants" ADD CONSTRAINT "placement_recruiter_grant_validity_ck" CHECK ("placement_recruiter_college_grants"."valid_until" is null or "placement_recruiter_college_grants"."valid_until" > "placement_recruiter_college_grants"."created_at");--> statement-breakpoint
+ALTER TABLE "placement_recruiter_college_grants" ADD CONSTRAINT "placement_recruiter_grant_capabilities_ck" CHECK (cardinality("placement_recruiter_college_grants"."capabilities") > 0 and "placement_recruiter_college_grants"."capabilities" <@ ARRAY['DRIVES','APPLICANT_EXPORT','INTERVIEWS','MESSAGES']::text[]);

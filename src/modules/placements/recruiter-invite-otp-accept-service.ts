@@ -1,13 +1,13 @@
 import "server-only";
-import { and, desc, eq, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementCompanies,placementCompanyRelationships,
   placementRecruiterCollegeGrants,placementRecruiterProfiles,
-  placementTpoLeadActivities,placementTpoLeads,users,
+  placementTpoCollegeSettings,placementTpoLeadActivities,placementTpoLeads,users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { recruiterInviteCodesStaged,recruiterAccessPoliciesStaged } from "./staged-schema";
+import { recruiterInviteCodesStaged } from "./staged-schema";
 import { recruiterGrantValidUntil } from "./recruiter-grant-expiry-policy";
 import {
   isRecruiterInviteTokenShape,recruiterInviteTokenHash,requireRecruiterInviteUsable,
@@ -81,9 +81,9 @@ export async function acceptTpoRecruiterInviteOtp(
    if(!relationship || relationship.status!=="ACTIVE" ||
       relationship.companyStatus!=="ACTIVE")return "DENIED";
    const [duration]=await tx.select({
-      months:recruiterAccessPoliciesStaged.recruiterAccessMonths,
-   }).from(recruiterAccessPoliciesStaged)
-     .where(eq(recruiterAccessPoliciesStaged.collegeId,lead.collegeId))
+      months:placementTpoCollegeSettings.recruiterAccessMonths,
+   }).from(placementTpoCollegeSettings)
+     .where(eq(placementTpoCollegeSettings.collegeId,lead.collegeId))
      .for("share").limit(1);
    if(!duration || duration.months<1 || duration.months>60)return "DENIED";
    const validUntil=recruiterGrantValidUntil(now,duration.months);
@@ -99,16 +99,10 @@ export async function acceptTpoRecruiterInviteOtp(
    const [grant]=await tx.insert(placementRecruiterCollegeGrants).values({
      recruiterUserId:identity.id,
      companyRelationshipId:lead.companyRelationshipId,
-     grantedByUserId:identity.id,
+     grantedByUserId:identity.id,validUntil,
+     capabilities:["DRIVES"],verificationStatus:"VERIFIED",
    }).onConflictDoNothing().returning({id:placementRecruiterCollegeGrants.id});
    if(!grant)return "DENIED"; // Never quietly renew existing active grants.
-   // These fields are STAGED and only exist after the approved migration.
-   await tx.execute(sql`update placement_recruiter_college_grants
-      set valid_until=${validUntil}::timestamptz,
-          capabilities=ARRAY['DRIVES']::text[],
-          verification_status='VERIFIED',
-          updated_at=${now}::timestamptz
-      where id=${grant.id}::uuid`);
    const [used]=await tx.update(recruiterInviteCodesStaged)
      .set({consumedAt:now})
      .where(and(eq(recruiterInviteCodesStaged.id,challenge.id),
