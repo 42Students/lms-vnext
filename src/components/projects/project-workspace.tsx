@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts, mentorWorkspaceMissingPrimaryMentor, mentorLatestDeliveryVersion, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -418,7 +418,7 @@ export function ProjectWorkspace({
           </p>
         ) : null}
         {mode==="MENTOR" ? (() => {
-          const facts=mentorWorkspaceTeamFacts(workspace.members);
+          const facts=workspace.mentorEvidence.team;
           return <p className="text-sm text-body">
             Current recorded roster: {facts.learners} Learner{facts.learners===1?"":"s"} ·
             {" "}{facts.mentors} Mentor{facts.mentors===1?"":"s"} ·
@@ -545,7 +545,7 @@ export function ProjectWorkspace({
                           </p>
                         ) : null}
                         {mode==="MENTOR" ? (() => {
-                          const facts=mentorSprintTaskFacts(tasksBySprint.get(sprint.id)??[]);
+                          const facts=workspace.mentorEvidence.tasksBySprint[sprint.id]??mentorSprintTaskFacts([]);
                           return <p className="mt-2 text-xs text-body">
                             Recorded tasks: {facts.done}/{facts.total} Done · {facts.inReview} In review · {facts.blocked} Blocked
                             {" · "}Completion: {facts.completionPercent===null?"Unknown (no tasks)":facts.completionPercent+"%"}
@@ -750,10 +750,10 @@ export function ProjectWorkspace({
             and rubric evaluation.
           </p>
         </div>
-        {mode==="MENTOR" && mentorLatestDeliveryVersion(workspace.finalDelivery.submissions) ? (
+        {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
           <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
-            Latest recorded delivery: version {mentorLatestDeliveryVersion(workspace.finalDelivery.submissions)?.version}
-            {" · "}{mentorLatestDeliveryVersion(workspace.finalDelivery.submissions)?.status}.
+            Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}
+            {" · "}{workspace.mentorEvidence.latestDelivery?.status}.
             Historic versions remain available below.
           </p>
         ) : null}
