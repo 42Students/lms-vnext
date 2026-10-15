@@ -68,6 +68,11 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             </select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Course department code
+            <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
