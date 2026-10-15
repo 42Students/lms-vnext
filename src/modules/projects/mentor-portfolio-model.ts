@@ -78,7 +78,7 @@ export function safeMentorProjectEventLabel(eventType: string): string {
 }
 export function mentorPortfolioHref(
   area: "reviews" | "activity",
-  query: { search?: string; page?: number; pageSize?: number; order?: string; projectStatus?: string; age?: string; projectId?: string; importance?: string; view?: string; window?: string; projectId?: string },
+  query: { search?: string; page?: number; pageSize?: number; order?: string; projectStatus?: string; age?: string; projectId?: string; importance?: string; view?: string; window?: string },
 ) {
   const params = new URLSearchParams();
   if (area === "reviews" && query.search) params.set("search", query.search);
