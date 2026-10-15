@@ -4,7 +4,7 @@ export const mentorReviewHistoryQuerySchema = z.object({
   version: z.preprocess(value=>value===""?undefined:value,z.coerce.number().int().min(1).max(100000).optional()),
   projectId: z.preprocess(value => value===""?undefined:value,z.string().uuid().optional()),
   projectState:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
-  window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS"]).default("ALL"),
+  window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   decision: z.enum(["ALL", "APPROVED", "CHANGES_REQUESTED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
