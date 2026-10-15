@@ -950,3 +950,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 student override editor (PARTIAL):** Added selected-college/learner interactive Projects and Electives Inherit/On/Off and membership-lock controls, with explicit destructive confirmation, optimistic expected state, same-origin PUT, human-readable error feedback, and refreshed trace. Placements remains read-only; broader locked ancestry disables actions. Pure UI payload tests authored, unexecuted; actual browser and PostgreSQL write/lock certification still required.
+
+
+**2026-10-15 chat-6 student rule recheck endpoint — PARTIAL:** Added authenticated, Super Admin-scoped GET returning only membership stored On/Off/lock and resolver flags, `no-store` cache, no student contacts or identity. Editor can recheck and reload observed optimistic state after a conflict rather than overriding blindly. Pure unit tests authored; real PostgreSQL and browser stale-edit checks remain OPEN.
