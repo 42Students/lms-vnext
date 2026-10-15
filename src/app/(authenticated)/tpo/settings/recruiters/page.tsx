@@ -27,6 +27,7 @@ import {
 import {
   TPO_RECRUITER_ACCESS_FILTERS,
   tpoRecruiterAccessHref,
+  nextTpoRecruiterGrantPage,
   tpoRecruiterAccessQuerySchema,
 } from "@/modules/placements/tpo-recruiter-access-model";
 import {
@@ -352,10 +353,7 @@ export default async function TpoRecruiterAccessPage({
 
             {page < totalPages ? (
               <Link
-                href={tpoRecruiterAccessHref({
-                  status: query.status,
-                  page: page + 1,
-                })}
+                href={nextTpoRecruiterGrantPage(query,page)}
                 className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
               >
                 Next →
