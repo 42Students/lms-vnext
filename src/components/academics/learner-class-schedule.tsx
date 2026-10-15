@@ -9,6 +9,7 @@ import { filterLearnerScheduleUpcoming } from "@/modules/academics/learner-sched
 import { learnerScheduleResetFilters } from "@/modules/academics/learner-schedule-filter-reset-model";
 import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock-model";
 import { learnerScheduleDayAfterShift } from "@/modules/academics/learner-schedule-shift-day-model";
+import { learnerScheduleAnchorForView } from "@/modules/academics/learner-schedule-view-anchor-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -416,12 +417,10 @@ export function LearnerClassSchedule({
             View
             <Select
               value={view}
-              onChange={(event) =>
-                setView(
-                  event.target
-                    .value as LearnerScheduleView,
-                )
-              }
+              onChange={(event) => {
+                setAnchor(learnerScheduleAnchorForView(chosenDay,anchor));
+                setView(event.target.value as LearnerScheduleView);
+              }}
               className="min-w-28"
             >
               <option value="month">
