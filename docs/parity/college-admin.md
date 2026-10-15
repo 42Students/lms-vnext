@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Scoped Contact detail route PARTIAL (2026-10-15, chat-9):** Each Contacts card links to `/college/contacts/[membershipId]` for a read-only public detail anchored to a persisted current-college COLLEGE_ADMIN membership. Foreign IDs return identical not-found, and learner/dual-role email and all phone numbers stay masked. Positive, foreign and wrong-role isolated PG cases authored; execution/375px browser and exact legacy card metadata remain open.
+
+
 **Invalid Contacts date-window rejection PARTIAL (2026-10-15, chat-9):** Reverse IST joined-from/through intervals now fail closed in both page and export parsing and cannot silently return empty results. Service rechecks even for programmatic callers. Unit scenarios authored; browser/PG execution pending.
 
 

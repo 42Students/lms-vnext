@@ -96,7 +96,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
       <p className="break-all text-sm">Email: {contact.email}</p>
       <p className="text-sm">Phone: {contact.phone}</p>
       <p className="text-xs text-muted-foreground">Joined {dateFormat.format(contact.joinedAt)} IST</p>
-      <div className="flex flex-wrap gap-2">{contactRecordLinks(contact).map(link=>
+      <div className="flex flex-wrap gap-2"><Link href={"/college/contacts/"+contact.membershipId} className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold">View contact</Link>{contactRecordLinks(contact).map(link=>
        <Link key={link.href} href={link.href} className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold">{link.label}</Link>)}</div>
      </li>)}
     </ul>}

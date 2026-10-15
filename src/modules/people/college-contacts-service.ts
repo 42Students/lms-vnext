@@ -37,6 +37,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.initial?ilike(users.displayName,filter.initial+"%"):undefined,
    filter.joinedFrom?gte(collegeMemberships.createdAt,contactsIstDayStart(filter.joinedFrom)):undefined,
    filter.joinedThrough?lt(collegeMemberships.createdAt,contactsNextIstDayStart(filter.joinedThrough)):undefined,
+   filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
    filter.accountStatus==="ALL"?undefined:eq(users.platformStatus,filter.accountStatus),
    filter.audience==="FACULTY_ONLY"?and(faculty,sql`not (${learner})`):
    filter.audience==="LEARNER_ONLY"?and(learner,sql`not (${faculty})`):
@@ -80,4 +81,10 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
   });
   return {items,total:countRow?.total??0,filter,pageSize:filter.pageSize};
  });
+}
+
+/** One role-safe public contact, never a private user profile. Foreign college IDs are indistinguishable from missing IDs. */
+export async function getCollegeContactById(context:RequestContext,membershipId:string){
+ const result=await listCollegeContacts(context,{membershipId,status:"ALL"});
+ return result.items[0]??null;
 }
