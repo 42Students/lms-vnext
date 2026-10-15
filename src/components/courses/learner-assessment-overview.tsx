@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { learnerAssessmentDateLabel } from "@/modules/courses/learner-assessment-date-label-model";
 import {
   useEffect,
   useMemo,
@@ -81,18 +82,8 @@ type Item =
   | LearnerAssignmentOverviewItem
   | LearnerQuizOverviewItem;
 
-function formatDate(value: string | null) {
-  if (!value) return "No deadline";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+function formatDate(value:string|null) {
+  return learnerAssessmentDateLabel(value);
 }
 
 function Metric({
