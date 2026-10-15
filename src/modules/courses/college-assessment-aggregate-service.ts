@@ -78,6 +78,7 @@ export async function listCollegeAssessmentAggregate(
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.scope==="SHARED"?isNull(courseAssignments.deliveryId):
         query.scope==="SECTION"?isNotNull(courseAssignments.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseAssignments.dueAt):
@@ -125,6 +126,7 @@ export async function listCollegeAssessmentAggregate(
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.scope==="SHARED"?isNull(courseQuizzes.deliveryId):
         query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseQuizzes.dueAt):
