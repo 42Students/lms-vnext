@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   check,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -27,9 +28,8 @@ import {
 /**
  * W05 / DB09 collaboration persistence.
  *
- * IMPORTANT: these tables are source-authored but UNREGISTERED until W01
- * adds them to the shared schema barrel, generates the canonical Drizzle
- * migration/snapshot and replays them against disposable PostgreSQL.
+ * Registered by migration 0075 (tenant-scoped composite FKs generated here;
+ * principal/lifecycle guard triggers are hand-appended in the SQL).
  */
 export const placementTpoMessageThreads = pgTable(
   "placement_tpo_message_threads",
@@ -43,9 +43,7 @@ export const placementTpoMessageThreads = pgTable(
       .references(() => placementRecruiterProfiles.userId, {
         onDelete: "restrict",
       }),
-    jobId: uuid("job_id").references(() => placementJobs.id, {
-      onDelete: "restrict",
-    }),
+    jobId: uuid("job_id"),
     lastMessageAt: timestamp("last_message_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -62,6 +60,11 @@ export const placementTpoMessageThreads = pgTable(
       table.collegeId,
       table.lastMessageAt,
     ),
+    foreignKey({
+      name: "db09_thread_job_scope_fk",
+      columns: [table.jobId, table.collegeId],
+      foreignColumns: [placementJobs.id, placementJobs.collegeId],
+    }).onDelete("restrict"),
   ],
 );
 
@@ -107,9 +110,7 @@ export const placementTpoShareLinks = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
-    jobId: uuid("job_id")
-      .notNull()
-      .references(() => placementJobs.id, { onDelete: "restrict" }),
+    jobId: uuid("job_id").notNull(),
     tokenHash: varchar("token_hash", { length: 64 }).notNull(),
     recipientEmail: varchar("recipient_email", { length: 320 }).notNull(),
     codeHash: varchar("code_hash", { length: 64 }),
@@ -131,6 +132,11 @@ export const placementTpoShareLinks = pgTable(
   },
   (table) => [
     uniqueIndex("placement_tpo_share_links_token_uq").on(table.tokenHash),
+    foreignKey({
+      name: "db09_share_job_scope_fk",
+      columns: [table.jobId, table.collegeId],
+      foreignColumns: [placementJobs.id, placementJobs.collegeId],
+    }).onDelete("restrict"),
     index("placement_tpo_share_links_job_created_idx").on(
       table.jobId,
       table.createdAt,
@@ -213,6 +219,12 @@ export const placementTpoShareEvents = pgTable(
       table.shareId,
       table.createdAt,
     ),
+    uniqueIndex("db09_share_events_created_uq")
+      .on(table.shareId)
+      .where(sql`${table.action} = 'CREATED'`),
+    uniqueIndex("db09_share_events_revoked_uq")
+      .on(table.shareId)
+      .where(sql`${table.action} = 'REVOKED'`),
     check(
       "placement_tpo_share_events_action_ck",
       sql`${table.action} in ('CREATED','OPENED','DOWNLOADED_LIST','DOWNLOADED_ZIP','REVOKED','LINK_EMAILED','CODE_EMAILED')`,
@@ -428,11 +440,7 @@ export const placementTpoStudentNotes = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
-    learnerMembershipId: uuid("learner_membership_id")
-      .notNull()
-      .references(() => collegeMemberships.id, {
-        onDelete: "restrict",
-      }),
+    learnerMembershipId: uuid("learner_membership_id").notNull(),
     note: text("note").notNull(),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
@@ -446,6 +454,11 @@ export const placementTpoStudentNotes = pgTable(
       table.learnerMembershipId,
       table.createdAt,
     ),
+    foreignKey({
+      name: "db09_note_member_scope_fk",
+      columns: [table.learnerMembershipId, table.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
     check(
       "placement_tpo_student_notes_note_ck",
       sql`length(trim(${table.note})) between 1 and 2000`,
@@ -460,15 +473,9 @@ export const placementTpoTeamMembers = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
-    membershipId: uuid("membership_id")
-      .notNull()
-      .references(() => collegeMemberships.id, {
-        onDelete: "restrict",
-      }),
+    membershipId: uuid("membership_id").notNull(),
     role: varchar("role", { length: 32 }).notNull(),
-    departmentId: uuid("department_id").references(() => departments.id, {
-      onDelete: "restrict",
-    }),
+    departmentId: uuid("department_id"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -478,6 +485,16 @@ export const placementTpoTeamMembers = pgTable(
       table.collegeId,
       table.membershipId,
     ),
+    foreignKey({
+      name: "db09_team_member_scope_fk",
+      columns: [table.membershipId, table.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "db09_team_department_scope_fk",
+      columns: [table.departmentId, table.collegeId],
+      foreignColumns: [departments.id, departments.collegeId],
+    }).onDelete("restrict"),
     check(
       "placement_tpo_team_members_role_ck",
       sql`${table.role} in ('TPO_ADMIN','FACULTY_COORDINATOR')`,
@@ -502,14 +519,8 @@ export const placementRecruiterApplicantNotes = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
-    jobId: uuid("job_id")
-      .notNull()
-      .references(() => placementJobs.id, { onDelete: "restrict" }),
-    applicationId: uuid("application_id")
-      .notNull()
-      .references(() => placementApplications.id, {
-        onDelete: "restrict",
-      }),
+    jobId: uuid("job_id").notNull(),
+    applicationId: uuid("application_id").notNull(),
     rating: integer("rating"),
     note: text("note"),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -528,6 +539,16 @@ export const placementRecruiterApplicantNotes = pgTable(
       table.recruiterUserId,
       table.jobId,
     ),
+    foreignKey({
+      name: "db09_recruiter_note_job_scope_fk",
+      columns: [table.jobId, table.collegeId],
+      foreignColumns: [placementJobs.id, placementJobs.collegeId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "db09_recruiter_note_application_job_fk",
+      columns: [table.applicationId, table.jobId],
+      foreignColumns: [placementApplications.id, placementApplications.jobId],
+    }).onDelete("restrict"),
     check(
       "placement_recruiter_applicant_notes_rating_ck",
       sql`${table.rating} is null or ${table.rating} between 1 and 5`,

@@ -4,11 +4,13 @@ q:z.string().trim().max(100).optional().default(""),
 view:z.enum(["all","progress","completed"]).optional().default("all"),
 stage:z.string().max(64).optional().default("all"),
 sort:z.enum(["activity","company","oldest","stage"]).optional().default("activity"),
-page:z.coerce.number().int().min(1).max(10000).optional().default(1),
+page:z.string().regex(/^(?:[1-9][0-9]{0,3}|10000)$/).transform(Number).optional().default(1),
 applicationId:z.string().uuid().optional(),
 }).strict();
 export function readLearnerApplicationUrl(raw:string){
 const params=new URLSearchParams(raw.startsWith("?")?raw.slice(1):raw);
+const keys=[...params.keys()];
+if(new Set(keys).size!==keys.length)return learnerApplicationUrlSchema.parse({});
 const result=learnerApplicationUrlSchema.safeParse(Object.fromEntries(params.entries()));
 return result.success?result.data:learnerApplicationUrlSchema.parse({});
 }

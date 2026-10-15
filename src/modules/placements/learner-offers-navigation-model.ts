@@ -14,3 +14,15 @@ export function learnerOfferStatusHref(status:LearnerOfferView,options:{
  const tail=query.toString();
  return "/learn/my-placements/offers"+(tail?"?"+tail:"");
 }
+
+/** Status tabs and optional search/sort/kind/joining facets are independent. */
+export function learnerOfferHasActiveFacets(options:{
+ searchTerm:string;dueOnly:boolean;sort:LearnerOfferSort;kind?:string;joining?:string
+}):boolean{
+ return Boolean(options.searchTerm.trim())||options.dueOnly||options.sort!=="priority"||
+  (options.kind!==undefined&&options.kind!=="all")||
+  (options.joining!==undefined&&options.joining!=="all");
+}
+export function learnerOfferClearFiltersHref(view:LearnerOfferView):string{
+ return learnerOfferStatusHref(view,{searchTerm:"",dueOnly:false,sort:"priority",kind:"all",joining:"all"});
+}
