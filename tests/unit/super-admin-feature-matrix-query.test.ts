@@ -41,4 +41,9 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.safeParse({searchField:"EMAIL"}).success).toBe(false);
   expect(adminFeaturesHref({q:"COL",searchField:"CODE",page:2})).toContain("searchField=CODE");
  });
+ it("accepts deterministic descending name and code sorts without changing scope",()=>{
+  expect(adminFeatureQuerySchema.parse({sort:"NAME_DESC"}).sort).toBe("NAME_DESC");
+  expect(adminFeatureQuerySchema.parse({sort:"CODE_DESC"}).sort).toBe("CODE_DESC");
+  expect(adminFeaturesHref({sort:"CODE_DESC",page:2})).toContain("sort=CODE_DESC");
+ });
 });

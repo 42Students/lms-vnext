@@ -3,6 +3,7 @@ import "server-only";
 import {
   and,
   asc,
+  desc,
   count,
   eq,
   inArray,
@@ -220,7 +221,7 @@ export async function listSuperAdminFeatureControls(
       .from(colleges)
       .where(where)
       .orderBy(
-        query.sort === "CODE" ? asc(colleges.code) : asc(colleges.name),
+        query.sort === "CODE" ? asc(colleges.code) : query.sort === "CODE_DESC" ? desc(colleges.code) : query.sort === "NAME_DESC" ? desc(colleges.name) : asc(colleges.name),
         asc(colleges.id),
       )
       .limit(COLLEGE_PAGE_SIZE)
