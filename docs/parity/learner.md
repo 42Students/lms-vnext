@@ -1462,3 +1462,15 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / L6-L7 created-date sorting (PARTIAL):** invalid published-creation timestamps now sort after all valid dates, including historical pre-1970 entries, rather than masquerading as a legitimate 1970 timestamp. The authoritative assessment list remains scoped at service load. Unit regression authored; live list/browser proof pending.
 
 **Chat-7 follow-up / L8 quiz question-index answer integrity (PARTIAL):** the question-index accessible label and answered badge now count only option IDs still present in that learner-authorized question, matching answer-progress policy. Stale/deleted option IDs are not represented as answered. Pure unit regression authored; browser/PG proof pending.
+
+**2026-10-15 chat-5 scoped hardening (FIXED source, not final parity closure):**
+Learner drive URL filters recover independently and strip malformed/duplicate/untrusted
+facets on read and navigation; drive cards use safe persisted deadline labels; application
+and dashboard dates fail safe. Application/offer CSV downloads are capped at 1,000 rows
+with an explicit on-page truncation notice. Offer sorts handle malformed persisted time
+without placing corrupted expiry first as actionable. Drive availability chips count
+unique drives rather than role options. The issued-offer page now explicitly identifies
+past-deadline ISSUED offers without granting response rights. Tests are authored with
+these commits; complete lint/typecheck, isolated PostgreSQL, responsive browser,
+legacy-oracle and cross-role acceptance are still required. No master-matrix DONE or
+Learner ledger CLOSED status is claimed from these changes.
