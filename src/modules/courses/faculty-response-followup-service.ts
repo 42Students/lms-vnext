@@ -83,5 +83,5 @@ export async function getFacultyResponseFollowUps(
         "?deliveryId=" + encodeURIComponent(row.deliveryId),
     };
   }));
-  return { query, ...selected, items };
+  return { query, ...selected, items, sections:overview.courses };
 }

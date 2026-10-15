@@ -4,6 +4,7 @@ export const facultyResponseFollowUpQuerySchema = z.object({
   kind: z.enum(["ALL", "ASSIGNMENT", "QUIZ"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
+  deliveryId:z.string().uuid().optional(),
 }).strict();
 export type FacultyResponseFollowUpQuery = z.infer<typeof facultyResponseFollowUpQuerySchema>;
 
@@ -20,7 +21,7 @@ export type FacultyResponseCandidate = {
 
 export function selectPastDueAssessments<T extends FacultyResponseCandidate>(
   candidates: readonly T[],
-  query: Pick<FacultyResponseFollowUpQuery, "kind" | "search">,
+  query: Pick<FacultyResponseFollowUpQuery, "kind" | "search"> & Partial<Pick<FacultyResponseFollowUpQuery,"deliveryId">>,
   now: Date,
 ): T[] {
   const term = query.search.toLowerCase();
@@ -28,6 +29,7 @@ export function selectPastDueAssessments<T extends FacultyResponseCandidate>(
     row.status === "PUBLISHED" && row.dueAt !== null &&
     row.dueAt.getTime() <= now.getTime() &&
     (query.kind === "ALL" || row.kind === query.kind) &&
+    (!query.deliveryId || row.deliveryId===query.deliveryId) &&
     (!term || [row.title, row.courseName, row.sectionName].some(value =>
       value.toLowerCase().includes(term))),
   ).sort((a,b) =>
@@ -55,6 +57,7 @@ export function facultyResponseFollowUpHref(query: FacultyResponseFollowUpQuery)
   const params = new URLSearchParams();
   if (query.kind !== "ALL") params.set("kind", query.kind);
   if (query.search) params.set("search", query.search);
+  if(query.deliveryId)params.set("deliveryId",query.deliveryId);
   if (query.page > 1) params.set("page", String(query.page));
   const suffix = params.toString();
   return "/teacher/response-followups" + (suffix ? "?" + suffix : "");
@@ -68,10 +71,11 @@ export function limitedMissingLearners<T>(
 }
 
 export function parseFacultyFollowUpSearchParams(raw:Record<string,string|string[]|undefined>){
- const allowed=new Set(["kind","search","page"]);
+ const allowed=new Set(["kind","search","page","deliveryId"]);
  if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
   return facultyResponseFollowUpQuerySchema.safeParse({kind:"INVALID"});
  return facultyResponseFollowUpQuerySchema.safeParse({
   kind:raw.kind||undefined,search:raw.search??undefined,page:raw.page||undefined,
+  deliveryId:raw.deliveryId||undefined,
  });
 }
