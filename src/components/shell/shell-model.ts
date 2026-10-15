@@ -213,16 +213,16 @@ const recruiterItems: ShellNavItem[] = [
 
 /** Legacy college sidebar, source: docs/audit/legacy-copy-A.md lists.js L192–212. */
 export const collegeAdminItems: ShellNavItem[] = [
-  { label: "Dashboard", href: "/college", shortLabel: "D" },
-  { label: "Activity Log", href: "/college/activity", shortLabel: "A" },
-  { label: "Academic Setup", href: "/college/departments", shortLabel: "A" },
-  { label: "Courses & Content", href: "/college/courses", shortLabel: "C" },
-  { label: "People", href: "/college/people", shortLabel: "P" },
-  { label: "Profile verification", href: "/college/verification", shortLabel: "V" },
-  { label: "Placements", href: "/college/placements", shortLabel: "P" },
-  { label: "Placement cell", href: "/tpo/home", shortLabel: "P" },
-  { label: "Projects", href: "/college/projects", shortLabel: "P" },
-  { label: "Profile", href: "/college/profile", shortLabel: "P" },
+  { label: "Dashboard", href: "/college", shortLabel: "D", group: "operate" },
+  { label: "Activity Log", href: "/college/activity", shortLabel: "A", group: "operate" },
+  { label: "Academic Setup", href: "/college/departments", shortLabel: "A", group: "coordinate" },
+  { label: "Courses & Content", href: "/college/courses", shortLabel: "C", group: "coordinate" },
+  { label: "People", href: "/college/faculty", shortLabel: "P", group: "coordinate" },
+  { label: "Profile verification", href: "/college/verification", shortLabel: "V", group: "insights" },
+  { label: "Placements", href: "/college/placements", shortLabel: "P", group: "insights" },
+  { label: "Placement cell", href: "/tpo/home", shortLabel: "P", group: "insights" },
+  { label: "Projects", href: "/college/projects", shortLabel: "P", group: "insights" },
+  { label: "Profile", href: "/college/profile", shortLabel: "P", group: "administration" },
 ];
 
 function pushUnique(
