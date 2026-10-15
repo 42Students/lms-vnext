@@ -3,6 +3,7 @@ import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
 import {learnerOfferStatusHref,learnerOfferClearFiltersHref,learnerOfferHasActiveFacets} from "@/modules/placements/learner-offers-navigation-model";
+import { resolveLearnerOfferFocus } from "@/modules/placements/learner-offer-deep-link-model";
 import {learnerOfferKindSchema,filterOwnOffersByKind} from "@/modules/placements/learner-offer-kind-model";
 import {learnerJoiningFilterSchema,filterOwnOffersByJoining} from "@/modules/placements/learner-offer-joining-filter-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
@@ -37,7 +38,7 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 export default async function LearnerOffersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[]; sort?: string | string[]; kind?: string | string[]; joining?:string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[]; sort?: string | string[]; kind?: string | string[]; joining?:string | string[]; focus?:string | string[] }>;
 }) {
   const query = await searchParams;
   const requested = typeof query.status === "string" ? query.status : "all";
@@ -62,7 +63,8 @@ export default async function LearnerOffersPage({
   const sortParsed=learnerOfferSortSchema.safeParse(query.sort ?? "priority");
   const order=sortParsed.success?sortParsed.data:"priority";
   const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
-  const paginated = paginateOwnOffers(sorted,requestedPage,15);
+  const focused = resolveLearnerOfferFocus(sorted,requestedPage,query.focus);
+  const paginated = paginateOwnOffers(sorted,focused.page,15);
   const hasActiveFacets = learnerOfferHasActiveFacets({searchTerm,dueOnly,sort:order,kind,joining:joiningFilter});
   const emptyState = learnerOffersEmptyState(offers.counts.all, Boolean(searchTerm) || dueOnly || kind !== "all" || joiningFilter !== "all");
   const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
