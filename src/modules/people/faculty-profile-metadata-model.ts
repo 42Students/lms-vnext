@@ -22,7 +22,7 @@ export function facultyMetadataFromDraft(
  const entries=z.array(entrySchema).max(100).parse(raw);
  const next:{[key:string]:string|number|boolean|null}={};
  for(const [key,value] of Object.entries(current)){
-  if(typeof value!=="string")next[key]=value;
+  if(typeof value!=="string" || !facultyMetadataEditableKey(key))next[key]=value;
  }
  const seen=new Set<string>();
  for(const entry of entries){

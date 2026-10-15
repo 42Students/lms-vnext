@@ -28,3 +28,11 @@ describe("Faculty metadata API bypass prevention",()=>{
   })).toThrow();
  });
 });
+
+
+describe("protected legacy metadata preservation",()=>{
+ it("keeps old protected text fields intact but never puts them in the editable input set",()=>{
+  expect(facultyMetadataFromDraft({tokenReceipt:"legacy",title:"Old"},[{id:"10000000-0000-4000-8000-000000000004",key:"title",value:"New"}]))
+   .toEqual({tokenReceipt:"legacy",title:"New"});
+ });
+});
