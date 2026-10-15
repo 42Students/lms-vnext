@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorReviewQueue } from "@/modules/projects/mentor-portfolio-service";
-import { mentorPortfolioHref, mentorReviewQuerySchema } from "@/modules/projects/mentor-portfolio-model";
+import { mentorPortfolioHref, mentorReviewQuerySchema, mentorDeliveryReviewMobileForm } from "@/modules/projects/mentor-portfolio-model";
 import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
@@ -26,7 +26,7 @@ export default async function MentorReviewsPage({
     <Link href="/mentor/reviews" className="text-primary-text underline">Clear filters</Link>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
     <PageHeader eyebrow="Mentor · Projects" title="Delivery review queue"
       description="Submitted deliveries awaiting review across your currently assigned Mentor projects."
       actions={<div className="flex flex-wrap items-center gap-3">
@@ -42,7 +42,7 @@ export default async function MentorReviewsPage({
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No project data was loaded.
     </div> : <>
-      <form action="/mentor/reviews" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+      <form action="/mentor/reviews" method="get" className={mentorDeliveryReviewMobileForm}>
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             placeholder="Project title" className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
@@ -91,7 +91,7 @@ export default async function MentorReviewsPage({
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." />
         : <div className="grid gap-3">{data.items.map(item =>
           <Link key={item.key} href={item.href} className="block rounded-xl border border-border bg-surface p-4 hover:border-primary">
-            <p className="font-semibold text-primary-text">{item.description}</p>
+            <p className="min-w-0 break-words font-semibold text-primary-text">{item.description}</p>
             <p className="mt-2 text-xs text-muted-foreground">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(new Date(item.occurredAt))} IST</p>

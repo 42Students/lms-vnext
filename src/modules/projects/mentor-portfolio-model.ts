@@ -140,3 +140,7 @@ export function mentorActivityImportanceLabel(importance:string){
 }
 
 export type MentorActivityQuery = z.infer<typeof mentorActivityQuerySchema>;
+
+/** Responsive queue filters do not impose large minimum grid widths. */
+export const mentorDeliveryReviewMobileForm =
+  "flex min-w-0 max-w-full flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_input]:min-w-0 [&_input]:max-w-full [&_select]:min-w-0 [&_select]:max-w-full";
