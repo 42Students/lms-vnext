@@ -598,6 +598,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Quizzes
+**Past/upcoming due windows PARTIAL (2026-10-15):** Both assessment directories apply database timestamps before pagination (strictly before versus at/after now), excluding missing due timestamps. Typed query tests authored; independent PostgreSQL and browser execution pending.
+
 **Persisted quiz result-publication triage PARTIAL (2026-10-15):** College Admin quiz listing now filters by actual `results_published`, shows the state separately from quiz publication, and preserves the result selector in pagination. The Assignment endpoint rejects quiz-only result filters. Isolated PostgreSQL and strict-model fixtures authored; browser acceptance pending.
 
 **Shared versus section-specific assessment scope PARTIAL (2026-10-15):** The quizzes and assignments aggregates now distinguish actual NULL versus non-NULL delivery associations before page totals; URL state and strictly typed filter options are preserved. Disposable PostgreSQL own-college scope fixtures authored; browser acceptance pending.
