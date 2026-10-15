@@ -2007,3 +2007,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 2026-10-15 / Batch department filter — PARTIAL:** Added independent URL-validated department selection over authorized cohorts; program, lifecycle, search and name-sort filters compose without mutating the source roster. Browser/large-list legacy parity is still open.
 
 **Chat-2 2026-10-15 / Batch deadline filter — PARTIAL:** Eligible invited, unfinished batches can be filtered by exact upcoming seven-day, past-due or not-recorded deadline; unregistered lifecycle storage explicitly disables the filter. This does not infer invitations, reminder delivery, or timezone/date-only policy.
+
+**Chat-2 2026-10-15 / Deadline sort — PARTIAL:** Batch directory sorting now orders recorded deadline timestamps asc/desc with unknown deadlines last and deterministic secondary name/ID order. Missing dates are not replaced with invented ones; browser/legacy acceptance remains open.
