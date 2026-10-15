@@ -3,6 +3,7 @@ import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts,
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
+import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
@@ -883,6 +884,18 @@ export function ProjectWorkspace({
                           projectId={workspace.project.id}
                           submissionId={submission.id}
                         />
+                      </div>
+                    ) : null}
+
+                    {mode !== "LEARNER" &&
+                     workspace.project.status === "ACTIVE" &&
+                     submission.status === "APPROVED" &&
+                     !evaluation &&
+                     workspace.readiness.finalSubmission.latest?.id === submission.id &&
+                     !workspace.readiness.finalSubmission.reopened ? (
+                      <div className="mt-3">
+                        <ProjectDeliveryReopenControl projectId={workspace.project.id}
+                          submissionId={submission.id} expectedUpdatedAt={submission.updatedAt.toISOString()} />
                       </div>
                     ) : null}
 

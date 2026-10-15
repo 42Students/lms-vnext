@@ -1,0 +1,51 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Dialog} from "@/components/ui/dialog";
+import {Textarea} from "@/components/ui/textarea";
+import {useToast} from "@/components/ui/toast";
+import {projectMutation} from "./project-api";
+
+export function ProjectDeliveryReopenControl({projectId,submissionId,expectedUpdatedAt}:{
+  projectId:string;submissionId:string;expectedUpdatedAt:string;
+}){
+  const router=useRouter();
+  const {showToast}=useToast();
+  const [open,setOpen]=useState(false);
+  const [reason,setReason]=useState("");
+  const [pending,setPending]=useState(false);
+  const [error,setError]=useState<string|null>(null);
+  async function reopen(){
+    if(!reason.trim())return;
+    setPending(true);setError(null);
+    try{
+      await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
+        "/submissions/"+encodeURIComponent(submissionId)+"/reopen","POST",{
+          expectedUpdatedAt,reason:reason.trim(),
+        });
+      setOpen(false);
+      showToast({tone:"success",title:"Submission reopened for revision."});
+      router.refresh();
+    }catch(caught){
+      setError(caught instanceof Error?caught.message:"Could not reopen submission");
+    }finally{setPending(false);}
+  }
+  return <>
+    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Reopen for revision</Button>
+    <Dialog open={open} onOpenChange={setOpen}
+      title="Reopen this submission for revision?"
+      description="The learner will be able to edit and resubmit it."
+      footer={<>
+        <Button variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
+        <Button disabled={pending||!reason.trim()} onClick={()=>void reopen()}>Reopen</Button>
+      </>}>
+      <label className="grid gap-2 text-sm font-semibold text-body">Review feedback
+        <Textarea required value={reason} maxLength={4000} disabled={pending}
+          onChange={event=>setReason(event.target.value)}
+          placeholder="Feedback for the learner"/>
+      </label>
+      {error&&<p role="alert" className="mt-2 text-sm text-error">{error}</p>}
+    </Dialog>
+  </>;
+}
