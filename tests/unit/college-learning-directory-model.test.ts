@@ -303,4 +303,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("hiddenContentState=NO_HIDDEN");
   });
 
+  it("roundtrips actual shared offering content state into progress CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({sharedContentState:"USER_SHARED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({sharedContentState:"HAS_SHARED"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("sharedContentState=HAS_SHARED");
+    expect(collegeProgressCsvHref(q)).toContain("sharedContentState=HAS_SHARED");
+  });
+
 });
