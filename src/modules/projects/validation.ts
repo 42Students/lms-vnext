@@ -429,7 +429,8 @@ export const projectTaskIdSchema = z.string().uuid();
 
 export const updateProjectTaskStatusInputSchema = z
   .object({
-    status: z.enum(PROJECT_TASK_STATUSES),
+    status: z.enum(["TODO", "IN_PROGRESS", "BLOCKED"]),
+    expectedUpdatedAt: z.iso.datetime({ offset: true }),
   })
   .strict();
 

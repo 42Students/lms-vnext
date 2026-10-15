@@ -1,9 +1,13 @@
+import { randomUUID } from "node:crypto";
 import {
   and,
   eq,
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import { allowedMentorTaskTransition } from "./mentor-task-transition-model";
 import {
   projectInstances,
   projectReleases,
@@ -497,107 +501,75 @@ export async function updateProjectTaskStatus(
   taskIdInput: string,
   rawInput: UpdateProjectTaskStatusInput,
 ) {
-  const scope =
-    await requireProjectLifecycleAccess(
-      context,
-      projectIdInput,
-    );
-  const input =
-    updateProjectTaskStatusInputSchema.parse(rawInput);
-  const task = await loadTask(
-    scope.project.id,
-    taskIdInput,
-  );
+  const scope = await requireProjectLifecycleAccess(context, projectIdInput);
+  const input = updateProjectTaskStatusInputSchema.parse(rawInput);
+  const taskId = projectTaskIdSchema.parse(taskIdInput);
 
-  if (
-    input.status === "IN_REVIEW" ||
-    task.status === "IN_REVIEW"
-  ) {
-    throw new ProjectsServiceError(
-      "PROJECT_TASK_INVALID_STATE",
-    );
-  }
-
-  const db = getDb();
-  return db.transaction(async (tx) => {
-    const [project] = await tx
-      .select({ status: projectInstances.status })
+  return getDb().transaction(async (tx) => {
+    const [project] = await tx.select({ status: projectInstances.status })
       .from(projectInstances)
       .where(eq(projectInstances.id, scope.project.id))
-      .for("update")
-      .limit(1);
-
+      .for("update").limit(1);
     if (!project || !projectAllowsExecution(project.status)) {
-      throw new ProjectsServiceError(
-        "PROJECT_TASK_INVALID_STATE",
-      );
+      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     }
 
-    const [sprint] = await tx
-      .select({ status: projectSprints.status })
-      .from(projectSprints)
-      .where(
-        and(
-          eq(projectSprints.id, task.sprintId),
-          eq(projectSprints.projectId, scope.project.id),
-        ),
-      )
-      .for("update")
-      .limit(1);
-
-    if (!sprint || sprint.status !== "ACTIVE") {
-      throw new ProjectsServiceError(
-        "PROJECT_TASK_INVALID_STATE",
-      );
-    }
-
-    const [lockedTask] = await tx
-      .select({
-        id: projectTasks.id,
-        status: projectTasks.status,
-      })
+    // Read inside the transaction; the sprint lock and task recheck protect
+    // against concurrently moving or completing a task.
+    const [candidate] = await tx.select({ sprintId: projectTasks.sprintId })
       .from(projectTasks)
-      .where(
-        and(
-          eq(projectTasks.id, task.id),
-          eq(projectTasks.projectId, scope.project.id),
-          eq(projectTasks.sprintId, task.sprintId),
-        ),
-      )
-      .for("update")
+      .where(and(eq(projectTasks.id, taskId), eq(projectTasks.projectId, scope.project.id)))
       .limit(1);
+    if (!candidate) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
 
-    if (
-      !lockedTask ||
-      lockedTask.status !== task.status ||
-      lockedTask.status === "IN_REVIEW"
-    ) {
-      throw new ProjectsServiceError(
-        "PROJECT_TASK_INVALID_STATE",
-      );
+    const [sprint] = await tx.select({ status: projectSprints.status })
+      .from(projectSprints)
+      .where(and(eq(projectSprints.id, candidate.sprintId), eq(projectSprints.projectId, scope.project.id)))
+      .for("update").limit(1);
+    if (!sprint || sprint.status !== "ACTIVE") {
+      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     }
 
-    const [updated] = await tx
-      .update(projectTasks)
-      .set({
-        status: input.status,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(
-          eq(projectTasks.id, task.id),
-          eq(projectTasks.projectId, scope.project.id),
-          eq(projectTasks.status, task.status),
-        ),
-      )
-      .returning();
-
-    if (!updated) {
-      throw new ProjectsServiceError(
-        "PROJECT_TASK_INVALID_STATE",
-      );
+    const [lockedTask] = await tx.select()
+      .from(projectTasks)
+      .where(and(eq(projectTasks.id, taskId), eq(projectTasks.projectId, scope.project.id)))
+      .for("update").limit(1);
+    if (!lockedTask || lockedTask.sprintId !== candidate.sprintId ||
+        !allowedMentorTaskTransition(lockedTask.status, input.status) ||
+        lockedTask.updatedAt.getTime() !== new Date(input.expectedUpdatedAt).getTime()) {
+      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     }
 
+    const now = new Date(Math.max(Date.now(), lockedTask.updatedAt.getTime() + 1));
+    const [updated] = await tx.update(projectTasks).set({
+      status: input.status,
+      updatedAt: now,
+    }).where(and(
+      eq(projectTasks.id, lockedTask.id),
+      eq(projectTasks.projectId, scope.project.id),
+      eq(projectTasks.status, lockedTask.status),
+      eq(projectTasks.updatedAt, lockedTask.updatedAt),
+    )).returning();
+    if (!updated) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PROJECTS_TASK_STATUS_CHANGED,
+      collegeId: scope.collegeId,
+      organizationId: scope.organizationId,
+      subjectType: "project_task",
+      subjectId: updated.id,
+      subjectLabel: updated.title,
+      summary: "Project task status changed",
+      metadata: {
+        projectId: scope.project.id,
+        taskId: updated.id,
+        previousStatus: lockedTask.status,
+        nextStatus: updated.status,
+        reviewRequiredForDone: true,
+      },
+      groupKey: "project:" + scope.project.id,
+      dedupeKey: "project-task:" + updated.id + ":status:" + randomUUID(),
+    });
     return updated;
   });
 }
