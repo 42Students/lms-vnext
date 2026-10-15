@@ -106,4 +106,9 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({creditState:"UNSET"}))).toContain("creditState=UNSET");
   });
 
+  it("semester parent program lifecycle has a bounded College Admin URL", () => {
+    expect(collegeSemesterDirectorySchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+    expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
+  });
+
 });
