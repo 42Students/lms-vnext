@@ -25,7 +25,14 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
     body:JSON.stringify({section,value,expectedVersion:version}),
    });
    if(!response.ok){
-    if(response.status===409){setError("Your profile changed. Reload this page before saving again.");return;}
+    if(response.status===409){
+     const problem=await response.json().catch(()=>({error:"UNKNOWN"})) as {error?:string};
+     setError(problem.error==="PRIVATE_IDENTITY_STORAGE_NOT_READY"
+      ?"Profile storage is not registered. Your edits have not been saved."
+      :problem.error==="FACULTY_PROFILE_VERSION_CONFLICT"
+       ?"Your profile changed. Reload this page before saving again."
+       :"This change was rejected. Review your fields and retry.");return;
+    }
     setError("Could not save your profile. Check the fields and retry.");return;
    }
    const result=await response.json() as {document:FacultyProfileDocument;version:number};
@@ -51,7 +58,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <FacultyProfileTextSection key={"socialProfiles-"+version} section="socialProfiles" title="Social profiles"
    description="Optional HTTPS links to professional work and research."
    fields={SOCIAL_PROFILES_FIELDS}
-   initial={document.socialProfiles} pending={pending} onSave={save}/>
+   initial={{linkedIn:document.socialProfiles.linkedIn,github:document.socialProfiles.github,portfolio:document.socialProfiles.portfolio,twitter:document.socialProfiles.twitter,googleScholar:document.socialProfiles.googleScholar,researchGate:document.socialProfiles.researchGate}} pending={pending} onSave={save}/>
   <FacultyProfileSkills key={"skills-"+version} initial={document.skills} pending={pending} onSave={save}/>
  </div>;
 }
