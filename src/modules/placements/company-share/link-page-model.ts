@@ -15,3 +15,9 @@ export function recoverCompanyShareLinkPage(raw:unknown){
  const parsed=companyShareLinkPageSchema.safeParse(raw);
  return parsed.success?{page:parsed.data,wasInvalid:false}:{page:1,wasInvalid:true};
 }
+
+/** Keep the requested TPO share-history page in the current result bounds. */
+export function clampCompanyShareLinksPage(page:number,total:number){
+ const totalPages=Math.max(1,Math.ceil(total/COMPANY_SHARE_PAGE_SIZE));
+ return {page:Math.min(Math.max(1,page),totalPages),totalPages};
+}
