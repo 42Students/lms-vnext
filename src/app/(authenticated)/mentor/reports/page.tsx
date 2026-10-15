@@ -115,6 +115,7 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="UPDATED">Recently updated</option>
             <option value="TITLE_AZ">Project title A–Z</option>
             <option value="TITLE_ZA">Project title Z–A</option>
+            <option value="TASK_PROGRESS">Least registered task progress first</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

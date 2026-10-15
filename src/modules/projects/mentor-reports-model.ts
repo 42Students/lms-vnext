@@ -7,7 +7,7 @@ export const mentorReportsQuerySchema=z.object({
   taskCoverage:z.enum(["ALL","NO_TASKS","OPEN_TASKS","ALL_DONE"]).default("ALL"),
   attention:z.enum(["ALL","REVIEW","STALLED","REQUESTED","MEETING_SOON","NONE"]).default("ALL"),
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
-  order:z.enum(["UPDATED","TITLE_AZ","TITLE_ZA"]).default("UPDATED"),
+  order:z.enum(["UPDATED","TITLE_AZ","TITLE_ZA","TASK_PROGRESS"]).default("UPDATED"),
   search:z.string().trim().max(120).default(""),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -38,6 +38,11 @@ export function mentorReportsOverview(
     kind,projects.filter(p=>kinds.get(p.id)?.has(kind)).length,
   ])) as Record<(typeof alertKinds)[number],number>;
   const term=query.search.toLocaleLowerCase("en-IN");
+  const progress=(p:MentorReportProject)=>{
+    const counts=taskCounts.get(p.id);
+    return counts?.total&&counts.total>0 ?
+      Math.round(100*Math.max(0,counts.total-counts.open)/counts.total):null;
+  };
   const filtered=projects.filter(p=>
     (query.taskCoverage==="ALL"||
       (query.taskCoverage==="NO_TASKS"&&(taskCounts.get(p.id)?.total??0)===0)||
@@ -50,7 +55,10 @@ export function mentorReportsOverview(
     (query.attention==="ALL"||
       (query.attention==="NONE"?!kinds.get(p.id)?.size:kinds.get(p.id)?.has(query.attention)))&&
     (!term||p.title.toLocaleLowerCase("en-IN").includes(term)))
-    .sort((a,b)=>query.order==="TITLE_AZ"
+    .sort((a,b)=>query.order==="TASK_PROGRESS"
+      ? (progress(a)===null?1:0)-(progress(b)===null?1:0)||
+        (progress(a)??0)-(progress(b)??0)||a.title.localeCompare(b.title)||a.id.localeCompare(b.id)
+      : query.order==="TITLE_AZ"
       ? a.title.localeCompare(b.title)||a.id.localeCompare(b.id)
       : query.order==="TITLE_ZA"
         ? b.title.localeCompare(a.title)||a.id.localeCompare(b.id)

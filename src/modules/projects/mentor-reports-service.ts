@@ -22,7 +22,8 @@ export async function getMentorReports(context:RequestContext,raw:unknown){
     ...mentorReportsOverview([],[],query)};
   const [assigned,attention,taskCounts]=await Promise.all([
     listMyProjectInstances(context),listMyMentorProjectAttention(context),
-    query.taskCoverage!=="ALL"?getMentorProjectWorkCounts(context):Promise.resolve(new Map()),
+    (query.taskCoverage!=="ALL"||query.order==="TASK_PROGRESS")
+      ?getMentorProjectWorkCounts(context):Promise.resolve(new Map()),
   ]);
   const projects=assigned.filter(row=>row.memberRole==="MENTOR")
     .map(row=>({id:row.project.id,title:row.project.title,
