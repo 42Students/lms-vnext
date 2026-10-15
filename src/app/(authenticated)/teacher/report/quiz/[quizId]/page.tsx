@@ -44,13 +44,9 @@ export default async function FacultyQuizReportPage({
   return (
     <div className="space-y-6">
       <Link href="/teacher/allQuizzes" className="text-sm font-semibold text-primary-text">
-        ← All Quizzes
+        ← My Quizzes
       </Link>
-      <PageHeader
-        eyebrow="Faculty · Quiz Report"
-        title={quiz.title}
-        description={`${quiz.courseName} · ${quiz.sectionName} · ${quiz.lessonName}`}
-      />
+      <PageHeader title={quiz.title} />
       <div className="flex flex-wrap justify-end gap-3">
         <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
@@ -172,12 +168,11 @@ export default async function FacultyQuizReportPage({
           Question accuracy
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Worst-answered questions are shown first and use each learner&apos;s
-          latest attempt only.
+          Worst-answered first. Accuracy uses each learner&apos;s latest attempt only.
         </p>
         {questions.length === 0 ? (
           <p className="mt-4 text-sm text-body">
-            This Quiz has no questions.
+            This quiz has no questions yet.
           </p>
         ) : (
           <ol className="mt-4 space-y-3">
@@ -220,7 +215,7 @@ export default async function FacultyQuizReportPage({
         )}
       </section>
 
-      <FacultyReportStudentTable title="Submitted attempts" rows={latestAttempts.map((attempt) => ({
+      <FacultyReportStudentTable title="Student scores" emptyMessage="No one has submitted this quiz yet." rows={latestAttempts.map((attempt) => ({
         id: attempt.id,
         name: facultyReportLearnerName(attempt.learnerDisplayName),
         score: attempt.score + "/" + attempt.maxScore,
