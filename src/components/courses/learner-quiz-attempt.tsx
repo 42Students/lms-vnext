@@ -456,9 +456,13 @@ export function LearnerQuizAttempt() {
                 key={question.id}
                 type="button"
                 onClick={() => setStep(index)}
-                aria-label={learnerQuizQuestionNavState(index,step,answers[question.id] ?? []).label}
+                aria-label={learnerQuizQuestionNavState(
+                  index,step,answers[question.id] ?? [],question.options.map(option=>option.id),
+                ).label}
                 aria-current={index === step ? "step" : undefined}
-                className={`min-h-11 rounded-md border text-sm font-semibold ${index === step ? "border-primary bg-primary text-on-primary" : answers[question.id]?.length ? "border-success bg-success-subtle text-foreground" : "border-border bg-surface text-body"}`}
+                className={`min-h-11 rounded-md border text-sm font-semibold ${index === step ? "border-primary bg-primary text-on-primary" : learnerQuizQuestionNavState(
+                  index,step,answers[question.id] ?? [],question.options.map(option=>option.id),
+                ).answered ? "border-success bg-success-subtle text-foreground" : "border-border bg-surface text-body"}`}
               >
                 {index + 1}
               </button>
