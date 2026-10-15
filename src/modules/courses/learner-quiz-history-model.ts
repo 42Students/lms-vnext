@@ -32,3 +32,10 @@ export function learnerQuizAttemptDateLabel(value:Date):string {
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(value);
 }
+
+/** A missing published per-question grade is unknown, never a recorded zero. */
+export function learnerQuizQuestionAwardLabel(awarded:number|null,possible:number):string {
+ if(awarded===null || !Number.isFinite(awarded) || !Number.isFinite(possible))
+  return "Question marks unavailable";
+ return `Awarded ${awarded} / ${possible} points`;
+}
