@@ -368,6 +368,7 @@ export async function getTpoStudentsIntelligence(
         applicationScope: "ACTIVE_SEASON",
         readinessVerified: false,
         placedVerified: false,
+        afterCollegeAvailable,
       },
     };
   }
