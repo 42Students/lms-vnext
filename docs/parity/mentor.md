@@ -1328,3 +1328,8 @@ The existing isolated PostgreSQL Project task fixture now verifies the registere
 ## 2026-10-15 chat-11 — persisted Resource activity lifecycle (PARTIAL)
 
 Registered safe Resource created/updated/archived Project activity event taxonomy, fixed non-PII labels, and Resource group filters across cross-project and exact-project Mentor activity. The next source commits wire the real transactional resource write producers. This mirrors the legacy activity category without exposing resource URLs, file content, actor details or raw audit metadata. Browser, PostgreSQL and legacy second-pass evidence remain OPEN.
+
+
+## 2026-10-15 chat-11 — transactional resource create audit (PARTIAL)
+
+The registered Project resource create write now emits `projects.resource.created` within its existing scoped database transaction. Event failures roll back the resource mutation, with project/college/organization IDs and no URL/description/private payload in event metadata. Scoped Mentor Activity filters display only the fixed label. Pure payload test authored; database execution and browser acceptance remain OPEN.
