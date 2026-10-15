@@ -83,7 +83,7 @@ export default async function MentorTaskReviewsPage({
           <select name="order" defaultValue={data.query.order}
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Newest first</option>
-            <option value="OLDEST">Oldest first</option>
+            <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
           </select>
         </label>
         <button type="submit"

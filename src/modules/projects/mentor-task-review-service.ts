@@ -97,8 +97,13 @@ export async function getMentorTaskReviews(
     total:Number(counts?.total??0),page:query.page,pageSize:query.pageSize,
   });
   const ordering=query.order==="OLDEST"?asc:desc;
-  const items=await base.orderBy(ordering(projectTaskSubmissions.submittedAt),
-    ordering(projectTaskSubmissions.id)).limit(page.pageSize)
-    .offset((page.page-1)*page.pageSize);
+  const priorityRank=sql<number>`CASE ${projectTasks.priority}
+    WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'MEDIUM' THEN 2
+    WHEN 'LOW' THEN 1 ELSE 0 END`;
+  const items=await base.orderBy(
+    ...(query.order==="PRIORITY"
+      ? [desc(priorityRank),desc(projectTaskSubmissions.submittedAt),desc(projectTaskSubmissions.id)]
+      : [ordering(projectTaskSubmissions.submittedAt),ordering(projectTaskSubmissions.id)])
+  ).limit(page.pageSize).offset((page.page-1)*page.pageSize);
   return {enabled:true as const,query:{...query,page:page.page},...page,items};
 }
