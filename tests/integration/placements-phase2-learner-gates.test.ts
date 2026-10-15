@@ -290,6 +290,40 @@ describe("Section A: placement write/read integration boundaries", () => {
   });
 
 
+  it("P-S1-07 concurrent sweep skips a locked offer then expires it once on release",async()=>{
+    const job=await makeJob("Expiry locked concurrency");
+    const application=await applyToPlacementJob(learner,job.id,{});
+    const now=new Date();
+    const stored=await pool.query<{id:string}>(`
+      INSERT INTO placement_offers
+        (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,issued_at,expires_at)
+      VALUES ($1,1,'OFFER','ISSUED','Lock engineer',1000000,$2,$3,$4)
+      RETURNING id
+    `,[application.id,SEED_IDS.facultyUser,new Date(now.getTime()-86_400_000),new Date(now.getTime()-1000)]);
+    const offerId=stored.rows[0]!.id;
+    const blocker=await pool.connect();
+    try{
+      await blocker.query("BEGIN");
+      await blocker.query("SELECT id FROM placement_offers WHERE id=$1 FOR UPDATE",[offerId]);
+      expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser,now)).toBe(0);
+    }finally{
+      await blocker.query("ROLLBACK");
+      blocker.release();
+    }
+    const [first,second]=await Promise.all([
+      sweepExpiredPlacementOffers(SEED_IDS.facultyUser,now),
+      sweepExpiredPlacementOffers(SEED_IDS.facultyUser,now),
+    ]);
+    expect(first+second).toBe(1);
+    expect((await pool.query<{status:string}>(
+      "SELECT status FROM placement_offers WHERE id=$1",[offerId],
+    )).rows[0]?.status).toBe("EXPIRED");
+    expect((await pool.query<{n:number}>(
+      "SELECT count(*)::int n FROM placement_offer_status_history WHERE offer_id=$1 AND to_status='EXPIRED'",
+      [offerId],
+    )).rows[0]?.n).toBe(1);
+  });
+
   it("P-S1-06 accept cascade declines sibling offers and withdraws sibling applications atomically", async () => {
     const first = await makeJob("Accepted primary");
     const second = await makeJob("Withdrawn sibling");
