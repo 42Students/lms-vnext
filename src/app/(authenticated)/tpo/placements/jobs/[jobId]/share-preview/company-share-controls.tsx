@@ -1,8 +1,9 @@
 "use client";
 import {useState} from "react";
+import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
-export function CompanyShareControls({jobId,ready,initialLinks}:{
- jobId:string;ready:boolean;initialLinks:LinkFact[];
+export function CompanyShareControls({jobId,ready,initialLinks,status}:{
+ jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;
 }){
  const [links,setLinks]=useState(initialLinks);
  const [days,setDays]=useState(2);
@@ -20,7 +21,7 @@ export function CompanyShareControls({jobId,ready,initialLinks}:{
    });
    if(!res.ok)throw new Error("Cannot issue share link");
    const data=await res.json() as {shareId:string;token:string;expiresAt:string};
-   setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}},...current]);
+   if(shouldDisplayNewCompanyShare(status))setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}},...current]);
    setNewUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
   }catch{setError("Link could not be created. Confirm access and try again.");}
   finally{setPending(false);}
@@ -75,7 +76,7 @@ export function CompanyShareControls({jobId,ready,initialLinks}:{
     {!link.revokedAt?<button type="button" disabled={pending}
      onClick={()=>void revokeLink(link.id)}
      className="font-semibold text-primary-text underline">Revoke</button>:null}
-   </li>)}</ul>:<p className="text-sm text-body">No recent links recorded.</p>}
+   </li>)}</ul>:<p className="text-sm text-body">{companyShareEmptyMessage(status)}</p>}
   </>}
   {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
  </section>;
