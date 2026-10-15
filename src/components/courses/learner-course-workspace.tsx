@@ -1,3 +1,4 @@
+import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empty-state-model";
 import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
 import { learnerRoadmapDialogKey } from "@/modules/courses/learner-roadmap-dialog-key-model";
@@ -423,10 +424,8 @@ function AssignmentCard({
           enabled={assignmentFilesRuntimeEnabled()} /> : null}
       {assignment.gradePublished ? (
         <div className="mt-4 rounded-lg bg-primary-subtle px-3 py-2 text-sm text-body">
-          Published grade:{" "}
           <strong className="text-foreground">
-            {assignment.pointsAwarded ?? 0}/
-            {assignment.maxPoints}
+            {learnerAssignmentPublishedGradeLabel(assignment.pointsAwarded,assignment.maxPoints)}
           </strong>
           {assignment.feedback ? (
             <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
