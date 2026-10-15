@@ -54,7 +54,9 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
       // CAS before any work, including a possible retry with the same base slug.
       if (classRosterRevision(section.id,members)!==input.rosterRevision) throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_STALE");
       if (previewVersion(input.teams)!==input.expectedPreviewVersion) throw new ProjectsServiceError("PROJECT_TEAM_PREVIEW_STALE");
-      const groups=verifyClassTeamPreview(input.teams,members.map(m=>m.membershipId));
+      let groups: ReturnType<typeof verifyClassTeamPreview>;
+      try { groups=verifyClassTeamPreview(input.teams,members.map(m=>m.membershipId)); }
+      catch { throw new ProjectsServiceError("PROJECT_TEAM_PREVIEW_INVALID"); }
       const capacity=classTeamCapacity(groups);
       if (!capacity.balanced) throw new ProjectsServiceError("PROJECT_TEAM_UNBALANCED");
       const plans=planClassTeamWorkspaceNames(input.baseTitle,input.baseSlug,groups);
@@ -83,7 +85,7 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         const plan=plans[index],group=groups[index];
         const [team]=await tx.insert(lmsGroups).values({
           kind:"PROJECT_TEAM",ownerScope:"COLLEGE",collegeId:scope.id,
-          name:plan.title.slice(0,150),status:"ACTIVE",
+          name:(input.baseTitle.slice(0,20)+" · "+group.name),status:"ACTIVE",
           capacity:plan.membershipIds.length,activeCount:plan.membershipIds.length,
           configJson:{classId:section.id,managedBy:"PROJECT_WORKSPACE"},
           createdByUserId:context.user.id,createdByType:isSuperAdmin(context)?"SUPER_ADMIN":"COLLEGE_ADMIN",

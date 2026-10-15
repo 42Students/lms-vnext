@@ -70,11 +70,11 @@ export async function loadClassTeamRoster(context: RequestContext, collegeId: st
       eq(learnerProgramEnrollments.status, "ACTIVE"), eq(collegeMemberships.collegeId, college.id),
       eq(collegeMemberships.status, "ACTIVE"), eq(users.platformStatus, "ACTIVE")))
     .orderBy(asc(collegeMemberships.id)).limit(2001);
-  if (!rows.length || rows.length > 2000) throw new Error("CLASS_ROSTER_SIZE_UNSUPPORTED");
+  if (!rows.length || rows.length > 2000) throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_UNSUPPORTED");
   const members = rows.map(row => ({
     membershipId: row.membershipId, displayName: row.displayName,
     rollNumber: (row.rollNumber || row.registrationNumber || row.membershipId).slice(0, 80),
   })).sort((a,b) => a.rollNumber.localeCompare(b.rollNumber, undefined, {numeric: true}) || a.membershipId.localeCompare(b.membershipId));
-  if (new Set(members.map(member => member.membershipId)).size !== members.length) throw new Error("CLASS_ROSTER_DUPLICATE");
+  if (new Set(members.map(member => member.membershipId)).size !== members.length) throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_DUPLICATE");
   return { collegeId: college.id, classId: section.id, className: section.name, revision: classRosterRevision(section.id, members), members };
 }
