@@ -82,6 +82,13 @@ export function describeModuleDecision(
 export function adminFeaturesHref(filters: {
   q?: string;
   page?: number;
+  sort?: "NAME"|"CODE"|"NAME_DESC"|"CODE_DESC";
+  module?: "projects"|"placements"|"electives";
+  storedState?: "ALL"|"ON"|"OFF";
+  locks?: "ALL"|"LOCKED";
+  presence?: "ANY"|"HAS_RULE"|"NO_RULE";
+  recent?: "ALL"|"7D"|"30D"|"90D";
+  searchField?: "ALL"|"NAME"|"CODE";
 }): string {
   const params = new URLSearchParams();
 
@@ -92,6 +99,14 @@ export function adminFeaturesHref(filters: {
   if (filters.page && filters.page > 1) {
     params.set("page", String(filters.page));
   }
+
+  if (filters.sort && filters.sort !== "NAME") params.set("sort", filters.sort);
+  if (filters.module) params.set("module", filters.module);
+  if (filters.storedState && filters.storedState !== "ALL") params.set("storedState", filters.storedState);
+  if (filters.locks === "LOCKED") params.set("locks", "LOCKED");
+  if (filters.presence && filters.presence !== "ANY") params.set("presence", filters.presence);
+  if (filters.recent && filters.recent !== "ALL") params.set("recent",filters.recent);
+  if (filters.searchField && filters.searchField !== "ALL") params.set("searchField", filters.searchField);
 
   const query = params.toString();
 
@@ -136,4 +151,15 @@ export function collegeModuleCardSummary(
 /** Describes stored lower-level overrides without claiming effective learner access. */
 export function summarizeStoredModuleOverrides(items:readonly {enabled:boolean;locked:boolean}[]) {
  return {rules:items.length,enabled:items.filter(x=>x.enabled).length,locked:items.filter(x=>x.locked).length};
+}
+
+/** A downloadable view of the exact filtered and permissioned matrix page. */
+export function adminFeatureExportHref(filters:Parameters<typeof adminFeaturesHref>[0]):string {
+ return adminFeaturesHref(filters).replace("/admin/features","/api/admin/features/export");
+}
+
+/** Preserve the chosen optional-module context when inspecting one college's rule hierarchy. */
+export function adminFeatureHierarchyHref(collegeId:string,module?:OptionalModuleKey|null):string {
+ const base="/admin/features/"+encodeURIComponent(collegeId);
+ return module?base+"?module="+encodeURIComponent(module):base;
 }
