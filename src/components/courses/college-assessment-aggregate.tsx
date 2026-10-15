@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   collegeAssessmentHref,
   collegeAssessmentSummary,
+  collegeAssessmentListQuerySchema,
   collegeAssessmentScopeLabel,
   type CollegeAssessmentAggregateItem,
   type CollegeAssessmentKind,
@@ -126,7 +127,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
             Filter
           </button>
-          <Link href={collegeAssessmentHref(data.kind, { q: "", status: "ALL", page: 1 })}
+          <Link href={collegeAssessmentHref(data.kind, collegeAssessmentListQuerySchema.parse({}))}
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
           </Link>
