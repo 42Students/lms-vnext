@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {cohorts,programs,departments,sections} from "@/db/schema";
+import {cohorts,programs,departments,sections,facultyProfiles,collegeMemberships,membershipRoles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -21,6 +21,11 @@ export async function listCollegeContactFilterOptions(context:RequestContext){
    .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,actor.collegeId)))
    .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id)).limit(201);
+  const employmentRows=await tx.selectDistinct({value:facultyProfiles.employmentType}).from(facultyProfiles)
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,facultyProfiles.membershipId))
+   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"FACULTY")))
+   .where(eq(collegeMemberships.collegeId,actor.collegeId))
+   .orderBy(asc(facultyProfiles.employmentType)).limit(101);
   const sectionRows=await tx.select({id:sections.id,name:sections.name,cohortName:cohorts.name})
    .from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
    .innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -33,7 +38,9 @@ export async function listCollegeContactFilterOptions(context:RequestContext){
   const departmentRows=await tx.select({id:departments.id,name:departments.name})
    .from(departments).where(and(eq(departments.collegeId,actor.collegeId),isNull(departments.archivedAt)))
    .orderBy(asc(departments.name),asc(departments.id)).limit(201);
-  return {sections:sectionRows.slice(0,200).map(r=>({id:r.id,label:r.cohortName+" · "+r.name})),
+  return {employmentTypes:employmentRows.map(r=>r.value).filter((x):x is string=>Boolean(x)).slice(0,100),
+   employmentTypesTruncated:employmentRows.length>100,
+   sections:sectionRows.slice(0,200).map(r=>({id:r.id,label:r.cohortName+" · "+r.name})),
    sectionsTruncated:sectionRows.length>200,
    programs:programRows.slice(0,200).map(r=>({id:r.id,label:r.name})),
    programsTruncated:programRows.length>200,

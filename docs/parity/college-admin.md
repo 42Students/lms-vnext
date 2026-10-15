@@ -747,6 +747,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 # People
+**Faculty employment-type Contacts facet PARTIAL (chat-9):** Contact cards and masked CSV now share a same-college Faculty-only exact employment-type filter from persisted faculty profiles. A bounded 100-option current-college dropdown retains the bookmarked choice without exposing other colleges. Unit/source authored; database/browser proof open.
 **Active-class Contacts filtering PARTIAL (chat-9):** The read-only Contacts page now filters learner memberships by registered active section enrollment and same-college cohort/program ancestry, before list/CSV paging, using capped own-college class choices. Faculty-only contacts cannot match; PostgreSQL/browser acceptance remains open.
 **Scoped Contacts program selector PARTIAL (chat-9):** Registered college-owned programs now filter active learner enrollment by exact program before contact pagination and masked CSV export, with a bounded authorized dropdown and neutral unknown-selection label. Faculty-only rows never match. Unit contract authored; PostgreSQL/browser acceptance pending.
 
