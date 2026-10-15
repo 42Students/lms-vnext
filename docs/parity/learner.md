@@ -1436,3 +1436,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **L5 discussion create capability fail-closed (source FIXED, proof open):** the composer stays read-only until a successful same-delivery GET explicitly returns `canPost: true`; missing/failed capability responses cannot default to permission. POST still independently enforces same-origin and persisted membership. Unit test authored; historical/browser denial acceptance pending.
 
 **Chat-7 follow-up / L5 pinned discussion visibility (FIXED source; unverified):** the already-authorized GET response now includes the server's delivery-scoped highlighted pinned message even when outside the newest 60-message page. No extra data read, cache remains private/no-store. Regression authored; DB/browser oracle verification pending.
+
+**Chat-7 follow-up / L5 discussion composer parity (FIXED source; unverified):** the same exported 3,900-character limit now governs the server's Zod boundary and the learner's visible input cap, counter, and Post validation. Overlimit/blank payloads fail closed; authorizations unchanged. Boundary tests authored; execution/browser pending.

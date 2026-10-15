@@ -9,6 +9,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { z } from "zod";
+import { LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH } from "./learner-discussion-message-limit-model";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -32,7 +33,7 @@ import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
 const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
-  messageText: z.string().trim().min(1).max(3900),
+  messageText: z.string().trim().min(1).max(LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH),
   replyToMessageId: messageIdSchema.optional(),
   expectedParentUpdatedAt:z.string().datetime({offset:true}).optional(),
   confirmed:z.literal(true).optional(),
