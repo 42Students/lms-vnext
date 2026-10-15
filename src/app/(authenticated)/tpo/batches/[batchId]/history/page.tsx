@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TpoBatchUndoControl } from "@/components/tpo/tpo-batch-undo-control";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-read-service";
 export const dynamic="force-dynamic";
@@ -12,6 +13,7 @@ export default async function BatchHistory({params}:{params:Promise<{batchId:str
  <strong>{e.kind==="UNDO"?"Undo":"Decision"}: {e.before??"NOT_DECIDED"} → {e.after??"NOT_DECIDED"}</strong>
  <p className="mt-1 text-xs text-muted-foreground">{e.occurredAt.toISOString()} · action {e.actionId}</p>
  {e.reversesActionId?<p className="text-xs">Reverses {e.reversesActionId}</p>:null}
+ {e.kind==="DECIDE"?<TpoBatchUndoControl batchId={batchId} actionId={e.actionId}/>:null}
  </li>)}</ol>}
  </main>;
 }
