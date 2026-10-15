@@ -3,7 +3,7 @@ import {useState} from "react";
 import {parseTpoAcademicPreviewCsv,previewTpoAcademicPageMatches} from "@/modules/placements/tpo-academic-preview-import-model";
 export function TpoAcademicImportPreview({activeIds}:{activeIds:readonly string[]}){
  const [text,setText]=useState("studentCode,cgpa,activeBacklogs\n");
- const [rows,setRows]=useState<ReturnType<typeof previewTpoAcademicPageMatches>|null>(null);
+ const [rows,setRows]=useState<(ReturnType<typeof parseTpoAcademicPreviewCsv>[number]&{matchedOnCurrentPage:boolean})[]|null>(null);
  const [error,setError]=useState("");
  function preview(){
   try{
