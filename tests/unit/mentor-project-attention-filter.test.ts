@@ -4,3 +4,5 @@ describe("Mentor project attention filtering",()=>{it("retains unfiltered projec
 it("recognizes only registered stalled alerts",()=>{expect(f("MENTOR_STALLED",new Set(["STALLED"]))).toBe(true);expect(f("MENTOR_STALLED",new Set(["REVIEW"]))).toBe(false);});
 
 it("matches only upcoming meeting alerts",()=>{expect(f("MENTOR_MEETING_SOON",new Set(["MEETING_SOON"]))).toBe(true);expect(f("MENTOR_MEETING_SOON",new Set(["STALLED"]))).toBe(false);});
+
+it("accepts any recorded assigned-project attention",()=>{expect(f("MENTOR_ANY_ATTENTION",new Set(["REVIEW"]))).toBe(true);expect(f("MENTOR_ANY_ATTENTION",new Set())).toBe(false);expect(f("MENTOR_ANY_ATTENTION",undefined)).toBe(false);});
