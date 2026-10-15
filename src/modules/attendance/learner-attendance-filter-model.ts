@@ -5,9 +5,11 @@ const deliverySchema = z.string().uuid();
 
 /** UTC instants belong to the College calendar month in IST, regardless of device timezone. */
 export function learnerAttendanceIstMonth(value: string | Date): string {
+  const date=new Date(value);
+  if(!Number.isFinite(date.getTime()))return "";
   const parts = new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
-  }).formatToParts(new Date(value));
+  }).formatToParts(date);
   return parts.find(part => part.type === "year")!.value + "-" +
     parts.find(part => part.type === "month")!.value;
 }
