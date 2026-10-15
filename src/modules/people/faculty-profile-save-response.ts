@@ -16,6 +16,6 @@ export function facultyProfileSaveReceipt(raw:unknown,expectedVersion:number):Fa
  const parsed=facultyProfileDocumentSchema.safeParse(persisted);
  if(!parsed.success)throw new FacultyProfileSaveResponseError();
  if(typeof payload.version!=="number"||!Number.isSafeInteger(payload.version)||
-    payload.version<=expectedVersion)throw new FacultyProfileSaveResponseError();
+    payload.version!==expectedVersion+1)throw new FacultyProfileSaveResponseError();
  return {document:parsed.data,version:payload.version};
 }
