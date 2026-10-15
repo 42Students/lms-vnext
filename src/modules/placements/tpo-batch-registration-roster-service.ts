@@ -7,13 +7,18 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
+import {tpoPlacementRegistrationConsentEvidence} from "./tpo-batch-registration-consent-model";
+import {summarizeSampledBatchRegistrations} from "./tpo-batch-registration-sample-summary-model";
+import {sortTpoBatchRegistrationRows} from "./tpo-batch-registration-sort-model";
+import {filterTpoRegistrationRecency} from "./tpo-batch-registration-recency-model";
+import {filterTpoBatchRegistrationSource} from "./tpo-batch-registration-source-model";
 import {filterBatchRegistrations,paginateBatchRegistrations,tpoBatchRegistrationFilters} from "./tpo-batch-registration-filter-model";
 const MAX_ACTIVE_LEARNERS=500;
 export async function listTpoBatchRegistrationRoster(ctx:RequestContext,cohortId:string,raw:unknown){
  const filters=tpoBatchRegistrationFilters.parse(raw);
  const {batch,collegeId}=await getTpoBatch(ctx,cohortId);
  const ready=await placementTableExists("placement_batch_registrations");
- if(!ready)return {batch,ready:false,limited:false,filters,items:[],hasMore:false,total:0,sampleSize:0};
+ if(!ready)return {batch,ready:false,limited:false,filters,items:[],hasMore:false,total:0,sampleSize:0,summary:null};
  const db=getDb();
  const all=await db.select({membershipId:collegeMemberships.id,name:users.displayName})
   .from(learnerProgramEnrollments)
@@ -32,6 +37,8 @@ export async function listTpoBatchRegistrationRoster(ctx:RequestContext,cohortId
   choice:placementBatchRegistrations.choice,
   source:placementBatchRegistrations.source,
   updatedAt:placementBatchRegistrations.updatedAt,
+  consentAt:placementBatchRegistrations.consentAt,
+  consentVersion:placementBatchRegistrations.consentVersion,
  }).from(placementBatchRegistrations)
   .where(and(eq(placementBatchRegistrations.collegeId,collegeId),
     eq(placementBatchRegistrations.cohortId,batch.id),
@@ -41,10 +48,13 @@ export async function listTpoBatchRegistrationRoster(ctx:RequestContext,cohortId
   const reg=byId.get(row.membershipId);
   return {membershipId:row.membershipId,name:row.name??"Unnamed learner",
    choice:reg?tpoRegistrationChoiceSchema.parse(reg.choice):null,
-   source:reg?.source??null,updatedAt:reg?.updatedAt.toISOString()??null};
+   source:reg?.source??null,updatedAt:reg?.updatedAt.toISOString()??null,
+   placementConsentEvidence:tpoPlacementRegistrationConsentEvidence({choice:reg?.choice??null,consentAt:reg?.consentAt??null,consentVersion:reg?.consentVersion??null})};
  });
- const filtered=filterBatchRegistrations(roster,filters);
- const page=paginateBatchRegistrations(filtered,filters.page);
+ const summary=summarizeSampledBatchRegistrations(roster);
+ const filtered=filterTpoRegistrationRecency(filterTpoBatchRegistrationSource(filterBatchRegistrations(roster,filters),filters.source),filters.recency,new Date());
+ const ordered=sortTpoBatchRegistrationRows(filtered,filters.order);
+ const page=paginateBatchRegistrations(ordered,filters.page,filters.pageSize);
  return {batch,ready:true,limited,filters,items:page.items,hasMore:page.hasMore,
-   total:page.total,sampleSize:sample.length};
+   total:page.total,sampleSize:sample.length,summary};
 }
