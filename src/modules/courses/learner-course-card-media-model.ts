@@ -18,3 +18,8 @@ export function learnerCourseCardMedia(value: string | null | undefined) {
 export function learnerCourseFallbackMedia() {
   return learnerCourseCardMedia(null);
 }
+
+/** A failed authored remote image falls back to the trusted bundled asset. */
+export function learnerCourseCardMediaAfterError(value:string|null|undefined,loadFailed:boolean){
+ return learnerCourseCardMedia(loadFailed ? null : value);
+}

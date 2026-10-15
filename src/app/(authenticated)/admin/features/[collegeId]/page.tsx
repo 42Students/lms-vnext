@@ -18,6 +18,7 @@ import {
 } from "@/modules/module-access/admin-read-service";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import {placementFeatureEffects} from "@/modules/platform-settings/placement-feature-controls-model";
+import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 
 type SearchParams = {
   page?: string | string[];
@@ -114,7 +115,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       <PageHeader
         eyebrow="Super Admin · Module Access"
         title={`${college.name} · Access hierarchy`}
-        description={`Read-only persisted module rules for college ${college.code}. Stored overrides may be inherited or masked by higher-priority locked rules.`}
+        description={`Inspect and update college rules for ${college.code}. Higher-priority locks and learner participation gates still apply.`}
       />
 
       <section className="rounded-xl border border-border bg-surface p-4">
@@ -138,6 +139,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </div>
       </section>
 
+      <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        View audited college module changes →
+      </Link>
       <section className="grid gap-3 md:grid-cols-3">
         {modules.map((decision) => (
           <article
@@ -163,6 +168,9 @@ export default async function SuperAdminCollegeModuleAccessPage({
             <p className="mt-2 text-xs leading-5 text-muted-foreground">
               {describeModuleDecision(decision)}
             </p>
+            <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
+              stored={(()=>{const r=ancestors.find(rule=>rule.scopeType==="COLLEGE"&&rule.module===decision.module);return r?{enabled:r.enabled,locked:r.locked}:null;})()}
+              ancestorLocked={ancestors.some(rule=>rule.module===decision.module&&rule.locked&&(rule.scopeType==="GLOBAL"||rule.scopeType==="ORGANIZATION"))}/>
           </article>
         ))}
       </section>

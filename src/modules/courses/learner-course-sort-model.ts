@@ -6,6 +6,7 @@ type CourseCard={
  summary:{overallPercent:number|null};
  nextDue:{dueAt:string}|null;
  lastActivity?:string|null;
+ readOnly?:boolean;overdueAssignments?:number;
 };
 /** Preserve legacy regular-before-elective grouping with alternate within-group order. */
 export function sortLearnerCourseCards<T extends CourseCard>(
@@ -31,6 +32,8 @@ export function sortLearnerCourseCards<T extends CourseCard>(
    if(x!==y)return y-x;
   }
   if(mode==="DUE"){
+   const overdue=(row:T)=>!row.readOnly && (row.overdueAssignments??0)>0;
+   if(overdue(a)!==overdue(b))return overdue(a)?-1:1;
    const x=deadline(a),y=deadline(b);
    const first=Number.isFinite(x)?x:Number.POSITIVE_INFINITY;
    const second=Number.isFinite(y)?y:Number.POSITIVE_INFINITY;
