@@ -10,7 +10,7 @@ describe("T-S1-03 authenticated OTP acceptance boundary",()=>{
   expect(recruiterInviteAcceptanceBodySchema.safeParse({code:"1234"}).success).toBe(false);
  });
  it("requires every independent availability/verification flag",()=>{
-  const live={db09:"DB09_VERIFIED",otp:"VERIFIED",grantExpiry:"VERIFIED",delivery:"VERIFIED"};
+  const live={db09:"DB09_VERIFIED",otp:"VERIFIED",delivery:"VERIFIED"};
   expect(recruiterInviteAcceptReady(live)).toBe(true);
   for(const k of Object.keys(live) as (keyof typeof live)[]){
     expect(recruiterInviteAcceptReady({...live,[k]:"PENDING"})).toBe(false);

@@ -32,10 +32,6 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
 
   return getDb().transaction(async (tx) => {
     if (input.action === "GRANT") {
-      // T-S1-01: no new indefinite recruiter grants before registration.
-      if (process.env.TPO_RECRUITER_GRANT_EXPIRY_READY !== "VERIFIED") {
-        throw new TpoRecruiterGrantConflict();
-      }
       const [duration] = await tx.select({
         months: placementTpoCollegeSettings.recruiterAccessMonths,
       }).from(placementTpoCollegeSettings)

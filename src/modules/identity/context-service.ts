@@ -110,10 +110,6 @@ async function findRecruiterContext(
     .limit(1);
 
   if (!profile) return null;
-  // T-S1-01: refusing recruiter authorization until the registered expiry
-  // migration is verified is safer than honoring perpetual ACTIVE rows.
-  if (process.env.TPO_RECRUITER_GRANT_EXPIRY_READY !== "VERIFIED") return null;
-
   const grants = await db
     .select({
       id: placementRecruiterCollegeGrants.id,
