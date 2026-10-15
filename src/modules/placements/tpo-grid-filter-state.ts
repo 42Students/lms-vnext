@@ -10,9 +10,10 @@ export function resolvedTpoGridFilterValue(raw:string|null,field:GridFilterChoic
 }
 
 /** Only genuine non-default filter selections count; columns and search never inflate the badge. */
-export function activeTpoGridFilterCount(query:URLSearchParams,fields:readonly {key:string;urlKey?:string;allValue?:string}[]):number {
+export function activeTpoGridFilterCount(query:URLSearchParams,fields:readonly {key:string;urlKey?:string;allValue?:string;options?:readonly {value:string}[]}[]):number {
  return fields.filter(field=>{
   const value=query.get(field.urlKey??"filter."+field.key);
-  return value!==null&&value!==""&&value!==(field.allValue??"");
+  return value!==null&&value!==""&&value!==(field.allValue??"")&&
+   (!field.options||field.options.some(option=>option.value===value));
  }).length;
 }
