@@ -4,6 +4,7 @@ import {notFound} from "next/navigation";
 import {parseFacultyAssessmentReportRoute,facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
+import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
@@ -73,7 +74,7 @@ export default async function FacultyAssignmentReportPage({
           "Graded: " + metrics.graded + "/" + metrics.submitted,
           "On time: " + metrics.onTime + "; Late: " + metrics.late + "; Not submitted: " + metrics.missing,
           "Total possible points: " + assignment.maxPoints,
-          "Due: " + (assignment.dueAt ? assignment.dueAt.toISOString() : "No due date"),
+          "Due: " + (assignment.dueAt ? facultyReportIstTimestamp(assignment.dueAt) : "No due date"),
         ]}
         sections={[
           { title: "Score distribution", rows: distribution.map((bucket) => bucket.label + ": " + bucket.count) },
@@ -81,7 +82,7 @@ export default async function FacultyAssignmentReportPage({
             (facultyReportLearnerName(submission.learnerDisplayName)) +
             " | " + (submission.gradingStatus === "GRADED" ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded") +
             (submission.gradePublished ? " (published)" : " (private)") +
-            " | " + submission.submittedAt.toISOString() +
+            " | " + facultyReportIstTimestamp(submission.submittedAt) +
             (assignment.dueAt && submission.submittedAt > assignment.dueAt ? " (late)" : " (on time)")
           ) },
           { title: "Not submitted", rows: missingLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
@@ -167,7 +168,7 @@ export default async function FacultyAssignmentReportPage({
           name: facultyReportLearnerName(submission.learnerDisplayName),
           score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded",
           percent: scored ? Math.round((submission.pointsAwarded! / assignment.maxPoints) * 100) : null,
-          submittedAt: submission.submittedAt.toISOString(),
+          submittedAt: facultyReportIstTimestamp(submission.submittedAt),
           note: (assignment.dueAt && submission.submittedAt > assignment.dueAt ? "Late" : "On time") +
             (submission.gradePublished ? " · Published" : " · Private"),
         };
