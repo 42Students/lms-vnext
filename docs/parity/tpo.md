@@ -2031,3 +2031,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 aged Requests — PARTIAL:** Global queue supports validated requests older than 7 × 24 hours, evaluated from the server clock before pagination; this is a triage filter, not a promised SLA, expiry or fabricated deadline.
 
 **Chat-2 Requests status tabs — PARTIAL:** Status controls now include authoritative college-wide persisted status totals independent of the current page, with no inferred zero for unavailable external request categories. Full browser parity remains open.
+
+**Chat-2 Requests elapsed age — PARTIAL:** Each visible request displays a deterministic hours/days age from one server render clock, explicitly not a business SLA or overdue policy. Original requested timestamp remains visible in IST.
