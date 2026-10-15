@@ -39,8 +39,7 @@ export default async function FacultyAssignmentSubmissionsPage({
     deliveryId:report.assignment.deliveryId,filter:query.filter,
   });
   return <div className="space-y-6">
-    <PageHeader eyebrow="Faculty · Assignment Report" title="Learner submissions"
-      description={report.assignment.title+" · "+report.assignment.courseName+" · "+report.assignment.sectionName}
+    <PageHeader title="Assignment submissions"
       actions={<Link href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
@@ -109,11 +108,11 @@ export default async function FacultyAssignmentSubmissionsPage({
               {row.learnerDisplayName||row.learnerEmail||"Learner"}
             </h2>
             <p className="mt-1 text-sm text-body">
-              {row.gradingStatus==="GRADED"?"Graded":"Not graded"} · {late?"Late":"On time / no due date"}
+              {row.gradingStatus==="GRADED"?"Graded":"Pending"} · {late?"Late":"On time / no due date"}
             </p>
             <p className="mt-1 text-sm text-body">
               Recorded score: {row.gradingStatus==="GRADED"&&row.pointsAwarded!==null
-                ? row.pointsAwarded+"/"+report.assignment.maxPoints:"Not graded"}
+                ? row.pointsAwarded+"/"+report.assignment.maxPoints:"Grade pending"}
               {" · "}{row.gradePublished?"Published":"Private"}
             </p>
             {row.submissionType==="FILE"?<FacultySubmissionFileReview submissionId={row.id}/>:null}

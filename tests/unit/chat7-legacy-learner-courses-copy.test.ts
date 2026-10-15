@@ -14,12 +14,14 @@ describe("legacy Learner My Courses copy — legacy-copy-A course listing and He
    "learn/courses/error.tsx","learn/allQuizzes/error.tsx","learn/allAssignments/error.tsx",
   ]){
    const page=source("src/app/(authenticated)/"+file);
-   expect(page).toContain("Back to courses");
+   expect(page).toContain("LEARNER_BACK_TO_COURSES");
    expect(page).not.toContain("Back to Courses");
   }
+  expect(source("src/modules/courses/learner-course-copy-model.ts")).toContain('"Back to courses"');
  });
  it("uses the full legacy search hint without replacing the search control",()=>{
   const tools=source("src/components/shell/learner-topbar-tools.tsx");
-  expect(tools).toContain('placeholder="Search Courses (e.g., Java, Data Structures, CS...)"');
+  expect(tools).toContain("LEARNER_COURSE_SEARCH_PLACEHOLDER");
+  expect(source("src/modules/courses/learner-course-copy-model.ts")).toContain("Search Courses (e.g., Java, Data Structures, CS...)");
  });
 });

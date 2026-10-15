@@ -145,16 +145,16 @@ export function AssignmentFileSubmissionControl({
   const hasPending = staged.some(file => file.status !== "READY");
 
   return <section aria-label="Assignment file submission" className="mt-4 space-y-3">
-    <h3 className="text-sm font-semibold text-foreground">Upload File</h3>
+    <h3 className="text-sm font-semibold text-foreground">File Upload</h3>
     <p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>
-    <label className="block text-sm font-semibold text-body">Choose files
+    <label className="block text-sm font-semibold text-body">Choose a file to upload
       <input type="file" multiple accept={acceptAttributeFor("assignment-submission")}
         disabled={loading || busy || staged.length >= MAX_ASSIGNMENT_FILES_PER_SUBMISSION}
         className="mt-2 block min-h-11 w-full max-w-full text-sm"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
     </label>
     <Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload}>
-      {busy && activeName ? "Uploading…" : `Upload file${selected.length === 1 ? "" : "s"}`}
+      {busy && activeName ? "Uploading…" : staged.length > 0 ? "Add another file" : "Choose a file to upload"}
     </Button>
     {busy && activeName ? <div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
@@ -170,7 +170,7 @@ export function AssignmentFileSubmissionControl({
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
           {file.status === "VERIFYING" || file.status === "UPLOADING" ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => retry(file.id)}>Check file</Button> : null}
-          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => remove(file.id)}>Remove</Button> : null}
+          {canRemoveStagedFile(file) ? <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => remove(file.id)} aria-label="Remove this file">Remove</Button> : null}
         </li>;
       })}
     </ul>

@@ -30,15 +30,14 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
   const historyUrl="/learn/allQuizzes/"+encodeURIComponent(quiz.id)+"?deliveryId="+encodeURIComponent(quiz.deliveryId);
   return <div className="space-y-6">
     <Link href="/learn/allQuizzes" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← All Quizzes</Link>
-    <PageHeader eyebrow="Learner · Quiz history" title={quiz.title}
-      description={quiz.courseName+" · "+quiz.lessonName} />
+    <PageHeader title={quiz.title} />
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <h2 className="text-base font-semibold text-foreground">Attempt history</h2>
       <p className="mt-2 text-sm text-body">
         Attempts are recorded against your current college membership. Results appear only after Faculty publishes them.
       </p>
       {attempts.length===0 ? <p className="mt-4 rounded-lg bg-surface-subtle p-4 text-sm text-body">
-        No quiz attempt is recorded for you in this course.
+        Not attempted · No quiz attempt is recorded for you in this course.
       </p> : <ol className="mt-4 grid gap-3 sm:grid-cols-2">
         {attempts.map(attempt=><li key={attempt.id} className="min-w-0 rounded-lg border border-border p-4">
           <h3 className="text-sm font-semibold text-foreground">Attempt {attempt.attemptNumber}</h3>

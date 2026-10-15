@@ -42,13 +42,9 @@ export default async function FacultyAssignmentReportPage({
   return (
     <div className="space-y-6">
       <Link href="/teacher/allAssignments" className="text-sm font-semibold text-primary-text">
-        ← All Assignments
+        ← My Assignments
       </Link>
-      <PageHeader
-        eyebrow="Faculty · Assignment Report"
-        title={assignment.title}
-        description={`${assignment.courseName} · ${assignment.sectionName} · ${assignment.lessonName}`}
-      />
+      <PageHeader title={assignment.title} />
       <div className="flex flex-wrap items-center gap-3">
         <FacultyReportCsvDownload
           href={facultyReportCsvHref({
@@ -159,7 +155,7 @@ export default async function FacultyAssignmentReportPage({
         </div>
       </section>
 
-      <FacultyReportStudentTable title="Learner submissions" rows={submissions.map((submission) => {
+      <FacultyReportStudentTable title="Student scores" emptyMessage="No one has submitted this assignment yet." rows={submissions.map((submission) => {
         const scored = submission.gradingStatus === "GRADED" &&
           submission.pointsAwarded !== null &&
           assignment.maxPoints > 0;
@@ -199,8 +195,8 @@ export default async function FacultyAssignmentReportPage({
       </section>
 
       <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-lg font-semibold text-foreground">Review and grade submissions</h2>
-        <p className="mt-1 text-sm text-body">Open a learner submission to grade, regrade or publish feedback.</p>
+        <h2 className="text-lg font-semibold text-foreground">View submissions</h2>
+        <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
         <FacultyAssignmentReview
         filesEnabled={assignmentFilesRuntimeEnabled()}
           assignmentId={assignment.id}
