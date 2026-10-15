@@ -19,7 +19,11 @@ export default async function CollegeHiringDashboardPage({
   const query = collegeHiringAnalyticsQuery(await searchParams);
   if (!query.success) {
     return <div className="space-y-4">
-      <PageHeader eyebrow="Placements" title="Analytics" />
+      <PageHeader eyebrow="Placements" title="Analytics"
+      actions={<Link href="/college/placements/readiness-by-department"
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Placement Evidence by Department
+      </Link>} />
       <ErrorState title="Invalid report search" description="No placement metrics were loaded."
         action={<Link href="/college/hiring-dashboard" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>;
@@ -29,7 +33,11 @@ export default async function CollegeHiringDashboardPage({
     ...query.data,
   });
   return <div className="space-y-6">
-    <PageHeader eyebrow="Placements" title="Analytics" />
+    <PageHeader eyebrow="Placements" title="Analytics"
+      actions={<Link href="/college/placements/readiness-by-department"
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Placement Evidence by Department
+      </Link>} />
     <ReportFilters workspace={workspace} path="/college/hiring-dashboard" />
     <ReportMetrics metrics={workspace.report.metrics} />
     <ReportScopeNote note={workspace.registrationScopeNote} />

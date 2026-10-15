@@ -33,6 +33,10 @@ export default async function CollegeAdminProfilePage() {
         </div>)}</dl>
       </section>)}
     </div>
+    <Link href="/college/domains"
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Tenant domains
+    </Link>
     <Link href="/college/college-profile" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Edit college display and support contacts
     </Link>

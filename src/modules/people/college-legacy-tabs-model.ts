@@ -1,6 +1,5 @@
 /** Legacy lms-dev-2026 college-admin navGroupDefinitions/adminNavGroups copy.
- * The four legacy Company/Analytics/drive-detail UNKNOWN routes remain gated:
- * do not point a visible tab at another account's protected route.
+ * Tab hrefs target existing College pages, never foreign-role routes.
  */
 export type CollegeLegacyTab = {label:string;href:string};
 export type CollegeLegacyGroup = {title:string;tabs:readonly CollegeLegacyTab[]};
@@ -41,7 +40,7 @@ export const COLLEGE_LEGACY_GROUPS: readonly CollegeLegacyGroup[] = [
     {label:"Analytics",href:"/college/hiring-dashboard"},
   ]},
   {title:"Projects",tabs:[
-    {label:"Workspaces",href:"/college/projects/workspaces"},
+    {label:"Workspaces",href:"/college/projects"},
     {label:"At Risk",href:"/college/projects/at-risk"},
     {label:"Readiness",href:"/college/projects/readiness"},
     {label:"Submissions",href:"/college/projects/submissions"},
@@ -50,13 +49,32 @@ export const COLLEGE_LEGACY_GROUPS: readonly CollegeLegacyGroup[] = [
   ]},
 ];
 
+/** Secondary pages inherit the selected legacy section without adding new tabs. */
+export function collegeLegacyNavigationPath(pathname: string): string {
+  if (pathname === "/college/groups" || pathname.startsWith("/college/groups/")) {
+    return "/college/people";
+  }
+  if (pathname === "/college/placements/readiness-by-department" ||
+      pathname.startsWith("/college/placements/readiness-by-department/")) {
+    return "/college/hiring-dashboard";
+  }
+  return pathname;
+}
+
 export function collegeLegacyGroupForPath(pathname: string): CollegeLegacyGroup | null {
+  const active = collegeLegacyNavigationPath(pathname);
   const match = COLLEGE_LEGACY_GROUPS.flatMap(group=>group.tabs.map(tab=>({group,tab})))
-    .filter(({tab})=>pathname===tab.href||pathname.startsWith(tab.href+"/"))
+    .filter(({tab})=>active===tab.href||active.startsWith(tab.href+"/"))
     .sort((a,b)=>b.tab.href.length-a.tab.href.length)[0];
   return match?.group ?? null;
 }
 
 export function collegeLegacyTabActive(pathname: string, href: string): boolean {
-  return pathname === href || pathname.startsWith(href+"/");
+  const active = collegeLegacyNavigationPath(pathname);
+  const matches = (candidate: string) => active === candidate || active.startsWith(candidate + "/");
+  if (!matches(href)) return false;
+  return !COLLEGE_LEGACY_GROUPS.some(group => group.tabs.some(tab =>
+    tab.href !== href && tab.href.length > href.length &&
+    tab.href.startsWith(href + "/") && matches(tab.href)
+  ));
 }

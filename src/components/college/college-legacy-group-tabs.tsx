@@ -12,6 +12,7 @@ export function CollegeLegacyGroupTabs() {
   if (!group) return null;
   return <nav aria-label={group.title}
     className="mx-auto w-full max-w-[1600px] overflow-x-auto border-b border-border bg-surface px-4 sm:px-6">
+    <h2 className="pt-3 text-base font-semibold text-foreground">{group.title}</h2>
     <div className="flex w-max min-w-full flex-wrap items-center gap-1 py-2 sm:gap-2">
       {group.tabs.map(tab=><Link key={tab.href} href={tab.href}
         aria-current={collegeLegacyTabActive(pathname,tab.href)?"page":undefined}
