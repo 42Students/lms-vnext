@@ -150,3 +150,12 @@ describe("Faculty education dates", () => {
     expect(facultyProfileDocumentSchema.safeParse({ education: [{ ...education, endYear: "2027", isCurrentlyPursuing: true }] }).success).toBe(false);
   });
 });
+
+
+describe("Faculty record identities", () => {
+  it("does not allow duplicate entries within a section", () => {
+    const skill = { id, skill: "Java" };
+    expect(facultyProfileDocumentSchema.safeParse({ skills: [skill, skill] }).success).toBe(false);
+    expect(facultyProfileDocumentSchema.safeParse({ skills: [skill] }).success).toBe(true);
+  });
+});

@@ -318,7 +318,19 @@ export const facultyProfileDocumentSchema = z
         panDocumentId: null,
       }),
   })
-  .strict();
+  .strict()
+  .superRefine((profile, ctx) => {
+    const collections = ["languages", "education", "certifications", "experiences", "skills", "publications", "awards"] as const;
+    for (const section of collections) {
+      const seen = new Set<string>();
+      for (const [index, entry] of profile[section].entries()) {
+        if (seen.has(entry.id)) {
+          ctx.addIssue({ code: "custom", path: [section, index, "id"], message: "Duplicate profile record ID" });
+        }
+        seen.add(entry.id);
+      }
+    }
+  });
 
 export const emptyFacultyProfileDocument =
   facultyProfileDocumentSchema.parse({});
