@@ -12,7 +12,7 @@ export function matchesVerificationAgeBand(submittedAt:Date,status:string,band:V
 }
 
 /** Elapsed-time SQL bounds evaluated at the same clock as in-memory flags. */
-export function verificationAgeSqlBounds(band:"ANY"|"WITHIN_48_HOURS"|"TWO_TO_SEVEN_DAYS"|"OVER_SEVEN_DAYS",now:Date){
+export function verificationAgeSqlBounds(band:"ANY"|"WITHIN_48_HOURS"|"TWO_TO_SEVEN_DAYS"|"OVER_SEVEN_DAYS",now:Date):{after?:Date;through?:Date}{
  const at=now.getTime();
  if(band==="WITHIN_48_HOURS")return {after:new Date(at-48*HOUR),through:now};
  if(band==="TWO_TO_SEVEN_DAYS")return {after:new Date(at-168*HOUR),through:new Date(at-48*HOUR)};

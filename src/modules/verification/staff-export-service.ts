@@ -12,7 +12,7 @@ import {matchesVerificationAttention} from "./attention-filter";
 import {matchesVerificationAgeBand,verificationAgeSqlBounds} from "./queue-age-band";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
-import {verificationTab} from "./queue-tabs";
+import {verificationTab,verificationTabStatuses} from "./queue-tabs";
 import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid,verificationSubmittedSqlBounds} from "./queue-waiting-since";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationAttentionFlags} from "./attention-flags";
@@ -54,7 +54,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   ageBounds.after?gt(profileVerifications.submittedAt,ageBounds.after):undefined,
   ageBounds.through?lte(profileVerifications.submittedAt,ageBounds.through):undefined,
   inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
-  inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]:[filter.waitingState]),
+  inArray(profileVerifications.status,[...verificationTabStatuses(filter.tab,filter.waitingState)]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
