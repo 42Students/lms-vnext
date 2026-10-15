@@ -59,7 +59,7 @@ export function learnerAssignmentFilePayload(deliveryId: string, receiptId: stri
 export const learnerAssignmentReadGrantSchema = z.object({ grant: z.object({
   readUrl: z.string().url().refine(value => {
     const url = new URL(value);
-    return url.protocol === "https:" && !url.username && !url.password;
+    return url.protocol === "https:" && !url.username && !url.password && !url.hash;
   }, "A secure file URL is required"),
   expiresAt: z.iso.datetime({ offset: true }), originalName: z.string().min(1).max(255),
   mimeType: z.string().min(1).max(128), sizeBytes: z.number().int().min(1).max(50 * 1024 * 1024),
