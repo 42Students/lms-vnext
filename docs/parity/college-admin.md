@@ -496,6 +496,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Linked academic-period lifecycle PARTIAL (chat-3, 2026-10-15):** Persisted same-college period state, with unlinked slots retained only for ALL. The filter is included in page navigation and the tenant-scoped CSV with unit/PG fixtures authored; runtime and browser acceptance remain open.
+
 **Semester through PARTIAL (chat-3, 2026-10-15):** Bounded semester maximum against persisted slot term (not learner progression). The filter is included in page navigation and the tenant-scoped CSV with unit/PG fixtures authored; runtime and browser acceptance remain open.
 
 **Semester from PARTIAL (chat-3, 2026-10-15):** College Admin can filter by persisted elective semesterNumber with inclusive numerical constraints, validated in URL and CSV export, scoped by the owning College. Authored unit and isolated-PG positive/negative fixtures; executed database/browser acceptance and full legacy parity outstanding.
