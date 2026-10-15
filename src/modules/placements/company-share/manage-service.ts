@@ -127,7 +127,7 @@ export async function listTpoCompanyShareAudit(
  const page=companyShareAuditPageSchema.parse(rawPage);
  const jobId=companyShareIssueSchema.shape.jobId.parse(rawJobId);
  const college=await tpoJob(context,jobId);
- if(!await companyShareTablesReady())return {ready:false,entries:[],limited:false,page};
+ if(!await companyShareTablesReady())return {ready:false,entries:[],limited:false,page,total:0,totalPages:1};
  const filter=and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId),
   kind==="ALL"?undefined:eq(views.eventKind,kind));
  const joined=()=>getDb().select({
