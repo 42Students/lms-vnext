@@ -10,7 +10,11 @@ export async function GET(request:Request){
   const url=new URL(request.url);
   const query=mentorTaskReviewQuerySchema.parse({
    search:url.searchParams.get("search")??undefined,
+   projectId:url.searchParams.get("projectId")??undefined,
+   assignment:url.searchParams.get("assignment")??undefined,
    priority:url.searchParams.get("priority")??undefined,
+   version:url.searchParams.get("version")??undefined,
+   age:url.searchParams.get("age")??undefined,
    order:url.searchParams.get("order")??undefined,page:1,pageSize:50,
   });
   const ctx=await getCurrentRequestContext();
