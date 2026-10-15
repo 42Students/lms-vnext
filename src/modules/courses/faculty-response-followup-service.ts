@@ -4,6 +4,7 @@ import { can } from "@/modules/permissions/policy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "./errors";
 import { getFacultyAssessmentOverview } from "./faculty-assessment-service";
+import {facultyTeachingSelectionAllowed} from "./faculty-teaching-selector";
 import {
   getFacultyAssignmentReport, getFacultyQuizReport,
 } from "./faculty-assessment-report-service";
@@ -35,6 +36,8 @@ export async function getFacultyResponseFollowUps(
   }
 
   const overview = await getFacultyAssessmentOverview(context);
+  if(!facultyTeachingSelectionAllowed(overview.courses,query.deliveryId))
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const candidates: FacultyResponseCandidate[] = [
     ...overview.assignments.map(row => ({
       id: row.id, deliveryId: row.deliveryId, title: row.title,
