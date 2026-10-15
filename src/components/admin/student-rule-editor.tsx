@@ -3,7 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
-import {studentRulePayload,studentRuleChangeSummary,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
+import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
 export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,blocked}:{
  collegeId:string;membershipId:string;module:EditableStudentModule;
  stored:boolean|null;locked:boolean;blocked:boolean;
@@ -24,15 +24,8 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
   try{
    const response=await fetch(endpoint,{method:"GET",cache:"no-store"});
    const data:unknown=await response.json().catch(()=>null);
-   if(!response.ok||!data||typeof data!=="object"||!("rules" in data)||!Array.isArray(data.rules)){
-    setFeedback("Latest rule could not be loaded.");return;
-   }
-   const rule=(data.rules as unknown[]).find(row=>row!==null&&typeof row==="object"&&"module" in row&&row.module===module);
-   if(!rule||typeof rule!=="object"||!("enabled" in rule)||!("locked" in rule)) {
-    setFeedback("Latest module state is unavailable.");return;
-   }
-   const state=rule.enabled===null?null:
-    typeof rule.enabled==="boolean"&&typeof rule.locked==="boolean"?{enabled:rule.enabled,locked:rule.locked}:null;
+   const state=response.ok?parseStudentRuleRecheck(data,module):undefined;
+   if(state===undefined){setFeedback("Latest module state could not be verified.");return;}
    setObserved(state);
    setChoice(state===null?"INHERIT":state.enabled?"ON":"OFF");
    setNextLocked(state?.locked??false);
