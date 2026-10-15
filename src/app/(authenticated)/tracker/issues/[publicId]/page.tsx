@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { TrackerAdminError } from "@/modules/bug-tracker/admin-errors";
 import { getBugTrackerIssueForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import { trackerPublicIdSchema } from "@/modules/bug-tracker/admin-validation";
 import { isSuperAdmin } from "@/modules/identity/context";
 
 function when(value: Date) {
@@ -29,6 +30,7 @@ export default async function TrackerIssueDetailPage({
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) redirect("/dashboard");
   const { publicId } = await params;
+  if (!trackerPublicIdSchema.safeParse(publicId).success) notFound();
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
