@@ -12,6 +12,7 @@ import {
   createProjectTemplate, publishProjectTemplate, assignProjectTemplateToCollege,
 } from "@/modules/projects/template-service";
 import { updateMentorSprintDetails } from "@/modules/projects/mentor-sprint-details-service";
+import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 import {
   createMentorProjectSprint, transitionMentorProjectSprint,
 } from "@/modules/projects/mentor-sprint-write-service";
@@ -142,6 +143,21 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
       status:"PLANNED",releaseId:sprint.releaseId,
     });
     expect(edited.updatedAt.getTime()).toBeGreaterThan(sprint.updatedAt.getTime());
+    const selected=await getMentorSprintProgress(mentor,{
+      projectId:project.id,order:"ACTIVE_FIRST",
+    });
+    expect(selected.items.map(item=>item.id)).toContain(sprint.id);
+    await expect(getMentorSprintProgress(mentor,{projectId:randomUUID()}))
+      .rejects.toBeDefined();
+    const noBlocked=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"BLOCKED",
+    });
+    expect(noBlocked.items).toHaveLength(0);
+    await pool.query("update project_tasks set status='BLOCKED' where project_id=$1::uuid",[project.id]);
+    const blocked=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"BLOCKED",
+    });
+    expect(blocked.items.map(item=>item.id)).toContain(sprint.id);
     const after=await getProjectInstanceWorkspace(mentor,project.id);
     expect(after.sprints).toEqual(expect.arrayContaining([
       expect.objectContaining({id:sprint.id,title:"Sprint reviewed by Mentor"}),
@@ -186,6 +202,38 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
         where event_type='projects.sprint.updated' and metadata->>'sprintId'=$1`,[sprint.id]),
     ]);
     expect(events.rows[0]?.total).toBe("1");
+  });
+  it("filters real persisted empty/TODO/DONE Sprint evidence inside exact active Mentor scope",async()=>{
+    const {project,sprint}=await fixture();
+    const onlyTodo=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"TODO",
+    });
+    expect(onlyTodo.items.map(item=>item.id)).toContain(sprint.id);
+    const initiallyEmpty=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"NO_TASKS",
+    });
+    expect(initiallyEmpty.items).toHaveLength(0);
+    await pool.query("update project_tasks set status='DONE' where project_id=$1::uuid",[project.id]);
+    const completed=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"DONE",
+    });
+    expect(completed.items.map(item=>item.id)).toContain(sprint.id);
+    expect((await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"TODO",
+    })).items).toHaveLength(0);
+    await pool.query("delete from project_tasks where project_id=$1::uuid",[project.id]);
+    const noTasks=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"NO_TASKS",
+    });
+    expect(noTasks.items.map(item=>item.id)).toContain(sprint.id);
+    expect(noTasks.items.find(item=>item.id===sprint.id)?.tasks.completionPercent)
+      .toBeNull();
+    await expect(getMentorSprintProgress(learner,{
+      projectId:project.id,taskAttention:"NO_TASKS",
+    })).rejects.toBeDefined();
+    await expect(getMentorSprintProgress(mentor,{
+      projectId:randomUUID(),taskAttention:"NO_TASKS",
+    })).rejects.toBeDefined();
   });
   it("creates a registered planned sprint, audits three token-checked transitions and denies scope forgery",async()=>{
     const {project,sprint:original}=await fixture();
