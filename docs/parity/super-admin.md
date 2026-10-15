@@ -893,3 +893,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 trace route strict query keys (PARTIAL):** Access-trace deep links reject repeated member IDs, page/search/override selectors and unexpected parameters before scoped SQL. The existing Zod validated service handles field content and cross-college denial. Pure unit tests authored, unexecuted; browser redirect and test acceptance remain open.
+
+
+**2026-10-15 chat-6 Settings inventory search (PARTIAL):** Super Admin can now filter the existing safe, non-secret source/college policy inventory by typed section and setting/source text. This is an in-memory filter over already-authorized reads; credentials and raw environment config remain unavailable. Unit tests authored, not executed; legacy mutable settings still absent and page is not DONE.
