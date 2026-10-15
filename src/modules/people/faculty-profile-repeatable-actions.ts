@@ -33,3 +33,13 @@ export function duplicateFacultyProfileDraftRow<T extends {id:string}>(
  next.splice(index+1,0,cloneFacultyProfileDraftRow(rows[index]!,newId));
  return next;
 }
+
+/** Reordering only changes one section's draft; it never mutates its source. */
+export function moveFacultyProfileDraftRow<T extends {id:string}>(
+ rows:readonly T[],id:string,toIndex:number,
+):T[]{
+ const from=rows.findIndex(row=>row.id===id);
+ if(from<0||toIndex<0||toIndex>=rows.length||from===toIndex)return [...rows];
+ const result=[...rows];const [item]=result.splice(from,1);result.splice(toIndex,0,item!);
+ return result;
+}

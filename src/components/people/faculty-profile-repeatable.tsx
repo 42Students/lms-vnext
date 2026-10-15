@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
-import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow} from "@/modules/people/faculty-profile-repeatable-actions";
+import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -79,6 +79,14 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                   )}
                 </label>;
               })}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button type="button" disabled={pending || index===0} onClick={()=>{
+                setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
+              }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</button>
+              <button type="button" disabled={pending || index===rows.length-1} onClick={()=>{
+                setRows(current=>moveFacultyProfileDraftRow(current,row.id,index+1));setChanged(true);
+              }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" down"}>Move down</button>
             </div>
             <button type="button" disabled={pending || rows.length >= maxItems} onClick={() => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
