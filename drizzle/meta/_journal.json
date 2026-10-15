@@ -575,6 +575,13 @@
       "when": 1792093683964,
       "tag": "0081_profile_verification_withdraw_action",
       "breakpoints": true
+    },
+    {
+      "idx": 82,
+      "version": "7",
+      "when": 1792093743287,
+      "tag": "0082_project_task_assignee",
+      "breakpoints": true
     }
   ]
 }

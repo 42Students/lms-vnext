@@ -1,0 +1,3 @@
+ALTER TABLE "project_tasks" ADD COLUMN "assignee_membership_id" uuid;--> statement-breakpoint
+ALTER TABLE "project_tasks" ADD CONSTRAINT "project_tasks_assignee_membership_id_college_memberships_id_fk" FOREIGN KEY ("assignee_membership_id") REFERENCES "public"."college_memberships"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "project_tasks_assignee_membership_idx" ON "project_tasks" USING btree ("assignee_membership_id") WHERE "project_tasks"."assignee_membership_id" is not null;
