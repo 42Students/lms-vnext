@@ -30,7 +30,7 @@ describe("TPO recruiter-visible shortlist preview", () => {
   it("rejects forged college parameters and bad page", () => {
     const jobId = "00000000-0000-4000-8000-000000000001";
     expect(tpoShareableShortlistQuerySchema.parse({ jobId })).toEqual({
-      jobId, page: 1,
+      jobId, page: 1, q: "",
     });
     expect(tpoShareableShortlistQuerySchema.safeParse({
       jobId, collegeId: jobId,

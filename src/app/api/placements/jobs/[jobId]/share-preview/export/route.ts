@@ -8,12 +8,12 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ jobId: string }> };
-export async function GET(_request: Request, { params }: RouteContext) {
+export async function GET(request: Request, { params }: RouteContext) {
   try {
     const { jobId } = await params;
     const data = await getTpoShareableShortlist(
       await getCurrentRequestContext(),
-      { jobId }, { exportAll: true },
+      { jobId, q:new URL(request.url).searchParams.get("q")??"" }, { exportAll: true },
     );
     return new Response("\uFEFF" + tpoShareableShortlistCsv(data.rows, data.truncated), {
       status: 200,

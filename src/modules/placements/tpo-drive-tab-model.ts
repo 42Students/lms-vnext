@@ -1,0 +1,12 @@
+export type TpoDriveTab={label:string;href:string};
+export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
+ const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
+ return [
+  {label:"Overview",href:root},
+  {label:"Applicants",href:root+"/applicants"},
+  {label:"Rounds",href:root+"/rounds"},
+  {label:"Offers",href:root+"/offers"},
+  {label:"Joining",href:root+"/joining"},
+  {label:"Company sharing",href:root+"/share-preview"},
+ ];
+}

@@ -6,6 +6,8 @@ import {
   count,
   desc,
   eq,
+  ilike,
+  or,
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
@@ -31,6 +33,8 @@ import {
 import {
   requirePlacementManageScope,
 } from "./scope";
+import {escapeLiteralApplicantSearch} from "./company-share/public-filter-model";
+import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 
 const PAGE_SIZE = 25;
 
@@ -47,6 +51,7 @@ const PAGE_SIZE = 25;
 export async function listTpoRecruiterAccess(
   context: RequestContext,
   rawQuery: unknown = {},
+  options: {exportAll?:boolean} = {},
 ) {
   if (
     !hasMembershipRole(context, "TPO") ||
@@ -66,6 +71,7 @@ export async function listTpoRecruiterAccess(
     context,
     collegeId,
   );
+  await requirePersistedTpoMembership(context,collegeId);
 
   const query =
     tpoRecruiterAccessQuerySchema.parse(
@@ -133,6 +139,10 @@ export async function listTpoRecruiterAccess(
           placementCompanyRelationships.collegeId,
           collegeId,
         ),
+        query.q ? or(
+          ilike(users.displayName,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
+          ilike(placementCompanies.name,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
+        ) : undefined,
         query.status === "ALL"
           ? undefined
           : eq(
@@ -181,11 +191,8 @@ export async function listTpoRecruiterAccess(
             scopedGrants.grantId,
           ),
         )
-        .limit(PAGE_SIZE)
-        .offset(
-          (query.page - 1) *
-            PAGE_SIZE,
-        ),
+        .limit(options.exportAll?500:PAGE_SIZE)
+        .offset(options.exportAll?0:(query.page - 1) * PAGE_SIZE),
     ]);
 
   const total =
@@ -196,8 +203,9 @@ export async function listTpoRecruiterAccess(
     items: rows.map(
       toTpoRecruiterGrantView,
     ),
-    page: query.page,
-    pageSize: PAGE_SIZE,
+    page: options.exportAll?1:query.page,
+    pageSize: options.exportAll?500:PAGE_SIZE,
+    truncated:options.exportAll===true&&total>500,
     total,
     totalPages: Math.max(
       1,

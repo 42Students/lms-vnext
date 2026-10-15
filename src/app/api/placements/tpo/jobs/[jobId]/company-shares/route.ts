@@ -10,16 +10,16 @@ type RouteContext = {params:Promise<{jobId:string}>};
 function errorResponse(error:unknown) {
   if (error instanceof CompanyShareError) {
     return NextResponse.json({error:error.code},{
-      status:error.code==="MIGRATION_PENDING"?503:error.code==="NOT_FOUND"?404:422,
+      status:error.code==="MIGRATION_PENDING"?503:error.code==="NOT_FOUND"?404:error.code==="ACTIVE_LINK_LIMIT"?409:422,
       headers:{"Cache-Control":"private, no-store"},
     });
   }
   return apiErrorResponse(error);
 }
-export async function GET(_request:Request,{params}:RouteContext) {
+export async function GET(request:Request,{params}:RouteContext) {
   try {
     const {jobId}=await params;
-    const result=await listTpoCompanyApplicantShares(await getCurrentRequestContext(),jobId);
+    const result=await listTpoCompanyApplicantShares(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("status")??"ALL",new URL(request.url).searchParams.get("page")??1);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return errorResponse(error);}
 }

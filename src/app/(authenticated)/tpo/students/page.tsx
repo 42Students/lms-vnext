@@ -1,14 +1,15 @@
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
-import { TpoBulkActionPanel } from "@/components/tpo/tpo-bulk-action-panel";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
+import { TpoBulkActionPanel } from "@/components/tpo/tpo-bulk-action-panel";
 import { listPlacementJobs } from "@/modules/placements/job-service";
+import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
 import { can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -314,11 +315,12 @@ export default async function TpoStudentsPage({
             return (
               <Link
                 key={state}
-                href={studentsHref({
-                  journeyState: state,
+                href={studentsHref(tpoJourneyDrillFilters({
+                  branchId:query.branchId,
+                  search:query.search,
                   columns:first(raw.columns)?.slice(0,800),
-                  pageSize: query.pageSize,
-                })}
+                  pageSize:query.pageSize,
+                },state))}
                 aria-current={selected ? "page" : undefined}
                 className={
                   "rounded-lg border p-4 transition hover:border-primary hover:bg-primary-subtle " +
@@ -417,11 +419,12 @@ export default async function TpoStudentsPage({
                   >
                     <td className="px-4 py-3">
                       <Link
-                        href={studentsHref({
-                          branchId: branch.branchId,
+                        href={studentsHref(tpoBranchDrillFilters({
+                          journeyState:query.journeyState,
+                          search:query.search,
                           columns:first(raw.columns)?.slice(0,800),
-                          pageSize: query.pageSize,
-                        })}
+                          pageSize:query.pageSize,
+                        },branch.branchId))}
                         className="font-semibold text-primary-text hover:underline"
                       >
                         {branch.branchName}
@@ -575,15 +578,11 @@ export default async function TpoStudentsPage({
           </Suspense>
         )}
 
-        {manageAllowed && roster.items.length > 0 ? (
-          <TpoBulkActionPanel
-            key={["students", roster.page, query.search, query.journeyState, query.branchId].join(":")}
+        {manageAllowed ? (
+          <TpoBulkActionPanel key={"students:"+roster.page+":"+query.search+":"+query.journeyState}
             target="STUDENTS"
-            rows={roster.items.map((student) => ({
-              id: student.membershipId,
-              label: student.displayName + " · " + student.branchName,
-            }))}
-          />
+            rows={roster.items.map(student=>({id:student.membershipId,
+              label:student.displayName+" · "+student.branchName}))}/>
         ) : null}
 
         {manageAllowed ? (
