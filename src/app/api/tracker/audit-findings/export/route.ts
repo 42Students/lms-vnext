@@ -1,5 +1,5 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {apiErrorResponse} from "@/lib/api-error";
+import {bugTrackerApiError} from "@/lib/bug-tracker-api-error";
 import {listBugTrackerIssuesForAdmin} from "@/modules/bug-tracker/admin-service";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {parseAuditFindingsSearchParams,trackerAuditFindingsInput} from "@/modules/bug-tracker/audit-findings-board-model";
@@ -21,5 +21,5 @@ export async function GET(request:Request){
    "content-disposition":'attachment; filename="audit-findings-page.csv"',
    "cache-control":"private, no-store","x-export-row-count":String(data.items.length),
   }});
- }catch(error){return apiErrorResponse(error);}
+ }catch(error){return bugTrackerApiError(error);}
 }
