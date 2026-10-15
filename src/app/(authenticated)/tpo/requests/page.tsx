@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
-import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,parseGlobalTpoRequestFilters} from "@/modules/placements/tpo-global-requests-model";
+import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
@@ -67,8 +67,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export current page CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
-      {data.total>0?"No requests on this page.":"No requests match the current filters."}
-      <Link href="/tpo/requests" className="ml-3 text-primary-text underline">Reset</Link>
+      {data.total>0?"This page is past the available request results.":"No requests match the current filters."}
+      <Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):"/tpo/requests"}
+       className="ml-3 inline-flex min-h-11 items-center text-primary-text underline">
+       {data.total>0?"First matching page":"Reset filters"}
+      </Link>
     </section>:<ul className="space-y-3">{data.requests.map(request=>
       <li key={request.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">

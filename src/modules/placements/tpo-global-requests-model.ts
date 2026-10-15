@@ -49,3 +49,16 @@ export function tpoRequestContextLink(row:{requestType:string;roundId:string|nul
 export function parseGlobalTpoRequestFilters(raw:unknown){
  return globalTpoRequestsQuerySchema.safeParse(raw);
 }
+
+export function globalTpoRequestFirstPageHref(query:{
+ status:string;age:string;sort:string;requestType:string;search:string;pageSize:number;
+}){
+ const p=new URLSearchParams();
+ p.set("status",query.status);
+ if(query.age!=="ALL")p.set("age",query.age);
+ p.set("sort",query.sort);
+ if(query.requestType!=="ALL")p.set("requestType",query.requestType);
+ if(query.search)p.set("search",query.search);
+ p.set("page","1");p.set("pageSize",String(query.pageSize));
+ return "/tpo/requests?"+p.toString();
+}
