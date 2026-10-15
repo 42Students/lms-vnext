@@ -6,6 +6,7 @@ import {
   parseCollegeRoleDirectorySearchParams,
   canonicalCollegeRoleDirectoryHref,
   selectedDirectoryValueNotListed,
+  collegeRoleContactHref,
   assertCompatibleCollegeRoleDirectoryFilters,
   roleDirectoryDateWindowValid,
   roleDirectoryIstDayStart,
@@ -196,3 +197,9 @@ describe("Contradictory role-directory filters",()=>{
   expect(()=>assertCompatibleCollegeRoleDirectoryFilters("LEARNER",collegeRoleDirectoryQuerySchema.parse({enrollment:"NONE",classPresence:"NONE"}))).not.toThrow();
  });
 });
+
+describe("College role roster masked Contacts drilldown",()=>{it("links the exact membership without accepting a forged URL segment",()=>{const id="00000000-0000-4000-8000-000000000149";expect(collegeRoleContactHref(id)).toBe("/college/contacts/"+id);expect(()=>collegeRoleContactHref("../other-college")).toThrow();});});
+
+describe("Student role directory academic program",()=>{it("round-trips an exact program selector without leaking onto Faculty routes",()=>{const programId="00000000-0000-4000-8000-000000000099";const query=collegeRoleDirectoryQuerySchema.parse({programId});expect(collegeRoleDirectoryHref("LEARNER",query)).toContain("programId="+programId);expect(collegeRoleDirectoryHref("FACULTY",query)).not.toContain("programId");expect(collegeRoleDirectoryQuerySchema.safeParse({programId:"foreign"}).success).toBe(false);});});
+
+describe("Student roster exact class selector",()=>{it("retains strict section UUIDs only for Students and rejects no-class conflicts",()=>{const sectionId="00000000-0000-4000-8000-000000000199";const query=collegeRoleDirectoryQuerySchema.parse({sectionId});expect(collegeRoleDirectoryHref("LEARNER",query)).toContain("sectionId="+sectionId);expect(collegeRoleDirectoryHref("FACULTY",query)).not.toContain("sectionId=");expect(collegeRoleDirectoryQuerySchema.safeParse({sectionId:"invalid"}).success).toBe(false);expect(()=>assertCompatibleCollegeRoleDirectoryFilters("LEARNER",collegeRoleDirectoryQuerySchema.parse({sectionId,classPresence:"NONE"}))).toThrow("LEARNER_CLASS_FILTER_CONFLICT");});});
