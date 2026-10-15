@@ -4,9 +4,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placement-read-service";
-import {previewTpoCollegeAnnouncementVisibility} from "@/modules/announcements/tpo-audience-preview-service";
+import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
+import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
-type Props={searchParams:Promise<{tab?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -15,18 +16,48 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const tab=tpoAnnouncementTabSchema.safeParse(t??"yours");
  if(!tab.success)return <main role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></main>;
  const result=await listTpoPlacementAnnouncements(context,tab.data);
- const audience=result.status==="READY"&&tab.data==="yours"
-  ?await previewTpoCollegeAnnouncementVisibility(context):null;
+ const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+ const query=tpoAudiencePreviewQuery.safeParse({
+  audience:first(raw.audience)??"COLLEGE",
+  targetId:first(raw.targetId)||undefined,
+ });
+ const isPreview=result.status==="READY"&&tab.data==="yours";
+ const selected=query.success?announcementPreviewScope(query.data):null;
+ const audience=isPreview&&query.success
+  ?selected?await previewTpoPlacementAudience(context,selected)
+   :await previewTpoCollegeAnnouncementVisibility(context)
+  :null;
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description="College-wide notices for this college. Removal and undo are author-only and version checked; external reminders remain unavailable."/>
   {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
+   <form method="get" action="/tpo/announcements"
+     className="mt-3 flex flex-wrap items-end gap-3 rounded-lg border border-border p-3"
+     aria-label="Announcement audience preview">
+     <input type="hidden" name="tab" value="yours"/>
+     <label className="grid gap-1 text-sm">Audience
+       <select name="audience" defaultValue={query.success?query.data.audience:"COLLEGE"}
+         className="min-h-11 rounded-md border border-border bg-surface px-3">
+         <option value="COLLEGE">COLLEGE</option>
+         <option value="PLACEMENTS">PLACEMENTS</option>
+         <option value="BATCHES">BATCHES</option>
+         <option value="BRANCHES">BRANCHES</option>
+         <option value="DRIVE">DRIVE</option>
+       </select>
+     </label>
+     <label className="grid gap-1 text-sm">Target ID (batch, branch or drive)
+       <input name="targetId" defaultValue={first(raw.targetId)??""}
+         className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+     </label>
+     <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">Preview audience</button>
+   </form>
+   {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
    {audience?<div role="status" className="mt-3 rounded-lg border border-border p-3">
-     <p className="text-sm font-semibold text-foreground">Current college-wide visibility preview</p>
+     <p className="text-sm font-semibold text-foreground">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
      <p className="mt-1 text-sm text-body">{audience.potentiallyVisibleMemberships} active memberships with active platform accounts.</p>
-     <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users.</p>
+     <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. Publishing is still college-wide; this preview does not change recipients.</p>
    </div>:null}
    <form action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
     <label className="grid gap-1 text-sm font-semibold">Title
