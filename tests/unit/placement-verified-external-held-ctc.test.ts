@@ -14,6 +14,13 @@ describe("P-S1-05 verified off-campus offers as held CTC", () => {
       expect(verifiedExternalCtcInr(value)).toBeNull();
     }
   });
+  it("fails closed for verified external offers without a recorded CTC", () => {
+    expect(canAddPlacementHeldOffer({
+      maxHeldOffers: 1, upliftPct: 40, nextAnnualCtcInr: 1_900_000,
+      isDream: false,
+      heldOffers: [{kind: "OFFER", status: "ACCEPTED", annualCtcInr: null}],
+    })).toBe(false);
+  });
   it("requires uplift over an external VERIFIED hold at capacity", () => {
     const heldOffers = [{
       kind: "OFFER", status: "ACCEPTED",
