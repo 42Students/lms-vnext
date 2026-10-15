@@ -1026,6 +1026,14 @@ export async function getPlacementApplication(
   return row;
 }
 
+/** P-S2-11: do not bypass an issued or accepted offer via self-withdrawal. */
+export function canSelfWithdrawPlacementApplication(
+  offers: readonly { status: string }[],
+): boolean {
+  return !offers.some((offer) =>
+    offer.status === "ISSUED" || offer.status === "ACCEPTED");
+}
+
 export async function withdrawPlacementApplication(
   context: RequestContext,
   applicationIdInput: string,
@@ -1108,6 +1116,17 @@ export async function withdrawPlacementApplication(
         .for("share")
         .limit(1);
       if (!liveRole) throw new AuthorizationError("placements.read");
+
+      // P-S2-11: a live official offer belongs to the TPO response flow;
+      // a learner may not remove its application while ISSUED or ACCEPTED.
+      const activeOffers = await tx.select({
+        status: placementOffers.status,
+      }).from(placementOffers)
+        .where(eq(placementOffers.applicationId, applicationId))
+        .for("share");
+      if (!canSelfWithdrawPlacementApplication(activeOffers)) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
 
       const [application] = await tx
         .update(placementApplications)
