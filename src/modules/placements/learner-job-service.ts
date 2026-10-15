@@ -21,6 +21,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   evaluatePlacementEligibility,
@@ -44,6 +45,9 @@ export async function listLearnerPlacementJobs(
 ) {
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
+  // P-S1-04: a finished placement batch may browse historical drives,
+  // but its learner must not be shown an actionable self-apply control.
+  const participation = await getOwnPlacementParticipationAccess(context);
 
   const rows = await getDb()
     .select({
@@ -212,6 +216,7 @@ export async function listLearnerPlacementJobs(
         eligibility,
         deadlinePassed,
         canApply:
+          participation.canSelfApply &&
           !application &&
           !deadlinePassed &&
           (eligibility.status === "ELIGIBLE" ||
