@@ -42,9 +42,11 @@ describe("W03 mentor project detail legacy tab contract", () => {
     expect(page).toContain("activeSection={activeSection}");
   });
 
-  it("keeps Task Allocation visibly blocked rather than fabricating assignee persistence", () => {
+  it("serves real persisted task assignees without the pre-migration placeholder", () => {
     expect(page).toContain('tab === "performance"');
-    expect(page).toContain("does not yet persist task assignee fields");
+    expect(page).not.toContain("does not yet persist task assignee fields");
+    expect(workspace).toContain("<ProjectTaskAssigneeControl");
+    expect(workspace).toContain("assigneeMembershipId={task.assigneeMembershipId}");
   });
 
   it("shows meetings inside the mentor People & Meetings tab", () => {

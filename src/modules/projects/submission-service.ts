@@ -6,6 +6,8 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {activityEvents} from "@/db/schema";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
 import {deriveProjectExecutionReadiness} from "./execution-readiness";
@@ -105,7 +107,7 @@ export async function createProjectSubmissionDraft(
         .for("update")
         .limit(1);
 
-      if (!project || project.status === "ARCHIVED") {
+      if (!project || (project.status === "ARCHIVED" || project.status === "COMPLETED")) {
         throw new ProjectsServiceError(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
@@ -129,12 +131,25 @@ export async function createProjectSubmissionDraft(
       }
 
       const [latest] = await tx
-        .select({ version: projectSubmissions.version, status: projectSubmissions.status })
+        .select({ id: projectSubmissions.id, version: projectSubmissions.version, status: projectSubmissions.status })
         .from(projectSubmissions)
         .where(eq(projectSubmissions.projectId, scope.project.id))
         .orderBy(desc(projectSubmissions.version))
         .limit(1);
-      if (!projectSubmissionAllowsNewDraft(latest?.status)) {
+      // Approved deliveries are immutable. A newer version is possible only
+      // after an explicit mentor/admin reopen event on that exact approved row.
+      let approvedReopened=false;
+      if(latest?.status==="APPROVED"){
+        const [reopened]=await tx.select({id:activityEvents.id}).from(activityEvents)
+          .where(and(
+            eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REOPENED),
+            eq(activityEvents.collegeId,scope.collegeId),
+            eq(activityEvents.subjectType,"project_submission"),
+            eq(activityEvents.subjectId,latest.id),
+          )).limit(1);
+        approvedReopened=Boolean(reopened);
+      }
+      if(!projectSubmissionAllowsNewDraft(latest?.status) && !approvedReopened){
         throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
       }
       const version = (latest?.version ?? 0) + 1;
@@ -454,6 +469,12 @@ export async function reviewProjectSubmission(
         submissionId: updated.id, version: updated.version,
         decision: input.decision,
       }));
+      if(input.decision==="APPROVED"){
+        await recordActivityEventInTransaction(tx,context,projectDeliveryActivity({
+          action:"LOCKED",collegeId:scope.collegeId,organizationId:scope.organizationId,
+          projectId:scope.project.id,submissionId:updated.id,version:updated.version,
+        }));
+      }
       return { submission: updated, review };
     });
   } catch (error) {

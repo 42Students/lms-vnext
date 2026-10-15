@@ -2,11 +2,14 @@ import {
   asc,
   desc,
   eq,
+  and,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { readProjectReadinessOverride } from "./readiness-override-service";
 import { effectiveProjectSubmissionReady } from "./readiness-override-model";
 import {
+  activityEvents,
   projectEvaluations,
   projectReleases,
   projectSprints,
@@ -109,6 +112,13 @@ export async function getProjectReadiness(
     latestSubmission?.status === "SUBMITTED";
   const finalApproved =
     latestSubmission?.status === "APPROVED";
+  const deliveryReopened=latestSubmission?.status==="APPROVED" ?
+    Boolean((await db.select({id:activityEvents.id}).from(activityEvents).where(
+      and(eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REOPENED),
+        eq(activityEvents.collegeId,scope.collegeId),
+        eq(activityEvents.subjectType,"project_submission"),
+        eq(activityEvents.subjectId,latestSubmission.id),
+      )).limit(1))[0]) : false;
   const readinessOverride=await readProjectReadinessOverride(db,projectId,scope.collegeId);
 
   return {
@@ -135,12 +145,14 @@ export async function getProjectReadiness(
       canCreateDraft:
         scope.project.status !== "ARCHIVED" &&
         !hasOpenSubmission &&
-        !finalApproved,
+        scope.project.status !== "COMPLETED" &&
+        (!finalApproved || deliveryReopened),
       canSubmitDraft:
         effectiveProjectSubmissionReady(executionComplete,readinessOverride.state) &&
         scope.project.status !== "ARCHIVED" &&
         latestSubmission?.status === "DRAFT",
       approved: finalApproved,
+      reopened: deliveryReopened,
     },
     evaluation: {
       exists: Boolean(evaluation),

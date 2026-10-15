@@ -10,8 +10,9 @@ describe("W03 project lifecycle concurrency contract", () => {
   it("serializes lifecycle mutations on persisted project/sprint/task rows", () => {
     expect(source.match(/\.for\("update"\)/g)?.length ?? 0).toBeGreaterThanOrEqual(8);
     expect(source).toContain('projectAllowsExecution(project.status)');
-    expect(source).toContain('lockedTask.status !== task.status');
-    expect(source).toContain('eq(projectTasks.status, task.status)');
+    expect(source).toContain("allowedMentorTaskTransition(lockedTask.status, input.status)");
+    expect(source).toContain("eq(projectTasks.status, lockedTask.status)");
+    expect(source).toContain("date_trunc('milliseconds', ${projectTasks.updatedAt})");
   });
 
   it("rechecks sprint and release prerequisites inside their transactions", () => {
@@ -30,7 +31,8 @@ describe("W03 project lifecycle concurrency contract", () => {
 
   it("never reopens archived/completed projects as a lifecycle side effect", () => {
     expect(source).toContain('status !== "ARCHIVED" && status !== "COMPLETED"');
-    expect(source).toContain('ne(projectInstances.status, "ARCHIVED")');
-    expect(source).toContain('ne(projectInstances.status, "COMPLETED")');
+    expect(source).toContain("projectAllowsExecution(project.status)");
+    expect(source).toContain('.for("update")');
+    expect(source).not.toContain('status: "COMPLETED",\n        updatedAt: new Date(),');
   });
 });

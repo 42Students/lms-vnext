@@ -21,6 +21,7 @@ import {
   shipProjectRelease,
   startProjectSprint,
   unshipProjectRelease,
+  updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {
   assignProjectTemplateToCollege,
@@ -28,7 +29,7 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import {approveProjectTaskThroughReview} from "./support/projects-review-fixture";
+import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
 
 const databaseUrl =
@@ -335,6 +336,30 @@ describe("Projects P5 lifecycle", () => {
       project_status: "ACTIVE",
       release_status: "IN_PROGRESS",
     });
+  });
+
+  it("matches PostgreSQL microseconds for assignment and task-status CAS, but rejects stale tokens", async () => {
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const task=workspace.tasks[0]!;
+    const sprint=workspace.sprints.find(row=>row.id===task.sprintId)!;
+    await startProjectSprint(mentor,project.id,sprint.id);
+    // Date truncation must accept the millisecond client token even when
+    // PostgreSQL stores 427 additional microseconds.
+    await pool.query(`update project_tasks
+        set updated_at = date_trunc('milliseconds', now()) + interval '427 microseconds'
+        where id = $1 and project_id = $2`,[task.id,project.id]);
+    const fresh=await getProjectInstanceWorkspace(mentor,project.id);
+    const unassigned=fresh.tasks.find(row=>row.id===task.id)!;
+    const assigned=await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
+    expect(assigned.assigneeMembershipId).toBe(learner.membership!.id);
+    const changed=await updateProjectTaskStatus(mentor,project.id,task.id,{
+      status:"IN_PROGRESS",expectedUpdatedAt:assigned.updatedAt.toISOString(),
+    });
+    expect(changed.status).toBe("IN_PROGRESS");
+    await expect(updateProjectTaskStatus(mentor,project.id,task.id,{
+      status:"BLOCKED",expectedUpdatedAt:unassigned.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
   });
 
   it("blocks sprint completion until every task is done and reserves IN_REVIEW for submissions", async () => {
