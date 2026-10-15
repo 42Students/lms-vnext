@@ -22,6 +22,7 @@ export type PermissionTransaction =
 const recruiterOnlyPermissions = new Set<PlatformPermission>([
   "placements.recruiter.read",
   "placements.recruiter.result.stage",
+  "placements.recruiter.note",
 ]);
 
 /**
