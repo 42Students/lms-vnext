@@ -90,4 +90,14 @@ describe.skipIf(!enabled)("College classes export persisted PostgreSQL scope",()
     expect(excluded.exported).toBe(0);
     expect(foreign.exported).toBe(0);
   });
+  it("exports only matching exact cohort name in its own college",async()=>{
+    const [included,excluded,foreign]=await Promise.all([
+      exportCollegeClasses(own,{q:label,cohortName:label}),
+      exportCollegeClasses(own,{q:label,cohortName:"NOT-MATCHED"}),
+      exportCollegeClasses(other,{q:label,cohortName:label}),
+    ]);
+    expect(included.csv).toContain(label);
+    expect(excluded.exported).toBe(0);
+    expect(foreign.exported).toBe(0);
+  });
 });

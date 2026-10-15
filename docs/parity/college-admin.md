@@ -367,6 +367,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Exact cohort name PARTIAL (chat-3, 2026-10-15):** College-scoped exact persisted exact cohort name matching now applies before pagination and to the matching capped CSV. Bounded URL, unit and disposable-PostgreSQL tenant/denial fixtures authored; browser/runtime verification remains open.
+
 **Exact class name PARTIAL (chat-3, 2026-10-15):** College-scoped exact persisted exact class name matching now applies before pagination and to the matching capped CSV. Bounded URL, unit and disposable-PostgreSQL tenant/denial fixtures authored; browser/runtime verification remains open.
 
 **Exact program code PARTIAL (chat-3, 2026-10-15):** College-scoped exact persisted exact program code matching now applies before pagination and to the matching capped CSV. Bounded URL, unit and disposable-PostgreSQL tenant/denial fixtures authored; browser/runtime verification remains open.

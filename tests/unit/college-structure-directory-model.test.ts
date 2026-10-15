@@ -153,4 +153,11 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeClassQuerySchema.safeParse({className:"x".repeat(256)}).success).toBe(false);
     expect(readCollegeStructureParams({className:""})).toEqual({});
   });
+  it("validates and carries exact cohort name in class pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({cohortName:"A&26"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("cohortName=A%2626");
+    expect(classesExportHref(query)).toContain("cohortName=A%2626");
+    expect(collegeClassQuerySchema.safeParse({cohortName:"x".repeat(256)}).success).toBe(false);
+    expect(readCollegeStructureParams({cohortName:""})).toEqual({});
+  });
 });
