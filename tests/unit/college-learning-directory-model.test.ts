@@ -202,4 +202,13 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(new URL(lessonsCsvHref(q),"https://t.example").searchParams.get("sequenceThrough")).toBe("1");
   });
 
+  it("round-trips bounded exact lesson title through page and CSV", () => {
+    expect(collegeLessonQuerySchema.safeParse({lessonName:"x".repeat(256)}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({lessonName:" "}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({lessonName:"  Intro & Set-up "});
+    expect(q.lessonName).toBe("Intro & Set-up");
+    expect(new URL(collegeLearningHref("LESSONS",q),"https://t.example").searchParams.get("lessonName")).toBe("Intro & Set-up");
+    expect(new URL(lessonsCsvHref(q),"https://t.example").searchParams.get("lessonName")).toBe("Intro & Set-up");
+  });
+
 });

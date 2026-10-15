@@ -532,6 +532,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Exact lesson title PARTIAL (2026-10-15, chat-3):** Adds a bounded exact-title selector over registered lessons (distinct from fuzzy search) with same-college pagination and capped CSV parity. Unit/isolated PG source authored; browser/runtime and full legacy acceptance open.
+
 **Ending lesson order PARTIAL (2026-10-15, chat-3):** A 1-based persisted sequence upper bound narrows Lessons and CSV before pagination, combinable with the existing lower bound. Source tests authored; actual PG/browser and legacy matching open.
 
 **Starting lesson order PARTIAL (2026-10-15, chat-3):** The 1-based persisted sequence lower bound filters in-college lesson ordering before paging and CSV. It is not a progress/completion rank. Typed and gated-PG tests authored; execution/browser/legacy acceptance outstanding.
