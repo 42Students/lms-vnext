@@ -14,7 +14,8 @@ export default async function CollegeProjectSectionRoute({
       projectId={projectId}
       section={section}
       basePath="/college/projects"
-      eyebrow="College Admin Project"
+
+
     />
   );
 }

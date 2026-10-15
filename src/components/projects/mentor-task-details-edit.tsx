@@ -82,15 +82,15 @@ export function MentorTaskDetailsEdit(props:Props) {
     <Dialog open={open} onOpenChange={setOpen} title="Edit task details"
       description="Change registered task details. Status, assignee and sprint remain unchanged.">
       <form onSubmit={review} className="grid gap-4">
-        <label className="grid gap-1 text-xs font-semibold text-body">Task title
+        <label className="grid gap-1 text-xs font-semibold text-body">Title
           <Input required maxLength={200} value={title}
             onChange={event=>setTitle(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Description (optional)
+        <label className="grid gap-1 text-xs font-semibold text-body">Description
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Acceptance criteria (optional)
+        <label className="grid gap-1 text-xs font-semibold text-body">Done when (optional)
           <Textarea maxLength={4000} value={criteria}
             onChange={event=>setCriteria(event.target.value)} />
         </label>
@@ -113,10 +113,10 @@ export function MentorTaskDetailsEdit(props:Props) {
             <option value="SPIKE">Spike</option>
           </select>
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Due date
+        <label className="grid gap-1 text-xs font-semibold text-body">Due
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
         </label>
-        <label className="grid gap-1 text-xs font-semibold text-body">Blocker reason
+        <label className="grid gap-1 text-xs font-semibold text-body">Blocker note
           <Textarea maxLength={4000} value={blockerReason}
             onChange={e=>setBlockerReason(e.target.value)}/>
         </label>
@@ -130,7 +130,7 @@ export function MentorTaskDetailsEdit(props:Props) {
     <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
       title="Confirm task changes?"
       description="Updated details will be visible to the assigned project team."
-      confirmLabel="Save task details" confirmVariant="primary"
+      confirmLabel="Save changes" confirmVariant="primary"
       pending={pending} onConfirm={save}>
       <dl className="grid gap-2 text-sm text-body">
         <dt className="font-semibold text-foreground">Title</dt>

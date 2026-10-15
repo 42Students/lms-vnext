@@ -158,7 +158,6 @@ export function ProjectWorkspace({
   workspace,
   backHref,
   backLabel,
-  eyebrow,
   mode,
   currentMembershipId,
   activeSection,
@@ -167,7 +166,6 @@ export function ProjectWorkspace({
   workspace: Workspace;
   backHref: string;
   backLabel: string;
-  eyebrow: string;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
   currentMembershipId: string | null;
   activeSection?: ProjectWorkspaceSection;
@@ -270,12 +268,8 @@ export function ProjectWorkspace({
       ) : null}
 
       <PageHeader
-        eyebrow={eyebrow}
         title={workspace.project.title}
-        description={
-          workspace.project.summary ??
-          "Project workspace for execution, review and final delivery."
-        }
+        description={workspace.project.summary ?? undefined}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge
@@ -339,7 +333,7 @@ export function ProjectWorkspace({
             detail="Releases shipped."
           />
           <Metric
-            label="Final delivery"
+            label="Final submission"
             value={
               readiness.finalSubmission.latest
                 ? label(
@@ -364,7 +358,7 @@ export function ProjectWorkspace({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="m-0 text-base font-semibold text-foreground">
-                Your final delivery
+                Your final submission
               </h2>
 
             </div>
@@ -762,7 +756,7 @@ export function ProjectWorkspace({
       {show("delivery") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Final delivery
+            Final submission
           </h2>
 
         </div>
@@ -1187,13 +1181,7 @@ export function ProjectWorkspace({
             </div>
           )}
 
-          <div className="rounded-xl border border-warning-border bg-warning-subtle p-4">
-            <p className="m-0 text-xs leading-5 text-body">
-              Legacy also keeps immutable meeting/resource/delivery history and task comments.
-              Those DB07 tables remain staged until W01 registers and replays the shared migration,
-              so this feed intentionally does not claim full legacy audit parity yet.
-            </p>
-          </div>
+
         </section>
       ) : null}
     </div>

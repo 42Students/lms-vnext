@@ -208,7 +208,6 @@ export default async function MentorProjectsPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Mentor"
         title="Projects"
         description="Choose a project to open its workspace."
         actions={
@@ -335,9 +334,7 @@ export default async function MentorProjectsPage({
         total={total}
       />
 
-      <p className="m-0 text-xs leading-5 text-muted-foreground">
-        Legacy also filters explicit Blocked workspaces. DB07 vNext does not yet persist the workspace blocker field, so that filter remains a tracked parity blocker instead of being simulated from unrelated states.
-      </p>
+
     </div>
   );
 }
