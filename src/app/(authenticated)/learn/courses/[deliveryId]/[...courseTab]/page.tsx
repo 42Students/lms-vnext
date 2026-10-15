@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { learnerCourseTabPath } from "@/modules/courses/learner-course-tab-route-model";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCourseAttendance } from "@/components/courses/learner-course-attendance";
@@ -35,9 +36,8 @@ export default async function LearnerCourseTabPage({
 }) {
   const { deliveryId, courseTab } = await params;
   const query = await searchParams;
-  const activeTab = courseTab[0] ?? "home";
-
-  if (!learnerCourseTabs.some((tab) => tab.path === activeTab)) {
+  const activeTab = learnerCourseTabPath(courseTab, learnerCourseTabs.map((tab) => tab.path));
+  if (activeTab === null) {
     notFound();
   }
 

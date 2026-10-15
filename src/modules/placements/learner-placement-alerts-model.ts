@@ -12,8 +12,9 @@ export type OwnPlacementAlert = {
 export function presentOwnLearnerPlacementAlerts(
   rows: readonly OwnPlacementAlert[],
 ) {
+  const timestamp=(date:Date)=>{const parsed=date.getTime();return Number.isFinite(parsed)?parsed:0;};
   return [...rows].sort((a, b) =>
-    b.createdAt.getTime() - a.createdAt.getTime() ||
+    timestamp(b.createdAt) - timestamp(a.createdAt) ||
     b.id.localeCompare(a.id),
   ).map((row) => ({
     id: row.id,

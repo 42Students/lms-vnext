@@ -55,3 +55,37 @@ describe("Course card future deadlines",()=>{
   expect(learnerCourseListSignals(lessons,{itemsTotal:1,overallPercent:0},new Date("2026-10-15")).nextDue).toBeNull();
  });
 });
+
+describe("large learner activity histories",()=>{
+  it("finds the newest stored event in a large published learning path",()=>{
+    const lessons=Array.from({length:30000},(_,index)=>({
+      contents:[{progress:{completedAt:new Date(1700000000000+index*1000)}}],
+      assignments:[],quizzes:[],
+    }));
+    const result=learnerCourseListSignals(lessons,{itemsTotal:lessons.length,overallPercent:100},new Date("2026-10-15T10:00:00Z"));
+    expect(result.lastActivity).toBe(new Date(1700000000000+29999*1000).toISOString());
+  });
+});
+
+describe("in-progress quiz course-card deadlines",()=>{
+ it("keeps a still-open in-progress attempt actionable",()=>{
+  const due=new Date("2026-10-18T10:00:00Z");
+  const result=learnerCourseListSignals([{contents:[],assignments:[],quizzes:[
+   {title:"Resume quiz",dueAt:due,progress:{status:"IN_PROGRESS"}},
+   {title:"Completed quiz",dueAt:due,progress:{status:"COMPLETED"}},
+  ]}],{itemsTotal:2,overallPercent:0},new Date("2026-10-15T10:00:00Z"));
+  expect(result.nextDue?.title).toBe("Resume quiz");
+ });
+});
+
+describe("course recorded activity cannot be a future event",()=>{
+ it("uses the most recent event already recorded by snapshot time",()=>{
+  const now=new Date("2026-10-15T10:00:00Z");
+  const previous=new Date("2026-10-14T10:00:00Z");
+  const result=learnerCourseListSignals([{contents:[
+    {progress:{completedAt:previous}},
+    {progress:{completedAt:new Date("2026-10-17T10:00:00Z")}},
+  ],assignments:[],quizzes:[]}],{itemsTotal:2,overallPercent:50},now);
+  expect(result.lastActivity).toBe(previous.toISOString());
+ });
+});

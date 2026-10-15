@@ -8,14 +8,14 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   ADMIN_MODULE_LABELS,
   adminFeaturesHref,
+  adminFeatureExportHref,
+  adminFeatureHierarchyHref,
   describeModuleDecision,
   collegeModuleCardSummary,
   type AdminModuleDecision,
 } from "@/modules/module-access/admin-read-model";
-import {
-  adminFeatureQuerySchema,
-  listSuperAdminFeatureControls,
-} from "@/modules/module-access/admin-read-service";
+import {listSuperAdminFeatureControls} from "@/modules/module-access/admin-read-service";
+import {parseAdminFeaturePageParams} from "@/modules/module-access/admin-feature-query";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import { placementFeatureEffects } from "@/modules/platform-settings/placement-feature-controls-model";
 
@@ -24,15 +24,7 @@ type SearchParams = Record<
   string | string[] | undefined
 >;
 
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
-
-function ModuleState({
+ function ModuleState({
   decision,
 }: {
   decision: AdminModuleDecision;
@@ -71,13 +63,9 @@ export default async function SuperAdminFeaturesPage({
     await getCurrentRequestContext();
 
   const params = await searchParams;
-  const parsed =
-    adminFeatureQuerySchema.safeParse({
-      q: one(params.q) || undefined,
-      page: one(params.page) || undefined,
-    });
+  const parsed = parseAdminFeaturePageParams(params);
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <PageHeader
@@ -104,7 +92,7 @@ export default async function SuperAdminFeaturesPage({
   const result =
     await listSuperAdminFeatureControls(
       context,
-      parsed.data,
+      parsed,
     );
 
   const firstItem =
@@ -144,6 +132,41 @@ export default async function SuperAdminFeaturesPage({
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
             />
           </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
+            <select name="sort" defaultValue={result.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Explicit college rule for
+            <select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Stored college value
+            <select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">College rule lock
+            <select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">College rule presence
+            <select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Stored rule last updated
+            <select name="recent" defaultValue={result.recentFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any date</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Search in
+            <select name="searchField" defaultValue={result.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Name and code</option><option value="NAME">College name</option><option value="CODE">College code</option>
+            </select>
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -164,6 +187,13 @@ export default async function SuperAdminFeaturesPage({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             College module matrix
           </h2>
+          <Link href={adminFeatureExportHref({
+            q:result.q,page:result.page,sort:result.sort,module:result.moduleFilter??undefined,
+            storedState:result.stateFilter,locks:result.lockFilter,presence:result.presenceFilter,
+            recent:result.recentFilter,searchField:result.searchField,
+          })} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            Export current page (CSV)
+          </Link>
           <p className="m-0 text-sm text-muted-foreground">
             {result.total === 0
               ? "No matching active colleges"
@@ -202,7 +232,7 @@ export default async function SuperAdminFeaturesPage({
                 <p className="mt-3 text-xs text-muted-foreground">
                   {summary.locked} locked · {summary.persisted} rules with persisted source
                 </p>
-                <Link href={`/admin/features/${encodeURIComponent(college.id)}`}
+                <Link href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
                   className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
                   View access hierarchy →
                 </Link>
@@ -270,7 +300,7 @@ export default async function SuperAdminFeaturesPage({
 
                       <td className="px-4 py-4 align-top">
                         <Link
-                          href={`/admin/features/${encodeURIComponent(college.id)}`}
+                          href={adminFeatureHierarchyHref(college.id,result.moduleFilter)}
                           className="font-semibold text-primary-text hover:underline"
                         >
                           View hierarchy →
@@ -297,6 +327,13 @@ export default async function SuperAdminFeaturesPage({
               <Link
                 href={adminFeaturesHref({
                   q: result.q,
+                  sort: result.sort,
+                  module: result.moduleFilter ?? undefined,
+                  storedState: result.stateFilter,
+                  locks: result.lockFilter,
+                  presence: result.presenceFilter,
+                  recent: result.recentFilter,
+                  searchField: result.searchField,
                   page: result.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -308,6 +345,13 @@ export default async function SuperAdminFeaturesPage({
               <Link
                 href={adminFeaturesHref({
                   q: result.q,
+                  sort: result.sort,
+                  module: result.moduleFilter ?? undefined,
+                  storedState: result.stateFilter,
+                  locks: result.lockFilter,
+                  presence: result.presenceFilter,
+                  recent: result.recentFilter,
+                  searchField: result.searchField,
                   page: result.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -320,7 +364,7 @@ export default async function SuperAdminFeaturesPage({
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        Source: module_access_rules and the existing
+        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner&apos;s effective access. The CSV includes only the current permissioned page (up to 20 colleges) and excludes contacts. Source: module_access_rules and the existing
         optional-module resolver. A persisted global,
         organization or college rule can override the
         source defaults. This matrix shows college-level
