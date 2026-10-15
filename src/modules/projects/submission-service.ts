@@ -233,6 +233,11 @@ export async function updateProjectSubmissionDraft(
       );
     }
 
+    await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+      action: "DRAFT_UPDATED", collegeId: scope.collegeId,
+      organizationId: scope.organizationId, projectId: scope.project.id,
+      submissionId: updated.id, version: updated.version,
+    }));
     return updated;
   });
 }
