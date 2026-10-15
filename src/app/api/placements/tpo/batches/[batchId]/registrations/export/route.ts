@@ -11,7 +11,7 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   const {batchId}=await params;
   const q=new URL(request.url).searchParams;
   const data=await listTpoBatchRegistrationRoster(await getCurrentRequestContext(),batchId,{
-   q:q.get("q")??undefined,choice:q.get("choice")??undefined,source:q.get("source")??undefined,recency:q.get("recency")??undefined,page:q.get("page")??undefined,
+   q:q.get("q")??undefined,choice:q.get("choice")??undefined,source:q.get("source")??undefined,recency:q.get("recency")??undefined,order:q.get("order")??undefined,page:q.get("page")??undefined,
   });
   if(!data.ready)return NextResponse.json({error:"REGISTRATION_DATA_UNAVAILABLE"},{status:503});
   const csv=exportTpoBatchRegistrationsCsv(data.items);
