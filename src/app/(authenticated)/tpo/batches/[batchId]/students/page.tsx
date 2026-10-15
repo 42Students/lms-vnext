@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoBatchEligibilityImport} from "@/components/tpo/tpo-batch-eligibility-import";
 import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getTpoBatchStudents } from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -13,6 +14,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const href=(page:number)=>"/tpo/batches/"+batchId+"/students?page="+page;
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
  <Link href={"/tpo/batches/"+batchId} className="text-sm text-primary-text underline">Batch overview</Link>
+ <TpoBatchEligibilityImport batchId={batchId}/>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
  {result.students.length===0?<p role="status">No active learners found on this page.</p>:<ul className="space-y-2">
  {result.students.map(s=><li className="min-w-0 rounded-lg border border-border bg-surface p-3 text-sm" key={s.membershipId}>
