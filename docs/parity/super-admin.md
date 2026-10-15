@@ -914,3 +914,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: readiness check status filtering — PARTIAL.** Selected-college Readiness Gate can focus on failures, unknowns or passes while its ten-source overall verdict and totals are never recalculated from a filtered subset. Scope remains Super Admin + college, filter strict Zod; unit tests authored, unexecuted. Runtime/browser acceptance open.
+
+
+**2026-10-15 chat-6: Readiness CSV evidence export — PARTIAL.** Authorized read-only GET reuses college-scoped readiness service and exports all checks, not the selected UI subset, as formula-neutralized CSV. It does not claim runtime DNS/login or production launch approval; caches disabled. Pure and disposable-PostgreSQL tests authored, not executed; browser/download gates open.
