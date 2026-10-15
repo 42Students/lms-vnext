@@ -198,6 +198,12 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     ]);
     expect(scopedResource.items.map((item) => item.id)).toContain(ids.resource);
     expect(absentCourse.items).toEqual([]);
+    const [liveLesson,archivedLesson]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,lessonStatus:"ACTIVE"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,lessonStatus:"ARCHIVED"}),
+    ]);
+    expect(liveLesson.items.map(row=>row.id)).toContain(ids.resource);
+    expect(archivedLesson.items).toEqual([]);
     const [coreContent,electiveContent]=await Promise.all([
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringType:"CORE"}),
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringType:"ELECTIVE"}),

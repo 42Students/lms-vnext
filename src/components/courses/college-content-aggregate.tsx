@@ -80,6 +80,13 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             </select>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Owning lesson state
+            <select name="lessonStatus" defaultValue={data.query.lessonStatus??"ALL"}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All lessons</option><option value="ACTIVE">Active lesson</option><option value="ARCHIVED">Archived lesson</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
