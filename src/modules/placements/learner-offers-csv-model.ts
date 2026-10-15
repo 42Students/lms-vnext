@@ -1,14 +1,13 @@
+import {learnerSafeCsvCell} from "./learner-csv-safe-cell-model";
+import {learnerOfferCtc} from "./learner-offer-ctc-model";
 import type {LearnerPlacementOfferItem} from "@/components/placements/learner-placement-offers";
-function quoted(cell:string){
- const safe=/^[\s\uFEFF]*[=+@-]/u.test(cell)?"'"+cell:cell;
- return '"'+safe.replaceAll('"','""')+'"';
-}
+export const LEARNER_OFFER_CSV_LIMIT=1000;
 /** Displayed, own-membership offer metadata only. No employer credentials or file links. */
 export function learnerOffersCsv(rows:readonly LearnerPlacementOfferItem[]){
  const columns=["Employer","Role","Document kind","Response","Annual CTC (INR)","Issued (UTC)","Expires (UTC)","Joining result"];
- const values=rows.map(r=>[
+ const values=rows.slice(0,LEARNER_OFFER_CSV_LIMIT).map(r=>[
   r.companyName,r.roleTitle,r.kind==="LOI"?"LOI":"OFFER",r.status,
-  r.annualCtcInr===null?"":String(r.annualCtcInr),r.issuedAt,r.expiresAt??"",r.joining?.status??"",
+  learnerOfferCtc(r.annualCtcInr)===null?"":String(learnerOfferCtc(r.annualCtcInr)),r.issuedAt,r.expiresAt??"",r.joining?.status??"",
  ]);
- return "\uFEFF"+[columns,...values].map(r=>r.map(quoted).join(",")).join("\r\n")+"\r\n";
+ return "\uFEFF"+[columns,...values].map(r=>r.map(learnerSafeCsvCell).join(",")).join("\r\n")+"\r\n";
 }

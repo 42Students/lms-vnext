@@ -20,3 +20,16 @@ describe("learner Course card sorts",()=>{
   expect(rows[0]?.course.deliveryId).toBe("a");
  });
 });
+
+describe("urgent open Course assessment ordering",()=>{
+ it("sorts an actionable overdue assignment before future deadlines",()=>{
+  const overdue={...card("late","Late","REGULAR",20,null),readOnly:false,overdueAssignments:1};
+  const future={...card("soon","Soon","REGULAR",20,"2026-10-20T10:00:00Z"),readOnly:false,overdueAssignments:0};
+  expect(sortLearnerCourseCards([future,overdue],"DUE")[0].course.deliveryId).toBe("late");
+ });
+ it("never treats a historical course as actionable overdue work",()=>{
+  const old={...card("past","Past","REGULAR",20,null),readOnly:true,overdueAssignments:2};
+  const current={...card("current","Current","REGULAR",20,"2026-10-20T10:00:00Z"),readOnly:false,overdueAssignments:0};
+  expect(sortLearnerCourseCards([old,current],"DUE")[0].course.deliveryId).toBe("current");
+ });
+});

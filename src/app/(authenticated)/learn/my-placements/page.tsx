@@ -15,6 +15,7 @@ import { LearnerPlacementOffers } from "@/components/placements/learner-placemen
 import { LearnerPlacementsDashboard } from "@/components/placements/learner-placements-dashboard";
 import { LearnerPlacementPartialAlert } from "@/components/placements/learner-placement-partial-alert";
 import { getOwnLearnerRecentCollegeNotices } from "@/modules/placements/learner-dashboard-college-notices-service";
+import {learnerNoticeHref} from "@/modules/placements/learner-notice-deep-link-model";
 import { learnerDashboardPartialState, type PlacementDashboardAvailability }
   from "@/modules/placements/learner-dashboard-partial-model";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -244,10 +245,16 @@ export default async function LearnerPlacementsPage({
           {verificationCue ? verificationCue.summary :
             "Your current verification status is temporarily unavailable. Open your profile to retry."}
         </p>
-        {verificationCue?.editHref ? <Link href={verificationCue.editHref}
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
-          Correct the sent-back profile section →
-        </Link> : null}
+        {verificationCue && verificationCue.editHrefs.length>0 ? (
+          <div className="mt-2 flex flex-wrap gap-3">
+            {verificationCue.editHrefs.map(link=>(
+              <Link key={link.href} href={link.href}
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                {link.label} →
+              </Link>
+            ))}
+          </div>
+        ) : null}
         {verificationCue ? <p className="mt-2 text-xs text-muted-foreground">
           Education: {verificationCue.educationLabel} · Identity: {verificationCue.identityLabel}.
           This is profile review status, not a placement eligibility decision.
@@ -268,7 +275,11 @@ export default async function LearnerPlacementsPage({
           : collegeNotices===null ? <p className="mt-3 text-sm text-body">The college notice feed is not enabled.</p>
           : collegeNotices.length===0 ? <p className="mt-3 text-sm text-body">No currently visible college notices.</p>
           : <ul className="mt-3 space-y-2">{collegeNotices.map(notice=><li key={notice.id} className="rounded-lg border border-border px-3 py-2">
-              <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>
+              {learnerNoticeHref(notice.id) ? (
+                <Link href={learnerNoticeHref(notice.id)!} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline">
+                  {notice.title} →
+                </Link>
+              ) : <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>}
               <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(notice.createdAt))}</time>
             </li>)}</ul>}
       </section>

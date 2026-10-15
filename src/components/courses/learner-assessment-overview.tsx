@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import {learnerAssessmentDrawerSelectionAllowed} from "@/modules/courses/learner-assessment-drawer-scope-model";
+import {learnerAssessmentEmptyMessage} from "@/modules/courses/learner-assessment-empty-model";
+import { learnerAssessmentCourseScopeCount } from "@/modules/courses/learner-assessment-course-scope-count-model";
+import { learnerAssessmentPageSummary } from "@/modules/courses/learner-assessment-page-summary-model";
 import { learnerAssessmentDateLabel } from "@/modules/courses/learner-assessment-date-label-model";
 import {
   useEffect,
@@ -180,14 +184,14 @@ export function LearnerAssessmentOverview({
   ).length;
 
   const selectedAssignment = useMemo(
-    () =>
-      items.find(
-        (item): item is LearnerAssignmentOverviewItem =>
-          item.kind === "ASSIGNMENT" &&
-          `${item.deliveryId}:${item.id}` ===
-            selectedAssignmentKey,
-      ),
-    [items, selectedAssignmentKey],
+    () => learnerAssessmentDrawerSelectionAllowed(selectedAssignmentKey,filtered)
+      ? items.find(
+          (item):item is LearnerAssignmentOverviewItem =>
+            item.kind==="ASSIGNMENT" &&
+            `${item.deliveryId}:${item.id}`===selectedAssignmentKey,
+        )
+      : undefined,
+    [items,filtered,selectedAssignmentKey],
   );
 
   if (items.length === 0) {
@@ -220,7 +224,7 @@ export function LearnerAssessmentOverview({
         />
         <Metric
           label="Courses"
-          value={courses.length}
+          value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
         />
         <Metric label="Needs action" value={actionCounts.pending} />
         <Metric label="Overdue / missed" value={actionCounts.overdue} />
@@ -310,13 +314,14 @@ export function LearnerAssessmentOverview({
         </button>
       ) : null}
       <p role="status" className="text-sm text-muted-foreground">
-        Showing {filtered.length} of {items.length} published {kind==="ASSIGNMENT"?"assignments":"quizzes"} after your filters.
-        {filtered.length>PAGE_SIZE?" Page "+currentPage+" of "+totalPages+".":""}
+        {learnerAssessmentPageSummary({
+          filteredCount:filtered.length,totalCount:items.length,
+          currentPage,pageSize:PAGE_SIZE,label:kind==="ASSIGNMENT"?"assignments":"quizzes",
+        })}
       </p>
       {filtered.length === 0 ? (
         <EmptyState
-          title="No matching assessments"
-          description="Change the search, course or state filter to see other published assessments."
+          {...learnerAssessmentEmptyMessage({kind,courseSelected:Boolean(activeCourseId),search,stateFilter})}
         />
       ) : (
         <div
