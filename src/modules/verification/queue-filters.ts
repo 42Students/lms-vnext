@@ -2,6 +2,7 @@ import {z} from "zod";
 export const verificationQueueFilters=z.strictObject({
   tab:z.enum(["WAITING","SENT_BACK","VERIFIED"]).default("WAITING"),
   waitingState:z.enum(["ALL","SUBMITTED","UPDATE_PENDING"]).default("ALL"),
+  ageBand:z.enum(["ANY","WITHIN_48_HOURS","TWO_TO_SEVEN_DAYS","OVER_SEVEN_DAYS"]).default("ANY"),
   q:z.string().trim().max(100).default(""),
   membershipId:z.string().uuid().optional(),
   sectionId:z.string().uuid().optional(),
@@ -28,4 +29,8 @@ export function verificationWaitingStateValid(filter:{tab:string;waitingState:st
 /** No enrollment cannot coexist with a specific CURRENT academic placement. */
 export function verificationEnrollmentFiltersValid(filter:{enrollment:string;programId?:string;batchId?:string;branchId?:string;sectionId?:string}):boolean{
  return filter.enrollment!=="NONE"||!(filter.programId||filter.batchId||filter.branchId||filter.sectionId);
+}
+
+export function verificationAgeBandValid(filter:{tab:string;ageBand:string}):boolean{
+ return filter.ageBand==="ANY"||filter.tab==="WAITING";
 }

@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Elapsed waiting-age triage PARTIAL (chat-9):** The queue and capped CSV now partition active SUBMITTED/UPDATE_PENDING requests into under-48-hour, 2–7-day and at-least-7-day groups using one captured request clock, with future dates excluded. Only Waiting tab permits the filter, preventing misleading decided records. Unit boundary cases authored; real database/browser validation pending.
+
 **Verification-to-Student context navigation PARTIAL (chat-9):** College review cards now open the exact current-learner Student detail using a validated membership UUID, delegating permissions to the existing scoped page. This link is enabled only on College Admin mounting, not the shared Super Admin queue. Unit URL validation authored; cross-role/browser acceptance open.
 
 **Case-insensitive learner-name sorting PARTIAL (chat-9):** Verification cards, SQL paging, and capped CSV now share a typed learner-name A–Z ordering with membership/section UUID ties, without exposing identity or private contact values. Unit ordering tests authored; DB pagination/locale/browser acceptance pending.
