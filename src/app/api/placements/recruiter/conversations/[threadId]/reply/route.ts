@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrRecruiterReplySchema} from "@/modules/placements/hr-conversation-reply-model";
-import {sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
+import {sendRecruiterThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
@@ -18,7 +18,7 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  if(!hasActiveRecruiter(context))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
-  await sendThreadMessage(context,parsed.data.threadId,parsed.data.body);
+  await sendRecruiterThreadMessage(context,parsed.data.threadId,parsed.data.body);
  }catch(error){
   if(error instanceof TpoMessagingError)
    return NextResponse.json({error:error.code==="TPO_MESSAGE_FORBIDDEN"?"FORBIDDEN":"NOT_FOUND"},
