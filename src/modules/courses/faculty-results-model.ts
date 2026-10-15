@@ -18,6 +18,8 @@ export type FacultyResultCandidate = {
   title: string;
   courseName: string;
   sectionName: string;
+  courseCode?:string;
+  sectionCode?:string;
   deliveryId: string;
   dueAt: Date | null;
 };
@@ -31,7 +33,7 @@ export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
     (query.status === "ALL" || row.status === "PUBLISHED" ||
       (row.kind === "QUIZ" && row.status === "CLOSED")) &&
     (!query.deliveryId || row.deliveryId === query.deliveryId) &&
-    (!term || [row.title, row.courseName, row.sectionName].some(field =>
+    (!term || [row.title, row.courseName, row.sectionName,row.courseCode??"",row.sectionCode??""].some(field =>
       field.toLowerCase().includes(term))),
   ).sort((a,b) =>
     (query.sort==="TITLE" ? a.title.localeCompare(b.title) :
