@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
 import { tpoBatchNextAction } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
-import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref } from "@/modules/placements/tpo-batch-directory-pagination-model";
+import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref,tpoBatchClearFiltersHref,tpoBatchEmptyReason } from "@/modules/placements/tpo-batch-directory-pagination-model";
 import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/placements/tpo-batch-deadline-filter-model";
 import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartments } from "@/modules/placements/tpo-batch-department-model";
 import { tpoBatchProgramSchema, filterTpoBatchProgram, listTpoBatchPrograms } from "@/modules/placements/tpo-batch-program-model";
@@ -52,13 +52,20 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
   ["Total batches",summary.total],["Planning",summary.planning],["Invited",summary.invited],["Finished",summary.finished],
   ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:label==="Total batches"?value:"—"}</dd></div>)}</dl>
-  <p className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to}</p>
+  <p role="status" className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
+  {pageParsed.data.page!==batchPage.page?<p role="status" className="rounded border border-border p-3 text-sm text-body">The requested batch page no longer exists for these filters. Showing the last available page.</p>:null}
   <nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
-   {batchPage.hasPrev?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,pageParsed.data.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
-   {batchPage.hasNext?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,pageParsed.data.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
-   {batchPage.total>0&&batchPage.items.length===0?<Link href={tpoBatchPageHref(pageFilters,1,pageParsed.data.pageSize)} className="text-primary-text underline">Return to page 1</Link>:null}
+   {batchPage.hasPrev?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
+   {batchPage.hasNext?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
+
   </nav>
-  {batches.length===0?<p role="status" className="rounded border border-border p-4">No matching batches.</p>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
+  {batches.length===0?<section role="status" className="space-y-2 rounded border border-border p-4">
+   <p>{tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?
+     "No placement batches or academic cohorts are available to list yet.":
+     "No batches match these filters."}</p>
+   {data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
+      className="inline-flex min-h-11 items-center text-primary-text underline">Clear batch filters</Link>:null}
+  </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold">{b.name}</h2><p className="text-sm">{b.program} · {b.department}</p>
     <p className="text-xs text-muted-foreground">{data.ready?batchDirectoryState(b):"Lifecycle pending"}</p>
     <p className="text-xs text-muted-foreground">{tpoBatchDeadlineLabel(b.deadline,data.ready)}</p>

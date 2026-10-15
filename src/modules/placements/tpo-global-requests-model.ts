@@ -68,3 +68,8 @@ export function tpoRequestAgeCutoff(age:"ALL"|"OLDER_THAN_1_DAY"|"OLDER_THAN_7_D
  if(age==="ALL")return undefined;
  return new Date(asOf.getTime()-(age==="OLDER_THAN_1_DAY"?1:age==="OLDER_THAN_7_DAYS"?7:30)*86400000);
 }
+
+/** A cleared request search keeps the selected decision queue, without carrying stale pagination. */
+export function tpoRequestClearAdvancedHref(status:z.infer<typeof globalTpoRequestsQuerySchema>["status"]){
+ return "/tpo/requests?"+new URLSearchParams({status,page:"1"}).toString();
+}

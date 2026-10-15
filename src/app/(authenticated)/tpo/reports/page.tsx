@@ -11,7 +11,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
-import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards} from "@/modules/placements/tpo-report-gallery-filter-model";
+import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards,alphabetizeTpoReportGallery} from "@/modules/placements/tpo-report-gallery-filter-model";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -155,7 +155,7 @@ export default async function TpoReportsPage({
     },
   ];
 
-  const visibleGroups=filterTpoReportGallery(groups,parsedSearch.data,parsedGroup.data);
+  const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(groups,parsedSearch.data,parsedGroup.data));
   return (
     <div className="space-y-6">
       <PageHeader

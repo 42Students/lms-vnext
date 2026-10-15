@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementCalendarWorkspace } from "@/components/placements/placement-calendar-workspace";
 import { hasMembershipRole } from "@/modules/identity/context";
+import {parseTpoCalendarUrl} from "@/modules/placements/tpo-calendar-url-model";
+import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 
 type SearchParams = {
   date?: string | string[];
@@ -27,6 +29,19 @@ export default async function TpoCalendarPage({
     redirect("/dashboard");
   }
 
+  await requirePersistedTpoMembership(context,context.membership.collegeId);
+  const raw=await searchParams;
+  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+  const parsed=parseTpoCalendarUrl({
+    date:first(raw.date),view:first(raw.view),company:first(raw.company),kind:first(raw.kind),
+  });
+  if(!parsed.success)return <main className="space-y-4">
+    <h1 className="text-xl font-semibold">Invalid calendar filters</h1>
+    <p role="alert" className="rounded border border-border bg-surface p-4 text-sm text-body">
+      Enter a valid day, calendar view, event kind and company filter. No events were queried.
+    </p>
+    <Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-primary-text underline">Reset calendar filters</Link>
+  </main>;
   return (
     <div className="space-y-4">
       <Link href="/tpo/calendar/export"
@@ -45,7 +60,7 @@ export default async function TpoCalendarPage({
         context={context}
         collegeId={context.membership.collegeId}
         audience="TPO"
-        searchParams={await searchParams}
+        searchParams={parsed.data}
       />
     </div>
   );
