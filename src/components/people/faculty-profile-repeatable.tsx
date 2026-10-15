@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
-import {restoreFacultyProfileRows} from "@/modules/people/faculty-profile-repeatable-actions";
+import {restoreFacultyProfileRows,removeFacultyProfileDraftRow} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -81,7 +81,8 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
               })}
             </div>
             <button type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => {
-              setRows(current => current.filter(item => item.id !== row.id)); setChanged(true);
+              if (!window.confirm("Remove record "+(index+1)+" from "+title+"? It remains saved until you submit the section.")) return;
+              setRows(current => removeFacultyProfileDraftRow(current,row.id)); setChanged(true);
             }} className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-error">
               Remove draft record
             </button>
