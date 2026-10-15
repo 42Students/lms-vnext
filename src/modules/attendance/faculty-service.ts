@@ -18,6 +18,7 @@ import {
   attendanceSessions,
   collegeMemberships,
   courseTeachingAssignments,
+  courseSectionDeliveries,
   learnerProfiles,
   membershipRoles,
   sectionScheduleEventCourses,
@@ -160,13 +161,18 @@ async function assertPersistedFacultyScope(
     .innerJoin(
       membershipRoles,
       and(
-        eq(
-          membershipRoles.membershipId,
-          collegeMemberships.id,
-        ),
+        eq(membershipRoles.membershipId, collegeMemberships.id),
         eq(membershipRoles.role, "FACULTY"),
       ),
     )
+    .innerJoin(users, and(
+      eq(users.id, collegeMemberships.userId),
+      eq(users.platformStatus, "ACTIVE"),
+    ))
+    .innerJoin(courseSectionDeliveries, and(
+      eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId),
+      isNull(courseSectionDeliveries.endedAt),
+    ))
     .where(
       and(
         eq(
