@@ -38,6 +38,7 @@ export default async function LearnerCoursesPage() {
       return {
         thumbnailUrl: display?.thumbnailUrl ?? null,
         lastActivity:signals.lastActivity,
+        overdueAssignments: signals.overdueAssignments,
         nextDue:signals.nextDue,
         course: {
           deliveryId: course.deliveryId,

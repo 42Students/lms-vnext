@@ -4,7 +4,7 @@ describe("course card persisted progress context",()=>{
   const now=new Date("2026-10-14T10:00:00Z");
   it("does not invent progress or last activity when no denominator or persisted event exists",()=>{
     expect(learnerCourseListSignals([],{itemsTotal:0,overallPercent:0},now)).toEqual({
-      percentage:null,lastActivity:null,nextDue:null,
+      percentage:null,lastActivity:null,overdueAssignments:0,nextDue:null,
     });
   });
   it("shows actual recorded completion and earliest still-open due",()=>{
@@ -24,5 +24,17 @@ describe("unknown or invalid progress", () => {
       new Date("2026-10-15T00:00:00Z")).percentage).toBeNull();
     expect(learnerCourseListSignals([],{itemsTotal:2,overallPercent:120},
       new Date("2026-10-15T00:00:00Z")).percentage).toBe(100);
+  });
+});
+
+describe("overdue assignment action signal", () => {
+  it("counts only past due unsubmitted assignments, not submitted work", () => {
+    const now = new Date("2026-10-15T10:00:00Z");
+    const due = new Date("2026-10-14T10:00:00Z");
+    const value = learnerCourseListSignals([{contents:[], quizzes:[],
+      assignments:[{title:"Late essay",dueAt:due,submittedAt:null},
+        {title:"Already submitted",dueAt:due,submittedAt:now}]}],
+      {itemsTotal:2,overallPercent:50},now);
+    expect(value.overdueAssignments).toBe(1);
   });
 });

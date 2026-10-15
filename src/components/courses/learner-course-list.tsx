@@ -48,6 +48,7 @@ export type LearnerCourseListRow = {
     itemsTotal: number;
   };
   lastActivity: string | null;
+  overdueAssignments?: number;
   nextDue: {title:string;kind:"Assignment"|"Quiz";dueAt:string} | null;
   readOnly: boolean;
   learningPathReady: boolean;
@@ -422,6 +423,11 @@ export function LearnerCourseList({
                             style={{ width: `${row.summary.overallPercent}%` }}
                           />
                         </div> : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
+                        {!row.readOnly && row.overdueAssignments ? (
+                          <p className="mt-3 text-xs font-semibold text-warning" role="note">
+                            {row.overdueAssignments} overdue {row.overdueAssignments === 1 ? "assignment" : "assignments"} · late submission available
+                          </p>
+                        ) : null}
                         <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
                           <p className="m-0">
                             Last recorded activity: {row.lastActivity
