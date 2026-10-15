@@ -78,7 +78,11 @@ export function browseLearnerApplications<T extends LearnerApplicationBrowseItem
         a.applicationId.localeCompare(b.applicationId);
     }
     if (filters.sort === "oldest") {
-      return a.submittedAt.getTime() - b.submittedAt.getTime() ||
+      const submitted = (item: T) => {
+        const time = item.submittedAt.getTime();
+        return Number.isFinite(time) ? time : Number.POSITIVE_INFINITY;
+      };
+      return submitted(a) - submitted(b) ||
         a.applicationId.localeCompare(b.applicationId);
     }
     return learnerApplicationLatestActivity(b) - learnerApplicationLatestActivity(a) ||

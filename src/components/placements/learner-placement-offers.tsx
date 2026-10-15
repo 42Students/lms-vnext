@@ -17,6 +17,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {learnerOffersCsv,LEARNER_OFFER_CSV_LIMIT} from "@/modules/placements/learner-offers-csv-model";
 import {learnerOfferCtc} from "@/modules/placements/learner-offer-ctc-model";
 import {learnerOfferDisplayDate} from "@/modules/placements/learner-offer-display-date-model";
+import {learnerOfferActionErrorMessage} from "@/modules/placements/learner-offer-action-error-model";
 import { useToast } from "@/components/ui/toast";
 
 export type LearnerPlacementOfferItem = {
@@ -132,16 +133,8 @@ export function LearnerPlacementOffers({
           }),
         },
       );
-      const payload = (await response
-        .json()
-        .catch(() => null)) as
-        | { error?: string }
-        | null;
       if (!response.ok) {
-        throw new Error(
-          payload?.error ??
-            "PLACEMENT_OFFER_ACTION_FAILED",
-        );
+        throw new Error(learnerOfferActionErrorMessage(response.status));
       }
 
       showToast({
@@ -166,8 +159,8 @@ export function LearnerPlacementOffers({
           "Could not update offer",
         description:
           error instanceof Error
-            ? humanize(error.message)
-            : "Please try again.",
+            ? error.message
+            : "Could not record the offer response. Please retry.",
       });
     } finally {
       setPendingId(null);

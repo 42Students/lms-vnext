@@ -20,8 +20,8 @@ describe("Learner offer acceptance preview", () => {
   });
 
   it("checks UTC expiry instants rather than treating an IST date as a UTC date", () => {
-    // 18:30 UTC is 00:00 IST the next day.
-    expect(learnerOfferAcceptancePreview(terms, new Date("2026-10-14T18:30:00Z")).canConfirm).toBe(true);
+    // 18:30 UTC is 00:00 IST the next day; the exact instant is expired.
+    expect(learnerOfferAcceptancePreview(terms, new Date("2026-10-14T18:30:00Z")).canConfirm).toBe(false);
     const expired = learnerOfferAcceptancePreview(terms, new Date("2026-10-14T18:30:00.001Z"));
     expect(expired).toMatchObject({ expired: true, canConfirm: false });
   });

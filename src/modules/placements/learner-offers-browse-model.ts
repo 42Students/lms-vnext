@@ -45,9 +45,13 @@ export function browseOwnLearnerOffers<T extends LearnerOfferBrowseRow>(
   return {
     counts,
     items: rows.filter((row) => matches(row.offer.status))
-      .sort((a, b) =>
-        b.offer.issuedAt.getTime() - a.offer.issuedAt.getTime() ||
-        a.offer.id.localeCompare(b.offer.id),
-      ),
+      .sort((a, b) => {
+        const issued = (row: T) => {
+          const value = row.offer.issuedAt.getTime();
+          return Number.isFinite(value) ? value : Number.NEGATIVE_INFINITY;
+        };
+        return issued(b) - issued(a) ||
+          a.offer.id.localeCompare(b.offer.id);
+      }),
   };
 }

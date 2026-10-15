@@ -155,7 +155,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </div>
       ) : notices.length === 0 ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          {learnerNoticeEmptyLabel(allNotices.length,pinnedOnly,source)}
+          {learnerNoticeEmptyLabel(allNotices.length,pinnedOnly,source,{
+             search:queryText,recent:recentOnly,matchingTotal:notices.length,
+           })}
         </p>
       ) : (
         <ul className="min-w-0 space-y-3">
