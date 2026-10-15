@@ -295,10 +295,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                               q: query.q,
                               page,
                               overridesOnly: query.overridesOnly,
-                    overridesModule: query.overridesModule,
-                    storedValue: query.storedValue,
                               overridesModule: query.overridesModule,
-                    storedValue: query.storedValue,
+                              storedValue: query.storedValue,
                               membershipId:
                                 learner.membershipId,
                             },

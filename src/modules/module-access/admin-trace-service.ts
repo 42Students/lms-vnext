@@ -188,7 +188,7 @@ export async function getSuperAdminLearnerAccessTrace(
       membershipRoles.role,
       "LEARNER",
     ),
-    query.overridesOnly !== "all"
+    (query.overridesOnly !== "all" || Boolean(query.overridesModule) || query.storedValue !== "all")
       ? exists(db.select({id:moduleAccessRules.scopeId}).from(moduleAccessRules).where(and(
           eq(moduleAccessRules.scopeType,"MEMBERSHIP"),
           eq(moduleAccessRules.scopeId,collegeMemberships.id),

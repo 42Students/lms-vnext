@@ -14,6 +14,8 @@ describe("Super Admin readiness subset",()=>{
   expect(rows).toHaveLength(3);
   expect(visibleReadinessChecks(rows,"NEEDS_ATTENTION","DOMAINS").map(x=>x.id)).toEqual(["TENANT_DOMAIN"]);
  });
- it("rejects ambiguous statuses",()=>expect(superAdminReadinessQuerySchema.safeParse({status:"READY"}).success).toBe(false);
-  expect(superAdminReadinessQuerySchema.safeParse({area:"SECRETS"}).success).toBe(false));
+ it("rejects ambiguous status and setup areas",()=>{
+  expect(superAdminReadinessQuerySchema.safeParse({status:"READY"}).success).toBe(false);
+  expect(superAdminReadinessQuerySchema.safeParse({area:"SECRETS"}).success).toBe(false);
+ });
 });

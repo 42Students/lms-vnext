@@ -929,3 +929,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: recently changed company relationships — PARTIAL.** Super Admin Companies now supports 7/30/90-day server-side `updated_at` windows. The time window is calculated once per scoped database request and applied to both count and page; current query and CSV link retain selection. No event-history claim or guessed change types. Unit and disposable-PG tests authored, not executed.
+
+
+**2026-10-15 chat-6 post-round source corrections:** Removed duplicate JSX object keys in student trace, repaired the readiness filter test's callback syntax, retained all company filters through Next-page links, and made explicitly supplied learner stored-rule selectors narrow the queue even when the broad mode remains selected. Tests remain authored/unexecuted.
