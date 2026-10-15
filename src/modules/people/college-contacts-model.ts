@@ -50,6 +50,7 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.tab!=="ALL")params.set("tab",filter.tab);
  if(filter.q)params.set("q",filter.q);
  if(filter.initial)params.set("initial",filter.initial);
+ if(filter.membershipId)params.set("membershipId",filter.membershipId);
  if(filter.joinedFrom)params.set("joinedFrom",filter.joinedFrom);
  if(filter.joinedThrough)params.set("joinedThrough",filter.joinedThrough);
  if(filter.status!=="ACTIVE")params.set("status",filter.status);
