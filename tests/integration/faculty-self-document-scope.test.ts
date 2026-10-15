@@ -61,6 +61,26 @@ describe("Faculty staged private profile integration",()=>{
   });
   expect(saved.version).toBe(1);
   expect(saved.document.about.description).toBe("Faculty Mathematics");
+  // Exercise multiple repeatable sections against the same versioned profile.
+  let latest=saved;
+  const rows=[
+   {section:"languages",value:[{id:randomUUID(),language:"Telugu",proficiency:"Fluent"}]},
+   {section:"education",value:[{id:randomUUID(),institutionName:"University",startYear:"2020",endYear:"2024"}]},
+   {section:"certifications",value:[{id:randomUUID(),name:"Faculty Training"}]},
+   {section:"experiences",value:[{id:randomUUID(),organization:"College"}]},
+   {section:"publications",value:[{id:randomUUID(),title:"Teaching paper"}]},
+   {section:"awards",value:[{id:randomUUID(),title:"Academic Merit"}]},
+  ] as const;
+  for (const row of rows){
+   latest=await patchOwnFacultyProfileSection(faculty,{
+    section:row.section,value:row.value,expectedVersion:latest.version,
+   });
+  }
+  expect(latest.version).toBe(saved.version+rows.length);
+  const reloaded=await loadOwnFacultyProfileDocumentStaged(faculty);
+  expect(reloaded.document.languages[0]?.language).toBe("Telugu");
+  expect(reloaded.document.education[0]?.institutionName).toBe("University");
+  expect(reloaded.document.awards[0]?.title).toBe("Academic Merit");
   await expect(patchOwnFacultyProfileSection(faculty,{
    section:"about",value:{description:"Stale"},expectedVersion:0,
   })).rejects.toMatchObject({code:"FACULTY_PROFILE_VERSION_CONFLICT"});
@@ -72,7 +92,7 @@ describe("Faculty staged private profile integration",()=>{
    [facultyMembershipId,"FACULTY"]);
   try{
    await expect(patchOwnFacultyProfileSection(faculty,{
-    section:"about",value:{description:"Revoked"},expectedVersion:saved.version,
+    section:"about",value:{description:"Revoked"},expectedVersion:latest.version,
    })).rejects.toBeDefined();
   }finally{
    await pool.query("insert into membership_roles(id,membership_id,role) values($1::uuid,$2::uuid,$3::text::membership_role)",
