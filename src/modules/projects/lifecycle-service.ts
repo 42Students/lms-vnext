@@ -3,6 +3,7 @@ import {
   and,
   eq,
   ne,
+  isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -13,6 +14,7 @@ import {
   projectReleases,
   projectSprints,
   projectTasks,
+  projectMembers,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -153,6 +155,15 @@ export async function startProjectSprint(
           "PROJECT_SPRINT_INVALID_STATE",
         );
       }
+
+      const [primary] = await tx.select({ id: projectMembers.id })
+        .from(projectMembers).where(and(
+          eq(projectMembers.projectId, scope.project.id),
+          eq(projectMembers.role, "MENTOR"),
+          eq(projectMembers.isPrimary, true),
+          isNull(projectMembers.endedAt),
+        )).limit(1);
+      if (!primary) throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
 
       const [sprint] = await tx
         .select()

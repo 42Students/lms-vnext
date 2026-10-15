@@ -1,9 +1,9 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, ne } from "drizzle-orm";
+import { and, desc, eq, ne, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
+import { projectInstances, projectReleases, projectSprints, projectTasks, projectMembers } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -109,6 +109,13 @@ export async function transitionMentorProjectSprint(
       .for("update").limit(1);
     if(!project || project.status==="ARCHIVED" || project.status==="COMPLETED") {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+    }
+    if (input.action !== "COMPLETE") {
+      const [primary] = await tx.select({id:projectMembers.id}).from(projectMembers)
+        .where(and(eq(projectMembers.projectId,scope.project.id),
+          eq(projectMembers.role,"MENTOR"),eq(projectMembers.isPrimary,true),
+          isNull(projectMembers.endedAt))).limit(1);
+      if (!primary) throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     const [sprint]=await tx.select().from(projectSprints)
       .where(and(eq(projectSprints.id,params.sprintId),

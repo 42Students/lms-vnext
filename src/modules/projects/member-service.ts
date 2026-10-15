@@ -11,6 +11,7 @@ import {
 import { getDb } from "@/db/client";
 import {randomUUID} from "node:crypto";
 import {projectTeamAuditInput} from "./mentor-team-audit-model";
+import { mayRemovePrimaryProjectMentor } from "./primary-mentor-policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -712,12 +713,18 @@ export async function updateProjectMember(
 
   try {
     const [updated]=await getDb().transaction(async tx=>{
+      const [project]=await tx.select({status:projectInstances.status})
+        .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
+        .for("update").limit(1);
+      if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
       const [fresh]=await tx.select().from(projectMembers)
         .where(and(
           eq(projectMembers.id,member.id),eq(projectMembers.projectId,scope.project.id),
           isNull(projectMembers.endedAt),
         )).for("update").limit(1);
       if(!fresh)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      if(input.isPrimary===false && !mayRemovePrimaryProjectMentor(project.status,fresh.role,fresh.isPrimary))
+        throw new ProjectsServiceError("PROJECT_INVALID_STATE");
       if(input.isPrimary===true&&fresh.role!=="MENTOR")
         throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       const [changed]=await tx.update(projectMembers).set({
@@ -757,7 +764,7 @@ export async function endProjectMember(
   );
 
   return getDb().transaction(async tx => {
-    const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId })
+    const [project] = await tx.select({ teamGroupId: projectInstances.teamGroupId,status:projectInstances.status })
       .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
     if (member.role === "LEARNER" && project?.teamGroupId)
       throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
@@ -765,6 +772,8 @@ export async function endProjectMember(
       .where(and(eq(projectMembers.id, member.id), isNull(projectMembers.endedAt)))
       .for("update");
     if (!fresh) throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+    if (!project || !mayRemovePrimaryProjectMentor(project.status,fresh.role,fresh.isPrimary))
+      throw new ProjectsServiceError("PROJECT_INVALID_STATE");
     const now = new Date();
     const [ended] = await tx.update(projectMembers)
       .set({ endedAt: now, isPrimary: false, updatedAt: now })
