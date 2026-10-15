@@ -45,6 +45,7 @@ afterEach(async()=>{
  if(fixtures.periods.length)await pool.query("DELETE FROM academic_periods WHERE id=ANY($1::uuid[])",[fixtures.periods]);
  if(fixtures.programs.length)await pool.query("DELETE FROM programs WHERE id=ANY($1::uuid[])",[fixtures.programs]);
  if(fixtures.memberships.length){
+  await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type=\'MEMBERSHIP\' AND scope_id=ANY($1::uuid[])",[fixtures.memberships]);
   await pool.query("DELETE FROM membership_roles WHERE membership_id=ANY($1::uuid[])",[fixtures.memberships]);
   await pool.query("DELETE FROM college_memberships WHERE id=ANY($1::uuid[])",[fixtures.memberships]);
  }
