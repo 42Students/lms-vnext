@@ -292,6 +292,17 @@ export async function issuePlacementOffer(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Per-learner serialization for cross-drive releases, in the same
+    // membership-before-application order used by learner withdrawal.
+    const [member] = await tx.select({
+      id: collegeMemberships.id,
+      collegeId: collegeMemberships.collegeId,
+    }).from(collegeMemberships).where(
+      eq(collegeMemberships.id, current.application.membershipId),
+    ).for("update").limit(1);
+    if (!member || member.collegeId !== current.job.collegeId) {
+      throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+    }
     const [lockedApplication] =
       await tx
         .select({
