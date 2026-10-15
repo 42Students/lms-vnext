@@ -13,7 +13,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { mentorInboxQuerySchema, mentorInboxPageHref } from "@/modules/activity/mentor-notifications-model";
 import { getMentorPersonalInbox } from "@/modules/activity/mentor-notifications-service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
-import {mentorAttentionKindSchema,mentorAttentionProjectSchema,selectMentorAttention} from "@/modules/projects/mentor-attention-kind-model";
+import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention} from "@/modules/projects/mentor-attention-kind-model";
 
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
@@ -21,6 +21,7 @@ type Params = {
   view?: string | string[];
   kind?: string | string[];
   projectId?: string | string[];
+  attentionOrder?: string | string[];
   beforeCreatedAt?: string | string[];
   beforeId?: string | string[];
 };
@@ -39,7 +40,8 @@ export default async function MentorNotificationsPage({
   });
   const kind=mentorAttentionKindSchema.safeParse(first(raw.kind)??"ALL");
   const projectId=mentorAttentionProjectSchema.safeParse(first(raw.projectId)??undefined);
-  if (!parsed.success||!kind.success||!projectId.success) return <section role="alert" className="space-y-3">
+  const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
+  if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid notification filters</h1>
     <Link href={MENTOR_INBOX} className="text-primary-text underline">Return to newest notifications</Link>
   </section>;
@@ -56,7 +58,7 @@ export default async function MentorNotificationsPage({
   ]);
   const alerts = projectAccess.projects.enabled
     ? await listMyMentorProjectAttention(context) : [];
-  const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data);
+  const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data);
   const items:NotificationListItem[] = inbox.page.items.map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
     actionHref:notification.actionHref,
@@ -88,6 +90,13 @@ export default async function MentorNotificationsPage({
             {[...new Map(alerts.map(alert=>[alert.projectId,alert.description.split(":")[0]])).entries()]
               .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
               .map(([id,title])=><option key={id} value={id}>{title}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold">Attention order
+          <select name="attentionOrder" defaultValue={attentionOrder.data}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="RECENT">Most recent recorded first</option>
+            <option value="REVIEW_FIRST">Reviews and requests first</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention type
