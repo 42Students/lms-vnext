@@ -8,6 +8,7 @@ export const adminFeatureQuerySchema=z.strictObject({
  locks:z.enum(["ALL","LOCKED"]).default("ALL"),
  presence:z.enum(["ANY","HAS_RULE","NO_RULE"]).default("ANY"),
  recent:z.enum(["ALL","7D","30D","90D"]).default("ALL"),
+ searchField:z.enum(["ALL","NAME","CODE"]).default("ALL"),
 }).superRefine((value,ctx)=>{
  if(value.presence==="NO_RULE"&&(value.storedState!=="ALL"||value.locks==="LOCKED"||value.recent!=="ALL"))ctx.addIssue({code:"custom",path:["presence"],message:"No-rule cannot combine with stored value or locked-only"});
 });

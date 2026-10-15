@@ -182,16 +182,9 @@ export async function listSuperAdminFeatureControls(
   }
 
   if (query.q) {
-    conditions.push(
-      sql`(
-        position(
-          lower(${query.q}) in lower(${colleges.name})
-        ) > 0
-        or position(
-          lower(${query.q}) in lower(${colleges.code})
-        ) > 0
-      )`,
-    );
+    const nameMatch=sql`position(lower(${query.q}) in lower(${colleges.name})) > 0`;
+    const codeMatch=sql`position(lower(${query.q}) in lower(${colleges.code})) > 0`;
+    conditions.push(query.searchField==="NAME"?nameMatch:query.searchField==="CODE"?codeMatch:sql`(${nameMatch} or ${codeMatch})`);
   }
 
   const cutoff=featureRuleCutoff(query.recent,new Date());
@@ -266,6 +259,7 @@ export async function listSuperAdminFeatureControls(
     lockFilter: query.locks,
     presenceFilter: query.presence,
     recentFilter: query.recent,
+    searchField: query.searchField,
     page: query.page,
     pageSize: COLLEGE_PAGE_SIZE,
     total,
