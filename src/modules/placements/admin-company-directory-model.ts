@@ -4,6 +4,7 @@ export const adminCompaniesQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   trust: z.enum(["ALL", "TRUSTED", "UNTRUSTED"]).default("ALL"),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
 });
 export type AdminCompanyRow = {
   relationshipId: string; companyId: string; name: string; collegeId: string;

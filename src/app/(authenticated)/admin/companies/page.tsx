@@ -13,7 +13,7 @@ export default async function SuperAdminCompaniesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, status: params.status, trust: params.trust,
+    q: params.q, status: params.status, trust: params.trust, page: params.page,
   });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
@@ -45,6 +45,7 @@ export default async function SuperAdminCompaniesPage({
       </label>
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
     </form>
+    <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
     <div className="grid gap-3 sm:grid-cols-3">
       {([["Companies in this page", data.distinctCompanies], ["Relationships", data.relationships],
         ["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
@@ -65,7 +66,7 @@ export default async function SuperAdminCompaniesPage({
           <ul className="mt-2 space-y-1 text-sm text-body">{group.companies.map(company=>
            <li key={company.id} className="break-words">{company.name}</li>)}</ul>
         </li>)}</ul>}
-      {data.truncated?<p className="text-xs text-muted-foreground">The directory is capped at 200 relationships, so duplicate detection is incomplete. Narrow the filter before reviewing.</p>:null}
+      {data.truncated?<p className="text-xs text-muted-foreground">Only this 50-row page was checked. Move through pages before concluding there are no duplicate identities.</p>:null}
     </section>
     <section className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Name identity review">
       <h2 className="text-base font-semibold text-foreground">Same-name identities to review</h2>
@@ -75,7 +76,7 @@ export default async function SuperAdminCompaniesPage({
         <h3 className="break-words text-sm font-semibold">{group.label}</h3>
         <p className="mt-2 text-xs text-muted-foreground">{group.companyIds.length} distinct identities · manual verification required</p>
        </li>)}</ul>}
-      {data.truncated?<p className="text-xs text-muted-foreground">Only the first 200 scoped relationships were reviewed.</p>:null}
+      {data.truncated?<p className="text-xs text-muted-foreground">Only this page of scoped relationships was reviewed.</p>:null}
     </section>
     {data.rows.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
@@ -89,7 +90,11 @@ export default async function SuperAdminCompaniesPage({
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
       </article>)}
     </div> : <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
-    {data.truncated ? <p className="text-sm text-muted-foreground">Only the first 200 matching relationships are shown. Narrow filters for a smaller set.</p> : null}
+    {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
+    <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
+      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,trust:data.query.trust,page:String(data.query.page-1)}).toString()}>Previous</Link> : null}
+      {data.query.page < data.totalPages ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,trust:data.query.trust,page:String(data.query.page+1)}).toString()}>Next</Link> : null}
+    </nav>
     <Link href="/admin/placements" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Placement operations</Link>
   </div>;
 }
