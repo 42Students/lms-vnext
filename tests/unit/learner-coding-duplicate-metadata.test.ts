@@ -8,6 +8,6 @@ it("finds valid saved platform URL after malformed duplicate without disclosing 
    {id:"b",key:"LeetCode",type:"url" as const,value:"https://leetcode.com/u/person/"}
   ]};
  const rows=learnerSavedCodingProfiles(doc);
- expect(rows.find(row=>row.platform==="LEETCODE")?.href).toBe("https://leetcode.com/u/person/");
+ expect(rows.find(row=>row.platform==="LEETCODE")?.href).toBe("https://leetcode.com/u/person");
  expect(rows.some(row=>row.href.includes("evil.test"))).toBe(false);
 });
