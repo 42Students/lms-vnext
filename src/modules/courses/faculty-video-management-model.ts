@@ -52,3 +52,9 @@ export function facultyFilterLessonVideos(
   (query.status==="ALL"||row.processingStatus===query.status)&&
   (!term||row.title.toLocaleLowerCase().includes(term)));
 }
+
+/** Predictable stable order irrespective of asynchronously arriving status rows. */
+export function facultyOrderLessonVideos(rows:readonly FacultyLessonVideo[]):FacultyLessonVideo[]{
+ return [...rows].sort((a,b)=>
+  a.sequence-b.sequence||a.title.localeCompare(b.title)||a.contentId.localeCompare(b.contentId));
+}
