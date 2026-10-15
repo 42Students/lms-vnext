@@ -6,6 +6,7 @@ export const facultyResultsQuerySchema = z.object({
   deliveryId: z.string().uuid().optional(),
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
+  sort:z.enum(["DUE_DESC","DUE_ASC","TITLE"]).default("DUE_DESC"),
 }).strict();
 
 export type FacultyResultsQuery = z.infer<typeof facultyResultsQuerySchema>;
@@ -21,7 +22,7 @@ export type FacultyResultCandidate = {
 };
 
 export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
-  rows: readonly T[], query: Pick<FacultyResultsQuery, "kind" | "status" | "search" | "deliveryId">,
+  rows: readonly T[], query: Pick<FacultyResultsQuery, "kind" | "status" | "search" | "deliveryId"|"sort">,
 ): T[] {
   const term = query.search.toLowerCase();
   return rows.filter(row =>
@@ -32,8 +33,10 @@ export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
     (!term || [row.title, row.courseName, row.sectionName].some(field =>
       field.toLowerCase().includes(term))),
   ).sort((a,b) =>
-    (b.dueAt?.getTime() ?? 0) - (a.dueAt?.getTime() ?? 0) ||
-    a.kind.localeCompare(b.kind) || a.id.localeCompare(b.id),
+    (query.sort==="TITLE" ? a.title.localeCompare(b.title) :
+      query.sort==="DUE_ASC" ? (a.dueAt?.getTime()??Number.MAX_SAFE_INTEGER)-(b.dueAt?.getTime()??Number.MAX_SAFE_INTEGER) :
+      (b.dueAt?.getTime()??Number.NEGATIVE_INFINITY)-(a.dueAt?.getTime()??Number.NEGATIVE_INFINITY)) ||
+    a.kind.localeCompare(b.kind) || a.id.localeCompare(b.id) || a.deliveryId.localeCompare(b.deliveryId),
   );
 }
 
@@ -56,6 +59,7 @@ export function facultyResultsHref(query: FacultyResultsQuery): string {
   if (query.deliveryId) params.set("deliveryId", query.deliveryId);
   if (query.search) params.set("search", query.search);
   if (query.page > 1) params.set("page", String(query.page));
+  if (query.sort!=="DUE_DESC") params.set("sort",query.sort);
   return "/teacher/results" + (params.size ? "?" + params.toString() : "");
 }
 
@@ -68,12 +72,12 @@ export function facultyRecordedResponseRate(eligible: number, responded: number)
 
 /** Never silently accept duplicate or unknown filtering selectors from Next searchParams. */
 export function parseFacultyResultsSearchParams(raw:Record<string,string|string[]|undefined>){
- const allowed=new Set(["kind","status","deliveryId","search","page"]);
+ const allowed=new Set(["kind","status","deliveryId","search","page","sort"]);
  if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
   return facultyResultsQuerySchema.safeParse({kind:"INVALID"});
  return facultyResultsQuerySchema.safeParse({
   kind:raw.kind||undefined,status:raw.status||undefined,
   deliveryId:raw.deliveryId||undefined,search:raw.search??undefined,
-  page:raw.page||undefined,
+  page:raw.page||undefined,sort:raw.sort||undefined,
  });
 }
