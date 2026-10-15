@@ -13,6 +13,7 @@ import { AssignmentFileSubmissionControl } from "./assignment-file-submission-co
 import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
 import { isLearnerAssignmentHttpsLink } from "@/modules/courses/learner-assignment-link-model";
+import { learnerAssignmentFinalConfirmation } from "@/modules/courses/learner-assignment-confirmation-model";
 
 type SubmissionType = "TEXT" | "LINK" | "FILE";
 
@@ -67,6 +68,11 @@ export function AssignmentSubmissionControl({
         flight.current.end();
         return;
       }
+    }
+
+    if (!window.confirm(learnerAssignmentFinalConfirmation(submissionType))) {
+      flight.current.end();
+      return;
     }
 
     setSubmitting(true);
