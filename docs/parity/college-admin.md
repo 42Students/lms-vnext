@@ -69,6 +69,8 @@ Legacy route maps dashboard quick actions to Departments, Courses, Programs, Fac
 - [ ] College boundary is enforced.
 
 ## Page: Profile
+**Focused personal profile sections PARTIAL (2026-10-15):** College Admin profile follows legacy Personal, Contact, Address and Social sections, with only caller-owned registered name/phone/email displayed. Address/social stay clearly unavailable instead of fabricating or exposing a different learner/faculty profile. Personal-security and separate college-support links remain. Pure projection tests authored; actual address/social persistence and browser acceptance open.
+
 **Legacy:** `/college-admin/profile`
 
 Uses the shared Faculty-profile schema.
