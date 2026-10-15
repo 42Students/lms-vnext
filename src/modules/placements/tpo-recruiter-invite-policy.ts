@@ -152,3 +152,8 @@ export function canRemindRecruiterInvite(
     age < RECRUITER_INVITE_TTL_MS,
   );
 }
+
+/** Only the first page open is recorded; later opens are idempotent. */
+export function isRecruiterInviteFirstOpen(clickedAt: Date | null): boolean {
+  return clickedAt === null;
+}
