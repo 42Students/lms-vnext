@@ -23,6 +23,8 @@ import { learnerCourseMatchesProgress, type LearnerCourseProgressFilter } from "
 import { learnerCourseMatchesTermState, type LearnerCourseTermState } from "@/modules/courses/learner-course-term-state-model";
 import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
 
+import {learnerCourseCardNextLabel} from "@/modules/courses/learner-course-card-next-label-model";
+
 const PAGE_SIZE = 48;
 
 export type LearnerCourseListRow = {
@@ -65,24 +67,6 @@ export type LearnerCourseListRow = {
   } | null;
 };
 
-function nextLabel(row: LearnerCourseListRow) {
-  if (row.readOnly) return "View course";
-  if (!row.learningPathReady) return "Learning path not published";
-  if (!row.nextItem) {
-    return row.summary.itemsTotal === 0
-      ? "No learning items yet"
-      : "Course work complete";
-  }
-
-  switch (row.nextItem.kind) {
-    case "ASSIGNMENT":
-      return `Assignment · ${row.nextItem.title}`;
-    case "QUIZ":
-      return `Quiz · ${row.nextItem.title}`;
-    default:
-      return `Continue · ${row.nextItem.title}`;
-  }
-}
 
 export function LearnerCourseList({
   rows,
@@ -433,7 +417,7 @@ export function LearnerCourseList({
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
                           <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
-                            {nextLabel(row)}
+                            {learnerCourseCardNextLabel(row)}
                           </p>
                           <span
                             aria-hidden="true"
