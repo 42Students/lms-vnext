@@ -7,16 +7,11 @@ import {learnerPlacementHeroGreeting} from "@/modules/placements/learner-dashboa
 import type {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
 import {learnerDashboardSafeFallback} from "@/modules/placements/learner-dashboard-fallback-model";
 import {learnerDashboardMetricView} from "@/modules/placements/learner-dashboard-metric-view-model";
+import {learnerDashboardDateLabel} from "@/modules/placements/learner-dashboard-date-label-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
-function formatWhen(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
-}
+const formatWhen=learnerDashboardDateLabel;
 
 function Metric({
   label,
