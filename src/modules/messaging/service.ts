@@ -1,4 +1,5 @@
 import { canContactRecipientAtRuntime } from "./runtime-safety";
+import { opaqueBatchAttemptKey } from "./batch-dedupe";
 import { decideDelivery, normalizeRecipient, outboundSendSchema, type DeliveryPolicy, type OutboundSendRequest, type OutboundStatus } from "./model";
 
 export interface OutboundProvider {
@@ -44,7 +45,7 @@ export async function deliverBatch(args: {
     if (!/^[0-9a-f]{64}$/.test(recipientKey)) throw new Error("INVALID_RECIPIENT_KEY");
     // Never dispatch the same keyed recipient twice for the same purpose in one batch.
     // Use only the opaque key, never contact details, in the deduplication set.
-    const dedupeKey = request.channel + ":" + recipientKey + ":" + request.purpose;
+    const dedupeKey = opaqueBatchAttemptKey(request.channel,recipientKey,request.purpose,request.templateKey);
     const duplicate = seenRecipientPurpose.has(dedupeKey);
     seenRecipientPurpose.add(dedupeKey);
     const finalDecision = duplicate
