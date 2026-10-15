@@ -23,6 +23,7 @@ import {
   ANNOUNCEMENT_RECEIVER_TYPES,
 } from "./validation";
 import { AnnouncementError } from "./errors";
+import {requirePlatformPublishConsent} from "./super-admin-publish-consent-model";
 
 type ReceiverType = (typeof ANNOUNCEMENT_RECEIVER_TYPES)[number];
 
@@ -147,6 +148,7 @@ function assertSchedule(scheduledAt: Date | null, expiresAt: Date | null) {
 
 export async function createAnnouncement(context: RequestContext, raw: unknown) {
   const input = announcementCreateSchema.parse(raw);
+  requirePlatformPublishConsent(isSuperAdmin(context),input.publishConsent===true);
   const scope = await resolveTarget(input.receiverType, input.receiverId);
   requireManage(context, scope);
   assertSchedule(input.scheduledAt ?? null, input.expiresAt ?? null);
@@ -215,6 +217,7 @@ export async function updateAnnouncement(
 ) {
   const id = announcementIdSchema.parse(idInput);
   const input = announcementUpdateSchema.parse(raw);
+  requirePlatformPublishConsent(isSuperAdmin(context),input.publishConsent===true);
   const current = await loadAnnouncement(id);
   requireManage(context, {
     organizationId: current.organizationId,

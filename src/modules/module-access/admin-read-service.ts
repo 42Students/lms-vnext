@@ -3,6 +3,7 @@ import "server-only";
 import {
   and,
   asc,
+  desc,
   count,
   eq,
   inArray,
@@ -38,20 +39,8 @@ import type {
 } from "./service";
 import {adminModuleOverrideFilterSchema} from "./admin-override-filter-model";
 
-export const adminFeatureQuerySchema =
-  z.object({
-    q: z
-      .string()
-      .trim()
-      .max(100)
-      .default(""),
-    page: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(10000)
-      .default(1),
-  }).strict();
+export {adminFeatureQuerySchema} from "./admin-feature-query";
+import {adminFeatureQuerySchema,featureRuleCutoff,boundedAdminFeaturePage} from "./admin-feature-query";
 
 const detailQuerySchema = z.object({
   module: adminModuleOverrideFilterSchema,
@@ -194,47 +183,45 @@ export async function listSuperAdminFeatureControls(
   }
 
   if (query.q) {
-    conditions.push(
-      sql`(
-        position(
-          lower(${query.q}) in lower(${colleges.name})
-        ) > 0
-        or position(
-          lower(${query.q}) in lower(${colleges.code})
-        ) > 0
-      )`,
-    );
+    const nameMatch=sql`position(lower(${query.q}) in lower(${colleges.name})) > 0`;
+    const codeMatch=sql`position(lower(${query.q}) in lower(${colleges.code})) > 0`;
+    conditions.push(query.searchField==="NAME"?nameMatch:query.searchField==="CODE"?codeMatch:sql`(${nameMatch} or ${codeMatch})`);
   }
 
+  const cutoff=featureRuleCutoff(query.recent,new Date());
+  if (query.module || query.storedState !== "ALL" || query.locks === "LOCKED" || query.presence !== "ANY" || cutoff) {
+    const matchRule=sql`exists (
+      select 1 from module_access_rules rule
+      where rule.scope_type = 'COLLEGE' and rule.scope_id = ${colleges.id}
+      ${query.module ? sql`and rule.module::text = ${query.module}::text` : sql``}
+      ${query.storedState !== "ALL" ? sql`and rule.enabled = ${query.storedState === "ON"}` : sql``}
+      ${query.locks === "LOCKED" ? sql`and rule.locked = true` : sql``}
+      ${cutoff ? sql`and rule.updated_at >= ${cutoff}` : sql``}
+    )`;
+    conditions.push(query.presence === "NO_RULE" ? sql`not (${matchRule})` : matchRule);
+  }
   const where = and(...conditions);
   const db = getDb();
 
-  const [totals, collegeRows] = await Promise.all([
-    db
-      .select({
-        total: count(),
-      })
-      .from(colleges)
-      .where(where),
-    db
-      .select({
-        id: colleges.id,
-        organizationId: colleges.organizationId,
-        name: colleges.name,
-        code: colleges.code,
-        status: colleges.status,
-      })
-      .from(colleges)
-      .where(where)
-      .orderBy(
-        asc(colleges.name),
-        asc(colleges.id),
-      )
-      .limit(COLLEGE_PAGE_SIZE)
-      .offset(
-        (query.page - 1) * COLLEGE_PAGE_SIZE,
-      ),
-  ]);
+  const [totals] = await db.select({total:count()}).from(colleges).where(where);
+  const total=totals?.total ?? 0;
+  const effectivePage=boundedAdminFeaturePage(query.page,total,COLLEGE_PAGE_SIZE);
+  const collegeRows=await db
+    .select({
+      id:colleges.id,
+      organizationId:colleges.organizationId,
+      name:colleges.name,
+      code:colleges.code,
+      status:colleges.status,
+    })
+    .from(colleges)
+    .where(where)
+    .orderBy(
+      query.sort === "CODE" ? asc(colleges.code) : query.sort === "CODE_DESC" ? desc(colleges.code) : query.sort === "NAME_DESC" ? desc(colleges.name) : asc(colleges.name),
+      asc(colleges.id),
+    )
+    .limit(COLLEGE_PAGE_SIZE)
+    .offset((effectivePage-1)*COLLEGE_PAGE_SIZE);
 
   for (const college of collegeRows) {
     requirePermission(context, "college.read", {
@@ -245,8 +232,6 @@ export async function listSuperAdminFeatureControls(
 
   const rules =
     await loadCollegeAncestorRules(collegeRows);
-
-  const total = totals[0]?.total ?? 0;
 
   return {
     items: collegeRows.map((college) => ({
@@ -260,7 +245,14 @@ export async function listSuperAdminFeatureControls(
       ),
     })),
     q: query.q,
-    page: query.page,
+    sort: query.sort,
+    moduleFilter: query.module ?? null,
+    stateFilter: query.storedState,
+    lockFilter: query.locks,
+    presenceFilter: query.presence,
+    recentFilter: query.recent,
+    searchField: query.searchField,
+    page: effectivePage,
     pageSize: COLLEGE_PAGE_SIZE,
     total,
     totalPages: Math.max(
