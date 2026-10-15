@@ -1,0 +1,32 @@
+import {z} from "zod";
+import type {LearnerModuleTrace} from "./admin-trace-model";
+import {membershipOverrideSummary} from "./admin-trace-model";
+export const previousStudentRuleSchema=z.strictObject({enabled:z.boolean(),locked:z.boolean()}).nullable();
+export type PreviousStudentRule=z.infer<typeof previousStudentRuleSchema>;
+export function studentRuleMatches(expected:PreviousStudentRule,actual:PreviousStudentRule){
+ if(expected===null||actual===null)return expected===actual;
+ return expected.enabled===actual.enabled&&expected.locked===actual.locked;
+}
+
+export function isStudentRuleNoop(current:PreviousStudentRule,action:
+ {action:"SET";enabled:boolean;locked:boolean}|{action:"INHERIT"}){
+ return action.action==="INHERIT"?current===null:
+  current!==null&&current.enabled===action.enabled&&current.locked===action.locked;
+}
+
+export function hasPersistedAncestorLock(rows:readonly {locked:boolean}[]):boolean{
+ return rows.some(row=>row.locked);
+}
+
+export const studentRuleWriteInput=z.discriminatedUnion("action",[
+ z.strictObject({action:z.literal("SET"),module:z.enum(["projects","electives"]),enabled:z.boolean(),locked:z.boolean(),expected:previousStudentRuleSchema}),
+ z.strictObject({action:z.literal("INHERIT"),module:z.enum(["projects","electives"]),expected:previousStudentRuleSchema}),
+]);
+
+export function studentRuleCards(modules:readonly LearnerModuleTrace[]){
+ return membershipOverrideSummary(modules).map(item=>({
+  ...item,
+  state:item.stored===null?"Inherit":item.stored?"On":"Off",
+  consequence:item.ignored?"Stored only: placements ignores member scope":item.winner?"Selected by resolver":"Inherits or is masked by another rule",
+ }));
+}

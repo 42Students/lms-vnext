@@ -17,7 +17,7 @@ const detailPages = [
     "No application-status history records", "sm:"],
   ["learn/my-placements/applications/[applicationId]/company",
     "No extended company biography", "sm:"],
-  ["learn/my-placements/offers", "No offers recorded", "sm:"],
+  ["learn/my-placements/offers", "learnerOffersEmptyState", "sm:"],
   ["learn/my-placements/assessments/results", "No official assessment results yet", "sm:"],
   ["learn/notifications/history", "emptyMessage", "NotificationList"],
   ["learn/courses/[deliveryId]/progress", "No published lessons", "sm:"],
