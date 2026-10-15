@@ -75,6 +75,16 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Batch / cohort code (exact)
+            <input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Program code (exact)
+            <input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Audience scope
             <select name="scope" defaultValue={data.query.scope}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">

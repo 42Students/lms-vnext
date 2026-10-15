@@ -13,7 +13,7 @@ export async function exportCollegeContentMetadata(
     q:query.q,courseCode:query.courseCode,status:query.status,scope:query.scope,
     view:query.view,from:query.from,to:query.to,page,
   } : {
-    q:query.q,courseCode:query.courseCode,programCode:query.programCode,cohortCode:query.cohortCode,status:query.status,
+    q:query.q,courseCode:query.courseCode,programCode:query.programCode,cohortCode:query.cohortCode,periodCode:query.periodCode,pathStatus:query.pathStatus,departmentName:query.departmentName,offeringType:query.offeringType,lessonStatus:query.lessonStatus,status:query.status,
     format:query.format,scope:query.scope,visibility:query.visibility,offeringStatus:query.offeringStatus,page,
   }),
   COLLEGE_CONTENT_PAGE_SIZE,CONTENT_METADATA_EXPORT_CAP);
