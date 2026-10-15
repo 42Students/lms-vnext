@@ -61,6 +61,12 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="TITLE">Assessment title</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Assessments per page
+        <select name="pageSize" defaultValue={data.query.pageSize}
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          <option value="5">5</option><option value="10">10</option>
+        </select>
+      </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
       </button>
@@ -114,7 +120,7 @@ export default async function FacultyResponseFollowUpsPage({
     <p className="text-xs leading-5 text-muted-foreground">
       Missing means no persisted submission or quiz attempt for a currently enrolled learner.
       It does not establish misconduct, failure or a notification being sent. No messages are sent
-      from this view; five assessments per page are expanded to keep work bounded.
+      from this view; up to ten assessments per page are expanded to keep work bounded.
     </p>
   </div>;
 }

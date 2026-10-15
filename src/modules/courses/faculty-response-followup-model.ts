@@ -6,6 +6,7 @@ export const facultyResponseFollowUpQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(10000).default(1),
   deliveryId:z.string().uuid().optional(),
   sort:z.enum(["RECENT_DUE","OLDEST_DUE","TITLE"]).default("RECENT_DUE"),
+  pageSize:z.coerce.number().int().refine(value=>value===5||value===10).default(5),
 }).strict();
 export type FacultyResponseFollowUpQuery = z.infer<typeof facultyResponseFollowUpQuerySchema>;
 
@@ -44,9 +45,9 @@ export function selectPastDueAssessments<T extends FacultyResponseCandidate>(
 }
 
 export function facultyResponseFollowUpPage<T>(
-  rows: readonly T[], requested: number,
+  rows: readonly T[], requested: number,pageSize=5,
 ) {
-  const pageSize = 5;
+  if(pageSize!==5&&pageSize!==10)throw new Error("INVALID_FOLLOWUP_PAGE_SIZE");
   const total = rows.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const page = Math.min(requested, totalPages);
@@ -56,12 +57,13 @@ export function facultyResponseFollowUpPage<T>(
   };
 }
 
-export function facultyResponseFollowUpHref(query: FacultyResponseFollowUpQuery) {
+export function facultyResponseFollowUpHref(query: Pick<FacultyResponseFollowUpQuery,"kind"|"search"|"page"> & Partial<Pick<FacultyResponseFollowUpQuery,"deliveryId"|"sort"|"pageSize">>) {
   const params = new URLSearchParams();
   if (query.kind !== "ALL") params.set("kind", query.kind);
   if (query.search) params.set("search", query.search);
   if(query.deliveryId)params.set("deliveryId",query.deliveryId);
   if(query.sort&&query.sort!=="RECENT_DUE")params.set("sort",query.sort);
+  if(query.pageSize&&query.pageSize!==5)params.set("pageSize",String(query.pageSize));
   if (query.page > 1) params.set("page", String(query.page));
   const suffix = params.toString();
   return "/teacher/response-followups" + (suffix ? "?" + suffix : "");
@@ -75,11 +77,12 @@ export function limitedMissingLearners<T>(
 }
 
 export function parseFacultyFollowUpSearchParams(raw:Record<string,string|string[]|undefined>){
- const allowed=new Set(["kind","search","page","deliveryId","sort"]);
+ const allowed=new Set(["kind","search","page","deliveryId","sort","pageSize"]);
  if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
   return facultyResponseFollowUpQuerySchema.safeParse({kind:"INVALID"});
  return facultyResponseFollowUpQuerySchema.safeParse({
   kind:raw.kind||undefined,search:raw.search??undefined,page:raw.page||undefined,
   deliveryId:raw.deliveryId||undefined,sort:raw.sort||undefined,
+  pageSize:raw.pageSize||undefined,
  });
 }
