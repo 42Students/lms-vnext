@@ -75,6 +75,10 @@ export default async function SuperAdminCompaniesPage({
       {data.query.companyId ? <input type="hidden" name="companyId" value={data.query.companyId}/> : null}
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
     </form>
+    <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,companyStatus:data.query.companyStatus,trust:data.query.trust,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
+      className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+      Export this 50-row page as CSV →
+    </Link>
     <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
     <div className="grid gap-3 sm:grid-cols-3">
       {([["Companies in this page", data.distinctCompanies], ["Relationships", data.relationships],
