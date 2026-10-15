@@ -10,6 +10,8 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "SUSPENDED", "ENDED"]).default("ALL"),
   accountStatus: z.enum(["ALL", "ACTIVE", "DISABLED"]).default("ALL"),
+  joinedFrom: z.iso.date().optional(),
+  joinedThrough: z.iso.date().optional(),
   enrollment: z.enum(["ALL", "ACTIVE", "NONE"]).default("ALL"),
   rollPresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
   registrationPresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
@@ -72,6 +74,8 @@ export function collegeRoleDirectoryHref(
   if (filter.q) params.set("q", filter.q);
   if (filter.status !== "ALL") params.set("status", filter.status);
   if (filter.accountStatus !== "ALL") params.set("accountStatus", filter.accountStatus);
+  if (filter.joinedFrom) params.set("joinedFrom",filter.joinedFrom);
+  if (filter.joinedThrough) params.set("joinedThrough",filter.joinedThrough);
   if (kind === "LEARNER" && filter.enrollment !== "ALL") params.set("enrollment", filter.enrollment);
   if (kind === "LEARNER" && filter.rollPresence !== "ALL") params.set("rollPresence", filter.rollPresence);
   if (kind === "LEARNER" && filter.registrationPresence !== "ALL") params.set("registrationPresence", filter.registrationPresence);
@@ -99,7 +103,9 @@ export function parseCollegeRoleDirectorySearchParams(raw: Record<string, string
     }
     if (value !== undefined && value !== "") input[key] = value;
   }
-  return collegeRoleDirectoryQuerySchema.parse(input);
+  const filter=collegeRoleDirectoryQuerySchema.parse(input);
+  if (!roleDirectoryDateWindowValid(filter)) throw new Error("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
+  return filter;
 }
 
 /** Return a stable URL when deletions/filter changes make the requested page stale. */
@@ -112,3 +118,10 @@ export function canonicalCollegeRoleDirectoryHref(kind: CollegeDirectoryKind, fi
 export function selectedDirectoryValueNotListed(value: string | undefined, visibleOptions: readonly string[]): boolean {
   return Boolean(value && !visibleOptions.includes(value));
 }
+
+export function roleDirectoryDateWindowValid(window: {joinedFrom?:string;joinedThrough?:string}): boolean {
+  return !(window.joinedFrom && window.joinedThrough && window.joinedFrom>window.joinedThrough);
+}
+/** Inclusive IST calendar day lower bound and exclusive next-day upper bound. */
+export function roleDirectoryIstDayStart(day: string): Date {return new Date(day+"T00:00:00+05:30");}
+export function roleDirectoryNextIstDayStart(day: string): Date {return new Date(roleDirectoryIstDayStart(day).getTime()+86400000);}
