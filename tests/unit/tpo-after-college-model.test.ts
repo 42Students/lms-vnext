@@ -1,0 +1,2 @@
+import {it,expect} from "vitest";import {AFTER_COLLEGE_OUTCOMES,afterCollegeOutcomeSchema,afterCollegeOptions} from "@/modules/placements/tpo-after-college-model";
+it("keeps five fixed outcomes",()=>{expect(AFTER_COLLEGE_OUTCOMES).toHaveLength(5);expect(afterCollegeOptions()).toHaveLength(5);expect(afterCollegeOutcomeSchema.safeParse("UNKNOWN").success).toBe(false);});

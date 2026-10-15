@@ -4,13 +4,14 @@ export const OFFERING_MAPPING_EXPORT_CAP=1000;
 export const offeringMappingCsvSchema=semesterCourseQuerySchema.omit({page:true});
 export {exportParams};
 export function offeringMappingCsvHref(q:{
- q:string;programId?:string;periodId?:string;type:"ALL"|"CORE"|"ELECTIVE";
+ q:string;programId?:string;periodId?:string;courseCode?:string;type:"ALL"|"CORE"|"ELECTIVE";
  status:"ALL"|"ACTIVE"|"ARCHIVED";
 }) {
  const params=new URLSearchParams();
  if(q.q)params.set("q",q.q);
  if(q.programId)params.set("programId",q.programId);
  if(q.periodId)params.set("periodId",q.periodId);
+ if(q.courseCode)params.set("courseCode",q.courseCode);
  if(q.type!=="ALL")params.set("type",q.type);
  if(q.status!=="ALL")params.set("status",q.status);
  return "/api/academics/college-offering-mappings-export"+(params.size?"?"+params.toString():"");

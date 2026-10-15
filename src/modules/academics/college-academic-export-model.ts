@@ -1,11 +1,11 @@
-import { collegeBatchDirectorySchema,collegeSemesterDirectorySchema } from "./college-academic-directory-model";
+import { collegeBatchDirectorySchema,collegeSemesterDirectoryBaseSchema,withCollegeSemesterCreditCheck } from "./college-academic-directory-model";
 import { buildCollegeDirectoryCsv,exportParams } from "./college-directory-export-model";
 export const ACADEMIC_EXPORT_CAP=1000;
-export const semesterCsvSchema=collegeSemesterDirectorySchema.omit({page:true});
+export const semesterCsvSchema=withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema.omit({page:true}));
 export const batchCsvSchema=collegeBatchDirectorySchema.omit({page:true});
 export type AcademicCsvKind="SEMESTERS"|"BATCHES";
 export function academicExportHref(kind:AcademicCsvKind,query:{
- q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;yearStart?:number;currentTerm?:number;
+ q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;maximumCredits?:number;yearStart?:number;currentTerm?:number;progression?:"ALL"|"RECORDED"|"MISSING";
 }){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
@@ -13,8 +13,10 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
  if(query.status!=="ALL")p.set("status",query.status);
  if(kind==="SEMESTERS"&&query.termNumber!==undefined)p.set("termNumber",String(query.termNumber));
  if(kind==="SEMESTERS"&&query.minimumCredits!==undefined)p.set("minimumCredits",String(query.minimumCredits));
+ if(kind==="SEMESTERS"&&query.maximumCredits!==undefined)p.set("maximumCredits",String(query.maximumCredits));
  if(kind==="BATCHES"&&query.yearStart!==undefined)p.set("yearStart",String(query.yearStart));
  if(kind==="BATCHES"&&query.currentTerm!==undefined)p.set("currentTerm",String(query.currentTerm));
+ if(kind==="BATCHES"&&query.progression&&query.progression!=="ALL")p.set("progression",query.progression);
  return "/api/academics/college-academic-export/"+(kind==="SEMESTERS"?"semesters":"batches")+
   (p.size?"?"+p.toString():"");
 }
