@@ -113,6 +113,10 @@ export default async function CollegesPage() {
       <Link href="/admin/tenants" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Search tenant directory →
       </Link>
+      {rows.length === 0 ? (
+        <EmptyState title="No active colleges in this scope"
+          description="No college records are visible under the selected Super Admin safety scope. Clear or change the scope to search elsewhere; no tenants were modified." />
+      ) : null}
       <div className="grid min-w-0 gap-3 lg:hidden" aria-label="College onboarding cards">
         {rows.map(college=>(
           <article key={college.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
