@@ -257,7 +257,7 @@ function SubmissionGradeCard({
             : submission.gradingStatus ===
                 "GRADED"
               ? "Graded · unpublished"
-              : "Needs grading"}
+              : "Pending"}
         </StatusBadge>
       </div>
 
@@ -265,7 +265,7 @@ function SubmissionGradeCard({
         {submission.submissionType === "FILE" && filesEnabled ? (
           <FacultySubmissionFileReview submissionId={submission.id} />
         ) : content.kind === "TEXT" ? (
-          <p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p>
+          <div><p className="mb-2 text-xs font-semibold text-body">Written Response</p><p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p></div>
         ) : content.kind === "FILE" || content.kind === "LINK" ? (
           <Link href={content.href} target="_blank" rel="noopener noreferrer" prefetch={false}
             className="inline-flex min-h-10 items-center break-words text-sm font-semibold text-primary-text hover:text-primary-hover">
@@ -283,6 +283,7 @@ function SubmissionGradeCard({
             Points
           </span>
           <Input
+            placeholder="Grade points"
             type="number"
             min={0}
             max={maxPoints}
@@ -327,8 +328,8 @@ function SubmissionGradeCard({
                 ? "Saving…"
                 : submission.gradingStatus ===
                     "GRADED"
-                  ? "Save regrade"
-                  : "Save grade"}
+                  ? "Edit grade"
+                  : "Submit grade"}
             </Button>
           ) : null}
 
@@ -485,7 +486,7 @@ export function FacultyAssignmentReview({
         {SUBMISSION_FILTERS.map(value=><Button key={value} type="button" size="sm"
           variant={filter===value?"secondary":"ghost"} disabled={loading}
           aria-pressed={filter===value} onClick={()=>void load({filter:value,page:1})}>
-          {value==="ALL"?"All":value==="UNGRADED"?"Needs grading":value==="GRADED"?"Graded":"Late"}
+          {value==="ALL"?"All":value==="UNGRADED"?"Pending":value==="GRADED"?"Graded":"Late"}
         </Button>)}
       </nav>
       {pagination ? <p role="status" className="text-xs text-muted-foreground">
