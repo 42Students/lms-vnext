@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { COLLEGE_LEGACY_GROUPS, collegeLegacyGroupForPath, collegeLegacyTabActive } from
+import { collegeLegacyGroupForPath, collegeLegacyTabActive } from
   "@/modules/people/college-legacy-tabs-model";
 
 /** Route-aware nested College Admin tabs, scoped to existing College pages. */
