@@ -155,6 +155,12 @@ describe.skipIf(!enabled)("College Admin assessment aggregates — disposable Po
       ]);
     expect(ownAssignments.items.map((item) => item.id)).toContain(ids.assignment);
     expect(ownQuizzes.items.map((item) => item.id)).toContain(ids.quiz);
+    for(const kind of ["ASSIGNMENT","QUIZ"] as const){
+      const mine=await listCollegeAssessmentAggregate(adminA,kind,{courseCode:code});
+      const missing=await listCollegeAssessmentAggregate(adminA,kind,{courseCode:"OTHER-COURSE"});
+      expect(mine.items).toHaveLength(1);
+      expect(missing.items).toEqual([]);
+    }
     expect(foreignAssignments.items).toEqual([]);
     expect(foreignQuizzes.items).toEqual([]);
   });

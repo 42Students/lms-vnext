@@ -29,6 +29,7 @@ describe("College Admin assignment and quiz aggregate model", () => {
       { page: 1001 },
       { status: "NOT_VALID" },
       { q: "x".repeat(101) },
+      {courseCode:"x".repeat(65)},
     ]) {
       expect(collegeAssessmentListQuerySchema.safeParse(bad).success).toBe(false);
     }
@@ -44,6 +45,7 @@ describe("College Admin assignment and quiz aggregate model", () => {
     expect(url.searchParams.get("status")).toBe("PUBLISHED");
     expect(url.searchParams.get("page")).toBe("2");
     expect(url.searchParams.has("collegeId")).toBe(false);
+    expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({courseCode:"CS&42"}))).toContain("courseCode=CS%2642");
     expect(collegeAssessmentHref("ASSIGNMENT", {
       q: "", status: "ALL", page: 1,
     })).toBe("/college/assignments");
