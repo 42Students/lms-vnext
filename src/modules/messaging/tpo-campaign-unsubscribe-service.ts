@@ -1,16 +1,15 @@
 import "server-only";
 import {and,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementTpoLeads,placementTpoLeadActivities} from "@/db/schema/tpo-crm";
-import {placementTpoEmailRecipientsStaged} from "./tpo-campaign-staged-schema";
+import {placementTpoLeads,placementTpoLeadActivities,placementTpoEmailCampaignRecipients} from "@/db/schema/tpo-crm";
 import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision} from "./tpo-campaign-recipient-token";
 
 export class CampaignUnsubscribeInvalid extends Error {
   constructor(){super("CAMPAIGN_UNSUBSCRIBE_INVALID");this.name="CampaignUnsubscribeInvalid";}
 }
 
-/** T-S2-04: STAGED, NOT ROUTED.
- * The campaign tables and delivery provider must be registered first.
+/** T-S2-04: NOT ROUTED (tables registered in migration 0095).
+ * The delivery provider and TPO_CAMPAIGNS_READY gate must be approved first.
  * A signed link alone cannot switch identities; live recipient rows are locked
  * and tied to the matching college, campaign and lead before any update.
  */
@@ -25,22 +24,22 @@ export async function unsubscribeTpoCampaignRecipient(
   if(!claim)throw new CampaignUnsubscribeInvalid();
   const db=getDb();
   const outcome=await db.transaction(async tx=>{
-    const [row]=await tx.select().from(placementTpoEmailRecipientsStaged)
+    const [row]=await tx.select().from(placementTpoEmailCampaignRecipients)
       .where(and(
-        eq(placementTpoEmailRecipientsStaged.id,claim.recipientId),
-        eq(placementTpoEmailRecipientsStaged.collegeId,claim.collegeId),
-        eq(placementTpoEmailRecipientsStaged.campaignId,claim.campaignId),
+        eq(placementTpoEmailCampaignRecipients.id,claim.recipientId),
+        eq(placementTpoEmailCampaignRecipients.collegeId,claim.collegeId),
+        eq(placementTpoEmailCampaignRecipients.campaignId,claim.campaignId),
       )).for("update").limit(1);
     if(!row)return "DENY";
     const decision=campaignUnsubscribeDecision(claim,row);
     if(decision!=="APPLY")return decision;
     const now=new Date();
-    const [changed]=await tx.update(placementTpoEmailRecipientsStaged)
+    const [changed]=await tx.update(placementTpoEmailCampaignRecipients)
       .set({unsubscribedAt:now,status:"UNSUBSCRIBED"})
       .where(and(
-        eq(placementTpoEmailRecipientsStaged.id,row.id),
-        isNull(placementTpoEmailRecipientsStaged.unsubscribedAt),
-      )).returning({id:placementTpoEmailRecipientsStaged.id});
+        eq(placementTpoEmailCampaignRecipients.id,row.id),
+        isNull(placementTpoEmailCampaignRecipients.unsubscribedAt),
+      )).returning({id:placementTpoEmailCampaignRecipients.id});
     if(!changed)return "DENY";
     // DB09 placement_tpo_leads_invite_lifecycle_ck requires a token to be
     // cleared when the lead opts out. This also prevents new OTP delivery.

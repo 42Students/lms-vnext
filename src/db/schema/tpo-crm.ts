@@ -290,3 +290,98 @@ export const recruiterInviteCodes = pgTable(
     ),
   ],
 );
+
+/**
+ * T-S2-04: TPO email campaign header. The 500-recipient cap is enforced by a
+ * row-locking trigger on the recipients table (migration 0095), not only by
+ * `total_recipients`. No delivery route is enabled by this table alone.
+ */
+export const placementTpoEmailCampaigns = pgTable(
+  "placement_tpo_email_campaigns",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    createdByUserId: uuid("created_by_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    status: varchar("status", { length: 16 }).notNull().default("DRAFT"),
+    totalRecipients: integer("total_recipients").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("tpo_email_campaign_college_id_uq").on(t.collegeId, t.id),
+    index("tpo_email_campaign_college_created_idx").on(
+      t.collegeId,
+      t.createdAt,
+    ),
+    check(
+      "placement_tpo_email_campaigns_status_ck",
+      sql`${t.status} in ('DRAFT','SENDING','SENT','CANCELLED')`,
+    ),
+    check(
+      "placement_tpo_email_campaigns_total_ck",
+      sql`${t.totalRecipients} between 0 and 500`,
+    ),
+  ],
+);
+
+/**
+ * T-S2-04: one row per lead per campaign. `recipient_key` is the keyed HMAC of
+ * the normalized email (never the address) so two leads sharing an address
+ * cannot both be sent the same campaign.
+ */
+export const placementTpoEmailCampaignRecipients = pgTable(
+  "placement_tpo_email_campaign_recipients",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id").notNull(),
+    campaignId: uuid("campaign_id").notNull(),
+    leadId: uuid("lead_id").notNull(),
+    recipientKey: varchar("recipient_key", { length: 64 }).notNull(),
+    status: varchar("status", { length: 24 }).notNull().default("PENDING"),
+    unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    foreignKey({
+      name: "tpo_email_recipient_campaign_fk",
+      columns: [t.collegeId, t.campaignId],
+      foreignColumns: [
+        placementTpoEmailCampaigns.collegeId,
+        placementTpoEmailCampaigns.id,
+      ],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "tpo_email_recipient_lead_fk",
+      columns: [t.collegeId, t.leadId],
+      foreignColumns: [placementTpoLeads.collegeId, placementTpoLeads.id],
+    }).onDelete("restrict"),
+    uniqueIndex("tpo_email_recipient_campaign_lead_uq").on(
+      t.campaignId,
+      t.leadId,
+    ),
+    uniqueIndex("tpo_email_recipient_campaign_key_uq").on(
+      t.campaignId,
+      t.recipientKey,
+    ),
+    index("tpo_email_recipient_college_campaign_idx").on(
+      t.collegeId,
+      t.campaignId,
+    ),
+    check(
+      "placement_tpo_email_recipients_key_ck",
+      sql`${t.recipientKey} ~ '^[0-9a-f]{64}$'`,
+    ),
+    check(
+      "placement_tpo_email_recipients_status_ck",
+      sql`${t.status} in ('PENDING','SKIPPED_NO_EMAIL','SKIPPED_UNSUBSCRIBED','QUEUED','SENT','FAILED','UNSUBSCRIBED')`,
+    ),
+  ],
+);
