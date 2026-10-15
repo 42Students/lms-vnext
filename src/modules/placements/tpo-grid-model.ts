@@ -41,19 +41,3 @@ export function exportTpoGridCsv<Row>(columns: readonly TpoGridColumn<Row>[], ro
   const header = columns.map((column) => csvSafeGridCell(column.label)).join(",");
   return [header, ...rows.map((row) => columns.map((column) => csvSafeGridCell(column.read(row))).join(","))].join("\r\n");
 }
-
-/** Per-column text filters operate only on the records explicitly supplied to the grid. */
-export function filterTpoGridRows<Row>(
-  rows: readonly Row[],
-  columns: readonly TpoGridColumn<Row>[],
-  filters: Readonly<Record<string,string>>,
-) {
-  const byKey=new Map(columns.filter(col=>!col.exportOnly).map(col=>[col.key,col] as const));
-  const active=Object.entries(filters).flatMap(([key,value])=>{
-    const column=byKey.get(key);
-    const match=value.trim().toLocaleLowerCase();
-    return column&&match? [{column,match}]:[];
-  });
-  return rows.filter(row=>active.every(({column,match})=>
-    String(column.read(row)??"").toLocaleLowerCase().includes(match)));
-}
