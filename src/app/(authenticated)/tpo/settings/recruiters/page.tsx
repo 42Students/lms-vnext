@@ -32,6 +32,7 @@ import {
 import {
   listTpoRecruiterAccess,
 } from "@/modules/placements/tpo-recruiter-access-service";
+import {tpoRecruiterGrantExportHref} from "@/modules/placements/tpo-recruiter-grant-export-model";
 
 type SearchParams = {
   status?: string | string[];
@@ -212,6 +213,10 @@ export default async function TpoRecruiterAccessPage({
           <h2 className="text-lg font-semibold text-foreground">
             Grant records
           </h2>
+          <a href={tpoRecruiterGrantExportHref(query)}
+            className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Export filtered grants CSV
+          </a>
 
           <p className="text-sm text-muted-foreground">
             {total === 0
