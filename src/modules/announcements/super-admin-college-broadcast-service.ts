@@ -10,6 +10,24 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {AnnouncementError} from "./errors";
 import {superAdminCollegeBroadcastSchema,requestedBroadcastCollegeIds} from "./super-admin-college-broadcast-model";
+/** Scoped active-college directory independent of the single-college announcement composer. */
+export async function listSuperAdminBroadcastColleges(context:RequestContext){
+ if(!isSuperAdmin(context))throw new AuthorizationError("college.read");
+ requirePermission(context,"admin-scope.select");
+ const conditions=[
+  eq(colleges.status,"ACTIVE"),
+  eq(organizations.status,"ACTIVE"),
+  ...(context.adminScope?.collegeId?[eq(colleges.id,context.adminScope.collegeId)]:[]),
+  ...(context.adminScope?.organizationId?[eq(colleges.organizationId,context.adminScope.organizationId)]:[]),
+ ];
+ const rows=await getDb().select({
+  id:colleges.id,label:colleges.name,organizationId:colleges.organizationId,
+ }).from(colleges).innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+  .where(and(...conditions)).orderBy(colleges.name,colleges.id).limit(501);
+ if(rows.length>500)throw new AnnouncementError("TARGET_NOT_FOUND");
+ for(const row of rows)requirePermission(context,"college.read",{collegeId:row.id,organizationId:row.organizationId});
+ return rows.map(row=>({id:row.id,label:row.label}));
+}
 /** Creates one persisted DB10 recipient-scoped notice per college; no external delivery. */
 export async function publishSuperAdminCollegeBroadcast(context:RequestContext,raw:unknown){
  if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");

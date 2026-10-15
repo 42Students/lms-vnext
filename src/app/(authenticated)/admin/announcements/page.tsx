@@ -7,6 +7,7 @@ import {
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import {SuperAdminCollegeBroadcastForm} from "@/components/announcements/super-admin-college-broadcast-form";
+import {listSuperAdminBroadcastColleges} from "@/modules/announcements/super-admin-college-broadcast-service";
 import {
   listAnnouncementsForAdmin,
   listAnnouncementTargetOptions,
@@ -38,7 +39,7 @@ export default async function AnnouncementsPage({
   }
 
   const includeDeleted = params.deleted === "1";
-  const [page, targetGroups] = await Promise.all([
+  const [page, targetGroups, broadcastColleges] = await Promise.all([
     listAnnouncementsForAdmin(context, {
       includeDeleted,
       beforeCreatedAt: params.beforeCreatedAt,
@@ -46,6 +47,7 @@ export default async function AnnouncementsPage({
       limit: 50,
     }),
     listAnnouncementTargetOptions(context),
+    listSuperAdminBroadcastColleges(context),
   ]);
 
   const targets: AnnouncementTarget[] = targetGroups
@@ -105,7 +107,7 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <SuperAdminCollegeBroadcastForm colleges={targets.filter(target=>target.type==="COLLEGE").map(target=>({id:target.id,label:target.label}))}/>
+      <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent/>
       {next ? (
         <div className="flex justify-center">
