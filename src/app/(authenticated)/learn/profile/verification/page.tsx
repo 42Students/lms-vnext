@@ -25,6 +25,16 @@ export default async function LearnerVerificationPage() {
       return <section key={item.key} className="min-w-0 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">{item.heading}</h2>
         <p className="mt-2 text-sm font-semibold text-body">{label[row.status]}</p>
+        <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
+          <div className="flex flex-wrap gap-x-2">
+            <dt>Last submitted:</dt>
+            <dd>{row.submittedAt ? <time dateTime={row.submittedAt}>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.submittedAt))}</time> : "Not yet submitted"}</dd>
+          </div>
+          {row.decidedAt ? <div className="flex flex-wrap gap-x-2">
+            <dt>Last reviewed:</dt>
+            <dd><time dateTime={row.decidedAt}>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.decidedAt))}</time></dd>
+          </div> : null}
+        </dl>
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
