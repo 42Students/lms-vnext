@@ -428,6 +428,13 @@
       "when": 1792045960481,
       "tag": "0060_placement_offer_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1792048777606,
+      "tag": "0061_faculty_lesson_visibility",
+      "breakpoints": true
     }
   ]
 }
