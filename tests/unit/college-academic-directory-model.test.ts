@@ -101,4 +101,57 @@ describe("College Admin semester and batch read models", () => {
       currentTermNumber: 3, currentAcademicYearStart: 2026,
     })).toBe("Term 3 · 2026–2027");
   });
+  it("distinguishes semester credits that are configured from missing evidence", () => {
+    expect(collegeSemesterDirectorySchema.safeParse({creditState:"GUESSED"}).success).toBe(false);
+    expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({creditState:"UNSET"}))).toContain("creditState=UNSET");
+  });
+
+  it("semester parent program lifecycle has a bounded College Admin URL", () => {
+    expect(collegeSemesterDirectorySchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+    expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
+  });
+
+  it("mappingState: validates semester/batch query and pagination",()=>{
+    expect(collegeSemesterDirectorySchema.safeParse({mappingState:"INVALID"}).success).toBe(false);
+    expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({mappingState:"MAPPED"}))).toContain("mappingState=MAPPED");
+  });
+
+  it("expectedEndState: validates semester/batch query and pagination",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({expectedEndState:"INVALID"}).success).toBe(false);
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({expectedEndState:"UNSET"}))).toContain("expectedEndState=UNSET");
+  });
+
+  it("academicYearState: validates semester/batch query and pagination",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({academicYearState:"INVALID"}).success).toBe(false);
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({academicYearState:"RECORDED"}))).toContain("academicYearState=RECORDED");
+  });
+
+  it("filters batches using the actual parent program lifecycle",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({programStatus:"UNKNOWN"}).success).toBe(false);
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({programStatus:"ARCHIVED"}))).toContain("programStatus=ARCHIVED");
+  });
+
+  it("startOnOrAfter validates actual ISO dates and survives batch links",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({startOnOrAfter:"2026-02-30"}).success).toBe(false);
+    expect(collegeBatchDirectorySchema.safeParse({startOnOrAfter:"2026-07-01"}).success).toBe(true);
+    expect(academicDirectorySearchParams({startOnOrAfter:""})).toEqual({});
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({startOnOrAfter:"2026-07-01"}))).toContain("startOnOrAfter=2026-07-01");
+  });
+
+  it("startOnOrBefore validates actual ISO dates and survives batch links",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({startOnOrBefore:"2026-02-30"}).success).toBe(false);
+    expect(academicDirectorySearchParams({startOnOrBefore:""})).toEqual({});
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({startOnOrBefore:"2026-07-01"}))).toContain("startOnOrBefore=2026-07-01");
+  });
+
+  it("activeClassState supports persisted-only choices and safe pagination URLs",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({activeClassState:"GUESSED"}).success).toBe(false);
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({activeClassState:"HAS_ACTIVE"}))).toContain("activeClassState=HAS_ACTIVE");
+  });
+
+  it("activeLearnerState supports persisted-only choices and safe pagination URLs",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({activeLearnerState:"GUESSED"}).success).toBe(false);
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({activeLearnerState:"HAS_ACTIVE"}))).toContain("activeLearnerState=HAS_ACTIVE");
+  });
+
 });

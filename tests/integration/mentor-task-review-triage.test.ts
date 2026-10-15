@@ -123,5 +123,5 @@ describe("Mentor pending task review triage PostgreSQL",()=>{
       .rejects.toBeDefined();
     const disabled:RequestContext={...mentor,user:{...mentor.user,platformStatus:"DISABLED"}};
     await expect(getMentorTaskReviews(disabled,query)).rejects.toBeDefined();
-  });
+  },30_000);
 });

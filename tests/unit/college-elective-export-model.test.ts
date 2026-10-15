@@ -23,4 +23,24 @@ describe("college electives CSV",()=>{
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(csv).toContain("Minimum picks");
  });
+ it("periodState is applied to electives CSV",()=>{
+  expect(electiveCsvSchema.safeParse({periodState:"INVALID"}).success).toBe(false);
+  expect(electiveCsvHref({q:"",status:"ACTIVE",periodState:"LINKED"})).toContain("periodState=LINKED");
+ });
+
+ it("elective CSV filters actual parent program lifecycle",()=>{
+    expect(electiveCsvSchema.safeParse({programStatus:"INACTIVE"}).success).toBe(false);
+    expect(electiveCsvHref({q:"",status:"ACTIVE",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
+ it("choiceMode is retained in scoped elective CSV filters",()=>{
+    expect(electiveCsvSchema.safeParse({choiceMode:"ASSUMED"}).success).toBe(false);
+    expect(electiveCsvHref({q:"",status:"ACTIVE",choiceMode:"FIXED"})).toContain("choiceMode=FIXED");
+ });
+
+ it("offeringState is retained in scoped elective CSV filters",()=>{
+    expect(electiveCsvSchema.safeParse({offeringState:"ASSUMED"}).success).toBe(false);
+    expect(electiveCsvHref({q:"",status:"ACTIVE",offeringState:"NONE_ACTIVE"})).toContain("offeringState=NONE_ACTIVE");
+ });
+
 });
