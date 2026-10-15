@@ -887,3 +887,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 company identity drill-down (PARTIAL):** Each company relationship card links to an exact global employer-ID filter while retaining authorization against the caller's selected college/organization. Archived relationships can be inspected without making them editable; strict UUID input, pagination retention and unit/PG tests authored, unrun. Full legacy CRM detail and browser validation remain open.
+
+
+**2026-10-15 chat-6 Companies page export (PARTIAL):** Added Super Admin-only server-validated CSV export of exactly the currently scoped, filtered 50-row directory page, with formula neutralization and capped row/total metadata. No CRM contacts/private fields; GET uses existing permissioned service, rejects duplicate query keys and emits no-store. Pure test authored, not executed; full export and browser privacy gates remain open.
