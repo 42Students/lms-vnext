@@ -49,7 +49,7 @@ export default async function LearnerVerificationPage() {
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
         <p className="mt-3 text-xs text-muted-foreground">Update profile details and privately uploaded evidence before submitting. The server checks the real stored documents; a pending upload is not sufficient.</p>
-        {row.canResubmit ? <LearnerVerificationSubmit section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
+        {row.canResubmit ? <LearnerVerificationSubmit key={item.section+":"+row.version} section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
         <Link href={item.edit} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
       </section>;
     })}</div>
