@@ -790,6 +790,20 @@ export function placementApplyEligibilityDenial(status: PlacementEligibilityResu
   return null;
 }
 
+/**
+ * P-S2-03: legacy recognizes lateral entry from the explicit flag OR
+ * diploma marks with no 12th marks; never treat a blank diploma as lateral.
+ */
+export function derivePlacementLateralEntry(evidence: {
+  isLateralEntry: boolean | null;
+  diplomaPctBasisPoints: number | null;
+  twelfthPctBasisPoints: number | null;
+} | null | undefined): boolean {
+  return evidence?.isLateralEntry === true ||
+    (evidence?.diplomaPctBasisPoints != null &&
+      evidence?.twelfthPctBasisPoints == null);
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
@@ -1013,8 +1027,7 @@ export async function evaluatePlacementEligibility(
     );
   }
 
-  const lateral =
-    evidence?.isLateralEntry === true;
+  const lateral = derivePlacementLateralEntry(evidence ?? null);
   const secondaryMinimum = lateral
     ? policy.minDiplomaPctBasisPoints
     : policy.minTwelfthPctBasisPoints;
