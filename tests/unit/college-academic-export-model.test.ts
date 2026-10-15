@@ -24,5 +24,55 @@ describe("college semester CSV",()=>{
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(academicExportHref("BATCHES",{q:"",status:"ACTIVE",yearStart:2026})).toContain("yearStart=2026");
  });
+ it("preserves the configured-credit filter in the scoped CSV URL",()=>{
+  expect(semesterCsvSchema.safeParse({creditState:"MISSING_COURSE"}).success).toBe(false);
+  expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",creditState:"UNSET"})).toContain("creditState=UNSET");
+ });
+
+ it("programStatus is preserved in semesters CSV",()=>{
+  expect(semesterCsvSchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
+ it("mappingState: export uses the same validated filter",()=>{
+  expect(semesterCsvSchema.safeParse({mappingState:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("SEMESTERS",{q:"",status:"ALL",mappingState:"MAPPED"})).toContain("mappingState=MAPPED");
+ });
+
+ it("expectedEndState: export uses the same validated filter",()=>{
+  expect(batchCsvSchema.safeParse({expectedEndState:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",expectedEndState:"UNSET"})).toContain("expectedEndState=UNSET");
+ });
+
+ it("academicYearState: export uses the same validated filter",()=>{
+  expect(batchCsvSchema.safeParse({academicYearState:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",academicYearState:"RECORDED"})).toContain("academicYearState=RECORDED");
+ });
+
+ it("retains batch parent program lifecycle for CSV",()=>{
+  expect(batchCsvSchema.safeParse({programStatus:"CLOSED"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
+ it("startOnOrAfter is included in batch CSV and rejects malformed dates",()=>{
+   expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-13-01"}).success).toBe(false);
+   expect(academicExportHref("BATCHES",{q:"",status:"ALL",startOnOrAfter:"2026-07-01"})).toContain("startOnOrAfter=2026-07-01");
+ });
+
+ it("startOnOrBefore is included in CSV and rejects malformed dates",()=>{
+  expect(batchCsvSchema.safeParse({startOnOrBefore:"2026-13-01"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",startOnOrBefore:"2026-07-01"})).toContain("startOnOrBefore=2026-07-01");
+ });
+
+ it("activeClassState stays constrained in batch CSV",()=>{
+   expect(batchCsvSchema.safeParse({activeClassState:"INFERRED"}).success).toBe(false);
+   expect(academicExportHref("BATCHES",{q:"",status:"ALL",activeClassState:"NONE_ACTIVE"})).toContain("activeClassState=NONE_ACTIVE");
+ });
+
+ it("activeLearnerState stays constrained in batch CSV",()=>{
+   expect(batchCsvSchema.safeParse({activeLearnerState:"INFERRED"}).success).toBe(false);
+   expect(academicExportHref("BATCHES",{q:"",status:"ALL",activeLearnerState:"NONE_ACTIVE"})).toContain("activeLearnerState=NONE_ACTIVE");
+ });
+
 });
 
