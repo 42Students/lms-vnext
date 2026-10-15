@@ -6,8 +6,8 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {broadcastConsentSummary} from "@/modules/announcements/super-admin-college-broadcast-model";
+import {broadcastLocalTiming} from "@/modules/announcements/super-admin-broadcast-timing-model";
 type CollegeTarget={id:string;label:string};
-const asUtc=(value:string)=>value.trim()?new Date(value).toISOString():null;
 export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly CollegeTarget[]}){
  const router=useRouter();
  const [mode,setMode]=useState<"ALL_COLLEGES"|"SELECTED_COLLEGES">("SELECTED_COLLEGES");
@@ -21,7 +21,8 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  const [pending,setPending]=useState(false);
  const [feedback,setFeedback]=useState("");
  const count=mode==="ALL_COLLEGES"?colleges.length:selected.length;
- const valid=count>0&&Boolean(title.trim())&&Boolean(message.trim())&&!pending;
+ const timing=broadcastLocalTiming(scheduledAt,expiresAt);
+ const valid=count>0&&Boolean(title.trim())&&Boolean(message.trim())&&timing.valid&&!pending;
  async function submit(){
   if(!valid)return;
   setPending(true);setFeedback("");
@@ -29,7 +30,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    const response=await fetch("/api/admin/announcements/broadcast",{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({audienceMode:mode,collegeIds:mode==="ALL_COLLEGES"?[]:selected,
-     title,message,scheduledAt:asUtc(scheduledAt),expiresAt:asUtc(expiresAt),
+     title,message,scheduledAt:timing.scheduledAt,expiresAt:timing.expiresAt,
      isPinned:pinned,publishConsent:true}),
    });
    const data:unknown=await response.json().catch(()=>null);
@@ -68,6 +69,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   <label className="flex items-center gap-2 text-sm font-semibold text-body">
    <input type="checkbox" checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin for recipients
   </label>
+  {!timing.valid?<p role="alert" className="text-sm text-danger-text">Enter valid local schedule and expiry values; expiry must follow the schedule.</p>:null}
   <p className="text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,Boolean(scheduledAt))}</p>
   <Button disabled={!valid} onClick={()=>setReview(true)}>Review college publication</Button>
   {feedback?<p role="status" className="text-sm text-body">{feedback}</p>:null}
