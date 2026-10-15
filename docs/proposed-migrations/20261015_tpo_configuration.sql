@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS placement_tpo_after_college (
  learner_membership_id uuid PRIMARY KEY REFERENCES college_memberships(id),
  college_id uuid NOT NULL REFERENCES colleges(id),
  outcome varchar(40) NOT NULL CHECK (outcome IN
- ('PLACED','HIGHER_STUDIES','ENTREPRENEURSHIP','GOVERNMENT_EXAMS','OTHER')),
+ ('HIGHER_STUDIES','ENTREPRENEURSHIP','COMPETITIVE_EXAMS','LOOKING_FOR_JOB','NOT_DECIDED')),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
 -- Registration review must add cross-table tenant-membership invariant and RLS / service scope checks.
