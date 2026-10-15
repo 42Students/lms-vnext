@@ -108,4 +108,24 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("periodEndsOnOrBefore=2026-12-31");
    expect(electiveCsvSchema.safeParse({periodEndsOnOrBefore:"2026-13-39"}).success).toBe(false);
  });
+ it("rejects elective semester interval during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({semesterFrom:5,semesterThrough:4}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({semesterFrom:4,semesterThrough:4}).success).toBe(true);
+ });
+ it("rejects elective required versus allowed picks during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({minimumRequiredPicks:4,maximumAllowedPicks:3}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({minimumRequiredPicks:2,maximumAllowedPicks:3}).success).toBe(true);
+ });
+ it("rejects elective linked period date interval during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({periodStartsOnOrAfter:"2026-12-01",periodEndsOnOrBefore:"2026-11-30"}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({periodStartsOnOrAfter:"2026-07-01",periodEndsOnOrBefore:"2026-12-31"}).success).toBe(true);
+ });
+ it("rejects exact elective semester inside selected interval during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({semesterNumber:3,semesterFrom:4,semesterThrough:6}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({semesterNumber:4,semesterFrom:4,semesterThrough:6}).success).toBe(true);
+ });
+ it("rejects unlinked elective period without linked-only selectors during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({periodState:"UNLINKED",periodLifecycle:"ACTIVE"}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({periodState:"LINKED",periodLifecycle:"ACTIVE"}).success).toBe(true);
+ });
 });

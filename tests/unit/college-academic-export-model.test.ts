@@ -74,5 +74,25 @@ describe("college semester CSV",()=>{
    expect(academicExportHref("BATCHES",{q:"",status:"ALL",activeLearnerState:"NONE_ACTIVE"})).toContain("activeLearnerState=NONE_ACTIVE");
  });
 
+ it("rejects batch start-date order in matching batch CSV",()=>{
+  expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-09-10",startOnOrBefore:"2026-09-09"}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-09-09",startOnOrBefore:"2026-09-10"}).success).toBe(true);
+ });
+ it("rejects missing progression versus recorded term in matching batch CSV",()=>{
+  expect(batchCsvSchema.safeParse({progression:"MISSING",currentTerm:2}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
+ });
+ it("rejects unrecorded academic year versus year filter in matching batch CSV",()=>{
+  expect(batchCsvSchema.safeParse({academicYearState:"UNRECORDED",yearStart:2026}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({academicYearState:"RECORDED",yearStart:2026}).success).toBe(true);
+ });
+ it("rejects missing progression versus academic year filter in matching batch CSV",()=>{
+  expect(batchCsvSchema.safeParse({progression:"MISSING",yearStart:2026}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({progression:"RECORDED",yearStart:2026}).success).toBe(true);
+ });
+ it("enforces the same missing-credit constraints for semester CSV",()=>{
+  expect(semesterCsvSchema.safeParse({creditState:"UNSET",minimumCredits:10}).success).toBe(false);
+  expect(semesterCsvSchema.safeParse({creditState:"UNSET",maximumCredits:10}).success).toBe(false);
+  expect(semesterCsvSchema.safeParse({creditState:"UNSET"}).success).toBe(true);
+ });
 });
-

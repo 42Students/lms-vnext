@@ -1,11 +1,16 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {requirePermission} from "@/modules/permissions/policy";
+import {can} from "@/modules/permissions/policy";
+import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {SuperAdminTemplateCreateForm} from "@/components/projects/super-admin-template-create-form";
 export default async function NewSuperAdminTemplatePage(){
  const ctx=await getCurrentRequestContext();
- requirePermission(ctx,"project-template.manage");
+ if (!can(ctx,"project-template.manage")) return <div className="mx-auto w-full min-w-0 max-w-3xl space-y-5 px-3 py-5 sm:px-6">
+  <PageHeader eyebrow="Super Admin · Projects" title="New project template"/>
+  <ErrorState title="Access denied" description="Global project templates can only be created outside a selected college or organization scope."
+   action={<Link href="/admin/projects/templates" className="font-semibold text-primary-text">Back to template catalogue</Link>}/>
+ </div>;
  return <div className="min-w-0 space-y-5">
   <Link href="/admin/projects/templates" className="text-sm font-semibold text-primary-text">← Template catalogue</Link>
   <PageHeader eyebrow="Super Admin · Projects" title="New project template"
