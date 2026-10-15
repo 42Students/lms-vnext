@@ -111,6 +111,8 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
     className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Checking…":"Preview "+safeSelected.length+" selected"}
   </button>
+  {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?
+    <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
     busy={busy||outcomes.length>0} onConfirm={()=>void confirm()}/>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
