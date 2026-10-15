@@ -60,6 +60,7 @@ export type TpoStudentSource = {
   ambiguousSection: boolean;
   afterCollegeOutcome?: AfterCollegeOutcome | null;
   afterCollegeUpdatedAt?: string | null;
+  codingGithubUrl?: string | null;
 };
 
 export type TpoStudentReadinessSignal =
@@ -121,6 +122,7 @@ export type TpoStudentBranchSummary = TpoStudentSummary & {
 export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   afterCollege?: AfterCollegeOutcome;
+  codingPlatform?: "GITHUB";
   branchId?: string;
   search?: string;
   page: number;
@@ -293,6 +295,7 @@ export function deriveTpoStudent(
     journeyState,
     afterCollegeOutcome: source.afterCollegeOutcome ?? null,
     afterCollegeUpdatedAt: source.afterCollegeUpdatedAt ?? null,
+    codingGithubUrl: source.codingGithubUrl ?? null,
     bestSoFar,
     maximumAppliedRoundSequence,
     ambiguousSection: source.ambiguousSection,
@@ -412,6 +415,7 @@ export function filterTpoStudentRoster(
     )
     .filter(row=>!filter.afterCollege ||
       (row.afterCollegeOutcome??"NOT_DECIDED")===filter.afterCollege)
+    .filter(row=>!filter.codingPlatform || Boolean(row.codingGithubUrl))
     .filter((row) => {
       if (!search) return true;
 
