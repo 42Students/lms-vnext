@@ -1625,3 +1625,17 @@ After merging the current `main` into `chatgpt/chat-4`, this round pushed 12 ind
 - `tests/unit/faculty-profile-round10-1.test.ts` through `round10-12.test.ts` were authored alongside the changes. All components remain linked to existing authenticated and same-origin-guarded service endpoints; no new mutation route, tenant permission or storage claim was introduced.
 
 **Evidence and closure:** GitHub pushes are verified, but no executed TypeScript/ESLint/Vitest, disposable PostgreSQL, authenticated desktop/mobile, browser unload/SPA, or legacy-oracle acceptance was available for this commit. The Faculty profile document remains conditional on runtime column readiness; successful registered migration replay and privacy/receipt disposition must be independently verified before release acceptance. The shared Faculty matrix currently labels Self Profile DONE despite missing full legacy profile evidence; **this round makes no new DONE claim**. DB and release tracker statuses remain unchanged.
+
+## 2026-10-15 Faculty Self Profile filtered-collection safety — PARTIAL (chat-4 round 11)
+
+**Before → after:** Repeatable Faculty profile records, Skills, and editable Metadata had search controls that disappeared at five or fewer entries while leaving an invisible active filter behind. Adding or duplicating a blank record could also create an editor hidden by the old search query. Reorder buttons operated on absolute positions even when some records were filtered away, making the result difficult to anticipate.
+
+This branch adds **11 separately committed and pushed Faculty editor changes** using existing authenticated Self Profile page components and pure model helpers. All write calls still send their **complete original section draft** to `PATCH /api/people/faculty-self-document`; no server authorization, validation, private receipts, storage migrations, or other accounts were modified.
+
+- Search is disabled automatically once a repeatable section, Skills, or Metadata has five or fewer records, preventing invisible stale-query results.
+- Moving repeatable records or Skills is disabled when a search hides any entries; original record identities and order are preserved until the full list is visible.
+- Adding/duplicating a repeatable section entry, adding a Skill, and adding a Metadata field clear the active search so the newly created draft input is immediately visible.
+- A filtered result count with a named clear-search action is available in repeatable sections, Skills, and Metadata, including zero matches.
+- Eleven focused, **authored but unexecuted** tests live in `tests/unit/faculty-profile-round11-1.test.ts` through `round11-11.test.ts`, exercising each pure search/reorder recovery helper.
+
+**Parity status: PARTIAL.** These user-facing editor controls improve the Faculty Self Profile backlog but do not certify the whole legacy feature. A real registered private-profile database migration/replay, role/tenant denial and optimistic concurrency tests on disposable PostgreSQL, authenticated desktop/mobile browser checks (including search and a saved section), SPA navigation loss prevention, and approved private-document/contact privacy workflows still need independent proof. The shared matrix already marks Faculty Self Profile DONE despite describing missing acceptance; this branch does not change that matrix or the sole database tracker. Runtime source pushes and test authorship must not be counted as acceptance evidence.
