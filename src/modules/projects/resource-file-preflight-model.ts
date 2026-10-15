@@ -12,7 +12,7 @@ export function resourceFilePreflight(candidate:FileCandidate,limits:ResourceFil
  const policy=resourceFileLimitsSchema.parse(limits);
  if(!Number.isSafeInteger(currentCount)||currentCount<0)return {allowed:false,message:"File count is unavailable. Refresh the resource."};
  if(currentCount>=policy.maxPerResource)return {allowed:false,message:"This resource reached its file limit."};
- if(!candidate.name.trim()||candidate.name.length>255||/[\u0000-\u001f\/\\]/u.test(candidate.name))
+ if(!candidate.name.trim()||candidate.name.length>255||/[\u0000-\u001f\u007f\/\\\u202a-\u202e\u2066-\u2069]/u.test(candidate.name))
   return {allowed:false,message:"Choose a file with a valid name."};
  if(!Number.isSafeInteger(candidate.size)||candidate.size<=0)
   return {allowed:false,message:"Choose a non-empty file."};
