@@ -1268,3 +1268,8 @@ The existing scope-checked getProjectWorkspaceView service now derives Sprint ta
 ## 2026-10-15 chat-11 — real PostgreSQL Mentor workspace evidence fixture (PARTIAL)
 
 The existing seeded disposable-PostgreSQL task-create integration suite now asserts tenant-scoped Team membership counts, Sprint task totals before/after a persisted Mentor task creation, absence of fabricated delivery history and a foreign-college denial through the actual shared workspace service. This test is source-authored but has not been executed in this connector environment; all browser and CI acceptance gates remain open.
+
+
+## 2026-10-15 chat-11 — responsive-portfolio-activity-filters (PARTIAL)
+
+Replaced the previously overflowing wrapping form with a single-column narrow viewport grid and shrinkable labels/select controls; long project names wrap inside cards. Known orchestrator 375px/desktop overflow defect targeted, but browser measurement still required. Pure tests authored; independent PostgreSQL, unit, lint, typecheck, browser and legacy-oracle acceptance remain open. Mentor activity remains PARTIAL.
