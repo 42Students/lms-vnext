@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Stale single-decision recovery PARTIAL (chat-9):** After a row-version conflict the drawer now invalidates the stale snapshot and disables further decisions until the reviewer explicitly reloads the fresh private detail. No stale replay or blind success is presented. Source contracts authored; actual DB concurrency/browser acceptance outstanding.
+
 **Waiting-only verification attention cues PARTIAL (chat-9):** Updated-details and overdue-waiting triage now reject decided tabs at the page, query service and CSV boundaries. Navigating to a decided tab clears only incompatible attention selections while preserving supported filters. Pure parser contract tests authored; browser acceptance pending.
 
 **Identity/Education evidence-filter guard PARTIAL (chat-9):** An Identity-only queue cannot silently apply marksheet-present/missing or missing-marksheet triage. Page, service and CSV reject impossible combinations, and switching the visible kind to Identity clears the incompatible fields. Model tests authored; PG/browser acceptance pending.
