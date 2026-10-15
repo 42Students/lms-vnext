@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
+import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch } from "@/modules/courses/faculty-assessment-editor-model";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -108,10 +109,7 @@ export function FacultyAssessmentEditor({
           description:
             description.trim() || null,
           dueAt: authoringDueInstant(dueAt),
-          ...(assessment.kind ===
-          "ASSIGNMENT"
-            ? { maxPoints: number }
-            : { maxAttempts: number }),
+          ...facultyAssessmentLimitPatch(assessment.kind,assessment.status,number),
         }),
       });
       if (!response.ok) {
@@ -291,11 +289,14 @@ export function FacultyAssessmentEditor({
                   : 20
               }
               value={points}
+              disabled={!facultyAssessmentLimitEditable(assessment.kind,assessment.status)}
               onChange={(event) =>
                 setPoints(event.target.value)
               }
               required
             />
+            {!facultyAssessmentLimitEditable(assessment.kind,assessment.status) ?
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">The published Quiz attempt limit is locked; you can still edit its title, description and due date.</span> : null}
           </label>
 
           {error ? (
