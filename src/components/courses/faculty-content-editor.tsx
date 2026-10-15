@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyContentPatch, facultyContentDraftChanged, facultyContentMayChangeOpen, facultyContentSaveReceiptMatches, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
+import { facultyContentPatch, facultyContentDraftChanged, facultyContentMayChangeOpen, facultyContentSaveReceiptMatches, facultyContentMaySave, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
 
 type Item = {
   id: string;
@@ -24,6 +24,7 @@ type Item = {
 
 export function FacultyContentEditor({ item }: { item: Item }) {
   const router = useRouter();
+  const mutationLock=useRef(false);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(item.title);
   const [notes, setNotes] = useState(item.notes ?? "");
@@ -55,7 +56,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (saving) return;
+    if (!facultyContentMaySave(saving,mutationLock.current,dirty)) return;
     setError(null);
     let body: ReturnType<typeof facultyContentPatch>;
     try {
@@ -67,6 +68,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
       setError(caught instanceof Error ? caught.message : "Invalid content.");
       return;
     }
+    mutationLock.current=true;
     setSaving(true);
     try {
       const response = await fetch("/api/courses/lesson-contents/" + encodeURIComponent(item.id), {
@@ -88,6 +90,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
     } catch {
       setError("Could not save this content. Retry after checking your connection.");
     } finally {
+      mutationLock.current=false;
       setSaving(false);
     }
   }

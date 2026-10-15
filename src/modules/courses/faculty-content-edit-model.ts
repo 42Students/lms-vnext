@@ -82,3 +82,8 @@ export function facultyContentSaveReceiptMatches(id:string, expected:ReturnType<
  if("endsAt" in expected && data.endsAt!==expected.endsAt) return false;
  return true;
 }
+
+/** A React render may lag behind the request: the synchronous ref is authoritative. */
+export function facultyContentMaySave(pending:boolean,locked:boolean,dirty:boolean){
+ return !pending && !locked && dirty;
+}
