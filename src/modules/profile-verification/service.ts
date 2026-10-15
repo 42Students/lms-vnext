@@ -169,8 +169,8 @@ export async function reviewProfileVerification(
 }
 
 /**
- * Not routed until the profile_verification_events action check is migrated.
- * Database row lock + optimistic version guard preserve last approved data.
+ * Migration 0081 admits WITHDRAWN; the locked writer and optimistic version
+ * guard preserve the last verified snapshot and append one audit event.
  */
 export async function withdrawOwnPendingVerification(
   context: RequestContext,
