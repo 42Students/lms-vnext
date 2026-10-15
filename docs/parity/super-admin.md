@@ -1186,3 +1186,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Recruiter Accounts literal search — PARTIAL:** Scoped recruiter directory text search escapes `%`, `_` and backslash before parameterized ILIKE, preventing user-provided wildcard expansion to unrelated recruiters while keeping existing DB visibility predicates and count/page consistent. Pure escaping tests authored; isolated PG and browser acceptance pending.
+
+
+**2026-10-15 chat-6 College action parent-scope fence — PARTIAL:** If a selected college and organization appear inconsistent, the college-row edit/archive affordances now fail closed on organization mismatch in addition to centralized `college.manage`. The persisted service still rechecks the true parent and authorization; pure negative tests authored, browser pending.
