@@ -6,6 +6,8 @@ describe("college offering mapping export",()=>{
   expect(offeringMappingCsvSchema.safeParse({collegeId:"foreign"}).success).toBe(false);
   expect(offeringMappingCsvSchema.safeParse({page:99}).success).toBe(false);
   expect(offeringMappingCsvSchema.safeParse({type:"WRONG"}).success).toBe(false);
+  expect(offeringMappingCsvSchema.safeParse({courseCode:"x".repeat(65)}).success).toBe(false);
+  expect(offeringMappingCsvHref({q:"",type:"ALL",status:"ALL",courseCode:"CS-1"})).toContain("courseCode=CS-1");
   expect(exportParams(new URLSearchParams("q=x&q=y"))).toBeNull();
   const url=new URL(offeringMappingCsvHref({q:"Hi & Bye",type:"CORE",status:"ACTIVE"}),"https://example.test");
   expect(url.searchParams.get("q")).toBe("Hi & Bye");

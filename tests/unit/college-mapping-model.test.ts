@@ -21,6 +21,7 @@ describe("College Admin semester offering and faculty assignment models", () => 
       { periodId: "not-a-uuid" },
       { programId: "not-a-uuid" },
       { q: "x".repeat(101) },
+      { courseCode:"x".repeat(65) },
     ]) {
       expect(semesterCourseQuerySchema.safeParse(invalid).success).toBe(false);
     }
@@ -58,6 +59,7 @@ describe("College Admin semester offering and faculty assignment models", () => 
     }), "https://example.test");
     expect(url.pathname).toBe("/college/semester-courses");
     expect(url.searchParams.get("q")).toBe("a & b");
+    expect(collegeMappingHref("SEMESTER_COURSES",semesterCourseQuerySchema.parse({courseCode:"ABC&1"}))).toContain("courseCode=ABC%261");
     expect(url.searchParams.get("type")).toBe("ELECTIVE");
     expect(url.searchParams.get("status")).toBe("ARCHIVED");
     expect(url.searchParams.has("collegeId")).toBe(false);
