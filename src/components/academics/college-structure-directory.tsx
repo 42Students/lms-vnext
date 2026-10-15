@@ -246,6 +246,15 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               </select>
             </label>
           ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Current section Faculty assignments
+              <select name="facultyCoverage" defaultValue={data.query.facultyCoverage} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All classes</option>
+                <option value="HAS_FACULTY">Has active Faculty assignments</option>
+                <option value="NO_FACULTY">No active Faculty assignments</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

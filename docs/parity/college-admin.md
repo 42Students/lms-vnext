@@ -367,6 +367,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Current section Faculty assignments PARTIAL (chat-3, 2026-10-15):** New persisted Section relationship presence/absence triage queries sectionFacultyAssignments under College Admin's own-program/college joins. No missing event, assignment or course record is invented. Filter carries into paging/capped CSV; strict unit and isolated PostgreSQL own/foreign fixtures authored. Runtime/browser verification remains open.
+
 **Saved section schedule PARTIAL (chat-3, 2026-10-15):** New persisted Section relationship presence/absence triage queries sectionScheduleEvents under College Admin's own-program/college joins. No missing event, assignment or course record is invented. Filter carries into paging/capped CSV; strict unit and isolated PostgreSQL own/foreign fixtures authored. Runtime/browser verification remains open.
 
 **Exact cohort name PARTIAL (chat-3, 2026-10-15):** College-scoped exact persisted exact cohort name matching now applies before pagination and to the matching capped CSV. Bounded URL, unit and disposable-PostgreSQL tenant/denial fixtures authored; browser/runtime verification remains open.
