@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
+import { tpoBatchDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
 import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref } from "@/modules/placements/tpo-batch-directory-pagination-model";
 import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/placements/tpo-batch-deadline-filter-model";
 import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartments } from "@/modules/placements/tpo-batch-department-model";
@@ -59,6 +60,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {batches.length===0?<p role="status" className="rounded border border-border p-4">No matching batches.</p>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold">{b.name}</h2><p className="text-sm">{b.program} · {b.department}</p>
     <p className="text-xs text-muted-foreground">{data.ready?batchDirectoryState(b):"Lifecycle pending"}</p>
+    <p className="text-xs text-muted-foreground">{tpoBatchDeadlineLabel(b.deadline,data.ready)}</p>
     <p className="text-sm text-muted-foreground">Eligibility split and journey counts: open Students to review verified records.</p>
     <Link href={"/tpo/batches/"+b.id} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">Open batch</Link>
    </li>)}</ul>}

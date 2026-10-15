@@ -2011,3 +2011,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 2026-10-15 / Deadline sort — PARTIAL:** Batch directory sorting now orders recorded deadline timestamps asc/desc with unknown deadlines last and deterministic secondary name/ID order. Missing dates are not replaced with invented ones; browser/legacy acceptance remains open.
 
 **Chat-2 2026-10-15 / Batch directory paging — PARTIAL:** Validated 12/24/48-item page sizes, nonnegative bounded page indexes, preserved URL filter navigation and out-of-range recovery over the already-authorized cohort snapshot. It remains a bounded UI slice, not database-level pagination; larger-cohort performance and browser acceptance remain open.
+
+**Chat-2 2026-10-15 / Batch deadline presentation — PARTIAL:** Each cohort card now displays a real registered lifecycle deadline formatted in IST, an explicit no-deadline status, or unavailable when lifecycle storage cannot be read. No reminder, eligibility or consent is inferred.
