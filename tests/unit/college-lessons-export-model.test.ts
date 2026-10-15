@@ -29,4 +29,29 @@ describe("college lessons CSV",()=>{
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(csv).not.toContain("completion rate");
  });
+ it("lessons CSV carries validated programStatus",()=>{
+   expect(lessonsCsvSchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
+ });
+
+ it("lessons CSV carries validated cohortStatus",()=>{
+   expect(lessonsCsvSchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({cohortStatus:"PLANNED"}))).toContain("cohortStatus=PLANNED");
+ });
+
+ it("lessons CSV keeps periodStatus validated",()=>{
+   expect(lessonsCsvSchema.safeParse({periodStatus:"INVALID"}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({periodStatus:"PLANNED"}))).toContain("periodStatus=PLANNED");
+ });
+
+ it("lessons CSV keeps courseStatus validated",()=>{
+   expect(lessonsCsvSchema.safeParse({courseStatus:"INVALID"}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
+ });
+
+ it("lessons CSV includes departmentCode but rejects oversized input",()=>{
+   expect(lessonsCsvSchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+   expect(lessonsCsvHref(lessonsCsvSchema.parse({departmentCode:"CS & EE"}))).toContain("departmentCode=CS+%26+EE");
+ });
+
 });

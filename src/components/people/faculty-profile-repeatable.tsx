@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
+import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -79,8 +80,15 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 </label>;
               })}
             </div>
+            <button type="button" disabled={pending || rows.length >= maxItems} onClick={() => {
+              setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
+              setChanged(true);
+            }} className="mt-3 mr-2 min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
+              Duplicate draft
+            </button>
             <button type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => {
-              setRows(current => current.filter(item => item.id !== row.id)); setChanged(true);
+              if (!window.confirm("Remove record "+(index+1)+" from "+title+"? It remains saved until you submit the section.")) return;
+              setRows(current => removeFacultyProfileDraftRow(current,row.id)); setChanged(true);
             }} className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-error">
               Remove draft record
             </button>
@@ -99,6 +107,11 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </button>
       </div>
+      {changed ? <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
+        onClick={()=>{if(!window.confirm("Discard unsaved changes to "+title+"?"))return;
+          setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
+        Discard unsaved edits
+      </button> : null}
       {changed ? <p className="text-xs text-muted-foreground">
         Draft changes, including removals, remain unsaved until you choose Save.
       </p> : null}

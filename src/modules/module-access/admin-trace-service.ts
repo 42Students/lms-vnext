@@ -52,6 +52,8 @@ export const adminModuleTraceQuerySchema =
       .max(10000)
       .default(1),
     overridesOnly: z.enum(["all","only","locked"]).default("all"),
+    overridesModule: z.enum(["projects","placements","electives"]).optional(),
+    storedValue: z.enum(["all","on","off"]).default("all"),
     membershipId: z
       .string()
       .uuid()
@@ -186,12 +188,13 @@ export async function getSuperAdminLearnerAccessTrace(
       membershipRoles.role,
       "LEARNER",
     ),
-    query.overridesOnly !== "all"
+    (query.overridesOnly !== "all" || Boolean(query.overridesModule) || query.storedValue !== "all")
       ? exists(db.select({id:moduleAccessRules.scopeId}).from(moduleAccessRules).where(and(
           eq(moduleAccessRules.scopeType,"MEMBERSHIP"),
           eq(moduleAccessRules.scopeId,collegeMemberships.id),
-          inArray(moduleAccessRules.module,[...OPTIONAL_MODULE_KEYS]),
+          query.overridesModule ? eq(moduleAccessRules.module,query.overridesModule) : inArray(moduleAccessRules.module,[...OPTIONAL_MODULE_KEYS]),
           query.overridesOnly === "locked" ? eq(moduleAccessRules.locked,true) : undefined,
+          query.storedValue !== "all" ? eq(moduleAccessRules.enabled,query.storedValue === "on") : undefined,
         )))
       : undefined,
     query.q
