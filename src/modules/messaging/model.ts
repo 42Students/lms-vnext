@@ -47,8 +47,17 @@ export function decideDelivery(request: OutboundSendRequest, policy: DeliveryPol
     if (!allowed) return { status: "SUPPRESSED", reason: "nonprod-not-allowlisted" };
   }
   if (policy.suppressed.has(`${request.channel}:${recipient}`)) return { status: "SUPPRESSED", reason: "unsubscribed" };
-  if (policy.dailyCap <= 0 || policy.sentToday >= policy.dailyCap) return { status: "SUPPRESSED", reason: "daily-cap" };
-  if (policy.recipientWindowCap <= 0 || policy.recentRecipientSends >= policy.recipientWindowCap) return { status: "SUPPRESSED", reason: "rate-limited" };
+  // Malformed or overflowing counters must never disable rate-limit enforcement.
+  if (!Number.isSafeInteger(policy.dailyCap) || policy.dailyCap <= 0 ||
+      !Number.isSafeInteger(policy.sentToday) || policy.sentToday < 0 ||
+      policy.sentToday >= policy.dailyCap) {
+    return { status: "SUPPRESSED", reason: "daily-cap" };
+  }
+  if (!Number.isSafeInteger(policy.recipientWindowCap) || policy.recipientWindowCap <= 0 ||
+      !Number.isSafeInteger(policy.recentRecipientSends) || policy.recentRecipientSends < 0 ||
+      policy.recentRecipientSends >= policy.recipientWindowCap) {
+    return { status: "SUPPRESSED", reason: "rate-limited" };
+  }
   return { status: "QUEUED" };
 }
 export function previewAudience(requests: readonly OutboundSendRequest[], policyFor: (request: OutboundSendRequest) => DeliveryPolicy) {
