@@ -62,16 +62,16 @@ export function paginateFacultyResults<T>(
   };
 }
 
-export function facultyResultsHref(query: FacultyResultsQuery): string {
+export function facultyResultsHref(query: Pick<FacultyResultsQuery,"kind"|"status"|"deliveryId"|"search"|"page"> & Partial<Pick<FacultyResultsQuery,"sort"|"pageSize"|"due">>): string {
   const params = new URLSearchParams();
   if (query.kind !== "ALL") params.set("kind", query.kind);
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.deliveryId) params.set("deliveryId", query.deliveryId);
   if (query.search) params.set("search", query.search);
   if (query.page > 1) params.set("page", String(query.page));
-  if (query.sort!=="DUE_DESC") params.set("sort",query.sort);
-  if(query.pageSize!==5) params.set("pageSize",String(query.pageSize));
-  if(query.due!=="ALL")params.set("due",query.due);
+  if (query.sort&&query.sort!=="DUE_DESC") params.set("sort",query.sort);
+  if(query.pageSize&&query.pageSize!==5) params.set("pageSize",String(query.pageSize));
+  if(query.due&&query.due!=="ALL")params.set("due",query.due);
   return "/teacher/results" + (params.size ? "?" + params.toString() : "");
 }
 
