@@ -1973,3 +1973,9 @@ W06 transport to activate invite acceptance safely.
 
 
 **W54 PARTIAL (Audit):** A scoped actor-user UUID, subject-type/ID and IST date filter now shows paginated canonical PLACEMENTS activity with a formula-neutralized CSV capped at 2,000 records. Domain-history sources without consistent actors remain separate; actor directory, exact legacy coverage, executed tests and browser acceptance remain open.
+
+## 2026-10-15 source reconciliation against main ea1172d2
+
+The current main/lane comparison and safe integration targets are recorded in the final reconciliation section of `docs/planning/account-surface-parity.md`; it is a source snapshot, not another tracker or runtime acceptance. Existing checkbox evidence is preserved. No required page/family becomes closed from this review.
+
+Main already contains migration 0064, TPO batch list/student/rules/history readers, decisions/undo, verification read gating and configuration read pages. Thirteen stale MISSING labels across section 8 were changed to PARTIAL; no TPO detailed checkbox was closed. Job-type editor/APIs, blocked-date writes and import/lifecycle improvements are already authored on chat-2, while announcement read/write/lifecycle, campaign history/detail/export and Team read improvements are authored on chat-10. Review those exact sampled heads in the matrix before assigning duplicate work. TPO verification currently disables review, and configuration reads do not imply editors or scheduling consumers. Registration does not certify clean replay, drift or runtime acceptance. DEV-ONLY source still needs the specified oracle decision.

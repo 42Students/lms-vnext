@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {learnerApplicationSavedStatusCounts} from "@/modules/placements/learner-application-saved-counts-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJourneyItem } from "@/components/placements/learner-placement-journey";
 import { LearnerApplicationsBrowse } from "@/components/placements/learner-applications-browse";
@@ -15,6 +16,7 @@ export default async function LearnerPlacementApplicationsPage() {
     getLearnerPlacementJourney(context),
     getLearnerPlacementRequestWorkspace(context),
   ]);
+  const savedCounts = learnerApplicationSavedStatusCounts(rows);
   const interviewLinks=ownApplicationInterviewLinks(
     requests.rounds.map(row=>({
       applicationId:row.applicationId,roundId:row.roundId,roundKind:row.roundKind,
@@ -58,6 +60,12 @@ export default async function LearnerPlacementApplicationsPage() {
         title="Applications"
         description="Your placement applications and their current journey."
       />
+      <section aria-label="Saved application status summary" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.total}</strong> recorded applications</p>
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.submitted}</strong> still submitted</p>
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body"><strong>{savedCounts.withdrawn}</strong> withdrawn</p>
+      </section>
+      <p className="text-xs text-muted-foreground">These are saved application records, not screening decisions or hiring outcomes.</p>
       <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Review all official offers →
       </Link>
