@@ -11,6 +11,7 @@ const tabs = [
   { label: "Interviews", href: "/learn/my-placements/interviews" },
   { label: "Career Calendar", href: "/learn/my-placements/calendar" },
   { label: "Placement cell", href: "/learn/my-placements/placement" },
+  { label: "Announcements", href: "/learn/my-placements/announcements" },
 ] as const;
 
 export function LearnerPlacementsTabs() {
