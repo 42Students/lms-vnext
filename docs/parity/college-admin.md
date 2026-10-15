@@ -475,6 +475,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Publication versus visibility counts PARTIAL (2026-10-15):** Lessons aggregate now distinguishes all authored content, published content, and published content with the persisted student-visibility flag enabled. These are actual per-lesson counts, not guaranteed learner access when parent path/lesson or section gating blocks it. CSV parity and existing database fixtures updated; runtime/browser acceptance open.
+
 **Learning-path lifecycle selector PARTIAL (2026-10-15):** College lesson rows and capped exports can now distinguish DRAFT, PUBLISHED and ARCHIVED owning learning paths independently of lesson and offering state. Query applies at signed-in-college scoped joins before page counts; strict schema and guarded PG inclusion/exclusion authored. Legacy/browser/CI acceptance remains open.
 
 **Period-specific lesson catalogue PARTIAL (2026-10-15):** Lessons now filter by saved academic-period code without conflating numbered semesters and calendar periods; scoped SQL runs before pagination/content counts and matching CSV uses the same selector. Own/other period PostgreSQL fixture authored; runtime/mobile/browser checks remain open.
