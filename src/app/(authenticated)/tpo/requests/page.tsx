@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
-import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink} from "@/modules/placements/tpo-global-requests-model";
+import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,parseGlobalTpoRequestFilters} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
@@ -23,9 +23,23 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     redirect("/dashboard");
   }
   const raw = await searchParams;
-  const data = await getTpoGlobalRequestsInbox(context, {
-    status:first(raw.status),age:first(raw.age),sort:first(raw.sort),requestType:first(raw.requestType), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
+  const parsed=parseGlobalTpoRequestFilters({
+    status:first(raw.status),age:first(raw.age),sort:first(raw.sort),
+    requestType:first(raw.requestType),search:first(raw.search),
+    page:first(raw.page),pageSize:first(raw.pageSize),
   });
+  if(!parsed.success)return <main className="space-y-5">
+    <PageHeader eyebrow="TPO · Operations" title="Requests"
+      description="College-wide learner placement requests."/>
+    <section role="alert" className="rounded-xl border border-border bg-surface p-6">
+      <h2 className="font-semibold text-foreground">Invalid request filters</h2>
+      <p className="mt-2 text-sm text-body">Check the request status, kind, age, sorting and page values. No request data was loaded.</p>
+      <Link href="/tpo/requests" className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+        Clear invalid filters
+      </Link>
+    </section>
+  </main>;
+  const data = await getTpoGlobalRequestsInbox(context, parsed.data);
   const statusCounts=tpoRequestStatusCounts(data.summary);
   const asOf=new Date();
   return <main className="min-w-0 space-y-5">

@@ -44,3 +44,8 @@ export function tpoRequestContextLink(row:{requestType:string;roundId:string|nul
  }
  return {href:"/tpo/placements/jobs/"+encodeURIComponent(row.jobId),label:"Open drive"};
 }
+
+/** Read-only URL recovery never attempts a data query with invalid filters. */
+export function parseGlobalTpoRequestFilters(raw:unknown){
+ return globalTpoRequestsQuerySchema.safeParse(raw);
+}
