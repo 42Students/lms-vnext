@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="space-y-3 p-4" role="status" aria-live="polite"><h1 className="text-xl font-semibold">Profile verification</h1><p>Loading verification requests…</p></div>}

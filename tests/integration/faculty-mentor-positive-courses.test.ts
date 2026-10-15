@@ -577,6 +577,9 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect((await getFacultyCourseList(facultyOnly,{})).items).toEqual([]);
     await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
       [facultyOnlyRoleId,facultyOnlyMembershipId]);
+    // Role removal ends the teaching assignment by trigger; re-granting the role does not revive it.
+    expect((await getFacultyCourseList(facultyOnly,{q:codePrefix})).items).toEqual([]);
+    await pool.query("update course_teaching_assignments set ended_at=null where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
     expect((await getFacultyCourseList(facultyOnly,{q:codePrefix})).items.map(row=>row.deliveryId))
       .toEqual([delivery.id]);
   });
@@ -1038,12 +1041,12 @@ describe("Faculty active teaching membership cannot be forged by stale context",
     expect(await requireDeliveryContentMutation(facultyOnly, delivery.id)).toBe("FACULTY");
     await expect(requireLearningReadAccess(learner, offeringId, delivery.id)).rejects.toBeDefined();
     await expect(requireLearningReadAccess({ ...facultyOnly, membership: { ...facultyOnly.membership!, collegeId: SEED_IDS.collegeB } }, offeringId, delivery.id)).rejects.toBeDefined();
-    await pool.query("delete from membership_roles where membership_id = $1::uuid and role = $2::text", [facultyOnlyMembershipId, "FACULTY"]);
+    await pool.query("delete from membership_roles where membership_id = $1::uuid and role = $2::membership_role", [facultyOnlyMembershipId, "FACULTY"]);
     try {
       await expect(requireLearningReadAccess(facultyOnly, offeringId, delivery.id)).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
       await expect(requireDeliveryContentMutation(facultyOnly, delivery.id)).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
     } finally {
-      await pool.query("insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,$3::text) on conflict (id) do nothing", [facultyOnlyRoleId, facultyOnlyMembershipId, "FACULTY"]);
+      await pool.query("insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,$3::membership_role) on conflict (id) do nothing", [facultyOnlyRoleId, facultyOnlyMembershipId, "FACULTY"]);
     }
     await pool.query("update college_memberships set status = 'SUSPENDED' where id = $1::uuid", [facultyOnlyMembershipId]);
     try {

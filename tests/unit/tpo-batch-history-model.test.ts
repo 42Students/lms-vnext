@@ -1,0 +1,2 @@
+import {it,expect} from "vitest";import {undoableBatchHistory} from "@/modules/placements/tpo-batch-history-model";
+it("only exposes exact-version unapplied reversals",()=>{const row={id:"1",membershipId:"a",afterVersion:"2",occurredAt:"2026-10-15",revertedAt:null};expect(undoableBatchHistory([row],new Map([["a","2"]]))).toHaveLength(1);expect(undoableBatchHistory([row],new Map([["a","3"]]))).toHaveLength(0);});

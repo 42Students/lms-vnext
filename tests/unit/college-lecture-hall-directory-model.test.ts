@@ -42,6 +42,9 @@ describe("College Admin lecture hall directory filters", () => {
       { page: "1001" },
       { minimumCapacity: "0" },
       { minimumCapacity: "5001" },
+      { maximumCapacity: "0" },
+      { maximumCapacity: "5001" },
+      { minimumCapacity: "40", maximumCapacity: "39" },
       { status: "DELETED" },
       { roomType: "GYM" },
       { departmentId: "another-college" },
@@ -68,6 +71,9 @@ describe("College Admin lecture hall directory filters", () => {
     const seats = parseCollegeLectureHallSearchParams({ minimumCapacity: "38" });
     expect(seats?.minimumCapacity).toBe(38);
     expect(collegeLectureHallHref(seats!)).toContain("minimumCapacity=38");
+    const maxSeats = parseCollegeLectureHallSearchParams({ maximumCapacity: "38", minimumCapacity: "20" });
+    expect(maxSeats?.maximumCapacity).toBe(38);
+    expect(collegeLectureHallHref(maxSeats!)).toContain("maximumCapacity=38");
     expect(url.searchParams.has("collegeId")).toBe(false);
     expect(hasCollegeLectureHallFilters(query!)).toBe(true);
     const defaults = parseCollegeLectureHallSearchParams({})!;
