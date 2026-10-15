@@ -151,10 +151,12 @@ function Metric({
 
 function ContentCard({
   content,
+  lessonId,
   deliveryId,
   readOnly,
 }: {
   content: Workspace["lessons"][number]["contents"][number];
+  lessonId: string;
   deliveryId: string;
   readOnly: boolean;
 }) {
@@ -253,6 +255,8 @@ function ContentCard({
       ) : content.type === "VIDEO" &&
       content.storageKey ? (
         <LearnerVideoPlayer
+          lessonId={lessonId}
+          storageKey={content.storageKey}
           contentId={content.id}
           deliveryId={deliveryId}
           initialPositionSeconds={
@@ -889,7 +893,7 @@ export function LearnerCourseWorkspace({
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
-                            <ContentCard content={content} deliveryId={deliveryId} readOnly={readOnly} />
+                            <ContentCard content={content} lessonId={lesson.id} deliveryId={deliveryId} readOnly={readOnly} />
                           </LearnerRoadmapItemDialog>
                         ) : null;
                       }
