@@ -1,5 +1,5 @@
 import {z} from "zod";
-/** PR-S2-07 proposed final delivery revisions. Persistence is not registered. */
+/** PR-S2-07 registered 0091 final delivery models. */
 export const projectDeliveryAttachmentSchema=z.object({
   name:z.string().trim().min(1).max(255),
   kind:z.enum(["FILE","LINK"]),

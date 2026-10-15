@@ -1647,3 +1647,7 @@ Task create/edit validation accepts registered taskType, estimatePoints, blocker
 ### PR-S2-04 0090 registered task comments runtime
 
 The new task-comment service and GET/POST route use registered `project_task_comments`, enforce exact project+task row scope and membership, deny read-only observers from posting, and serialize optimistic task writes in a PostgreSQL transaction. Read and write services are separate. Tests include source contracts; disposable PostgreSQL acceptance is pending.
+
+### PR-S2-07 registered 0091 reopen state (committed)
+
+Reopen now atomically writes the latest APPROVED submission's `reopened_at` field under a project/submission row lock and PostgreSQL millisecond CAS, checks evaluations, requires scoped actor membership, and inserts immutable `project_delivery_events(REOPENED)`. Learner draft/readiness paths consult persisted `reopened_at` instead of activity log hints. Separate LOCKED events and file attachment writes follow in subsequent commits. DB acceptance not yet run.
