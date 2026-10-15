@@ -4,6 +4,7 @@ import type { OutboundProvider } from "./service";
 import type { OutboundSendRequest } from "./model";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
 import {isExotelAcceptedResponse} from "./provider-acceptance-model";
+import {isCampaignTemplateKey} from "./template-boundary-model";
 
 /** Templates are explicitly provisioned; OTP identifiers must never be reused for campaigns. */
 export type OutboundTemplate = {
@@ -31,7 +32,7 @@ export function createOutboundProvider(
       // This guard is inside the provider: callers cannot bypass it by passing an unsafe policy.
       if (!canContactRecipientAtRuntime(request.channel, request.recipient, env)) return false;
       const template = config.templates[request.templateKey];
-      if (!template) return false;
+      if (!template || !isCampaignTemplateKey(request.templateKey)) return false;
       try {
         if (request.channel === "EMAIL") {
           if (!config.email.token || !template.zeptoTemplateKey) return false;
