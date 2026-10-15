@@ -6,6 +6,9 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementCompanyRelationships,
   placementCompanies,
+  placementApplications,
+  placementOffers,
+  placementOfferStatusHistory,
   placementDebarmentDriveEvents,
   placementDebarments,
   placementJobs,
@@ -523,6 +526,37 @@ export async function publishPlacementJob(
   });
 }
 
+type PlacementTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
+/** P-S2-12 / D11: closing a drive revokes only still-actionable letters. */
+export function mustWithdrawPendingOfferOnDriveStop(status: string): boolean {
+  return status === "ISSUED";
+}
+
+async function withdrawJobIssuedOffers(
+  tx: PlacementTx, jobId: string, actorUserId: string, now: Date,
+): Promise<number> {
+  const offers = await tx.select({id:placementOffers.id,status:placementOffers.status})
+    .from(placementOffers)
+    .innerJoin(placementApplications,
+      eq(placementApplications.id,placementOffers.applicationId))
+    .where(and(eq(placementApplications.jobId,jobId),
+      eq(placementOffers.status,"ISSUED"))).for("update");
+  for (const offer of offers) {
+    if (!mustWithdrawPendingOfferOnDriveStop(offer.status)) continue;
+    await tx.update(placementOffers).set({
+      status:"WITHDRAWN",withdrawnByUserId:actorUserId,
+      withdrawnAt:now,updatedAt:now,
+    }).where(and(eq(placementOffers.id,offer.id),
+      eq(placementOffers.status,"ISSUED")));
+    await tx.insert(placementOfferStatusHistory).values({
+      offerId:offer.id,fromStatus:"ISSUED",toStatus:"WITHDRAWN",
+      actorUserId,
+    });
+  }
+  return offers.length;
+}
+
 export async function closePlacementJob(
   context: RequestContext,
   jobIdInput: string,
@@ -566,6 +600,7 @@ export async function closePlacementJob(
       );
     }
 
+    await withdrawJobIssuedOffers(tx, closed.id, context.user.id, now);
     await recordActivityEventInTransaction(
       tx,
       context,
