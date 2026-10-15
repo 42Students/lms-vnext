@@ -15,3 +15,8 @@ export const projectMemberKindsStage=pgTable("project_members",{
   roleKind:varchar("role_kind",{length:24}),
   canMutate:boolean("can_mutate"),
 });
+
+/** PR-S2-11 resource visibility staged until schema is registered. */
+export const projectResourceVisibilityStage=pgTable("project_resources",{
+  visibility:varchar("visibility",{length:16}),
+});

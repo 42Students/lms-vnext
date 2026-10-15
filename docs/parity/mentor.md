@@ -1527,3 +1527,7 @@ The proposed member model distinguishes MENTOR, CO_MENTOR, OBSERVER, REVIEWER an
 ## Phase 2 PR-S2-10 — archived Project restoration (source fixed; tests pending execution)
 
 A college-admin-authorized, same-origin POST restores an archived project only after a fresh project-row lock, matching updatedAt token, and a persisted current ACTIVE primary mentor membership and platform user check. The restored state is taken from the latest college-scoped archive activity event (falling back to PLANNED for missing/invalid history), resets archivedAt and writes a restoration event in the same transaction. Source tests added; PostgreSQL races, browser action wiring and role-negative acceptance remain OPEN. Commit reference: branch history.
+
+## Phase 2 PR-S2-11 — resource visibility (STAGED / NOT DONE)
+
+The old LMS says **“Mentor-only resources stay hidden from learners on this project.”** A proposed project_resources.visibility column supports TEAM (existing-resource default) and MENTOR_ONLY, with read policy returning false for LEARNER on mentor-only resources. The SQL, policy and test are staged but **not wired into the active read/write/export APIs**, which cannot safely filter a field that the registered schema does not yet contain. The orchestrator must register the column, enforce writes and tenant/role-scoped reads, then run leak-negative tests. No mentor-only resource capability is claimed before those gates.
