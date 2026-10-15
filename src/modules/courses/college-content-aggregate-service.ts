@@ -103,6 +103,7 @@ export async function listCollegeContentAggregate(
       kind !== "LIVE_CLASS" && query.offeringStatus && query.offeringStatus !== "ALL"
         ? eq(courseOfferings.status,query.offeringStatus) : undefined,
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
+      kind !== "LIVE_CLASS" && query.programCode ? eq(programs.code,query.programCode) : undefined,
       kind !== "LIVE_CLASS" && query.visibility !== "ALL" ? eq(lessonContents.visibleToStudents,query.visibility === "VISIBLE") : undefined,
       query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
       query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
