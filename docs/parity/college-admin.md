@@ -532,6 +532,14 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Lesson quiz-authoring triage PARTIAL (2026-10-15):** College Admin Lessons now filter independently by persisted course_quizzes authorship, using the canonical lesson ownership scope rather than quiz attempt totals. All lifecycle states count as authored; query/export/page state and disposable-PG empty/matching fixtures authored, executed CI/browser acceptance pending.
+
+**Lesson assignment-authoring triage PARTIAL (2026-10-15):** The lesson catalogue now filters by actual course_assignments rows related to each college-owned lesson (including draft and archived), rather than assuming assessments exist when content exists. Filtered pagination and safe CSV share the state; strict Zod and isolated-PG fixtures authored, execution and browser acceptance open.
+
+**Saved content visibility flag triage PARTIAL (2026-10-15):** College Admin now isolates lessons having any PUBLISHED content with stored visibleToStudents=true, versus no such content, using EXISTS on the in-college lesson ancestry before pagination. This is a metadata flag, not an access-grant claim. URL/CSV propagation and disposable PostgreSQL branch assertions authored; execution pending.
+
+**Published content existence PARTIAL (2026-10-15):** College Admin can identify Lessons with/without at least one saved PUBLISHED lesson-content record through a tenant-owned EXISTS/NOT EXISTS predicate before pagination and capped CSV; this does not imply parent publication or actual learner access. Model and isolated PostgreSQL assertions authored; execution/browser gates pending.
+
 **Lessons with/without authored content PARTIAL (2026-10-15):** College Admin can isolate lessons that have any persisted content or have none using a correlated database existence check before pagination, without treating empty lessons as unpublished or without assignments/quizzes. Filter carries to CSV and unit/PG assertions; browser/runtime acceptance pending.
 
 **Course department name filter PARTIAL (2026-10-15):** College Admin lessons now support exact course-owning department name filtering within the authenticated college; URL pagination and CSV preserve this state. Typed URL and same-college PG fixture authored. Execution/browser acceptance pending.
@@ -705,6 +713,18 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Published learning path triage PARTIAL (2026-10-15):** The Course Progress offering list now distinguishes registered PUBLISHED learning paths from drafts, archived paths or absent paths. This is an authored structure state, not proof of learner visibility or course completion. Filtered totals, safe CSV, strict schema and disposable-PG fixture are authored; execution/browser acceptance open.
+
+**Missing shared learning path triage PARTIAL (2026-10-15):** College Admin now distinguishes offerings with/without a persisted course_learning_paths row before activity pagination and CSV. An offering without a path is not described as failed learning or absent enrollment. Strict Zod/URL and own-college PostgreSQL fixtures authored; execution and browser acceptance open.
+
+**Recorded completed-content triage PARTIAL (2026-10-15):** A second college-scoped EXISTS predicate distinguishes offerings with at least one LEARNER-role record whose completedAt is populated from those without. It does not classify whole courses as complete. Strict URL/CVS and disposable-PG fixture tests authored; browser and CI execution pending.
+
+**Observed activity versus no events PARTIAL (2026-10-15):** The offering directory now filters by EXISTS/NOT EXISTS of real LEARNER-role learner-content progress, restricted to college memberships and course learning paths before pagination and capped CSV. An empty result does not mean attendance or enrollment absence. Strict and disposable-PG tests authored, execution/browser acceptance open.
+
+**Department-specific course progress PARTIAL (2026-10-15):** College Admin can filter persisted learner-content activity offerings by exact owning department name, without inferring course completion or changing the recorded learner denominator. Pagination and capped CSV follow the same scope. PostgreSQL and validation fixtures authored; acceptance open.
+
+**CORE/ELECTIVE course progress filter PARTIAL (2026-10-15):** The persisted activity directory now partitions course offerings by registered CORE/ELECTIVE type before pagination and safe CSV; counts still refer only to recorded learner content events. Strict input and scoped-PG fixture authored; execution/browser acceptance open.
+
 **Registered cohort code filter PARTIAL (2026-10-15):** Course Progress supports a cohort-code filter against persisted offering membership rather than inferred learner groups. Combined course/program/period/cohort selectors survive navigation and scoped CSV. PostgreSQL own/missing-cohort fixtures authored; no completion-rate inference or executed PG/browser sign-off.
 
 **Persisted academic-period filter PARTIAL (2026-10-15):** Course Progress now uses exact academic-period codes from registered offerings, before college-scoped pagination and content-activity counts. Search, CSV and page links preserve the selector; own/other period fixture coverage authored. Runtime/browser verification remains open.

@@ -92,6 +92,38 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Published and visibility-flagged content
+              <select name="flaggedVisibility" defaultValue={data.query.flaggedVisibility} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All lessons</option><option value="HAS_FLAGGED">Has flagged content</option><option value="NONE_FLAGGED">No flagged content</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Authored assignments
+              <select name="assignmentPresence" defaultValue={data.query.assignmentPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All lessons</option><option value="HAS_ASSIGNMENTS">Has assignments</option><option value="NO_ASSIGNMENTS">No assignments</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Authored quizzes
+              <select name="quizPresence" defaultValue={data.query.quizPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All lessons</option><option value="HAS_QUIZZES">Has quizzes</option><option value="NO_QUIZZES">No quizzes</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Published lesson content
+              <select name="publishedContent" defaultValue={data.query.publishedContent} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">Any publication</option><option value="HAS_PUBLISHED">Has published content</option><option value="NONE_PUBLISHED">No published content</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Authored lesson items
               <select name="contentPresence" defaultValue={data.query.contentPresence??"ALL"}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -119,6 +151,46 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                 <option value="ALL">All offerings</option>
                 <option value="ACTIVE">Active offerings</option>
                 <option value="ARCHIVED">Archived offerings</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course offering type
+              <select name="offeringType" defaultValue={data.query.offeringType??"ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course department (exact name)
+              <input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Recorded learner activity
+              <select name="activityState" defaultValue={data.query.activityState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="RECORDED">Has activity rows</option><option value="UNRECORDED">No recorded activity</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Content completion evidence
+              <select name="completionEvidence" defaultValue={data.query.completionEvidence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="COMPLETED_CONTENT">Has completed content records</option><option value="NO_COMPLETED_CONTENT">No completed content records</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Shared learning path
+              <select name="learningPathPresence" defaultValue={data.query.learningPathPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="HAS_PATH">Has a path</option><option value="NO_PATH">No learning path</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Published learning path
+              <select name="publishedPathPresence" defaultValue={data.query.publishedPathPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">Any publication</option><option value="HAS_PUBLISHED_PATH">Published path exists</option><option value="NO_PUBLISHED_PATH">No published path</option>
               </select>
             </label>
           ) : null}

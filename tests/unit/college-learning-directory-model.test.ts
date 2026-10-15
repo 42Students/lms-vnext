@@ -40,6 +40,18 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
     expect(collegeProgressQuerySchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
     expect(collegeProgressQuerySchema.safeParse({cohortCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({departmentName:"x".repeat(256)}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({activityState:"INFERRED"}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({completionEvidence:"PASS_RATE"}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({learningPathPresence:"GUESSED"}).success).toBe(false);
+    expect(collegeProgressQuerySchema.safeParse({publishedPathPresence:"LEARNER_VISIBLE"}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({publishedPathPresence:"NO_PUBLISHED_PATH"}))).toContain("publishedPathPresence=NO_PUBLISHED_PATH");
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({learningPathPresence:"NO_PATH"}))).toContain("learningPathPresence=NO_PATH");
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({completionEvidence:"COMPLETED_CONTENT"}))).toContain("completionEvidence=COMPLETED_CONTENT");
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({activityState:"UNRECORDED"}))).toContain("activityState=UNRECORDED");
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({departmentName:"CS & EE"}))).toContain("departmentName=CS+%26+EE");
+    expect(collegeProgressQuerySchema.safeParse({offeringType:"LAB"}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({offeringType:"ELECTIVE"}))).toContain("offeringType=");
     expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({cohortCode:"B-2026"})))
       .toContain("cohortCode=B-2026");
     expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({periodCode:"2026-FALL"})))
@@ -53,6 +65,14 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLessonQuerySchema.safeParse({ offeringStatus: "SUSPENDED" }).success).toBe(false);
     expect(collegeLessonQuerySchema.parse({pathStatus:"PUBLISHED"}).pathStatus).toBe("PUBLISHED");
     expect(collegeLessonQuerySchema.safeParse({ pathStatus: "ACTIVE" }).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({publishedContent:"INFERRED"}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({flaggedVisibility:"LEARNER_VISIBLE"}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({assignmentPresence:"SUBMITTED"}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({quizPresence:"TAKEN"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({quizPresence:"NO_QUIZZES"}))).toContain("quizPresence=NO_QUIZZES");
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({assignmentPresence:"NO_ASSIGNMENTS"}))).toContain("assignmentPresence=NO_ASSIGNMENTS");
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({flaggedVisibility:"HAS_FLAGGED"}))).toContain("flaggedVisibility=HAS_FLAGGED");
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({publishedContent:"NONE_PUBLISHED"}))).toContain("publishedContent=NONE_PUBLISHED");
     expect(collegeLessonQuerySchema.safeParse({offeringType:"LAB"}).success).toBe(false);
     expect(collegeLessonQuerySchema.safeParse({departmentName:"x".repeat(256)}).success).toBe(false);
     expect(collegeLessonQuerySchema.safeParse({contentPresence:"PUBLISHED"}).success).toBe(false);
