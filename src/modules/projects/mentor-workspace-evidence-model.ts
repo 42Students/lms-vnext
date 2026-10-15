@@ -47,3 +47,10 @@ export function mentorWorkspaceTeamFacts(members:readonly {role:string;isPrimary
     mentors:members.filter(row=>row.role==="MENTOR").length,
     primaryMentors:members.filter(row=>row.role==="MENTOR"&&row.isPrimary).length};
 }
+
+export function mentorWorkspaceMissingPrimaryMentor(
+ projectStatus:string,members:readonly {role:string;isPrimary:boolean}[]
+){
+  return projectStatus!=="ARCHIVED"&&
+    !members.some(row=>row.role==="MENTOR"&&row.isPrimary);
+}

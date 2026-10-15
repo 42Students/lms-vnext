@@ -1243,3 +1243,8 @@ Mentors can open the exact currently assigned task's authorized recorded-feedbac
 ## 2026-10-15 chat-11 new round — live-team-role-summary (PARTIAL)
 
 The exact-project Mentor Team section now summarizes actual current Learner, Mentor and primary-Mentor grants from the authorized active roster, without inferred contacts, staffing capacity or workload. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 new round — missing-primary-mentor-signal (PARTIAL)
+
+The Mentor Team view now calls out a live current-project roster with no registered primary Mentor, without offering forbidden Mentor-side membership editing or treating archived teams as needing assignment. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
