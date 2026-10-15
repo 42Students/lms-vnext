@@ -479,6 +479,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Published content existence PARTIAL (2026-10-15):** College Admin can identify Lessons with/without at least one saved PUBLISHED lesson-content record through a tenant-owned EXISTS/NOT EXISTS predicate before pagination and capped CSV; this does not imply parent publication or actual learner access. Model and isolated PostgreSQL assertions authored; execution/browser gates pending.
+
 **Lessons with/without authored content PARTIAL (2026-10-15):** College Admin can isolate lessons that have any persisted content or have none using a correlated database existence check before pagination, without treating empty lessons as unpublished or without assignments/quizzes. Filter carries to CSV and unit/PG assertions; browser/runtime acceptance pending.
 
 **Course department name filter PARTIAL (2026-10-15):** College Admin lessons now support exact course-owning department name filtering within the authenticated college; URL pagination and CSV preserve this state. Typed URL and same-college PG fixture authored. Execution/browser acceptance pending.
