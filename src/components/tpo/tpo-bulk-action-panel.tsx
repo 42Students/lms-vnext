@@ -98,6 +98,17 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
     <span className="min-w-0 break-words">{row.label}</span>
    </label>)}
   </div>
+  <div className="flex flex-wrap gap-2">
+   <button type="button" disabled={busy||safeSelected.length===0}
+     onClick={()=>{setSelected([]);invalidate();}}
+     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
+     Clear selection
+   </button>
+   {preview&&!busy?<button type="button" onClick={invalidate}
+     className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+     Cancel preview
+   </button>:null}
+  </div>
   <div className="grid gap-3 sm:grid-cols-2">
    <label className="text-sm font-semibold text-body">Action
     <select value={action} disabled={busy}
