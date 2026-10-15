@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
+import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
 import { learnerQuizSubmitDeadlineOpen } from "@/modules/courses/learner-quiz-submit-deadline-model";
@@ -347,7 +348,7 @@ export function LearnerQuizAttempt() {
             <p className="mt-2 text-sm text-body">
               {latestAttempt
                 ? latestAttempt.resultsVisible
-                  ? `Attempt ${latestAttempt.attemptNumber} · ${latestAttempt.score ?? 0}/${latestAttempt.maxScore ?? quiz.quiz.totalPoints}`
+                  ? `Attempt ${latestAttempt.attemptNumber} · ${learnerAttemptResultLabel(latestAttempt)}`
                   : "Your attempt is submitted. Results will appear after Faculty publishes them."
                 : duePassed || quiz.quiz.status === "CLOSED"
                   ? "Not attempted before this quiz closed."
