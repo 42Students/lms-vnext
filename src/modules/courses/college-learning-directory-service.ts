@@ -107,10 +107,6 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
       query.departmentName?eq(departments.name,query.departmentName):undefined,
-      query.activityState==="RECORDED"?persistedContentActivity:
-        query.activityState==="UNRECORDED"?not(persistedContentActivity):undefined,
-      query.completionEvidence==="COMPLETED_CONTENT"?completedContentActivity:
-        query.completionEvidence==="NO_COMPLETED_CONTENT"?not(completedContentActivity):undefined,
       query.contentPresence&&query.contentPresence!=="ALL" ?
         (query.contentPresence==="HAS_CONTENT" ? exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))) :
           not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(eq(lessonContents.lessonId,courseLessons.id))))) : undefined,
@@ -196,6 +192,10 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
       query.departmentName?eq(departments.name,query.departmentName):undefined,
+      query.activityState==="RECORDED"?persistedContentActivity:
+        query.activityState==="UNRECORDED"?not(persistedContentActivity):undefined,
+      query.completionEvidence==="COMPLETED_CONTENT"?completedContentActivity:
+        query.completionEvidence==="NO_COMPLETED_CONTENT"?not(completedContentActivity):undefined,
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
