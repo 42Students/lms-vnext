@@ -587,6 +587,13 @@ export async function readRecruiterThreadMessages(
   const [count]=await tx.select({total:sql<number>`count(*)::integer`})
    .from(placementTpoMessages).where(eq(placementTpoMessages.threadId,thread.id));
   const total=Number(count?.total??0);
+  const [pending]=await tx.select({
+   unread:sql<number>`count(*)::integer`,
+  }).from(placementTpoMessages).where(and(
+   eq(placementTpoMessages.threadId,thread.id),
+   eq(placementTpoMessages.senderType,"TPO"),
+   isNull(placementTpoMessages.readAt),
+  ));
   const descending=await tx.select({
     id:placementTpoMessages.id,senderType:placementTpoMessages.senderType,
     body:placementTpoMessages.body,readAt:placementTpoMessages.readAt,
@@ -595,7 +602,7 @@ export async function readRecruiterThreadMessages(
    .where(eq(placementTpoMessages.threadId,thread.id))
    .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
    .limit(40).offset((page-1)*40);
-  return {thread,messages:descending.reverse(),page,pages:Math.max(1,Math.ceil(total/40)),total};
+  return {thread,messages:descending.reverse(),page,pages:Math.max(1,Math.ceil(total/40)),total,unread:Number(pending?.unread??0)};
  });
 }
 
