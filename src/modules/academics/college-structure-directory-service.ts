@@ -16,6 +16,7 @@ import {
   membershipRoles,
   programs,
   sectionEnrollments,
+  courseSectionDeliveries,
   sectionFacultyAssignments,
   sectionScheduleEvents,
   sections,
@@ -94,6 +95,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.deliveryPresence === "HAS_DELIVERIES" ? exists(db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries).where(eq(courseSectionDeliveries.sectionId,sections.id))) : query.deliveryPresence === "NO_DELIVERIES" ? not(exists(db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries).where(eq(courseSectionDeliveries.sectionId,sections.id)))) : undefined,
       query.facultyCoverage === "HAS_FACULTY" ? exists(db.select({id:sectionFacultyAssignments.id}).from(sectionFacultyAssignments).where(and(eq(sectionFacultyAssignments.sectionId,sections.id),isNull(sectionFacultyAssignments.endedAt)))) : query.facultyCoverage === "NO_FACULTY" ? not(exists(db.select({id:sectionFacultyAssignments.id}).from(sectionFacultyAssignments).where(and(eq(sectionFacultyAssignments.sectionId,sections.id),isNull(sectionFacultyAssignments.endedAt))))) : undefined,
       query.schedulePresence === "HAS_EVENTS" ? exists(db.select({id:sectionScheduleEvents.id}).from(sectionScheduleEvents).where(eq(sectionScheduleEvents.sectionId,sections.id))) : query.schedulePresence === "NO_EVENTS" ? not(exists(db.select({id:sectionScheduleEvents.id}).from(sectionScheduleEvents).where(eq(sectionScheduleEvents.sectionId,sections.id)))) : undefined,
       query.cohortName ? eq(cohorts.name,query.cohortName) : undefined,
