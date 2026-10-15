@@ -1,0 +1,2 @@
+ALTER TABLE "profile_verification_events" DROP CONSTRAINT "profile_verification_events_action_ck";--> statement-breakpoint
+ALTER TABLE "profile_verification_events" ADD CONSTRAINT "profile_verification_events_action_ck" CHECK ("profile_verification_events"."action" in ('SUBMITTED','UPDATE_SUBMITTED','VERIFIED','SENT_BACK','WITHDRAWN'));

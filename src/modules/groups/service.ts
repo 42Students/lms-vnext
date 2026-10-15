@@ -165,7 +165,7 @@ async function mirrorProjectTeamMember(
     }
     await tx.insert(projectMembers).values({
       projectId: project.id, membershipId: memberId,
-      role: "LEARNER", isPrimary: false, createdByUserId: userId,
+      role: "LEARNER", roleKind: "LEARNER", canMutate: true, isPrimary: false, createdByUserId: userId,
     });
   } else {
     if (!existing || existing.role !== "LEARNER")

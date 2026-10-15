@@ -55,7 +55,7 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
     if(conflict)throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
     const now=new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1));
     const [updated]=await tx.update(projectMeetings).set({
-      startsAt:start,endsAt:end,timeZone:"Asia/Kolkata",updatedAt:now,
+      startsAt:start,endsAt:end,timeZone:meeting.timeZone,updatedAt:now,
     }).where(and(eq(projectMeetings.id,meeting.id),
       eq(projectMeetings.projectId,scope.project.id),eq(projectMeetings.status,"SCHEDULED"),
       sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${expected.toISOString()}::timestamptz`,
@@ -68,7 +68,7 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
       summary:"Mentor rescheduled project meeting",
       metadata:{projectId:scope.project.id,meetingId:updated.id,
         previousStartsAt:meeting.startsAt.toISOString(),
-        startsAt:updated.startsAt.toISOString(),timeZone:"Asia/Kolkata"},
+        startsAt:updated.startsAt.toISOString(),timeZone:meeting.timeZone},
       groupKey:"project:"+scope.project.id+":meetings",
     });
     return updated;

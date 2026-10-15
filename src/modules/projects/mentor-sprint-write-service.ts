@@ -1,15 +1,14 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, ne } from "drizzle-orm";
+import { and, desc, eq, ne, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
+import { mayCloseProjectSprint } from "./sprint-close-policy";
+import { projectInstances, projectReleases, projectSprints, projectTasks, projectMembers } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { can } from "@/modules/permissions/policy";
-import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { requireProjectLifecycleAccess } from "./access";
+import type { RequestContext } from "@/modules/identity/context";
+import { requireProjectLifecycleMutationAccess } from "./access";
 import { ProjectsServiceError, postgresConstraintName } from "./errors";
 import {
   mentorSprintCreateParamsSchema, mentorSprintCreateSchema,
@@ -17,19 +16,8 @@ import {
   isValidMentorSprintTransition,
 } from "./mentor-sprint-write-model";
 
-async function mentorSprintWriteScope(context:RequestContext,projectId:string) {
-  const membership=context.membership;
-  if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"MENTOR")) {
-    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  }
-  const scope=await requireProjectLifecycleAccess(context,projectId);
-  if (scope.access!=="MENTOR" || !can(context,"projects.read",{
-    organizationId:scope.organizationId,collegeId:scope.collegeId,
-  })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const modules=await resolveOptionalModuleAccess(context);
-  if(!modules.projects.enabled) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  return scope;
+async function mentorSprintWriteScope(context: RequestContext, projectId: string) {
+  return requireProjectLifecycleMutationAccess(context, projectId);
 }
 
 /** Serializes sprint creations under project-row lock, avoiding sibling sequence races. */
@@ -110,6 +98,13 @@ export async function transitionMentorProjectSprint(
     if(!project || project.status==="ARCHIVED" || project.status==="COMPLETED") {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
+    if (input.action !== "COMPLETE") {
+      const [primary] = await tx.select({id:projectMembers.id}).from(projectMembers)
+        .where(and(eq(projectMembers.projectId,scope.project.id),
+          eq(projectMembers.role,"MENTOR"),eq(projectMembers.isPrimary,true),
+          isNull(projectMembers.endedAt))).limit(1);
+      if (!primary) throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+    }
     const [sprint]=await tx.select().from(projectSprints)
       .where(and(eq(projectSprints.id,params.sprintId),
         eq(projectSprints.projectId,scope.project.id)))
@@ -138,7 +133,8 @@ export async function transitionMentorProjectSprint(
         .where(and(eq(projectTasks.projectId,scope.project.id),
           eq(projectTasks.sprintId,sprint.id),ne(projectTasks.status,"DONE")))
         .limit(1);
-      if(openTask) throw new ProjectsServiceError("PROJECT_SPRINT_HAS_OPEN_TASKS");
+      if(!mayCloseProjectSprint(openTask ? 1 : 0))
+        throw new ProjectsServiceError("PROJECT_SPRINT_HAS_OPEN_TASKS");
     }
     const status=input.action==="COMPLETE"?"COMPLETED":"ACTIVE";
     const now=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));

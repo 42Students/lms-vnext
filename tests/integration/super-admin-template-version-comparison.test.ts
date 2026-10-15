@@ -20,7 +20,7 @@ describe.skipIf(!enabled)("Super Admin version comparison (PG)", () => {
       tasks: [{ key: "t1", title: "Original", sprintKey: "s1", priority: "HIGH" as const, sequence: 0 }], resources: [] };
     const made = await createProjectTemplate(admin, { slug: "compare-" + randomUUID(), title: "Original", blueprint });
     const other = await createProjectTemplate(admin, { slug: "compare-" + randomUUID(), title: "Foreign", blueprint });
-    await reviseProjectTemplate(admin, made.template.id, { title: "Revised", blueprint, changeNote: "Test revision" });
+    await reviseProjectTemplate(admin, made.template.id, { expectedVersion: made.version.version, title: "Revised", blueprint, changeNote: "Test revision" });
     for (const context of [admin, { ...admin, adminScope: { organizationId: SEED_IDS.organization, collegeId: SEED_IDS.collegeA } }]) {
       const detail = await getSuperAdminTemplateVersionComparison(context, { templateId: made.template.id, versionId: made.version.id });
       expect(detail.selected.title).toBe("Original");

@@ -84,13 +84,7 @@ export async function ProjectAdminReadinessPage({
         title="Submission readiness"
         description="Execution completion and final-delivery readiness across project workspaces."
       />
-      <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
-        The legacy manual readiness override is not yet
-        persisted in the vNext DB07 schema. This page shows
-        authoritative execution/readiness state, but does
-        not fabricate an override control until that
-        persisted contract is implemented.
-      </section>
+      <p className="text-sm text-body">See whether each team is ready to submit, and override the gate when you need to.</p>
       <ProjectAdminFilters query={query} />
 
       {!result.items.length ? (
@@ -117,6 +111,7 @@ export async function ProjectAdminReadinessPage({
                   >
                     {project.title}
                   </Link>
+                  <Link href={basePath + "/" + project.id + "/readiness"} className="ml-3 text-sm text-primary-text underline">Manage</Link>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {project.mentorName
                       ? "Mentor: " +

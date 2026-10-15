@@ -220,6 +220,8 @@ export const projectInstances = pgTable(
       sql`lower(${table.slug})`,
     ),
     uniqueIndex("project_instances_team_group_uq").on(table.teamGroupId),
+    // Parent key for tenant-scoped composite FKs (project_resource_files).
+    uniqueIndex("project_instances_id_college_uq").on(table.id, table.collegeId),
     index("project_instances_college_status_idx").on(
       table.collegeId,
       table.status,
@@ -373,6 +375,11 @@ export const projectTasks = pgTable(
       .notNull()
       .default("TODO"),
     sequence: integer("sequence").notNull(),
+    /** PR-S2-03: nullable for historical tasks; active-LEARNER-member scoping is enforced in the service. */
+    assigneeMembershipId: uuid("assignee_membership_id").references(
+      () => collegeMemberships.id,
+      { onDelete: "restrict" },
+    ),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -397,6 +404,9 @@ export const projectTasks = pgTable(
       table.projectId,
       table.status,
     ),
+    index("project_tasks_assignee_membership_idx")
+      .on(table.assigneeMembershipId)
+      .where(sql`${table.assigneeMembershipId} is not null`),
     check(
       "project_tasks_sequence_ck",
       sql`${table.sequence} >= 0`,
@@ -434,6 +444,10 @@ export const projectResources = pgTable(
     status: varchar("status", { length: 32 })
       .notNull()
       .default("ACTIVE"),
+    /** PR-S2-11: TEAM or MENTOR_ONLY. */
+    visibility: varchar("visibility", { length: 16 })
+      .notNull()
+      .default("TEAM"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -446,6 +460,7 @@ export const projectResources = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_resources_id_project_uq").on(table.id, table.projectId),
     uniqueIndex("project_resources_project_key_uq").on(
       table.projectId,
       table.templateKey,
@@ -465,6 +480,13 @@ export const projectResources = pgTable(
       "project_resources_status_ck",
       sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
     ),
+    check(
+      "project_resources_visibility_ck",
+      sql`${table.visibility} in ('TEAM','MENTOR_ONLY')`,
+    ),
+    index("project_resources_visibility_idx")
+      .on(table.projectId, table.visibility)
+      .where(sql`${table.status} = 'ACTIVE'`),
   ],
 );
 
@@ -483,6 +505,9 @@ export const projectMembers = pgTable(
         onDelete: "restrict",
       }),
     role: varchar("role", { length: 16 }).notNull(),
+    /** PR-S2-08: fine-grained kind; read-only kinds can never mutate. */
+    roleKind: varchar("role_kind", { length: 24 }).notNull(),
+    canMutate: boolean("can_mutate").notNull(),
     isPrimary: boolean("is_primary")
       .notNull()
       .default(false),
@@ -532,6 +557,14 @@ export const projectMembers = pgTable(
     check(
       "project_members_role_ck",
       sql`${table.role} in ('LEARNER', 'MENTOR')`,
+    ),
+    check(
+      "project_members_role_kind_ck",
+      sql`${table.roleKind} in ('LEARNER','MENTOR','CO_MENTOR','OBSERVER','REVIEWER','QA')`,
+    ),
+    check(
+      "project_members_readonly_role_ck",
+      sql`${table.roleKind} not in ('OBSERVER','REVIEWER','QA') or ${table.canMutate} = false`,
     ),
     check(
       "project_members_primary_role_ck",

@@ -13,6 +13,7 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
+import { projectCompletionPercent } from "./progress-percentage-policy";
 import {
   collegeMemberships,
   projectInstances,
@@ -316,14 +317,7 @@ export async function listProjectAdminSnapshots(
     const executionDenominator =
       execution.tasks.total +
       execution.sprints.total;
-    const progressPercent =
-      executionDenominator > 0
-        ? Math.round(
-            ((doneTasks + completedSprints) /
-              executionDenominator) *
-              100,
-          )
-        : 0;
+    const progressPercent = projectCompletionPercent(doneTasks + completedSprints, executionDenominator) ?? 0;
 
     let lastActivityAt = project.updatedAt;
     for (const row of projectTasksRows) {

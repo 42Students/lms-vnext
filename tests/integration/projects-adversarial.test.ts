@@ -20,7 +20,6 @@ import {
   completeProjectSprint,
   shipProjectRelease,
   startProjectSprint,
-  updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {
   listMyMentorProjectAttention,
@@ -54,6 +53,7 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {approveProjectTaskThroughReview} from "./support/projects-review-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -898,12 +898,7 @@ describe("Projects adversarial isolation", () => {
       project.id,
       sprint.id,
     );
-    await updateProjectTaskStatus(
-      mentor,
-      project.id,
-      task.id,
-      { status: "DONE" },
-    );
+    await approveProjectTaskThroughReview({learner,mentor,projectId:project.id,taskId:task.id});
 
     await expect(
       submitProjectTask(
@@ -1038,12 +1033,7 @@ describe("Projects adversarial isolation", () => {
       project.id,
       sprint.id,
     );
-    await updateProjectTaskStatus(
-      mentor,
-      project.id,
-      task.id,
-      { status: "DONE" },
-    );
+    await approveProjectTaskThroughReview({learner,mentor,projectId:project.id,taskId:task.id});
     await completeProjectSprint(
       mentor,
       project.id,

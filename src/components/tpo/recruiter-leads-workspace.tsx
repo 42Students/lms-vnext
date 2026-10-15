@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
+import {
+  RECRUITER_ATTENTION_LABELS,
+  type RecruiterAttentionChip,
+} from "@/modules/placements/tpo-recruiter-attention-model";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
@@ -21,6 +25,8 @@ type Lead = {
   inviteSentAt: string | null;
   recruiterUserId: string | null;
   unsubscribedAt: string | null;
+  chips: RecruiterAttentionChip[];
+  quietDays: number;
 };
 
 type CompanySummary = {
@@ -89,6 +95,7 @@ export function RecruiterLeadsWorkspace({
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState<(typeof STAGES)[number]>("ALL");
   const [need, setNeed] = useState<EngageNeed>("ALL");
+  const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
   const [view, setView] = useState<"table" | "board" | "companies">(initialView);
   const [companies, setCompanies] = useState<CompanySummary[]>([]);
   const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
@@ -184,11 +191,12 @@ export function RecruiterLeadsWorkspace({
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const visible = useMemo(() => rows.filter(lead => {
     if (!matchesEngageNeed(lead,need)) return false;
+    if (attention !== "ALL" && !lead.chips?.includes(attention)) return false;
     if (stage !== "ALL" && lead.manualStage !== stage) return false;
     const terms = [lead.name, lead.emailNorm, lead.phoneNorm, lead.companyName]
       .filter(Boolean).join(" ").toLowerCase();
     return terms.includes(query.trim().toLowerCase());
-  }), [rows, stage, query, need]);
+  }), [rows, stage, query, need, attention]);
 
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
@@ -310,11 +318,20 @@ export function RecruiterLeadsWorkspace({
                 className={need===key?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}>
                   {label} ({count})
                 </button>)}
+              {(Object.keys(RECRUITER_ATTENTION_LABELS) as RecruiterAttentionChip[]).map(key => (
+                <button key={key} type="button" aria-pressed={attention === key}
+                  className={attention === key
+                    ? "min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
+                    : "min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                  onClick={() => setAttention(current => current === key ? "ALL" : key)}>
+                  {RECRUITER_ATTENTION_LABELS[key]} ({rows.filter(row => row.chips?.includes(key)).length})
+                </button>
+              ))}
               <Link href="/tpo/follow-ups" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">
                 Follow-ups due
               </Link>
             </div>
-            <p className="text-xs text-muted-foreground">Counts use recorded ownership and contact stage; quiet/no-next-step signals require activity history and are not inferred.</p>
+            <p className="text-xs text-muted-foreground">Needs attention</p>
           </section>
           <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
             <label className="min-w-48 flex-1 text-sm">
@@ -414,7 +431,7 @@ export function RecruiterLeadsWorkspace({
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                  <tr>{["Contact", "Company", "Stage", "Source", "Email", "Phone"].map(x =>
+                  <tr>{["Contact", "Company", "Stage", "Flags", "Source", "Email", "Phone"].map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
@@ -426,6 +443,13 @@ export function RecruiterLeadsWorkspace({
                       </td>
                       <td className="px-4 py-3">{lead.companyName || "—"}</td>
                       <td className="px-4 py-3">{lead.manualStage.replace("_", " ")}</td>
+                      <td className="px-4 py-3">
+                        {lead.chips?.map(chip => (
+                          <span key={chip} className="mr-1 inline-block rounded border border-border px-1.5 py-0.5 text-xs">
+                            {chip === "QUIET" ? `Quiet ${lead.quietDays}d` : RECRUITER_ATTENTION_LABELS[chip]}
+                          </span>
+                        ))}
+                      </td>
                       <td className="px-4 py-3">{lead.source || "Manual"}</td>
                       <td className="px-4 py-3">{lead.emailNorm || "—"}</td>
                       <td className="px-4 py-3">{lead.phoneNorm || "—"}</td>

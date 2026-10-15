@@ -103,12 +103,12 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         if (!project) throw new Error("Workspace insert failed");
         await tx.insert(projectMembers).values([
           ...plan.membershipIds.map(membershipId=>({
-            projectId:project.id,membershipId,role:"LEARNER",isPrimary:false,
+            projectId:project.id,membershipId,role:"LEARNER",roleKind:"LEARNER",canMutate:true,isPrimary:false,
             createdByUserId:context.user.id,
           })),
           ...(input.primaryMentorMembershipId?[{
             projectId:project.id,membershipId:input.primaryMentorMembershipId,
-            role:"MENTOR",isPrimary:true,roleLabel:"Project Mentor",createdByUserId:context.user.id,
+            role:"MENTOR",roleKind:"MENTOR",canMutate:true,isPrimary:true,roleLabel:"Project Mentor",createdByUserId:context.user.id,
           }]:[]),
         ]);
         const releases=await tx.insert(projectReleases).values(blueprint.releases.map(r=>({

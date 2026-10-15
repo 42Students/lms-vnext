@@ -40,6 +40,12 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         }
         setInvite(data.invite);
         setState("ready");
+        // T-S2-03: GET is read-only. A same-origin POST records first open.
+        // Best-effort telemetry must not block the visitor's invitation.
+        void fetch(
+          "/api/public/recruiter-invite/" + encodeURIComponent(token) + "/opened",
+          { method: "POST", credentials: "same-origin", signal: controller.signal },
+        ).catch(() => undefined);
       })
       .catch(() => {
         if (!controller.signal.aborted) setState("invalid");

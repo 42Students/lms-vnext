@@ -5,10 +5,8 @@ import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { can } from "@/modules/permissions/policy";
-import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { requireProjectLifecycleAccess } from "./access";
+import type { RequestContext } from "@/modules/identity/context";
+import { requireProjectLifecycleMutationAccess } from "./access";
 import { ProjectsServiceError } from "./errors";
 import { mentorTaskTransitionParamsSchema, mentorTaskTransitionSchema, allowedMentorTaskTransition }
   from "./mentor-task-transition-model";
@@ -18,14 +16,7 @@ export async function transitionMentorProjectTask(
 ) {
   const params = mentorTaskTransitionParamsSchema.parse(rawParams);
   const input = mentorTaskTransitionSchema.parse(rawInput);
-  if (!hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR"))
-    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const scope = await requireProjectLifecycleAccess(context, params.projectId);
-  if (scope.access !== "MENTOR" || !can(context, "projects.read", {
-    collegeId: scope.collegeId, organizationId: scope.organizationId,
-  })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  if (!(await resolveOptionalModuleAccess(context)).projects.enabled)
-    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const scope = await requireProjectLifecycleMutationAccess(context, params.projectId);
   return getDb().transaction(async tx => {
     const [project] = await tx.select({status:projectInstances.status})
       .from(projectInstances).where(and(

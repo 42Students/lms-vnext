@@ -247,6 +247,8 @@ export async function createProjectInstance(
             membershipId:
               input.primaryMentorMembershipId,
             role: "MENTOR",
+            roleKind: "MENTOR",
+            canMutate: true,
             isPrimary: true,
             roleLabel: "Project Mentor",
             createdByUserId:
