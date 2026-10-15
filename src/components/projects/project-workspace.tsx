@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -530,6 +530,13 @@ export function ProjectWorkspace({
                             {sprint.description}
                           </p>
                         ) : null}
+                        {mode==="MENTOR" ? (() => {
+                          const facts=mentorSprintTaskFacts(tasksBySprint.get(sprint.id)??[]);
+                          return <p className="mt-2 text-xs text-body">
+                            Recorded tasks: {facts.done}/{facts.total} Done · {facts.inReview} In review · {facts.blocked} Blocked
+                            {" · "}Completion: {facts.completionPercent===null?"Unknown (no tasks)":facts.completionPercent+"%"}
+                          </p>;
+                        })() : null}
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
                         <StatusBadge
