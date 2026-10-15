@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
+import {learnerNotificationPreviewNotice} from "@/modules/activity/learner-notification-preview-notice-model";
 import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner-notification-mobile-model";
 import {learnerInboxEmptyLabel} from "@/modules/activity/learner-inbox-empty-label-model";
 import {learnerPinnedAnnouncementPreview} from "@/modules/activity/learner-pinned-announcements-model";
@@ -159,7 +160,12 @@ export function LearnerNotificationsInbox({
         </div>
       ):null}
       <p role="status" className="text-xs text-muted-foreground">
-        Showing {visible.length} of {combined.length} notifications. College announcements have no personal read status.
+        Showing {visible.length} of {combined.length} loaded notifications in this filtered view.
+        College announcements have no personal read status.
+        {" "}{learnerNotificationPreviewNotice(personal.length,60)}
+        {" "}<Link href="/learn/notifications/history" className="font-semibold text-primary-text underline">
+          Browse personal history
+        </Link>
       </p>
 
       {sourceStatus.state==="PARTIAL" ? (
