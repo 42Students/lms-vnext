@@ -1108,3 +1108,158 @@ Mentor Meetings, Team, Reports, Task Review, Delivery Review or Notifications
 PARTIAL rows. Section 8 contains no independent Mentor-specific MISSING
 route to implement; College Admin bulk reassign Mentor remains admin-owned,
 not a Mentor write.
+
+
+## 2026-10-15 chat-11 standing-brief round — Team coverage, Sprint progress and final-review history (PARTIAL)
+
+Merged current main before implementation. Ten separate feature commits were pushed in
+the assigned Mentor/Projects lane; all involved routes remain PARTIAL pending acceptance.
+
+- **Team coverage:** primary-versus-supporting *current Mentor assignment* facet;
+  multi-Mentor team flag from persisted active same-college project memberships;
+  fewest/most active learners first, before server pagination. These are
+  measured team counts, not inferred staffing levels. The existing team
+  service still authorizes through central projects.read and a live persisted
+  member/role grant.
+- **Delivery review history:** optional exact assigned Project UUID, positive
+  stored submission version, ascending/descending recorded decision time,
+  last-seven/last-thirty day windows. Project selectors fail closed if not
+  currently assigned; filters apply to the registered joined decision query
+  before SQL count, ordering, and pagination. Only non-sensitive decision,
+  version and timestamp metadata is returned; no learner identities, raw
+  feedback or claim that the current Mentor personally authored a decision.
+- **Sprint progress:** optional exact Project UUID, persisted task attention
+  (BLOCKED or IN_REVIEW), and active-Sprint-first ordering. An authorized
+  Project list supplies selector choices; the non-archived Mentor scope,
+  release/project linkage, status, search, and task filters are enforced by
+  the existing PostgreSQL query before pagination. The same filters/order
+  are forwarded into the existing capped, formula-safe CSV download. No
+  attempt was made to infer missing Sprint dates/goals.
+
+Zod input, scoped SQL readers, existing React pages, focused unit assertions and
+new isolated-PostgreSQL integration fixture assertions were authored. One
+backwards-compatible model/test repair preserves older team-coverage call-site
+types with missing optional filter facets. No new tables, registered migrations,
+POST/PATCH/PUT/DELETE route handlers, permissions or team-member mutation paths
+were introduced. Master account matrix and sole DATABASE tracker untouched.
+
+**Unexecuted acceptance:** no Node typecheck, ESLint, Vitest, disposable
+PostgreSQL, browser/375px or legacy-oracle side-by-side run was available
+in this connector-only source session. Full Team/Overview/Delivery/Sprints
+source-legacy interaction fidelity, upstream producers and browser/mobile
+acceptance remain open. No DONE surface/task/phase claim is made.
+
+
+## 2026-10-15 chat-11 — single-mentor team coverage (PARTIAL)
+
+Projects with exactly one active Mentor now have a current-assignment, registered-team filter; this surfaces single-Mentor coverage without inferring workload. The existing active-Mentor/college/module permission service is reused; the new selector is server-validated and preserved in paging. Pure regression is authored, not executed. Real PostgreSQL, mobile/desktop, exact legacy producer and staffing-action verification remain OPEN; no Team row is closed.
+
+
+## 2026-10-15 chat-11 — uncovered-team current Mentor team triage (PARTIAL)
+
+The existing live same-college current-assignment Team coverage screen supports no learners and no primary mentor using registered active Learner/Mentor membership counts. Server-side Zod accepts only known selectors and paging retains them; no invented staffing adequacy or new team write is introduced. Focused unit test authored. Runtime, disposable PostgreSQL, accessible browser/mobile and exact legacy behavior checks remain open.
+
+
+## 2026-10-15 chat-11 — five-learners current Mentor team triage (PARTIAL)
+
+The existing live same-college current-assignment Team coverage screen supports five or more active learners using registered active Learner/Mentor membership counts. Server-side Zod accepts only known selectors and paging retains them; no invented staffing adequacy or new team write is introduced. Focused unit test authored. Runtime, disposable PostgreSQL, accessible browser/mobile and exact legacy behavior checks remain open.
+
+
+## 2026-10-15 chat-11 — fewest-mentors current Mentor team triage (PARTIAL)
+
+The existing live same-college current-assignment Team coverage screen supports fewest mentors first using registered active Learner/Mentor membership counts. Server-side Zod accepts only known selectors and paging retains them; no invented staffing adequacy or new team write is introduced. Focused unit test authored. Runtime, disposable PostgreSQL, accessible browser/mobile and exact legacy behavior checks remain open.
+
+
+## 2026-10-15 chat-11 — most-mentors current Mentor team triage (PARTIAL)
+
+The existing live same-college current-assignment Team coverage screen supports most mentors first using registered active Learner/Mentor membership counts. Server-side Zod accepts only known selectors and paging retains them; no invented staffing adequacy or new team write is introduced. Focused unit test authored. Runtime, disposable PostgreSQL, accessible browser/mobile and exact legacy behavior checks remain open.
+
+
+## 2026-10-15 chat-11 — no-recorded-tasks Sprint attention (PARTIAL)
+
+The authorized current assigned-Mentor Sprint progress UI and its existing capped metadata CSV now select sprints without recorded tasks using registered project_tasks, server-side Zod and the same college/project authorization. The predicate is applied in SQL before count and paging, and zero-task Sprints do not claim 100% completion. Focused model unit authored, independent database/TypeScript/lint/browser/legacy verification still OPEN.
+
+
+## 2026-10-15 chat-11 — todo-task-attention Sprint attention (PARTIAL)
+
+The authorized current assigned-Mentor Sprint progress UI and its existing capped metadata CSV now select sprints with recorded to do tasks using registered project_tasks, server-side Zod and the same college/project authorization. The predicate is applied in SQL before count and paging, and zero-task Sprints do not claim 100% completion. Focused model unit authored, independent database/TypeScript/lint/browser/legacy verification still OPEN.
+
+
+## 2026-10-15 chat-11 — done-task-attention Sprint attention (PARTIAL)
+
+The authorized current assigned-Mentor Sprint progress UI and its existing capped metadata CSV now select sprints with recorded done tasks using registered project_tasks, server-side Zod and the same college/project authorization. The predicate is applied in SQL before count and paging, and zero-task Sprints do not claim 100% completion. Focused model unit authored, independent database/TypeScript/lint/browser/legacy verification still OPEN.
+
+
+## 2026-10-15 chat-11 — project-state-review-history (PARTIAL)
+
+The currently-assigned Mentor delivery-decision history filters by persisted Project PLANNED/ACTIVE/COMPLETED/ARCHIVED lifecycle without widening project membership scope. Only registered review metadata is shown. The UI, Zod query, SQL-scoped service and pagination URL are updated together. A focused source regression is authored, not executed. Independent PostgreSQL, TypeScript, lint, mobile/desktop browser, current legacy-oracle and upstream-producer verification remain OPEN; this does not close the Mentor Delivery review row.
+
+
+## 2026-10-15 chat-11 — older-recorded-reviews (PARTIAL)
+
+The project-scoped review timeline distinguishes persisted decisions older than 30 rolling days from recent 7/30-day decisions; the SQL cutoff is applied before counting or paginating and does not assert missing legacy review rows. The UI, Zod query, SQL-scoped service and pagination URL are updated together. A focused source regression is authored, not executed. Independent PostgreSQL, TypeScript, lint, mobile/desktop browser, current legacy-oracle and upstream-producer verification remain OPEN; this does not close the Mentor Delivery review row.
+
+
+## 2026-10-15 chat-11 — sprint-attention-postgres isolated DB regression (PARTIAL)
+
+Added an isolated registered PostgreSQL regression for TODO, DONE and no-task Sprint triage, honest zero-task completion, current active Mentor scope and learner/foreign-project denial. The fixture is authored but not executed; independent PostgreSQL/typecheck/CI remain open.
+
+
+## 2026-10-15 chat-11 — review-age-postgres isolated DB regression (PARTIAL)
+
+Added a persisted Project-state and deliberately backdated review fixture for assigned Mentor review history, with older-than-30 vs last-30 contrast and learner/foreign project denials. The disposable PostgreSQL test is source-authored only; runtime/legacy acceptance is pending.
+
+
+## 2026-10-15 chat-11 new round — safe-external-project-links (PARTIAL)
+
+The shared Project workspace now rejects credential-bearing, non-HTTP(S), malformed and oversized external URL values before rendering source/demo/resource/meeting links. Existing clean HTTP(S) links remain usable. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — mentor-task-acceptance-criteria (PARTIAL)
+
+Mentors can now expand the same registered task acceptance criteria that Learners see, directly from the Board during review; blanks never display a false rubric. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — sprint-recorded-progress (PARTIAL)
+
+Each Mentor Sprint displays counted persisted Done/In review/Blocked tasks and a completion percentage only when tasks exist. Empty Sprint completion is explicitly unknown, never 100%. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — sprint-empty-work-evidence (PARTIAL)
+
+The Mentor Board now explicitly distinguishes Sprints without persisted task rows from completed Sprints with work, preventing blank boards from implying a successful delivery. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — task-review-state-evidence (PARTIAL)
+
+Mentor Task cards now identify a real pending review only when the task is IN_REVIEW and its latest recorded attempt is SUBMITTED; stale or absent submissions do not produce phantom review-needed messages. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — task-feedback-deep-link (PARTIAL)
+
+Mentors can open the exact currently assigned task's authorized recorded-feedback history from its Board card when a submission attempt exists, rather than searching another page. The target retains its own persisted membership/college permission checks. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 new round — live-team-role-summary (PARTIAL)
+
+The exact-project Mentor Team section now summarizes actual current Learner, Mentor and primary-Mentor grants from the authorized active roster, without inferred contacts, staffing capacity or workload. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 new round — missing-primary-mentor-signal (PARTIAL)
+
+The Mentor Team view now calls out a live current-project roster with no registered primary Mentor, without offering forbidden Mentor-side membership editing or treating archived teams as needing assignment. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 new round — latest-final-delivery-version (PARTIAL)
+
+The Mentor Delivery tab explicitly identifies the highest persisted final-delivery version and status, even if historical rows are returned in a different order. Prior submitted versions are not falsely presented as the latest review action. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 new round — required-resource-link-evidence (PARTIAL)
+
+The Mentor Resources tab now distinguishes valid required external links, valid text-only resources, and required entries without usable content. Credential-bearing links are never shown as safe; no file/blob provider or invented upload is implied. Existing current-Mentor persisted-assignment, central projects.read, college and Projects module authorization still applies. New pure-model regression and visible exact-project UI change are authored. Real PostgreSQL, TypeScript/lint/Vitest, responsive browser, accessibility and legacy-oracle comparison remain open.
+
+
+## 2026-10-15 chat-11 — service-integrated Mentor workspace evidence (PARTIAL)
+
+The existing scope-checked getProjectWorkspaceView service now derives Sprint task status totals, active Team role counts and latest recorded delivery version from the already loaded registered rows in a pure shared model. Mentor and other account renderers consume in-request facts without duplicate database reads or invented workload metrics. Source-authored unit verification covers composition; isolated PostgreSQL, TypeScript, lint, Vitest and responsive browser gates remain unexecuted.

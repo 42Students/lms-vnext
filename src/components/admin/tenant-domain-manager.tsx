@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTimeIst } from "@/lib/format-date";
 import {
   useState,
   useTransition,
@@ -33,7 +34,7 @@ function dnsValue(token: string) {
 
 function formatCheckedAt(value: string | null) {
   if (!value) return "Never checked";
-  return new Date(value).toLocaleString();
+  return formatDateTimeIst(value);
 }
 
 export function TenantDomainManager({
