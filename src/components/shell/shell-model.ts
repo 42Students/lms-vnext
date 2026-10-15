@@ -162,7 +162,7 @@ const facultyItems: ShellNavItem[] = [
     group: "learning",
   },
   {
-    label: "All Assignments",
+    label: "All assignments",
     href: "/teacher/allAssignments",
     shortLabel: "A",
     icon: "/assets/images/common/assignment.svg",

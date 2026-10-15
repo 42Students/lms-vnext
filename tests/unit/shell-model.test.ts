@@ -232,7 +232,7 @@ describe("authenticated shell model", () => {
       "Courses",
       "Class Schedule",
       "All Quizzes",
-      "All Assignments",
+      "All assignments",
       "Projects",
       "Meetings",
     ]);
@@ -284,7 +284,7 @@ describe("authenticated shell model", () => {
       "Assignments",
       "My Placements",
       "All Quizzes",
-      "All Assignments",
+      "All assignments",
     ]);
     expect(hasAdminLinks(shellContext)).toBe(false);
   });

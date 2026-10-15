@@ -18,7 +18,7 @@ export default async function FacultyAllQuizzesPage() {
       </div>
       <PageHeader
         eyebrow="Faculty"
-        title="All Quizzes"
+        title="My Quizzes"
         description="View quizzes across your active teaching Sections, review attempts and publish results with your existing Course permissions."
       />
       <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="QUIZ" />
