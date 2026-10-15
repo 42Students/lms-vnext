@@ -5,7 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
-import { CreateProjectTemplateControl } from "@/components/projects/project-template-controls";
+
 import { can } from "@/modules/permissions/policy";
 import { templateDirectoryHref, templateDirectoryQuerySchema } from "@/modules/projects/super-admin-template-directory-model";
 import { listSuperAdminTemplateDirectory } from "@/modules/projects/super-admin-template-directory-service";
@@ -29,7 +29,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <PageHeader eyebrow="Super Admin · Projects" title="Template catalogue"
    description="Global template metadata with active college-assignment counts limited to your current administrative scope. No publishing or editing when scoped."
-   actions={can(context,"project-template.manage")?<CreateProjectTemplateControl/>:undefined}/>
+   actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">New template →</Link>:undefined}/>
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
