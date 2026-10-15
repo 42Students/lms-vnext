@@ -7,3 +7,8 @@ export function facultyMoveContentId(ids:readonly string[],from:number,delta:num
  [result[from],result[to]]=[result[to]!,result[from]!];
  return result;
 }
+
+/** Saving a persisted order without any changes should not send another write. */
+export function facultyContentOrderDirty(initial:readonly string[],draft:readonly string[]):boolean{
+ return initial.length!==draft.length || initial.some((id,i)=>id!==draft[i]);
+}

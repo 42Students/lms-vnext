@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
-import { facultyMoveContentId } from "@/modules/courses/faculty-content-order-ui-model";
+import { facultyMoveContentId, facultyContentOrderDirty } from "@/modules/courses/faculty-content-order-ui-model";
 
 type Item = {
   id: string;
@@ -33,6 +33,7 @@ function FacultyContentOrderEditorInner({
   // The parent keys this editor by the persisted source order. A new
   // lesson/delivery/content list remounts it, resetting unsaved local order.
 
+  const dirty = facultyContentOrderDirty(items.map(item=>item.id),order);
   if (items.length <= 1) return null;
 
   const byId = new Map(
@@ -108,10 +109,10 @@ function FacultyContentOrderEditorInner({
         <Button
           type="button"
           size="sm"
-          disabled={!enabled || pending}
+          disabled={!enabled || pending || !dirty}
           onClick={save}
         >
-          {pending ? "Saving…" : "Save order"}
+          {pending ? "Saving…" : dirty ? "Save order" : "Order saved"}
         </Button>
       </div>
 
