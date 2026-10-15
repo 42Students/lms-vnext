@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { buildTpoCompanyReportLinks } from "@/modules/placements/tpo-company-report-links-model";
 import {tpoCompanyPageCsvHref} from "@/modules/placements/tpo-company-page-csv-model";
-import { companyReportViewSchema, paginateCompanyReport, companyReportViewHref } from "@/modules/placements/tpo-company-report-view-model";
+import { companyReportViewSchema, paginateCompanyReport, companyReportViewHref,companyReportHasUserFilters } from "@/modules/placements/tpo-company-report-view-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -92,6 +92,14 @@ export default async function TpoByCompanyReportPage({
       </form>
       <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
+      {view.total===0&&companyReportHasUserFilters(view.query)?<section role="status"
+        className="rounded-xl border border-border bg-surface p-4">
+        <p className="text-sm text-body">No company records match these filters within the selected reporting scope.</p>
+        <Link href={companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined})}
+          className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+          Clear company filters
+        </Link>
+      </section>:null}
 
       <ReportTable
         title="Company placement performance"
@@ -117,7 +125,7 @@ export default async function TpoByCompanyReportPage({
           reportCurrency(company.averagePackageInr),
           reportCurrency(company.highestPackageInr),
         ])}
-        emptyDescription="No company placements are available for the selected season and drive."
+        emptyDescription="No company records are available for the selected reporting scope and filters."
       />
       <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex gap-4">{view.page>1?<Link href={href(view.page-1)} className="font-semibold text-primary-text">← Previous</Link>:null}{view.page<view.totalPages?<Link href={href(view.page+1)} className="font-semibold text-primary-text">Next →</Link>:null}</div></nav>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Company report drill-down">
