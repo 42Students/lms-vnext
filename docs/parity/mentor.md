@@ -1612,3 +1612,8 @@ Safe immutable lock/reopen history and attachments require additional registered
 ### Legacy Projects wording and one-strip audit — partial
 
 Compared Mentor and Learner Project tabs with exact legacy-copy-A labels, and College/Admin project strips with legacy-copy-A/B. Learner section tabs now exclude the non-legacy Final Delivery tab while retaining a separately reachable Final delivery action. Mentor Task Allocation no longer claims the now-registered assignee column is unavailable. College workspace route uses exactly the workspace section strip; Mentor/Learner pages only render their account section strip. Source-level label tests added; full modal/button/page text and browser visual audit remain outstanding.
+
+
+### 2026-10-16 PR-S2-03 / PR-S2-10 / PR-S2-14 precision correction
+
+Fixed the optimistic write conditions for task assignment, task-status transition and archived project restoration to compare PostgreSQL's microsecond timestamps using `date_trunc('milliseconds', updated_at)` against the UTC millisecond client token. All retain project/row locks and scoped status predicates. The archive write itself uses a locked row and no JS-Date timestamp CAS. Real PostgreSQL and browser acceptance still require independent execution.
