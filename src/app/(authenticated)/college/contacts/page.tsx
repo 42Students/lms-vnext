@@ -3,7 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
-import {collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
+import {collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
@@ -20,6 +20,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const context=await getCurrentRequestContext();
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
  const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));
+ const range=collegeContactsPageRange(filter.page,results.pageSize,results.total);
  if(filter.page>pageCount)redirect(collegeContactsHref({...filter,page:pageCount}));
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="College Admin · People" title="Contacts"
@@ -192,7 +193,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </ul>}
   </section>
   <nav aria-label="Contact directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-   <p>Page {filter.page} of {pageCount} · {results.total} matching contacts</p>
+   <p>Page {filter.page} of {pageCount} · Showing {range.first}–{range.last} of {results.total} matching contacts</p>
    <div className="flex flex-wrap gap-2">
     {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="rounded-md border px-4 py-2">First</Link>:null}
     {filter.page>1?<Link href={collegeContactsHref({...filter,page:filter.page-1})} className="rounded-md border px-4 py-2">Previous</Link>:null}
