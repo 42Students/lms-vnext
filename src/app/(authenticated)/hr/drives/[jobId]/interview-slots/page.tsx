@@ -40,6 +40,12 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
   </section>:<>
    <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Propose an interviewer time block</h2>
+    {rounds.length===0?<p role="status" className="text-sm text-body">
+     No pending or scheduled interview round is available for this drive.{" "}
+     <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
+      className="font-semibold text-primary-text">Review hiring rounds</Link>
+     {" "}before proposing a slot.
+    </p>:null}
     <form method="post" action={action} className="grid gap-3 sm:grid-cols-2">
      <input type="hidden" name="action" value="CREATE"/>
      <label className="grid gap-1 text-sm text-body">Interview round
