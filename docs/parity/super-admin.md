@@ -1120,3 +1120,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 visibility schema contract correction (PARTIAL):** Moved notice visibility selector onto admin-list Zod schema; edit requests remain strict and cannot smuggle ignored visibility fields. Regression unit confirms read query acceptance and write rejection. Executed typecheck/DB/browser still pending.
+
+
+**2026-10-15 chat-6 DB10 announcements filtered PostgreSQL fixture (AUTHORED, NOT EXECUTED):** Extends isolated registered-table lifecycle with literal title search, persisted audience and LIVE/SCHEDULED/DELETED filtering before page limit, export projection and cross-tenant history check. Requires a disposable migrated PG runner; no false acceptance claim.
