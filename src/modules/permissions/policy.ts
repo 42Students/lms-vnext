@@ -24,6 +24,9 @@ export type PlatformPermission =
   | "placements.read"
   | "placements.manage"
   | "placements.recruiter.read"
+  | "placements.recruiter.round.manage"
+  | "placements.recruiter.slot.manage"
+  | "placements.recruiter.outside.record"
   | "placements.recruiter.result.stage"
   | "placements.recruiter.note"
   | "activity.read"
@@ -127,6 +130,9 @@ export function can(
 
   if (
     permission === "placements.recruiter.read" ||
+    permission === "placements.recruiter.round.manage" ||
+    permission === "placements.recruiter.slot.manage" ||
+    permission === "placements.recruiter.outside.record" ||
     permission === "placements.recruiter.result.stage" ||
     permission === "placements.recruiter.note"
   ) {

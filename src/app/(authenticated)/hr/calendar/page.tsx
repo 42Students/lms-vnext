@@ -131,10 +131,9 @@ function eventDateTime(value: Date) {
 function eventHref(event: PlacementCalendarEvent) {
   if (!event.jobId) return null;
 
-  return (
-    "/hr/placements/jobs/" +
-    encodeURIComponent(event.jobId)
-  );
+  return event.roundKind==="INTERVIEW"
+    ? "/recruiter/drives/"+encodeURIComponent(event.jobId)+"/interview-slots"
+    : "/hr/placements/jobs/"+encodeURIComponent(event.jobId);
 }
 
 function eventKindLabel(event: PlacementCalendarEvent) {
