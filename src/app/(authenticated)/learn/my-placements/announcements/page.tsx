@@ -6,8 +6,13 @@ import { requireLearnerPlacementAccess } from "@/modules/placements/learner-part
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placement-announcement-model";
+import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
 
-export default async function LearnerPlacementAnnouncementsPage() {
+export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
+  searchParams: Promise<{ pinned?: string | string[] }>;
+}) {
+  const query = await searchParams;
+  const pinnedOnly = query.pinned === "1";
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) throw new AuthorizationError("placements.read");
   const own = await requireLearnerPlacementAccess(context);
@@ -16,9 +21,10 @@ export default async function LearnerPlacementAnnouncementsPage() {
   });
   // DB10 is an optional registered migration. Never query staged tables when disabled.
   const ready = announcementsRuntimeEnabled();
-  const notices = ready
+  const allNotices = ready
     ? learnerPlacementNoticeFeed(await listVisibleAnnouncementsForMembership(context))
     : [];
+  const notices = learnerPlacementNoticeView(allNotices, pinnedOnly);
   return (
     <main className="min-w-0 space-y-6">
       <div>
@@ -26,13 +32,13 @@ export default async function LearnerPlacementAnnouncementsPage() {
         <h1 className="mt-3 text-2xl font-semibold text-foreground">Announcements</h1>
         <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership.</p>
       </div>
-      {!ready ? (
+      <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">\n        <Link href="/learn/my-placements/announcements" aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>\n        <Link href="/learn/my-placements/announcements?pinned=1" aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>\n      </nav>\n      <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>\n      {!ready ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           College announcements are not available until the announcements database is enabled.
         </div>
       ) : notices.length === 0 ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          No current notices are visible to your membership.
+          {pinnedOnly && allNotices.length > 0 ? "No pinned notices match this filter." : "No current notices are visible to your membership."}
         </p>
       ) : (
         <ul className="min-w-0 space-y-3">
