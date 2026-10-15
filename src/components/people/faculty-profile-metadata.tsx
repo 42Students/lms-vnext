@@ -4,7 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import { facultyMetadataFromDraft,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileSearchAfterInsertion} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue,facultyProfileMetadataMatches,removeFacultyMetadataDraftEntry} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
@@ -54,7 +54,8 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={pending||rows.length>=100}
     className="min-h-11 rounded-md border border-border px-4 text-sm" onClick={()=>{
-     setRows(current=>[...current,{id:crypto.randomUUID(),key:"",value:""}]);setDirty(true);
+     setRows(current=>[...current,{id:crypto.randomUUID(),key:"",value:""}]);
+     setSearch(current=>facultyProfileSearchAfterInsertion(current));setDirty(true);
     }}>Add field</button>
    {dirty?<button type="button" disabled={pending} onClick={()=>{
     if(!window.confirm("Discard unsaved metadata edits?"))return;
