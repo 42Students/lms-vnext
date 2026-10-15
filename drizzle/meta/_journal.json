@@ -470,6 +470,13 @@
       "when": 1792054876983,
       "tag": "0066_college_signin_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1792054889964,
+      "tag": "0067_faculty_profile_document",
+      "breakpoints": true
     }
   ]
 }
