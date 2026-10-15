@@ -4,7 +4,7 @@ export const companyReportViewSchema=z.object({
  q:z.string().trim().max(100).default(""),
  outcome:z.enum(["ALL","HAS_PLACED","NO_PLACED"]).default("ALL"),
  page:z.coerce.number().int().min(1).max(10000).default(1),
- sort:z.enum(["NAME","PLACED_DESC","ACCEPTED_DESC","AVG_CTC_DESC","APPLICATIONS_DESC","DRIVES_DESC"]).default("NAME"),
+ sort:z.enum(["NAME","PLACED_DESC","ACCEPTED_DESC","AVG_CTC_DESC","APPLICATIONS_DESC","DRIVES_DESC","HIGHEST_CTC_DESC"]).default("NAME"),
 }).strict();
 export const COMPANY_REPORT_PAGE_SIZE=25;
 export function paginateCompanyReport(rows:readonly PlacementReportCompanyRow[],raw:z.input<typeof companyReportViewSchema>){
@@ -14,7 +14,7 @@ export function paginateCompanyReport(rows:readonly PlacementReportCompanyRow[],
   (query.outcome==="ALL"||(query.outcome==="HAS_PLACED"?r.placed>0:r.placed===0)))
  .sort((a,b)=>{
   if(query.sort!=="NAME"){
-   const metric=query.sort==="PLACED_DESC"?"placed":query.sort==="ACCEPTED_DESC"?"acceptedOffers":query.sort==="APPLICATIONS_DESC"?"applications":query.sort==="DRIVES_DESC"?"drives":"averagePackageInr";
+   const metric=query.sort==="PLACED_DESC"?"placed":query.sort==="ACCEPTED_DESC"?"acceptedOffers":query.sort==="APPLICATIONS_DESC"?"applications":query.sort==="DRIVES_DESC"?"drives":query.sort==="HIGHEST_CTC_DESC"?"highestPackageInr":"averagePackageInr";
    const left=a[metric],right=b[metric];
    if(left===null&&right!==null)return 1;
    if(right===null&&left!==null)return -1;

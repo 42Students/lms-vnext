@@ -86,7 +86,7 @@ export default async function TpoByCompanyReportPage({
         </label><label className="grid gap-1 text-sm font-semibold text-body">Order companies
           <select name="sort" defaultValue={view.query.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
-            <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option>
+            <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>
           </select>
         </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
       </form>
