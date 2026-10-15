@@ -18,6 +18,7 @@ import {
 } from "@/modules/module-access/admin-read-service";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import {placementFeatureEffects} from "@/modules/platform-settings/placement-feature-controls-model";
+import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 
 type SearchParams = {
   page?: string | string[];
@@ -163,6 +164,9 @@ export default async function SuperAdminCollegeModuleAccessPage({
             <p className="mt-2 text-xs leading-5 text-muted-foreground">
               {describeModuleDecision(decision)}
             </p>
+            <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
+              stored={(()=>{const r=ancestors.find(rule=>rule.scopeType==="COLLEGE"&&rule.module===decision.module);return r?{enabled:r.enabled,locked:r.locked}:null;})()}
+              ancestorLocked={ancestors.some(rule=>rule.module===decision.module&&rule.locked&&(rule.scopeType==="GLOBAL"||rule.scopeType==="ORGANIZATION"))}/>
           </article>
         ))}
       </section>
