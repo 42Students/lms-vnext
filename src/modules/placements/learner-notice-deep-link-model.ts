@@ -21,3 +21,11 @@ export function learnerNoticeFocusPage<T extends {id:string}>(
 export function learnerNoticeMissing(focus:string|null,found:boolean):boolean{
  return focus!==null&&!found;
 }
+
+/** Re-run lookup only against the reader's own authorized, unfiltered notices. */
+export function learnerNoticeRecoveryHref(focus:unknown):string{
+ const valid=typeof focus==="string"?idSchema.safeParse(focus):null;
+ return valid?.success?
+  "/learn/my-placements/announcements?focus="+encodeURIComponent(valid.data):
+  "/learn/my-placements/announcements";
+}

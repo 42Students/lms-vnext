@@ -18,7 +18,7 @@ import {learnerNoticeFilterHref,learnerNoticePageHref} from "@/modules/placement
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
 import {filterLearnerNoticesBySource} from "@/modules/placements/learner-notice-source-filter-model";
-import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing } from "@/modules/placements/learner-notice-deep-link-model";
+import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing, learnerNoticeRecoveryHref } from "@/modules/placements/learner-notice-deep-link-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[]; source?:string | string[] }>;
@@ -124,9 +124,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       {ready && collegeNoticesRead.available && learnerNoticeMissing(filters.focus,focused.found) ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
-          <Link href="/learn/my-placements/announcements"
+          <Link href={learnerNoticeRecoveryHref(filters.focus)}
             className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
-            Browse current notices
+            Search all my visible notices
           </Link>
         </div>
       ) : null}
