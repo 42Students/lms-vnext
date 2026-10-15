@@ -71,5 +71,13 @@ export function decideDelivery(request: OutboundSendRequest, policy: DeliveryPol
 export function previewAudience(requests: readonly OutboundSendRequest[], policyFor: (request: OutboundSendRequest) => DeliveryPolicy) {
   // Validate every address and template before performing any policy lookups.
   const prepared=requests.map(request=>outboundSendSchema.parse(request));
-  return prepared.map(request => ({ channel: request.channel, recipient: normalizeRecipient(request.channel, request.recipient), ...decideDelivery(request, policyFor(request)) }));
+  const seen=new Set<string>();
+  return prepared.map(request=>{
+    const recipient=normalizeRecipient(request.channel,request.recipient);
+    const key=JSON.stringify([request.channel,recipient,request.purpose,request.templateKey]);
+    const duplicate=seen.has(key);
+    seen.add(key);
+    const decision=duplicate?{status:"SUPPRESSED" as const,reason:"duplicate-in-batch" as const}:decideDelivery(request,policyFor(request));
+    return {channel:request.channel,recipient,...decision};
+  });
 }
