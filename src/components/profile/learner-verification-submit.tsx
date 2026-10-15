@@ -10,6 +10,7 @@ export function LearnerVerificationSubmit({
 }:{section:"EDUCATION"|"IDENTITY";expectedVersion:number;status:LearnerVerificationState}){
  const [pending,setPending]=useState(false);
  const [message,setMessage]=useState<string|null>(null);
+ const [refreshRequired,setRefreshRequired]=useState(false);
  const router=useRouter();
  async function submit(){
   if(pending||refreshRequired)return;
