@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
-import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref} from "@/modules/placements/tpo-global-requests-model";
+import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
@@ -63,12 +63,13 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
       <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
+      <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search and age filters</Link>
     </form>
     <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export current page CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
       {data.total>0?"This page is past the available request results.":"No requests match the current filters."}
-      <Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):"/tpo/requests"}
+      <Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
        className="ml-3 inline-flex min-h-11 items-center text-primary-text underline">
        {data.total>0?"First matching page":"Reset filters"}
       </Link>
