@@ -100,7 +100,7 @@ export function facultySubmissionReportEmptyState(query:{
  filter:FacultySubmissionFilter;q:string;publication:"ALL"|"PUBLISHED"|"PRIVATE";
 },sourceCount:number){
  if(sourceCount===0)return {
-  title:"No submissions received",
+  title:"No submissions yet",
   description:"Learners have not submitted work for this assignment in your authorized Section.",
  };
  if(query.q)return {
