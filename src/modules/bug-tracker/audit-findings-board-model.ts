@@ -1,10 +1,11 @@
 import {z} from "zod";
-import {BUG_SEVERITIES} from "./admin-validation";
+import {BUG_SEVERITIES,BUG_ACCOUNT_ROLES} from "./admin-validation";
 import {BUG_STATUSES} from "./workflow";
 const findingStatusOptions=["ALL",...BUG_STATUSES] as const;
 const findingSeverityOptions=["ALL",...BUG_SEVERITIES] as const;
 export const auditFindingsQuerySchema=z.strictObject({
  severity:z.enum(findingSeverityOptions).default("ALL"),
+ accountRole:z.enum(["ALL",...BUG_ACCOUNT_ROLES] as const).default("ALL"),
  environment:z.enum(["ALL","LOCAL","DEVELOPMENT","UAT","PRODUCTION","OTHER","NOT_SURE"]).default("ALL"),
  status:z.enum(findingStatusOptions).default("ALL"),
  q:z.string().trim().max(120).default(""),
@@ -18,6 +19,7 @@ export function trackerAuditFindingsInput(x:z.infer<typeof auditFindingsQuerySch
  return {
   status:x.status==="ALL"?undefined:x.status,
   severity:x.severity==="ALL"?undefined:x.severity,
+  accountRole:x.accountRole==="ALL"?undefined:x.accountRole,
   environment:x.environment==="ALL"?undefined:x.environment,
   q:x.q||undefined,sort:x.sort,limit:50,
   beforeCreatedAt:x.beforeCreatedAt,

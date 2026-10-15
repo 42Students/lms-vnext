@@ -7,6 +7,9 @@ import {
   BUG_STATUSES,
 } from "./workflow";
 
+export const BUG_ACCOUNT_ROLES = [
+  "LEARNER","FACULTY","MENTOR","COLLEGE_ADMIN","SUPER_ADMIN","NOT_SURE",
+] as const;
 export const BUG_SEVERITIES = [
   "BLOCKER", "CRITICAL", "MAJOR", "MINOR", "UI_ONLY", "SUGGESTION", "NOT_SURE",
 ] as const;
@@ -17,6 +20,7 @@ export const BUG_ENVIRONMENTS = [
 export const trackerAdminListSchema = z.object({
   status: z.enum(BUG_STATUSES).optional(),
   severity: z.enum(BUG_SEVERITIES).optional(),
+  accountRole: z.enum(BUG_ACCOUNT_ROLES).optional(),
   environment: z.enum(BUG_ENVIRONMENTS).optional(),
   q: z.string().trim().min(1).max(200).optional(),
   sort: z.enum(["newest", "oldest"]).default("newest"),
