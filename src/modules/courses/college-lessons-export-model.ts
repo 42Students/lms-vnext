@@ -35,6 +35,11 @@ export function lessonsCsvHref(q: Partial<Omit<CollegeLessonQuery,"page">>) {
  if(q.videoEvidence&&q.videoEvidence!=="ALL")p.set("videoEvidence",q.videoEvidence);
  if(q.resourceEvidence&&q.resourceEvidence!=="ALL")p.set("resourceEvidence",q.resourceEvidence);
  if(q.liveEvidence&&q.liveEvidence!=="ALL")p.set("liveEvidence",q.liveEvidence);
+ if(q.lessonId)p.set("lessonId",q.lessonId);
+ if(q.offeringId)p.set("offeringId",q.offeringId);
+ if(q.pathId)p.set("pathId",q.pathId);
+ if(q.minContentCount!==undefined)p.set("minContentCount",String(q.minContentCount));
+ if(q.maxContentCount!==undefined)p.set("maxContentCount",String(q.maxContentCount));
  return "/api/academics/college-lessons-export"+(p.size?"?"+p.toString():"");
 }
 export function renderLessonsCsv(rows:readonly {

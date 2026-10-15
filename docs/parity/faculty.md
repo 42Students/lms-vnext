@@ -1625,3 +1625,45 @@ After merging the current `main` into `chatgpt/chat-4`, this round pushed 12 ind
 - `tests/unit/faculty-profile-round10-1.test.ts` through `round10-12.test.ts` were authored alongside the changes. All components remain linked to existing authenticated and same-origin-guarded service endpoints; no new mutation route, tenant permission or storage claim was introduced.
 
 **Evidence and closure:** GitHub pushes are verified, but no executed TypeScript/ESLint/Vitest, disposable PostgreSQL, authenticated desktop/mobile, browser unload/SPA, or legacy-oracle acceptance was available for this commit. The Faculty profile document remains conditional on runtime column readiness; successful registered migration replay and privacy/receipt disposition must be independently verified before release acceptance. The shared Faculty matrix currently labels Self Profile DONE despite missing full legacy profile evidence; **this round makes no new DONE claim**. DB and release tracker statuses remain unchanged.
+
+## 2026-10-15 Faculty Self Profile filtered-collection safety — PARTIAL (chat-4 round 11)
+
+**Before → after:** Repeatable Faculty profile records, Skills, and editable Metadata had search controls that disappeared at five or fewer entries while leaving an invisible active filter behind. Adding or duplicating a blank record could also create an editor hidden by the old search query. Reorder buttons operated on absolute positions even when some records were filtered away, making the result difficult to anticipate.
+
+This branch adds **11 separately committed and pushed Faculty editor changes** using existing authenticated Self Profile page components and pure model helpers. All write calls still send their **complete original section draft** to `PATCH /api/people/faculty-self-document`; no server authorization, validation, private receipts, storage migrations, or other accounts were modified.
+
+- Search is disabled automatically once a repeatable section, Skills, or Metadata has five or fewer records, preventing invisible stale-query results.
+- Moving repeatable records or Skills is disabled when a search hides any entries; original record identities and order are preserved until the full list is visible.
+- Adding/duplicating a repeatable section entry, adding a Skill, and adding a Metadata field clear the active search so the newly created draft input is immediately visible.
+- A filtered result count with a named clear-search action is available in repeatable sections, Skills, and Metadata, including zero matches.
+- Eleven focused, **authored but unexecuted** tests live in `tests/unit/faculty-profile-round11-1.test.ts` through `round11-11.test.ts`, exercising each pure search/reorder recovery helper.
+
+**Parity status: PARTIAL.** These user-facing editor controls improve the Faculty Self Profile backlog but do not certify the whole legacy feature. A real registered private-profile database migration/replay, role/tenant denial and optimistic concurrency tests on disposable PostgreSQL, authenticated desktop/mobile browser checks (including search and a saved section), SPA navigation loss prevention, and approved private-document/contact privacy workflows still need independent proof. The shared matrix already marks Faculty Self Profile DONE despite describing missing acceptance; this branch does not change that matrix or the sole database tracker. Runtime source pushes and test authorship must not be counted as acceptance evidence.
+
+## 2026-10-15 Faculty Self Profile validated-save receipts and conflict recovery — PARTIAL (chat-4 round 12)
+
+**Before → after:** The Faculty Profile editor directly trusted the JSON shape and optimistic version of a successful PATCH response, potentially overwriting the local profile with an incomplete or malformed receipt. Errors from untyped server envelopes and uncertain writes were presented as generic validation/network failures. This round adds 14 individually committed and pushed Faculty changes within the existing Self Profile editor and pure response/error models.
+
+- Successful PATCH responses now pass `facultyProfileSaveReceipt` before any document or version state is replaced. The parser requires an object response, every persisted top-level document section, all fields in nested identity/contact/address/social/profile sections, valid Zod schema values, and **exactly** the next safe-integer optimistic version. Incomplete private fields cannot silently default to empty.
+- A malformed 2xx receipt is treated as **uncertain commit status** (not a guaranteed rollback). The editor keeps the local draft, flags a safe reload path, and warns against immediately retrying. No raw server exception bodies or private profile values are shown.
+- Non-2xx error JSON is treated as unknown and must expose an uppercase, length-bounded machine code to be used. HTTP 401, 403, 409, 413, 429, and gateway/service outages now have distinct non-leaking recovery guidance. An uncoded 409 still prompts stale-version reload rather than implying a field error.
+- Reloading an inconsistent/stale profile requires explicit confirmation that unsaved work across **all** sections will be discarded. No unsolicited page reload, silent overwrite, or forced migration is introduced.
+- A live `role="status"` reports the section currently saving; a successful verified response shows only the section name and confirmed revision, not personal values.
+- Fourteen focused unit tests are authored at `tests/unit/faculty-profile-round12-{1..14}.test.ts`. Changes use the pre-existing authenticated, same-origin checked `PATCH /api/people/faculty-self-document` and the existing transactional permission and optimistic-token service. No database schema, migration, shared tracker or unrelated account route was changed.
+
+**Acceptance limits:** These commits and unit tests are source-authored; repository-local TypeScript/ESLint/Vitest, disposable PostgreSQL, authenticated desktop/mobile browser, response corruption and multi-tab concurrency scenarios were **not independently executed** in this chat. Profile storage remains conditional on registered columns and approved private-document/identity handling. Faculty Self Profile cannot be declared fully legacy-complete based on this source work; existing master matrix DONE text does not remove the listed open gates. Database/release tracker remains untouched.
+
+## 2026-10-15 Faculty manual assignment grading response and conflict hardening — PARTIAL (chat-4 round 14)
+
+**Before → after:** The existing authenticated Faculty assignment report and its persisted `PATCH /api/courses/assignment-submissions/[submissionId]/grade` and `POST .../publish` routes were already responsible for manual scoring, optimistic version enforcement, and activity events. However, the review client trusted untyped successful mutation JSON and could display a false success after accepting a malformed, stale or foreign submission response.
+
+This round adds **12 independently committed, pushed Faculty-only manual grading improvements**:
+- Authoritative grade-save and publish receipts are Zod-validated against the exact persisted submission, assignment, delivery, membership, next optimistic version, correct grading status and gradePublished transition before replacing local state.
+- The returned points and feedback must match the Faculty-confirmed grading values; publish responses must preserve the previously saved points/feedback. The maximum-point guard remains enforced on both service and client response boundary.
+- A synchronous ref lock prevents overlapping save/publish commands on one submission, avoiding duplicate stale-token writes.
+- A timeout, invalid success payload or other unknown result is reported as a potentially committed operation; no assertion of rollback or automatic retry is made.
+- Publication confirmation quotes the exact saved score with a bounded feedback excerpt, makes learner visibility explicit, and still uses the existing human confirmation.
+- HTTP 409 exposes an explicit re-query action for the current submission revision (save **and** publish). A verified save says `saved privately`; only a verified publish reports learner visibility.
+- Twelve focused tests are authored at `tests/unit/faculty-manual-grading-round14-{1..12}.test.ts`. All grade/publish requests continue through existing authenticated, same-origin-guarded, tenant-scoped, transactional routes; this round changed no permission definitions, schema, migration, or other account.
+
+**Acceptance limits:** the remote code was pushed and source wiring inspected, but TypeScript/ESLint/Vitest, disposable PostgreSQL role denial, grading concurrency, and authenticated browser acceptance were not executed here. Source-only assertions are not independent acceptance evidence. Existing tracker and release gate statuses remain unchanged.
