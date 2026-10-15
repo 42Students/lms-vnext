@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { learnerAssessmentQuickCounts } from "@/modules/courses/learner-assessment-quick-counts-model";
 import { learnerAssessmentClock } from "@/modules/courses/learner-assessment-clock-model";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -177,6 +178,7 @@ export function LearnerAssessmentOverview({
 
   const countsByCourse=useMemo(()=>learnerAssessmentCourseCounts(items),[items]);
   const actionCounts=learnerAssessmentActionCounts(items,currentNowMs);
+  const quickCounts=learnerAssessmentQuickCounts(items,currentNowMs);
 
   const completed = items.filter((item) =>
     item.kind === "ASSIGNMENT"
@@ -239,6 +241,18 @@ export function LearnerAssessmentOverview({
         />
       </div>
 
+      <nav aria-label={kind === "ASSIGNMENT" ? "Assignment quick views" : "Quiz quick views"}
+        className="flex flex-wrap gap-2">
+        {quickCounts.map(quick => (
+          <button key={quick.value} type="button" aria-pressed={stateFilter === quick.value}
+            onClick={() => { setStateFilter(value => value === quick.value ? "ALL" : quick.value); setPage(1); }}
+            className={stateFilter === quick.value
+              ? "min-h-11 rounded-lg border border-primary bg-primary-subtle px-4 text-sm font-semibold text-primary-text"
+              : "min-h-11 rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-body"}>
+            {LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label} ({quick.count})
+          </button>
+        ))}
+      </nav>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="w-full">
           <span className="mb-1.5 block text-xs font-semibold text-body">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>

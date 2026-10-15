@@ -1378,3 +1378,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 round 2 / Quiz deadline fail-closed policy:** both initial quiz load and live attempt availability now reuse the same deadline guard as final confirmed submission. Malformed deadlines cannot expose an actionable attempt, and exact equality remains allowed. Unit regressions authored; PostgreSQL and real-clock browser verification pending.
 
 **Chat-7 round 2 / Quiz deadline clock:** the attempt now refreshes once per second in the last 60 seconds, every five seconds within ten minutes and every thirty seconds otherwise. The server remains final authority; client controls now catch deadlines without the previous 30-second lag. Unit tests authored, browser timing proof pending.
+
+**Chat-7 round 2 / Aggregate assessment quick states (PARTIAL; L6/L7):** All Assignments/All Quizzes expose count-backed, keyboard-accessible one-tap Needs action, Due soon, Overdue/missed and Published results filters. Counts share the existing persisted-state policy and don't expose unpublished scores. Models and unit cases authored; browser/PG parity remains open.
