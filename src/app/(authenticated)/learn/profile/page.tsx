@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
 import {learnerProfileAcademicRecovery} from "@/modules/people/learner-profile-recovery-model";
 import {LearnerProfileAcademicRetry} from "@/components/profile/learner-profile-academic-retry";
@@ -63,7 +64,7 @@ export default async function LearnerProfilePage({
           </p>
         )}
       </section>
-      <LearnerProfileWorkspace
+      <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">\n        <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>\n        <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>\n        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View my verification status →</Link>\n      </section>\n      <LearnerProfileWorkspace
         initialSection={initialSection}
         displayName={person.user.displayName}
         primaryEmail={person.user.email}
