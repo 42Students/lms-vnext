@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { buildTpoCompanyReportLinks } from "@/modules/placements/tpo-company-report-links-model";
-import { companyReportViewSchema, paginateCompanyReport, companyReportViewHref } from "@/modules/placements/tpo-company-report-view-model";
+import {tpoCompanyPageCsvHref} from "@/modules/placements/tpo-company-page-csv-model";
+import { companyReportViewSchema, paginateCompanyReport, companyReportViewHref,companyReportHasUserFilters } from "@/modules/placements/tpo-company-report-view-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -22,6 +23,7 @@ type SearchParams = {
   q?: string | string[];
   page?: string | string[];
   sort?: string | string[];
+  outcome?:string|string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -40,7 +42,7 @@ export default async function TpoByCompanyReportPage({
   }
 
   const query = await searchParams;
-  const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{})});
+  const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{}),...(first(query.outcome)?{outcome:first(query.outcome)}:{})});
   if(!viewQuery.success)return <section role="alert" className="rounded-xl border border-border bg-surface p-6"><h1 className="font-semibold text-foreground">Invalid company report filters</h1><p className="mt-2 text-sm text-body">Check search length and page number.</p></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
@@ -50,14 +52,21 @@ export default async function TpoByCompanyReportPage({
 
   const view=paginateCompanyReport(workspace.report.byCompany,viewQuery.data);
   const companyLinks=buildTpoCompanyReportLinks(view.rows);
-  const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,sort:view.query.sort,page});
+  const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page});
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Placement by company"
         description="Compare companies by drives, applicants, accepted offers, unique placed learners and accepted full-time packages."
-        actions={<ReportCsvLink workspace={workspace} kind="by-company" />}
+        actions={<div className="flex flex-wrap items-center gap-2">
+          <ReportCsvLink workspace={workspace} kind="by-company" />
+          <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
+            jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
+            className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Export visible companies CSV
+          </a>
+        </div>}
       />
 
       <ReportNavigation workspace={workspace} />
@@ -68,15 +77,29 @@ export default async function TpoByCompanyReportPage({
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">Search company name
           <input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label><label className="grid gap-1 text-sm font-semibold text-body">Recorded placement outcome
+          <select name="outcome" defaultValue={view.query.outcome}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="ALL">All companies</option><option value="HAS_PLACED">At least one placed learner</option>
+            <option value="NO_PLACED">No placed learners recorded</option>
+          </select>
         </label><label className="grid gap-1 text-sm font-semibold text-body">Order companies
           <select name="sort" defaultValue={view.query.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
-            <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option>
+            <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>
           </select>
         </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
       </form>
-      <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and CSV retain the selected full season/drive scope.</p>
+      <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
+      {view.total===0&&companyReportHasUserFilters(view.query)?<section role="status"
+        className="rounded-xl border border-border bg-surface p-4">
+        <p className="text-sm text-body">No company records match these filters within the selected reporting scope.</p>
+        <Link href={companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined})}
+          className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+          Clear company filters
+        </Link>
+      </section>:null}
 
       <ReportTable
         title="Company placement performance"
@@ -102,7 +125,7 @@ export default async function TpoByCompanyReportPage({
           reportCurrency(company.averagePackageInr),
           reportCurrency(company.highestPackageInr),
         ])}
-        emptyDescription="No company placements are available for the selected season and drive."
+        emptyDescription="No company records are available for the selected reporting scope and filters."
       />
       <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex gap-4">{view.page>1?<Link href={href(view.page-1)} className="font-semibold text-primary-text">← Previous</Link>:null}{view.page<view.totalPages?<Link href={href(view.page+1)} className="font-semibold text-primary-text">Next →</Link>:null}</div></nav>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Company report drill-down">

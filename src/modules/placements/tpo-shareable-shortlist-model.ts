@@ -4,6 +4,7 @@ import { placementReportCsv } from "./report-model";
 export const tpoShareableShortlistQuerySchema = z.object({
   jobId: z.string().uuid(),
   page: z.coerce.number().int().min(1).max(10000).default(1),
+  q: z.string().trim().max(80).default(""),
 }).strict();
 
 /** The recruiter round workspace exposes only these candidate identity fields. */

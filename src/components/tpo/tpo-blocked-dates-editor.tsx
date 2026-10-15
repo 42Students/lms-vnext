@@ -1,10 +1,13 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
 type BlockedDay={id:string;day:string;reason:string;updatedAt:string};
 export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
  const router=useRouter(),[day,setDay]=useState(""),[reason,setReason]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [search,setSearch]=useState(""),[month,setMonth]=useState("");
+ const visible=filterTpoBlockedDates(items,search,month);
  async function request(url:string,method:"POST"|"DELETE",body:Record<string,unknown>){
   setBusy(true);setError("");setNotice("");
   try{
@@ -27,8 +30,20 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50"
     disabled={busy||!day||reason.trim().length<3}>Block date</button>
   </form>
-  {items.length===0?<p role="status" className="text-sm text-muted-foreground">No dates have been blocked.</p>:
-   <ul className="grid min-w-0 gap-2 sm:grid-cols-2">{items.map(item=><li key={item.id}
+  <div className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
+    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
+      <input type="month" value={month} onChange={e=>setMonth(e.target.value)}
+        className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
+    </label>
+    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search reasons
+      <input type="search" maxLength={100} value={search} onChange={e=>setSearch(e.target.value)}
+        placeholder="Reason or YYYY-MM-DD"
+        className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
+    </label>
+  </div>
+  <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked dates</p>
+  {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{tpoBlockedDatesEmptyMessage(items.length)}</p>:
+   <ul className="grid min-w-0 gap-2 sm:grid-cols-2">{visible.map(item=><li key={item.id}
     className="flex min-w-0 flex-wrap justify-between gap-3 rounded-lg border border-border bg-surface p-3">
     <div className="min-w-0"><strong>{item.day}</strong><p className="break-words text-sm">{item.reason}</p></div>
     <button type="button" disabled={busy} onClick={()=>{

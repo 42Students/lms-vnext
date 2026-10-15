@@ -115,6 +115,7 @@ describe("TPO recruiter access filters", () => {
       tpoRecruiterAccessQuerySchema.parse({}),
     ).toEqual({
       status: "ALL",
+      q: "",
       page: 1,
     });
   });
@@ -127,6 +128,7 @@ describe("TPO recruiter access filters", () => {
       }),
     ).toEqual({
       status: "REVOKED",
+      q: "",
       page: 3,
     });
 

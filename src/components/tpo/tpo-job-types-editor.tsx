@@ -1,10 +1,13 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {filterTpoJobTypes,tpoJobTypesEmptyMessage,type TpoJobTypeStatusFilter} from "@/modules/placements/tpo-job-type-filter-model";
 type JobType={id:string;label:string;active:boolean;updatedAt:string};
 export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
  const router=useRouter(),[label,setLabel]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
+ const [search,setSearch]=useState(""),[status,setStatus]=useState<TpoJobTypeStatusFilter>("ALL");
+ const visible=filterTpoJobTypes(types,search,status);
  async function send(url:string,method:"POST"|"PATCH",payload:Record<string,unknown>){
   setBusy(true);setError("");setMessage("");
   try{
@@ -29,8 +32,23 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    </label>
    <button type="submit" disabled={!label.trim()||busy} className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Add job type</button>
   </form>
-  {types.length===0?<p role="status" className="text-sm text-muted-foreground">No custom job types yet.</p>:
-   <ul className="space-y-2">{types.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded border border-border p-3">
+  <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Find job type
+      <input type="search" value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
+        className="min-h-11 w-full rounded border border-border bg-surface px-3"
+        placeholder="Filter by name"/>
+    </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">Status
+      <select value={status} onChange={event=>setStatus(event.target.value as TpoJobTypeStatusFilter)}
+        className="min-h-11 rounded border border-border bg-surface px-3">
+        <option value="ALL">All types</option><option value="ACTIVE">Active</option>
+        <option value="INACTIVE">Inactive</option>
+      </select>
+    </label>
+  </div>
+  <p role="status" className="text-xs text-muted-foreground">{visible.length} of {types.length} custom job types</p>
+  {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{tpoJobTypesEmptyMessage(types.length,search,status)}</p>:
+   <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded border border-border p-3">
     <span className="min-w-0 break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
     <button type="button" disabled={busy} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,

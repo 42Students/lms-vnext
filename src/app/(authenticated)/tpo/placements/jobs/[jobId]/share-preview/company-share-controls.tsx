@@ -1,38 +1,57 @@
 "use client";
 import {useState} from "react";
-type LinkFact={id:string;expiresAt:string;revokedAt:string|null};
-export function CompanyShareControls({jobId,ready,initialLinks}:{
- jobId:string;ready:boolean;initialLinks:LinkFact[];
+import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,companyShareLifecycleStatus,companyShareLifecycleLabel,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
+import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
+import {prependCompanyShareLink} from "@/modules/placements/company-share/link-page-model";
+import {companyShareIssueFailureMessage} from "@/modules/placements/company-share/issue-message-model";
+import {copyCompanyShareUrl} from "@/modules/placements/company-share/copy-model";
+type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
+export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:{
+ jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;linkPage:number;
 }){
  const [links,setLinks]=useState(initialLinks);
+ const [asOf] = useState(() => new Date());
  const [days,setDays]=useState(2);
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
  const [newUrl,setNewUrl]=useState<string|null>(null);
+ const [copyState,setCopyState]=useState<"IDLE"|"COPIED"|"MANUAL_COPY">("IDLE");
  const root="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares";
  async function createLink(){
-  setPending(true);setError("");setNewUrl(null);
+  setPending(true);setError("");setNewUrl(null);setCopyState("IDLE");
   try{
    const res=await fetch(root,{
     method:"POST",credentials:"same-origin",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({expiresInDays:days}),
    });
-   if(!res.ok)throw new Error("Cannot issue share link");
+   if(!res.ok){
+    const code=(await res.json().catch(()=>({}))) as {error?:string};
+    if(code.error==="ACTIVE_LINK_LIMIT")throw new Error("ACTIVE_LINK_LIMIT");
+    throw new Error("CREATE_FAILED");
+   }
    const data=await res.json() as {shareId:string;token:string;expiresAt:string};
-   setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null},...current]);
+   if(linkPage===1&&shouldDisplayNewCompanyShare(status))setLinks(current=>prependCompanyShareLink(current,{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}}));
    setNewUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
-  }catch{setError("Link could not be created. Confirm access and try again.");}
+  }catch(error){setError(error instanceof Error&&error.message==="ACTIVE_LINK_LIMIT"?
+   companyShareIssueFailureMessage("ACTIVE_LINK_LIMIT"):
+   companyShareIssueFailureMessage(undefined));}
   finally{setPending(false);}
  }
+ async function copyLink(){
+  if(!newUrl)return;
+  const state=await copyCompanyShareUrl(newUrl,value=>navigator.clipboard.writeText(value));
+  setCopyState(state);
+ }
  async function revokeLink(id:string){
+  if(!window.confirm("Revoke this company applicant link? Anyone using it will immediately lose access."))return;
   setPending(true);setError("");
   try{
    const res=await fetch(root+"/"+encodeURIComponent(id)+"/revoke",{
     method:"POST",credentials:"same-origin",
    });
    if(!res.ok)throw new Error("Cannot revoke");
-   setLinks(current=>current.map(item=>item.id===id?{...item,revokedAt:new Date().toISOString()}:item));
+   setLinks(current=>afterCompanyShareRevocation(current,id,status,new Date().toISOString()));
    setNewUrl(null);
   }catch{setError("Could not revoke link. Refresh before trying again.");}
   finally{setPending(false);}
@@ -40,7 +59,7 @@ export function CompanyShareControls({jobId,ready,initialLinks}:{
  return <section aria-label="Company applicant sharing"
    className="space-y-3 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold text-foreground">Share shortlisted applicants with a company</h2>
-  <p className="text-sm text-body">Links disclose only the same three fields shown above,
+  <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum seven-day lifetime, and may be revoked immediately. Resume downloads
    and private learner details are excluded.</p>
   {!ready?<p role="status" className="text-sm text-body">
@@ -60,19 +79,24 @@ export function CompanyShareControls({jobId,ready,initialLinks}:{
    </div>
    {newUrl?<div className="rounded border border-border p-3">
     <p className="text-xs font-semibold text-body">Copy this URL now. The secret cannot be recovered later.</p>
-    <input aria-label="One-time share URL" readOnly value={newUrl}
+    <input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="mt-2 w-full rounded border border-border bg-surface p-2 text-xs"/>
-    <button type="button" onClick={()=>void navigator.clipboard.writeText(newUrl)}
+    <button type="button" onClick={()=>void copyLink()}
      className="mt-2 text-sm font-semibold text-primary-text underline">Copy URL</button>
+    {copyState==="COPIED"?<p role="status" className="mt-2 text-sm text-body">Copied to clipboard.</p>:null}
+    {copyState==="MANUAL_COPY"?<p role="status" className="mt-2 text-sm text-body">Clipboard unavailable. Select the URL field above and copy it manually.</p>:null}
    </div>:null}
    {links.length>0?<ul className="space-y-2">{links.map(link=><li key={link.id}
     className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
     <span>Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
-     {link.revokedAt?" Revoked":" Not revoked (validity checked when opened)"}</span>
+     {companyShareLifecycleLabel(companyShareLifecycleStatus(link,asOf))}</span>
+    <span className="text-xs text-muted-foreground">
+     {link.audit.views} views · {link.audit.exports} CSV downloads
+    </span>
     {!link.revokedAt?<button type="button" disabled={pending}
      onClick={()=>void revokeLink(link.id)}
      className="font-semibold text-primary-text underline">Revoke</button>:null}
-   </li>)}</ul>:<p className="text-sm text-body">No recent links recorded.</p>}
+   </li>)}</ul>:<p className="text-sm text-body">{companyShareEmptyMessage(status)}</p>}
   </>}
   {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
  </section>;
