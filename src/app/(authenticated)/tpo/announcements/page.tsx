@@ -16,7 +16,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const result=await listTpoPlacementAnnouncements(context,tab.data);
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
-   description="Read-only placement notices explicitly addressed to this college. Draft, remind and undo actions require separately registered delivery controls."/>
+   description="College-wide notices for this college. Removal and undo are author-only and version checked; external reminders remain unavailable."/>
   {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
@@ -32,7 +32,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    </form>
   </section>:null}
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
-   {([["yours","Yours"],["from-42","From 42"]] as const).map(([value,label])=><Link
+   {([["yours","Yours"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
     key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
     className={value===tab.data?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm text-on-primary":
     "inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-body"}>{label}</Link>)}
@@ -44,6 +44,15 @@ export default async function TpoAnnouncements({searchParams}:Props){
    {result.items.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}</h2>
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{row.message}</p>
+    {((tab.data==="yours"&&row.senderUserId===context.user.id)||tab.data==="deleted")?
+     <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
+      className="mt-4 flex flex-wrap gap-2">
+      <input type="hidden" name="expectedVersion" value={row.version}/>
+      <input type="hidden" name="action" value={tab.data==="deleted"?"RESTORE":"DELETE"}/>
+      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">
+       {tab.data==="deleted"?"Undo removal":"Remove notice"}
+      </button>
+     </form>:null}
     <p className="mt-3 text-xs text-muted-foreground">
      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)} IST</p>
    </li>)}
