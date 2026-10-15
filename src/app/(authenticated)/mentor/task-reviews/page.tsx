@@ -108,7 +108,7 @@ export default async function MentorTaskReviewsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Waiting since
           <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
-            <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option>
+            <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
