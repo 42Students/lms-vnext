@@ -496,6 +496,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Contradictory filter validation PARTIAL (chat-3, 2026-10-15):** The directory and scoped CSV reject reversed semester bounds, impossible required/allowed choice constraints and reversed linked-period date bounds with precise page validation text; the shared Academic Setup directory also no longer incorrectly labels functional CRUD controls read-only. Authored pure-model/unit cases; executed browser/runtime and complete legacy action parity remain open.
+
 **Elective linked period ends on or before PARTIAL (chat-3, 2026-10-15):** Inclusive validated ISO date filter uses only the persisted same-college linked academic period; slots without a period do not match a dated query. Page navigation and tenant-scoped capped CSV share the predicate; unit/disposable-PostgreSQL fixtures authored. Browser, executed PG and legacy workflow acceptance remain open.
 
 **Elective linked period starts on or after PARTIAL (chat-3, 2026-10-15):** Inclusive validated ISO date filter uses only the persisted same-college linked academic period; slots without a period do not match a dated query. Page navigation and tenant-scoped capped CSV share the predicate; unit/disposable-PostgreSQL fixtures authored. Browser, executed PG and legacy workflow acceptance remain open.
