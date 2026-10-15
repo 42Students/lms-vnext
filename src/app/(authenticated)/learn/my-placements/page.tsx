@@ -245,10 +245,16 @@ export default async function LearnerPlacementsPage({
           {verificationCue ? verificationCue.summary :
             "Your current verification status is temporarily unavailable. Open your profile to retry."}
         </p>
-        {verificationCue?.editHref ? <Link href={verificationCue.editHref}
-          className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
-          Correct the sent-back profile section →
-        </Link> : null}
+        {verificationCue && verificationCue.editHrefs.length>0 ? (
+          <div className="mt-2 flex flex-wrap gap-3">
+            {verificationCue.editHrefs.map(link=>(
+              <Link key={link.href} href={link.href}
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                {link.label} →
+              </Link>
+            ))}
+          </div>
+        ) : null}
         {verificationCue ? <p className="mt-2 text-xs text-muted-foreground">
           Education: {verificationCue.educationLabel} · Identity: {verificationCue.identityLabel}.
           This is profile review status, not a placement eligibility decision.
