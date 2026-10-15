@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { cx } from "@/lib/class-names";
 import type { ShellNavItem } from "./shell-model";
 import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-tabs-model";
+import {collegeLegacyGroupForPath} from "@/modules/people/college-legacy-tabs-model";
 
 import { TPO_SECTION_LABELS } from "./shell-model";
 function tpoSectionLabel(item: ShellNavItem): string | null {
@@ -28,7 +29,7 @@ export function SidebarNav({
 
   return (
     <nav
-      aria-label="Primary navigation"
+      aria-label="Main navigation"
       className={cx(
         "flex gap-1",
         compact ? "flex-row" : "flex-col",
@@ -46,6 +47,8 @@ export function SidebarNav({
           (index === 0 || item.group !== previousGroup);
         const superAdminGroup=pathname.startsWith("/admin/")
           ?superAdminLegacyGroupForPath(pathname):null;
+        const collegeGroup=pathname.startsWith("/college/")
+          ?collegeLegacyGroupForPath(pathname):null;
         const isFeatureDetail=pathname.startsWith("/admin/features/");
         const active =
           pathname === item.href ||
@@ -53,7 +56,11 @@ export function SidebarNav({
             pathname.startsWith(`${item.href}/`) &&
             !(item.label==="Feature Controls"&&isFeatureDetail)) ||
           (superAdminGroup!==null&&superAdminGroup.title===item.label) ||
+          (collegeGroup!==null&&collegeGroup.title===item.label) ||
           (item.label==="Module Access"&&isFeatureDetail) ||
+          (item.label==="Activity Log"&&
+            (pathname==="/tracker/audit-findings"||
+             pathname.startsWith("/tracker/audit-findings/"))) ||
           (item.label==="Projects"&&pathname.startsWith("/admin/projects/"));
 
         return (

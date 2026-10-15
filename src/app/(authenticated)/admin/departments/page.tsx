@@ -23,8 +23,8 @@ export default async function SuperAdminDepartmentsPage() {
           description="Department administration requires a college safety scope."
         />
         <EmptyState
-          title="Select a college scope"
-          description="Use the Super Admin scope selector in the top bar to choose a college before viewing or changing departments."
+          title="Select a college to continue"
+          description="Choose a college in the header above to see its departments."
         />
       </div>
     );

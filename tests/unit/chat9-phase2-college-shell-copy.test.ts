@@ -7,7 +7,7 @@ const legacyCollegeSidebar = [
   ["Activity Log", "/college/activity"],
   ["Academic Setup", "/college/departments"],
   ["Courses & Content", "/college/courses"],
-  ["People", "/college/people"],
+  ["People", "/college/faculty"],
   ["Profile verification", "/college/verification"],
   ["Placements", "/college/placements"],
   ["Placement cell", "/tpo/home"],

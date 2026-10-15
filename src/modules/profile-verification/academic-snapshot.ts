@@ -31,7 +31,13 @@ export function parseAcademicSnapshot(snapshot: SafeSnapshot): RawEntry[] {
       throw new VerificationStateError("INVALID_SNAPSHOT");
     }
     const raw = obj as Record<string, unknown>;
-    if (typeof raw.educationType !== "string" || typeof raw.grade !== "string") {
+    if (typeof raw.educationType !== "string") {
+      throw new VerificationStateError("INVALID_SNAPSHOT");
+    }
+    // Older learner profile entries can omit a blank grade or serialize it as
+    // null. Treat those as ungraded; never allow them to replace prior grades.
+    if (raw.grade === null || raw.grade === undefined || raw.grade === "") continue;
+    if (typeof raw.grade !== "string") {
       throw new VerificationStateError("INVALID_SNAPSHOT");
     }
     const level = educationLevel(raw.educationType);
