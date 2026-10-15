@@ -25,7 +25,8 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const allowed=jobs.filter(j=>j.collegeId===collegeId&&j.companyId===context.recruiter!.companyId);
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
- const filtered=filterRecruiterConversations(threads,knownJobIds,query.q,titles);
+ const recruiterOwned=threads.filter(thread=>thread.recruiterUserId===context.user.id);
+ const filtered=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles);
  const visible=filtered.slice(
   (query.page-1)*HR_CONVERSATION_PAGE_SIZE,query.page*HR_CONVERSATION_PAGE_SIZE,
  );
