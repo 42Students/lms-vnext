@@ -2095,3 +2095,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch Students effective decision filter — PARTIAL:** A strict URL selector filters the current authorized roster page by eligible/ineligible/undecided/ambiguous; ambiguous enrollment is never misclassified as an ordinary decision. Full SQL-grid/browser parity open.
 
 **Chat-2 batch Students inheritance source filter — PARTIAL:** Explicit LEARNER/CLASS/BATCH/NONE selection now composes over the authorized page and supports source audit; missing source never implies eligibility. Cohort-wide filtering and acceptance open.
+
+**Chat-2 batch Students registration evidence filter — PARTIAL:** Current-page recorded/unrecorded selection is permitted only when registration storage is available; unavailable never means unrecorded or consent. Page-scope/browser acceptance pending.
