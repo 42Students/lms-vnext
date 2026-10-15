@@ -1071,3 +1071,16 @@ describe("Faculty assignment command rejects stale membership state", () => {
     }
   });
 });
+
+
+describe("Faculty grade mutation scope checks", () => {
+  it("rejects a forged Faculty context on a foreign membership", async () => {
+    const {delivery,assignment}=await fixture();
+    const rows=await listAssignmentSubmissions(facultyOnly,assignment.id,delivery.id);
+    expect(rows.length).toBe(0);
+    await expect(publishAssignmentGrade(learner,randomUUID(),{expectedVersion:0})).rejects.toBeDefined();
+    await expect(gradeAssignmentSubmission({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},randomUUID(),{
+      pointsAwarded:2,feedback:"Revised",expectedVersion:0,
+    })).rejects.toBeDefined();
+  });
+});
