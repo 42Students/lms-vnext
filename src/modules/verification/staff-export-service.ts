@@ -5,10 +5,11 @@ import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
-import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
 import {verificationSqlSections} from "./queue-kind";
 import {matchesVerificationAttention} from "./attention-filter";
+import {matchesVerificationAgeBand} from "./queue-age-band";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab} from "./queue-tabs";
@@ -26,6 +27,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
  if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
  if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
+ if(!verificationAgeBandValid(filter))throw Error("INVALID_VERIFICATION_AGE_BAND");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const dateBounds=verificationSubmittedSqlBounds(filter);
@@ -55,6 +57,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
   if(!matchesSubmittedFrom(row.submittedAt,filter.submittedFrom))return false;
+  if(!matchesVerificationAgeBand(row.submittedAt,row.status,filter.ageBand,evaluatedAt))return false;
   const m=submittedMarksheets(row.snapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&m.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&m.count>0&&m.missing===0))return false;
