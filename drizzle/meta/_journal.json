@@ -596,6 +596,13 @@
       "when": 1792093886635,
       "tag": "0084_project_resource_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 85,
+      "version": "7",
+      "when": 1792098818123,
+      "tag": "0085_placement_job_cancelled_offer_expired",
+      "breakpoints": true
     }
   ]
 }

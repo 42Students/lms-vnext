@@ -491,7 +491,7 @@ export const placementJobs = pgTable(
     ),
     check(
       "placement_jobs_status_ck",
-      sql`${table.status} in ('DRAFT', 'PUBLISHED', 'CLOSED', 'ARCHIVED')`,
+      sql`${table.status} in ('DRAFT', 'PUBLISHED', 'CLOSED', 'ARCHIVED', 'CANCELLED')`,
     ),
     check(
       "placement_jobs_employment_type_ck",
@@ -524,6 +524,7 @@ export const placementJobs = pgTable(
       sql`(${table.status} = 'DRAFT' and ${table.publishedAt} is null and ${table.closedAt} is null and ${table.archivedAt} is null)
         or (${table.status} = 'PUBLISHED' and ${table.publishedAt} is not null and ${table.closedAt} is null and ${table.archivedAt} is null)
         or (${table.status} = 'CLOSED' and ${table.publishedAt} is not null and ${table.closedAt} is not null and ${table.archivedAt} is null)
+        or (${table.status} = 'CANCELLED' and ${table.publishedAt} is not null and ${table.closedAt} is not null and ${table.archivedAt} is null)
         or (${table.status} = 'ARCHIVED' and ${table.archivedAt} is not null)`,
     ),
   ],
@@ -1447,7 +1448,7 @@ export const placementOffers = pgTable(
     ),
     check(
       "placement_offers_status_ck",
-      sql`${table.status} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN')`,
+      sql`${table.status} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN', 'EXPIRED')`,
     ),
     check(
       "placement_offers_kind_ck",
@@ -1467,7 +1468,7 @@ export const placementOffers = pgTable(
     ),
     check(
       "placement_offers_lifecycle_ck",
-      sql`(${table.status} = 'ISSUED'
+      sql`(${table.status} in ('ISSUED', 'EXPIRED')
           and ${table.respondedByUserId} is null
           and ${table.respondedAt} is null
           and ${table.withdrawnByUserId} is null
@@ -1517,13 +1518,13 @@ export const placementOfferStatusHistory = pgTable(
     ).on(table.offerId, table.createdAt),
     check(
       "placement_offer_status_history_status_ck",
-      sql`(${table.fromStatus} is null or ${table.fromStatus} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN'))
-        and ${table.toStatus} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN')`,
+      sql`(${table.fromStatus} is null or ${table.fromStatus} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN', 'EXPIRED'))
+        and ${table.toStatus} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN', 'EXPIRED')`,
     ),
     check(
       "placement_offer_status_history_transition_ck",
       sql`(${table.fromStatus} is null and ${table.toStatus} = 'ISSUED')
-        or (${table.fromStatus} = 'ISSUED' and ${table.toStatus} in ('ACCEPTED', 'DECLINED', 'WITHDRAWN'))
+        or (${table.fromStatus} = 'ISSUED' and ${table.toStatus} in ('ACCEPTED', 'DECLINED', 'WITHDRAWN', 'EXPIRED'))
         or (${table.fromStatus} = 'ACCEPTED' and ${table.toStatus} = 'WITHDRAWN')`,
     ),
   ],
