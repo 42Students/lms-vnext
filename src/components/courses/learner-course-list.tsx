@@ -258,6 +258,7 @@ export function LearnerCourseList({
               className="min-h-11 rounded-lg border border-border bg-surface px-3 text-sm text-foreground">
               <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
               <option value="DUE">Next assessment due</option>
+               <option value="RECENT">Most recently active</option>
             </select>
           </label>
           <button type="button" aria-pressed={continueOnly}
