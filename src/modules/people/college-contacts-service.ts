@@ -53,7 +53,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.registrationPresence==="PRESENT"?and(learner,academic.hasRegistration):filter.registrationPresence==="MISSING"?and(learner,not(academic.hasRegistration)):undefined,
    filter.titlePresence==="PRESENT"?and(faculty,academic.hasAcademicTitle):filter.titlePresence==="MISSING"?and(faculty,not(academic.hasAcademicTitle)):undefined,
    filter.departmentPresence==="ASSIGNED"?and(faculty,academic.hasPrimaryDepartment):filter.departmentPresence==="MISSING"?and(faculty,not(academic.hasPrimaryDepartment)):undefined,
-   filter.classPresence==="ASSIGNED"?and(learner,academic.activeClass):filter.classPresence==="NONE"?and(learner,not(academic.activeClass)):undefined,
+   filter.classPresence==="ASSIGNED"&&!(filter.programId||filter.cohortId||filter.sectionId)?and(learner,academic.activeClass):filter.classPresence==="NONE"?and(learner,not(academic.activeClass)):undefined,
    filter.cohortId||filter.programId||filter.sectionId?and(learner,academic.inCombinedPlacement(filter)):undefined,
    filter.facultyDepartmentId?and(faculty,academic.inFacultyDepartment(filter.facultyDepartmentId)):undefined,
    filter.employmentType?and(faculty,academic.inEmploymentType(filter.employmentType)):undefined,

@@ -31,18 +31,18 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(programs,eq(programs.id,cohorts.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(sectionEnrollments.status,"ACTIVE"),eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.id,sectionId))));
- const inCombinedPlacement=(input:{cohortId?:string;programId?:string;sectionId?:string})=>exists(
+ const inCombinedPlacement=(input:{cohortId?:string;programId?:string;sectionId?:string;classPresence?:string})=>exists(
   db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
    .innerJoin(programs,eq(programs.id,cohorts.programId))
    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"),
      input.programId?eq(programs.id,input.programId):undefined,input.cohortId?eq(cohorts.id,input.cohortId):undefined,
-     input.sectionId?exists(db.select({id:sectionEnrollments.id}).from(sectionEnrollments)
+     input.sectionId||input.classPresence==="ASSIGNED"?exists(db.select({id:sectionEnrollments.id}).from(sectionEnrollments)
        .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,cohorts.id),
          eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
        .where(and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
-         eq(sectionEnrollments.sectionId,input.sectionId),eq(sectionEnrollments.status,"ACTIVE")))):undefined))
+         input.sectionId?eq(sectionEnrollments.sectionId,input.sectionId):undefined,eq(sectionEnrollments.status,"ACTIVE")))):undefined))
  );
  const inProgram=(programId:string)=>exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
