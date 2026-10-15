@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
+import {sortTpoBatchRegistrationRows} from "./tpo-batch-registration-sort-model";
 import {filterTpoRegistrationRecency} from "./tpo-batch-registration-recency-model";
 import {filterTpoBatchRegistrationSource} from "./tpo-batch-registration-source-model";
 import {filterBatchRegistrations,paginateBatchRegistrations,tpoBatchRegistrationFilters} from "./tpo-batch-registration-filter-model";
@@ -46,7 +47,8 @@ export async function listTpoBatchRegistrationRoster(ctx:RequestContext,cohortId
    source:reg?.source??null,updatedAt:reg?.updatedAt.toISOString()??null};
  });
  const filtered=filterTpoRegistrationRecency(filterTpoBatchRegistrationSource(filterBatchRegistrations(roster,filters),filters.source),filters.recency,new Date());
- const page=paginateBatchRegistrations(filtered,filters.page);
+ const ordered=sortTpoBatchRegistrationRows(filtered,filters.order);
+ const page=paginateBatchRegistrations(ordered,filters.page);
  return {batch,ready:true,limited,filters,items:page.items,hasMore:page.hasMore,
    total:page.total,sampleSize:sample.length};
 }
