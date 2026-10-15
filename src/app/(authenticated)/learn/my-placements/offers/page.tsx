@@ -1,4 +1,9 @@
 import Link from "next/link";
+import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
+import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
+import {learnerOfferStatusHref} from "@/modules/placements/learner-offers-navigation-model";
+import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
+import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
@@ -20,18 +25,33 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 export default async function LearnerOffersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[]; sort?: string | string[] }>;
 }) {
   const query = await searchParams;
   const requested = typeof query.status === "string" ? query.status : "all";
   const validView = learnerOfferViewSchema.safeParse(requested);
   const view = validView.success ? validView.data : "all";
+  const parsedSearch = learnerOffersSearchSchema.safeParse(query.q ?? "");
+  const searchTerm = parsedSearch.success ? parsedSearch.data : "";
+  const dueOnly = query.due === "1";
   const context = await getCurrentRequestContext();
   const [offers,requests] = await Promise.all([
     getOwnLearnerOfferBrowse(context,view),listOwnPlacementRequests(context),
   ]);
   const snapshotNowIso = new Date().toISOString();
-  const expiringSoon = learnerOffersExpiringSoon(offers.items.map(row => ({
+  const searchedOffers = searchOwnOffers(offers.items, searchTerm);
+  const visibleOffers = dueOnly ? ownOffersDueWithinWeek(searchedOffers,Date.parse(snapshotNowIso)) : searchedOffers;
+  const pageResult = learnerOfferPageSchema.safeParse(query.page ?? "1");
+  const requestedPage = pageResult.success ? pageResult.data : 1;
+  const sortParsed=learnerOfferSortSchema.safeParse(query.sort ?? "priority");
+  const order=sortParsed.success?sortParsed.data:"priority";
+  const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
+  const paginated = paginateOwnOffers(sorted,requestedPage,15);
+  const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
+    ...(view!=="all"?{status:view}:{}),...(searchTerm?{q:searchTerm}:{}),
+    ...(dueOnly?{due:"1"}:{}),...(order!=="priority"?{sort:order}:{}),page:String(page),
+  }).toString();
+  const expiringSoon = learnerOffersExpiringSoon(visibleOffers.map(row => ({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
   })), Date.parse(snapshotNowIso));
 
@@ -52,8 +72,7 @@ export default async function LearnerOffersPage({
         {tabs.map((tab) => (
           <Link
             key={tab.id}
-            href={tab.id === "all" ? "/learn/my-placements/offers" :
-              "/learn/my-placements/offers?status=" + tab.id}
+            href={learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order})}
             aria-current={view === tab.id ? "page" : undefined}
             className={view === tab.id
               ? "inline-flex min-h-11 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
@@ -63,19 +82,61 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
+        {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
+        {dueOnly ? <input type="hidden" name="due" value="1" /> : null}
+        {order !== "priority" ? <input type="hidden" name="sort" value={order} /> : null}
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
+          Search my offers
+          <input name="q" type="search" maxLength={80} defaultValue={searchTerm}
+            placeholder="Employer or role" className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
+        {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order})}
+          className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
+      </form>
+      <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
+        {view!=="all"?<input type="hidden" name="status" value={view}/>:null}
+        {searchTerm?<input type="hidden" name="q" value={searchTerm}/>:null}
+        {dueOnly?<input type="hidden" name="due" value="1"/>:null}
+        <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+          Sort my offers
+          <select name="sort" defaultValue={order} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="priority">Needs response first</option>
+            <option value="newest">Newest issued</option>
+            <option value="company">Company A–Z</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
+      </form>
+      <nav aria-label="Offer deadline filter" className="flex flex-wrap gap-3 text-sm">
+        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order})}
+          aria-current={!dueOnly?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">All deadlines</Link>
+        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:true,sort:order})}
+          aria-current={dueOnly?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Awaiting response · next 7 days</Link>
+      </nav>
+      {expiringSoon > 0 && view !== "pending" ? (
+        <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order})}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Review {expiringSoon} awaiting-response {expiringSoon===1?"offer":"offers"} with a deadline in 24 hours →
+        </Link>
+      ) : null}
       {expiringSoon > 0 ? (
         <div role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
           <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
         </div>
       ) : null}
-      {offers.items.length === 0 ? (
+      {visibleOffers.length === 0 ? (
         <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">
-            {offers.counts.all === 0 ? "No offers recorded" : "No offers in this view"}
+            {offers.counts.all === 0 ? "No offers recorded" : (searchTerm || dueOnly) ? "No matching offers" : "No offers in this view"}
           </h2>
           <p className="mt-2 text-sm text-body">
             {offers.counts.all === 0
               ? "Official offers will appear after the placement team issues them. A round result is not an offer."
+              : (searchTerm || dueOnly) ? "No own persisted offer matches these filters. Clear them to restore the selected status."
               : "No persisted offer currently matches this status. Choose another status to see other offers."}
           </p>
           {offers.counts.all > 0 ? (
@@ -87,12 +148,13 @@ export default async function LearnerOffersPage({
         </section>
       ) : (
         <LearnerPlacementOffers
+          preserveOrder
           extensionRequests={requests.map(row=>({
             offerId:row.request.offerId,status:row.request.status,
             requestType:row.request.requestType,
           }))}
           snapshotNowIso={snapshotNowIso}
-          offers={offers.items.map((row) => ({
+          offers={paginated.items.map((row) => ({
             offerId: row.offer.id,
             applicationId: row.offer.applicationId,
             companyName: row.company.name,
@@ -115,6 +177,12 @@ export default async function LearnerOffersPage({
           }))}
         />
       )}
+      {paginated.total>0 ? <nav aria-label="Offer results pagination" className="flex flex-wrap items-center gap-3 text-sm">
+        <p className="text-muted-foreground">{paginated.from}–{paginated.to} of {paginated.total} matching offers</p>
+        {paginated.page>1 ? <Link href={pageUrl(paginated.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link> : null}
+        <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
+        {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link> : null}
+      </nav> : null}
       <p className="text-xs text-muted-foreground">
         Offer actions reuse the existing authorized offer-response endpoint.
         This page does not issue an offer or infer joining from acceptance.

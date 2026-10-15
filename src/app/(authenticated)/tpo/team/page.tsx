@@ -43,11 +43,35 @@ export default async function TpoTeamPage({searchParams}:{
     </ul>:<EmptyState title="No active team assignments" description="No members match this college's currently active role evidence." />}
   </section>:<section className="rounded-xl border border-border bg-surface p-5">
     <h2 className="font-semibold text-foreground">Internal conversations</h2>
+    {conversations?.status==="READY" ? <form method="post" action="/api/placements/tpo/team/threads"
+      className="mt-4 grid gap-3 rounded-lg border border-border p-4">
+      <h3 className="font-semibold text-foreground">Start a private TPO conversation</h3>
+      <label className="grid gap-1 text-sm text-body">Team member
+        <select name="recipientMembershipId" required defaultValue=""
+          className="min-h-11 rounded-md border border-border bg-surface px-3">
+          <option value="" disabled>Choose an active TPO colleague</option>
+          {team.members.filter(member=>member.membershipId!==context.membership?.id && member.roles.includes("TPO")).map(member=>
+            <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm text-body">Topic
+        <input name="topic" required maxLength={160} className="min-h-11 rounded-md border border-border bg-surface px-3"
+          placeholder="Drive coordination" />
+      </label>
+      <p className="text-xs text-muted-foreground">Only two named active TPO members can participate; the recipient is revalidated before saving.</p>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Start conversation</button>
+    </form> : null}
     {conversations?.status==="NOT_REGISTERED"?
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
       conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
        <li key={row.id} className="rounded-md border border-border p-3">
-        <p className="break-words font-semibold text-foreground">{row.topic}</p>
+        <div className="flex flex-wrap items-start justify-between gap-2">
+         <Link className="min-w-0 break-words font-semibold text-primary-text" href={"/tpo/team/"+row.id}>{row.topic}</Link>
+         {row.unreadCount>0 ? <span aria-label={row.unreadCount+" unread updates"}
+          className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">
+          {row.unreadCount} unread
+         </span>:null}
+        </div>
         <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
        </li>)}</ul>:
        <p role="status" className="mt-2 text-sm text-body">No private team conversations are available to your active membership.</p>}

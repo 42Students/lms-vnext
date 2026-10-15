@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, lt, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTasks, projectTaskSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -36,7 +36,7 @@ export async function getMentorTaskReviews(
   const modules = await resolveOptionalModuleAccess(context);
   if (!modules.projects.enabled) {
     return {
-      enabled: false as const, query,
+      enabled: false as const, query, projects: [] as {id:string;title:string}[],
       ...mentorTaskReviewSummary({ total: 0, ...query }),
       items: [] as PendingTaskReview[],
     };
@@ -44,19 +44,29 @@ export async function getMentorTaskReviews(
   const assigned = (await listMyProjectInstances(context))
     .filter(row => row.memberRole === "MENTOR");
   const ids = assigned.map(row => row.project.id);
-  if (!ids.length) {
+  const projects = assigned.map(row => ({id:row.project.id,title:row.project.title}));
+  if (query.projectId && !ids.includes(query.projectId))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const selectedIds=assigned.filter(row=>query.assignment==="ALL"||
+    (query.assignment==="PRIMARY")===row.isPrimaryMentor).map(row=>row.project.id);
+  if (!selectedIds.length) {
     return {
-      enabled: true as const, query,
+      enabled: true as const, query, projects,
       ...mentorTaskReviewSummary({ total: 0, ...query }),
       items: [] as PendingTaskReview[],
     };
   }
 
   const escaped=mentorTaskReviewLiteralSearch(query.search);
+  const cutoff=query.age==="ALL"?null:new Date(new Date().getTime()-7*86400000);
   const conditions = and(
-    inArray(projectTaskSubmissions.projectId, ids),
+    inArray(projectTaskSubmissions.projectId, selectedIds),
+    query.projectId?eq(projectTaskSubmissions.projectId,query.projectId):undefined,
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
+    cutoff?(query.age==="OLDER_THAN_7_DAYS"
+      ? lt(projectTaskSubmissions.submittedAt,cutoff)
+      : gte(projectTaskSubmissions.submittedAt,cutoff)):undefined,
     query.priority==="ALL"?undefined:eq(projectTasks.priority,query.priority),
     query.version===undefined?undefined:eq(projectTaskSubmissions.version,query.version),
     sql`not exists (select 1 from project_task_submissions newer
@@ -106,5 +116,5 @@ export async function getMentorTaskReviews(
       ? [desc(priorityRank),desc(projectTaskSubmissions.submittedAt),desc(projectTaskSubmissions.id)]
       : [ordering(projectTaskSubmissions.submittedAt),ordering(projectTaskSubmissions.id)])
   ).limit(page.pageSize).offset((page.page-1)*page.pageSize);
-  return {enabled:true as const,query:{...query,page:page.page},...page,items};
+  return {enabled:true as const,query:{...query,page:page.page},projects,...page,items};
 }

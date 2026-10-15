@@ -2,6 +2,7 @@ import { z } from "zod";
 export const inboundMailListQuerySchema = z.strictObject({
  status: z.enum(["ALL", "NEW", "TRIAGED", "RESOLVED"]).default("ALL"),
  q: z.string().trim().max(120).default(""),
+ recipient: z.string().trim().toLowerCase().pipe(z.email().max(320)).optional(),
  page: z.coerce.number().int().min(1).max(10000).default(1),
 });
 export const inboundMailMetadataSchema = z.strictObject({

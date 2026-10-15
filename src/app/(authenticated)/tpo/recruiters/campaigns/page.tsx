@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -19,11 +18,18 @@ export default async function CampaignHistory({searchParams}:PageProps){
  return <main className="space-y-6">
   <PageHeader eyebrow="Engage" title="Campaign history"
    description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."/>
-  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-primary-text">Back to Engage</Link>
+  <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
+   <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-primary-text">Back to Engage</Link>
+   <Link href={"/api/placements/tpo/campaigns/history/export?page="+result.page}
+     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Export this page as CSV</Link>
+  </nav>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
   {result.rows.length ? <ol className="grid gap-3 sm:grid-cols-2">
     {result.rows.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-      <h2 className="break-words font-semibold text-foreground">{row.purpose}</h2>
+      <h2 className="break-words font-semibold text-foreground">
+       <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
+        className="text-primary-text underline-offset-2 hover:underline">{row.purpose}</Link>
+      </h2>
       <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.createdAt)} IST · {row.status}</p>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-body">
         <div><dt>Total</dt><dd>{row.total}</dd></div>

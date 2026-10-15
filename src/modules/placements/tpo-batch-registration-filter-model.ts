@@ -1,0 +1,24 @@
+import {z} from "zod";
+import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
+export const tpoBatchRegistrationFilters=z.object({
+ q:z.string().trim().max(100).default(""),
+ choice:z.union([tpoRegistrationChoiceSchema,z.literal("UNRECORDED"),z.literal("ALL")]).default("ALL"),
+ page:z.coerce.number().int().min(1).max(10000).default(1),
+}).strict();
+export type BatchRegistrationListRow={membershipId:string;name:string;choice:string|null};
+export function filterBatchRegistrations<T extends BatchRegistrationListRow>(
+ rows:readonly T[],filter:z.infer<typeof tpoBatchRegistrationFilters>,
+){
+ const search=filter.q.toLocaleLowerCase();
+ return rows.filter(row=>{
+  const matchesChoice=filter.choice==="ALL"||
+   (filter.choice==="UNRECORDED"?row.choice===null:row.choice===filter.choice);
+  const matchesSearch=row.name.toLocaleLowerCase().includes(search)||
+   row.membershipId.toLowerCase().includes(search);
+  return matchesChoice&&matchesSearch;
+ });
+}
+export function paginateBatchRegistrations<T>(items:readonly T[],page:number,pageSize=25){
+ return {items:items.slice((page-1)*pageSize,page*pageSize),
+  page,total:items.length,hasMore:page*pageSize<items.length};
+}

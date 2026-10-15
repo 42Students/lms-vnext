@@ -36,6 +36,7 @@ import {
 import type {
   ModuleAccessRule,
 } from "./service";
+import {adminModuleOverrideFilterSchema} from "./admin-override-filter-model";
 
 export const adminFeatureQuerySchema =
   z.object({
@@ -53,6 +54,7 @@ export const adminFeatureQuerySchema =
   }).strict();
 
 const detailQuerySchema = z.object({
+  module: adminModuleOverrideFilterSchema,
   page: z.coerce
     .number()
     .int()
@@ -448,6 +450,7 @@ export async function getSuperAdminCollegeModuleAccess(
 
   const descendantSql =
     scopedDescendantRules(college.id);
+  const descendantFilter = query.module ? sql`where module = ${query.module}::text` : sql``;
 
   const [countResult, overrideResult] =
     await Promise.all([
@@ -455,6 +458,7 @@ export async function getSuperAdminCollegeModuleAccess(
         with scoped as (${descendantSql})
         select count(*)::int as total
         from scoped
+        ${descendantFilter}
       `),
       db.execute<OverrideQueryRow>(sql`
         with scoped as (${descendantSql})
@@ -466,6 +470,7 @@ export async function getSuperAdminCollegeModuleAccess(
           enabled,
           locked
         from scoped
+        ${descendantFilter}
         order by
           case scope_type
             when 'DEPARTMENT' then 1
@@ -513,6 +518,7 @@ export async function getSuperAdminCollegeModuleAccess(
     descendants:
       overrideResult.rows as StoredModuleOverride[],
     page: query.page,
+    moduleFilter: query.module ?? null,
     pageSize: OVERRIDE_PAGE_SIZE,
     total,
     totalPages: Math.max(

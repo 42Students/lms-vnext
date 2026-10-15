@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { adminCompaniesQuerySchema } from "@/modules/placements/admin-company-directory-model";
 import { listSuperAdminCompanyDirectory } from "@/modules/placements/admin-company-directory-service";
 import { findPossibleCompanyDuplicates } from "@/modules/placements/company-curation-candidates-model";
+import {findCompanyNameIdentityConflicts} from "@/modules/placements/company-curation-name-conflicts";
 
 export default async function SuperAdminCompaniesPage({
   searchParams,
@@ -22,6 +23,7 @@ export default async function SuperAdminCompaniesPage({
   const context = await getCurrentRequestContext();
   const data = await listSuperAdminCompanyDirectory(context, parsed.data);
   const candidates = findPossibleCompanyDuplicates(data.rows);
+  const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies"
       description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
@@ -59,6 +61,16 @@ export default async function SuperAdminCompaniesPage({
            <li key={company.id} className="break-words">{company.name}</li>)}</ul>
         </li>)}</ul>}
       {data.truncated?<p className="text-xs text-muted-foreground">The directory is capped at 200 relationships, so duplicate detection is incomplete. Narrow the filter before reviewing.</p>:null}
+    </section>
+    <section className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Name identity review">
+      <h2 className="text-base font-semibold text-foreground">Same-name identities to review</h2>
+      <p className="text-sm text-body">Distinct employer IDs with matching normalized names may be aliases, franchises or unrelated companies. No automatic verification or merge is made.</p>
+      {nameConflicts.length===0?<p className="text-sm text-muted-foreground">No distinct IDs share a normalized name in this page.</p>:
+       <ul className="grid gap-2 sm:grid-cols-2">{nameConflicts.map(group=><li key={group.key} className="min-w-0 rounded-lg border border-border p-3">
+        <h3 className="break-words text-sm font-semibold">{group.label}</h3>
+        <p className="mt-2 text-xs text-muted-foreground">{group.companyIds.length} distinct identities · manual verification required</p>
+       </li>)}</ul>}
+      {data.truncated?<p className="text-xs text-muted-foreground">Only the first 200 scoped relationships were reviewed.</p>:null}
     </section>
     {data.rows.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">

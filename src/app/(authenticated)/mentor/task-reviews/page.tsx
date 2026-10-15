@@ -10,10 +10,13 @@ import {
 } from "@/modules/projects/mentor-task-review-model";
 
 type Params = {
+  assignment?: string | string[];
   search?: string | string[];
+  projectId?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
   priority?: string | string[];
+  age?: string | string[];
   version?: string | string[];
   order?: string | string[];
 };
@@ -28,9 +31,12 @@ export default async function MentorTaskReviewsPage({
   const raw = await searchParams;
   const parsed = mentorTaskReviewQuerySchema.safeParse({
     search: first(raw.search) ?? undefined,
+    projectId: first(raw.projectId) ?? undefined,
+    assignment:first(raw.assignment) ?? undefined,
     page: first(raw.page) ?? undefined,
     pageSize: first(raw.pageSize) ?? undefined,
     priority: first(raw.priority) ?? undefined,
+    age: first(raw.age) ?? undefined,
     version: first(raw.version) ?? undefined,
     order: first(raw.order) ?? undefined,
   });
@@ -74,6 +80,20 @@ export default async function MentorTaskReviewsPage({
             <option value="20">20</option><option value="50">50</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
+          <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+            <option value="">All assigned projects</option>
+            {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
+          <select name="assignment" defaultValue={data.query.assignment}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All current assignments</option>
+            <option value="PRIMARY">Primary Mentor</option>
+            <option value="SUPPORTING">Supporting Mentor</option>
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority
           <select name="priority" defaultValue={data.query.priority}
             className="min-h-10 rounded-md border border-border bg-background px-3">
@@ -85,6 +105,11 @@ export default async function MentorTaskReviewsPage({
           <input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
             className="min-h-10 w-32 rounded-md border border-border bg-background px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Waiting since
+          <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option>
+          </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
           <select name="order" defaultValue={data.query.order}

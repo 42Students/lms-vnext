@@ -15,7 +15,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  if(context.adminScope?.organizationId||context.adminScope?.collegeId) return <div className="space-y-6">{header}
   <div role="status" className="rounded-xl border border-border bg-surface p-5">Switch to global Super Admin scope to inspect inbound messages. Incoming mail is not mapped to a verified college yet.</div></div>;
  const params=await searchParams;
- const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status),q:one(params.q),page:one(params.page)});
+ const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status),q:one(params.q),recipient:params.recipient,page:one(params.page)});
  if(!parsed.success)return <div className="space-y-6">{header}
    <div role="alert" className="rounded-xl border border-border p-5">Invalid filters. <Link href="/admin/inbound-mail" className="font-semibold text-primary-text">Reset</Link></div></div>;
  const data=await listInboundMailForAdmin(context,parsed.data);
@@ -27,6 +27,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   const url=new URLSearchParams();
   if(parsed.data.status!=="ALL")url.set("status",parsed.data.status);
   if(parsed.data.q)url.set("q",parsed.data.q);
+  if(parsed.data.recipient)url.set("recipient",parsed.data.recipient);
   if(page>1)url.set("page",String(page));
   return "/admin/inbound-mail"+(url.size?"?"+url.toString():"");
  };
@@ -34,6 +35,8 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="min-w-0 flex-1 text-sm">Search
     <input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border px-3" placeholder="Sender or subject"/></label>
+   <label className="min-w-0 text-sm">Recipient inbox
+    <input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border px-3" placeholder="inbox@example.edu"/></label>
    <label className="text-sm">Status
     <select name="status" defaultValue={parsed.data.status} className="mt-1 min-h-11 w-full rounded-md border border-border px-3">
      <option value="ALL">All</option><option value="NEW">New</option><option value="TRIAGED">Triaged</option><option value="RESOLVED">Resolved</option>

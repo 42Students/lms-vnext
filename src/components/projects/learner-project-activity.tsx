@@ -3,6 +3,8 @@
 import {useState} from "react";
 import {filterLearnerProjectActivityText} from "@/modules/projects/learner-project-activity-text-model";
 import { learnerProjectActivityPageSummary } from "@/modules/projects/learner-project-activity-page-summary-model";
+import { learnerProjectActivityEmptyMessage } from "@/modules/projects/learner-project-activity-empty-model";
+import { learnerProjectActivityLastFetched } from "@/modules/projects/learner-project-activity-cursor-model";
 import Link from "next/link";
 import { learnerProjectActivityCsv } from "@/modules/projects/learner-project-activity-csv-model";
 import { filterLearnerProjectActivity, learnerProjectActivityCategories,
@@ -24,8 +26,8 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const [textQuery,setTextQuery]=useState("");
   const pageRows = parsed.success ? filterLearnerProjectActivity(events,category) : [];
   const shown=filterLearnerProjectActivityText(pageRows,textQuery);
-  // Pagination must advance using the last *fetched* row, not the last text match.
-  const lastEvent=pageRows.at(-1);
+  // Cursor advances using the last fetched row, never the last category/text match.
+  const lastEvent=learnerProjectActivityLastFetched(events);
   const csv=learnerProjectActivityCsv(shown);
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-label="Project Activity" className="space-y-4">
@@ -73,7 +75,15 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       ) : null}
     </div>
     {shown.length === 0 ? <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-      {!parsed.success ? "Apply a valid filter to view activity." : textQuery.trim() && pageRows.length ? "No events on this loaded page match your text. Clear the search or navigate to older events." : category === "ALL" && !parsed.data.from && !parsed.data.to ? "No persisted Project activity yet." : "No activity matches these filters. Clear them to see recent activity."}
+      {learnerProjectActivityEmptyMessage({
+        valid:parsed.success,
+        fetchedCount:events.length,
+        pageCount:pageRows.length,
+        searching:Boolean(textQuery.trim()),
+        filtered:category!=="ALL" || (parsed.success && Boolean(parsed.data.from || parsed.data.to)),
+        olderPage:parsed.success && Boolean(parsed.data.beforeTime),
+        hasMore,
+      })}
     </div> : <ol className="space-y-3">{shown.map(event => <li key={event.id}
       className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <p className="break-words text-sm font-semibold text-foreground">{event.summary}</p>
@@ -82,10 +92,10 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     </li>)}</ol>}
     {parsed.success ? <nav aria-label="Activity pages" className="flex flex-wrap gap-3">
       {parsed.data.beforeTime ? <Link href={learnerProjectActivityPageHref(projectId, parsed.data)}
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">Newest matching events</Link> : null}
+        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">Newest activity page</Link> : null}
       {hasMore && lastEvent ? <Link href={learnerProjectActivityPageHref(projectId, parsed.data, { time: lastEvent.cursorOccurredAt, id: lastEvent.id })}
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">Older matching events →</Link> : null}
+        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">Older activity page →</Link> : null}
     </nav> : null}
-    <p className="text-xs leading-5 text-muted-foreground">Category and IST dates are applied to authorized Project history. Text search only filters the current page of up to 100 fetched events; Older matching events uses the original page cursor to avoid skipping history. CSV downloads include only the currently displayed matches.</p>
+    <p className="text-xs leading-5 text-muted-foreground">Category and IST dates are applied to authorized Project history. Text search only filters the current page of up to 100 fetched events; Older activity pages use the original page cursor to avoid skipping history. CSV downloads include only the currently displayed matches.</p>
   </section>;
 }

@@ -21,6 +21,10 @@ import { learnerAssessmentMatchesSearch } from "@/modules/courses/learner-assess
 import { learnerAssessmentCourseCounts } from "@/modules/courses/learner-assessment-course-counts-model";
 import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type LearnerAssessmentStateFilter } from "@/modules/courses/learner-assessment-state-filter-model";
 import { learnerAssessmentActionCounts } from "@/modules/courses/learner-assessment-action-counts-model";
+import { learnerAssessmentActiveCourse } from "@/modules/courses/learner-assessment-active-course-model";
+import { learnerAssessmentFiltersActive } from "@/modules/courses/learner-assessment-filters-active-model";
+import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
+import { learnerAssessmentSubmittedLinkHref } from "@/modules/courses/learner-assessment-submitted-link-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
 type CourseChoice = {
@@ -141,6 +145,7 @@ export function LearnerAssessmentOverview({
 
   const [courseId, setCourseId] =
     useState("");
+  const activeCourseId = learnerAssessmentActiveCourse(courseId,courses);
   const [search, setSearch] = useState("");
   const [stateFilter, setStateFilter] = useState<LearnerAssessmentStateFilter>("ALL");
   const [sort, setSort] = useState<LearnerAssessmentSort>("DUE");
@@ -153,11 +158,11 @@ export function LearnerAssessmentOverview({
   const filtered = useMemo(
     () =>
       learnerAssessmentSort(items.filter(item =>
-        (!courseId || item.courseId === courseId) &&
+        (!activeCourseId || item.courseId === activeCourseId) &&
         learnerAssessmentMatchesSearch(item, search) &&
         learnerAssessmentMatchesState(item, stateFilter, currentNowMs),
       ),sort),
-    [courseId, items, search, stateFilter, currentNowMs,sort],
+    [activeCourseId, items, search, stateFilter, currentNowMs,sort],
   );
 
   const totalPages = Math.max(
@@ -247,7 +252,7 @@ export function LearnerAssessmentOverview({
             Course
           </span>
           <Select
-            value={courseId}
+            value={activeCourseId}
             onChange={(event) => {
               setCourseId(event.target.value);
               setPage(1);
@@ -290,6 +295,13 @@ export function LearnerAssessmentOverview({
         </label>
       </div>
 
+      {learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort}) ? (
+        <button type="button" onClick={() => {
+          setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
+        }} className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          Clear assessment filters
+        </button>
+      ) : null}
       <p role="status" className="text-sm text-muted-foreground">
         Showing {filtered.length} of {items.length} published {kind==="ASSIGNMENT"?"assignments":"quizzes"} after your filters.
         {filtered.length>PAGE_SIZE?" Page "+currentPage+" of "+totalPages+".":""}
@@ -508,7 +520,7 @@ export function LearnerAssessmentOverview({
                     }
                   >
                     {selectedAssignment.gradePublished
-                      ? `Graded · ${selectedAssignment.pointsAwarded ?? 0}/${selectedAssignment.maxPoints}`
+                      ? learnerAssignmentPublishedGradeLabel(selectedAssignment.pointsAwarded,selectedAssignment.maxPoints)
                       : "Submitted · awaiting grade"}
                   </StatusBadge>
                 </div>
@@ -531,9 +543,9 @@ export function LearnerAssessmentOverview({
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Submitted link
                     </p>
-                    {selectedAssignment.submissionUrl.startsWith("https://") ? (
+                    {learnerAssessmentSubmittedLinkHref(selectedAssignment.submissionUrl) ? (
                       <a
-                        href={selectedAssignment.submissionUrl}
+                        href={learnerAssessmentSubmittedLinkHref(selectedAssignment.submissionUrl)!}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="mt-2 block break-all text-sm font-semibold text-primary-text underline"

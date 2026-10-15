@@ -5,6 +5,7 @@ import { courseApiError } from "./learner-course-api";
 export async function transferLearnerAssignmentFile(
   assignmentId: string, deliveryId: string, file: File, signal: AbortSignal,
   fetcher: typeof fetch = fetch,
+  now: () => number = Date.now,
 ) {
   const request = learnerAssignmentFileRequest(deliveryId, file);
   if (!request.success) throw new Error(request.error.issues[0]?.message ?? "Choose a supported file up to 50 MB.");
@@ -13,17 +14,19 @@ export async function transferLearnerAssignmentFile(
     headers: { "Content-Type": "application/json" }, body: JSON.stringify(request.data),
   });
   if (!response.ok) throw new Error(await courseApiError(response));
-  const grant = validateLearnerAssignmentUploadGrant(await response.json(), Date.now());
+  const grant = validateLearnerAssignmentUploadGrant(await response.json(), now());
   if (grant.originalName !== request.data.originalName ||
       grant.requiredHeaders["content-type"] !== request.data.contentType ||
-      (grant.requiredHeaders["x-amz-meta-expected-size"] !== undefined &&
-        grant.requiredHeaders["x-amz-meta-expected-size"] !== String(file.size)) ||
-      Date.parse(grant.expiresAt) <= Date.now()) {
+      grant.requiredHeaders["x-amz-meta-expected-size"] !== String(file.size) ||
+      Date.parse(grant.expiresAt) <= now()) {
     throw new Error("The upload permission is invalid or expired. Try uploading again.");
   }
   const uploaded = await fetcher(grant.uploadUrl, {
-    method: "PUT", credentials: "omit", signal, headers: grant.requiredHeaders, body: file,
+    method: "PUT", credentials: "omit", redirect: "error", signal, headers: grant.requiredHeaders, body: file,
   });
   if (!uploaded.ok) throw new Error("The file could not be uploaded. Your assignment has not been submitted.");
+  if (Date.parse(grant.expiresAt) <= now()) {
+    throw new Error("Upload permission expired before confirmation. Upload the file again.");
+  }
   return { receiptId: grant.receiptId, originalName: grant.originalName, expiresAt: grant.expiresAt };
 }
