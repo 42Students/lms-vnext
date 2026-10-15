@@ -1084,3 +1084,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Super Admin broadcast actor-status fence (PARTIAL):** Both broadcast college enumeration and publication now explicitly deny inactive platform actors even if a stale Super Admin role appears in the request context; guards precede DB access. Unit source contract authored; live negative authorization and browser checks remain pending.
+
+
+**2026-10-15 chat-6 tracker page actor-status route fence (PARTIAL):** Both issue list/detail and the Audit Findings board require an active platform Super Admin before returning migration-flag status or fetching data. Routes use the standard dashboard redirect; unit source assertions authored, browser permission negatives pending.
