@@ -46,9 +46,10 @@ export async function listCollegeRoleDirectory(
   ) {
     throw new AuthorizationError("people.manage");
   }
-  const collegeId = context.membership.collegeId;
+  const actorMembership = context.membership;
+  const collegeId = actorMembership.collegeId;
   requirePermission(context, "people.manage", {
-    organizationId: context.membership.organizationId,
+    organizationId: actorMembership.organizationId,
     collegeId,
   });
 
@@ -90,7 +91,7 @@ export async function listCollegeRoleDirectory(
     collegeId,
     organizationId: context.membership.organizationId,
   });
-  if (!checked.membership || checked.membership.id !== context.membership.id ||
+  if (!checked.membership || checked.membership.id !== actorMembership.id ||
       checked.membership.collegeId !== collegeId ||
       !checked.membership.roles.includes("COLLEGE_ADMIN")) {
     throw new AuthorizationError("people.manage");
