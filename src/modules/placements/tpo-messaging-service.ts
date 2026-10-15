@@ -550,6 +550,40 @@ export async function sendThreadMessage(
   });
 }
 
+/** Employer-only reply path: persisted exact recruiter ownership wins over any TPO role. */
+export async function sendRecruiterThreadMessage(
+ context: RequestContext, rawThreadId: unknown, rawBody: unknown,
+) {
+ const id = threadIdSchema.parse(rawThreadId);
+ const body = bodySchema.parse(rawBody);
+ if (context.recruiter?.status !== "ACTIVE" ||
+     context.recruiter.userId !== context.user.id)
+   throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx => {
+   const [thread] = await tx.select({
+     id:placementTpoMessageThreads.id,collegeId:placementTpoMessageThreads.collegeId,
+     recruiterUserId:placementTpoMessageThreads.recruiterUserId,
+     jobId:placementTpoMessageThreads.jobId,
+   }).from(placementTpoMessageThreads)
+    .where(eq(placementTpoMessageThreads.id,id)).for("update").limit(1);
+   if(!thread || thread.recruiterUserId !== context.user.id)
+     throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+   const grant = await loadActiveRecruiterGrant(tx,context.user.id,thread.collegeId,true);
+   if(!grant)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+   if(thread.jobId)await assertJobForThread(
+     tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
+   );
+   const now=new Date();
+   const [message]=await tx.insert(placementTpoMessages).values({
+     threadId:thread.id,senderType:"RECRUITER",senderUserId:context.user.id,
+     body,createdAt:now,
+   }).returning({id:placementTpoMessages.id});
+   await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
+    .where(eq(placementTpoMessageThreads.id,thread.id));
+   return {id:message.id,threadId:thread.id};
+ });
+}
+
 /** Recruiter-only, read-only message history; opening a GET never marks messages read. */
 export async function readRecruiterThreadMessages(
  context:RequestContext,threadIdInput:unknown,rawPage:unknown=1,
