@@ -2101,3 +2101,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch Students query parsing hardening:** All decision/source/registration URL parameters are now validated and applied rather than silently defaulting to ALL. Adds exact multi-filter regression tests; browser acceptance open.
 
 **Chat-2 current-page student triage ordering — PARTIAL:** Name A–Z/Z–A and needs-review-first ordering now prioritize only verified ambiguous/undecided status with stable ties; no change to eligibility or database ordering.
+
+**Chat-2 loaded page student evidence summary — PARTIAL:** Explicit slice-only counters separate eligible, ineligible, undecided, ambiguous and direct overrides without suggesting cohort-wide totals. Back-end and browser checks remain open.
