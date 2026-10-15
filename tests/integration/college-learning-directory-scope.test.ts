@@ -140,6 +140,66 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     const unknown=await listCollegeLessons(own,{courseCode:"MISSING-CODE"});
     expect(exact.items.map(row=>row.id)).toContain(ids.lesson);
     expect(unknown.items).toEqual([]);
+    const [publishedPath,noPublishedPath]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,publishedPathPresence:"HAS_PUBLISHED_PATH"}),
+      listCollegeCourseProgress(own,{q:name,publishedPathPresence:"NO_PUBLISHED_PATH"}),
+    ]);
+    expect(publishedPath.items).toEqual([]);
+    expect(noPublishedPath.items.map(row=>row.offeringId)).toContain(ids.offering);
+    const [hasSharedPath,missingSharedPath]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,learningPathPresence:"HAS_PATH"}),
+      listCollegeCourseProgress(own,{q:name,learningPathPresence:"NO_PATH"}),
+    ]);
+    expect(hasSharedPath.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(missingSharedPath.items).toEqual([]);
+    const [hasQuiz,noQuiz]=await Promise.all([
+      listCollegeLessons(own,{q:name,quizPresence:"HAS_QUIZZES"}),
+      listCollegeLessons(own,{q:name,quizPresence:"NO_QUIZZES"}),
+    ]);
+    expect(hasQuiz.items).toEqual([]);
+    expect(noQuiz.items.map(row=>row.id)).toContain(ids.lesson);
+    const [hasAssignment,noAssignment]=await Promise.all([
+      listCollegeLessons(own,{q:name,assignmentPresence:"HAS_ASSIGNMENTS"}),
+      listCollegeLessons(own,{q:name,assignmentPresence:"NO_ASSIGNMENTS"}),
+    ]);
+    expect(hasAssignment.items).toEqual([]);
+    expect(noAssignment.items.map(row=>row.id)).toContain(ids.lesson);
+    const currentVisibility=await pool!.query<{visible:boolean}>("SELECT visible_to_students AS visible FROM lesson_contents WHERE id=$1",[ids.content]);
+    const [flagged,notFlagged]=await Promise.all([
+      listCollegeLessons(own,{q:name,flaggedVisibility:"HAS_FLAGGED"}),
+      listCollegeLessons(own,{q:name,flaggedVisibility:"NONE_FLAGGED"}),
+    ]);
+    expect(flagged.items.map(row=>row.id).includes(ids.lesson)).toBe(currentVisibility.rows[0]!.visible);
+    expect(notFlagged.items.map(row=>row.id).includes(ids.lesson)).toBe(!currentVisibility.rows[0]!.visible);
+    const [publishedLessons,unpublishedLessons]=await Promise.all([
+      listCollegeLessons(own,{q:name,publishedContent:"HAS_PUBLISHED"}),
+      listCollegeLessons(own,{q:name,publishedContent:"NONE_PUBLISHED"}),
+    ]);
+    expect(publishedLessons.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(unpublishedLessons.items).toEqual([]);
+    const [hasComplete,noComplete]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,completionEvidence:"COMPLETED_CONTENT"}),
+      listCollegeCourseProgress(own,{q:name,completionEvidence:"NO_COMPLETED_CONTENT"}),
+    ]);
+    expect(hasComplete.items).toEqual([]);
+    expect(noComplete.items.map(row=>row.offeringId)).toContain(ids.offering);
+    const [noActivity,hasActivity]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,activityState:"UNRECORDED"}),
+      listCollegeCourseProgress(own,{q:name,activityState:"RECORDED"}),
+    ]);
+    expect(noActivity.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(hasActivity.items).toEqual([]);
+    expect((await exportCollegeCourseProgress(own,{q:name,activityState:"RECORDED"})).rows.length).toBe(0);
+    const depProgress=await pool!.query<{name:string}>("SELECT name FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const [matchingDepartment,unrelatedDepartment]=await Promise.all([
+      listCollegeCourseProgress(own,{q:name,departmentName:depProgress.rows[0]!.name}),
+      listCollegeCourseProgress(own,{q:name,departmentName:"NO-SUCH-DEPT"}),
+    ]);
+    expect(matchingDepartment.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(unrelatedDepartment.items).toEqual([]);
+    const [core,elec]=await Promise.all([listCollegeCourseProgress(own,{q:name,offeringType:"CORE"}),listCollegeCourseProgress(own,{q:name,offeringType:"ELECTIVE"})]);
+    expect(core.items.map(row=>row.offeringId)).toContain(ids.offering);
+    expect(elec.items).toEqual([]);
     const [authored,emptyLessons]=await Promise.all([
       listCollegeLessons(own,{q:name,contentPresence:"HAS_CONTENT"}),
       listCollegeLessons(own,{q:name,contentPresence:"EMPTY"}),
