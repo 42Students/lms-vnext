@@ -19,6 +19,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved}:{
  const url=`/api/college/verification/${encodeURIComponent(row.learnerMembershipId)}/${row.section}`;
  useEffect(()=>{
   let active=true;
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount / reset-on-input synchronisation
   setLoading(true);setDetail(null);setError("");
   fetch(url,{cache:"no-store"}).then(async response=>{
    if(!response.ok)throw Error(response.status===404?"Review is no longer available":"Unable to load review");

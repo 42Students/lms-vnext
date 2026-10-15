@@ -17,16 +17,9 @@ export default async function CollegeVerificationPage({searchParams}:{
   <p role="alert">Invalid verification filters. No records were loaded.</p>
   <Link href="/college/verification" className="underline">Clear filters</Link>
  </section>;
+ let data;
  try{
-  const data=await listCollegeVerificationQueue(await getCurrentRequestContext(),parsed.data);
-  const query:Record<string,string>={};
-  for(const [key,value] of Object.entries(data.filter)){
-   if(value!==undefined&&value!==null)query[key]=String(value);
-  }
-  return <CollegeVerificationPanel rows={data.rows} counts={data.counts}
-   activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
-   page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>;
-
+  data=await listCollegeVerificationQueue(await getCurrentRequestContext(),parsed.data);
  }catch(error){
   if(!(error instanceof VerificationUnavailableError)&&!(error instanceof VerificationQueueLimitError))throw error;
   return <section className="space-y-3 p-4">
@@ -35,4 +28,11 @@ export default async function CollegeVerificationPage({searchParams}:{
    <Link href="/college/verification" className="underline">Retry</Link>
   </section>;
  }
+ const query:Record<string,string>={};
+ for(const [key,value] of Object.entries(data.filter)){
+  if(value!==undefined&&value!==null)query[key]=String(value);
+ }
+ return <CollegeVerificationPanel rows={data.rows} counts={data.counts}
+  activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
+  page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>;
 }
