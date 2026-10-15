@@ -1,6 +1,7 @@
 import {notFound} from "next/navigation";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
+import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
 
 export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
@@ -51,7 +52,7 @@ export default async function CompanySharePage({
    {result.page<result.totalPages?<a href={href(result.page+1)}>Next</a>:null}
   </nav>
   <a className="font-semibold text-primary-text underline"
-   href={"/api/placements/company-share/"+encodeURIComponent(token)+"/export"}>
+   href={publicApplicantExportHref(token,result.search)}>
    Download capped CSV
   </a>
  </main>;
