@@ -120,4 +120,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({academicYearState:"MISSING"}))).toContain("academicYearState=MISSING");
   });
 
+  it("elective linked period code is bounded and escaped",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({periodCode:""})).toEqual({});
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({periodCode:"P&26"}))).toContain("periodCode=P%2626");
+  });
+
 });

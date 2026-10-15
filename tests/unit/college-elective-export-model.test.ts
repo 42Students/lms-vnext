@@ -48,4 +48,9 @@ describe("college electives CSV",()=>{
     expect(electiveCsvHref({q:"",status:"ACTIVE",academicYearState:"RECORDED"})).toContain("academicYearState=RECORDED");
  });
 
+ it("elective periodCode cannot select foreign college or bypass CSV validation",()=>{
+    expect(electiveCsvSchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(electiveCsvHref({q:"",status:"ACTIVE",periodCode:"P&26"})).toContain("periodCode=P%2626");
+  });
+
 });

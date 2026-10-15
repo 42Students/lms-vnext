@@ -298,4 +298,15 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("elective periodCode matches own-college registered linked period",async()=>{
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodCode:key}),
+      listCollegeElectives(adminA,{q:key,periodCode:"NOT-A-PERIOD"}),
+      listCollegeElectives(adminB,{q:key,periodCode:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
