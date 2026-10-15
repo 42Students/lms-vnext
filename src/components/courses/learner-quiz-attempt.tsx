@@ -8,6 +8,7 @@ import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
 import { learnerQuizRouteScopeCurrent } from "@/modules/courses/learner-quiz-route-scope-model";
+import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -132,6 +133,7 @@ export function LearnerQuizAttempt() {
       if (!attemptsResponse.ok) throw new Error(await messageFrom(attemptsResponse, "Unable to load your attempts."));
       const quizBody = await quizResponse.json();
       const attemptsBody = await attemptsResponse.json();
+      requireLearnerQuizResponseId(quizId, quizBody.quiz?.quiz?.id);
       if (!learnerQuizRequestCurrent(signal)) return;
       const loadedAtMs = Date.now();
       const deadlinePassed = quizBody.quiz?.quiz?.dueAt
