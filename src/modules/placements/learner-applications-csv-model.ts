@@ -1,11 +1,12 @@
 import {learnerSafeCsvCell} from "./learner-csv-safe-cell-model";
 import type {LearnerApplicationBrowseItem} from "./learner-applications-browse-model";
+export const LEARNER_APPLICATION_CSV_LIMIT=1000;
 /** Only already-authorized and currently selected application fields.
  * No personal contact, employer-only notes, documents or screening feedback. */
 export function learnerApplicationsCsv(rows:readonly LearnerApplicationBrowseItem[]):string{
  const validUtc=(value:Date|null)=>value!==null&&Number.isFinite(value.getTime())?value.toISOString():"";
  const header=["Employer","Position","Application status","Screening stage","Applied at (UTC)","Withdrawn at (UTC)"];
- const values=rows.map(row=>[
+ const values=rows.slice(0,LEARNER_APPLICATION_CSV_LIMIT).map(row=>[
   row.companyName,row.jobTitle,row.applicationStatus,row.screening.status,
   validUtc(row.submittedAt),validUtc(row.withdrawnAt),
  ]);
