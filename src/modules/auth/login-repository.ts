@@ -4,7 +4,9 @@ import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  colleges,
   identityAuthAttempts,
+  organizations,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
@@ -64,10 +66,50 @@ export const drizzleLoginRepository: LoginRepository = {
         id: collegeMemberships.id,
         collegeId: collegeMemberships.collegeId,
         status: collegeMemberships.status,
+        collegeStatus: colleges.status,
+        organizationStatus: organizations.status,
       })
       .from(collegeMemberships)
+      .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
+      .innerJoin(
+        organizations,
+        eq(organizations.id, colleges.organizationId),
+      )
       .where(eq(collegeMemberships.userId, userId));
-    return rows as LoginMembership[];
+    // A membership at an archived college or organization cannot sign in:
+    // report it as SUSPENDED so no caller treats it as ACTIVE.
+    return rows.map((row) => ({
+      id: row.id,
+      collegeId: row.collegeId,
+      status:
+        row.status === "ACTIVE" &&
+        (row.collegeStatus !== "ACTIVE" ||
+          row.organizationStatus !== "ACTIVE")
+          ? ("SUSPENDED" as const)
+          : row.status,
+    })) as LoginMembership[];
+  },
+
+  async hasAnyRecruiterGrant(userId) {
+    const [row] = await getDb()
+      .select({ id: placementRecruiterCollegeGrants.id })
+      .from(placementRecruiterCollegeGrants)
+      .innerJoin(
+        placementRecruiterProfiles,
+        eq(
+          placementRecruiterProfiles.userId,
+          placementRecruiterCollegeGrants.recruiterUserId,
+        ),
+      )
+      .where(
+        and(
+          eq(placementRecruiterCollegeGrants.recruiterUserId, userId),
+          eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+          eq(placementRecruiterProfiles.status, "ACTIVE"),
+        ),
+      )
+      .limit(1);
+    return Boolean(row);
   },
 
   async isSuperAdmin(userId) {
@@ -126,9 +168,11 @@ export const drizzleLoginRepository: LoginRepository = {
           count(*) FILTER (
             WHERE contact_fingerprint = ${input.contactFingerprint}
               AND ip_tag IS NOT DISTINCT FROM ${input.ipTag}
+              AND used_at IS NULL
           )::int AS contact_and_address,
           count(*) FILTER (
             WHERE contact_fingerprint = ${input.contactFingerprint}
+              AND used_at IS NULL
           )::int AS contact_total,
           count(*) FILTER (
             WHERE ${input.ipTag}::text IS NOT NULL AND ip_tag = ${input.ipTag}
@@ -172,6 +216,7 @@ export const drizzleLoginRepository: LoginRepository = {
   async loadAttempt(id) {
     const [row] = await getDb()
       .select({
+        dbNow: sql<Date>`now()`.mapWith((v) => new Date(v)),
         id: identityAuthAttempts.id,
         userId: identityAuthAttempts.userId,
         collegeId: identityAuthAttempts.collegeId,
@@ -190,7 +235,7 @@ export const drizzleLoginRepository: LoginRepository = {
     return (row as AttemptRecord | undefined) ?? null;
   },
 
-  async setEmailCode(id, mac, gapSeconds) {
+  async setEmailCode(id, mac, gapSeconds, maxResends = 5) {
     const result = await getDb().execute(sql`
       UPDATE identity_auth_attempts
       SET email_code_mac = ${mac},
@@ -201,6 +246,7 @@ export const drizzleLoginRepository: LoginRepository = {
       WHERE id = ${id}
         AND used_at IS NULL
         AND expires_at > now()
+        AND resend_attempts < ${maxResends}
         AND (
           email_code_sent_at IS NULL
           OR email_code_sent_at <= now() - make_interval(secs => ${gapSeconds})
@@ -224,8 +270,46 @@ export const drizzleLoginRepository: LoginRepository = {
     return rowsOf(result).length === 1;
   },
 
-  async consumeAttempt(id) {
-    const result = await getDb().execute(sql`
+  async consumeAttempt(id, userId, session) {
+    // Consume and session insert commit or roll back together, so a failed
+    // insert never burns the one-time code.
+    return getDb().transaction(async (tx) => {
+      const consumed = await consumeInTransaction(tx, id);
+      if (!consumed) return false;
+      if (session && userId) {
+        if (session.previousDigest) {
+          await tx.execute(sql`
+            UPDATE identity_device_sessions
+            SET revoked_at = now(),
+                revoked_by_user_id = user_id,
+                revocation_reason = 'RELOGIN'
+            WHERE credential_digest = ${session.previousDigest}
+              AND revoked_at IS NULL
+          `);
+        }
+        await tx.execute(sql`
+          INSERT INTO identity_device_sessions (
+            user_id, credential_digest, device_name, user_agent, ip_address,
+            created_at, last_seen_at, expires_at
+          ) VALUES (
+            ${userId}, ${session.digest}, NULL,
+            ${session.userAgent ? session.userAgent.slice(0, 512) : null},
+            ${session.ipAddress ? session.ipAddress.slice(0, 64) : null},
+            now(), now(),
+            now() + make_interval(secs => ${session.maxAgeSeconds})
+          )
+        `);
+      }
+      return true;
+    });
+  },
+};
+
+type Executor = Pick<ReturnType<typeof getDb>, "execute">;
+
+async function consumeInTransaction(tx: Executor, id: string) {
+  {
+    const result = await tx.execute(sql`
       UPDATE identity_auth_attempts
       SET verified_at = now(),
           used_at = now(),
@@ -240,5 +324,5 @@ export const drizzleLoginRepository: LoginRepository = {
       RETURNING id
     `);
     return rowsOf(result).length === 1;
-  },
-};
+  }
+}

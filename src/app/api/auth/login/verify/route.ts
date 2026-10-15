@@ -11,7 +11,7 @@ import {
   loginErrorResponse,
 } from "@/modules/auth/http";
 import { verifyLoginWithRuntime } from "@/modules/auth/runtime";
-import { createSession } from "@/modules/auth/session-service";
+import { getAuthConfig } from "@/modules/auth/config";
 
 export const runtime = "nodejs";
 
@@ -23,6 +23,15 @@ const schema = z.object({
     .regex(/^[0-9]{4,8}$/)
     .optional(),
 });
+
+function previousToken(request: Request) {
+  const header = request.headers.get("cookie") ?? "";
+  for (const part of header.split(";")) {
+    const [name, ...rest] = part.trim().split("=");
+    if (name === SESSION_COOKIE_NAME) return rest.join("=") || null;
+  }
+  return null;
+}
 
 export async function POST(request: Request) {
   const guarded = await guardLoginRequest(
@@ -39,15 +48,21 @@ export async function POST(request: Request) {
       code: guarded.body.code,
       secondCode: guarded.body.secondCode,
       tenantCollegeId: guarded.tenantCollegeId,
+      // Session is created in the same transaction as the code consume, and
+      // any session cookie being replaced is revoked there too.
+      session: {
+        userAgent: request.headers.get("user-agent"),
+        ipAddress: guarded.ip,
+        maxAgeSeconds: getAuthConfig().sessionMaxAgeSeconds,
+        previousToken: previousToken(request),
+      },
     });
+    const session = verified.session;
+    if (!session) throw new Error("session was not issued");
 
     auditLogin("auth.login_succeeded", { route: "login-verify", ip: guarded.ip }, {
       userId: verified.user.id,
       isSuperAdmin: verified.isSuperAdmin,
-    });
-    const session = await createSession(verified.user.id, {
-      userAgent: request.headers.get("user-agent"),
-      ipAddress: guarded.ip,
     });
 
     const active = verified.memberships.filter(
