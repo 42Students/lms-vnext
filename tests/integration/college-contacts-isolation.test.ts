@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
+import {exportCollegeContactsCsv} from "@/modules/people/college-contacts-export-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
@@ -46,4 +47,13 @@ describe.skipIf(!enabled)("read-only college contact isolation",()=>{
   const found=await listCollegeContacts(admin,{q:ids.u2.slice(0,8),tab:"STUDENT"});
   expect(found.items.some(x=>x.membershipId===ids.m2)).toBe(false);
  });
+ it("exports scoped learner contacts but never raw learner email or foreign membership",async()=>{
+  const report=await exportCollegeContactsCsv(admin,{tab:"STUDENT",q:ids.u1.slice(0,8)});
+  expect(report.exported).toBeGreaterThanOrEqual(1);
+  expect(report.csv).toContain("Contact "+ids.u1.slice(0,8));
+  expect(report.csv).not.toContain("contact-"+ids.u1+"@example.edu");
+  expect(report.csv).not.toContain("Contact "+ids.u2.slice(0,8));
+  await expect(exportCollegeContactsCsv(wrong,{tab:"STUDENT"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
+
 });

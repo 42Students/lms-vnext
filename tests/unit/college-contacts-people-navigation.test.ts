@@ -1,0 +1,1 @@
+import {describe,it,expect} from "vitest";import {collegeContactsHref,collegeContactsQuerySchema} from "@/modules/people/college-contacts-model";describe("college people contact navigation",()=>{it("goes to distinct read-only contacts route",()=>{expect(collegeContactsHref(collegeContactsQuerySchema.parse({}))).toBe("/college/contacts");});});
