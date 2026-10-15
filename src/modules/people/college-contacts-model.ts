@@ -107,3 +107,8 @@ export function collegeContactsTabHref(filter:CollegeContactsQuery,tab:CollegeCo
  const audience=contactRoleAudienceCompatible({tab,audience:filter.audience})?filter.audience:"ALL";
  return collegeContactsHref({...filter,tab,audience,page:1});
 }
+
+/** Exit an exact membership bookmark without erasing meaningful directory filters. */
+export function collegeContactsWithoutMemberHref(filter:CollegeContactsQuery):string{
+ return collegeContactsHref({...filter,membershipId:undefined,page:1});
+}
