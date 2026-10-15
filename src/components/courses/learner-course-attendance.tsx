@@ -1,5 +1,6 @@
 "use client";
 
+import { learnerCourseAttendanceIstMonth, learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -30,15 +31,8 @@ function shiftMonth(
   );
 }
 
-function sameMonth(
-  value: Date,
-  month: Date,
-) {
-  return (
-    value.getFullYear() ===
-      month.getFullYear() &&
-    value.getMonth() === month.getMonth()
-  );
+function sameMonth(value: Date, month: Date) {
+  return learnerCourseAttendanceSameIstMonth(value,monthKey(month));
 }
 
 function dateLabel(value: Date) {
@@ -47,6 +41,7 @@ function dateLabel(value: Date) {
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "Asia/Kolkata",
   }).format(value);
 }
 
@@ -54,6 +49,7 @@ function timeLabel(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
     hour: "numeric",
     minute: "2-digit",
+    timeZone: "Asia/Kolkata",
   }).format(value);
 }
 
@@ -199,18 +195,16 @@ function Metric({
 export function LearnerCourseAttendance({
   deliveryId,
   workspace,
+  defaultMonth,
 }: {
   deliveryId: string;
   workspace: AttendanceWorkspace;
+  defaultMonth: string;
 }) {
   const [month, setMonth] = useState(
     () => {
-      const now = new Date();
-      return new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        1,
-      );
+      const [year,month]=defaultMonth.split("-").map(Number);
+      return new Date(year,month-1,1);
     },
   );
 
