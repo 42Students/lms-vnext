@@ -65,6 +65,12 @@ export default async function FacultyQuizAttemptPage({
             </span>
           </li>)}</ul>}
     </section>
+    <nav aria-label="Quiz attempt order" className="flex flex-wrap gap-3">
+      <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"NEWEST")}
+        aria-current={data.query.order==="NEWEST"?"page":undefined} className="min-h-10 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Newest first</Link>
+      <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"OLDEST")}
+        aria-current={data.query.order==="OLDEST"?"page":undefined} className="min-h-10 rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Oldest first</Link>
+    </nav>
     {data.items.length===0?<EmptyState title="No recorded Quiz attempts"
       description="There are no persisted attempts in your authorized Section. This does not mean that results were published." />
     : <ol className="grid gap-3">{data.items.map(item=>
@@ -93,9 +99,9 @@ export default async function FacultyQuizAttemptPage({
     <nav aria-label="Quiz attempt pages" className="flex items-center justify-between gap-3">
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
-        {data.page>1?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page-1)}
+        {data.page>1?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page-1,data.query.order)}
           className="text-sm font-semibold text-primary-text">Previous</Link>:null}
-        {data.page<data.totalPages?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page+1)}
+        {data.page<data.totalPages?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page+1,data.query.order)}
           className="text-sm font-semibold text-primary-text">Next</Link>:null}
       </div>
     </nav>
