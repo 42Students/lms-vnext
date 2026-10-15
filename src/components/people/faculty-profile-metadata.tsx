@@ -4,6 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import { facultyMetadataFromDraft,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
  initial:FacultyProfileDocument["metadata"];pending:boolean;
@@ -11,6 +12,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
 }){
  const [rows,setRows]=useState<FacultyMetadataDraftEntry[]>(()=>restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));
  const [dirty,setDirty]=useState(false),[error,setError]=useState<string|null>(null);
+ useFacultyProfileUnsavedWarning(dirty);
  const issue=facultyMetadataDraftIssue(initial,rows);
  function edit(id:string,key:"key"|"value",value:string){
   setRows(current=>current.map(row=>row.id===id?{...row,[key]:value}:row));setDirty(true);
