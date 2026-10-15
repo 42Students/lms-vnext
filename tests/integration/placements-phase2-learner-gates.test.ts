@@ -8,6 +8,7 @@ import { createPlacementJob, publishPlacementJob } from "@/modules/placements/jo
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import {undoPlacementOfferCascade} from "@/modules/placements/offer-cascade-undo-service";
 import {getPublicPlacementStatistics} from "@/modules/placements/public-page/read-service";
 import { minimumOfferResponseDeadline } from "@/modules/placements/offer-college-rules-policy";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
@@ -431,6 +432,26 @@ describe("Section A: placement write/read integration boundaries", () => {
       WHERE offer_id=$1 AND to_status='DECLINED'
     `, [siblingId]);
     expect(count.rows[0]?.count).toBe(1);
+
+    // An explicit TPO compensation restores the accepted offer and all
+    // cohort-scoped cascade effects in a single transaction.
+    const undone=await undoPlacementOfferCascade(tpo,chosenId,token);
+    expect(undone).toMatchObject({
+      cascadeId:token,alreadyUndone:false,restoredApplications:1,restoredOffers:1,
+    });
+    const restored=(await pool.query<{id:string;status:string}>(
+      "SELECT id,status FROM placement_offers WHERE id=ANY($1::uuid[])",
+      [[chosenId,siblingId]],
+    )).rows;
+    expect(restored.find(x=>x.id===chosenId)?.status).toBe("ISSUED");
+    expect(restored.find(x=>x.id===siblingId)?.status).toBe("ISSUED");
+    expect((await pool.query<{status:string;withdrawn_at:Date|null}>(
+      "SELECT status,withdrawn_at FROM placement_applications WHERE id=$1",
+      [applicationB.id],
+    )).rows[0]).toMatchObject({status:"SUBMITTED",withdrawn_at:null});
+    expect(await undoPlacementOfferCascade(tpo,chosenId,token))
+      .toMatchObject({alreadyUndone:true,restoredApplications:0,restoredOffers:0});
+    await expect(undoPlacementOfferCascade(tpo,chosenId,randomUUID())).rejects.toBeDefined();
   });
 
 
