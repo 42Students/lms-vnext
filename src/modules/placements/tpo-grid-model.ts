@@ -51,3 +51,8 @@ export function exportTpoGridCsv<Row>(columns: readonly TpoGridColumn<Row>[], ro
   const header = columns.map((column) => csvSafeGridCell(column.label)).join(",");
   return [header, ...rows.map((row) => columns.map((column) => csvSafeGridCell(column.read(row))).join(","))].join("\r\n");
 }
+
+/** Table cells distinguish absent values from numeric zero. */
+export function displayTpoGridCell(value:string|number|null|undefined):string|number {
+ return value===null||value===undefined||(typeof value==="string"&&value.trim()==="")?"—":value;
+}
