@@ -4,6 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import { facultyMetadataFromDraft,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {facultyProfileActiveSearch} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue,facultyProfileMetadataMatches,removeFacultyMetadataDraftEntry} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
@@ -13,7 +14,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
  const [rows,setRows]=useState<FacultyMetadataDraftEntry[]>(()=>restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));
  const [dirty,setDirty]=useState(false),[error,setError]=useState<string|null>(null);
  const [search,setSearch]=useState("");
- const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>facultyProfileMetadataMatches(row,search));
+ const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>facultyProfileMetadataMatches(row,facultyProfileActiveSearch(search,rows.length)));
  useFacultyProfileUnsavedWarning(dirty);
  const issue=facultyMetadataDraftIssue(initial,rows);
  function edit(id:string,key:"key"|"value",value:string){
