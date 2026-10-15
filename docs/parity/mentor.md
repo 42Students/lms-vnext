@@ -1273,3 +1273,8 @@ The existing seeded disposable-PostgreSQL task-create integration suite now asse
 ## 2026-10-15 chat-11 — responsive-portfolio-activity-filters (PARTIAL)
 
 Replaced the previously overflowing wrapping form with a single-column narrow viewport grid and shrinkable labels/select controls; long project names wrap inside cards. Known orchestrator 375px/desktop overflow defect targeted, but browser measurement still required. Pure tests authored; independent PostgreSQL, unit, lint, typecheck, browser and legacy-oracle acceptance remain open. Mentor activity remains PARTIAL.
+
+
+## 2026-10-15 chat-11 — bounded-portfolio-activity-pagination (PARTIAL)
+
+Scoped count now executes before the page read and requested pages clamp to the last real page; avoids an empty page 9999 with misleading navigation for active Mentor portfolios. Pure tests authored; independent PostgreSQL, unit, lint, typecheck, browser and legacy-oracle acceptance remain open. Mentor activity remains PARTIAL.
