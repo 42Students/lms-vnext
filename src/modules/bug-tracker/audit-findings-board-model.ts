@@ -8,6 +8,7 @@ export const auditFindingsQuerySchema=z.strictObject({
  environment:z.enum(["ALL","LOCAL","DEVELOPMENT","UAT","PRODUCTION","OTHER","NOT_SURE"]).default("ALL"),
  status:z.enum(findingStatusOptions).default("ALL"),
  q:z.string().trim().max(120).default(""),
+ sort:z.enum(["newest","oldest"]).default("newest"),
  beforeCreatedAt:z.iso.datetime({offset:true}).optional(),
  beforeId:z.uuid().optional(),
 }).superRefine((x,ctx)=>{
@@ -18,7 +19,7 @@ export function trackerAuditFindingsInput(x:z.infer<typeof auditFindingsQuerySch
   status:x.status==="ALL"?undefined:x.status,
   severity:x.severity==="ALL"?undefined:x.severity,
   environment:x.environment==="ALL"?undefined:x.environment,
-  q:x.q||undefined,sort:"newest" as const,limit:50,
+  q:x.q||undefined,sort:x.sort,limit:50,
   beforeCreatedAt:x.beforeCreatedAt,
   beforeId:x.beforeId,
  };
