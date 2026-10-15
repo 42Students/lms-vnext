@@ -6,11 +6,16 @@ import {
   type AnnouncementTarget,
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import {SuperAdminCollegeBroadcastForm} from "@/components/announcements/super-admin-college-broadcast-form";
 import {
   listAnnouncementsForAdmin,
   listAnnouncementTargetOptions,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+
+function currentTimeMs(): number {
+  return Date.now();
+}
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -58,7 +63,7 @@ export default async function AnnouncementsPage({
       ]
     : [];
 
-  const now = Date.now();
+  const now = currentTimeMs();
   const items: AnnouncementAdminItem[] = page.items.map((item) => ({
     id: item.id,
     receiverType: item.receiverType as AnnouncementAdminItem["receiverType"],
@@ -104,6 +109,7 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
+      <SuperAdminCollegeBroadcastForm colleges={targets.filter(target=>target.type==="COLLEGE").map(target=>({id:target.id,label:target.label}))}/>
       <AnnouncementAdminWorkspace items={items} targets={targets} />
       {next ? (
         <div className="flex justify-center">

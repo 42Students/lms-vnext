@@ -48,7 +48,7 @@ The first matrix was not exhaustive enough. The deep route/navigation/section au
 - HR `/hr/colleges` is a retired redirect; the actual college chooser behavior lives on HR Home.
 - TPO, Mentor and other role-specific Notifications had been overclaimed as DONE merely because a shared vNext Notifications route exists.
 - TPO Settings, TPO Reports, TPO Students, TPO Drive detail, HR Drive detail, Super Admin Tenant Setup/Settings/Module Access/HR Accounts and Admin Project workspaces were represented by umbrella rows that could hide unfinished sections.
-- public/shared flows — recruiter invite, company applicant share, auth handoff, AI grading, tracker/ops, marketing/legal and error surfaces — were absent from the account-only matrix.
+- public/shared flows — recruiter invite, company applicant share, auth handoff, tracker/ops, marketing/legal and error surfaces — were absent from the account-only matrix.
 
 ## Status vocabulary
 
@@ -561,7 +561,7 @@ These were absent from matrix v1 and are now explicit.
 | Separate Super Admin login | `/superadmin-login` | unified sign-in on a platform host | Intentional: one login; a college host refuses super admins, they sign in on the platform host. **Production must add a second factor for SUPER_ADMIN (docs/architecture/privileged-authentication.md); phone/email OTP alone is not enough.** | REDESIGNED |
 | Cross-domain/account auth handoff | `/auth/handoff` | membership chooser/switcher only | Same-origin membership switching exists; token handoff across hosts is not equivalent. | DONE |
 | Company applicant share | `/company-share/[token]` | none | Code-gated external applicant list, expiry/revocation, CSV/resume ZIP/download audit is missing. | MISSING |
-| Standalone AI Grading | `/ai-grading` | AI tools only | Legacy has exam/rubric form+JSON, PDF grading, extraction evidence, confidence/review queue and report generation. | MISSING |
+| Standalone AI Grading | `/ai-grading` | AI tools only | Legacy has exam/rubric form+JSON, PDF grading, extraction evidence, confidence/review queue and report generation. | OUT OF SCOPE — owner decision 2026-10-15: AI grading is not required; excluded from the parity target and from row counts. |
 | Standalone learner quiz | `/quiz` | inline quiz UI | Tracked under Learner; exact full-screen behavior pending. | DONE |
 | Privacy Policy | `/privacy-policy` | none | Decide whether vNext owns legal/public site or separate deployment retains it. | VERIFY |
 | Custom 404 | `/404` | `src/app/not-found.tsx` | Legacy copy, Go back and Home recovery authored with brand tokens; public/mobile/browser parity remains unverified. | DONE |
