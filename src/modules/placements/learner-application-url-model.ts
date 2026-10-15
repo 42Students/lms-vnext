@@ -9,15 +9,20 @@ applicationId:z.string().uuid().optional(),
 }).strict();
 export function readLearnerApplicationUrl(raw:string){
 const params=new URLSearchParams(raw.startsWith("?")?raw.slice(1):raw);
-const keys=[...params.keys()];
-if(new Set(keys).size!==keys.length)return learnerApplicationUrlSchema.parse({});
-const result=learnerApplicationUrlSchema.safeParse(Object.fromEntries(params.entries()));
-return result.success?result.data:learnerApplicationUrlSchema.parse({});
+const allowed=["q","view","stage","sort","page","applicationId"] as const;
+const safe:Record<string,string>={};
+for(const key of allowed){
+ const values=params.getAll(key);
+ if(values.length!==1)continue;
+ // Validate each independent facet without losing other valid selections.
+ if(learnerApplicationUrlSchema.safeParse({[key]:values[0]}).success)safe[key]=values[0];
+}
+return learnerApplicationUrlSchema.parse(safe);
 }
 export function updateLearnerApplicationUrl(current:string,changes:Record<string,string|null>){
 const allowed=["q","view","stage","sort","page","applicationId"];
 const query=new URLSearchParams(),old=new URLSearchParams(current);
-for(const key of allowed){const v=old.get(key);if(v)query.set(key,v);}
+for(const key of allowed){const values=old.getAll(key);if(values.length===1&&values[0])query.set(key,values[0]);}
 for(const [key,value] of Object.entries(changes)){
 if(!allowed.includes(key))continue;
 if(!value||value==="all")query.delete(key);else query.set(key,value);

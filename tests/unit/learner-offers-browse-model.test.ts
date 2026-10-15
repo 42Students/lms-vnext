@@ -21,7 +21,7 @@ describe("Own learner offer browser", () => {
     expect(view.items.map((row) => row.offer.id))
       .toEqual(["four", "three", "two", "one"]);
     expect(view.counts).toEqual({
-      all: 4, pending: 1, accepted: 1, closed: 2,
+      all: 4, pending: 1, accepted: 1, closed: 2, declined: 1, withdrawn: 1,
     });
   });
   it("separates actionable issued offers from accepted and closed offers", () => {
@@ -35,7 +35,7 @@ describe("Own learner offer browser", () => {
   });
   it("keeps no-persisted-offers distinct from filters returning nothing", () => {
     expect(browseOwnLearnerOffers([], "all")).toEqual({
-      counts: { all: 0, pending: 0, accepted: 0, closed: 0 },
+      counts: { all: 0, pending: 0, accepted: 0, closed: 0, declined: 0, withdrawn: 0 },
       items: [],
     });
     expect(browseOwnLearnerOffers(rows.slice(0, 1), "accepted").counts.all).toBe(1);
