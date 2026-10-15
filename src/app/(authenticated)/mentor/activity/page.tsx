@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
 import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityFormLayout } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -15,6 +15,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = mentorActivityQuerySchema.safeParse({
+    search:first(raw.search)??undefined,
     importance: first(raw.importance) ?? undefined,
     window: first(raw.window) ?? undefined,
     order:first(raw.order) ?? undefined,
@@ -37,6 +38,10 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       Projects access is disabled. No activity was loaded.
     </div> : <>
       <form action="/mentor/activity" method="get" className={mentorActivityFormLayout}>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assigned project title
+          <input type="search" name="search" maxLength={120} defaultValue={data.query.search}
+            placeholder="Search your project names" className="min-h-10 w-full min-w-0 rounded-md border border-border bg-background px-3" />
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded importance
           <select name="importance" defaultValue={data.query.importance}
             className="min-h-10 rounded-md border border-border bg-background px-3">

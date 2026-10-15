@@ -13,7 +13,7 @@ import { listMyMentorProjectAttention } from "./mentor-attention-service";
 import { mentorProjectActivityEventTypes } from "./mentor-project-activity-model";
 import {
   mentorActivityQuerySchema, mentorReviewQuerySchema,
-  pageMentorPortfolio, mentorActivityPagination, safeMentorProjectEventLabel, selectMentorReviewQueue,
+  pageMentorPortfolio, mentorActivityPagination, mentorActivityProjectTitleMatch, safeMentorProjectEventLabel, selectMentorReviewQueue,
 } from "./mentor-portfolio-model";
 
 async function requireMentorPortfolio(context: RequestContext) {
@@ -68,7 +68,8 @@ export async function getMentorPortfolioActivity(
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const selectedProjects=scope.projects.filter(p=>(query.projectStatus==="ALL"||p.status===query.projectStatus)&&
     (query.assignment==="ALL"||(query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
-    (!query.projectId||p.id===query.projectId));
+    (!query.projectId||p.id===query.projectId)&&
+    mentorActivityProjectTitleMatch(p.title,query.search));
   if (!scope.enabled || !selectedProjects.length) {
     return {
       enabled: scope.enabled, query, projects:scope.projects, page: 1, pageSize: query.pageSize,
