@@ -1278,3 +1278,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Course Progress PARTIAL:** Academic period lifecycle applies academicPeriods.status to college-scoped registered parent records before pagination/CSV; counts remain recorded-evidence-only, tests authored but runtime and browser acceptance pending.
 
 **College Admin Course Progress PARTIAL:** Parent course lifecycle applies courses.status to college-scoped registered parent records before pagination/CSV; counts remain recorded-evidence-only, tests authored but runtime and browser acceptance pending.
+
+**College Admin Course Progress PARTIAL:** Exact course-department code lookup is restricted by the existing joined same-college department, paired with bounded page/CSV controls and unit/isolated PG tests. Execution/browser/oracle comparison pending.

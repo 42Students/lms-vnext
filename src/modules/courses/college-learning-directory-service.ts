@@ -206,6 +206,7 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.departmentCode ? eq(departments.code,query.departmentCode) : undefined,
       query.courseStatus !== "ALL" ? eq(courses.status,query.courseStatus) : undefined,
       query.periodStatus !== "ALL" ? eq(academicPeriods.status,query.periodStatus) : undefined,
       query.cohortStatus !== "ALL" ? eq(cohorts.status,query.cohortStatus) : undefined,

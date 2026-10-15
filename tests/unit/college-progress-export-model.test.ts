@@ -39,4 +39,9 @@ describe("college recorded course activity CSV",()=>{
     expect(collegeProgressCsvHref(collegeProgressCsvSchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
  });
 
+ it("progress departmentCode remains scoped by CSV input validation",()=>{
+    expect(collegeProgressCsvSchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeProgressCsvHref(collegeProgressCsvSchema.parse({departmentCode:"C & S"}))).toContain("departmentCode=C+%26+S");
+ });
+
 });
