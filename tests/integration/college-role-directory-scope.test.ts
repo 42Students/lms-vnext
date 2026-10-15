@@ -237,6 +237,16 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(collegeAdmin,"FACULTY",{programId:SEED_IDS.collegeB})).rejects.toThrow("FACULTY_PROGRAM_FILTER_UNSUPPORTED");
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{programId:SEED_IDS.collegeB})).rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("filters current Student class placement only from the active own-college section",async()=>{
+    const all=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
+    for(const section of all.sectionOptions.slice(0,2)){
+      const subset=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{sectionId:section.id});
+      expect(subset.total).toBeLessThanOrEqual(all.total);
+    }
+    expect((await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{sectionId:SEED_IDS.collegeB})).total).toBe(0);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"FACULTY",{sectionId:SEED_IDS.collegeB})).rejects.toThrow("FACULTY_SECTION_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{sectionId:SEED_IDS.collegeB})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("filters active student batch membership under own-college ancestry",async()=>{
     const unfiltered=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
     for(const option of unfiltered.cohortOptions.slice(0,3)){

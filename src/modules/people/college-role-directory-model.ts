@@ -17,6 +17,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   registrationPresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
   cohortId: z.string().uuid().optional(),
   programId: z.string().uuid().optional(),
+  sectionId: z.string().uuid().optional(),
   classPresence: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teaching: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teachingRole: z.union([z.literal("ALL"), z.enum(COURSE_TEACHING_ROLES)]).default("ALL"),
@@ -82,6 +83,7 @@ export function collegeRoleDirectoryHref(
   if (kind === "LEARNER" && filter.registrationPresence !== "ALL") params.set("registrationPresence", filter.registrationPresence);
   if (kind === "LEARNER" && filter.cohortId) params.set("cohortId",filter.cohortId);
   if (kind === "LEARNER" && filter.programId) params.set("programId",filter.programId);
+  if (kind === "LEARNER" && filter.sectionId) params.set("sectionId",filter.sectionId);
   if (kind === "LEARNER" && filter.classPresence !== "ALL") params.set("classPresence", filter.classPresence);
   if (kind === "FACULTY" && filter.teaching !== "ALL") params.set("teaching", filter.teaching);
   if (kind === "FACULTY" && filter.teachingRole !== "ALL") params.set("teachingRole", filter.teachingRole);
@@ -133,7 +135,10 @@ export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirecto
   if (kind === "FACULTY" && filter.teaching === "NONE" && filter.teachingRole !== "ALL") {
     throw new RangeError("FACULTY_TEACHING_FILTER_CONFLICT");
   }
-  if (kind === "LEARNER" && filter.enrollment === "NONE" && (filter.cohortId || filter.programId || filter.classPresence === "ASSIGNED")) {
+  if (kind === "LEARNER" && filter.classPresence === "NONE" && filter.sectionId) {
+    throw new RangeError("LEARNER_CLASS_FILTER_CONFLICT");
+  }
+  if (kind === "LEARNER" && filter.enrollment === "NONE" && (filter.cohortId || filter.programId || filter.sectionId || filter.classPresence === "ASSIGNED")) {
     throw new RangeError("LEARNER_ENROLLMENT_FILTER_CONFLICT");
   }
 }
