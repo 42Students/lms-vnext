@@ -159,8 +159,8 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L3-014 | Future live URL withheld | syllabus/liveclass | learner service | FIXED |
 | L3-015 | Live class join CTA | syllabus/liveclass | content card | FIXED |
 | L3-016 | Ended live class state | syllabus/liveclass | content card | FIXED |
-| L3-017 | Uploaded video playback | syllabus/video | GCS range route + player | BLOCKED |
-| L3-018 | Uploaded video resume/progress | syllabus/video | learner video player | BLOCKED |
+| L3-017 | Uploaded video playback | syllabus/video | private lesson learner-videos list + signed playback grant in LearnerVideoPlayer; authored tests, no executed browser/R2 proof | FIXED |
+| L3-018 | Uploaded video resume/progress | syllabus/video | grant resume with retained intentional seek, auto-renew before expiration, existing progress PUT; browser/PG acceptance open | FIXED |
 | L3-019 | YouTube resume/progress | syllabus/youtube | YouTube player | FIXED |
 | L3-020 | Resource open | syllabus/resource | protected GCS route | BLOCKED |
 | L3-021 | Resource download | syllabus/resource | protected GCS route | BLOCKED |
@@ -168,7 +168,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L3-023 | Assignment open/view | syllabus | assignment card/control | FIXED |
 | L3-024 | Assignment submit | syllabus | submission control | FIXED |
 | L3-025 | Late assignment submission | syllabus | submission control | FIXED |
-| L3-026 | Assignment file upload | syllabus submission | storage-backed submission | BLOCKED |
+| L3-026 | Assignment file upload | syllabus submission | signed grant/PUT/complete + READY staged set, progress, remove, retry, separate submit-files confirmation; real storage tests pending | FIXED |
 | L3-027 | Quiz open/take | syllabus | `/quiz` | FIXED |
 | L3-028 | Quiz completed/result state | syllabus | quiz control | FIXED |
 | L3-029 | Course progress refresh after actions | syllabus | progress model | FIXED |
@@ -244,7 +244,7 @@ Only `CLOSED`, `REDESIGNED`, and `RETIRED` are resolved.
 | L6-012 | Graded state | AssignmentsContent | state mapping | CLOSED |
 | L6-013 | View/submit primary action | AssignmentsContent | aggregate component | FIXED |
 | L6-014 | Submission/view drawer parity | AssignmentsContent | aggregate assignment drawer + own-delivery detail; text/link submission and atomic PII-free audit (PG tests authored, not run) | FIXED |
-| L6-015 | Submission text/link/file fields | AssignmentsContent | text/link in aggregate drawer; file awaits secure storage | BLOCKED |
+| L6-015 | Submission text/link/file fields | AssignmentsContent | text/link retained; FILE control uses staged assignment files + submit-files and submitted read via download grant; responsive/browser acceptance open | FIXED |
 | L6-016 | Grade masked until publish | AssignmentsContent | learner service | CLOSED |
 | L6-017 | Metrics/summary pills | AssignmentsContent | aggregate metrics | CLOSED |
 | L6-018 | Loading skeleton | AssignmentsContent | aggregate page | CLOSED |
