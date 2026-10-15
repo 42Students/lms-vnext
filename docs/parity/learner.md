@@ -1486,3 +1486,5 @@ Learner ledger CLOSED status is claimed from these changes.
 **2026-10-15 chat-5 parity hardening — L29 inbox pinned preview (PARTIAL):** pinned college announcements now obey the selected domain, search and unread-personal filters, so the Job/Unread tabs no longer display unrelated announcement cards above filtered results. No read-state mutation is inferred; mobile/browser verification outstanding.
 
 **2026-10-15 chat-5 parity hardening — L29 notification empties (PARTIAL):** when a loaded learner inbox has records but the selected category/unread/search has none, the empty state no longer incorrectly says no notifications have arrived. Full-history paging and responsive proof remain pending.
+
+**2026-10-15 chat-5 parity hardening — L18/L29 college notice empties (PARTIAL):** a genuine absence of membership-visible notices, search mismatch, pinned filter and thirty-day filter now use distinct messages. This does not conflate personal placement alerts with official TPO notices; browser/source-page verification remains open.
