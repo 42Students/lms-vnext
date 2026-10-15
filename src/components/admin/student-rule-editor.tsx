@@ -3,7 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
-import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
+import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement,canReviewStudentRule,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
 export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,blocked}:{
  collegeId:string;membershipId:string;module:EditableStudentModule;
  stored:boolean|null;locked:boolean;blocked:boolean;
@@ -63,11 +63,11 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
   }
  }
  return <div className="mt-4 space-y-3 border-t border-border pt-3">
-  {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents membership overrides.</p>:null}
+  {blocked?<p className="text-xs text-warning-text">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</p>:null}
   <label className="grid gap-1 text-sm font-semibold text-body">Stored override
-   <select value={choice} disabled={blocked||pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
+   <select value={choice} disabled={pending} onChange={e=>setChoice(e.target.value as StudentSelection)}
     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-    <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
+    <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>
    </select>
   </label>
   <label className="flex items-center gap-2 text-sm text-body">
@@ -76,7 +76,7 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
    Lock this membership rule
   </label>
   <div className="flex flex-wrap gap-2">
-   <Button disabled={blocked||pending||noChange} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
+   <Button disabled={!canReviewStudentRule(choice,blocked,pending,noChange)} onClick={()=>setConfirming(true)} variant="secondary">Review change</Button>
    <Button disabled={pending} variant="ghost" onClick={()=>{void reload();}}>Recheck stored rule</Button>
   </div>
   {feedback?<p role="status" className="text-xs leading-5 text-body">{feedback}</p>:null}
