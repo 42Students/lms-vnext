@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
 import { tpoBatchNextAction } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
-import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref } from "@/modules/placements/tpo-batch-directory-pagination-model";
+import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref,tpoBatchClearFiltersHref,tpoBatchEmptyReason } from "@/modules/placements/tpo-batch-directory-pagination-model";
 import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/placements/tpo-batch-deadline-filter-model";
 import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartments } from "@/modules/placements/tpo-batch-department-model";
 import { tpoBatchProgramSchema, filterTpoBatchProgram, listTpoBatchPrograms } from "@/modules/placements/tpo-batch-program-model";
@@ -59,7 +59,13 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    {batchPage.hasNext?<Link className="min-h-10 inline-flex items-center rounded border border-border px-3 text-primary-text" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
 
   </nav>
-  {batches.length===0?<p role="status" className="rounded border border-border p-4">No matching batches.</p>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
+  {batches.length===0?<section role="status" className="space-y-2 rounded border border-border p-4">
+   <p>{tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?
+     "No placement batches or academic cohorts are available to list yet.":
+     "No batches match these filters."}</p>
+   {data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
+      className="inline-flex min-h-11 items-center text-primary-text underline">Clear batch filters</Link>:null}
+  </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold">{b.name}</h2><p className="text-sm">{b.program} · {b.department}</p>
     <p className="text-xs text-muted-foreground">{data.ready?batchDirectoryState(b):"Lifecycle pending"}</p>
     <p className="text-xs text-muted-foreground">{tpoBatchDeadlineLabel(b.deadline,data.ready)}</p>
