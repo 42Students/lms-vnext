@@ -26,6 +26,7 @@ import {
 import { requirePlacementManageScope } from "./scope";
 import { inferLegacyRecruiterCompanyName } from "./tpo-recruiter-lead-policy";
 import { recruiterAttentionFromPersistedFacts } from "./tpo-recruiter-attention-model";
+import { getTpoRecruiterLeadStages } from "./tpo-company-memory-service";
 import {
   checkTpoLeadContactSchema,
   createTpoFollowupSchema,
@@ -76,7 +77,7 @@ function ownerMembership(context: RequestContext, collegeId: string) {
 }
 
 /** Explicit API projection: never expose stored invitation token hashes. */
-function tpoLeadView(row: typeof placementTpoLeads.$inferSelect, attention?: ReturnType<typeof recruiterAttentionFromPersistedFacts>) {
+function tpoLeadView(row: typeof placementTpoLeads.$inferSelect, attention?: ReturnType<typeof recruiterAttentionFromPersistedFacts>, stage?: string) {
   return {
     id: row.id,
     collegeId: row.collegeId,
@@ -89,6 +90,7 @@ function tpoLeadView(row: typeof placementTpoLeads.$inferSelect, attention?: Ret
     companyLogoObjectPath: row.companyLogoObjectPath,
     ownerMembershipId: row.ownerMembershipId,
     manualStage: row.manualStage,
+    stage: stage ?? row.manualStage,
     notNowReason: row.notNowReason,
     notNowUntil: row.notNowUntil,
     source: row.source,
@@ -119,7 +121,7 @@ export async function listTpoLeads(
   if (rows.length === 0) return [];
   const ids = rows.map(row => row.id);
   const db = getDb();
-  const [contacts, followups] = await Promise.all([
+  const [contacts, followups, stages] = await Promise.all([
     db.select({
       leadId: placementTpoLeadActivities.leadId,
       lastContactAt: max(placementTpoLeadActivities.createdAt),
@@ -136,6 +138,7 @@ export async function listTpoLeads(
       inArray(placementTpoFollowups.leadId, ids),
       isNull(placementTpoFollowups.doneAt),
     )).groupBy(placementTpoFollowups.leadId),
+    getTpoRecruiterLeadStages(context, collegeId),
   ]);
   const contactByLead = new Map(contacts.map(row => [row.leadId, row.lastContactAt]));
   const nextByLead = new Map(followups.map(row => [row.leadId, row.nextFollowupAt]));
@@ -149,7 +152,7 @@ export async function listTpoLeads(
     recruiterUserId: row.recruiterUserId,
     manualStage: row.manualStage,
     unsubscribedAt: row.unsubscribedAt,
-  }, now)));
+  }, now), stages.get(row.id)));
 }
 
 /** Database partial uniques make email/phone duplicate prevention race-safe. */

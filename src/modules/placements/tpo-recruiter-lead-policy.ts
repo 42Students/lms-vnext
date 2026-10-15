@@ -7,6 +7,13 @@ export type TpoRecruiterLeadStage =
   | "RECRUITED"
   | "NOT_NOW";
 
+/** Exact legacy dev src/components/tpo/recruiterLeadStages.js copy. */
+export const RECRUITER_STAGE_LEGACY_LABELS: Readonly<Record<TpoRecruiterLeadStage,string>> = {
+ NEW:"New", CONTACTED:"Contacted", INVITED:"Invited",
+ JOINED:"Joined", DRIVE_PLANNED:"Drive planned",
+ RECRUITED:"Recruited", NOT_NOW:"Not now",
+};
+
 export type TpoRecruiterInviteStatus =
   | "NOT_SENT"
   | "SENT"
