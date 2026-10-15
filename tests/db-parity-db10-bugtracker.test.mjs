@@ -8,7 +8,7 @@ const readText = p => fs.readFileSync(path.join(root, p), "utf8");
 const read = p => JSON.parse(readText(p));
 const ledger = read("docs/planning/database-parity-db10-field-ledger.json");
 const source = read("docs/planning/db-pass4-columns-db10_shared_operations.json");
-const draft = readText("src/db/schema/db10-bug-tracker.draft.ts");
+const draft = readText("src/db/schema/db10-bug-tracker.ts");
 const domain = readText("src/modules/bug-tracker/workflow.ts");
 
 const tables = new Map([
