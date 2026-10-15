@@ -19,11 +19,11 @@ const list = readFileSync(
 describe("W03 mentor project list legacy discovery contract", () => {
   it("supports addressable search, status, attention and pagination", () => {
     expect(page).toContain("searchParams");
-    expect(page).toContain("params.search");
-    expect(page).toContain("params.status");
-    expect(page).toContain("params.attention");
-    expect(page).toContain("params.page");
-    expect(page).toContain("params.pageSize");
+    expect(page).toContain("query.search");
+    expect(page).toContain("query.status");
+    expect(page).toContain("query.attention");
+    expect(page).toContain("query.page");
+    expect(page).toContain("query.pageSize");
     expect(controls).toContain('name="search"');
     expect(controls).toContain('name="status"');
     expect(controls).toContain('name="attention"');

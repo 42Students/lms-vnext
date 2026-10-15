@@ -1,3 +1,9 @@
+import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
+import { matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
+import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
+import { compareMentorProjects } from "@/modules/projects/mentor-project-order-model";
+import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
+import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -5,7 +11,6 @@ import { MentorProjectsUnavailable } from "@/components/projects/mentor-projects
 import {
   ProjectParticipantListControls,
   ProjectParticipantPagination,
-  type ProjectParticipantListQuery,
 } from "@/components/projects/project-participant-list-controls";
 import { ProjectList } from "@/components/projects/project-list";
 import { PageHeader } from "@/components/ui/page-header";
@@ -13,34 +18,6 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
-
-function pageSize(
-  value: string | undefined,
-) {
-  const parsed = Number(value);
-  return parsed === 50 ||
-    parsed === 100
-    ? parsed
-    : 25;
-}
-
-function pageNumber(
-  value: string | undefined,
-) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) &&
-    parsed > 0
-    ? parsed
-    : 1;
-}
 
 export default async function MentorProjectsPage({
   searchParams,
@@ -74,33 +51,18 @@ export default async function MentorProjectsPage({
   }
 
   const params = await searchParams;
-  const status =
-    one(params.status);
-  const attention =
-    one(params.attention);
-  const query: ProjectParticipantListQuery = {
-    search:
-      one(params.search)?.trim() ||
-      undefined,
-    status:
-      status === "CURRENT" ||
-      status === "PLANNED" ||
-      status === "ACTIVE" ||
-      status === "COMPLETED" ||
-      status === "ARCHIVED"
-        ? status
-        : undefined,
-    attention:
-      attention === "MENTOR_REVIEW"
-        ? attention
-        : undefined,
-    page: pageNumber(
-      one(params.page),
-    ),
-    pageSize: pageSize(
-      one(params.pageSize),
-    ),
-  };
+  const parsed = mentorProjectListQuerySchema.safeParse(
+    Object.fromEntries(Object.entries(params).map(([key, value]) => [
+      key, Array.isArray(value) ? value[0] : value,
+    ])),
+  );
+  if (!parsed.success) {
+    return <section role="alert" className="space-y-3">
+      <h1 className="text-xl font-semibold">Invalid Project filters</h1>
+      <Link href="/mentor/projects" className="text-primary-text underline">Clear filters</Link>
+    </section>;
+  }
+  const query = parsed.data;
 
   const [allRows, attentionRows] =
     await Promise.all([
@@ -112,6 +74,7 @@ export default async function MentorProjectsPage({
       ),
     ]);
 
+  const workCounts = query.work ? await getMentorProjectWorkCounts(context) : null;
   const alerts = new Map<
     string,
     Set<string>
@@ -162,6 +125,8 @@ export default async function MentorProjectsPage({
       (row) =>
         row.memberRole === "MENTOR",
     )
+    .filter(row => matchesMentorProjectAssignment(query.assignment, row.isPrimaryMentor))
+    .filter(row => matchesMentorProjectWork(query.work, workCounts?.get(row.project.id)))
     .filter((row) => {
       if (!normalizedSearch) {
         return true;
@@ -197,40 +162,8 @@ export default async function MentorProjectsPage({
         query.status
       );
     })
-    .filter((row) => {
-      if (
-        query.attention !==
-        "MENTOR_REVIEW"
-      ) {
-        return true;
-      }
-      return (
-        kinds
-          .get(row.project.id)
-          ?.has("REVIEW") ?? false
-      );
-    })
-    .sort((a, b) => {
-      const archivedOrder =
-        Number(
-          a.project.status ===
-            "ARCHIVED",
-        ) -
-        Number(
-          b.project.status ===
-            "ARCHIVED",
-        );
-      if (archivedOrder) {
-        return archivedOrder;
-      }
-      return (
-        b.project.updatedAt.getTime() -
-          a.project.updatedAt.getTime() ||
-        a.project.title.localeCompare(
-          b.project.title,
-        )
-      );
-    });
+    .filter((row) => matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
+    .sort((a,b) => compareMentorProjects(a.project,b.project,query.sort === "TITLE" ? "TITLE" : "RECENT"));
 
   const total = filtered.length;
   const totalPages = Math.max(
@@ -358,14 +291,14 @@ export default async function MentorProjectsPage({
         emptyTitle={
           query.search ||
           query.status ||
-          query.attention
+          query.attention || query.assignment || query.work
             ? "No mentoring Projects match these filters"
             : "No mentoring Projects"
         }
         emptyDescription={
           query.search ||
           query.status ||
-          query.attention
+          query.attention || query.assignment
             ? "Clear or change the filters to see other assigned Projects."
             : "Projects appear here when a College Admin assigns your Mentor membership to the team."
         }
