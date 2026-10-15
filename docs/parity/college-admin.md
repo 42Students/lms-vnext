@@ -19,6 +19,28 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Verification card decision-state clarity PARTIAL (chat-9):** The shared queue now clearly labels new SUBMITTED and updated UPDATE_PENDING items with the appropriate review action, while VERIFIED/SENT_BACK cards say View decision rather than suggesting another write. Pure presentation unit cases authored; 375px browser and end-to-end permission acceptance open.
+
+**Submitted-evidence verification CSV PARTIAL (chat-9):** Capped scoped verification CSV now includes the count of submitted Education rows, count of those with no marksheet document reference, and public-safe attention cues, in addition to status/timestamps. Identity rows keep Education counters blank; no raw snapshot, receipt IDs, private URLs or identity values are exported. Formula-neutralized unit cases authored, real DB/browser acceptance outstanding.
+
+**Elapsed waiting-age triage PARTIAL (chat-9):** The queue and capped CSV now partition active SUBMITTED/UPDATE_PENDING requests into under-48-hour, 2–7-day and at-least-7-day groups using one captured request clock, with future dates excluded. Only Waiting tab permits the filter, preventing misleading decided records. Unit boundary cases authored; real database/browser validation pending.
+
+**Verification-to-Student context navigation PARTIAL (chat-9):** College review cards now open the exact current-learner Student detail using a validated membership UUID, delegating permissions to the existing scoped page. This link is enabled only on College Admin mounting, not the shared Super Admin queue. Unit URL validation authored; cross-role/browser acceptance open.
+
+**Case-insensitive learner-name sorting PARTIAL (chat-9):** Verification cards, SQL paging, and capped CSV now share a typed learner-name A–Z ordering with membership/section UUID ties, without exposing identity or private contact values. Unit ordering tests authored; DB pagination/locale/browser acceptance pending.
+
+**Database-side verification kind filtering PARTIAL (chat-9):** Education/Identity kind now narrows the current-college PostgreSQL queue and CSV before the 5,001-row safety cap; tab counts remain within the chosen kind. Unit and disposable PostgreSQL wrong-role/foreign negative cases authored. Runtime/index/browser acceptance still open.
+
+**SQL date window before queue safety cap PARTIAL (chat-9):** The inclusive IST from/through submission-date window is now transformed to UTC half-open bounds in both verification queue and capped CSV SQL before the 5,001-row safeguard and in-memory marksheet/attention filters. Pure exact-midnight tests authored; runtime PG index-plan and browser acceptance pending.
+
+**Active enrollment availability PARTIAL (chat-9):** Verification queue and masked CSV now distinguish students with/without registered active program enrollment, using correlated current-college ownership. Contradictory no-enrollment with exact program/batch/branch/class filters reject at page, service and export boundaries. Unit tests authored; disposable DB and browser verification pending.
+
+**Single-enrollment academic filter correctness PARTIAL (chat-9):** Class+program+batch+branch verification filters now bind to the same current section enrollment and college-owned ancestry instead of accepting unrelated enrollments for the same learner. Queue and CSV share one scoped predicate. Pure query-mode tests authored; a multi-enrollment PostgreSQL negative fixture and browser proof remain required.
+
+**Academic-program verification selector PARTIAL (chat-9):** The queue and capped CSV now share exact current-college active program-enrollment filtering. A persisted college-only program picker is bounded to 200 and retains unknown bookmark IDs without showing another tenant's labels. Pure URL/CSV contract tests authored; PostgreSQL/browser acceptance open.
+
+**Unified verification CSV filter validation PARTIAL (chat-9):** The same strict date-window and pending-state compatibility checks now apply at the CSV URL boundary; invalid/ambiguous filters receive an explicit 400 without triggering protected reads. Disposable DB04-gated fixtures cover exact learner, lower-day and first-submission filters plus wrong-role/foreign tenant denials. These fixtures are authored but have not executed in this session.
+
 **Named bulk review preview PARTIAL (chat-9):** Before a bulk Verify/Send back, the College Admin now sees the actual selected learner names, sections, versions and any locally skipped entries rather than only aggregate counts. Changing selection cancels the old preview; in-flight decisions lock select/clear. No preview claims receipt validation or server commit. Unit coverage authored, browser/DB acceptance remains open.
 
 **Readable per-request bulk decision outcomes PARTIAL (chat-9):** Successful bulk API responses now retain the selected page's authorized learner names when displaying individual success/stale/document/permission outcomes; no shortened membership UUIDs are shown. Attempts/success/failure totals remain exact, and unknown rows use a neutral label. Pure outcome projection authored; browser/PG acceptance open.

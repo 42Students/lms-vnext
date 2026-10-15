@@ -6,7 +6,7 @@ import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/module
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {parseCollegeVerificationPageQuery} from "@/modules/verification/page-query";
 import {verificationLastPage,verificationPageUrl} from "@/modules/verification/page-range";
-import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions} from "@/modules/verification/filter-options-service";
+import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions,listVerificationProgramOptions} from "@/modules/verification/filter-options-service";
 
 export const dynamic="force-dynamic";
 export default async function CollegeVerificationPage({searchParams}:{
@@ -45,12 +45,13 @@ export default async function CollegeVerificationPage({searchParams}:{
  const batchChoices=await listVerificationBatchOptions(context);
  const branchChoices=await listVerificationBranchOptions(context);
  const classChoices=await listVerificationClassOptions(context);
+ const programChoices=await listVerificationProgramOptions(context);
  const query:Record<string,string>={};
  for(const [key,value] of Object.entries(data.filter)){
   if(value!==undefined&&value!==null)query[key]=String(value);
  }
  return <CollegeVerificationPanel rows={data.rows} counts={data.counts}
-  tpoCanVerify={data.tpoCanVerify} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices}
+  tpoCanVerify={data.tpoCanVerify} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices}
   activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
   page={data.page} total={data.total} hasMore={data.hasMore} pageSize={data.filter.pageSize} query={query}/>;
 }
