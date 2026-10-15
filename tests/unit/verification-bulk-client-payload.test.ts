@@ -13,3 +13,11 @@ describe("college bulk client payload",()=>{
   expect(collegeBulkReviewPayload([{...a,status:"VERIFIED"}],"VERIFY").items).toHaveLength(0);
  });
 });
+
+describe("reasoned bulk send-back payload",()=>{it("requires the same sanitized shared reason for each selected item",()=>{
+ const row={learnerMembershipId:"00000000-0000-4000-8000-000000000123",section:"EDUCATION" as const,status:"SUBMITTED" as const,version:1};
+ const body=collegeBulkReviewPayload([row],"SEND_BACK","  Please resubmit marksheet  ");
+ expect(body.reason).toBe("Please resubmit marksheet");
+ expect(bulkVerificationInput.safeParse(body).success).toBe(true);
+ expect(bulkVerificationInput.safeParse({...body,reason:" "}).success).toBe(false);
+});});

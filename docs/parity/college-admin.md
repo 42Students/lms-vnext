@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Confirmed bulk Send back PARTIAL (chat-9):** College reviewer preview now accepts a required 3–500 character correction explanation and an explicit Send back confirmation, passing only the chosen waiting requests to the existing version-locked writer with individual audit/notification. The reason is saved only after server success, not inferred from local preview. Unit coverage authored; PG/browser acceptance remains open.
+
+
 **Confirmed bulk Verify action PARTIAL (chat-9):** College reviewer preview offers a second explicit Verify confirmation, submitting only the first 20 waiting membership/section/version tuples through the same-origin guarded, DB04 receipt-attested bulk POST. The UI clears selection only on HTTP success, surfaces errors, and requests server refresh; per-item result details and independent execution remain open.
 
 
