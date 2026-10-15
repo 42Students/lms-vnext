@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq, gt, inArray, isNotNull, isNull, lte } from "drizzle-orm";
+import { and, count, desc, eq, gt, inArray, isNotNull, isNull, lte, sql } from "drizzle-orm";
 import { projectCompanyShareAudit } from "./audit-history-model";
 import {tpoCompanyAuditKindSchema} from "./audit-kind-model";
 import { getDb } from "@/db/client";
@@ -10,6 +10,7 @@ import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
 import { placementCompanyApplicantShares as shares, placementCompanyApplicantShareViews as views } from "./staged-schema";
 import { companyShareAuditTotals } from "./audit-model";
+import {canIssueCompanyApplicantShare} from "./issue-policy";
 import { companyShareStatusSchema } from "./status-model";
 import { isShareableJob } from "./scope-model";
 import {
@@ -18,7 +19,7 @@ import {
 } from "./token-model";
 
 export class CompanyShareError extends Error {
-  constructor(public readonly code: "MIGRATION_PENDING"|"NOT_FOUND"|"NOT_SHAREABLE") {
+  constructor(public readonly code: "MIGRATION_PENDING"|"NOT_FOUND"|"NOT_SHAREABLE"|"ACTIVE_LINK_LIMIT") {
     super(code);
   }
 }
@@ -62,15 +63,33 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
   const college = await tpoJob(context,parsed.jobId);
   if (!await companyShareTablesReady()) throw new CompanyShareError("MIGRATION_PENDING");
   if (!context.membership) throw new CompanyShareError("NOT_FOUND");
-  const {token,digest} = issueCompanyShareToken();
-  const expiresAt = companyShareExpiry(new Date(),parsed.expiresInDays);
-  const [row] = await getDb().insert(shares).values({
-    collegeId:college.id, jobId:parsed.jobId,
-    createdByMembershipId:context.membership.id,
-    tokenHash:digest, expiresAt,
-  }).returning({id:shares.id});
-  if (!row) throw new CompanyShareError("NOT_SHAREABLE");
-  return {shareId:row.id,token,expiresAt:expiresAt.toISOString()};
+  const actorMembershipId=context.membership.id;
+  return getDb().transaction(async tx=>{
+    // A job-row lock serializes simultaneous officers issuing for one drive.
+    const [job]=await tx.select({id:placementJobs.id})
+      .from(placementJobs)
+      .where(and(eq(placementJobs.id,parsed.jobId),
+        eq(placementJobs.collegeId,college.id),
+        inArray(placementJobs.status,["PUBLISHED","CLOSED"])))
+      .limit(1).for("update",{of:placementJobs});
+    if(!job)throw new CompanyShareError("NOT_FOUND");
+    const [existing]=await tx.select({total:count()}).from(shares).where(and(
+      eq(shares.jobId,job.id),eq(shares.collegeId,college.id),
+      isNull(shares.revokedAt),gt(shares.expiresAt,sql`clock_timestamp()`),
+    ));
+    if(!canIssueCompanyApplicantShare(existing?.total??0)){
+      throw new CompanyShareError("ACTIVE_LINK_LIMIT");
+    }
+    const {token,digest}=issueCompanyShareToken();
+    const expiresAt=companyShareExpiry(new Date(),parsed.expiresInDays);
+    const [row]=await tx.insert(shares).values({
+      collegeId:college.id,jobId:job.id,
+      createdByMembershipId:actorMembershipId,
+      tokenHash:digest,expiresAt,
+    }).returning({id:shares.id});
+    if(!row)throw new CompanyShareError("NOT_SHAREABLE");
+    return {shareId:row.id,token,expiresAt:expiresAt.toISOString()};
+  });
 }
 export async function listTpoCompanyApplicantShares(context: RequestContext, rawJobId: unknown, rawStatus:unknown="ALL") {
   const status=companyShareStatusSchema.parse(rawStatus);
