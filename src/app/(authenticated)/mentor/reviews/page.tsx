@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorReviewQueue } from "@/modules/projects/mentor-portfolio-service";
 import { mentorPortfolioHref, mentorReviewQuerySchema } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorReviewsPage({
@@ -20,6 +20,7 @@ export default async function MentorReviewsPage({
     search: first(raw.search) ?? undefined,
     projectStatus: first(raw.projectStatus) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
+    assignment:first(raw.assignment) ?? undefined,
     order: first(raw.order) ?? undefined,
     age: first(raw.age) ?? undefined,
     page: first(raw.page) ?? undefined,
@@ -55,6 +56,12 @@ export default async function MentorReviewsPage({
           <select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
+          <select name="assignment" defaultValue={data.query.assignment} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
+            <option value="SUPPORTING">Supporting Mentor</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
