@@ -29,6 +29,10 @@ CREATE INDEX IF NOT EXISTS pcas_views_share_idx
 -- The job compound unique index is a supporting index; it does not alter job semantics.
 CREATE UNIQUE INDEX IF NOT EXISTS pcas_jobs_id_college_uq
   ON placement_jobs(id, college_id);
+-- PostgreSQL requires a unique key on the exact compound membership FK target.
+-- The existing memberships PK alone does not satisfy (id,college_id).
+CREATE UNIQUE INDEX IF NOT EXISTS pcas_memberships_id_college_uq
+  ON college_memberships(id,college_id);
 CREATE UNIQUE INDEX IF NOT EXISTS pcas_share_id_college_uq
   ON placement_company_applicant_shares(id, college_id);
 ALTER TABLE placement_company_applicant_shares
