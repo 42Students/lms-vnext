@@ -182,7 +182,15 @@ const educationSchema = z
     description: text(2000),
     certificateDocumentId: receiptId,
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.startYear && value.endYear && Number(value.endYear) < Number(value.startYear)) {
+      ctx.addIssue({ code: "custom", path: ["endYear"], message: "Graduation year cannot precede start year" });
+    }
+    if (value.isCurrentlyPursuing && value.endYear) {
+      ctx.addIssue({ code: "custom", path: ["endYear"], message: "Current education cannot have a completed end year" });
+    }
+  });
 
 const certificationSchema = z
   .object({
