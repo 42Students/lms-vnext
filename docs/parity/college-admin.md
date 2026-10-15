@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**SQL date window before queue safety cap PARTIAL (chat-9):** The inclusive IST from/through submission-date window is now transformed to UTC half-open bounds in both verification queue and capped CSV SQL before the 5,001-row safeguard and in-memory marksheet/attention filters. Pure exact-midnight tests authored; runtime PG index-plan and browser acceptance pending.
+
 **Active enrollment availability PARTIAL (chat-9):** Verification queue and masked CSV now distinguish students with/without registered active program enrollment, using correlated current-college ownership. Contradictory no-enrollment with exact program/batch/branch/class filters reject at page, service and export boundaries. Unit tests authored; disposable DB and browser verification pending.
 
 **Single-enrollment academic filter correctness PARTIAL (chat-9):** Class+program+batch+branch verification filters now bind to the same current section enrollment and college-owned ancestry instead of accepting unrelated enrollments for the same learner. Queue and CSV share one scoped predicate. Pure query-mode tests authored; a multi-enrollment PostgreSQL negative fixture and browser proof remain required.
