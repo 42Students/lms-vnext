@@ -7,6 +7,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import {AuditFindingStatusAction} from "@/components/tracker/audit-finding-status-action";
 import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { BUG_SEVERITIES, BUG_ENVIRONMENTS } from "@/modules/bug-tracker/admin-validation";
 import { parseAuditFindingsSearchParams, trackerAuditFindingsInput } from "@/modules/bug-tracker/audit-findings-board-model";
@@ -23,7 +24,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
  const params=await searchParams;
  const query=parseAuditFindingsSearchParams(params);
  const header=<PageHeader eyebrow="42 Tracker · Super Admin" title="Audit Findings"
- description="Review recorded tracker findings in the selected administrative scope. This view is read-only and is not a replacement for independent security audit evidence."/>;
+ description="Review recorded tracker findings in the selected administrative scope. Status changes are audited and version-checked. This is not independent security-audit evidence."/>;
  if(!query) return <div className="space-y-5">{header}
   <div role="alert" className="rounded-xl border border-border p-5"><p>Invalid audit findings filters or pagination cursor.</p>
    <Link href="/tracker/audit-findings" className="font-semibold text-primary-text">Reset filters</Link></div></div>;
@@ -71,6 +72,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
     <h2 className="mt-2 break-words font-semibold"><Link href={`/tracker/issues/${encodeURIComponent(item.publicId)}`} className="text-primary-text">{item.publicId} · {item.issueType}</Link></h2>
     <p className="mt-2 break-words text-sm text-body">{item.description}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.page} · {item.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+    <div className="mt-3"><AuditFindingStatusAction publicId={item.publicId} current={item.status} version={item.version}/></div>
    </article>)}
   </section>}
   {next?<Link href={`/tracker/audit-findings?${next.toString()}`} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold">{query.sort==="newest"?"Older findings →":"Newer findings →"}</Link>:null}
