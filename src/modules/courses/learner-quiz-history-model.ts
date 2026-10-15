@@ -39,3 +39,13 @@ export function learnerQuizQuestionAwardLabel(awarded:number|null,possible:numbe
   return "Question marks unavailable";
  return `Awarded ${awarded} / ${possible} points`;
 }
+
+/** Never label vanished or unselected option IDs as actual selected answer text. */
+export function learnerQuizSelectedAnswerMessage(
+ selectedIds:readonly string[],available:readonly {id:string}[],
+):string|null {
+ if(selectedIds.length===0)return "No answer recorded for this question.";
+ if(!selectedIds.some(id=>available.some(option=>option.id===id)))
+  return "Previously selected option is unavailable for review.";
+ return null;
+}
