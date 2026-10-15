@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { learnerAssessmentScopedItems } from "@/modules/courses/learner-assessment-scope-attention-model";
 import { learnerAssessmentQuickCounts } from "@/modules/courses/learner-assessment-quick-counts-model";
 import { learnerAssessmentClock } from "@/modules/courses/learner-assessment-clock-model";
 import { Drawer } from "@/components/ui/drawer";
@@ -168,10 +169,11 @@ export function LearnerAssessmentOverview({
   );
 
   const countsByCourse=useMemo(()=>learnerAssessmentCourseCounts(items),[items]);
-  const actionCounts=learnerAssessmentActionCounts(items,currentNowMs);
-  const quickCounts=learnerAssessmentQuickCounts(items,currentNowMs);
+  const scopedAttentionItems=learnerAssessmentScopedItems(items,activeCourseId);
+  const actionCounts=learnerAssessmentActionCounts(scopedAttentionItems,currentNowMs);
+  const quickCounts=learnerAssessmentQuickCounts(scopedAttentionItems,currentNowMs);
 
-  const completed = items.filter((item) =>
+  const completed = scopedAttentionItems.filter((item) =>
     item.kind === "ASSIGNMENT"
       ? Boolean(item.submittedAt)
       : item.attemptsUsed > 0,
@@ -214,7 +216,7 @@ export function LearnerAssessmentOverview({
               ? "Assignments"
               : "Quizzes"
           }
-          value={items.length}
+          value={scopedAttentionItems.length}
         />
         <Metric
           label="Courses"

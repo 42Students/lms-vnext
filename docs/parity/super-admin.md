@@ -965,3 +965,18 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 source correction:** Moved mutation Zod contract to the pure module for isolated Vitest imports, removed the invalid union-property unit assertion, and made malformed JSON return a deterministic 400 rather than an unhandled server error. Real execution remains open.
+
+
+**2026-10-15 chat-6 disposable PG positive regression (source-authored):** Added isolated temporary learner fixture verifying audited SET → locked SET → INHERIT, stale expected-state denial, no-op suppression and cleanup. This integration test is not yet executed and no successful migration/runtime/browser gate is claimed.
+
+
+**2026-10-15 chat-6 validate learner rule recheck snapshot (PARTIAL):** The student editor no longer converts malformed, duplicated or inconsistent server snapshots into an editable inherited state; isolated unit checks authored, not executed. Full browser/PG acceptance remains open.
+
+
+### 2026-10-15 chat-6 follow-up — Super Admin module editor and scoped history (PARTIAL)
+
+- A malformed rule recheck can no longer be interpreted as an inherited rule, and an HTTP 2xx without the expected persisted module/value/lock receipt is not presented as a confirmed save. Pure unit cases are authored.
+- Removing a previously stored learner rule with **Inherit** is reachable even under a broader persisted lock, while On/Off writes remain blocked. This follows the existing server distinction between INHERIT and SET.
+- Authorized learner membership-rule audit history now supports a stable older-history cursor, Projects/Electives filtering, actor-name search, India-day start/end bounds, and a formula-neutralized CSV export of the **currently selected 40-record page**. Filters are applied in the scoped Activity Log service before pagination; CSV does not expose arbitrary metadata, actor email, or contact data.
+- Read-only Platform Settings rejects unknown or repeated URL query keys rather than silently treating them as valid filters.
+- **Acceptance remains OPEN:** branch pushes did not produce matching GitHub Actions checks; authored Vitest/tests and disposable PostgreSQL checks have **not executed** in this session. Browser/mobile interactions, learner rule mutation/concurrency, history paging, actor-name and time filtering, CSV formula/privacy checks, tenant/role negatives and full legacy oracle comparison must run before any row is declared DONE. No DATABASE tracker closure or production approval is claimed.
