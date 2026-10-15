@@ -21,3 +21,8 @@ export function clampCompanyShareLinksPage(page:number,total:number){
  const totalPages=Math.max(1,Math.ceil(total/COMPANY_SHARE_PAGE_SIZE));
  return {page:Math.min(Math.max(1,page),totalPages),totalPages};
 }
+
+/** Preserve latest-first order without duplicating a just-issued share. */
+export function prependCompanyShareLink<T extends {id:string}>(rows:readonly T[],created:T):T[]{
+ return [created,...rows.filter(row=>row.id!==created.id)].slice(0,COMPANY_SHARE_PAGE_SIZE);
+}

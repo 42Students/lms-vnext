@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,companyShareLifecycleStatus,companyShareLifecycleLabel,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
 import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
+import {prependCompanyShareLink} from "@/modules/placements/company-share/link-page-model";
 import {companyShareIssueFailureMessage} from "@/modules/placements/company-share/issue-message-model";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:{
@@ -28,7 +29,7 @@ export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:
     throw new Error("CREATE_FAILED");
    }
    const data=await res.json() as {shareId:string;token:string;expiresAt:string};
-   if(linkPage===1&&shouldDisplayNewCompanyShare(status))setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}},...current]);
+   if(linkPage===1&&shouldDisplayNewCompanyShare(status))setLinks(current=>prependCompanyShareLink(current,{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}}));
    setNewUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
   }catch(error){setError(error instanceof Error&&error.message==="ACTIVE_LINK_LIMIT"?
    companyShareIssueFailureMessage("ACTIVE_LINK_LIMIT"):
