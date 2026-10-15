@@ -477,6 +477,13 @@
       "when": 1792054889964,
       "tag": "0067_faculty_profile_document",
       "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1792054900425,
+      "tag": "0068_inbound_mail_messages",
+      "breakpoints": true
     }
   ]
 }
