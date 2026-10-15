@@ -367,6 +367,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Exact class name PARTIAL (chat-3, 2026-10-15):** College-scoped exact persisted exact class name matching now applies before pagination and to the matching capped CSV. Bounded URL, unit and disposable-PostgreSQL tenant/denial fixtures authored; browser/runtime verification remains open.
+
 **Exact program code PARTIAL (chat-3, 2026-10-15):** College-scoped exact persisted exact program code matching now applies before pagination and to the matching capped CSV. Bounded URL, unit and disposable-PostgreSQL tenant/denial fixtures authored; browser/runtime verification remains open.
 
 **Academic period status PARTIAL (chat-3, 2026-10-15):** Added a college-scoped persisted academic period status selector for the Classes directory, preserved across page links and capped CSV exports. Strict query validation, source unit checks and isolated PostgreSQL success/denial fixtures authored; executed DB/browser acceptance remains open.

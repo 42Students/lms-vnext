@@ -146,4 +146,11 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeClassQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
     expect(readCollegeStructureParams({programCode:""})).toEqual({});
   });
+  it("validates and carries exact class name in class pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({className:"A&26"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("className=A%2626");
+    expect(classesExportHref(query)).toContain("className=A%2626");
+    expect(collegeClassQuerySchema.safeParse({className:"x".repeat(256)}).success).toBe(false);
+    expect(readCollegeStructureParams({className:""})).toEqual({});
+  });
 });
