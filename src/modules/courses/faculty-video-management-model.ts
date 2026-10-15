@@ -92,3 +92,16 @@ export const facultyVideoReplaceIntentSchema=z.object({
  confirmed:z.literal(true),
 }).strict();
 export type FacultyVideoReplaceIntent=z.infer<typeof facultyVideoReplaceIntentSchema>;
+
+/** Product-language Delete means an audited soft archive, never blob hard-delete. */
+export function facultyVideoArchivePrompt(video:FacultyLessonVideo):string {
+ return "Archive \""+video.title.slice(0,120)+"\" from this lesson? Learners will lose access, but historical records must be retained.";
+}
+export const facultyVideoArchiveIntentSchema=z.object({
+ action:z.literal("ARCHIVE"),
+ contentId:z.string().uuid(),
+ lessonId:z.string().uuid(),
+ deliveryId:z.string().uuid().nullable(),
+ expectedUpdatedAt:z.iso.datetime({offset:true}),
+ confirmed:z.literal(true),
+}).strict();
