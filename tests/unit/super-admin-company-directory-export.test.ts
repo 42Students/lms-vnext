@@ -6,5 +6,7 @@ describe("Super Admin employer CSV",()=>{
   expect(csv).toContain("'=SUM(1,1)");
   expect(csv).toContain('College ""A""');
   expect(csv).not.toContain("email");
+  expect(csv).toContain("\\r\\n");
+  expect(csv).not.toContain("\\\\r\\\\n");
  });
 });
