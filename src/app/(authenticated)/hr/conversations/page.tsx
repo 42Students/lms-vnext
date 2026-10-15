@@ -59,6 +59,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       className="mt-2 inline-flex rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">
       {row.unread} unread
      </span>:null}
+     {row.preview?<p className="mt-2 break-words text-sm text-body">
+      {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}
+     </p>:null}
      <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?"Last update "+when(row.lastMessageAt):"No messages yet"} · Private employer thread</p>
     </li>)}
    </ol>:<p role="status" className="rounded-xl border border-border p-5 text-body">No matching conversations with the placement cell for this college.</p>}
