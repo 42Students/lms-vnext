@@ -1432,3 +1432,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **L11 Profile remove guard (source FIXED, proof open):** removing a saved career-profile entry requires explicit confirmation and a still-existing saved ID, preventing silent data loss and no-op section overwrites. This is a documented safety correction. Unit regression authored; browser and PostgreSQL acceptance open.
 
 **L2 next-action headline truth (source FIXED, acceptance open):** Course Home now displays `In progress` for uncompleted tracked items without an upcoming timestamp and `Attention` for missed items; `All clear` requires an actual completed denominator. No inferred grades or deadlines. Unit regressions authored; browser and producer verification pending.
+
+**L5 discussion create capability fail-closed (source FIXED, proof open):** the composer stays read-only until a successful same-delivery GET explicitly returns `canPost: true`; missing/failed capability responses cannot default to permission. POST still independently enforces same-origin and persisted membership. Unit test authored; historical/browser denial acceptance pending.
