@@ -2,7 +2,7 @@ import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import { redirect } from "next/navigation";
-import {tpoStudentUrlError} from "@/modules/placements/tpo-students-url-guard";
+import {tpoStudentUrlError,tpoStudentEmptyRecoveryHref} from "@/modules/placements/tpo-students-url-guard";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -561,13 +561,13 @@ export default async function TpoStudentsPage({
               : "No students match these filters. Try another journey, branch or search term."}
             <div className="mt-3">
               <Link
-                href={studentsHref({
+                href={tpoStudentEmptyRecoveryHref(roster.total,studentsHref({
                   ...currentFilters,
                   page: 1,
-                })}
+                }))}
                 className="font-semibold text-primary-text hover:underline"
               >
-                First page
+                {roster.total>0?"First page":"Clear student filters"}
               </Link>
             </div>
           </div>
