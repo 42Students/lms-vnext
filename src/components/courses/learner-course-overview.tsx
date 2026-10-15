@@ -99,6 +99,8 @@ export function LearnerCourseOverview({
     safeBodyHtml: meta.bodyHtml,
     courseDescription:meta.courseDescription,
     learningPathDescription:workspace.learningPath?.description??null,
+    introductionText:meta.introductionText,
+    takeaways:meta.takeaways,
   });
   const progressAvailability = learnerProgressAvailability({
     hasPublishedLearningPath: workspace.learningPath !== null,

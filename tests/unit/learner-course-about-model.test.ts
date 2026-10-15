@@ -13,6 +13,20 @@ describe("Course About text source transparency",()=>{
       safeBodyHtml:null,courseDescription:null,learningPathDescription:"Path",
     }).source).toBe("PATH");
   });
+  it("recognizes authored introduction or outcomes even without a body",()=>{
+    expect(learnerCourseAboutSource({
+      safeBodyHtml:null,courseDescription:null,learningPathDescription:null,
+      introductionText:"Welcome to the course",takeaways:[],
+    }).source).toBe("SUMMARY");
+    expect(learnerCourseAboutSource({
+      safeBodyHtml:null,courseDescription:null,learningPathDescription:null,
+      introductionText:" ",takeaways:["Build a model"],
+    }).source).toBe("SUMMARY");
+    expect(learnerCourseAboutSource({
+      safeBodyHtml:null,courseDescription:"Catalogue",learningPathDescription:null,
+      introductionText:"Welcome",takeaways:[],
+    }).source).toBe("CATALOGUE");
+  });
   it("does not claim a description where none is published",()=>{
     expect(learnerCourseAboutSource({
       safeBodyHtml:" ",courseDescription:" ",learningPathDescription:null,
