@@ -881,3 +881,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Companies stable sorting (PARTIAL):** Sorted-by-name and recently-updated relationship modes now use server-side stable SQL ordering, with UUID tie-breaks, strict Zod enum and filter-preserving pages. Does not claim a historical activity timeline. Unit/PG tests authored, unrun; browser/performance acceptance open.
+
+
+**2026-10-15 chat-6 Companies domain search (PARTIAL):** Employer lookup can search persisted `primary_domain` as distinct from company name, preserving literal SQL wildcard escaping, college safety scope and pagination. No sensitive CRM/private contacts are retrieved. Strict model and real-Postgres fixture authored, not run; legacy employer alias search and browser parity open.
