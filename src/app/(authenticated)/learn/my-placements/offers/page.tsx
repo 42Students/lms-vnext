@@ -56,6 +56,7 @@ export default async function LearnerOffersPage({
   const expiryParsed=learnerOfferExpirySchema.safeParse(query.expiry??"all");
   const expiry=expiryParsed.success?expiryParsed.data:"all";
   const dueOnly=expiry==="all"&&query.due==="1";
+  const conflictingDeadlines=expiry!=="all"&&query.due==="1";
   const context = await getCurrentRequestContext();
   const [offers,requestRead] = await Promise.all([
     getOwnLearnerOfferBrowse(context,view),
@@ -101,6 +102,9 @@ export default async function LearnerOffersPage({
         title="My offers"
         description="Official persisted offers, current response status and recorded joining outcomes."
       />
+      {conflictingDeadlines ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
+      </p> : null}
       {invalidQuery ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</p> : null}
       <nav aria-label="Offer status" className="flex flex-wrap gap-2">
         {tabs.map((tab) => (
