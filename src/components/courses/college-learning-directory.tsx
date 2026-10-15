@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
-import { collegeLearningHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
+import { collegeLearningHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
   listCollegeCourseProgress,
   listCollegeLessons,
@@ -560,6 +560,10 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                     <td className="px-4 py-4 text-body">Path: {item.pathStatus}; Lesson: {item.status}</td>
                     <td className="px-4 py-4 text-body">{item.publishedContentCount} published / {item.contentCount} authored
                       <p className="mt-1 text-xs text-muted-foreground">{item.publishedAndVisibleFlagCount} published and flagged visible to students</p>
+                      <Link href={collegeOfferingProgressHref(item.offeringId)}
+                        className="mt-2 inline-block font-semibold text-primary-text hover:underline">
+                        View recorded course activity
+                      </Link>
                     </td>
                   </tr>
                 ))

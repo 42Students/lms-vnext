@@ -3,6 +3,7 @@ import {collegeProgressCsvHref} from "@/modules/courses/college-progress-export-
 import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 import {
   collegeLearningHref,
+  collegeOfferingProgressHref,
   collegeLearningPageCount,
   collegeLearningQuerySchema,
   collegeLessonQuerySchema,
@@ -371,6 +372,14 @@ describe("College Admin lessons and course progress pure models", () => {
     const q=collegeProgressQuerySchema.parse({archivedContentState:"NO_ARCHIVED"});
     expect(collegeLearningHref("PROGRESS",q)).toContain("archivedContentState=NO_ARCHIVED");
     expect(collegeProgressCsvHref(q)).toContain("archivedContentState=NO_ARCHIVED");
+  });
+
+  it("links lessons to their exact persisted offering activity, including archived",()=>{
+    expect(()=>collegeOfferingProgressHref("bad")).toThrow();
+    const url=new URL(collegeOfferingProgressHref("123e4567-e89b-42d3-a456-426614174000"),"https://example.test");
+    expect(url.pathname).toBe("/college/course-progress");
+    expect(url.searchParams.get("offeringId")).toBe("123e4567-e89b-42d3-a456-426614174000");
+    expect(url.searchParams.get("status")).toBe("ALL");
   });
 
 });
