@@ -6,6 +6,7 @@ import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-dir
 import {mentorResourceDirectoryHref,mentorResourceDirectoryQuerySchema}
  from "@/modules/projects/mentor-resource-directory-model";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
+import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-resource-directory-layout-model";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
@@ -40,7 +41,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {" "}{data.linkableCount} with HTTPS links.
    </p>
    <form method="get" action={base+"/resources-directory"}
-    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+    className={mentorResourceDirectoryFilterLayout}>
     <label className="grid gap-1 text-sm font-semibold text-body">Resource title or description
      <input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-10 rounded-md border border-border bg-background px-3"/>
@@ -94,7 +95,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
      "Clear the filters to see other registered resource metadata."}/>:
-   <ol className="grid gap-3 sm:grid-cols-2">
+   <ol className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 rounded-xl border border-border bg-surface p-4">
      <div className="flex flex-wrap items-start justify-between gap-2">
@@ -113,7 +114,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      </p>}
     </li>)}
    </ol>}
-   <nav aria-label="Resource directory pages" className="flex items-center justify-between gap-3">
+   <nav aria-label="Resource directory pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
     <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
     <div className="flex gap-3">
      {data.page>1?<Link href={mentorResourceDirectoryHref({...data.query,page:data.page-1})}
