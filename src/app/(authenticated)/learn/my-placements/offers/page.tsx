@@ -2,7 +2,7 @@ import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-emp
 import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
-import {learnerOfferStatusHref} from "@/modules/placements/learner-offers-navigation-model";
+import {learnerOfferStatusHref,learnerOfferClearFiltersHref,learnerOfferHasActiveFacets} from "@/modules/placements/learner-offers-navigation-model";
 import {learnerOfferKindSchema,filterOwnOffersByKind} from "@/modules/placements/learner-offer-kind-model";
 import {learnerJoiningFilterSchema,filterOwnOffersByJoining} from "@/modules/placements/learner-offer-joining-filter-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
@@ -63,6 +63,7 @@ export default async function LearnerOffersPage({
   const order=sortParsed.success?sortParsed.data:"priority";
   const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
   const paginated = paginateOwnOffers(sorted,requestedPage,15);
+  const hasActiveFacets = learnerOfferHasActiveFacets({searchTerm,dueOnly,sort:order,kind,joining:joiningFilter});
   const emptyState = learnerOffersEmptyState(offers.counts.all, Boolean(searchTerm) || dueOnly || kind !== "all" || joiningFilter !== "all");
   const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
     ...(view!=="all"?{status:view}:{}),...(searchTerm?{q:searchTerm}:{}),
@@ -131,6 +132,12 @@ export default async function LearnerOffersPage({
         </label>
         <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
       </form>
+      {hasActiveFacets ? (
+        <Link href={learnerOfferClearFiltersHref(view)}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text underline">
+          Clear offer filters (keep selected status)
+        </Link>
+      ) : null}
       <nav aria-label="Recorded joining outcome" className="flex flex-wrap gap-3 text-sm">
         {joiningTabs.map(tab => (
           <Link key={tab.id}
