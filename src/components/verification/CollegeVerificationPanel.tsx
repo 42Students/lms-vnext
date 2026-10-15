@@ -11,6 +11,8 @@ import {verificationAttentionShortcuts,verificationAttentionShortcutPatch} from 
 import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules/verification/selection-model";
 import {verificationBulkPreviewRows} from "@/modules/verification/bulk-preview-display";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
+import {canStartVerificationBulkPreview} from "@/modules/verification/bulk-action-guard";
+import {emptyVerificationBulkFeedback} from "@/modules/verification/bulk-feedback-reset";
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
@@ -30,9 +32,12 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
  const preview=bulkAction?verificationBulkPreviewRows(selectedRows,bulkAction):null;
+ function resetBulkFeedback(){const state=emptyVerificationBulkFeedback();
+  setBulkAction(state.pendingAction);setBulkReason(state.reason);setBulkError(state.error);setBulkResult(state.result);
+ }
  function choose(row:VerificationQueueCard,checked:boolean){
   if(bulkBusy)return;
-  setBulkAction(null);
+  resetBulkFeedback();
   setSelection(current=>{
    const next=new Set([...current].filter(key=>available.has(key))),key=verificationSelectionKey(row);
    if(checked&&next.size<20)next.add(key);else if(!checked)next.delete(key);
@@ -56,6 +61,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   finally{setBulkBusy(false);}
  }
  function navigate(patch:Record<string,string>){
+  setSelection(new Set());resetBulkFeedback();
   const params=new URLSearchParams(query);
   Object.entries(patch).forEach(([key,value])=>{if(value)params.set(key,value);else params.delete(key);});
   router.push("/college/verification?"+params.toString());
@@ -75,18 +81,18 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </nav>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
-   selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} disableLocalSearch allowCollegeStudentLinks
+   selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} selectionDisabled={bulkBusy} disableLocalSearch preserveServerOrder allowCollegeStudentLinks allowCollegeContactLinks
    initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NAME"?"NAME":query.sort==="NEWEST"?"NEWEST":"OLDEST"}
-   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":""})}
-   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
+   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query.attention)?"ALL":query.attention??"ALL"})}
+   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query.attention==="MISSING_MARKSHEET"?"ALL":query.attention}:{})})}
    onReview={row=>setSelected(row)}/>
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());setBulkAction(null);}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
-    <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("VERIFY")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
-    <button type="button" disabled={selectedRows.length===0} onClick={()=>setBulkAction("SEND_BACK")} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());resetBulkFeedback();}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
+    <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("VERIFY");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
+    <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("SEND_BACK");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
    </div>
    {bulkAction&&<div className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
@@ -96,7 +102,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
      {preview?.skipped.map(item=><li key={item.key} className="break-words">{item.name} · {item.section}: skipped ({item.reason})</li>)}
     </ul>
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
-     <textarea value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
+     <textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" placeholder="Describe the correction required"/>
      <span className="mt-1 block text-xs">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
     </label>}

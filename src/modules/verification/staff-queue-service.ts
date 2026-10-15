@@ -1,14 +1,14 @@
 import "server-only";
-import {and,asc,desc,eq,gte,lt,ilike,inArray,sql} from "drizzle-orm";
+import {and,asc,desc,eq,gte,lt,gt,lte,ilike,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
 import {profileVerifications,profileVerificationSettings} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
-import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid,verificationAgeBandValid,verificationSectionEvidenceFiltersValid,verificationWaitingAttentionValid,verificationAttentionAgeCompatible} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
 import {verificationSqlSections} from "./queue-kind";
 import {matchesVerificationAttention} from "./attention-filter";
-import {matchesVerificationAgeBand} from "./queue-age-band";
+import {matchesVerificationAgeBand,verificationAgeSqlBounds} from "./queue-age-band";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
@@ -30,9 +30,14 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
  if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
  if(!verificationAgeBandValid(filter))throw Error("INVALID_VERIFICATION_AGE_BAND");
+ if(!verificationSectionEvidenceFiltersValid(filter))throw Error("INVALID_VERIFICATION_SECTION_EVIDENCE_FILTERS");
+ if(!verificationWaitingAttentionValid(filter))throw Error("INVALID_VERIFICATION_ATTENTION_TAB");
+ if(!verificationAttentionAgeCompatible(filter))throw Error("INVALID_VERIFICATION_ATTENTION_AGE");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const dateBounds=verificationSubmittedSqlBounds(filter);
+ const evaluatedAt=new Date();
+ const ageBounds=verificationAgeSqlBounds(filter.ageBand,evaluatedAt);
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
  const tpoCanVerify=effectiveTpoVerifierSetting(setting);
  // Cap the working set and FAIL LOUDLY rather than silently reporting
@@ -51,12 +56,13 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    eq(users.platformStatus,"ACTIVE"),filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
    dateBounds.from?gte(profileVerifications.submittedAt,dateBounds.from):undefined,
    dateBounds.before?lt(profileVerifications.submittedAt,dateBounds.before):undefined,
+   ageBounds.after?gt(profileVerifications.submittedAt,ageBounds.after):undefined,
+   ageBounds.through?lte(profileVerifications.submittedAt,ageBounds.through):undefined,
    inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
    inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]:[filter.waitingState]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
- const evaluatedAt=new Date();
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
