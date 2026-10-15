@@ -41,6 +41,13 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
 ];
 
 export function superAdminLegacyNavigationPath(pathname:string):string {
+  if(pathname==="/admin/domains"||pathname.startsWith("/admin/domains/"))
+    return "/admin/tenants";
+  if(pathname==="/admin/academics"||pathname.startsWith("/admin/academics/"))
+    return "/admin/departments";
+  if(pathname==="/admin/placements/interviews"||
+     pathname.startsWith("/admin/placements/interviews/"))
+    return "/admin/placements/calendar";
   if(pathname==="/admin/projects/reassign-mentor" ||
      pathname.startsWith("/admin/projects/workspaces/"))return "/admin/projects";
   return pathname;
