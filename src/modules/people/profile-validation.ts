@@ -34,14 +34,16 @@ const urlValue = z
         try {
           const url = new URL(value);
           return (
-            url.protocol === "https:" ||
-            url.protocol === "http:"
+            (url.protocol === "https:" || url.protocol === "http:") &&
+            Boolean(url.hostname) &&
+            url.username === "" &&
+            url.password === ""
           );
         } catch {
           return false;
         }
       })(),
-    "Use a valid http or https URL",
+    "Use a valid http or https URL without embedded credentials",
   )
   .default("");
 

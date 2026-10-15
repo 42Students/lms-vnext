@@ -1,7 +1,9 @@
 const MAX_ROWS=200;
 const cell=(value:string):string=>{
  const text=value.slice(0,240);
- const safe=/^\s*[=+@\-]/.test(text)?"'"+text:text;
+ // Ignore leading formatting controls for the spreadsheet-formula decision.
+ const prefix=text.replace(/^[\s\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]*/u,"");
+ const safe=/^[=+@-]/.test(prefix)?"'"+text:text;
  return '"'+safe.replaceAll('"','""')+'"';
 };
 /** Only rows in the learner's current authorized UI selection are exported. */
