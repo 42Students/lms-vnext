@@ -73,4 +73,46 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(electiveSelectionLabel(1, 1)).toBe("Select 1");
     expect(electiveSelectionLabel(1, 3)).toBe("Select 1–3");
   });
+  it("cohortStatus classes query is validated and retained in navigation",()=>{
+    expect(collegeClassQuerySchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
+    expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({cohortStatus:"ACTIVE"}))).toContain("cohortStatus=ACTIVE");
+  });
+
+  it("programStatus classes query is validated and retained in navigation",()=>{
+    expect(collegeClassQuerySchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+    expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
+  });
+
+  it("periodState electives query is validated and retained in navigation",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({periodState:"INVALID"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({periodState:"LINKED"}))).toContain("periodState=LINKED");
+  });
+
+  it("elective program lifecycle is validated and retained in navigation",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({programStatus:"OTHER"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({programStatus:"ARCHIVED"}))).toContain("programStatus=ARCHIVED");
+  });
+
+  it("periodCode is an exact bounded class code filter, not arbitrary SQL",()=>{
+    expect(collegeClassQuerySchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({periodCode:""})).toEqual({});
+    expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({periodCode:"A&26"}))).toContain("periodCode=A%2626");
+  });
+
+  it("classCode is an exact bounded class code filter, not arbitrary SQL",()=>{
+    expect(collegeClassQuerySchema.safeParse({classCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({classCode:""})).toEqual({});
+    expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({classCode:"A&26"}))).toContain("classCode=A%2626");
+  });
+
+  it("choiceMode validates persisted elective evidence and navigation",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({choiceMode:"ASSUMED"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({choiceMode:"FLEXIBLE"}))).toContain("choiceMode=FLEXIBLE");
+  });
+
+  it("offeringState validates persisted elective evidence and navigation",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({offeringState:"ASSUMED"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({offeringState:"HAS_ACTIVE"}))).toContain("offeringState=HAS_ACTIVE");
+  });
+
 });

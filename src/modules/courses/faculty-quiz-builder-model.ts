@@ -197,3 +197,77 @@ export function facultyQuizReconcileRows<T extends {id:string}>(
 ):T[]{
  return [saved,...existing.filter(row=>row.id!==saved.id)];
 }
+
+/** Keep authored question order stable until the next explicit user action. */
+export function facultyMoveQuizQuestion<T>(rows:readonly T[],from:number,to:number):T[]{
+ if(from<0||to<0||from>=rows.length||to>=rows.length||from===to)return [...rows];
+ const next=[...rows];const [entry]=next.splice(from,1);next.splice(to,0,entry!);
+ return next;
+}
+
+/** Move one answer option without changing the selected correctness flags. */
+export function facultyMoveQuizOption<T>(options:readonly T[],from:number,to:number):T[]{
+ return facultyMoveQuizQuestion(options,from,to);
+}
+
+/** A duplicate question has an independent option list and a sequence assigned at save. */
+export function facultyDuplicateQuizQuestion<T extends {options:readonly object[]}>(rows:readonly T[],index:number):T[]{
+ if(index<0||index>=rows.length||rows.length>=100)return [...rows];
+ const original=rows[index]!;
+ const clone={...original,options:original.options.map(option=>({...option}))} as T;
+ const next=[...rows];next.splice(index+1,0,clone);return next;
+}
+
+/** A copied answer must never silently introduce a second correct answer. */
+export function facultyDuplicateQuizOption<T extends {correct:boolean}>(options:readonly T[],index:number):T[]{
+ if(index<0||index>=options.length||options.length>=20)return [...options];
+ const original=options[index]!;
+ const cloned={...original,correct:false};
+ const next=[...options];next.splice(index+1,0,cloned);
+ return next;
+}
+
+/** Switching quizzes while editing must not silently discard a draft. */
+export function facultyQuizSwitchNeedsConfirmation(unsaved:boolean,fromId:string,toId:string):boolean {
+ return unsaved&&fromId!==toId;
+}
+
+/** Synchronous write lock: React state updates only after the current event. */
+export function facultyBeginQuizWrite(lock:{current:boolean}):boolean{
+ if(lock.current)return false;
+ lock.current=true;return true;
+}
+
+/** Preview only authorized unsaved question totals; do not publish on preview. */
+export function facultyQuizDraftReview(questions:readonly {points:number;options:readonly {correct:boolean}[]}[]){
+ return {questionCount:questions.length,
+  optionCount:questions.reduce((sum,q)=>sum+q.options.length,0),
+  totalPoints:questions.reduce((sum,q)=>sum+(Number.isFinite(q.points)?q.points:0),0),
+  missingCorrect:questions.filter(q=>!q.options.some(o=>o.correct)).length};
+}
+
+/** Don't offer a metadata no-op as a real save (the API rejects it). */
+export function facultyQuizCanSaveChanges(status:string|undefined,dirty:boolean,failed:boolean,pending:boolean){
+ return !pending&&dirty&&(
+  status==="PUBLISHED"||status==="CLOSED"||(status==="DRAFT"&&!failed));
+}
+
+/** Explicitly reload persisted values or clear the unsaved new Quiz. */
+export function facultyQuizMayResetDraft(dirty:boolean,pending:boolean){
+ return dirty&&!pending;
+}
+
+/** Copies a scoped instructor-readable Quiz only into an unsaved local draft. */
+export function facultyQuizCanCopyToDraft(status:string|undefined,hasBank:boolean,pending:boolean,loadFailed:boolean){
+ return !pending&&!loadFailed&&hasBank&&["DRAFT","PUBLISHED","CLOSED"].includes(status??"");
+}
+export function facultyQuizCopyTitle(original:string):string{
+ const prefix="Copy of ";
+ return prefix+original.trim().slice(0,255-prefix.length);
+}
+
+/** Persist the visible drag/button ordering, regardless of cloned draft indexes. */
+export function facultyQuizNormalizeQuestions<T extends {sequence:number;options:{sequence:number}[]}>(items:readonly T[]):T[]{
+ return items.map((question,i)=>({...question,sequence:i,
+  options:question.options.map((option,j)=>({...option,sequence:j}))} as T));
+}

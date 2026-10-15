@@ -1556,3 +1556,17 @@ This batch targets the remaining PARTIAL Faculty Self Profile row rather than re
 - **Testing:** focused unit tests authored for protected legacy metadata preservation, prototype-key rejection, private receipt injection, managed-file deletion protection, HTTPS updates, oversize/malformed request bodies, duplicate-save fencing and conflict recovery.
 
 **Acceptance outstanding:** no independent TypeScript, lint, disposable PostgreSQL or authenticated browser/mobile gates were executed. Self Profile stays PARTIAL while its private-document migration, signed upload receipts and contact privacy policy are unresolved. Quiz shuffle and remaining Blueprint browser acceptance are independent blockers and unchanged. No matrix row was promoted to DONE.
+
+
+## 2026-10-15 Faculty Quiz question editor round — PARTIAL
+
+The `chatgpt/chat-4` round beginning at `c0f9c23c00c5e73666bca6aefd31f16f5e24bd41` extends the existing, authorized Faculty choice-Quiz creator/manager without changing any registered database schema or other account lane.
+
+- **Question authoring:** Faculty can move questions up/down and duplicate one into a separate in-memory draft, capped at the existing 100-question command limit. The existing validated CREATE/EDIT route receives the visible ordering after explicit renumbering.
+- **Answer authoring:** Faculty can move answer options without changing correctness and duplicate an answer as unchecked; the existing 20-option limit and single-choice semantics are preserved.
+- **Unsaved work safety:** Selecting a different Quiz while a draft is dirty prompts before discard. The editor provides an explicit confirmed reset to its persisted version, blocks unchanged metadata saves, and uses a synchronous ref-based write lock against duplicate POST submissions.
+- **Pre-publication review:** A live, accessible summary shows question count, option count, total possible points, and questions with no correct choice. A permitted Quiz can also be copied into a new *unsaved* draft without changing its original version or attempt history.
+- **Scope and persistence:** The existing POST route, backend Zod command, persisted Faculty teaching checks and question/option sequence constraints remain authoritative. New unit coverage exercises these local flows; an additional disposable PostgreSQL integration case exercises actual reordered saves and foreign-Section denial via `commandFacultyQuiz`.
+- **Important metadata distinction:** Published/CLOSED metadata-only edits remain possible even if the immutable question-bank GET fails; failed DRAFT question-bank edits remain blocked.
+
+**PARTIAL / acceptance pending:** no TypeScript, lint, PostgreSQL or authenticated desktop/mobile browser gate was executed at this batch SHA. Database-persisted legacy `shuffleQuestions`/`shuffleOptions` and randomized learner rendering still require orchestrator DB06 registration and follow-through; the staged-only SQL is not production parity. No master matrix row was promoted to DONE. The sole DATABASE tracker remains unchanged pending its independent gates.

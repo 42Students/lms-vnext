@@ -13,6 +13,9 @@ export const collegeSemesterDirectoryBaseSchema = z.object({
   termNumber: z.coerce.number().int().min(1).max(24).optional(),
   minimumCredits: z.coerce.number().int().min(0).max(500).optional(),
   maximumCredits: z.coerce.number().int().min(0).max(500).optional(),
+  creditState: z.enum(["ALL", "CONFIGURED", "UNSET"]).optional(),
+  programStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).optional(),
+  mappingState: z.enum(["ALL","MAPPED","UNMAPPED"]).optional(),
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
 }).strict();
 
@@ -28,6 +31,13 @@ export const collegeBatchDirectorySchema = z.object({
   yearStart: z.coerce.number().int().min(1900).max(9998).optional(),
   currentTerm: z.coerce.number().int().min(1).max(24).optional(),
   progression: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
+  programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
+  expectedEndState: z.enum(["ALL","SET","UNSET"]).optional(),
+  academicYearState: z.enum(["ALL","RECORDED","UNRECORDED"]).optional(),
+  activeLearnerState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
+  activeClassState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
+  startOnOrAfter: z.iso.date().optional(),
+  startOnOrBefore: z.iso.date().optional(),
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
@@ -46,10 +56,19 @@ export function academicDirectoryHref(
   if ("termNumber" in query && query.termNumber !== undefined) params.set("termNumber", String(query.termNumber));
   if ("minimumCredits" in query && query.minimumCredits !== undefined) params.set("minimumCredits", String(query.minimumCredits));
   if ("maximumCredits" in query && query.maximumCredits !== undefined) params.set("maximumCredits", String(query.maximumCredits));
+  if ("creditState" in query && query.creditState && query.creditState !== "ALL") params.set("creditState", query.creditState);
   if ("yearStart" in query && query.yearStart !== undefined) params.set("yearStart", String(query.yearStart));
   if ("currentTerm" in query && query.currentTerm !== undefined) params.set("currentTerm",String(query.currentTerm));
   if ("progression" in query && query.progression !== "ALL") params.set("progression",query.progression);
   if (query.status !== "ALL") params.set("status", query.status);
+  if ("programStatus" in query && query.programStatus && query.programStatus !== "ALL") params.set("programStatus", query.programStatus);
+  if ("mappingState" in query && query.mappingState && query.mappingState !== "ALL") params.set("mappingState",query.mappingState);
+  if ("expectedEndState" in query && query.expectedEndState && query.expectedEndState !== "ALL") params.set("expectedEndState",query.expectedEndState);
+  if ("academicYearState" in query && query.academicYearState && query.academicYearState !== "ALL") params.set("academicYearState",query.academicYearState);
+  if ("startOnOrAfter" in query && query.startOnOrAfter) params.set("startOnOrAfter",query.startOnOrAfter);
+  if ("startOnOrBefore" in query && query.startOnOrBefore) params.set("startOnOrBefore",query.startOnOrBefore);
+  if ("activeClassState" in query && query.activeClassState && query.activeClassState !== "ALL") params.set("activeClassState",query.activeClassState);
+  if ("activeLearnerState" in query && query.activeLearnerState && query.activeLearnerState !== "ALL") params.set("activeLearnerState",query.activeLearnerState);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
@@ -62,10 +81,10 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart", "currentTerm", "progression", "status", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "startOnOrBefore", "activeClassState", "activeLearnerState", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
+    if (typeof value === "string" && (key !== "startOnOrAfter" || value !== "") && (key !== "startOnOrBefore" || value !== "") && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
       result[key] = value;
     }
   }
