@@ -12,3 +12,8 @@ export function facultyProfileCanReorderVisible(total:number,visible:number):boo
 export function facultyProfileSearchAfterInsertion(_previous:string):string{
  return "";
 }
+
+/** Search result count is a display aid; section writes still use every record. */
+export function facultyProfileSearchSummary(total:number,visible:number):string{
+ return "Showing "+visible+" of "+total+" records";
+}
