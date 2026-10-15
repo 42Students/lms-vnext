@@ -220,8 +220,7 @@ export default async function FacultyQuizReportPage({
 
       <FacultyReportStudentTable title="Submitted attempts" rows={latestAttempts.map((attempt) => ({
         id: attempt.id,
-        name: attempt.learnerDisplayName || attempt.learnerEmail || "Learner",
-        email: attempt.learnerEmail,
+        name: attempt.learnerDisplayName || "Learner (name unavailable)",
         score: attempt.score + "/" + attempt.maxScore,
         percent: attempt.maxScore > 0 ? Math.round(attempt.score / attempt.maxScore * 100) : null,
         submittedAt: attempt.submittedAt.toISOString(),

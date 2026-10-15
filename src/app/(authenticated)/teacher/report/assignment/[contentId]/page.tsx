@@ -163,8 +163,7 @@ export default async function FacultyAssignmentReportPage({
           assignment.maxPoints > 0;
         return {
           id: submission.id,
-          name: submission.learnerDisplayName || submission.learnerEmail || "Learner",
-          email: submission.learnerEmail,
+          name: submission.learnerDisplayName || "Learner (name unavailable)",
           score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded",
           percent: scored ? Math.round((submission.pointsAwarded! / assignment.maxPoints) * 100) : null,
           submittedAt: submission.submittedAt.toISOString(),
