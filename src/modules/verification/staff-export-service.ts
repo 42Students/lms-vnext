@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,gte,lt,ilike,inArray,sql} from "drizzle-orm";
+import {and,asc,desc,eq,gte,lt,gt,lte,ilike,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
@@ -9,7 +9,7 @@ import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrol
 import {verificationSortDirection} from "./sort-model";
 import {verificationSqlSections} from "./queue-kind";
 import {matchesVerificationAttention} from "./attention-filter";
-import {matchesVerificationAgeBand} from "./queue-age-band";
+import {matchesVerificationAgeBand,verificationAgeSqlBounds} from "./queue-age-band";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab} from "./queue-tabs";
@@ -34,6 +34,8 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const dateBounds=verificationSubmittedSqlBounds(filter);
+ const evaluatedAt=new Date();
+ const ageBounds=verificationAgeSqlBounds(filter.ageBand,evaluatedAt);
  const rows=await getDb().select({
   membershipId:collegeMemberships.id,learnerName:users.displayName,
   section:profileVerifications.section,status:profileVerifications.status,
@@ -49,12 +51,13 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
   dateBounds.from?gte(profileVerifications.submittedAt,dateBounds.from):undefined,
   dateBounds.before?lt(profileVerifications.submittedAt,dateBounds.before):undefined,
+  ageBounds.after?gt(profileVerifications.submittedAt,ageBounds.after):undefined,
+  ageBounds.through?lte(profileVerifications.submittedAt,ageBounds.through):undefined,
   inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
   inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]:[filter.waitingState]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
- const evaluatedAt=new Date();
  const selected=rows.filter(row=>{
   if(verificationTab({status:row.status as VerificationStatus})!==filter.tab)return false;
   if(filter.kind&&row.section!==filter.kind)return false;
