@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
+import { learnerProfileCollectionMayEdit } from "@/modules/people/learner-profile-collection-busy-model";
 import { learnerProfileDeletePrompt } from "@/modules/people/learner-profile-delete-confirm-model";
 import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people/learner-profile-refresh-model";
 import Link from "next/link";
@@ -316,6 +317,7 @@ export function LearnerProfileWorkspace(props: {
   }
 
   function openCollection(section: CollectionKey, item?: Record<string, unknown>) {
+    if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
     setCollection(section);
     setEditingId(item ? String(item.id) : null);
     setItemDraft(item ? { ...item } : newItem(section));
@@ -373,6 +375,7 @@ export function LearnerProfileWorkspace(props: {
   }
 
   function removeItem(section: CollectionKey, id: string) {
+    if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
     const current = document[section] as Array<Record<string, unknown>>;
     const confirmation=learnerProfileDeletePrompt(section,
       current.some(item=>String(item.id)===id));
@@ -565,7 +568,8 @@ export function LearnerProfileWorkspace(props: {
       {(Object.keys(collectionLabels) as CollectionKey[]).map((section) => {
         const items = document[section] as Array<Record<string, unknown>>;
         return (
-          <Card key={section} id={section} title={collectionLabels[section]} action={<Button size="sm" onClick={() => openCollection(section)}>Add</Button>}>
+          <Card key={section} id={section} title={collectionLabels[section]} action={<Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+            onClick={() => openCollection(section)}>Add</Button>}>
             {items.length ? (
               <div className="space-y-2">
                 {items.map((item) => {
@@ -577,8 +581,10 @@ export function LearnerProfileWorkspace(props: {
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
                       </div>
                       <div className="flex w-full flex-wrap gap-2 sm:w-auto">
-                        <Button size="sm" variant="secondary" className="min-h-11 flex-1 sm:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
-                        <Button size="sm" variant="danger" className="min-h-11 flex-1 sm:flex-none" onClick={() => removeItem(section, String(item.id))}>Delete</Button>
+                        <Button size="sm" variant="secondary" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                          className="min-h-11 flex-1 sm:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
+                        <Button size="sm" variant="danger" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                          className="min-h-11 flex-1 sm:flex-none" onClick={() => removeItem(section, String(item.id))}>Delete</Button>
                       </div>
                     </div>
                   );

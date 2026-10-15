@@ -1446,3 +1446,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / L6-L7 aggregate attention course scope (PARTIAL):** selecting an already-authorized Course now scopes the visible total, submitted/attempted, Needs action, Due soon, Overdue, and Results counters to that Course; All courses retains global totals. No extra data read or authorization change. Regression authored; mobile/browser evidence pending.
 
 **Chat-7 follow-up / L2 Course Home mixed outcomes (PARTIAL):** when a missed quiz coexists with a real next authorized task, the learner sees a `Continue learning` completion summary, not a false `No remaining actionable items` conclusion. The stored missed quiz remains disclosed; no expiry policy changed. Unit regression authored; live state and browser proof open.
+
+**Chat-7 follow-up / L11 saved Profile collection mutation controls (PARTIAL):** Add/Edit/Delete are disabled during an existing profile or contact save, and the handlers check the same guard before destructive mutation to limit stale full-section overwrites. Confirmation remains required. Unit model authored; concurrency/browser/PG proof pending.
