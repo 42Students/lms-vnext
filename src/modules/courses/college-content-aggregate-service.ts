@@ -66,6 +66,7 @@ export async function listCollegeContentAggregate(
     durationSeconds: aliasedColumn(lessonContents.durationSeconds, "content_duration_seconds"),
     deliveryId: aliasedColumn(lessonContents.deliveryId, "content_delivery_id"),
     visibleToStudents: aliasedColumn(lessonContents.visibleToStudents, "content_visible_to_students"),
+    updatedAt: aliasedColumn(lessonContents.updatedAt, "content_updated_at"),
     lessonName: aliasedColumn(courseLessons.name, "content_lesson_name"),
     learningPathTitle: aliasedColumn(courseLearningPaths.title, "content_learning_path_title"),
     learningPathStatus: aliasedColumn(courseLearningPaths.status, "content_learning_path_status"),
