@@ -229,6 +229,9 @@ export async function updateProjectResource(
       );
     }
 
+    await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("UPDATED",{
+      projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+    },updated,randomUUID()));
     return updated;
   });
 }
