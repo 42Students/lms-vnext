@@ -34,3 +34,12 @@ export function compareMentorProjectsByOpenTasks(a:OrderableProject,b:OrderableP
  if(archived)return archived;
  return bOpen-aOpen||compareMentorProjects(a,b,"RECENT");
 }
+
+/** Active team count is supplied by an authorized project-scoped roster query. */
+export function compareMentorProjectsByTeamSize(a:OrderableProject,b:OrderableProject,
+ aSize:number,bSize:number, direction:"LARGEST"|"SMALLEST"){
+ const archived=Number(a.status==="ARCHIVED")-Number(b.status==="ARCHIVED");
+ if(archived)return archived;
+ const difference=direction==="LARGEST"?bSize-aSize:aSize-bSize;
+ return difference||compareMentorProjects(a,b,"RECENT");
+}

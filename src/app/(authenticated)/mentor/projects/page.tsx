@@ -2,7 +2,7 @@ import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-tea
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
-import { compareMentorProjects, compareMentorProjectsByMostProgress, compareMentorProjectsByOpenTasks, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
+import { compareMentorProjects, compareMentorProjectsByMostProgress, compareMentorProjectsByOpenTasks, compareMentorProjectsByTeamSize, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
@@ -177,6 +177,9 @@ export default async function MentorProjectsPage({
       : query.sort === "OPEN_TASKS"
       ? compareMentorProjectsByOpenTasks(a.project,b.project,
           workCounts.get(a.project.id)?.open ?? 0, workCounts.get(b.project.id)?.open ?? 0)
+      : query.sort === "TEAM_SIZE_DESC"
+      ? compareMentorProjectsByTeamSize(a.project,b.project,
+          teamSizes.get(a.project.id) ?? 0, teamSizes.get(b.project.id) ?? 0,"LARGEST")
       : compareMentorProjects(a.project,b.project,query.sort));
 
   const total = filtered.length;
