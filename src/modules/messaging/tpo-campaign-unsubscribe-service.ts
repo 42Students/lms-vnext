@@ -42,8 +42,10 @@ export async function unsubscribeTpoCampaignRecipient(
         isNull(placementTpoEmailRecipientsStaged.unsubscribedAt),
       )).returning({id:placementTpoEmailRecipientsStaged.id});
     if(!changed)return "DENY";
+    // DB09 placement_tpo_leads_invite_lifecycle_ck requires a token to be
+    // cleared when the lead opts out. This also prevents new OTP delivery.
     const [lead]=await tx.update(placementTpoLeads)
-      .set({unsubscribedAt:now,updatedAt:now})
+      .set({unsubscribedAt:now,inviteTokenHash:null,updatedAt:now})
       .where(and(
         eq(placementTpoLeads.id,row.leadId),
         eq(placementTpoLeads.collegeId,row.collegeId),
