@@ -71,6 +71,10 @@ export function safeVerificationSnapshot(value: unknown): SafeSnapshot {
           !/^[*Xx•-]{4,}[A-Za-z0-9]{0,4}$/.test(part)) {
         throw new VerificationStateError("UNSAFE_SNAPSHOT");
       }
+      if (/^(identityHashSalt|aadhaarHash|panHash)$/.test(key) &&
+          typeof part === "string" && !/^[0-9a-f]{64}$/.test(part)) {
+        throw new VerificationStateError("UNSAFE_SNAPSHOT");
+      }
       if (/(?:Document|Marksheet|Resume)(?:Url|Link|Path)?$/i.test(key) && typeof part === "string" &&
           /^(?:https?:|data:|gs:|s3:|\/\/)/i.test(part)) {
         throw new VerificationStateError("UNSAFE_SNAPSHOT");
