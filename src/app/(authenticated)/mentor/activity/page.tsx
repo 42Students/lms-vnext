@@ -51,7 +51,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
           <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
-            <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option>
+            <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option><option value="PAST_30_DAYS">Past 30 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size

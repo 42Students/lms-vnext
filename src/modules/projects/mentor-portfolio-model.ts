@@ -12,7 +12,7 @@ export const mentorReviewQuerySchema = z.object({
   ...paging,
 }).strict();
 export const mentorActivityQuerySchema = z.object({
-  window: z.enum(["ALL","PAST_7_DAYS"]).default("ALL"),
+  window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
   view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS"]).default("ALL"),
   ...paging,

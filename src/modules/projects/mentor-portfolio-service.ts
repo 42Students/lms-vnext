@@ -70,8 +70,8 @@ export async function getMentorPortfolioActivity(
   const byId = new Map(scope.projects.map(project => [project.id, project]));
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
   const types=mentorProjectActivityEventTypes(query.view);
-  const cutoff = query.window==="PAST_7_DAYS"
-    ? new Date(new Date().getTime()-7*86400000) : null;
+  const cutoff = query.window==="ALL" ? null :
+    new Date(new Date().getTime() - (query.window==="PAST_7_DAYS"?7:30)*86400000);
   const filters = and(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
