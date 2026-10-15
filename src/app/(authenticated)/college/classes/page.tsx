@@ -1,3 +1,4 @@
+import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -23,7 +24,7 @@ export default async function CollegeClassesPage({
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Classes" />
     <ErrorState title="Invalid class filters"
-      description="The search, program, status or page is invalid. No classes were loaded."
+      description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/classes" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const [classes, options] = await Promise.all([

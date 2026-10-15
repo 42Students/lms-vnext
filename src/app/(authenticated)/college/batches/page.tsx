@@ -1,3 +1,4 @@
+import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -26,7 +27,7 @@ export default async function CollegeBatchesPage({
     return <div className="space-y-4">
       <PageHeader eyebrow="College Admin · Academic Setup" title="Batches" />
       <ErrorState title="Invalid batch filters"
-        description="The search, program, status or page is invalid. No batches were loaded."
+        description={collegeDirectoryValidationMessage(parsed.error)}
         action={<Link href="/college/batches" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>;
   }
