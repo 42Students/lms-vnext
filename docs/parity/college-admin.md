@@ -652,6 +652,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Department-specific course progress PARTIAL (2026-10-15):** College Admin can filter persisted learner-content activity offerings by exact owning department name, without inferring course completion or changing the recorded learner denominator. Pagination and capped CSV follow the same scope. PostgreSQL and validation fixtures authored; acceptance open.
+
 **CORE/ELECTIVE course progress filter PARTIAL (2026-10-15):** The persisted activity directory now partitions course offerings by registered CORE/ELECTIVE type before pagination and safe CSV; counts still refer only to recorded learner content events. Strict input and scoped-PG fixture authored; execution/browser acceptance open.
 
 **Registered cohort code filter PARTIAL (2026-10-15):** Course Progress supports a cohort-code filter against persisted offering membership rather than inferred learner groups. Combined course/program/period/cohort selectors survive navigation and scoped CSV. PostgreSQL own/missing-cohort fixtures authored; no completion-rate inference or executed PG/browser sign-off.
