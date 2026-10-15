@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { tpoThreadIdSchema } from "@/modules/placements/tpo-team-conversation-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
-import { readTpoInternalConversation } from "@/modules/placements/tpo-team-conversation-service";
+import { readTpoInternalConversation, tpoThreadIdSchema } from "@/modules/placements/tpo-team-conversation-service";
 export default async function InternalThread({params}:{params:Promise<{threadId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
