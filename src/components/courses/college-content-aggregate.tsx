@@ -59,6 +59,15 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Learning path status
+            <select name="pathStatus" defaultValue={data.query.pathStatus??"ALL"}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learning paths</option>
+              <option value="DRAFT">Draft</option><option value="PUBLISHED">Published</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Content status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
