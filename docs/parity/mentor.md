@@ -1659,3 +1659,7 @@ APPROVED review now persists `locked_at` and emits append-only LOCKED delivery e
 ### PR-S2-07 0091 attachments runtime
 
 Learner delivery draft create/edit now accepts up to 10 typed FILE/LINK attachments. FILE references are checked against READY project uploads and TEAM-visible linked resources inside the same transaction; unsafe schemes, foreign/private files and duplicate metadata are rejected. Updates only alter draft attachments, never reviewed submissions. Every explicit metadata mutation writes immutable ATTACHMENTS_CHANGED project_delivery_events. PostgreSQL acceptance and browser remain pending.
+
+### PR-S2-04 and PR-S2-07 0090/0091 acceptance cases
+
+P5 PostgreSQL tests cover task fields, comments and stale task tokens. P6B tests now assert locked_at, reopened_at, append-only LOCKED/REOPENED/ATTACHMENTS_CHANGED rows, safe link metadata roundtrips and rejected unsafe schemes. Deprecated proposal files are historical only; never reapply after registered migrations 0090/0091. These tests are authored, NOT run.

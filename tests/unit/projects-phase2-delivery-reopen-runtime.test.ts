@@ -16,12 +16,13 @@ describe("PR-S2-07 immutable approval lock and explicit reopen",()=>{
     expect(svc).toContain('latest.status!=="APPROVED"');
     expect(svc).toContain('eq(projectEvaluations.submissionId,latest.id)');
     expect(svc).toContain('PROJECTS_DELIVERY_REOPENED');
-    expect(svc).toContain('if(previous)');
+    expect(svc).toContain("isNull(projectSubmissions.reopenedAt)");
+    expect(svc).toContain("tx.insert(projectDeliveryEvents)");
   });
   it("requires an exact reopen event before creating another draft after approval",()=>{
     const svc=read("submission-service.ts");
     expect(svc).toContain('latest?.status==="APPROVED"');
-    expect(svc).toContain("approvedReopened=Boolean(reopened)");
+    expect(svc).toContain('Boolean(latest.reopenedAt)');
     expect(svc).toContain('action:"LOCKED"');
     expect(svc).toContain("projectSubmissionAllowsNewDraft(latest?.status)");
   });

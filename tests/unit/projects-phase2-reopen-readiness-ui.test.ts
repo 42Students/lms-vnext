@@ -7,7 +7,7 @@ const controls=read("src/components/projects/project-delivery-reopen-control.tsx
 const workspace=read("src/components/projects/project-workspace.tsx");
 describe("PR-S2-07 UI and readiness after explicit approved delivery reopen",()=>{
   it("only advertises a new draft after the version's durable reopen event",()=>{
-    expect(readModel).toContain("ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REOPENED");
+    expect(readModel).toContain("Boolean(latestSubmission.reopenedAt)");
     expect(readModel).toContain("(!finalApproved || deliveryReopened)");
     expect(readModel).toContain("reopened: deliveryReopened");
   });
