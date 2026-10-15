@@ -15,7 +15,6 @@ export async function POST(request:Request,{params}:RouteContext){
  if(!recruiterInviteAcceptReady({
    db09:process.env.DB09_TPO_API_READY,
    otp:process.env.TPO_RECRUITER_OTP_READY,
-   grantExpiry:process.env.TPO_RECRUITER_GRANT_EXPIRY_READY,
    delivery:process.env.TPO_RECRUITER_OTP_DELIVERY_READY,
  }))return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503});
  const body=await request.json().catch(()=>null);

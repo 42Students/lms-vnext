@@ -7,10 +7,10 @@ export const recruiterInviteAcceptanceBodySchema=z.object({
 
 /** No public accept endpoint until storage, delivery and grant policy are live. */
 export function recruiterInviteAcceptReady(flags:{
- db09:string|undefined;otp:string|undefined;grantExpiry:string|undefined;
+ db09:string|undefined;otp:string|undefined;
  delivery:string|undefined;
 }):boolean {
  return flags.db09==="DB09_VERIFIED" &&
-  flags.otp==="VERIFIED" && flags.grantExpiry==="VERIFIED" &&
+  flags.otp==="VERIFIED" &&
   flags.delivery==="VERIFIED";
 }

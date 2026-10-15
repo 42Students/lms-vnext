@@ -27,8 +27,7 @@ import { TpoRecruiterInviteServiceError } from "./tpo-recruiter-invite-service";
 export async function acceptTpoRecruiterInviteOtp(
   context:RequestContext, rawToken:unknown, rawCode:unknown,
 ):Promise<{accepted:true}> {
- if(process.env.TPO_RECRUITER_OTP_READY!=="VERIFIED" ||
-    process.env.TPO_RECRUITER_GRANT_EXPIRY_READY!=="VERIFIED")
+ if(process.env.TPO_RECRUITER_OTP_READY!=="VERIFIED")
    throw new Error("RECRUITER_OTP_NOT_REGISTERED");
  const secret=process.env.TPO_RECRUITER_OTP_HMAC_SECRET;
  const invalid=()=>new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
