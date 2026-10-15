@@ -21,7 +21,7 @@ describe("college lessons CSV",()=>{
   const csv=renderLessonsCsv([{
    name:"=lesson",sequence:0,status:"ACTIVE",pathStatus:"PUBLISHED",
    courseName:"+course",courseCode:"CS-1",cohortName:"2026",periodName:"Year",
-   offeringStatus:"ACTIVE",contentCount:2,publishedContentCount:1,
+   offeringStatus:"ACTIVE",contentCount:2,publishedContentCount:1,publishedAndVisibleFlagCount:1,
   }],true);
   expect(csv).toContain("\"'=lesson\"");
   expect(csv).toContain("\"'+course\"");
