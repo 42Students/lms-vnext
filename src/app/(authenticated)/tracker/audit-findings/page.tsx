@@ -9,7 +9,7 @@ import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-servic
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import {AuditFindingStatusAction} from "@/components/tracker/audit-finding-status-action";
 import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
-import { BUG_SEVERITIES, BUG_ENVIRONMENTS } from "@/modules/bug-tracker/admin-validation";
+import { BUG_SEVERITIES, BUG_ENVIRONMENTS, BUG_ACCOUNT_ROLES } from "@/modules/bug-tracker/admin-validation";
 import { parseAuditFindingsSearchParams, trackerAuditFindingsInput } from "@/modules/bug-tracker/audit-findings-board-model";
 
 type Params=Record<string,string|string[]|undefined>;
@@ -35,6 +35,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
   ...(query.q?{q:query.q}:{}),
   ...(query.status!=="ALL"?{status:query.status}:{}),
   ...(query.severity!=="ALL"?{severity:query.severity}:{}),
+  ...(query.accountRole!=="ALL"?{accountRole:query.accountRole}:{}),
   ...(query.environment!=="ALL"?{environment:query.environment}:{}),
   ...(query.sort!=="newest"?{sort:query.sort}:{}),
   beforeCreatedAt:data.nextCursor.beforeCreatedAt.toISOString(),
@@ -50,6 +51,11 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
    <label className="min-w-0 text-sm">Severity
     <select name="severity" defaultValue={query.severity} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3">
     <option value="ALL">All</option>{BUG_SEVERITIES.map(x=><option key={x} value={x}>{x}</option>)}</select></label>
+   <label className="min-w-0 text-sm">Reported account role
+    <select name="accountRole" defaultValue={query.accountRole} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3">
+      <option value="ALL">All account roles</option>{BUG_ACCOUNT_ROLES.map(role=><option key={role} value={role}>{role}</option>)}
+    </select>
+   </label>
    <label className="min-w-0 text-sm">Environment
     <select name="environment" defaultValue={query.environment} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3">
       <option value="ALL">All environments</option>{BUG_ENVIRONMENTS.map(value=><option key={value} value={value}>{value}</option>)}
@@ -69,6 +75,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
    ...(query.q?{q:query.q}:{}),
    ...(query.status!=="ALL"?{status:query.status}:{}),
    ...(query.severity!=="ALL"?{severity:query.severity}:{}),
+  ...(query.accountRole!=="ALL"?{accountRole:query.accountRole}:{}),
    ...(query.environment!=="ALL"?{environment:query.environment}:{}),
    ...(query.sort!=="newest"?{sort:query.sort}:{}),
    ...(query.beforeCreatedAt?{beforeCreatedAt:query.beforeCreatedAt}:{}),

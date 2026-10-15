@@ -1099,3 +1099,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 bounded announcement CSV (PARTIAL):** Scoped Super Admin notice history has a 50-row current-page export, using identical DB10 search/audience/visibility/cursor filters. Only notice metadata is included, with spreadsheet-formula-safe values and private no-store headers; no content body or recipient contact export. Pure tests authored; download/PG/browser checks pending.
+
+
+**2026-10-15 chat-6 Audit Findings account-role filter (PARTIAL):** The real DB10 board and CSV export now share persisted `account_role` filtering, with strict role enums and cursor-state retention; the underlying service constrains the SQL page before fetching. Unit validation tests authored; integration and browser acceptance pending.

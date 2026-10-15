@@ -139,6 +139,7 @@ export async function listBugTrackerIssuesForAdmin(
   if (scope) conditions.push(scope);
   if (input.status) conditions.push(eq(db10BugReports.status, input.status));
   if (input.severity) conditions.push(eq(db10BugReports.severity, input.severity));
+  if (input.accountRole) conditions.push(eq(db10BugReports.accountRole, input.accountRole));
   if (input.environment) {
     conditions.push(eq(db10BugReports.environment, input.environment));
   }
