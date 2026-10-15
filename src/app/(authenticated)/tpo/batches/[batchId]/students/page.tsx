@@ -20,6 +20,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">Export current page CSV</a>
  </div>
  <TpoBatchEligibilityImport batchId={batchId}/>
+ <Link href={"/tpo/batches/"+batchId+"/nudge-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Prepare follow-up for unrecorded choices</Link>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
