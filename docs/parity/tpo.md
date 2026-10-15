@@ -2081,3 +2081,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / Drive Day live attendance KPI strip — PARTIAL:** Aggregates only fetched, college-authorized, max-20 live rounds before search/issue filters; separately shows explicit absent, WAITING and UNKNOWN without implying an all-college denominator.
 
 **Chat-2 / Drive Day scheduled-time awareness — PARTIAL:** Live cards now show calculated elapsed and scheduled remaining minutes using the single server snapshot timestamp, with unknowns left blank and explicit notice that schedule end is not actual completion.
+
+**Chat-2 / Live Drive Day filtered CSV — PARTIAL:** New read-only scoped GET uses the exact authorized TPO live-round reader and validated focus/search/sort query, capped at 20; includes no learner-level PII, neutralizes spreadsheet formulas and labels truncation via response header. Preserves compatibility for older filter tests with unspecified roster totals; PG/browser execution pending.

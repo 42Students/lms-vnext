@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import {tpoLiveCsvHref} from "@/modules/placements/tpo-live-drive-day-csv-model";
 import {tpoLiveRoundTiming} from "@/modules/placements/tpo-live-round-timing-model";
 import {summarizeTpoLiveTriage} from "@/modules/placements/tpo-live-triage-summary-model";
 import {filterTpoLiveRoundSearch,tpoLiveRoundSearchSchema} from "@/modules/placements/tpo-live-round-search-model";
@@ -56,6 +57,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <label className="text-sm">Prioritize<select name="sort" defaultValue={sort.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></select></label>
           <button type="submit" className="self-end min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
         </form>
+        <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-primary-text underline">Reset focus</Link></div>
         <dl aria-label="Current authorized live-round snapshot" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{[
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
