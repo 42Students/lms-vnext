@@ -15,6 +15,7 @@ export async function listSuperAdminStudentRuleHistory(context:RequestContext,co
   collegeId,module:"PLATFORM",eventType:ACTIVITY_EVENT_TYPES.PLATFORM_STUDENT_MODULE_RULE_CHANGED,
   subjectType:"MEMBERSHIP",subjectId:membershipId,limit:40,
   metadataModule:cursor.module==="all"?undefined:cursor.module,
+  actorName:cursor.actorName||undefined,
   beforeOccurredAt:cursor.beforeOccurredAt?new Date(cursor.beforeOccurredAt):undefined,
   beforeId:cursor.beforeId
  });

@@ -25,4 +25,10 @@ describe("Super Admin student rule audit projection",()=>{
   expect(studentRuleHistoryCursorSchema.parse(query).module).toBe("electives");
   expect(studentRuleHistoryCursorSchema.safeParse({module:"placements"}).success).toBe(false);
  });
+ it("preserves scoped actor name in learner audit paging without accepting arrays",()=>{
+  const id="92b172ff-3817-44bf-9b48-e9afab2e93d0";
+  const url=studentRuleHistoryHref(id,id,null,"projects","Admin A");
+  expect(studentRuleHistoryCursorSchema.parse(Object.fromEntries(new URL(url,"https://example.com").searchParams)).actorName).toBe("Admin A");
+  expect(studentRuleHistoryCursorSchema.safeParse({actorName:"x".repeat(101)}).success).toBe(false);
+ });
 });
