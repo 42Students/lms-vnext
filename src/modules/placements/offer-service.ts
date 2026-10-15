@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   and,
   asc,
@@ -16,6 +17,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   placementApplications,
+  placementApplicationStatusHistory,
   placementApplicationScreenings,
   placementCompanies,
   placementCompanyRelationships,
@@ -592,7 +594,8 @@ export async function actOnPlacementOffer(
         userId: collegeMemberships.userId, collegeId: collegeMemberships.collegeId,
         status: collegeMemberships.status,
       }).from(collegeMemberships).where(eq(collegeMemberships.id, context.membership!.id))
-        .for("share").limit(1);
+        // Serialize competing acceptances for the same learner.
+        .for("update").limit(1);
       const [account] = await tx.select({ status: users.platformStatus })
         .from(users).where(eq(users.id, context.user.id)).for("share").limit(1);
       if (!member || member.userId !== context.user.id ||
@@ -692,6 +695,73 @@ export async function actOnPlacementOffer(
         })
         .onConflictDoNothing();
 
+      // P-S1-06: accepting one placement offer atomically declines other
+      // pending offers and withdraws other live applications. A durable
+      // cascade id ties together all compensatable status histories.
+      const cascadeId = randomUUID();
+      const otherOffers = await tx
+        .select({
+          id: placementOffers.id,
+          status: placementOffers.status,
+        })
+        .from(placementOffers)
+        .innerJoin(placementApplications,
+          eq(placementApplications.id, placementOffers.applicationId))
+        .innerJoin(placementJobs,
+          eq(placementJobs.id, placementApplications.jobId))
+        .where(and(
+          eq(placementApplications.membershipId, current.application.membershipId),
+          eq(placementJobs.collegeId, current.job.collegeId),
+          ne(placementOffers.id, offer.id),
+          inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
+        ))
+        .for("update");
+      if (otherOffers.some((candidate) => candidate.status === "ACCEPTED")) {
+        throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
+      }
+      for (const other of otherOffers) {
+        const [declined] = await tx.update(placementOffers).set({
+          status: "DECLINED",
+          respondedByUserId: context.user.id,
+          respondedAt: now,
+          updatedAt: now,
+        }).where(and(
+          eq(placementOffers.id, other.id),
+          eq(placementOffers.status, "ISSUED"),
+        )).returning({ id: placementOffers.id });
+        if (!declined) {
+          throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+        }
+        await tx.insert(placementOfferStatusHistory).values({
+          offerId: declined.id,
+          fromStatus: "ISSUED",
+          toStatus: "DECLINED",
+          actorUserId: context.user.id,
+          reason: `placed elsewhere; cascade:${cascadeId}`,
+        });
+      }
+
+      const withdrawn = await tx.update(placementApplications).set({
+        status: "WITHDRAWN",
+        withdrawnAt: now,
+        updatedAt: now,
+      }).where(and(
+        eq(placementApplications.membershipId, current.application.membershipId),
+        ne(placementApplications.id, current.application.id),
+        eq(placementApplications.status, "SUBMITTED"),
+      )).returning({ id: placementApplications.id });
+      if (withdrawn.length > 0) {
+        await tx.insert(placementApplicationStatusHistory).values(
+          withdrawn.map((candidate) => ({
+            applicationId: candidate.id,
+            fromStatus: "SUBMITTED" as const,
+            toStatus: "WITHDRAWN" as const,
+            actorUserId: context.user.id,
+            reason: `placed elsewhere; cascade:${cascadeId}`,
+          })),
+        );
+      }
+
       await recordActivityEventInTransaction(
         tx,
         context,
@@ -709,6 +779,9 @@ export async function actOnPlacementOffer(
             applicationId:
               current.application.id,
             response: "ACCEPTED",
+            cascadeId,
+            cascadedOfferCount: otherOffers.length,
+            withdrawnApplicationCount: withdrawn.length,
           },
           groupKey:
             `placement-job:${current.job.id}:offers`,
