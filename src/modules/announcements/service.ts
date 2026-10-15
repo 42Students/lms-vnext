@@ -24,6 +24,7 @@ import {
 } from "./validation";
 import { AnnouncementError } from "./errors";
 import {requirePlatformPublishConsent} from "./super-admin-publish-consent-model";
+import { canAccessAnnouncements } from "./actor-status-model";
 
 type ReceiverType = (typeof ANNOUNCEMENT_RECEIVER_TYPES)[number];
 
@@ -125,10 +126,12 @@ function senderType(context: RequestContext) {
 }
 
 function requireManage(context: RequestContext, scope: { collegeId: string; organizationId: string }) {
+  if (!canAccessAnnouncements(context.user.platformStatus)) throw new AnnouncementError("FORBIDDEN");
   requirePermission(context, "college.manage", scope);
 }
 
 function adminListScope(context: RequestContext): { collegeId?: string; organizationId?: string } {
+  if (!canAccessAnnouncements(context.user.platformStatus)) throw new AnnouncementError("FORBIDDEN");
   if (isSuperAdmin(context)) {
     if (context.adminScope?.collegeId) return { collegeId: context.adminScope.collegeId };
     if (context.adminScope?.organizationId) return { organizationId: context.adminScope.organizationId };
@@ -323,7 +326,7 @@ export async function listVisibleAnnouncementsForMembership(
   context: RequestContext,
   now = new Date(),
 ) {
-  if (!context.membership || context.membership.status !== "ACTIVE") {
+  if (!canAccessAnnouncements(context.user.platformStatus) || !context.membership || context.membership.status !== "ACTIVE") {
     return [];
   }
   const membership = context.membership;
@@ -411,6 +414,7 @@ export async function listVisibleAnnouncementsForMembership(
 
 
 export async function listAnnouncementTargetOptions(context: RequestContext) {
+  if (!canAccessAnnouncements(context.user.platformStatus)) throw new AnnouncementError("FORBIDDEN");
   let collegeId: string | null = null;
   if (isSuperAdmin(context)) {
     collegeId = context.adminScope?.collegeId ?? null;
