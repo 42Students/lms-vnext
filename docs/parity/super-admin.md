@@ -1096,3 +1096,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 persisted DB10 visibility filtering (PARTIAL):** The announcement history can now filter LIVE/SCHEDULED/EXPIRED/DELETED before cursor paging using one database clock per request, with a boundary-tested status model; `DELETED` explicitly selects soft-deleted rows regardless of the Include deleted convenience toggle. Browser/PG evidence still open.
+
+
+**2026-10-15 chat-6 bounded announcement CSV (PARTIAL):** Scoped Super Admin notice history has a 50-row current-page export, using identical DB10 search/audience/visibility/cursor filters. Only notice metadata is included, with spreadsheet-formula-safe values and private no-store headers; no content body or recipient contact export. Pure tests authored; download/PG/browser checks pending.
