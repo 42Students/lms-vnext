@@ -8,6 +8,7 @@ import {
 import { getDb } from "@/db/client";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
+import {deriveProjectExecutionReadiness} from "./execution-readiness";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { projectDeliveryActivity } from "./delivery-activity-model";
 import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
@@ -15,6 +16,9 @@ import {
   projectInstances,
   projectSubmissionReviews,
   projectSubmissions,
+  projectReleases,
+  projectSprints,
+  projectTasks,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -273,8 +277,22 @@ export async function submitProjectSubmission(
     if (!project || project.status === "ARCHIVED") {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
+    const [releases,sprints,tasks]=await Promise.all([
+      tx.select({status:projectReleases.status}).from(projectReleases)
+        .where(eq(projectReleases.projectId,scope.project.id)),
+      tx.select({status:projectSprints.status}).from(projectSprints)
+        .where(eq(projectSprints.projectId,scope.project.id)),
+      tx.select({status:projectTasks.status}).from(projectTasks)
+        .where(eq(projectTasks.projectId,scope.project.id)),
+    ]);
+    const execution=deriveProjectExecutionReadiness({
+      projectStatus:project.status,
+      releaseStatuses:releases.map(row=>row.status),
+      sprintStatuses:sprints.map(row=>row.status),
+      taskStatuses:tasks.map(row=>row.status),
+    });
     const override=await readProjectReadinessOverride(tx,scope.project.id,scope.collegeId);
-    if (!effectiveProjectSubmissionReady(project.status === "COMPLETED",override.state)) {
+    if (!effectiveProjectSubmissionReady(execution.complete,override.state)) {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
 

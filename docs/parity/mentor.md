@@ -1535,3 +1535,7 @@ The old LMS says **“Mentor-only resources stay hidden from learners on this pr
 ## Phase 2 legacy-copy-A Mentor/Projects wording audit (PARTIAL)
 
 The Mentor sidebar already carried the exact legacy visible labels **Projects**, **Meetings**, **Notifications** in the correct order. Its three legacy group assignments are now consistently `learning`. Mentor Projects page title/back-link and core empty states were corrected to the exact legacy strings (“Projects”, “No projects match these filters.”, “No projects assigned yet.”). The shared Mentor project tab strip already has the exact seven documented labels, verified by source regression assertions against legacy-copy-A.md. Broader button/form/modal/table wording, responsive/browser and full source-diff acceptance remain open; this is not a complete wording certificate.
+
+## PR-S1-01 follow-up — remove approval/submission circular dependency
+
+After the single COMPLETED transition was assigned to Mentor closeout, the prior final-delivery submission check still required COMPLETED before submission, leaving no reachable approval path. The submission transaction now uses the same persisted all-releases-shipped, all-sprints-completed, all-tasks-done execution condition that the readiness reader uses; ACTIVE is valid for final-delivery submission and review before mentor closeout. FORCE_BLOCK/UNLOCK remains applied atomically to this checked gate. No project status is fabricated. Unit policy and source checks authored; real DB and UI acceptance pending. Commit reference: Git history.
