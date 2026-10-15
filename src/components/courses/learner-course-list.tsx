@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
 import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
 import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
 import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
@@ -446,10 +447,7 @@ export function LearnerCourseList({
                               : "Not recorded"}
                           </p>
                           <p className="m-0">
-                            Next due: {row.nextDue
-                              ? row.nextDue.kind+" · "+row.nextDue.title+" · "+
-                                (learnerCourseCardDate(row.nextDue.dueAt) ?? "Date unavailable")
-                              : "No upcoming due dates"}
+                            Next due: {learnerCourseCardDueLabel(row.readOnly,row.nextDue,learnerCourseCardDate)}
                           </p>
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
