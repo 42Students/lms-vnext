@@ -310,6 +310,9 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(draftPathLesson.items.map(row=>row.id)).toContain(ids.lesson);
     expect(archivedPathLesson.items).toEqual([]);
     expect((await exportCollegeLessons(own,{q:name,pathStatus:"DRAFT"})).csv).toContain(name);
+    expect((await listCollegeLessons(own,{lessonId:ids.lesson})).items.map(row=>row.id)).toContain(ids.lesson);
+    expect((await listCollegeLessons(own,{lessonId:randomUUID()})).items).toEqual([]);
+    expect((await exportCollegeLessons(otherCollege,{lessonId:ids.lesson})).rows).toEqual([]);
     const lesson = lessonPage.items.find(row => row.id === ids.lesson);
     const sameCode=await listCollegeCourseProgress(own,{courseCode:name});
     const missingCode=await listCollegeCourseProgress(own,{courseCode:"NOT-THIS-CODE"});

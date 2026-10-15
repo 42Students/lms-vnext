@@ -317,4 +317,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("sectionContentState=NO_SECTION");
   });
 
+  it("rejects malformed exact lesson identifiers and retains scoped links",()=>{
+    expect(collegeLessonQuerySchema.safeParse({lessonId:"not-a-uuid"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({lessonId:"123e4567-e89b-42d3-a456-426614174000"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("lessonId=");
+    expect(lessonsCsvHref(q)).toContain("lessonId=");
+  });
+
 });

@@ -105,6 +105,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.lessonId?eq(courseLessons.id,query.lessonId):undefined,
       query.liveEvidence==="HAS_LIVE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS")))):query.liveEvidence==="NO_LIVE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS"))))):undefined,
       query.resourceEvidence==="HAS_RESOURCE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE")))):query.resourceEvidence==="NO_RESOURCE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE"))))):undefined,
       query.videoEvidence==="HAS_VIDEO"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"])))):query.videoEvidence==="NO_VIDEO"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]))))):undefined,
