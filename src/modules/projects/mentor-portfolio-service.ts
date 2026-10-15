@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq, inArray, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import {
@@ -70,10 +70,13 @@ export async function getMentorPortfolioActivity(
   const byId = new Map(scope.projects.map(project => [project.id, project]));
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
   const types=mentorProjectActivityEventTypes(query.view);
+  const cutoff = query.window==="PAST_7_DAYS"
+    ? new Date(new Date().getTime()-7*86400000) : null;
   const filters = and(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
     eq(activityEvents.organizationId, membership.organizationId),
+    cutoff?gte(activityEvents.occurredAt,cutoff):undefined,
     query.importance === "ALL" ? undefined : eq(activityEvents.importance,query.importance),
     types?inArray(activityEvents.eventType,types):undefined,
     or(

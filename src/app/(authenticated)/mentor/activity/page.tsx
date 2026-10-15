@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
 import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -16,6 +16,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   const raw = await searchParams;
   const parsed = mentorActivityQuerySchema.safeParse({
     importance: first(raw.importance) ?? undefined,
+    window: first(raw.window) ?? undefined,
     view: first(raw.view) ?? undefined,
     page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
   });
@@ -46,6 +47,11 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             <option value="ALL">All event groups</option>
             <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option>
             <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
+          <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
