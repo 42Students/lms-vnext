@@ -19,6 +19,59 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**No hidden-row bulk selection PARTIAL (chat-9):** College verification now disables the shared page-local search input while keeping the authorized server-side learner-name filter and status/kind selectors. Consequently select-all and preview address exactly the displayed college-scoped server page; Super Admin and any other consumers retain their existing local-search behavior. Contract tests authored; browser/CI acceptance pending.
+
+**Bulk decision PostgreSQL success+failure fixture PARTIAL (chat-9):** A separate current-college verification fixture is now authored to assert a successful SEND_BACK row-version transition, exactly one activity event, recipient in-app notification, non-leaking foreign-college failure and stale replay without duplicate decision. The same batch includes a JSX duplicate-markup repair caught in source review. Fixture is gated on disposable registered DB04 and has not run here.
+
+**Per-item bulk results PARTIAL (chat-9):** Bulk decisions display server-returned succeeded/failed counts and each public-safe outcome, including stale-version, unavailable target and missing-document failures. Successful HTTP transport never implies every learner was verified. An explicit refresh button rechecks the server queue; integration/browser acceptance remains open.
+
+**Confirmed bulk Send back PARTIAL (chat-9):** College reviewer preview now accepts a required 3–500 character correction explanation and an explicit Send back confirmation, passing only the chosen waiting requests to the existing version-locked writer with individual audit/notification. The reason is saved only after server success, not inferred from local preview. Unit coverage authored; PG/browser acceptance remains open.
+
+**Confirmed bulk Verify action PARTIAL (chat-9):** College reviewer preview offers a second explicit Verify confirmation, submitting only the first 20 waiting membership/section/version tuples through the same-origin guarded, DB04 receipt-attested bulk POST. The UI clears selection only on HTTP success, surfaces errors, and requests server refresh; per-item result details and independent execution remain open.
+
+**Select-all and bulk preview PARTIAL (chat-9):** College Admin can select up to 20 currently visible waiting requests, clear the working selection and preview Verify/Send back eligibility using the existing status/version planner. Preview performs no mutation; Super Admin retains its existing single-review UI. Pure selection regression and browser acceptance open.
+
+**Scoped verification card selection PARTIAL (chat-9):** Only submitted/updated waiting rows offer accessible selection checkboxes in the reusable workspace when mounted by College Admin; selection uses membership+section composite identity, is capped at 20 and is intersected with the current server-authorized page, with no bulk writes yet. Pure-model and browser acceptance open.
+
+**Disposable PostgreSQL bulk isolation fixture PARTIAL (chat-9):** Gated integration exercise rejects LEARNER-role batch execution and maps foreign-college identity-review IDs to generic NOT_AVAILABLE without target metadata. Existing single-review fixture still covers version CAS, audit and in-app notification. Requires DB04_VERIFICATION_READY=1 and disposable DB target; not yet executed.
+
+**College Admin bulk mutation route PARTIAL (chat-9):** `/api/college/verification/bulk-review` POST checks same-origin before JSON parsing, delegates to persisted actor/scoped, row-versioned DB04 per-item service and returns no-store per-record outcomes. The endpoint does not accept caller-provided college scope. Route-contract tests authored, runtime/API and browser acceptance open.
+
+**Serialized bulk-review service PARTIAL (chat-9):** A bounded College Admin bulk command runs each selected request through the existing DB04 locked writer and private-document receipt validation, checking persisted reviewer membership again before each write. Audits and in-app notifications remain transactional per successful decision; recognized stale/foreign/invalid transitions report per-item outcomes. Unexpected failures abort remaining work rather than silently claiming success. Real DB/CI/browser evidence still open.
+
+**Per-request bulk outcome model PARTIAL (chat-9):** Bulk review now has a typed per-learner result taxonomy and truthful attempted/succeeded/failed counts, with a distinct stale-version message. Pure-model tests authored; route/UI/independent acceptance remain open.
+
+**Bounded confirmed bulk-review contract PARTIAL (chat-9):** Registered schema validates explicit user confirmation, at most 20 unique membership+section keys, positive expected versions, and reasoned send-back; caller-supplied tenant IDs and duplicate entries are rejected. Pure regression tests authored; service/UI and independent PG/browser acceptance remain open.
+
+**Unambiguous verification URL parsing PARTIAL (chat-9):** College Admin queue now fails closed on repeated query parameters instead of silently using the first value, while rejecting caller-supplied college scope and preserving strict typed filters. Invalid input is shown without querying protected data. Unit tests authored, browser/running-service acceptance outstanding.
+
+**Queue page-boundary recovery PARTIAL (chat-9):** If a filtered queue shrinks after a decision, the College Admin page redirects to the actual last page while preserving every validated filter, chosen page size and sort instead of displaying an empty page. Error and queue-limit rendering now occur outside try/catch. Pure model tests authored; browser and database state-transition verification still open.
+
+**Strict verification CSV query parsing PARTIAL (chat-9):** College Admin export now rejects duplicate filter values and forged tenant parameters rather than silently overwriting them. Only the typed queue filter contract may reach the scoped service; existing formula-safe 1,000-row cap remains. Unit coverage authored; browser and actual runtime acceptance pending.
+
+**Chronological verification queue order PARTIAL (chat-9):** Added typed OLDEST/NEWEST ordering by submitted timestamp with membership-ID ties; the same order is used before queue pagination and capped CSV. Current-college role gate remains enforced; unit plus PG denial checks authored, execution and browser proof open.
+
+**Selectable 10/25/50-row verification pages PARTIAL (chat-9):** College verification queue supports strict bounded server slicing with stable URL navigation, independent full-view tab counts, and same-college authorization. CSV still exports the filtered view independently of page length. Unit and gated PostgreSQL scope fixtures authored; large-roster and browser/real-DB acceptance open.
+
+**One-click triage shortcuts PARTIAL (chat-9):** The College queue presents three accessible needs-a-closer-look quick actions that switch to Waiting, preserve other filters and reset to first page, plus a reset to all states. These navigate the server-authorized filters, not current-page-only cards. Unit URL-patch acceptance authored; keyboard/mobile browser verification open.
+
+**Seven-day overdue attention triage PARTIAL (chat-9):** Queue and CSV now filter only SUBMITTED/UPDATE_PENDING entries older than seven complete days using a single per-request server clock and pure shared domain attention rules. Sent-back/verified records never appear as overdue. Unit and gated tenant-denial coverage authored, pending execution/browser proof.
+
+**Changed verified details triage PARTIAL (chat-9):** Added a queue-wide UPDATE_PENDING attention filter, across visible tabs and shared CSV, honoring the underlying verified-details state rather than guessing from a snapshot diff. Pure acceptance cases and role/tenant tests authored; executed PostgreSQL/mobile/browser and notification delivery checks open.
+
+**Missing-marksheet attention triage PARTIAL (chat-9):** Added typed, server-side EDUCATION missing-marksheet selector shared with same-scope capped CSV, evaluated before 25-row pagination and with full-view counts. Unit positive/negative and gated PostgreSQL denial fixtures authored; real runtime/375px/browser acceptance open.
+
+**Native class picker PARTIAL (chat-9):** Class UUID text input replaced by current-college ACTIVE section choices with batch/class names, bounded list, truncation and bookmarked-selection preservation. Existing same-college ACTIVE section-enrollment predicate remains authoritative; foreign class detail is never selected. Tests authored but not executed on disposable PostgreSQL/browser.
+
+**Native branch picker PARTIAL (chat-9):** Replaced raw department UUID entry with a bounded, name-labeled selector of current-college nonarchived departments; unknown bookmarked UUIDs remain visible but never disclose another tenant name. Existing correlated learner enrollment predicate is unchanged. PostgreSQL actor-denial fixture and unit coverage authored; actual runtime/browser acceptance outstanding.
+
+**Native batch picker PARTIAL (chat-9):** The verification queue now fetches up to 200 persisted batches through a fresh, active, same-college College Admin role check, with truncation disclosure and deep-linked selected UUID retained. Existing queue/export batch predicate remains canonical. Authored unit and gated PostgreSQL role fixtures; browser/real DB acceptance remains open.
+
+**Server-initialized TPO switch PARTIAL (2026-10-15, chat-9):** The College verification header now receives the same-college persisted TPO verifier switch directly from its authorized queue read, including the legacy default when no setting exists. Eliminated first-load client GET and effect-driven setState while keeping same-origin audited PATCH, optimistic success-only state, error/refresh and disabled-busy UI. Independent PG/browser acceptance and TPO route enforcement remain open.
+
+**Learner-name verification search PARTIAL (2026-10-15, chat-9):** The College Admin queue and matching capped CSV now apply escaped, bounded display-name substring search before the 5,001-row safety cap, scoped to active same-college learner verification requests. Private emails/phones/identity fields are never searched or revealed; query form resets safely without effect-driven state writes. Dedicated unit and gated disposable-PG tenant/foreign/name tests authored, not executed. Browser and full legacy search parity remain open.
+
+
 **Staff verification workspace PARTIAL (2026-10-15, chat-9):** Added /college/verification and shared src/components/verification + src/modules/verification. The route loads College Admin-owned learner Education/Identity requests from DB04 profile_verifications, checked against a persisted active actor membership/role and active learner roles. The reusable queue has Waiting/Sent back/Verified counts, submitted-update attention cues, safe mobile cards, same-college cohort/branch display, section/kind/marksheet/batch/branch/IST waiting-date filters, bounded paging, explicit unavailable/retry states and 5,000-request fail-closed working-set limit. Batch/branch/class selectors currently accept UUIDs rather than native college-owned pickers; search is local to the displayed page, not full-roster search.
 
 **Review and notification PARTIAL:** Submitted/previously verified fields are compared without raw identity values or receipt IDs; document access requires an authorized current-college receipt anchored in the submitted snapshot and the private-storage short-lived read signer with object attestation. A reasoned send-back or verify POST requires same-origin, Zod and expected version; the existing DB04 locked writer records the decision, immutable activity event, and learner in-app notification together. External email/SMS delivery still needs chat-10's shared messaging port, and bulk verify/send-back and bulk messaging are preview-only, not executed.
@@ -674,6 +727,27 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 # People
+
+**Scoped Contact detail route PARTIAL (2026-10-15, chat-9):** Each Contacts card links to `/college/contacts/[membershipId]` for a read-only public detail anchored to a persisted current-college COLLEGE_ADMIN membership. Foreign IDs return identical not-found, and learner/dual-role email and all phone numbers stay masked. Positive, foreign and wrong-role isolated PG cases authored; execution/375px browser and exact legacy card metadata remain open.
+
+**Invalid Contacts date-window rejection PARTIAL (2026-10-15, chat-9):** Reverse IST joined-from/through intervals now fail closed in both page and export parsing and cannot silently return empty results. Service rechecks even for programmatic callers. Unit scenarios authored; browser/PG execution pending.
+
+**Contact joined-through filter PARTIAL (2026-10-15, chat-9):** The read-only contact tabs support inclusive IST end-day filtering, persisted in URLs and exports with a next-midnight exclusive DB bound. Cross-college isolation and privacy masks are unchanged; runtime/browser acceptance pending.
+
+**Contacts joined-from IST filter PARTIAL (2026-10-15, chat-9):** Contacts can limit memberships to a validated inclusive local calendar day lower bound, converted to Asia/Kolkata midnight and applied in college-scoped SQL before count/paging/CSV. Browser and real-DB acceptance remain open.
+
+**Contact name-initial selector PARTIAL (2026-10-15, chat-9):** Native A–Z initials select filters persisted display names before total/paging/export, scoped to the current college and combined with role/status/search. Prefix is a single validated alphabetic character, not a user-supplied SQL pattern. PG/browser checks outstanding.
+
+**Mixed-role Contacts triage PARTIAL (2026-10-15, chat-9):** A role-audience control distinguishes Faculty-only, Learner-only and dual Faculty+Learner memberships in a single current-college SQL filter. Dual-role learner contact fields remain masked even on Faculty tab and exports; no recipient privilege is inferred. Real database/browser acceptance pending.
+
+**Reverse-name Contacts sorting PARTIAL (2026-10-15, chat-9):** Contacts All/Faculty/Student tabs now support case-insensitive Z–A persisted-name order with deterministic UUID ties and identical ordering for export. Query schema and UI tests authored; database/browser evidence pending.
+
+**Longest-serving Contacts order PARTIAL (2026-10-15, chat-9):** A typed OLDEST order pages by persisted join time then membership UUID, avoiding page churn on identical timestamps. Corresponding URL, UI and export filters preserve order. DB/browser execution pending.
+
+**Contacts platform-account filter PARTIAL (2026-10-15, chat-9):** College contacts can independently filter registered ACTIVE/DISABLED user accounts and ACTIVE/SUSPENDED/ENDED college memberships; server SQL applies both before count/paging/CSV. Tenant authorization and student masks remain unchanged. Isolated runtime and browser checks outstanding.
+
+**Contacts page-size selector PARTIAL (2026-10-15, chat-9):** Contact tabs support strict 10/25/50 server-side page sizes and URL-preserved pagination, while the CSV retains a fixed 25-row service batch and independent 1,000-row cap. Unit contract authored; real DB/browser acceptance remains open.
+
 
 ## Page: Faculty
 **Faculty history teaching-role drilldown PARTIAL (2026-10-15):** The Faculty detail history can filter registered PRIMARY, CO_TEACHER or TA assignments in conjunction with active/ended lifecycle before its 100-row cap, while separately retaining all-time totals. Strict no-forged-college model and own-college PG fixture tests authored; runtime/browser acceptance pending.
