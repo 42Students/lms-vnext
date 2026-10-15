@@ -4,9 +4,10 @@ describe("T-S2-07 DB10 notice timing in Asia/Kolkata",()=>{
  it("persists an IST civil time without depending on the server's timezone",()=>{
   expect(parseTpoIstMinute("2026-10-16T10:30")?.toISOString()).toBe("2026-10-16T05:00:00.000Z");
   expect(parseTpoIstMinute("")).toBeNull();
+  expect(parseTpoIstMinute("2028-02-29T10:30")?.toISOString()).toBe("2028-02-29T05:00:00.000Z");
  });
  it("rejects impossible dates, unbounded input and malformed offsets",()=>{
-  for(const text of ["2026-02-31T10:30","2026-10-16T25:30","2026-10-16T10:99","2026-10-16T10:30Z"]){
+  for(const text of ["2026-02-31T10:30","2025-02-29T10:30","2026-10-16T25:30","2026-10-16T10:99","2026-10-16T10:30Z"]){
    expect(()=>parseTpoIstMinute(text)).toThrow("TPO_NOTICE_INVALID_TIME");
   }
  });
