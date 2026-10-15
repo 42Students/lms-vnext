@@ -194,6 +194,8 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       or(isNull(electiveSlots.academicPeriodId), sql`${academicPeriods.id} is not null`),
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
+      query.academicYearState === "RECORDED" ? isNotNull(electiveSlots.academicYear) :
+        query.academicYearState === "MISSING" ? isNull(electiveSlots.academicYear) : undefined,
       query.semesterNumber !== undefined ? eq(electiveSlots.semesterNumber, query.semesterNumber) : undefined,
       query.offeringState === "HAS_ACTIVE" ? exists(db.select({id:electiveOfferings.id}).from(electiveOfferings).innerJoin(courses,eq(courses.id,electiveOfferings.courseId)).innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId))).where(and(eq(electiveOfferings.slotId,electiveSlots.id),eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt)))) :
         query.offeringState === "NONE_ACTIVE" ? not(exists(db.select({id:electiveOfferings.id}).from(electiveOfferings).innerJoin(courses,eq(courses.id,electiveOfferings.courseId)).innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId))).where(and(eq(electiveOfferings.slotId,electiveSlots.id),eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt))))) : undefined,

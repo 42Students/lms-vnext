@@ -43,4 +43,9 @@ describe("college electives CSV",()=>{
     expect(electiveCsvHref({q:"",status:"ACTIVE",offeringState:"NONE_ACTIVE"})).toContain("offeringState=NONE_ACTIVE");
  });
 
+ it("academicYearState is retained by formula-safe elective CSV",()=>{
+    expect(electiveCsvSchema.safeParse({academicYearState:"PREDICTED"}).success).toBe(false);
+    expect(electiveCsvHref({q:"",status:"ACTIVE",academicYearState:"RECORDED"})).toContain("academicYearState=RECORDED");
+ });
+
 });

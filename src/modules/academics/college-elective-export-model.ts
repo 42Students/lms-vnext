@@ -6,6 +6,7 @@ export {exportParams};
 export function electiveCsvHref(q:{
  q:string;programId?:string;status:"ALL"|"ACTIVE"|"ARCHIVED";semesterNumber?:number;minimumCredits?:number;maximumCredits?:number;
  periodState?:"ALL"|"LINKED"|"UNLINKED";
+ academicYearState?:"ALL"|"RECORDED"|"MISSING";
  offeringState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
  choiceMode?:"ALL"|"FLEXIBLE"|"FIXED";
  programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
@@ -21,6 +22,7 @@ export function electiveCsvHref(q:{
  if(q.periodState&&q.periodState!=="ALL")p.set("periodState",q.periodState);
  if(q.choiceMode&&q.choiceMode!=="ALL")p.set("choiceMode",q.choiceMode);
  if(q.offeringState&&q.offeringState!=="ALL")p.set("offeringState",q.offeringState);
+ if(q.academicYearState&&q.academicYearState!=="ALL")p.set("academicYearState",q.academicYearState);
  return "/api/academics/college-electives-export"+(p.size?"?"+p.toString():"");
 }
 export function renderElectivesCsv(rows:readonly {

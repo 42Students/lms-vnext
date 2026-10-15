@@ -115,4 +115,9 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({offeringState:"HAS_ACTIVE"}))).toContain("offeringState=HAS_ACTIVE");
   });
 
+  it("elective academicYearState is not inferred from the period",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({academicYearState:"ASSUMED"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({academicYearState:"MISSING"}))).toContain("academicYearState=MISSING");
+  });
+
 });
