@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
-import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts} from "@/modules/placements/tpo-global-requests-model";
+import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +26,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     status:first(raw.status),age:first(raw.age),sort:first(raw.sort),requestType:first(raw.requestType), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
   });
   const statusCounts=tpoRequestStatusCounts(data.summary);
+  const asOf=new Date();
   return <main className="min-w-0 space-y-5">
     <PageHeader eyebrow="TPO · Operations" title="Requests" description="College-wide learner placement requests. Decisions update recorded applications, rounds or offers only through the existing verified action." />
     <nav aria-label="Request statuses" className="flex flex-wrap gap-2">
@@ -58,7 +59,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <div className="min-w-0">
             <h2 className="font-semibold">{request.studentName} · {request.requestType.replaceAll("_"," ")}</h2>
             <p className="mt-1 text-sm text-body">{request.companyName} · {request.jobTitle}</p>
-            <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time></p>
+            <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time> · {tpoRequestAgeLabel(request.requestedAt,asOf)}</p>
             <p className="mt-2 whitespace-pre-wrap break-words text-sm">{request.reason}</p>
             {request.decisionNote?<p className="mt-2 whitespace-pre-wrap break-words text-sm">Decision note: {request.decisionNote}</p>:null}
             <Link href={"/tpo/placements/jobs/"+encodeURIComponent(request.jobId)} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Open drive</Link>

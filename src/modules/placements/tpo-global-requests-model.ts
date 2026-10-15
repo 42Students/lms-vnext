@@ -26,3 +26,11 @@ export const TPO_REQUEST_STATUSES=["PENDING","APPROVED","REJECTED","CANCELLED"] 
 export function tpoRequestStatusCounts(summary:{pending:number;approved:number;rejected:number;cancelled:number}){
  return {PENDING:summary.pending,APPROVED:summary.approved,REJECTED:summary.rejected,CANCELLED:summary.cancelled};
 }
+
+export function tpoRequestAgeLabel(requestedAt:Date,asOf:Date):string{
+ const elapsed=Math.max(0,asOf.getTime()-requestedAt.getTime());
+ if(elapsed<3600000)return "Less than 1 hour old";
+ if(elapsed<86400000)return Math.floor(elapsed/3600000)+" hours old";
+ const days=Math.floor(elapsed/86400000);
+ return days+" day"+(days===1?"":"s")+" old";
+}
