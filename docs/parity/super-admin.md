@@ -824,3 +824,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 New Template 6 (PARTIAL):** Draft task instructions now survive to the task blueprint; task key and parent sprint remain stable. No migration or permissions changed. Tests authored but not run; the richer legacy editor, PG and browser gate remain open.
+
+
+**2026-10-15 chat-6 New Template 7 (PARTIAL):** Overview description now persists independently of the existing template summary and goal. No migration or permissions changed. Tests authored but not run; the richer legacy editor, PG and browser gate remain open.
