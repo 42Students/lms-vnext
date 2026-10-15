@@ -523,7 +523,7 @@ Detailed page contract: `docs/parity/hr.md`.
 | Add/change/remove rounds | drive detail | limited manager model | MISSING |
 | Interview slots | nested rounds tab | none | MISSING |
 | Send results table | nested rounds tab | staged results | PARTIAL |
-| Selection list / Offer / LOI workflow | offers | result/offer model | PARTIAL |
+| Selection list / Offer / LOI workflow | offers | result/offer model. Persisted LOI record kind (migration 0060 `placement_offers.kind` OFFER|LOI): the TPO Offers panel issues an Offer or a Letter of intent through the same audited, serializable issue path (version history, learner notification titled Letter of intent received, audit metadata kind), the learner offers page and the HR Offers tab label LOI records, and re-issue is idempotent only for the same kind. No LOI document/file is generated or stored; no selection list is sent externally. A dedicated selection-list send, LOI document upload via src/modules/storage and browser acceptance remain open. | PARTIAL |
 
 ## 7.2 Calendar / Messages / Company / Account
 

@@ -203,6 +203,8 @@ Legacy:
 - [ ] joining/reply-by state matches.
 - [ ] selection-list workflow matches.
 - [ ] applicant row selection matches.
+**W70 PARTIAL — LOI kind:** Persisted LOI record kind (migration 0060 `placement_offers.kind` OFFER|LOI): the TPO Offers panel issues an Offer or a Letter of intent through the same audited, serializable issue path (version history, learner notification titled Letter of intent received, audit metadata kind), the learner offers page and the HR Offers tab label LOI records, and re-issue is idempotent only for the same kind. No LOI document/file is generated or stored; no selection list is sent externally. A dedicated selection-list send, LOI document upload via src/modules/storage and browser acceptance remain open.
+
 - [ ] OFFER/LOI kind matches.
 - [ ] role/CTC fields/validation match.
 - [ ] final send confirmation/consequence matches.
