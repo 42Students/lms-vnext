@@ -20,7 +20,7 @@ export default async function SuperAdminLessonsPage({
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
-    <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to inspect its course lessons." />
+    <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
   </div>;
   const data = await listCollegeLessons(context, parsed.data);
   const summary = adminLessonStats(data.items);
