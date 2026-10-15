@@ -46,6 +46,11 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      <option value="NAME">Name</option><option value="NEWEST">Newest joined</option>
     </select>
    </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Rows per page
+    <select name="pageSize" defaultValue={filter.pageSize} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
+    </select>
+   </label>
    <button type="submit" className="min-h-10 rounded-md border px-4 text-sm font-semibold">Apply</button>
    <Link href={collegeContactsHref({...filter,q:"",status:"ACTIVE",sort:"NAME",page:1})}
     className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm">Clear filters</Link>

@@ -6,7 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
-import {COLLEGE_CONTACTS_PAGE_SIZE,collegeContactsQuerySchema} from "./college-contacts-model";
+import {collegeContactsQuerySchema} from "./college-contacts-model";
 
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
@@ -49,8 +49,8 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    membershipId:collegeMemberships.id,name:users.displayName,email:users.email,
    phone:users.phoneE164,status:collegeMemberships.status,joinedAt:collegeMemberships.createdAt,
   }).from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
-   .where(matches).orderBy(...order).limit(COLLEGE_CONTACTS_PAGE_SIZE)
-   .offset((filter.page-1)*COLLEGE_CONTACTS_PAGE_SIZE);
+   .where(matches).orderBy(...order).limit(filter.pageSize)
+   .offset((filter.page-1)*filter.pageSize);
   const roles=rows.length?await tx.select({membershipId:membershipRoles.membershipId,role:membershipRoles.role})
    .from(membershipRoles).where(and(inArray(membershipRoles.membershipId,rows.map(r=>r.membershipId)),
     inArray(membershipRoles.role,["FACULTY","LEARNER"]))):[];
@@ -66,6 +66,6 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
     email:contact.email,phone:contact.phone,roles:memberRoles,
     status:row.status,joinedAt:row.joinedAt};
   });
-  return {items,total:countRow?.total??0,filter,pageSize:COLLEGE_CONTACTS_PAGE_SIZE};
+  return {items,total:countRow?.total??0,filter,pageSize:filter.pageSize};
  });
 }
