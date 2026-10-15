@@ -1333,3 +1333,8 @@ Registered safe Resource created/updated/archived Project activity event taxonom
 ## 2026-10-15 chat-11 — transactional resource create audit (PARTIAL)
 
 The registered Project resource create write now emits `projects.resource.created` within its existing scoped database transaction. Event failures roll back the resource mutation, with project/college/organization IDs and no URL/description/private payload in event metadata. Scoped Mentor Activity filters display only the fixed label. Pure payload test authored; database execution and browser acceptance remain OPEN.
+
+
+## 2026-10-15 chat-11 — transactional resource update audit (PARTIAL)
+
+The registered Project resource update write now emits `projects.resource.updated` within its existing scoped database transaction. Event failures roll back the resource mutation, with project/college/organization IDs and no URL/description/private payload in event metadata. Scoped Mentor Activity filters display only the fixed label. Pure payload test authored; database execution and browser acceptance remain OPEN.
