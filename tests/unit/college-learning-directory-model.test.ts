@@ -219,4 +219,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("lessonPresence=HAS_LESSONS");
   });
 
+  it("retains scoped authored-assignment selector in progress and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({assignmentPresence:"SUBMITTED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({assignmentPresence:"NO_ASSIGNMENTS"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("assignmentPresence=NO_ASSIGNMENTS");
+    expect(collegeProgressCsvHref(q)).toContain("assignmentPresence=NO_ASSIGNMENTS");
+  });
+
 });
