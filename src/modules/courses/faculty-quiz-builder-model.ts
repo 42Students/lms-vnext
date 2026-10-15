@@ -302,3 +302,9 @@ export function facultyQuizAnswerSummary(question:{
  const count=question.options.filter(option=>option.correct).length;
  return count+" of "+question.options.length+" answers marked correct";
 }
+
+/** Insert at the point of teaching flow, not only at the end of a 100-item Quiz. */
+export function facultyInsertQuizQuestionAfter<T>(questions:readonly T[],index:number,question:T):T[]{
+ if(index<0||index>=questions.length||questions.length>=100)return [...questions];
+ const next=[...questions];next.splice(index+1,0,question);return next;
+}
