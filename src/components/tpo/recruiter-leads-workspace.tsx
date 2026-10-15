@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RECRUITER_STAGE_LEGACY_LABELS, type TpoRecruiterLeadStage } from "@/modules/placements/tpo-recruiter-lead-policy";
 import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
 import {
   RECRUITER_ATTENTION_LABELS,
@@ -20,7 +21,7 @@ type Lead = {
   designation: string | null;
   source: string | null;
   manualStage: string;
-  stage: string;
+  stage: TpoRecruiterLeadStage;
   ownerMembershipId: string | null;
   notNowReason: string | null;
   inviteSentAt: string | null;
@@ -278,10 +279,7 @@ export function RecruiterLeadsWorkspace({
     <section className="space-y-5" aria-label="Recruiter leads">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Engage · Recruiters</h1>
-          <p className="text-sm text-muted-foreground">
-            Track employer contacts, outreach and follow-ups for your college.
-          </p>
+          <h1 className="text-2xl font-semibold text-foreground">Engage</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
@@ -344,7 +342,7 @@ export function RecruiterLeadsWorkspace({
               Stage
               <select className={inputStyle + " mt-1"} value={stage}
                 onChange={e => setStage(e.target.value as typeof stage)}>
-                {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : x.replace("_", " ")}</option>)}
+                {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </select>
             </label>
             <label className="min-w-36 text-sm">
@@ -443,7 +441,7 @@ export function RecruiterLeadsWorkspace({
                           href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name}</Link>
                       </td>
                       <td className="px-4 py-3">{lead.companyName || "—"}</td>
-                      <td className="px-4 py-3">{lead.stage.replace("_", " ")}</td>
+                      <td className="px-4 py-3">{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</td>
                       <td className="px-4 py-3">
                         {lead.chips?.map(chip => (
                           <span key={chip} className="mr-1 inline-block rounded border border-border px-1.5 py-0.5 text-xs">
@@ -463,7 +461,7 @@ export function RecruiterLeadsWorkspace({
             <div className="grid gap-4 md:grid-cols-3">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
                 <section key={column} className="rounded-lg border border-border bg-surface p-4">
-                  <h2 className="mb-3 font-semibold">{column.replace("_", " ")} · {visible.filter(x => x.stage === column).length}</h2>
+                  <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
                     {visible.filter(x => x.manualStage === column).map(lead => (
                       <Link key={lead.id} href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
