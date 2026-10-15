@@ -89,6 +89,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             <li key={notice.id} className="min-w-0 rounded-xl border border-border bg-surface p-5">
               {notice.isPinned ? <p className="text-xs font-semibold text-primary-text">Pinned</p> : null}
               <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {notice.senderLabel ? "Issued by "+notice.senderLabel : "College announcement"}
+                {notice.audienceLabel ? " · Audience: "+notice.audienceLabel : ""}
+              </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
               <time dateTime={notice.createdAt} className="mt-3 block text-xs text-muted-foreground">
                 {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.createdAt))}
