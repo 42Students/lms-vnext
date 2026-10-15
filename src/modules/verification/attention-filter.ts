@@ -1,6 +1,6 @@
 import {verificationAttentionFlags} from "./attention-flags";
 import type {VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
-export type VerificationAttention="ALL"|"MISSING_MARKSHEET"|"VERIFIED_DETAILS_CHANGED";
+export type VerificationAttention="ALL"|"MISSING_MARKSHEET"|"VERIFIED_DETAILS_CHANGED"|"WAITING_OVER_WEEK";
 export function matchesVerificationAttention(input:{
  status:VerificationStatus;section:VerificationSection;submittedAt:Date;missingMarksheet:boolean
 }, attention:VerificationAttention, evaluatedAt:Date){

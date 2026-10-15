@@ -25,3 +25,10 @@ describe("verified-details change attention",()=>{it("finds UPDATE_PENDING and e
  expect(matchesVerificationAttention({status:"UPDATE_PENDING",section:"IDENTITY",submittedAt:now,missingMarksheet:false},"VERIFIED_DETAILS_CHANGED",now)).toBe(true);
  expect(matchesVerificationAttention({status:"VERIFIED",section:"IDENTITY",submittedAt:now,missingMarksheet:false},"VERIFIED_DETAILS_CHANGED",now)).toBe(false);
 });});
+
+describe("overdue verification attention",()=>{it("uses a consistent seven-day window and waiting states",()=>{
+ const now=new Date("2026-10-15T00:00:00Z"),old=new Date("2026-10-07T00:00:00Z");
+ expect(matchesVerificationAttention({status:"SUBMITTED",section:"IDENTITY",submittedAt:old,missingMarksheet:false},"WAITING_OVER_WEEK",now)).toBe(true);
+ expect(matchesVerificationAttention({status:"SENT_BACK",section:"IDENTITY",submittedAt:old,missingMarksheet:false},"WAITING_OVER_WEEK",now)).toBe(false);
+ expect(matchesVerificationAttention({status:"SUBMITTED",section:"IDENTITY",submittedAt:now,missingMarksheet:false},"WAITING_OVER_WEEK",now)).toBe(false);
+});});
