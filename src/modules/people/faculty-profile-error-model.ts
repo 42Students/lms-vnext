@@ -37,3 +37,8 @@ export function facultyProfileSaveSectionLabel(section:string):string {
  };
  return Object.hasOwn(labels,section)?labels[section]!:"Profile";
 }
+
+/** A missing server error code still needs an explicit stale-token recovery at HTTP 409. */
+export function facultyProfileReloadRequired(code:string|undefined,status:number):boolean{
+ return facultyProfileNeedsReload(code)||status===409;
+}
