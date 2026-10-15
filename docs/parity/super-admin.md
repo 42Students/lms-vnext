@@ -1144,3 +1144,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 announcement blank-search recovery (PARTIAL):** Form query consisting solely of whitespace now resolves to an unfiltered server history instead of a false malformed-link error; nonblank values remain trimmed/capped and unknown keys fail closed. Source tests authored, browser execution open.
+
+
+**2026-10-15 chat-6 Audit Findings persisted issue-type filter (PARTIAL):** Added explicit exact issue_type predicate from the real DB10 report table. Form/server validation bounds the search to 80 characters, carries it into both cursor and CSV, and never substitutes synthetic categories. Authored unit tests, PG/browser acceptance still open.

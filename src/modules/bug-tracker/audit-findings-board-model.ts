@@ -12,6 +12,7 @@ export const auditFindingsQuerySchema=z.strictObject({
  environment:z.enum(["ALL","LOCAL","DEVELOPMENT","UAT","PRODUCTION","OTHER","NOT_SURE"]).default("ALL"),
  status:z.enum(findingStatusOptions).default("ALL"),
  q:z.string().trim().max(120).default(""),
+ issueType:z.string().trim().max(80).default(""),
  sort:z.enum(["newest","oldest"]).default("newest"),
  beforeCreatedAt:z.iso.datetime({offset:true}).optional(),
  beforeId:z.uuid().optional(),
@@ -27,7 +28,7 @@ export function trackerAuditFindingsInput(x:z.infer<typeof auditFindingsQuerySch
   retestStatus:x.retestStatus==="ALL"?undefined:x.retestStatus,
   productionVerified:x.productionVerified==="ALL"?undefined:x.productionVerified==="YES",
   environment:x.environment==="ALL"?undefined:x.environment,
-  q:x.q||undefined,sort:x.sort,limit:50,
+  q:x.q||undefined,issueType:x.issueType||undefined,sort:x.sort,limit:50,
   beforeCreatedAt:x.beforeCreatedAt,
   beforeId:x.beforeId,
  };
