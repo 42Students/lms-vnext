@@ -13,8 +13,9 @@ describe("legacy College Admin Companies route and scope",()=>{
     const source=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/companies/page.tsx"),"utf8");
     expect(source).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
-    expect(source).toContain("listPlacementCompanies(context, collegeId)");
-    expect(source).toContain("listPlacementRelationshipOwners(context, collegeId)");
+    expect(source).toContain("listCollegeCompanyDirectory(context,query)");
+    expect(source).toContain("listPlacementRelationshipOwners(context,collegeId)");
     expect(source).not.toContain("listSuperAdminCompanyDirectory");
+    expect(source).not.toContain("listPlacementCompanies(context, collegeId)");
   });
 });
