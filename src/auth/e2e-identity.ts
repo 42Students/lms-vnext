@@ -10,6 +10,8 @@ const E2E_IDENTITY_UID_PATTERN =
 
 export type E2eIdentityInput = {
   nodeEnv: string | undefined;
+  /** APP_ENV; the harness only exists when this is exactly "development". */
+  appEnv: string | undefined;
   enabled: string | undefined;
   configuredSecret: string | undefined;
   cookieSecret: string | undefined;
@@ -21,6 +23,7 @@ export function resolveE2eIdentityUid(
 ): string | null {
   if (
     input.nodeEnv === "production" ||
+    input.appEnv !== "development" ||
     input.enabled !== "true"
   ) {
     return null;
