@@ -17,6 +17,7 @@ export function mentorProjectActivityEventTypes(view:MentorProjectActivityQuery[
   if(view==="PROJECT")return [
     "projects.project.created","projects.project.archived",
     "projects.project.restored","projects.project.completed",
+    "projects.project.deleted",
   ];
   if(view==="TEAM")return [
     "projects.team_member.added","projects.team_member.updated","projects.team_member.ended",
