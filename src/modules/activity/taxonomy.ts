@@ -23,6 +23,7 @@ export type ActivityImportance =
 export const ACTIVITY_EVENT_TYPES = {
   PLATFORM_COLLEGE_CREATED:
     "platform.college.created",
+  PLATFORM_COLLEGE_MODULE_RULE_CHANGED:"platform.module_access.college_rule_changed",
   PLATFORM_STUDENT_MODULE_RULE_CHANGED:"platform.module_access.student_rule_changed",
   PLATFORM_COLLEGE_CONTACT_UPDATED:
     "platform.college.contact_updated",
