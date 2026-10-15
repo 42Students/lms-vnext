@@ -854,3 +854,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 organization-to-college creation handoff (PARTIAL):** The Tenant Create form receives the newly created organization ID from the existing authorized API, returns to the college step with an allowlisted choice, and preselects only an organization present in the current scoped server result. Duplicate/forged URL values cannot select foreign tenants. Other organization-create usages retain their prior behavior. Pure tests authored, not run; browser and PG creation acceptance open.
+
+
+**2026-10-15 chat-6 students-with-overrides queue (PARTIAL):** The learner module-access trace can now filter to active learners with a persisted membership-level Projects/Placements/Electives rule, scoped in the original college SQL and preserving the filter through pagination/deep links. No contact data or edit privilege is added. Model and disposable-PG tests authored, not executed; editing and full legacy override/lock drawer remain open.
