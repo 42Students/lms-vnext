@@ -159,8 +159,21 @@ export type PlacementEligibilityResult = {
   } | null;
 };
 
-function scaleHundredths(value: number | null) {
-  return value === null ? null : Math.round(value * 100);
+/** D4: decimal half-up scaling without binary floating-point multiplication. */
+export function scaleHundredths(value: number | null): number | null {
+  if (value === null) return null;
+  if (!Number.isFinite(value) || value < 0) throw new RangeError("Invalid percentage");
+  const decimal = String(value);
+  const parts = /^(\\d+)(?:\\.(\\d+))?$/.exec(decimal);
+  if (!parts) throw new RangeError("Unsupported percentage precision");
+  const whole = BigInt(parts[1]!);
+  const digits = (parts[2] ?? "").padEnd(3, "0");
+  const hundredths = whole * 100n + BigInt(digits.slice(0, 2)) +
+    (digits.charCodeAt(2) >= 53 ? 1n : 0n);
+  if (hundredths > BigInt(Number.MAX_SAFE_INTEGER)) {
+    throw new RangeError("Percentage out of range");
+  }
+  return Number(hundredths);
 }
 
 function unscaleHundredths(value: number | null) {
