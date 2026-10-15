@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { getMyQuizAttempts } from "@/modules/courses/quiz-attempt-service";
 import {
-  learnerAttemptResultLabel, learnerQuizAttemptDateLabel, learnerQuizQuestionAwardLabel, ownQuizHistorySelection,
+  learnerAttemptResultLabel, learnerQuizAttemptDateLabel, learnerQuizQuestionAwardLabel, learnerQuizSelectedAnswerMessage, ownQuizHistorySelection,
 } from "@/modules/courses/learner-quiz-history-model";
 
 type Props={
@@ -72,6 +72,11 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
             {(answer.options ?? []).filter(option=>answer.selectedOptionIds.includes(option.id)).map(option=>
               <li className="break-words" key={option.id}>Selected: {option.text}</li>)}
           </ul>
+          {learnerQuizSelectedAnswerMessage(answer.selectedOptionIds,answer.options??[]) ? (
+            <p role="status" className="mt-2 text-sm text-muted-foreground">
+              {learnerQuizSelectedAnswerMessage(answer.selectedOptionIds,answer.options??[])}
+            </p>
+          ) : null}
         </article>)}
       </div> : <p className="mt-4 text-sm text-body">
         Question review and scores are withheld until results are published.
