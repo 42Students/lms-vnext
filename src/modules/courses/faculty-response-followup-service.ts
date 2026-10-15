@@ -48,7 +48,7 @@ export async function getFacultyResponseFollowUps(
     })),
   ];
   const selected = facultyResponseFollowUpPage(
-    selectPastDueAssessments(candidates, query, new Date()), query.page,
+    selectPastDueAssessments(candidates, query, new Date()), query.page,query.pageSize,
   );
 
   const items = await Promise.all(selected.items.map(async row => {
