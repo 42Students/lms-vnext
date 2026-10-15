@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { parseFacultyResultsSearchParams, facultyResultsHref, facultyRecordedResponseRate } from "@/modules/courses/faculty-results-model";
+import { parseFacultyResultsSearchParams, facultyResultsHref, facultyRecordedResponseRate, facultyResultsEmptyState } from "@/modules/courses/faculty-results-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
 import {facultyResultsCsvHref} from "@/modules/courses/faculty-results-export";
 
@@ -24,6 +24,7 @@ export default async function FacultyAssessmentResultsPage({
   }
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
+  const emptyState = facultyResultsEmptyState(data.query,data.sections.length);
   return <div className="space-y-6">
     <PageHeader eyebrow="Faculty · Assessments" title="Assessment results"
       description="Section-specific recorded response counts and scores from your current teaching assignments."
@@ -107,8 +108,8 @@ export default async function FacultyAssessmentResultsPage({
        Export this page CSV (no learner names)
       </Link>
     </div>
-    {data.items.length === 0 ? <EmptyState title="No matching assessment results"
-      description="No assignments or quizzes matched the current teaching Sections and filters. No scores or responses are invented." />
+    {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
+      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Clear result filters</Link> : null}</div>
       : <div className="grid gap-3">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}

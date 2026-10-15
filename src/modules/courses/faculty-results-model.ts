@@ -96,3 +96,12 @@ export function parseFacultyResultsSearchParams(raw:Record<string,string|string[
   page:raw.page||undefined,sort:raw.sort||undefined,pageSize:raw.pageSize||undefined,due:raw.due||undefined,
  });
 }
+
+/** Empty screens distinguish missing current assignments from an active filter. */
+export function facultyResultsEmptyState(query:FacultyResultsQuery,sectionCount:number){
+ if(sectionCount===0)return {title:"No current teaching Sections",description:"Ask your college administrator to assign an active teaching Section before viewing its assessment results.",clearFilters:false};
+ const active=query.kind!=="ALL"||query.status!=="ALL"||Boolean(query.deliveryId)||Boolean(query.search)||query.due!=="ALL";
+ return active
+  ? {title:"No results match these filters",description:"Try a different teaching Section, assessment type, deadline or search term.",clearFilters:true}
+  : {title:"No assessments recorded yet",description:"Assignments and quizzes in your current teaching Sections will appear here when they are authored.",clearFilters:false};
+}
