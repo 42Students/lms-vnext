@@ -7,8 +7,8 @@ export type UploadUiEvent=
 export const initialResourceUploadUi:ResourceUploadUi={stage:"IDLE",progress:0,message:null};
 /** UI-only state machine; success is impossible without an explicit trusted verification event. */
 export function transitionResourceUploadUi(state:ResourceUploadUi,event:UploadUiEvent):ResourceUploadUi{
- if(event.type==="RESET")return {...initialResourceUploadUi};
- if(event.type==="CANCEL")return state.stage==="SUCCEEDED"?state:{stage:"CANCELLED",progress:0,message:null};
+ if(event.type==="RESET")return ["IDLE","SUCCEEDED","FAILED","CANCELLED"].includes(state.stage)?{...initialResourceUploadUi}:state;
+ if(event.type==="CANCEL")return ["SELECTED","UPLOADING"].includes(state.stage)?{stage:"CANCELLED",progress:0,message:null}:state;
  if(event.type==="SELECT"&&["IDLE","FAILED","CANCELLED"].includes(state.stage))return {stage:"SELECTED",progress:0,message:null};
  if(event.type==="START"&&state.stage==="SELECTED")return {stage:"UPLOADING",progress:0,message:null};
  if(event.type==="PROGRESS"&&state.stage==="UPLOADING"&&Number.isFinite(event.value))
