@@ -19,3 +19,26 @@ export function assertCampaignRecipientCap(total:number):number {
     throw new Error("TPO_CAMPAIGN_RECIPIENT_LIMIT");
   return total;
 }
+
+/** T-S2-04: a dry-run snapshot, never authority to send. The eventual
+ * delivery worker must re-read live suppression and verify actor/college.
+ * Returning IDs and counts (not contact addresses) prevents accidental PII
+ * disclosure through campaign preview pages.
+ */
+export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:string}>(
+  candidates:readonly T[],
+):{recipientIds:string[];suppressed:Record<Exclude<ReturnType<typeof campaignRecipientDisposition>,"ELIGIBLE">|"DUPLICATE",number>} {
+  assertCampaignRecipientCap(candidates.length);
+  const suppressed={NO_EMAIL:0,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:0};
+  const seen=new Set<string>();
+  const recipientIds:string[]=[];
+  for(const row of candidates){
+    const state=campaignRecipientDisposition(row);
+    if(state!=="ELIGIBLE"){suppressed[state]++;continue;}
+    const email=row.emailNorm!.trim().toLowerCase();
+    if(seen.has(email)){suppressed.DUPLICATE++;continue;}
+    seen.add(email);
+    recipientIds.push(row.id);
+  }
+  return {recipientIds,suppressed};
+}
