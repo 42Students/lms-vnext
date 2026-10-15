@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -26,6 +26,9 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
  const [confirmed,setConfirmed]=useState(false);
  const existing=assignments.find(x=>x.id===selected);
  function choose(id:string){
+  if(pending||mutationLock.current)return;
+  if(facultyAssignmentSwitchNeedsConfirmation(selected,id,existing??null,{title,description,dueAt,maxPoints}) &&
+     !window.confirm("Discard unsaved assignment changes and switch drafts?"))return;
   setSelected(id);const row=assignments.find(x=>x.id===id);
   setTitle(row?.title??"");setDescription(row?.description??"");
   setDueAt(authoringLocalDateTime(row?.dueAt??null));
@@ -72,7 +75,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Assignment authoring</h2>
   <label className="grid gap-1 text-sm">Choose draft or create new
-   <select value={selected} onChange={e=>choose(e.target.value)}
+   <select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
     className="min-h-10 rounded border border-border p-2">
     <option value="">New assignment</option>
     {assignments.map(x=><option key={x.id} value={x.id}>{x.title} ({x.status})</option>)}

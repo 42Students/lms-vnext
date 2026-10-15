@@ -46,3 +46,12 @@ export function facultyAssignmentMaySubmit(pending:boolean,locked:boolean){
 export function facultyAssignmentConfirmationOnEdit(confirmed:boolean,oldValue:unknown,nextValue:unknown){
  return Object.is(oldValue,nextValue)?confirmed:false;
 }
+
+export function facultyAssignmentSwitchNeedsConfirmation(
+ selected:string,next:string,existing:{title:string;description:string|null;dueAt:string|null;maxPoints:number}|null,
+ draft:{title:string;description:string;dueAt:string;maxPoints:number},
+){
+ if(selected===next)return false;
+ if(existing)return facultyAssignmentDraftDirty(existing,draft);
+ return Boolean(draft.title.trim()||draft.description.trim()||draft.dueAt||draft.maxPoints!==10);
+}
