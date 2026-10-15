@@ -8,6 +8,7 @@ export const facultyResultsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(10000).default(1),
   sort:z.enum(["DUE_DESC","DUE_ASC","TITLE"]).default("DUE_DESC"),
   pageSize:z.coerce.number().int().refine(value=>value===5||value===10).default(5),
+  due:z.enum(["ALL","OVERDUE","UPCOMING","UNDATED"]).default("ALL"),
 }).strict();
 
 export type FacultyResultsQuery = z.infer<typeof facultyResultsQuerySchema>;
@@ -25,7 +26,8 @@ export type FacultyResultCandidate = {
 };
 
 export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
-  rows: readonly T[], query: Pick<FacultyResultsQuery, "kind" | "status" | "search" | "deliveryId"> & Partial<Pick<FacultyResultsQuery,"sort">>,
+  rows: readonly T[], query: Pick<FacultyResultsQuery, "kind" | "status" | "search" | "deliveryId"> & Partial<Pick<FacultyResultsQuery,"sort"|"due">>,
+ now:Date=new Date(),
 ): T[] {
   const term = query.search.toLowerCase();
   return rows.filter(row =>
@@ -33,6 +35,11 @@ export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
     (query.status === "ALL" || row.status === "PUBLISHED" ||
       (row.kind === "QUIZ" && row.status === "CLOSED")) &&
     (!query.deliveryId || row.deliveryId === query.deliveryId) &&
+    (!query.due || query.due==="ALL" ||
+      (query.due==="UNDATED" && !row.dueAt) ||
+      (query.due==="OVERDUE" && row.dueAt!==null && row.dueAt.getTime()<now.getTime() &&
+       (row.status==="PUBLISHED"||row.status==="CLOSED")) ||
+      (query.due==="UPCOMING" && row.dueAt!==null && row.dueAt.getTime()>=now.getTime())) &&
     (!term || [row.title, row.courseName, row.sectionName,row.courseCode??"",row.sectionCode??""].some(field =>
       field.toLowerCase().includes(term))),
   ).sort((a,b) =>
@@ -64,6 +71,7 @@ export function facultyResultsHref(query: FacultyResultsQuery): string {
   if (query.page > 1) params.set("page", String(query.page));
   if (query.sort!=="DUE_DESC") params.set("sort",query.sort);
   if(query.pageSize!==5) params.set("pageSize",String(query.pageSize));
+  if(query.due!=="ALL")params.set("due",query.due);
   return "/teacher/results" + (params.size ? "?" + params.toString() : "");
 }
 
@@ -76,12 +84,12 @@ export function facultyRecordedResponseRate(eligible: number, responded: number)
 
 /** Never silently accept duplicate or unknown filtering selectors from Next searchParams. */
 export function parseFacultyResultsSearchParams(raw:Record<string,string|string[]|undefined>){
- const allowed=new Set(["kind","status","deliveryId","search","page","sort","pageSize"]);
+ const allowed=new Set(["kind","status","deliveryId","search","page","sort","pageSize","due"]);
  if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
   return facultyResultsQuerySchema.safeParse({kind:"INVALID"});
  return facultyResultsQuerySchema.safeParse({
   kind:raw.kind||undefined,status:raw.status||undefined,
   deliveryId:raw.deliveryId||undefined,search:raw.search??undefined,
-  page:raw.page||undefined,sort:raw.sort||undefined,pageSize:raw.pageSize||undefined,
+  page:raw.page||undefined,sort:raw.sort||undefined,pageSize:raw.pageSize||undefined,due:raw.due||undefined,
  });
 }
