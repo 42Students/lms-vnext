@@ -40,6 +40,7 @@ export async function deliverBatch(args: {
   const records: DeliveryRecord[] = [];
   let startingDailySent:number|undefined;
   let acceptedInBatch=0;
+  const recipientAccepted=new Map<string,{baseline:number;accepted:number}>();
   const seenRecipientPurpose = new Set<string>();
   for (const {request,recipientKey} of keyedRequests) {
     const policy = await args.policyFor(request);
@@ -55,7 +56,17 @@ export async function deliverBatch(args: {
     const dedupeKey = opaqueBatchAttemptKey(request.channel,recipientKey,request.purpose,request.templateKey);
     const duplicate = seenRecipientPurpose.has(dedupeKey);
     seenRecipientPurpose.add(dedupeKey);
-    const capacityDecision = decision.status==="QUEUED" &&
+    const recipientWindowKey=request.channel+":"+recipientKey;
+    const recipientCounter=recipientAccepted.get(recipientWindowKey)??{
+      baseline:policy.recentRecipientSends,accepted:0,
+    };
+    recipientAccepted.set(recipientWindowKey,recipientCounter);
+    const recipientWindowFull= Math.max(
+      policy.recentRecipientSends,recipientCounter.baseline+recipientCounter.accepted,
+    )>=policy.recipientWindowCap;
+    const capacityDecision = decision.status==="QUEUED" && recipientWindowFull
+      ? {status:"SUPPRESSED" as const,reason:"rate-limited" as const} :
+      decision.status==="QUEUED" &&
       Math.max(policy.sentToday,startingDailySent+acceptedInBatch)>=policy.dailyCap
       ? {status:"SUPPRESSED" as const,reason:"daily-cap" as const}:decision;
     const finalDecision = duplicate
@@ -79,7 +90,10 @@ export async function deliverBatch(args: {
         record.status = "FAILED";
       }
       await args.repository.update(record);
-      if(record.status==="SENT")acceptedInBatch++;
+      if(record.status==="SENT"){
+        acceptedInBatch++;
+        recipientCounter.accepted++;
+      }
     }
     records.push({ ...record });
   }
