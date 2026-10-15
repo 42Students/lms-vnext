@@ -222,6 +222,13 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.archivedContentState==="HAS_ARCHIVED"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.status,"ARCHIVED")))):query.archivedContentState==="NO_ARCHIVED"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.status,"ARCHIVED"))))):undefined,
       query.draftContentState==="HAS_DRAFT"?exists(db.select({id:lessonContents.id}).from(lessonContents)
   .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))

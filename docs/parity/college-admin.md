@@ -763,6 +763,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Archived authored-content triage PARTIAL (chat-3, 2026-10-15):** Offering list now filters persisted ARCHIVED content presence in scoped lessons, distinguishing archival from missing content. CSV is predicate-identical; tests authored, no real PG/browser signoff yet.
+
 **Saved draft metadata triage PARTIAL (chat-3, 2026-10-15):** Offering list can isolate presence/absence of DRAFT lesson-content records through college-scoped learning paths, before page and capped CSV. This is not a learner-availability decision; authored tests need PG/browser execution.
 
 **Exact offering progress lookup PARTIAL (chat-3, 2026-10-15):** A strongly typed offering UUID isolates one persisted college-owned delivery context and its recorded progress evidence; CSV and paged results agree, while foreign/unknown IDs return no rows. Unit/PG fixtures authored, execution/browser pending.

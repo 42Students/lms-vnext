@@ -48,6 +48,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
+  archivedContentState:z.enum(["ALL","HAS_ARCHIVED","NO_ARCHIVED"]).default("ALL"),
   draftContentState:z.enum(["ALL","HAS_DRAFT","NO_DRAFT"]).default("ALL"),
   offeringId:z.string().uuid().optional(),
   sectionContentState:z.enum(["ALL","HAS_SECTION","NO_SECTION"]).default("ALL"),
@@ -83,6 +84,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if(kind==="PROGRESS"&&"archivedContentState" in query&&query.archivedContentState!=="ALL")params.set("archivedContentState",query.archivedContentState);
   if(kind==="PROGRESS"&&"draftContentState" in query&&query.draftContentState!=="ALL")params.set("draftContentState",query.draftContentState);
   if(kind==="LESSONS"&&"maxContentCount" in query&&query.maxContentCount!==undefined)params.set("maxContentCount",String(query.maxContentCount));
   if(kind==="LESSONS"&&"minContentCount" in query&&query.minContentCount!==undefined)params.set("minContentCount",String(query.minContentCount));
