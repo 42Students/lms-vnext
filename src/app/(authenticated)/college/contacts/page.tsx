@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
@@ -14,6 +15,8 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <ErrorState title="Invalid contact filters" description="A contact filter is invalid. No contacts were loaded."
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
  const results=await listCollegeContacts(await getCurrentRequestContext(),filter);
+ const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));
+ if(filter.page>pageCount)redirect(collegeContactsHref({...filter,page:pageCount}));
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="College Admin · People" title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
@@ -59,5 +62,12 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      </li>)}
     </ul>}
   </section>
+  <nav aria-label="Contact directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+   <p>Page {filter.page} of {pageCount} · {results.total} matching contacts</p>
+   <div className="flex flex-wrap gap-2">
+    {filter.page>1?<Link href={collegeContactsHref({...filter,page:filter.page-1})} className="rounded-md border px-4 py-2">Previous</Link>:null}
+    {filter.page<pageCount?<Link href={collegeContactsHref({...filter,page:filter.page+1})} className="rounded-md border px-4 py-2">Next</Link>:null}
+   </div>
+  </nav>
  </div>;
 }
