@@ -12,6 +12,9 @@ const departmentId = "11111111-1111-4111-8111-111111111111";
 const input = { departmentId, name: "B.Tech Computer Science", code: "CSE", durationTerms: 8 };
 
 describe("College Admin program write contracts", () => {
+  it("does not mark equivalent year-to-terms edit as dirty",()=>{
+    expect(hasUnsavedCollegeProgramEdit({name:"CSE",code:"CS",durationTerms:8},{name:"CSE",code:"CS",durationTerms:String(4*2)})).toBe(false);
+  });
   it("requires a real department and validates exact program fields", () => {
     expect(createCollegeProgramSchema.parse({ ...input, name: "  Computer Science  " }).name)
       .toBe("Computer Science");

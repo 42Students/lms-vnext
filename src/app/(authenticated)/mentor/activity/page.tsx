@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
 import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -16,6 +16,9 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   const raw = await searchParams;
   const parsed = mentorActivityQuerySchema.safeParse({
     importance: first(raw.importance) ?? undefined,
+    window: first(raw.window) ?? undefined,
+    order:first(raw.order) ?? undefined,
+    projectStatus:first(raw.projectStatus) ?? undefined,
     view: first(raw.view) ?? undefined,
     page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
   });
@@ -26,7 +29,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   const data = await getMentorPortfolioActivity(context, parsed.data);
   return <div className="space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
-      description="Recorded activity in your currently assigned projects, newest first. Raw summaries and metadata are omitted."
+      description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
       actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">Projects</Link>} />
     {!data.enabled ? <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       Projects access is disabled. No activity was loaded.
@@ -46,6 +49,23 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             <option value="ALL">All event groups</option>
             <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option>
             <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Recorded within
+          <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option><option value="PAST_30_DAYS">Past 30 days</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Chronology
+          <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="NEWEST">Newest recorded first</option><option value="OLDEST">Oldest recorded first</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
+          <select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All assigned projects</option><option value="PLANNED">Planned</option>
+            <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
+            <option value="ARCHIVED">Archived</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size

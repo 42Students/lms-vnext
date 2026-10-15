@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
+import { learnerProgramEnrollments, collegeMemberships } from "@/db/schema";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { placementEligibilityEvents } from "@/db/schema/placement-batches";
@@ -25,8 +26,21 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
    .where(and(eq(placementEligibilityEvents.collegeId,collegeId),
     eq(placementEligibilityEvents.actionId,actionId),
     eq(placementEligibilityEvents.eventKind,"DECIDE")));
-  if(events.length===0||events.some(e=>e.scopeType!=="COHORT"||e.scopeId!==batchId))
+  if(events.length===0||events.some(e=>e.scopeType==="SECTION"||
+    (e.scopeType==="COHORT"&&e.scopeId!==batchId)||
+    (e.scopeType!=="COHORT"&&e.scopeType!=="MEMBERSHIP")))
    return NextResponse.json({error:"BATCH_ACTION_NOT_FOUND"},{status:404});
+  const membershipIds=events.filter(e=>e.scopeType==="MEMBERSHIP").map(e=>e.scopeId);
+  if(membershipIds.length){
+   const matching=await getDb().select({id:learnerProgramEnrollments.membershipId})
+    .from(learnerProgramEnrollments)
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
+    .where(and(eq(learnerProgramEnrollments.cohortId,batchId),
+      eq(learnerProgramEnrollments.status,"ACTIVE"),eq(collegeMemberships.collegeId,collegeId),
+      inArray(learnerProgramEnrollments.membershipId,membershipIds)));
+   if(new Set(matching.map(r=>r.id)).size!==new Set(membershipIds).size)
+    return NextResponse.json({error:"BATCH_ACTION_NOT_FOUND"},{status:404});
+  }
   const result=await undoPlacementParticipation(ctx,{collegeId,actionId});
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){

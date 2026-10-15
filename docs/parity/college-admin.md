@@ -133,6 +133,10 @@ Legacy contract:
 **W06 College Admin directory implementation (2026-10-10):** the existing College Admin `/college/departments` page now reuses `DepartmentDirectory`, matching the Super Admin search, CSV export, refresh, ten-row pagination and Programs/Courses/Faculty dependency counts. The `/college` layout enforces an active COLLEGE_ADMIN membership; server list uses only the active membership collegeId and the `department.read` service permission check. Each usage lookup is made only on IDs returned by that authorized query. Failed usage lookups show unknown (—), not 0. Legacy `/college-admin/departments` URL/bookmark is not yet aliased; browser behavior is not yet verified. Authored code does not advance this page to DONE.
 
 ## Page: Programs
+**Legacy duration-years editing PARTIAL (2026-10-15):** The College Admin edit dialog now accepts half-year increments, converts back to persisted terms for the unchanged validated endpoint, and compares normalized values for the unsaved-change prompt. Other admin roles retain terms-first editing. UI/browser acceptance open.
+
+**Legacy duration-years form PARTIAL (2026-10-15):** College Admin create and list now use explicit years with half-year increments, converted exactly to registered integer terms for the existing scoped write service. Validation rejects fractions not representable as terms; no schema changes. Existing edit dialog still terms-first; browser acceptance open.
+
 **Legacy:** `/college-admin/programs`
 
 **Write-side PARTIAL (2026-10-14):** `/college/programs` now uses strict Zod College Admin mutation contracts for create/edit/archive, with current-college ownership, `can()`/`requirePermission()`, isSameOriginRequest on all mutation routes, program-row locks, same-transaction activity audit entries and case-insensitive name/code conflicts. Archive confirmation is required in UI and server body; current/historical cohort, enrollment and curriculum term dependencies all block archive. Edits preserve immutable department and deny lowering duration below authored semester or recorded batch progression. Loading/error/empty states and search/CSV remain. Isolated PostgreSQL success/cross-college/denial tests authored, pending execution here. Legacy duration-years input, blocker detail view and browser acceptance remain open. Dirty program edits now require explicit discard confirmation.
@@ -541,6 +545,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 **Student visibility CSV column PARTIAL (2026-10-15):** Capped Video and Resource metadata export now explicitly labels the persisted Visible-to-students boolean as Yes/No instead of inferring visibility from publication. Metadata never includes private media keys or URLs. Formula-safe export unit assertions authored; runtime/browser verification open.
 
+**Batch-specific content metadata PARTIAL (2026-10-15):** Video/Resource aggregate filters now match an exact persisted cohort code through the already college-checked offering ancestry, preserve batch code in pagination and safe CSV, and reject excessive selector lengths. A disposable-PG own/missing-batch fixture authored; browser acceptance open.
+
 **Owning-offering lifecycle filter PARTIAL (2026-10-15):** RESOURCE metadata now supports a separate offering ACTIVE/ARCHIVED selector, server-enforced inside the own-college ancestry joins before pagination and capped download. Own/missing lifecycle fixture authored; private notes and storage keys still omitted. Browser/DB execution open.
 
 **Resource metadata CSV PARTIAL (2026-10-15):** Own-college RESOURCE authoring metadata can be exported with matching search/status/course/scope filters and 1,000-row cap, spreadsheet-formula neutralization and truncation disclosure. Private text notes, URLs, keys and meeting links are not returned. Tenant and wrong-role PG fixture assertions authored; executed/browser parity remains open.
@@ -587,6 +593,14 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Assignments
+**College-owned academic-period assessment filter PARTIAL (2026-10-15):** Both Assignment and Quiz aggregates now join a registered academic period in the signed-in college and optionally filter by exact period code, before pagination and activity counts. URL/model plus positive/negative disposable-PostgreSQL evidence authored; browser/runtime verification pending.
+
+**375px assessment cards PARTIAL (2026-10-15):** Both College Admin assessment catalogues now render stacked min-width-safe cards for narrow viewports, preserving lesson/offering link, scope, due timestamp, points and recorded submissions/attempts, while the desktop table remains. No global horizontal table overflow is required on mobile; browser/accessibility acceptance pending.
+
+**Missing assessment deadline triage PARTIAL (2026-10-15):** College Admin Assignment and Quiz directories now isolate persisted NULL deadlines from configured due timestamps before the record cap. Strict Zod, pagination and own-college PostgreSQL fixture coverage added; no due date is inferred. Browser acceptance pending.
+
+**Exact course-code aggregate filter PARTIAL (2026-10-15):** College Admin quizzes and assignments accept an exact persisted course code before paginated totals with a URL-preserved filter and strict validation. The database fixture tests positive/negative matches in the existing college-owned assessment ancestry. Browser/runtime acceptance open.
+
 **Legacy:** `/college-admin/assignments`
 
 **Read-first aggregate PARTIAL:** `/college/assignments` lists persisted college-owned assignments, with title/status filters, due dates, lesson/course context, submission-row counts, an offering deep link, loading/error/empty states and no assignment or file-storage mutations. Legacy authoring/edit/delete, report and browser parity remain unchecked.
@@ -600,6 +614,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Quizzes
+**Past/upcoming due windows PARTIAL (2026-10-15):** Both assessment directories apply database timestamps before pagination (strictly before versus at/after now), excluding missing due timestamps. Typed query tests authored; independent PostgreSQL and browser execution pending.
+
+**Persisted quiz result-publication triage PARTIAL (2026-10-15):** College Admin quiz listing now filters by actual `results_published`, shows the state separately from quiz publication, and preserves the result selector in pagination. The Assignment endpoint rejects quiz-only result filters. Isolated PostgreSQL and strict-model fixtures authored; browser acceptance pending.
+
+**Shared versus section-specific assessment scope PARTIAL (2026-10-15):** The quizzes and assignments aggregates now distinguish actual NULL versus non-NULL delivery associations before page totals; URL state and strictly typed filter options are preserved. Disposable PostgreSQL own-college scope fixtures authored; browser acceptance pending.
+
 **Legacy:** `/college-admin/quizzes`
 
 **Read-first aggregate PARTIAL:** `/college/quizzes` lists persisted college-owned quizzes, with title/status filters, due dates, lesson/course context, attempt-row counts, an offering deep link, loading/error/empty states and no quiz-answer disclosure. Legacy authoring/edit/question/results management and browser parity remain unchecked.

@@ -17,7 +17,7 @@ describe("learner Courses responsive layout source contract", () => {
 
   it("keeps course-type filters mobile-responsive and accessible", () => {
     expect(source).toContain('aria-label="Filter by course type"');
-    expect(source).toContain('aria-pressed={typeFilter === value}');
+    expect(source).toContain('aria-pressed={effectiveTypeFilter === value}');
     expect(source).toContain("grid-cols-3");
     expect(source).toContain("sm:inline-flex sm:w-auto");
     expect(source).toContain("setVisibleLimit(PAGE_SIZE)");
