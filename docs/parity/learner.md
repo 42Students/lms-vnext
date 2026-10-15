@@ -1488,3 +1488,5 @@ Learner ledger CLOSED status is claimed from these changes.
 **2026-10-15 chat-5 parity hardening — L29 notification empties (PARTIAL):** when a loaded learner inbox has records but the selected category/unread/search has none, the empty state no longer incorrectly says no notifications have arrived. Full-history paging and responsive proof remain pending.
 
 **2026-10-15 chat-5 parity hardening — L18/L29 college notice empties (PARTIAL):** a genuine absence of membership-visible notices, search mismatch, pinned filter and thirty-day filter now use distinct messages. This does not conflate personal placement alerts with official TPO notices; browser/source-page verification remains open.
+
+**2026-10-15 chat-5 parity hardening — L18 offer status filters (PARTIAL):** the historical ISSUED tab is now labelled to require deadline review rather than implying that every issued (possibly expired) offer is awaiting an actionable response. Expiry and POST permissions remain authoritative; browser acceptance open.
