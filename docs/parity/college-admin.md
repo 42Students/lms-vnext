@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Verification review modal keyboard focus containment PARTIAL (chat-9):** Tab and Shift+Tab now wrap inside the private review dialog instead of moving focus to underlying college pages; keyboard Escape and opener-focus restoration remain in place. Pure focus-boundary cases authored; screen-reader/browser focus QA still required.
+
 **Verified roster-to-masked Contacts navigation PARTIAL (chat-9):** College Admin verification cards now link directly to the existing masked Contacts detail under persisted actor scope, rather than forcing staff to search for the learner twice. Shared Super Admin/TPO consumers do not receive College-specific links. Pure navigation contract authored; browser/role acceptance open.
 
 **In-flight bulk selection lock PARTIAL (chat-9):** Verification row checkboxes now disable while a bulk decision is in progress, in addition to the existing select/clear and confirmation guards, preventing changes to the submitted set during asynchronous processing. Pure selection state checks authored; browser interaction acceptance pending.

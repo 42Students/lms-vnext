@@ -5,6 +5,7 @@ import {verificationSnapshotComparison} from "@/modules/verification/snapshot-co
 import {VERIFICATION_SEND_BACK_REASONS} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
+import {verificationFocusWrap} from "@/modules/verification/review-focus-loop";
 import {verificationDecisionHistory} from "@/modules/verification/review-decision-history";
 import {verificationDecisionConfirmation} from "@/modules/verification/review-confirmation";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
@@ -15,6 +16,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;apiBase?:string;collegeId?:string;
 }){
  const closeButton=useRef<HTMLButtonElement>(null);
+ const drawer=useRef<HTMLElement>(null);
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
@@ -31,6 +33,15 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  },[]);
  useEffect(()=>{
   function onKeyboard(event:KeyboardEvent){
+   if(event.key==="Tab"&&drawer.current){
+    const focusable=[...drawer.current.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+     .filter(element=>element.getClientRects().length>0);
+    if(focusable.length){
+     const direction=verificationFocusWrap(document.activeElement===focusable[0],document.activeElement===focusable[focusable.length-1],event.shiftKey);
+     if(direction){event.preventDefault();focusable[direction==="FIRST"?0:focusable.length-1]?.focus();}
+     else if(!drawer.current.contains(document.activeElement)){event.preventDefault();focusable[0]?.focus();}
+    }
+   }
    if(canDismissVerificationDialog(event.key,saving)){
     event.preventDefault();event.stopPropagation();onClose();
    }
@@ -75,7 +86,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   finally{setSaving(false);}
  }
  return <div className="fixed inset-0 z-50 flex justify-end bg-black/50">
-  <aside role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto bg-background p-4 shadow-xl sm:p-6">
+  <aside ref={drawer} role="dialog" aria-modal="true" aria-label={`Review ${row.learnerName}`} className="h-full w-full max-w-xl overflow-y-auto bg-background p-4 shadow-xl sm:p-6">
    <header className="flex items-start justify-between gap-3 border-b pb-3">
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
