@@ -1518,3 +1518,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Electives CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.
 
 **College Admin Semesters CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.
+
+**College Admin Batches CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.
