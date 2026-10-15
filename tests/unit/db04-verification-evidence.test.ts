@@ -50,8 +50,11 @@ describe("DB04 education and identity private evidence gates", () => {
       hasAadhaarNumber: false, hasPanNumber: true};
     expect(evaluateVerificationEvidence(base).ready).toBe(false);
     expect(evaluateVerificationEvidence({...base, receipts: [receipt("PAN")]}).ready).toBe(true);
+    // Legacy: one ID number with its verified document is sufficient.
     expect(evaluateVerificationEvidence({...base, hasAadhaarNumber: true,
-      receipts: [receipt("PAN")]}).missing).toContain("Upload verified Aadhaar document");
+      receipts: [receipt("PAN")]}).ready).toBe(true);
+    expect(evaluateVerificationEvidence({...base, hasAadhaarNumber: true,
+      hasPanNumber: false}).missing).toContain("Upload verified Aadhaar document");
   });
   it("denies forged college ownership, pending scan, revoked and expired files", () => {
     const changed = (patch: Partial<Receipt>) => [

@@ -58,7 +58,9 @@ describe("DB04 immutable submitted evidence validation", () => {
       {panNumber:"XXXXXX1234",panDocumentId:"replaced-file"},docs,now)).toBe(false);
     expect(validateSubmittedEvidence(member,"IDENTITY",
       {panNumber:"XXXXXX1234",panDocumentId:docs[4].id,
-       aadhaarNumber:"XXXXXXXX1234"},docs,now)).toBe(false);
+       aadhaarNumber:"XXXXXXXX1234"},docs,now)).toBe(true); // legacy: either ID with its document suffices
+    expect(validateSubmittedEvidence(member,"IDENTITY",
+      {aadhaarNumber:"XXXXXXXX1234",aadhaarDocumentId:"replaced-file"},docs,now)).toBe(false);
   });
   it("rejects malformed education and missing scale evidence", () => {
     expect(validateSubmittedEvidence(member,"EDUCATION",{education:[]},docs,now)).toBe(false);
