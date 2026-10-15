@@ -69,7 +69,7 @@ export function ProjectAdminWorkspaceList({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-                Project workspace
+                Project
               </p>
               <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
                 {item.title}
@@ -84,7 +84,7 @@ export function ProjectAdminWorkspaceList({
 
           <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
             {item.summary ??
-              "Project execution workspace with team, sprints, tasks, delivery and review history."}
+              "Project workspace."}
           </p>
 
           <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg bg-muted p-3 text-xs">
