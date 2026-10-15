@@ -10,6 +10,7 @@ export type LearnerPlacementJourneyItem = {
   jobTitle: string;
   companyName: string;
   applicationStatus: string;
+  offerStatus?: string | null;
   channel: string;
   submittedAt: Date;
   withdrawnAt: Date | null;
