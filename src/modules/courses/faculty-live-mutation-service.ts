@@ -14,6 +14,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
 import {listFacultyCourseDeliveries} from "./faculty-course-service";
+import {facultyLiveDeliveryLockKey} from "./faculty-live-lock-model";
 import {facultyLiveMutationParamsSchema,facultyLiveMutationSchema,
   facultyLiveWindow} from "./faculty-live-mutation-model";
 
@@ -39,6 +40,8 @@ export async function commandFacultyLiveClass(
   return db.transaction(async tx=>{
     // Serialize this Faculty actor's session writes, including across Sections.
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"faculty-live:"+context.user.id}))`);
+    // Serialize co-teachers for this Section, not just requests from one actor.
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${facultyLiveDeliveryLockKey(params.deliveryId)}))`);
     // Rebuild the actor under SHARE locks, then assert the exact active Section.
     // A stale cookie cannot preserve write access after role or class revocation.
     let persisted:RequestContext;
