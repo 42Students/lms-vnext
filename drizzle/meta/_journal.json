@@ -659,6 +659,13 @@
       "when": 1792100290686,
       "tag": "0093_recruiter_invite_code",
       "breakpoints": true
+    },
+    {
+      "idx": 94,
+      "version": "7",
+      "when": 1792107918206,
+      "tag": "0094_placement_external_offers",
+      "breakpoints": true
     }
   ]
 }

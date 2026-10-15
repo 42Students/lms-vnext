@@ -68,7 +68,7 @@ const publicOfferFields = {
  * awaits W01's verified object-access/storage contract; paths cannot be
  * injected from the browser.
  *
- * STAGED, NOT ROUTED until W01 journals DB08-C tables and constraints.
+ * Registered by migration 0094 (tables, CHECKs, tenant/state/audit triggers).
  */
 export async function submitOwnExternalOffer(
   context: RequestContext,

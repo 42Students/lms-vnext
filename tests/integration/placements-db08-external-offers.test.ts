@@ -12,12 +12,12 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 /**
- * SOURCE-AUTHORED SPECIFICATIONS, NOT A SUCCESSFUL PG RUN.
- * W01 must first register the DB08-C schema + tenant/history triggers.
- * This suite deliberately refuses any unconfirmed or shared test database.
+ * Integration suite for registered migration 0094 (DB08-C external offers,
+ * saved jobs, tenant/history triggers). Refuses any unconfirmed or shared
+ * test database; run against a disposable Postgres with all migrations applied.
  */
-const url = process.env.TEST_DATABASE_URL;
-if (!url || url !== process.env.DATABASE_URL ||
+if (!process.env.TEST_DATABASE_URL ||
+    process.env.TEST_DATABASE_URL !== process.env.DATABASE_URL ||
     process.env.DB08_ISOLATED_TEST_DATABASE !== "1" ||
     process.env.DB08_C_MIGRATION_APPLIED !== "1") {
   throw new Error(
@@ -25,6 +25,7 @@ if (!url || url !== process.env.DATABASE_URL ||
     "DB08_ISOLATED_TEST_DATABASE=1 and DB08_C_MIGRATION_APPLIED=1",
   );
 }
+const url = process.env.TEST_DATABASE_URL;
 const pool = new Pool({ connectionString: url, max: 2 });
 const created: string[] = [];
 const learner: RequestContext = {
