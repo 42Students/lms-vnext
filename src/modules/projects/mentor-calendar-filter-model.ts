@@ -1,8 +1,9 @@
 import {z} from "zod";
-import {mentorMeetingDisplayStatus,type MentorMeetingCalendarItem} from "./mentor-calendar-view";
+import {mentorMeetingDisplayStatus,safeMentorMeetingJoinUrl,type MentorMeetingCalendarItem} from "./mentor-calendar-view";
 
 /** Filters only rows returned by the current Mentor's persisted scoped roster. */
 export const mentorCalendarFiltersSchema=z.object({
+  join:z.enum(["ALL","HAS_SAFE_LINK","NO_SAFE_LINK"]).default("ALL"),
   projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   attention:z.enum(["ALL","OVERDUE_REQUESTED","SOON_SCHEDULED","MISSED_SCHEDULED"]).default("ALL"),
   status:z.enum(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
@@ -17,7 +18,7 @@ export function filterMentorCalendar(
   meetings:readonly MentorMeetingCalendarItem[],
   query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
     {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
-      attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"]},
+      attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"];join?:MentorCalendarFilters["join"]},
   now:Date=new Date(),
 ){
   const term=query.search.toLocaleLowerCase("en-IN");
@@ -38,6 +39,8 @@ export function filterMentorCalendar(
   };
   return meetings.filter(row=>
     (!query.projectId||row.projectId===query.projectId)&&
+    (!query.join||query.join==="ALL"||
+      (query.join==="HAS_SAFE_LINK" ? safeMentorMeetingJoinUrl(row)!==null : safeMentorMeetingJoinUrl(row)===null))&&
     (!query.attention||query.attention==="ALL"||
       (query.attention==="OVERDUE_REQUESTED"
         ? row.status==="REQUESTED"&&Date.parse(row.startsAt)<now.getTime()
@@ -55,9 +58,10 @@ export function filterMentorCalendar(
 }
 export function mentorCalendarFilterHref(query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
   {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
-   attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"]}){
+   attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"];join?:MentorCalendarFilters["join"]}){
   const params=new URLSearchParams();
   if(query.projectId)params.set("projectId",query.projectId);
+  if(query.join&&query.join!=="ALL")params.set("join",query.join);
   if(query.status!=="ALL")params.set("status",query.status);
   if(query.attention&&query.attention!=="ALL")params.set("attention",query.attention);
   if(query.type&&query.type!=="ALL")params.set("type",query.type);
