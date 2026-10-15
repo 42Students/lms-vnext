@@ -20,7 +20,8 @@ export async function POST(request:Request){
   const context=await getCurrentRequestContext();
   await requireSuperAdminVerificationCollege(context,candidate.collegeId);
   await requireVerificationTables();
-  const {collegeId:_,...reviewBody}=body as Record<string,unknown>;
+  const reviewBody={...z.record(z.string(),z.unknown()).parse(body)};
+  delete reviewBody.collegeId;
   const input=verificationReviewInput.parse(reviewBody);
   const record=await reviewProfileVerification(context,input,
    createProfileVerificationRepository(verifyPrivateDocumentReceipt));
