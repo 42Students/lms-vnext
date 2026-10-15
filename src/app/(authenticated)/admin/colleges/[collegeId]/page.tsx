@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
 import { tenantSetupLinksAvailable } from "@/modules/colleges/admin-tenant-lifecycle-model";
+import { superAdminVerificationHref } from "@/modules/verification/admin-links";
 export default async function TenantDetail({params}:{params:Promise<{collegeId:string}>}) {
  const {collegeId}=await params;
  let item:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;
@@ -27,6 +28,9 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Readiness</Link>
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/branding`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Branding</Link>
+   {superAdminVerificationHref(item.id,item.status,item.organizationStatus) ? <Link href={superAdminVerificationHref(item.id,item.status,item.organizationStatus)!} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Profile Verification</Link> : null}
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/signin`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Sign-in Methods</Link>
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Web address</Link>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
    <Link href="/admin/tenants" className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Tenant directory</Link>
   </div>
