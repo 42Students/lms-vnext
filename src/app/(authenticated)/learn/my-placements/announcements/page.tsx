@@ -17,7 +17,7 @@ import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-
 import {learnerNoticeFilterHref,learnerNoticePageHref} from "@/modules/placements/learner-notices-navigation-model";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
-import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref } from "@/modules/placements/learner-notice-deep-link-model";
+import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing } from "@/modules/placements/learner-notice-deep-link-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[] }>;
@@ -105,6 +105,15 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Last 30 days</Link>
       </nav>
       <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>
+      {ready && collegeNoticesRead.available && learnerNoticeMissing(filters.focus,focused.found) ? (
+        <div role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          That notice is not among your currently visible college notices. It may have expired or become unavailable to your membership.
+          <Link href="/learn/my-placements/announcements"
+            className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+            Browse current notices
+          </Link>
+        </div>
+      ) : null}
       {!ready ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           College announcements are not available until the announcements database is enabled.
