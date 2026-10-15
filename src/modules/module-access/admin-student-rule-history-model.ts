@@ -16,10 +16,10 @@ export function safeStudentRuleHistory(rows:readonly {
  metadata:Record<string,unknown>
 }[]){
  return rows.map(row=>{
-  const module=["projects","electives"].includes(String(row.metadata.module))
+  const moduleName=["projects","electives"].includes(String(row.metadata.module))
    ?String(row.metadata.module):"Optional module";
   const before=parseState(row.metadata.before),after=parseState(row.metadata.after);
   return {id:row.id,occurredAt:row.occurredAt,actorName:row.actorName||"Unknown actor",
-   module,change:stateLabel(before)+" → "+stateLabel(after)};
+   module:moduleName,change:stateLabel(before)+" → "+stateLabel(after)};
  });
 }
