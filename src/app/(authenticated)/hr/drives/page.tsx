@@ -9,6 +9,7 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives, sortRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
+import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; q?: string | string[];
@@ -54,8 +55,17 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       description="Hiring drives for the selected college and your exact employer relationship. Published and closed drives only."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
         className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
-        Request a Drive · preview
+        Request a Drive · proposal
       </Link>} />
+    <nav aria-label="Recruiter proposal history">
+      <Link href={hrSentProposalsHref(selectedCollege)}
+       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
+       Sent discussion proposals
+      </Link>
+      <span className="self-center text-xs text-muted-foreground">
+       Proposals are private messages, not approved or published drives.
+      </span>
+    </nav>
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
       <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
         className={selectedCollege === grant.collegeId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{grant.collegeName}</Link>)}</nav> : null}
