@@ -582,6 +582,8 @@ export const placementEligibilityPolicyInputSchema = z
       .nullable()
       .optional()
       .default(null),
+    minPctThroughout: percentageSchema
+      .nullable().optional().default(null),
     maxGapYears: z
       .number()
       .int()
