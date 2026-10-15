@@ -30,6 +30,7 @@ export function collegeProgressCsvHref(query: CollegeProgressQuery) {
  if(query.videoContentState!=="ALL")p.set("videoContentState",query.videoContentState);
  if(query.publishedContentState!=="ALL")p.set("publishedContentState",query.publishedContentState);
  if(query.hiddenContentState!=="ALL")p.set("hiddenContentState",query.hiddenContentState);
+ if(query.sharedContentState!=="ALL")p.set("sharedContentState",query.sharedContentState);
  return "/api/academics/college-progress-export"+(p.size?"?"+p.toString():"");
 }
 export function renderCollegeProgressCsv(rows:readonly {

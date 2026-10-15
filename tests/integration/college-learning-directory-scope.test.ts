@@ -198,6 +198,9 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect((await listCollegeCourseProgress(own,{q:name,hiddenContentState:"NO_HIDDEN"})).items.map(r=>r.offeringId)).toContain(ids.offering);
     expect((await listCollegeCourseProgress(own,{q:name,hiddenContentState:"HAS_HIDDEN"})).items).toEqual([]);
     expect((await exportCollegeCourseProgress(own,{q:name,hiddenContentState:"HAS_HIDDEN"})).rows).toEqual([]);
+    expect((await listCollegeCourseProgress(own,{q:name,sharedContentState:"HAS_SHARED"})).items.map(r=>r.offeringId)).toContain(ids.offering);
+    expect((await listCollegeCourseProgress(own,{q:name,sharedContentState:"NO_SHARED"})).items).toEqual([]);
+    expect((await exportCollegeCourseProgress(own,{q:name,sharedContentState:"NO_SHARED"})).rows).toEqual([]);
     const [publishedPath,noPublishedPath]=await Promise.all([
       listCollegeCourseProgress(own,{q:name,publishedPathPresence:"HAS_PUBLISHED_PATH"}),
       listCollegeCourseProgress(own,{q:name,publishedPathPresence:"NO_PUBLISHED_PATH"}),
