@@ -2,7 +2,8 @@ import {z} from "zod";
 export const hrConversationQuerySchema=z.object({
  collegeId:z.string().uuid().optional(),
  q:z.string().trim().max(120).default(""),
- page:z.coerce.number().int().min(1).max(10000).default(1),
+ page:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
+  .pipe(z.number().int().min(1).max(10000)).default(1),
  unreadOnly:z.enum(["true","false"]).default("false"),
  sort:z.enum(["LATEST","OLDEST"]).default("LATEST"),
  scope:z.enum(["ALL","GENERAL","DRIVE"]).default("ALL"),
