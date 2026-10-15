@@ -78,6 +78,7 @@ export default async function SuperAdminFeaturesPage({
       sort: one(params.sort) || undefined,
       module: one(params.module) || undefined,
       storedState: one(params.storedState) || undefined,
+      locks: one(params.locks) || undefined,
     });
 
   if (!parsed.success) {
@@ -160,6 +161,11 @@ export default async function SuperAdminFeaturesPage({
           <label className="grid gap-2 text-sm font-semibold text-body">Stored college value
             <select name="storedState" defaultValue={result.stateFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">College rule lock
+            <select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
             </select>
           </label>
           <button
@@ -318,6 +324,7 @@ export default async function SuperAdminFeaturesPage({
                   sort: result.sort,
                   module: result.moduleFilter ?? undefined,
                   storedState: result.stateFilter,
+                  locks: result.lockFilter,
                   page: result.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -332,6 +339,7 @@ export default async function SuperAdminFeaturesPage({
                   sort: result.sort,
                   module: result.moduleFilter ?? undefined,
                   storedState: result.stateFilter,
+                  locks: result.lockFilter,
                   page: result.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"

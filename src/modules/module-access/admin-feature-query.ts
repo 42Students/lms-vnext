@@ -5,5 +5,6 @@ export const adminFeatureQuerySchema=z.strictObject({
  sort:z.enum(["NAME","CODE"]).default("NAME"),
  module:z.enum(["projects","placements","electives"]).optional(),
  storedState:z.enum(["ALL","ON","OFF"]).default("ALL"),
+ locks:z.enum(["ALL","LOCKED"]).default("ALL"),
 });
 export type AdminFeatureQuery=z.infer<typeof adminFeatureQuerySchema>;
