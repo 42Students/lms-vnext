@@ -1,9 +1,10 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
 import {VERIFICATION_SEND_BACK_REASONS} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
+import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
@@ -11,6 +12,7 @@ type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapsho
 export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId}:{
  row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;apiBase?:string;collegeId?:string;
 }){
+ const closeButton=useRef<HTMLButtonElement>(null);
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
@@ -19,6 +21,20 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  const [reason,setReason]=useState<string>(VERIFICATION_SEND_BACK_REASONS[0]);
  const [additional,setAdditional]=useState("");
  const url=`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`;
+ useEffect(()=>{
+  const previouslyFocused=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  closeButton.current?.focus();
+  return ()=>previouslyFocused?.focus();
+ },[]);
+ useEffect(()=>{
+  function onKeyboard(event:KeyboardEvent){
+   if(canDismissVerificationDialog(event.key,saving)){
+    event.preventDefault();event.stopPropagation();onClose();
+   }
+  }
+  window.addEventListener("keydown",onKeyboard);
+  return ()=>window.removeEventListener("keydown",onKeyboard);
+ },[onClose,saving]);
  useEffect(()=>{
   let active=true;
   fetch(url,{cache:"no-store"}).then(async response=>{
@@ -55,7 +71,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
    <header className="flex items-start justify-between gap-3 border-b pb-3">
     <div className="min-w-0"><h2 className="break-words text-lg font-semibold">{row.learnerName}</h2>
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
-    <button type="button" onClick={onClose} className="rounded-md border px-3 py-2">Close</button>
+    <button type="button" ref={closeButton} disabled={saving} onClick={onClose} className="rounded-md border px-3 py-2 disabled:opacity-50">Close</button>
    </header>
    {loading?<p role="status" className="py-4">Loading submitted details…</p>:null}
    {error?<div role="alert" className="my-3 space-y-2 rounded-md border p-3"><p>{error}</p>
