@@ -959,3 +959,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 ancestor-lock transactional recheck — PARTIAL:** SET writes now additionally read the persisted Projects/Electives ancestor scopes under PostgreSQL shared row locks *inside* the membership write transaction and reject a stored ancestor lock before updating. This narrows stale trace decisions and prevents concurrent edits of existing ancestor rows while the transaction commits. Insert-phantom and academic-enrollment races remain open for independent PG certification; tests authored/unexecuted.
+
+
+**2026-10-15 chat-6 student override/lock activity history — PARTIAL:** Added role-fenced, exact learner/college-scoped history linked from the editor. A verified active learner lookup precedes a 40-event scoped Activity Log query; pure projection exposes actor display name, time, module, old/new stored values only, never arbitrary metadata or contact information. Older history links to the audited filter surface. Unit/PG tests authored, not executed; production browser/retention/history certification open.
