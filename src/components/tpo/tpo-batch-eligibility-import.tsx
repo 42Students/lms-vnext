@@ -2,6 +2,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
+import {serializeTpoEligibilityPreviewCsv} from "@/modules/placements/tpo-eligibility-preview-csv-model";
 import {parseTpoEligibilityCsv} from "@/modules/placements/tpo-eligibility-import-model";
 type ImportRow=ReturnType<typeof parseTpoEligibilityCsv>[number];
 type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
@@ -23,6 +24,13 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    if(!response.ok)throw Error(value.error??"Import preview failed.");
    setPreview(value);
   }catch(e){setError(e instanceof Error?e.message:"Preview unavailable.");}finally{setBusy(false);}
+ }
+ async function copyPreview(){
+  if(!preview||busy)return;
+  try{
+   await navigator.clipboard.writeText(serializeTpoEligibilityPreviewCsv(preview.rows,preview.preview));
+   setError("");setNotice("Current import preview copied as CSV. Nothing was submitted.");
+  }catch{setError("Could not copy this preview. Review the result list instead.");}
  }
  async function commit(){
   if(!preview||preview.ready===0||busy)return;
@@ -56,6 +64,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <ul className="max-h-64 space-y-1 overflow-y-auto text-xs">{preview.preview.map((row,i)=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
     Row {i+1}: {row.status==="matched"?"Will update":"Skipped"} {preview.rows[i]?.studentCode}{row.reason?" — "+row.reason:""}
    </li>)}</ul>
+   <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
    <button type="button" disabled={busy||preview.ready===0} onClick={()=>void commit()}
     className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
   </div>:null}
