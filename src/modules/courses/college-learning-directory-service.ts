@@ -105,6 +105,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.minContentCount!==undefined?sql`(SELECT count(*) FROM ${lessonContents} WHERE ${lessonContents.lessonId}=${courseLessons.id}) >= ${query.minContentCount}`:undefined,
       query.pathId?eq(courseLearningPaths.id,query.pathId):undefined,
       query.offeringId?eq(courseOfferings.id,query.offeringId):undefined,
       query.lessonId?eq(courseLessons.id,query.lessonId):undefined,
