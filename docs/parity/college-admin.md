@@ -1514,3 +1514,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin semester and batch mobile table accessibility PARTIAL (2026-10-15 chat-3):** Result table region has a bounded scroll container, keyboard focus, semantic region label and a small-screen horizontal-scroll hint. Desktop layout unchanged; source regression test authored, actual touch and screen-reader checks pending.
 
 **College Admin class and elective mobile table accessibility PARTIAL (2026-10-15 chat-3):** Result table region has a bounded scroll container, keyboard focus, semantic region label and a small-screen horizontal-scroll hint. Desktop layout unchanged; source regression test authored, actual touch and screen-reader checks pending.
+
+**College Admin Electives CSV transparency PARTIAL (2026-10-15 chat-3):** Visible mobile-wrapping export link and capped-row/truncation notice clarify that the downloadable CSV uses the current persisted, permission-scoped filters. Source/unit regression guard authored; executed browser/download parity pending.

@@ -12,7 +12,7 @@ import {
   readCollegeStructureParams,
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeElectives } from "@/modules/academics/college-structure-directory-service";
-import { electiveCsvHref } from "@/modules/academics/college-elective-export-model";
+import { electiveCsvHref , ELECTIVES_EXPORT_CAP } from "@/modules/academics/college-elective-export-model";
 
 export default async function CollegeElectivesPage({
   searchParams,
@@ -32,10 +32,13 @@ export default async function CollegeElectivesPage({
     listCollegeElectiveSlotOptions(context),
   ]);
   return <div className="space-y-4">
+    <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={electiveCsvHref(data.query)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered electives CSV
     </Link>
+    <p className="text-xs text-muted-foreground">Exports up to {ELECTIVES_EXPORT_CAP} matching elective slots; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
+    </div>
     <CollegeSlotManager options={options} />
     <CollegeStructureDirectory data={data} electiveOptions={options} />
   </div>;
