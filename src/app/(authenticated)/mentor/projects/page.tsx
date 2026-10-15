@@ -180,6 +180,9 @@ export default async function MentorProjectsPage({
       : query.sort === "TEAM_SIZE_DESC"
       ? compareMentorProjectsByTeamSize(a.project,b.project,
           teamSizes.get(a.project.id) ?? 0, teamSizes.get(b.project.id) ?? 0,"LARGEST")
+      : query.sort === "TEAM_SIZE_ASC"
+      ? compareMentorProjectsByTeamSize(a.project,b.project,
+          teamSizes.get(a.project.id) ?? 0, teamSizes.get(b.project.id) ?? 0,"SMALLEST")
       : compareMentorProjects(a.project,b.project,query.sort));
 
   const total = filtered.length;
