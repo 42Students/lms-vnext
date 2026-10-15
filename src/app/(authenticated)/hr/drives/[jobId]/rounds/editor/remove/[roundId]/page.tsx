@@ -1,0 +1,41 @@
+import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
+import {z} from "zod";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {hasActiveRecruiter} from "@/modules/identity/context";
+import {PageHeader} from "@/components/ui/page-header";
+import {PlacementsServiceError} from "@/modules/placements/errors";
+import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
+export default async function HrRoundRemovalConfirm({params}:{
+ params:Promise<{jobId:string;roundId:string}>;
+}){
+ const context=await getCurrentRequestContext();
+ if(!hasActiveRecruiter(context))redirect("/dashboard");
+ const {jobId,roundId}=await params;
+ if(!z.string().uuid().safeParse(jobId).success||!z.string().uuid().safeParse(roundId).success)notFound();
+ let rounds:Awaited<ReturnType<typeof listHrRoundEditorRows>>;
+ try{rounds=await listHrRoundEditorRows(context,jobId);}
+ catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
+ const round=rounds.find(row=>row.id===roundId);
+ if(!round||!round.editable)notFound();
+ return <main className="space-y-5">
+  <PageHeader eyebrow="Recruiter · Hiring rounds" title="Confirm unused round removal"
+   description="Only an unused, pending recruiter-created round can be cancelled. The record remains in audit history."/>
+  <div className="rounded-xl border border-border bg-surface p-5">
+   <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
+   <p className="mt-2 text-sm text-body">{round.kind} · {round.status} · No recorded candidate results.</p>
+  </div>
+  <div className="flex flex-wrap gap-3">
+   <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Keep round</Link>
+   <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"}>
+    <input type="hidden" name="action" value="REMOVE"/>
+    <input type="hidden" name="roundId" value={round.id}/>
+    <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
+    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">
+     Confirm remove
+    </button>
+   </form>
+  </div>
+ </main>;
+}
