@@ -770,6 +770,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 
 ## Page: Faculty
+**Role-directory URL ambiguity PARTIAL (2026-10-15, chat-9):** Faculty and Students directories now reject repeated/unknown query parameters before protected reads, rather than silently choosing the first of multiple values. Pure unit regressions authored; executable service/browser acceptance outstanding.
 **Faculty history teaching-role drilldown PARTIAL (2026-10-15):** The Faculty detail history can filter registered PRIMARY, CO_TEACHER or TA assignments in conjunction with active/ended lifecycle before its 100-row cap, while separately retaining all-time totals. Strict no-forged-college model and own-college PG fixture tests authored; runtime/browser acceptance pending.
 **Primary-department assignment coverage PARTIAL (2026-10-15):** Faculty roster now distinguishes registered same-college primary department assignments from absent/invalid links before pagination; archived departments remain distinguishable from missing links, without exposing other college names. Model and isolated PostgreSQL partition/role tests authored, not executed; legacy UI acceptance remains open.
 **Academic-title profile completeness PARTIAL (2026-10-15):** The Faculty roster filters memberships with and without a nonblank academic title in persisted faculty profiles, before scoped pagination; no title is inferred from teaching duties or employment type. Pure model and gated PG partition/wrong-role fixtures authored; runtime/browser acceptance remains outstanding.
