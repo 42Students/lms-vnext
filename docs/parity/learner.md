@@ -1494,3 +1494,5 @@ Learner ledger CLOSED status is claimed from these changes.
 **2026-10-15 chat-5 parity hardening — L18 offer failures (PARTIAL):** learner offer-response errors now map HTTP conflicts, changed/expired records and permission failures to non-leaking recovery guidance. Arbitrary server `error` payload text is not echoed into the UI; same-origin server POST and transaction checks remain authoritative.
 
 **2026-10-15 chat-5 parity hardening — L11 offer metric (PARTIAL):** dashboard actionable issued-offer count now excludes exact-expiry, older and malformed deadlines, aligned with protected response cutoff and the offer preview. Null documented deadlines remain explicitly recorded as undated; browser boundary/DB acceptance outstanding.
+
+**2026-10-15 chat-5 parity hardening — L29 inbox large volume (PARTIAL):** notifications landing page now discloses that its 60-record personal source is only a bounded preview, distinguishes visible filtered rows from loaded totals, and links directly to the independently authorized keyset history. Full-domain paging and browser/PG verification remain open.
