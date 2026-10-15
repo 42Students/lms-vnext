@@ -2091,3 +2091,29 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / Drive Day evidence-based follow-up label — PARTIAL:** Live cards now prioritize purely observed unrecorded, pending and explicitly absent attendance, distinguish empty rosters, and avoid fabricated contact/delivery states. Manual operator review remains required.
 
 **Chat-2 / batch Students current-page name search — PARTIAL:** Strict URL-bound search now filters only the already-authorized 25-person roster slice, with honest no-match and preserved pagination context. Cohort-wide SQL search and mobile/browser acceptance remain open.
+
+**Chat-2 batch Students effective decision filter — PARTIAL:** A strict URL selector filters the current authorized roster page by eligible/ineligible/undecided/ambiguous; ambiguous enrollment is never misclassified as an ordinary decision. Full SQL-grid/browser parity open.
+
+**Chat-2 batch Students inheritance source filter — PARTIAL:** Explicit LEARNER/CLASS/BATCH/NONE selection now composes over the authorized page and supports source audit; missing source never implies eligibility. Cohort-wide filtering and acceptance open.
+
+**Chat-2 batch Students registration evidence filter — PARTIAL:** Current-page recorded/unrecorded selection is permitted only when registration storage is available; unavailable never means unrecorded or consent. Page-scope/browser acceptance pending.
+
+**Chat-2 batch Students query parsing hardening:** All decision/source/registration URL parameters are now validated and applied rather than silently defaulting to ALL. Adds exact multi-filter regression tests; browser acceptance open.
+
+**Chat-2 current-page student triage ordering — PARTIAL:** Name A–Z/Z–A and needs-review-first ordering now prioritize only verified ambiguous/undecided status with stable ties; no change to eligibility or database ordering.
+
+**Chat-2 loaded page student evidence summary — PARTIAL:** Explicit slice-only counters separate eligible, ineligible, undecided, ambiguous and direct overrides without suggesting cohort-wide totals. Back-end and browser checks remain open.
+
+**Chat-2 shared batch Student selection — PARTIAL:** Extracted the pure multi-filter and sort pipeline so the filtered CSV endpoint can reuse the exact page semantics and same authorized roster. This is a consistency guard, not full-cohort SQL filtering.
+
+**Chat-2 filtered batch student CSV — PARTIAL:** TPO-only GET reuses persisted same-college, active learner batch roster; applies identical search/decision/source/registration/order filters to the current 25-row page. Exports only UUID/name/status/source/choice without eligibility notes; formula escaping, no-store headers and no inferred consent. PG/CI/browser verification remains open.
+
+**Chat-2 batch decision-history event-kind filter — PARTIAL:** TPO can review DECIDE versus UNDO within the last 100 scoped cohort events using strict URL values, with honest sample-sized counts and empty states. Full historical pagination still absent.
+
+**Chat-2 batch history after-state filter — PARTIAL:** A second bounded URL filter isolates transitions ending eligible, ineligible or undecided, composed after event-kind selection and without mutating the recorded event sample.
+
+**Chat-2 / decision-history filtered CSV — PARTIAL:** New TPO-scoped read-only GET reuses the authorized latest 100 cohort history events and validated kind/after-state filters, returns formula-safe metadata-only rows, no-store headers and explicit 503 if storage is missing; cannot certify full historical export or independent PG/browser acceptance.
+
+**Chat-2 / safe batch history undo affordance — PARTIAL:** History uses the existing source-backed newest, unreversed cohort action hint before applying view filters, suppressing stale old Undo controls; server DB08 transactional CAS remains authoritative for every attempted reversal. Real PG race tests and browser acceptance still open.
+
+**Chat-2 batch Students pager compatibility:** Optional filter parameters retain the pre-existing q-only URL builder contract, while explicit newer filters remain serializable. Regression test added to prevent TypeScript mismatch on pre-existing callers. CI execution pending.
