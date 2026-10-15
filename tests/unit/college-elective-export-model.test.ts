@@ -53,4 +53,9 @@ describe("college electives CSV",()=>{
     expect(electiveCsvHref({q:"",status:"ACTIVE",periodCode:"P&26"})).toContain("periodCode=P%2626");
   });
 
+ it("keeps exact elective slot name in scoped CSV",()=>{
+   const q=electiveCsvSchema.parse({slotName:"A&26"});
+   expect(electiveCsvHref(q)).toContain("slotName=A%2626");
+   expect(electiveCsvSchema.safeParse({slotName:"x".repeat(151)}).success).toBe(false);
+ });
 });
