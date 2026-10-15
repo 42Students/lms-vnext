@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { listColleges } from "@/modules/colleges/service";
+import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 
 export default async function CollegeOverviewPage() {
   const context = await getCurrentRequestContext();
@@ -39,8 +40,8 @@ export default async function CollegeOverviewPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="College Admin"
-        title={college.name}
-        description="Your college profile is loaded through the tenant-scoped college service."
+        title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}
+        description={college.name}
         actions={
           <>
             <StatusBadge tone="success">Active</StatusBadge>

@@ -1,3 +1,5 @@
+**2026-10-16 project resource file backend (PARTIAL, UI pending):** `project_resource_files` and `/api/projects/{projectId}/resource-files` let mentors and admins upload (50 MiB, document types plus Markdown, 200 files per project), edit title/description, delete, and let every project member download through short-lived signed URLs; archived and completed projects reject changes. See `docs/architecture/file-and-video-apis.md`. The existing `/resources` link/note API is unchanged. No UI page changed; the Project file resource uploads matrix row stays MISSING.
+
 # Mentor — Detailed Page Parity Spec
 
 Legacy primary navigation: Projects, Meetings, Notifications.

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, notInArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, placementCandidateAcademicEvidence } from "@/db/schema";
 import {
@@ -10,38 +10,10 @@ import {
   normaliseCgpaRule, normaliseMarkScale,
   type RawAcademicMark,
 } from "./academic-marks";
-import { educationLevel } from "./evidence";
-import { VerificationStateError, type SafeSnapshot } from "./domain";
+import type { SafeSnapshot } from "./domain";
+import { parseAcademicSnapshot, type AcademicLevel, type RawEntry } from "./academic-snapshot";
 
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
-type AcademicLevel = "10TH" | "12TH" | "DIPLOMA" | "UG" | "PG";
-type RawEntry = { level: AcademicLevel; grade: string; scale: string; max: string; endYear: string };
-function parseAcademicSnapshot(snapshot: SafeSnapshot): RawEntry[] {
-  const data = snapshot.education;
-  if (!Array.isArray(data) || data.length === 0) throw new VerificationStateError("INVALID_SNAPSHOT");
-  const seen = new Set<AcademicLevel>();
-  const parsed: RawEntry[] = [];
-  for (const obj of data) {
-    if (!obj || typeof obj !== "object" || Array.isArray(obj)) throw new VerificationStateError("INVALID_SNAPSHOT");
-    const raw = obj as Record<string, unknown>;
-    if (typeof raw.educationType !== "string" || typeof raw.grade !== "string" ||
-        typeof raw.gradingType !== "string" || typeof raw.max !== "string") {
-      throw new VerificationStateError("INVALID_SNAPSHOT");
-    }
-    const level = educationLevel(raw.educationType);
-    if (!level || seen.has(level) || raw.grade.trim() === "") {
-      throw new VerificationStateError("INVALID_SNAPSHOT");
-    }
-    seen.add(level);
-    parsed.push({
-      level, grade:raw.grade.trim(), scale:raw.gradingType,
-      max:raw.max, endYear:typeof raw.endYear==="string" ? raw.endYear : "",
-    });
-  }
-  if (!seen.has("10TH") || (!seen.has("12TH") && !seen.has("DIPLOMA")) ||
-      (!seen.has("UG") && !seen.has("PG"))) throw new VerificationStateError("INVALID_SNAPSHOT");
-  return parsed;
-}
 function cgpaHundredths(entry: RawEntry | undefined): number | null {
   if (!entry || normaliseMarkScale(entry.scale)!=="CGPA") return null;
   if (entry.max && Number(entry.max)!==10) return null;
@@ -73,6 +45,12 @@ export async function publishVerifiedEducation(
     .from(profileVerificationSettings)
     .where(eq(profileVerificationSettings.collegeId,args.collegeId)).for("update");
   const rule = normaliseCgpaRule(setting?.rule);
+  // Prune levels removed since the last verified snapshot before replacing
+  // remaining rows. Keep deletion and evidence publication in one transaction.
+  await tx.delete(profileVerificationAcademicMarks).where(and(
+    eq(profileVerificationAcademicMarks.learnerMembershipId,args.membershipId),
+    notInArray(profileVerificationAcademicMarks.level,entries.map(entry=>entry.level)),
+  ));
   const computed = new Map<AcademicLevel, number | null>();
   for (const entry of entries) {
     const mark:RawAcademicMark={grade:entry.grade,scale:entry.scale,max:entry.max};

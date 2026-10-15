@@ -13,6 +13,7 @@ import { collegePeopleHasFilters, collegePeopleDirectoryHref, parseCollegePeople
 import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import type { PersonMembershipView } from "@/modules/people/service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
+import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -51,7 +52,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
 
   if (!filter) {
     return <div className="space-y-5">
-      <PageHeader eyebrow="College Admin" title="People" />
+      <PageHeader eyebrow="College Admin" title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory} />
       <ErrorState title="Invalid directory filters"
         description="Check the search, role, status or page. No people were loaded."
         action={<Link href="/college/people" className="font-semibold text-primary-text">Clear filters</Link>} />
@@ -67,7 +68,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     redirect(collegePeopleDirectoryHref({ ...filter, page: pagination.page }));
   }
   return <div className="space-y-6">
-    <PageHeader eyebrow="College Admin" title="People"
+    <PageHeader eyebrow="College Admin" title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory}
       description="Manage college memberships, roles and lifecycle. For the read-only legacy contact tabs, open Contacts."
       actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/contacts" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Export filtered CSV</Link><PersonOnboardDialog collegeId={membership.collegeId} /></div>} />
     <section className="rounded-xl border border-border bg-surface p-4" aria-label="People filters">

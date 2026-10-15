@@ -292,7 +292,7 @@ export default async function MentorProjectsPage({
             updatedAt:
               row.project.updatedAt,
             memberCount: teamSizes.get(row.project.id) ?? 0,
-            progressPercent: mentorTaskProgress(workCounts.get(row.project.id))?.percent,
+            progressPercent: mentorTaskProgress(workCounts.get(row.project.id))?.percent ?? undefined,
             progressDetail: mentorTaskProgress(workCounts.get(row.project.id))?.label,
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             participation:

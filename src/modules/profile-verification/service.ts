@@ -3,6 +3,7 @@ import { requirePermission, AuthorizationError } from "@/modules/permissions/pol
 import {
   planVerificationReview,
   planVerificationSubmission,
+  planWithdrawPendingVerification,
   VerificationStateError,
   type Actor,
   type SafeSnapshot,
@@ -48,6 +49,7 @@ export interface VerificationTransactionRepository {
   readCurrentSectionForSubmission(
     membershipId: string,
     section: VerificationSection,
+    priorSnapshot?: SafeSnapshot | null,
   ): Promise<{ snapshot: SafeSnapshot; documentsReady: boolean }>;
   /** Must inspect the receipt status and purpose of submitted document IDs. */
   submittedEvidenceIsValid(
@@ -98,7 +100,9 @@ export async function submitOwnVerification(
   }
   return repository.withLockedTransition(membershipId, section, async (existing) => {
     // Source the snapshot from the current server-held profile rather than body JSON.
-    const prepared = await repository.readCurrentSectionForSubmission(membershipId, section);
+    const prepared = await repository.readCurrentSectionForSubmission(
+      membershipId, section, existing?.submittedSnapshot ?? existing?.verifiedSnapshot,
+    );
     return planVerificationSubmission({
       learnerMembershipId: membershipId, section, existing, expectedVersion,
       snapshot: prepared.snapshot, documentsReady: prepared.documentsReady,
@@ -160,6 +164,33 @@ export async function reviewProfileVerification(
     return planVerificationReview({
       existing, expectedVersion: input.expectedVersion, action: input.action,
       actor: reviewer, reason: input.reason, documentsReviewedAndAccepted, now,
+    });
+  });
+}
+
+/**
+ * Not routed until the profile_verification_events action check is migrated.
+ * Database row lock + optimistic version guard preserve last approved data.
+ */
+export async function withdrawOwnPendingVerification(
+  context: RequestContext,
+  section: VerificationSection,
+  expectedVersion: number,
+  repository: VerificationTransactionRepository,
+  now: Date = new Date(),
+): Promise<VerificationRecord> {
+  const membershipId = context.membership?.id;
+  if (!membershipId) throw new AuthorizationError("profile-verification.review");
+  ownLearner(context,membershipId);
+  const target = await repository.resolveLearner(membershipId);
+  assertLearnerTarget(target);
+  if (target.userId !== context.user.id || target.collegeId !== context.membership?.collegeId) {
+    throw new VerificationStateError("NOT_ALLOWED");
+  }
+  return repository.withLockedTransition(membershipId,section,async existing => {
+    if (!existing) throw new VerificationStateError("INVALID_TRANSITION");
+    return planWithdrawPendingVerification({
+      existing,expectedVersion,actor:actor(context),now,
     });
   });
 }
