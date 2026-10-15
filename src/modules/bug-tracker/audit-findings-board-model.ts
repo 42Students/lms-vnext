@@ -24,3 +24,10 @@ export function trackerAuditFindingsInput(x:z.infer<typeof auditFindingsQuerySch
 export function auditFindingPriority(severity:"CRITICAL"|"HIGH"|"MEDIUM"|"LOW") {
  return ({CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3} as const)[severity];
 }
+
+/** Guard against silently accepting a first value from repeated or unknown filters. */
+export function parseAuditFindingsSearchParams(raw:Record<string,string|string[]|undefined>){
+ if(Object.values(raw).some(value=>Array.isArray(value)))return null;
+ const parsed=auditFindingsQuerySchema.safeParse(raw);
+ return parsed.success?parsed.data:null;
+}
