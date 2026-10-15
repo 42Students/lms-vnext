@@ -22,6 +22,7 @@ import { learnerAssessmentCourseCounts } from "@/modules/courses/learner-assessm
 import { learnerAssessmentMatchesState, LEARNER_ASSESSMENT_STATE_OPTIONS, type LearnerAssessmentStateFilter } from "@/modules/courses/learner-assessment-state-filter-model";
 import { learnerAssessmentActionCounts } from "@/modules/courses/learner-assessment-action-counts-model";
 import { learnerAssessmentActiveCourse } from "@/modules/courses/learner-assessment-active-course-model";
+import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
 type CourseChoice = {
@@ -510,7 +511,7 @@ export function LearnerAssessmentOverview({
                     }
                   >
                     {selectedAssignment.gradePublished
-                      ? `Graded · ${selectedAssignment.pointsAwarded ?? 0}/${selectedAssignment.maxPoints}`
+                      ? learnerAssignmentPublishedGradeLabel(selectedAssignment.pointsAwarded,selectedAssignment.maxPoints)
                       : "Submitted · awaiting grade"}
                   </StatusBadge>
                 </div>
