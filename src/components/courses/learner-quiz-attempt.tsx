@@ -9,6 +9,7 @@ import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
 import { learnerQuizSubmitDeadlineOpen } from "@/modules/courses/learner-quiz-submit-deadline-model";
+import { learnerQuizSubmissionReceiptVisible } from "@/modules/courses/learner-quiz-submission-receipt-model";
 import { learnerQuizReviewRows } from "@/modules/courses/learner-quiz-review-model";
 import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
 import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
@@ -97,6 +98,7 @@ export function LearnerQuizAttempt() {
   const [review, setReview] = useState(reviewRequested);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [confirmedSubmissionQuizId,setConfirmedSubmissionQuizId]=useState<string|null>(null);
   const submittingRef = useRef(false);
   const cancelPendingReturn = useRef<(() => void) | null>(null);
   useEffect(() => () => { cancelPendingReturn.current?.(); }, []);
@@ -288,7 +290,9 @@ export function LearnerQuizAttempt() {
         },
       );
       if (!response.ok) throw new Error(await messageFrom(response, "Quiz submission failed."));
-      if (typeof window !== "undefined") window.sessionStorage.removeItem(storageKey);
+      setConfirmedSubmissionQuizId(quiz.quiz.id);
+      // Session storage may be blocked; a confirmed server write is never a failed submission.
+      try { window.sessionStorage.removeItem(storageKey); } catch { /* local cleanup is best effort */ }
       await load();
       setReview(true);
       setStep(0);
@@ -352,6 +356,9 @@ export function LearnerQuizAttempt() {
           </div>
           <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">← Back</button>
         </div>
+        {learnerQuizSubmissionReceiptVisible(confirmedSubmissionQuizId,quiz.quiz.id) ? (
+          <p role="status" className="mt-4 rounded-lg border border-success p-3 text-sm font-semibold text-body">Your quiz submission was received. Results may remain hidden until published.</p>
+        ) : null}
         {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
         <div className="mt-6 space-y-4">
           {questions.map((question, index) => {
