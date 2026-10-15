@@ -4,6 +4,7 @@ import {
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   parseCollegeRoleDirectorySearchParams,
+  canonicalCollegeRoleDirectoryHref,
   collegeDirectorySearchHint,
 } from "@/modules/people/college-role-directory-model";
 
@@ -110,5 +111,14 @@ describe("College role directory URL trust boundary", () => {
   });
   it("accepts a single bounded query without rewriting its search text", () => {
     expect(parseCollegeRoleDirectorySearchParams({q:" An ",page:"2"})).toMatchObject({q:"An",page:2});
+  });
+});
+
+describe("College role directory stale-page recovery", () => {
+  it("keeps all validated filters while rewinding beyond the last page", () => {
+    const filters = collegeRoleDirectoryQuerySchema.parse({q:"Alice",status:"ACTIVE",page:8});
+    expect(canonicalCollegeRoleDirectoryHref("LEARNER",filters,3)).toBe("/college/students?q=Alice&status=ACTIVE&page=3");
+    expect(canonicalCollegeRoleDirectoryHref("FACULTY",filters,8)).toBeNull();
+    expect(canonicalCollegeRoleDirectoryHref("LEARNER",filters,0)).toBe("/college/students?q=Alice&status=ACTIVE");
   });
 });

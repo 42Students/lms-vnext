@@ -13,6 +13,7 @@ import {
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
   parseCollegeRoleDirectorySearchParams,
+  canonicalCollegeRoleDirectoryHref,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
@@ -56,6 +57,8 @@ export async function CollegeRoleDirectoryWorkspace({
   }
 
   const result = await listCollegeRoleDirectory(context, kind, filter);
+  const canonical = canonicalCollegeRoleDirectoryHref(kind, result.filter, result.totalPages);
+  if (canonical) redirect(canonical);
   return (
     <div className="space-y-6">
       <PageHeader
