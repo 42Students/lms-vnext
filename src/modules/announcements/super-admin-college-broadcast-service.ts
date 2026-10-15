@@ -1,0 +1,46 @@
+import "server-only";
+import {and,eq,inArray} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {colleges} from "@/db/schema/colleges";
+import {organizations} from "@/db/schema/organizations";
+import {db10Announcements} from "@/db/schema/db10-announcements";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import {AnnouncementError} from "./errors";
+import {superAdminCollegeBroadcastSchema,requestedBroadcastCollegeIds} from "./super-admin-college-broadcast-model";
+/** Creates one persisted DB10 recipient-scoped notice per college; no external delivery. */
+export async function publishSuperAdminCollegeBroadcast(context:RequestContext,raw:unknown){
+ if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
+ requirePermission(context,"admin-scope.select");
+ const input=superAdminCollegeBroadcastSchema.parse(raw);
+ const requested=requestedBroadcastCollegeIds(input.collegeIds);
+ const db=getDb();
+ const restrictions=[
+  eq(colleges.status,"ACTIVE"),
+  eq(organizations.status,"ACTIVE"),
+  ...(context.adminScope?.collegeId?[eq(colleges.id,context.adminScope.collegeId)]:[]),
+  ...(context.adminScope?.organizationId?[eq(colleges.organizationId,context.adminScope.organizationId)]:[]),
+  ...(input.audienceMode==="SELECTED_COLLEGES"?[inArray(colleges.id,requested)]:[]),
+ ];
+ const targets=await db.select({id:colleges.id,organizationId:colleges.organizationId})
+  .from(colleges).innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+  .where(and(...restrictions)).orderBy(colleges.id).limit(501);
+ if(targets.length===0||targets.length>500)throw new AnnouncementError("TARGET_NOT_FOUND");
+ if(input.audienceMode==="SELECTED_COLLEGES"&&targets.length!==requested.length)throw new AnnouncementError("TARGET_NOT_FOUND");
+ for(const target of targets){
+  requirePermission(context,"college.manage",{organizationId:target.organizationId,collegeId:target.id});
+ }
+ const created=await db.transaction(async tx=>{
+  const rows=targets.map(target=>({
+   organizationId:target.organizationId,collegeId:target.id,
+   receiverType:"COLLEGE",receiverId:target.id,
+   title:input.title,message:input.message,
+   senderUserId:context.user.id,senderType:"SUPER_ADMIN",
+   scheduledAt:input.scheduledAt?new Date(input.scheduledAt):null,
+   expiresAt:input.expiresAt?new Date(input.expiresAt):null,
+   isPinned:input.isPinned,
+  }));
+  return tx.insert(db10Announcements).values(rows).returning({id:db10Announcements.id,collegeId:db10Announcements.collegeId});
+ });
+ return {count:created.length,noticeIds:created.map(x=>x.id)};
+}
