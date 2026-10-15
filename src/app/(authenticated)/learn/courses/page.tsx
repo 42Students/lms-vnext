@@ -4,6 +4,7 @@ import {
   type LearnerCourseListRow,
 } from "@/components/courses/learner-course-list";
 import { PageHeader } from "@/components/ui/page-header";
+import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import { learnerCourseListSignals } from "@/modules/courses/learner-course-overview-model";
 import {
   getLearnerCourseWorkspace,
@@ -20,7 +21,7 @@ export default async function LearnerCoursesPage() {
 
   const rows: LearnerCourseListRow[] = await Promise.all(
     courses.map(async (course) => {
-      const [workspace, instructors] = await Promise.all([
+      const [workspace, instructors, display] = await Promise.all([
         getLearnerCourseWorkspace(
           context,
           course.deliveryId,
@@ -29,11 +30,13 @@ export default async function LearnerCoursesPage() {
           context,
           course.deliveryId,
         ),
+        loadCourseDisplayContentIfReady(course.courseId),
       ]);
 
       const signals=learnerCourseListSignals(workspace.lessons,workspace.summary,
         new Date(workspace.snapshotNowMs));
       return {
+        thumbnailUrl: display?.thumbnailUrl ?? null,
         lastActivity:signals.lastActivity,
         nextDue:signals.nextDue,
         course: {
