@@ -12,4 +12,5 @@ describe("Super Admin template creation",()=>{
   expect(()=>initialSuperAdminTemplateDraft({...base,slug:"bad domain"})).toThrow();
   expect(()=>initialSuperAdminTemplateDraft({...base,task:""})).toThrow();
  });
+ it("persists user-selected initial task priority and rejects unknown priority",()=>{expect(initialSuperAdminTemplateDraft({...base,priority:"HIGH"}).blueprint.tasks[0].priority).toBe("HIGH");expect(()=>initialSuperAdminTemplateDraft({...base,priority:"UNSAFE"})).toThrow();});
 });

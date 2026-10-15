@@ -7,7 +7,7 @@ import {projectMutation} from "@/components/projects/project-api";
 
 export function SuperAdminTemplateCreateForm(){
  const router=useRouter();
- const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:""});
+ const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM"});
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const edit=(key:keyof typeof values,value:string)=>setValues(old=>({...old,[key]:value}));
@@ -47,6 +47,11 @@ export function SuperAdminTemplateCreateForm(){
   <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Goal (optional)
    <textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="min-h-24 min-w-0 rounded-md border border-border bg-background p-3 text-foreground"/>
+  </label>
+  <label className="grid gap-1 text-sm font-semibold text-body">First task priority
+   <select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+    <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
+   </select>
   </label>
   {error?<p role="alert" className="break-words text-sm text-error-text">{error}</p>:null}
   <div className="flex flex-wrap justify-end gap-3">
