@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Native class picker PARTIAL (chat-9):** Class UUID text input replaced by current-college ACTIVE section choices with batch/class names, bounded list, truncation and bookmarked-selection preservation. Existing same-college ACTIVE section-enrollment predicate remains authoritative; foreign class detail is never selected. Tests authored but not executed on disposable PostgreSQL/browser.
+
 **Native branch picker PARTIAL (chat-9):** Replaced raw department UUID entry with a bounded, name-labeled selector of current-college nonarchived departments; unknown bookmarked UUIDs remain visible but never disclose another tenant name. Existing correlated learner enrollment predicate is unchanged. PostgreSQL actor-denial fixture and unit coverage authored; actual runtime/browser acceptance outstanding.
 
 **Native batch picker PARTIAL (chat-9):** The verification queue now fetches up to 200 persisted batches through a fresh, active, same-college College Admin role check, with truncation disclosure and deep-linked selected UUID retained. Existing queue/export batch predicate remains canonical. Authored unit and gated PostgreSQL role fixtures; browser/real DB acceptance remains open.
