@@ -4,7 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
-import {selectTpoBulkPage,toggleTpoBulkRow,isTpoBulkPageSelected,TPO_BULK_UI_LIMIT,
+import {selectTpoBulkPage,toggleTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
 type Action="ELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED";
@@ -54,7 +54,8 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
   finally{setBusy(false);}
  }
  async function confirm(){
-  if(busy||!plan||!preview||preview.counts.ready===0)return;
+  if(busy||!plan||!preview||preview.counts.ready===0||
+     !isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id)))return;
   setBusy(true);setError("");
   try{
    const response=await post("confirm",{
@@ -110,7 +111,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
     className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Checking…":"Preview "+safeSelected.length+" selected"}
   </button>
-  {preview&&plan?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
+  {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
     busy={busy||outcomes.length>0} onConfirm={()=>void confirm()}/>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;

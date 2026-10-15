@@ -14,3 +14,9 @@ export function isTpoBulkPageSelected(visible:readonly string[],selected:readonl
  const page=selectTpoBulkPage(visible);
  return page.length>0&&page.every(id=>selected.includes(id));
 }
+
+/** Old previews cannot be confirmed after the displayed roster changes. */
+export function isTpoBulkPreviewCurrent(ids:readonly string[],visible:readonly string[]){
+ const current=new Set(visible);
+ return ids.length>0&&ids.every(id=>current.has(id));
+}
