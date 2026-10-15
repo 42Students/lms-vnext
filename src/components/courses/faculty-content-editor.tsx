@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyContentPatch, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
+import { facultyContentPatch, facultyContentDraftChanged, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
 
 type Item = {
   id: string;
@@ -33,6 +33,12 @@ export function FacultyContentEditor({ item }: { item: Item }) {
   const [ends, setEnds] = useState(authoringLocalDateTime(item.endsAt));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const dirty = facultyContentDraftChanged({
+    title:item.title, notes:item.notes??"", url:item.externalUrl??"",
+    duration:String(item.durationSeconds??300),
+    starts:authoringLocalDateTime(item.startsAt), ends:authoringLocalDateTime(item.endsAt),
+  }, {title,notes,url,duration,starts,ends});
 
   function openEditor() {
     // Each RSC refresh can change the persisted item while this Client
@@ -91,8 +97,8 @@ export function FacultyContentEditor({ item }: { item: Item }) {
         onOpenChange={setOpen}
         title={"Edit " + item.contentType.replaceAll("_", " ")}
         description="Changes to this item stay scoped to your assigned teaching Section."
-        footer={<Button type="submit" form={"faculty-content-edit-" + item.id} disabled={saving}>
-          {saving ? "Saving…" : "Save content"}
+        footer={<Button type="submit" form={"faculty-content-edit-" + item.id} disabled={saving || !dirty}>
+          {saving ? "Saving…" : dirty ? "Save content" : "No changes"}
         </Button>}
       >
         <form id={"faculty-content-edit-" + item.id} onSubmit={save} className="space-y-4">
