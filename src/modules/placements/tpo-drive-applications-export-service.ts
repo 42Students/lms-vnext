@@ -1,17 +1,20 @@
 import "server-only";
-import {and,desc,eq,ilike,or,sql} from "drizzle-orm";
+import {and,asc,desc,eq,gte,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobRoleOptions,placementJobs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
-import {requireTpoJobCollege} from "./tpo-job-write-base";
+import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
+import {tpoApplicantSubmittedSince} from "./tpo-applicant-pipeline-model";
 import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
  TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown){
  const collegeId=await requireTpoJobCollege(context);
- const {jobId,stage,search}=tpoDriveApplicationsExportQuerySchema.parse(raw);
+ const {jobId,stage,search,channel,eligibility,sort,submittedWithin}=tpoDriveApplicationsExportQuerySchema.parse(raw);
+ const since=tpoApplicantSubmittedSince(submittedWithin,new Date());
  const db=getDb();
+ await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
  const [job]=await db.select({id:placementJobs.id,title:placementJobs.title})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
    eq(placementJobs.collegeId,collegeId))).limit(1);
@@ -30,6 +33,9 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   .leftJoin(placementApplicationScreenings,
    eq(placementApplicationScreenings.applicationId,placementApplications.id))
   .where(and(eq(placementApplications.jobId,job.id),
+   since?gte(placementApplications.submittedAt,since):undefined,
+   channel!=="ALL"?eq(placementApplications.channel,channel):undefined,
+   eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,eligibility):undefined,
    stage==="ALL"?undefined:stage==="SUBMITTED"?eq(placementApplications.status,"SUBMITTED"):
     sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
      when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
@@ -37,9 +43,11 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
    search?or(ilike(users.displayName,tpoApplicantExportSearchPattern(search)),
     ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(search))):undefined,
   ))
-  .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
+  .orderBy(sort==="OLDEST"?asc(placementApplications.submittedAt):
+    sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
+    placementApplications.id)
   .limit(TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
- return {job,stage,search,...projectTpoDriveApplicationsExport(records.map(r=>({
+ return {job,stage,search,channel,eligibility,sort,submittedWithin,...projectTpoDriveApplicationsExport(records.map(r=>({
   ...r,submittedAt:r.submittedAt.toISOString(),
  })),job.title)};
 }

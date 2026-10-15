@@ -79,10 +79,23 @@ it("lists a real draft and fences off foreign colleges and wrong roles", async (
     expect(new Set([...first.rows,...second.rows].map(row=>row.id)).size).toBe(26);
     expect((await getTpoDriveLifecycleList(tpo,{...filters,page:1000})).page).toBe(2);
     expect((await getTpoDriveLifecycleList(tpo,{...filters,search:"%"})).rows).toHaveLength(0);
+    await pool.query("UPDATE placement_jobs SET status=\u0027PUBLISHED\u0027, published_at=now(), application_deadline=now()+interval \u00272 days\u0027 WHERE id=$1",[id]);
+    expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,employmentType:"FULL_TIME",search:ids.search})).rows.some(row=>row.id===id)).toBe(true);
+    expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,employmentType:"INTERNSHIP",search:ids.search})).rows.some(row=>row.id===id)).toBe(false);
+    const onsite=await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,workMode:"ONSITE",search:ids.search});
+    expect(onsite.rows.some(row=>row.id===id)).toBe(true);
+    expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,workMode:"REMOTE",search:ids.search})).rows.some(row=>row.id===id)).toBe(false);
+    const deadlineOrder=await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,sort:"DEADLINE_ASC",search:ids.search});
+    expect(deadlineOrder.rows[0]?.id).toBe(id);
+    const due=await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,deadline:"DUE_SOON",search:ids.search});
+    expect(due.rows.some(row=>row.id===id)).toBe(true);
+    expect((await getTpoDriveLifecycleList(tpo,{seasonId:SEED_IDS.placementSeasonA,deadline:"OVERDUE",search:ids.search})).rows.some(row=>row.id===id)).toBe(false);
     const foreign: RequestContext = { ...tpo, membership: { ...tpo.membership!,
       id: SEED_IDS.facultyCollegeBMembership, collegeId: SEED_IDS.collegeB } };
     await expect(getTpoDriveLifecycleList(foreign, { seasonId: SEED_IDS.placementSeasonA }))
       .rejects.toMatchObject({ code: "PLACEMENT_SEASON_NOT_FOUND" });
+    const forged:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.learnerCollegeAMembership}};
+    await expect(getTpoDriveLifecycleList(forged,{})).rejects.toBeInstanceOf(AuthorizationError);
     const wrong: RequestContext = { ...tpo, membership: { ...tpo.membership!, roles: ["LEARNER"] } };
     await expect(getTpoDriveLifecycleList(wrong, {})).rejects.toBeInstanceOf(AuthorizationError);
   });

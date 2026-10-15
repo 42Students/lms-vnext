@@ -14,6 +14,14 @@ describe("TPO drive lifecycle listing", () => {
    expect(tpoDriveLifecyclePage(26,999)).toMatchObject({page:2,totalPages:2,offset:25});
    expect(tpoDriveLifecyclePage(0,5)).toMatchObject({page:1,totalPages:1,offset:0});
    expect(tpoDriveLifecycleQuerySchema.safeParse({page:0}).success).toBe(false);
+   expect(tpoDriveLifecycleQuerySchema.parse({deadline:"DUE_SOON"}).deadline).toBe("DUE_SOON");
+   expect(tpoDriveLifecycleQuerySchema.safeParse({deadline:"SELECTED"}).success).toBe(false);
+   expect(tpoDriveLifecycleQuerySchema.parse({workMode:"REMOTE"}).workMode).toBe("REMOTE");
+   expect(tpoDriveLifecycleQuerySchema.safeParse({workMode:"EXTERNAL"}).success).toBe(false);
+   expect(tpoDriveLifecycleQuerySchema.parse({employmentType:"CONTRACT"}).employmentType).toBe("CONTRACT");
+   expect(tpoDriveLifecycleQuerySchema.safeParse({employmentType:"PART_TIME"}).success).toBe(false);
+   expect(tpoDriveLifecycleQuerySchema.parse({sort:"DEADLINE_ASC"}).sort).toBe("DEADLINE_ASC");
+   expect(tpoDriveLifecycleQuerySchema.safeParse({sort:"RANDOM"}).success).toBe(false);
    expect(tpoDriveLifecycleQuerySchema.safeParse({page:1.5}).success).toBe(false);
    expect(tpoDriveLifecycleQuerySchema.parse({search:" Acme ",page:"2"})).toMatchObject({search:"Acme",page:2});
   });

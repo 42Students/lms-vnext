@@ -59,6 +59,14 @@ it("reads persisted pending applicants and denies foreign college / wrong role",
 if(!pool)throw Error("PG required");
 const jobId=await fixture();
 const result=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING"});
+const recentlySubmitted=await getTpoApplicantPipeline(tpo,{jobId,submittedWithin:"LAST_7_DAYS"});
+expect(recentlySubmitted.rows.some(row=>row.id===ids.app)).toBe(true);
+const ownEvidence=await getTpoApplicantPipeline(tpo,{jobId,eligibility:"ELIGIBLE"});
+expect(ownEvidence.rows.some(r=>r.id===ids.app)).toBe(true);
+expect((await getTpoApplicantPipeline(tpo,{jobId,eligibility:"ELIGIBLE_WITH_MISSING_EVIDENCE"})).rows.some(r=>r.id===ids.app)).toBe(false);
+const ownChannel=await getTpoApplicantPipeline(tpo,{jobId,channel:"INTERNAL"});
+expect(ownChannel.rows.some(r=>r.id===ids.app)).toBe(true);
+expect((await getTpoApplicantPipeline(tpo,{jobId,channel:"EXTERNAL"})).rows.some(r=>r.id===ids.app)).toBe(false);
 expect(result.rows.some(r=>r.id===ids.app)).toBe(true);
 for(let i=0;i<25;i++){
  const user=(await pool.query<{id:string}>("INSERT INTO users(identity_uid,display_name) VALUES($1,$2) RETURNING id",
@@ -69,6 +77,9 @@ for(let i=0;i<25;i++){
  const app=(await pool.query<{id:string}>("INSERT INTO placement_applications(job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) RETURNING id",
   [jobId,ids.role,member,user])).rows[0]!.id;extraApps.push(app);
 }
+const alphabetical=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",sort:"LEARNER_NAME",page:1});
+expect(alphabetical.rows.length).toBeGreaterThan(0);
+expect(alphabetical.rows.map(row=>row.student??"").slice(0,2)).toEqual([...alphabetical.rows.map(row=>row.student??"").slice(0,2)].sort());
 const first=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:1});
 const second=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:2});
 expect(first.rows).toHaveLength(25);expect(second.rows).toHaveLength(1);
@@ -82,6 +93,8 @@ expect(withdrawn.rows.map(row=>row.id)).toEqual([extraApps[0]]);
 expect(withdrawn.counts.pending).toBe(25);
 const foreign:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
 await expect(getTpoApplicantPipeline(foreign,{jobId})).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+const forged:RequestContext={...tpo,membership:{...tpo.membership!,id:SEED_IDS.learnerCollegeAMembership}};
+await expect(getTpoApplicantPipeline(forged,{jobId})).rejects.toBeInstanceOf(AuthorizationError);
 const wrong:RequestContext={...tpo,membership:{...tpo.membership!,roles:["LEARNER"]}};
 await expect(getTpoApplicantPipeline(wrong,{jobId})).rejects.toBeInstanceOf(AuthorizationError);
 });

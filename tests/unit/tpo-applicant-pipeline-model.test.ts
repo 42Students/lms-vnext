@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applicantStage, projectTpoApplicantPipeline, tpoApplicantPipelineParams,tpoApplicantPipelinePage } from "@/modules/placements/tpo-applicant-pipeline-model";
+import { applicantStage, projectTpoApplicantPipeline, tpoApplicantPipelineParams,tpoApplicantPipelinePage,tpoApplicantSubmittedSince } from "@/modules/placements/tpo-applicant-pipeline-model";
 const base={role:"Main",student:"A Learner",submittedAt:"2026-10-14T00:00:00Z"};
 describe("TPO applicant stage projection",()=>{
   it("pages beyond 500 and clamps pages after filters reduce results",()=>{
@@ -20,6 +20,21 @@ describe("TPO applicant stage projection",()=>{
     });
     expect(projectTpoApplicantPipeline(facts,"SHORTLISTED","").rows).toHaveLength(1);
     expect(projectTpoApplicantPipeline(facts,"ALL","no-match").rows).toHaveLength(0);
+  });
+  it("validates application channel independently of stage",()=>{
+    const jobId="550e8400-e29b-41d4-a716-446655440000";
+    expect(tpoApplicantPipelineParams.parse({jobId,channel:"EXTERNAL"}).channel).toBe("EXTERNAL");
+    expect(tpoApplicantPipelineParams.safeParse({jobId,channel:"MESSAGE"}).success).toBe(false);
+    expect(tpoApplicantPipelineParams.parse({jobId,eligibility:"ELIGIBLE_WITH_MISSING_EVIDENCE"}).eligibility).toBe("ELIGIBLE_WITH_MISSING_EVIDENCE");
+    expect(tpoApplicantPipelineParams.safeParse({jobId,eligibility:"NOT_ELIGIBLE"}).success).toBe(false);
+    expect(tpoApplicantPipelineParams.parse({jobId,sort:"OLDEST"}).sort).toBe("OLDEST");
+    expect(tpoApplicantPipelineParams.safeParse({jobId,sort:"CTC"}).success).toBe(false);
+    expect(tpoApplicantPipelineParams.parse({jobId,submittedWithin:"LAST_7_DAYS"}).submittedWithin).toBe("LAST_7_DAYS");
+    expect(tpoApplicantPipelineParams.safeParse({jobId,submittedWithin:"NEXT_WEEK"}).success).toBe(false);
+    const now=new Date("2026-10-15T04:00:00Z");
+    expect(tpoApplicantSubmittedSince("LAST_7_DAYS",now)?.toISOString()).toBe("2026-10-08T04:00:00.000Z");
+    expect(tpoApplicantSubmittedSince("LAST_30_DAYS",now)?.toISOString()).toBe("2026-09-15T04:00:00.000Z");
+    expect(tpoApplicantSubmittedSince("ALL",now)).toBeNull();
   });
   it("rejects unsupported stage filters",()=>{
     expect(tpoApplicantPipelineParams.safeParse({jobId:"550e8400-e29b-41d4-a716-446655440000",stage:"SELECTED"}).success).toBe(false);
