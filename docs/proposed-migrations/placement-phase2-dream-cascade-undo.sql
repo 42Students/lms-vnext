@@ -25,3 +25,15 @@ ALTER TABLE placement_application_status_history
   );
 -- DB migration owner must also define rollback, backfill classification,
 -- concurrency acceptance and a durable indexed cascade action identifier.
+
+-- Enable indexed lookup for explicit cascade correlation after registration.
+-- Existing history reasons carry the accepted and affected row IDs; the
+-- proposed structured id is reserved for typed follow-up migration mapping.
+ALTER TABLE placement_offer_status_history
+  ADD COLUMN IF NOT EXISTS cascade_id uuid;
+ALTER TABLE placement_application_status_history
+  ADD COLUMN IF NOT EXISTS cascade_id uuid;
+CREATE INDEX IF NOT EXISTS placement_offer_history_cascade_id_idx
+  ON placement_offer_status_history(cascade_id) WHERE cascade_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS placement_application_history_cascade_id_idx
+  ON placement_application_status_history(cascade_id) WHERE cascade_id IS NOT NULL;
