@@ -261,4 +261,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessonsCsvHref(q)).toContain("hiddenPublished=HAS_HIDDEN");
   });
 
+  it("retains actual video-resource triage on lesson pages and export",()=>{
+    expect(collegeLessonQuerySchema.safeParse({videoEvidence:"WATCHED"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({videoEvidence:"NO_VIDEO"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("videoEvidence=NO_VIDEO");
+    expect(lessonsCsvHref(q)).toContain("videoEvidence=NO_VIDEO");
+  });
+
 });
