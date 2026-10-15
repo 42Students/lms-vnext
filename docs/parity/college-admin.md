@@ -496,6 +496,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Exact elective program code PARTIAL (chat-3, 2026-10-15):** Exact, bounded persisted Electives matching now applies before pagination, carries through URL navigation and the scoped capped CSV export. Unit and isolated PostgreSQL own/foreign/absent fixtures authored, pending execution and browser/oracle parity.
+
 **Exact elective slot name PARTIAL (chat-3, 2026-10-15):** Exact, bounded persisted Electives matching now applies before pagination, carries through URL navigation and the scoped capped CSV export. Unit and isolated PostgreSQL own/foreign/absent fixtures authored, pending execution and browser/oracle parity.
 
 **Elective maximum credit filter PARTIAL (2026-10-15):** Inclusive upper credit-bound filtering now applies to persisted elective slots in the college directory and capped CSV; combined contradictory credit bounds fail validation, URL pagination retains the bound. Unit test added; scoped PG/browser execution remains outstanding.

@@ -205,4 +205,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeElectiveQuerySchema.safeParse({slotName:"x".repeat(151)}).success).toBe(false);
     expect(readCollegeStructureParams({slotName:""})).toEqual({});
   });
+  it("Exact elective program code is bounded and persists in elective page links",()=>{
+    const query=collegeElectiveQuerySchema.parse({programCode:"A&26"});
+    expect(collegeStructureHref("ELECTIVES",query)).toContain("programCode=A%2626");
+    expect(collegeElectiveQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({programCode:""})).toEqual({});
+  });
 });
