@@ -830,3 +830,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 New Template 8 (PARTIAL):** Initial template resource creation accepts one title+HTTP(S) URL pair, enforces both-or-neither and the canonical resource blueprint schema, and never invents a file upload. Unit tests cover valid and unsafe schemes; authored, not executed. Full multi-resource management, file uploads and PG/browser parity remain open.
+
+
+**2026-10-15 chat-6 hierarchy module filter (PARTIAL):** Selected-college stored descendant rules now have a strict module filter applied to both total count and page query, with URL-retained pagination and reset. Only resolver-supported Projects, Placements and Electives are selectable; effective decisions and authorization remain unchanged. Unit tests authored but not run; editing, PostgreSQL role/scope and browser acceptance open.

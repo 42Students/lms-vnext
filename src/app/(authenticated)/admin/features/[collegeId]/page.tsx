@@ -21,6 +21,7 @@ import {placementFeatureEffects} from "@/modules/platform-settings/placement-fea
 
 type SearchParams = {
   page?: string | string[];
+  module?: string | string[];
 };
 
 function one(
@@ -52,6 +53,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
     collegeId,
     {
       page: one(query.page) || undefined,
+      module: one(query.module) || undefined,
     },
   );
 
@@ -81,9 +83,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
     const base =
       `/admin/features/${encodeURIComponent(college.id)}`;
 
-    return page === 1
-      ? base
-      : `${base}?page=${page}`;
+    const parts = new URLSearchParams();
+    if (result.moduleFilter) parts.set("module", result.moduleFilter);
+    if (page > 1) parts.set("page", String(page));
+    return base + (parts.size ? "?" + parts.toString() : "");
   };
 
   return (
@@ -162,6 +165,17 @@ export default async function SuperAdminCollegeModuleAccessPage({
           </div>
         ))}
       </section>
+
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4" aria-label="Filter stored module overrides">
+        <label className="grid gap-1 text-sm font-semibold text-body">Stored descendant module
+          <select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">All modules</option>
+            {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
+          </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter overrides</button>
+        <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Reset</Link>
+      </form>
 
       <section className="space-y-3">
         <div>
