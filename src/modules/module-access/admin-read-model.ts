@@ -82,6 +82,7 @@ export function describeModuleDecision(
 export function adminFeaturesHref(filters: {
   q?: string;
   page?: number;
+  sort?: "NAME"|"CODE";
 }): string {
   const params = new URLSearchParams();
 
@@ -92,6 +93,8 @@ export function adminFeaturesHref(filters: {
   if (filters.page && filters.page > 1) {
     params.set("page", String(filters.page));
   }
+
+  if (filters.sort === "CODE") params.set("sort", "CODE");
 
   const query = params.toString();
 

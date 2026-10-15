@@ -75,6 +75,7 @@ export default async function SuperAdminFeaturesPage({
     adminFeatureQuerySchema.safeParse({
       q: one(params.q) || undefined,
       page: one(params.page) || undefined,
+      sort: one(params.sort) || undefined,
     });
 
   if (!parsed.success) {
@@ -143,6 +144,11 @@ export default async function SuperAdminFeaturesPage({
               placeholder="College name or code"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
             />
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
+            <select name="sort" defaultValue={result.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="NAME">College name</option><option value="CODE">College code</option>
+            </select>
           </label>
           <button
             type="submit"
@@ -297,6 +303,7 @@ export default async function SuperAdminFeaturesPage({
               <Link
                 href={adminFeaturesHref({
                   q: result.q,
+                  sort: result.sort,
                   page: result.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -308,6 +315,7 @@ export default async function SuperAdminFeaturesPage({
               <Link
                 href={adminFeaturesHref({
                   q: result.q,
+                  sort: result.sort,
                   page: result.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"

@@ -980,3 +980,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 - Authorized learner membership-rule audit history now supports a stable older-history cursor, Projects/Electives filtering, actor-name search, India-day start/end bounds, and a formula-neutralized CSV export of the **currently selected 40-record page**. Filters are applied in the scoped Activity Log service before pagination; CSV does not expose arbitrary metadata, actor email, or contact data.
 - Read-only Platform Settings rejects unknown or repeated URL query keys rather than silently treating them as valid filters.
 - **Acceptance remains OPEN:** branch pushes did not produce matching GitHub Actions checks; authored Vitest/tests and disposable PostgreSQL checks have **not executed** in this session. Browser/mobile interactions, learner rule mutation/concurrency, history paging, actor-name and time filtering, CSV formula/privacy checks, tenant/role negatives and full legacy oracle comparison must run before any row is declared DONE. No DATABASE tracker closure or production approval is claimed.
+
+
+**2026-10-15 chat-6 feature matrix sorting (PARTIAL):** Server-side name/code sort with UUID tie-breaking, validated URL state and filter-preserving pagination. Unit contracts authored; PostgreSQL/browser evidence not yet executed. Existing module matrix is not parity-closed.

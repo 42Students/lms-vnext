@@ -38,20 +38,8 @@ import type {
 } from "./service";
 import {adminModuleOverrideFilterSchema} from "./admin-override-filter-model";
 
-export const adminFeatureQuerySchema =
-  z.object({
-    q: z
-      .string()
-      .trim()
-      .max(100)
-      .default(""),
-    page: z.coerce
-      .number()
-      .int()
-      .min(1)
-      .max(10000)
-      .default(1),
-  }).strict();
+export {adminFeatureQuerySchema} from "./admin-feature-query";
+import {adminFeatureQuerySchema} from "./admin-feature-query";
 
 const detailQuerySchema = z.object({
   module: adminModuleOverrideFilterSchema,
@@ -227,7 +215,7 @@ export async function listSuperAdminFeatureControls(
       .from(colleges)
       .where(where)
       .orderBy(
-        asc(colleges.name),
+        query.sort === "CODE" ? asc(colleges.code) : asc(colleges.name),
         asc(colleges.id),
       )
       .limit(COLLEGE_PAGE_SIZE)
@@ -260,6 +248,7 @@ export async function listSuperAdminFeatureControls(
       ),
     })),
     q: query.q,
+    sort: query.sort,
     page: query.page,
     pageSize: COLLEGE_PAGE_SIZE,
     total,
