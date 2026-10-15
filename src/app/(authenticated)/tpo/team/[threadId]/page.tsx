@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { tpoThreadIdSchema } from "@/modules/placements/tpo-team-conversation-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -8,7 +9,9 @@ export default async function InternalThread({params}:{params:Promise<{threadId:
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {threadId}=await params;
- const result=await readTpoInternalConversation(context,threadId);
+ const parsed=tpoThreadIdSchema.safeParse(threadId);
+ if(!parsed.success)notFound();
+ const result=await readTpoInternalConversation(context,parsed.data);
  if(result.status==="NOT_FOUND")notFound();
  if(result.status==="NOT_REGISTERED")return <main className="space-y-4 p-5">
    <PageHeader eyebrow="TPO · Team" title="Conversations unavailable"/>
