@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import {
@@ -44,10 +44,11 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
   if (!scope.enabled || !scope.projects.length) {
     return { enabled: scope.enabled, query, ...pageMentorPortfolio([], query) };
   }
-  const allowed = new Set(scope.projects.map(p => p.id));
+  const allowed = new Set(scope.projects
+    .filter(p=>query.projectStatus==="ALL"||p.status===query.projectStatus).map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(
-    alerts.filter(a => allowed.has(a.projectId)), query.search, query.order,
+    alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age,
   );
   return { enabled: true, query, ...pageMentorPortfolio(items, query) };
 }
@@ -58,7 +59,8 @@ export async function getMentorPortfolioActivity(
 ) {
   const query = mentorActivityQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
-  if (!scope.enabled || !scope.projects.length) {
+  const selectedProjects=scope.projects.filter(p=>query.projectStatus==="ALL"||p.status===query.projectStatus);
+  if (!scope.enabled || !selectedProjects.length) {
     return {
       enabled: scope.enabled, query, page: 1, pageSize: query.pageSize,
       total: 0, totalPages: 1,
@@ -66,14 +68,17 @@ export async function getMentorPortfolioActivity(
     };
   }
   const membership = context.membership!;
-  const ids = scope.projects.map(project => project.id);
-  const byId = new Map(scope.projects.map(project => [project.id, project]));
+  const ids = selectedProjects.map(project => project.id);
+  const byId = new Map(selectedProjects.map(project => [project.id, project]));
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
   const types=mentorProjectActivityEventTypes(query.view);
+  const cutoff = query.window==="ALL" ? null :
+    new Date(new Date().getTime() - (query.window==="PAST_7_DAYS"?7:30)*86400000);
   const filters = and(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
     eq(activityEvents.organizationId, membership.organizationId),
+    cutoff?gte(activityEvents.occurredAt,cutoff):undefined,
     query.importance === "ALL" ? undefined : eq(activityEvents.importance,query.importance),
     types?inArray(activityEvents.eventType,types):undefined,
     or(
@@ -89,7 +94,8 @@ export async function getMentorPortfolioActivity(
       subjectId: activityEvents.subjectId, subjectType: activityEvents.subjectType,
       metadataProjectId, occurredAt: activityEvents.occurredAt,
     }).from(activityEvents).where(filters)
-      .orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id))
+      .orderBy(query.order==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
+        query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
       .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
   ]);
   const total = Number(summary[0]?.total ?? 0);

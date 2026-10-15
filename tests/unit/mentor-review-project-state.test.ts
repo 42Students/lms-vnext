@@ -1,0 +1,3 @@
+import{it,expect}from"vitest";import{mentorReviewQuerySchema as schema,mentorPortfolioHref}from"@/modules/projects/mentor-portfolio-model";
+it("accepts only real project lifecycle states for review queues",()=>{expect(schema.parse({projectStatus:"ACTIVE"}).projectStatus).toBe("ACTIVE");expect(schema.safeParse({projectStatus:"IN_REVIEW"}).success).toBe(false)});
+it("preserves project lifecycle in the review URL",()=>expect(mentorPortfolioHref("reviews",{projectStatus:"ACTIVE",page:2})).toContain("projectStatus=ACTIVE"));
