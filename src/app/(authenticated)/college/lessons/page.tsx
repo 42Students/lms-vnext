@@ -40,6 +40,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       hiddenPublished:first(params.hiddenPublished),
       videoEvidence:first(params.videoEvidence),
       resourceEvidence:first(params.resourceEvidence),
+      liveEvidence:first(params.liveEvidence),
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );

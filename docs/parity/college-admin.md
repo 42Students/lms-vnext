@@ -552,6 +552,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Live-content coverage PARTIAL (chat-3, 2026-10-15):** A true persisted LIVE_CLASS authoring-presence facet is now available for Lessons and its college-fenced CSV; it does not imply a meeting took place or expose links. Authored unit and isolated PG cases require execution and browser parity review.
+
 **Lesson-resource coverage PARTIAL (chat-3, 2026-10-15):** The registered RESOURCE kind can be filtered as present or absent before College Admin pagination and export; the operation never fetches private storage identifiers. Unit/gated-PG source tests authored, execution and browser parity open.
 
 **Video authoring coverage PARTIAL (chat-3, 2026-10-15):** College Admin lesson list can isolate absence/presence of VIDEO or YOUTUBE metadata using registered in-college records, including CSV. This is not playback or learner access; PG/browser acceptance open.
