@@ -1,3 +1,6 @@
+import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
+import {learnerRoadmapHeadline} from "@/modules/courses/learner-roadmap-headline-model";
+import {learnerRoadmapFilterRecoveryNotice} from "@/modules/courses/learner-roadmap-filter-recovery-model";
 import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empty-state-model";
 import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
 import { learnerRoadmapDialogKey } from "@/modules/courses/learner-roadmap-dialog-key-model";
@@ -423,10 +426,8 @@ function AssignmentCard({
           enabled={assignmentFilesRuntimeEnabled()} /> : null}
       {assignment.gradePublished ? (
         <div className="mt-4 rounded-lg bg-primary-subtle px-3 py-2 text-sm text-body">
-          Published grade:{" "}
           <strong className="text-foreground">
-            {assignment.pointsAwarded ?? 0}/
-            {assignment.maxPoints}
+            {learnerAssignmentPublishedGradeLabel(assignment.pointsAwarded,assignment.maxPoints)}
           </strong>
           {assignment.feedback ? (
             <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
@@ -579,6 +580,7 @@ export function LearnerCourseWorkspace({
   const summary = workspace.summary;
   const emptyState = learnerRoadmapEmptyState(Boolean(workspace.learningPath),workspace.lessons);
   const measuredProgress = learnerRoadmapMeasuredProgress(summary);
+  const filterNotice=learnerRoadmapFilterRecoveryNotice(filter);
   const activeFilter = resolveLearnerRoadmapFocusFilter(
     filter, focusLessonId, focusContentId, workspace.lessons,
   );
@@ -652,6 +654,7 @@ export function LearnerCourseWorkspace({
 
   return (
     <div className="space-y-5">
+      {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
       <div>
         <h2 className="sr-only">Learning Path</h2>
         <p className="m-0 text-sm text-body">
@@ -666,13 +669,12 @@ export function LearnerCourseWorkspace({
               {workspace.learningPath.title}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
-              {workspace.nextItem
-                ? `Next: ${workspace.nextItem.title}`
-                : summary.itemsMissed > 0
-                  ? "No remaining actionable items"
-                  : summary.itemsTotal > 0
-                    ? "Course work complete"
-                    : "No learning items yet"}
+              {learnerRoadmapHeadline({
+                nextItemTitle:workspace.nextItem?.title??null,
+                itemsMissed:summary.itemsMissed,
+                itemsCompleted:summary.itemsCompleted,
+                itemsTotal:summary.itemsTotal,
+              })}
             </h3>
             <p className="mt-2 text-sm leading-6 text-body">
               {workspace.learningPath.description ??
