@@ -1,3 +1,4 @@
+import { learnerOffersQueryHasInvalidFields } from "@/modules/placements/learner-offers-query-feedback-model";
 import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-empty-state-model";
 import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
@@ -42,6 +43,7 @@ export default async function LearnerOffersPage({
   searchParams: Promise<{ status?: string | string[]; q?: string | string[]; due?: string | string[]; page?: string | string[]; sort?: string | string[]; kind?: string | string[]; joining?:string | string[]; focus?:string | string[] }>;
 }) {
   const query = await searchParams;
+  const invalidQuery=learnerOffersQueryHasInvalidFields(query);
   const requested = typeof query.status === "string" ? query.status : "all";
   const validView = learnerOfferViewSchema.safeParse(requested);
   const view = validView.success ? validView.data : "all";
@@ -92,6 +94,7 @@ export default async function LearnerOffersPage({
         title="My offers"
         description="Official persisted offers, current response status and recorded joining outcomes."
       />
+      {invalidQuery ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</p> : null}
       <nav aria-label="Offer status" className="flex flex-wrap gap-2">
         {tabs.map((tab) => (
           <Link
