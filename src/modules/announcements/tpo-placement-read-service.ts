@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,isNull,or,lte,gt} from "drizzle-orm";
+import {and,desc,eq,isNull,isNotNull,or,lte,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements.draft";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -25,6 +25,8 @@ export async function listTpoPlacementAnnouncements(
   const rows=await tx.select({
    id:db10Announcements.id,title:db10Announcements.title,
    message:db10Announcements.message,isPinned:db10Announcements.isPinned,
+   version:db10Announcements.version,deletedAt:db10Announcements.deletedAt,
+   senderUserId:db10Announcements.senderUserId,
    createdAt:db10Announcements.createdAt,expiresAt:db10Announcements.expiresAt,
   }).from(db10Announcements).where(and(
    eq(db10Announcements.organizationId,college.organizationId),
@@ -32,9 +34,13 @@ export async function listTpoPlacementAnnouncements(
    eq(db10Announcements.receiverType,"COLLEGE"),
    eq(db10Announcements.receiverId,college.id),
    eq(db10Announcements.senderType,senderTypeForTpoTab(tab)),
-   isNull(db10Announcements.deletedAt),
-   or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
-   or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
+   ...(tab==="deleted"?
+    [isNotNull(db10Announcements.deletedAt),eq(db10Announcements.senderUserId,context.user.id)]:
+    [isNull(db10Announcements.deletedAt)]),
+   ...(tab==="deleted"?[]:[
+    or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
+    or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
+   ]),
   )).orderBy(desc(db10Announcements.isPinned),desc(db10Announcements.createdAt))
   .limit(100);
   return {status:"READY" as const,items:projectTpoAnnouncementRows(rows)};
