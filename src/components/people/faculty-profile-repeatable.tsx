@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
@@ -49,7 +50,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
     if (changed && !pending && !missingRequired && !sectionIssue) void onSave(section, rows);
   }
   return (
-    <form aria-label={title} onSubmit={submit}
+    <form id={facultyProfileAnchor(section as "awards"|"publications"|"experiences"|"certifications"|"education"|"languages")} aria-label={title} onSubmit={submit}
       className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6">
       <div>
         <h2 className="text-lg font-semibold text-foreground">{title}</h2>

@@ -1,6 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
+import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {restoreFacultyTextDraft} from "@/modules/people/faculty-profile-draft-actions";
 
 export type FacultyProfileTextField = {
@@ -21,7 +22,7 @@ export function FacultyProfileTextSection({
   event.preventDefault();
   if(!pending && changed)void onSave(section,draft);
  }
- return <form onSubmit={submit} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label={title}>
+ return <form id={facultyProfileAnchor(section as "about"|"personalDetails"|"address"|"socialProfiles")} onSubmit={submit} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label={title}>
   <div>
    <h2 className="text-lg font-semibold text-foreground">{title}</h2>
    <p className="mt-1 text-sm text-muted-foreground">{description}</p>
