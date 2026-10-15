@@ -1,1 +1,23 @@
-import {describe,it,expect} from "vitest";import{moveMemberBalanced}from"@/modules/projects/class-team-balanced-move";const g=[{name:"A",membershipIds:["a","b","c"]},{name:"B",membershipIds:["d","e"]}];describe("balanced edits",()=>{it("allows three-to-two move",()=>expect(moveMemberBalanced(g,"a",1).map(x=>x.membershipIds.length)).toEqual([2,3]));it("denies making team sizes differ by more than one",()=>expect(()=>moveMemberBalanced([{name:"A",membershipIds:["a","b","c","f"]},{name:"B",membershipIds:["d","e"]}],"a",1)).not.toThrow());it("keeps original intact",()=>{moveMemberBalanced(g,"a",1);expect(g[0].membershipIds).toContain("a")});it("rejects unknown ids",()=>expect(()=>moveMemberBalanced(g,"x",1)).toThrow());});
+import { describe, it, expect } from "vitest";
+import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
+
+const teams = [
+  { name: "A", membershipIds: ["a", "b", "c"] },
+  { name: "B", membershipIds: ["d", "e"] },
+];
+describe("balanced manual team assignments", () => {
+  it("moves from the larger team to the smaller team", () => {
+    expect(moveMemberBalanced(teams, "a", 1).map(t => t.membershipIds.length)).toEqual([2, 3]);
+  });
+  it("rejects a move that would leave a two-student size gap", () => {
+    expect(() => moveMemberBalanced(teams, "d", 0)).toThrow("TEAM_SIZE_IMBALANCE");
+  });
+  it("leaves the original preview immutable", () => {
+    moveMemberBalanced(teams, "a", 1);
+    expect(teams[0].membershipIds).toContain("a");
+  });
+  it("rejects unknown and duplicate student memberships", () => {
+    expect(() => moveMemberBalanced(teams, "not-in-roster", 1)).toThrow();
+    expect(() => moveMemberBalanced([{name:"A",membershipIds:["a"]},{name:"B",membershipIds:["a"]}],"a",1)).toThrow();
+  });
+});
