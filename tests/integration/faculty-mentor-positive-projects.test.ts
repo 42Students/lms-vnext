@@ -9,6 +9,7 @@ import {
   createProjectTemplate, publishProjectTemplate, assignProjectTemplateToCollege,
 } from "@/modules/projects/template-service";
 import { submitProjectTask, reviewProjectTaskSubmission } from "@/modules/projects/task-submission-service";
+import {assignProjectTaskToLearner} from "./support/projects-review-fixture";
 import { getMentorTeamHistory } from "@/modules/projects/mentor-team-history-service";
 import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-service";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
@@ -203,6 +204,7 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
 
   it("approves an actual submission and audits the decision once",async()=>{
     const {project,sprint,task}=await fixture();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
     await startProjectSprint(mentor,project.id,sprint.id);
     const submission=await submitProjectTask(learner,project.id,task.id,{
       submissionUrl:"https://example.com/chat4-approval",
@@ -227,6 +229,7 @@ describe("Chat4 Mentor SUCCESS paths in disposable PostgreSQL",()=>{
 
   it("reviews a real task, persists one audit event, and exposes reviewed history",async()=>{
     const {project,sprint,task}=await fixture();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
     await startProjectSprint(mentor,project.id,sprint.id);
     const submission=await submitProjectTask(learner,project.id,task.id,{
       submissionUrl:"https://example.com/chat4-positive-work",

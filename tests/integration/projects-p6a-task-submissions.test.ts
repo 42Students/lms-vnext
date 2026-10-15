@@ -29,6 +29,7 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assignProjectTaskToLearner } from "./support/projects-review-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -285,6 +286,7 @@ describe("Projects P6A task submissions", () => {
   it("requires an active sprint and a learner project member to submit", async () => {
     const { project, sprint, task } =
       await createProject();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
 
     await expect(
       submitProjectTask(
@@ -371,6 +373,7 @@ describe("Projects P6A task submissions", () => {
   it("keeps attempt history and moves the task according to mentor review", async () => {
     const { project, sprint, task } =
       await createProject();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
     await startProjectSprint(
       mentor,
       project.id,
@@ -482,6 +485,7 @@ describe("Projects P6A task submissions", () => {
   it("requires feedback for changes and enforces review shape in PostgreSQL", async () => {
     const { project, sprint, task } =
       await createProject();
+    await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
     await startProjectSprint(
       mentor,
       project.id,
