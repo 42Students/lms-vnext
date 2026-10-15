@@ -3,16 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const tabs = [
-  { label: "Dashboard", href: "/learn/my-placements" },
+export const learnerPlacementsLegacyTabs = [
+  { label: "Home", href: "/learn/my-placements" },
   { label: "Drives", href: "/learn/my-placements/jobs" },
   { label: "Applications", href: "/learn/my-placements/applications" },
+  { label: "Schedule", href: "/learn/my-placements/schedule" },
   { label: "Offers", href: "/learn/my-placements/offers" },
-  { label: "Assessments", href: "/learn/my-placements/assessments" },
-  { label: "Interviews", href: "/learn/my-placements/interviews" },
-  { label: "Career Calendar", href: "/learn/my-placements/calendar" },
+  { label: "Notices", href: "/learn/my-placements/announcements" },
   { label: "Placement cell", href: "/learn/my-placements/placement" },
-  { label: "Announcements", href: "/learn/my-placements/announcements" },
 ] as const;
 
 export function LearnerPlacementsTabs() {
@@ -21,7 +19,7 @@ export function LearnerPlacementsTabs() {
   return (
     <nav aria-label="Placements workspace" className="min-w-0 border-b border-border">
       <div className="flex min-w-0 flex-wrap gap-1">
-        {tabs.map((tab) => {
+        {learnerPlacementsLegacyTabs.map((tab) => {
           const active =
             pathname === tab.href ||
             (tab.href !== "/learn/my-placements" && pathname.startsWith(`${tab.href}/`));

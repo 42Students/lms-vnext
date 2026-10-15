@@ -10,6 +10,11 @@ describe("learner calendar URL date/view/event filters",()=>{
       expect(readLearnerCalendarUrl(learnerCalendarHref(state).split("?")[1],fallback)).toEqual(state);
     }
   });
+  it("keeps Schedule URL navigation inside the selected legacy tab",()=>{
+    const state=readLearnerCalendarUrl("date=2026-10-17&view=day",fallback);
+    expect(learnerCalendarHref(state,"schedule")).toContain("/learn/my-placements/schedule?");
+    expect(learnerCalendarHref(state)).toContain("/learn/my-placements/calendar?");
+  });
   it("rejects impossible dates, duplicates and untrusted scope selectors",()=>{
     expect(readLearnerCalendarUrl("date=2026-02-30&view=admin&kind=all&collegeId=foreign",fallback)).toEqual({date:fallback,view:"agenda",kind:"ALL"});
     expect(readLearnerCalendarUrl("date=2026-10-17&date=2026-10-18&view=day&view=month",fallback)).toEqual({date:fallback,view:"agenda",kind:"ALL"});
