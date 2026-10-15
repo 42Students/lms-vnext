@@ -1,13 +1,15 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,eq,inArray,ne,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   courseLearningPaths,courseLessons,lessonContents,
+  courseTeachingAssignments,courseSectionDeliveries,
 } from "@/db/schema";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
@@ -37,6 +39,30 @@ export async function commandFacultyLiveClass(
   return db.transaction(async tx=>{
     // Serialize this Faculty actor's session writes, including across Sections.
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"faculty-live:"+context.user.id}))`);
+    // Rebuild the actor under SHARE locks, then assert the exact active Section.
+    // A stale cookie cannot preserve write access after role or class revocation.
+    let persisted:RequestContext;
+    try {
+      persisted=await assertPersistedPlatformPermission(tx,context,"courses.read",{
+        collegeId:membership.collegeId,organizationId:membership.organizationId,
+      });
+    } catch {
+      throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+    }
+    if(!persisted.membership?.roles.includes("FACULTY")||
+      persisted.membership.id!==membership.id)
+      throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+    const [teaching]=await tx.select({id:courseTeachingAssignments.id})
+      .from(courseTeachingAssignments)
+      .innerJoin(courseSectionDeliveries,
+        eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+      .where(and(
+        eq(courseTeachingAssignments.membershipId,membership.id),
+        eq(courseTeachingAssignments.deliveryId,params.deliveryId),
+        isNull(courseTeachingAssignments.endedAt),
+        isNull(courseSectionDeliveries.endedAt),
+      )).for("share").limit(1);
+    if(!teaching)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
     const [lesson]=input.action==="CREATE" ?
       await tx.select({id:courseLessons.id}).from(courseLessons)
         .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
