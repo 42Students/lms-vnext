@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {safeStudentRuleHistory,studentRuleHistoryCursorSchema,studentRuleHistoryHref} from "@/modules/module-access/admin-student-rule-history-model";
+import {safeStudentRuleHistory,studentRuleHistoryCursorSchema,studentRuleHistoryHref,studentRuleHistoryExportHref}
+import {studentRuleHistoryCsv} from "@/modules/module-access/admin-student-rule-history-export" from "@/modules/module-access/admin-student-rule-history-model";
 describe("Super Admin student rule audit projection",()=>{
  it("only projects valid values and omits arbitrary metadata",()=>{
   const output=safeStudentRuleHistory([{id:"1",occurredAt:new Date("2026-10-15T00:00:00Z"),summary:"",
@@ -37,5 +38,13 @@ describe("Super Admin student rule audit projection",()=>{
   expect(studentRuleHistoryCursorSchema.safeParse({from:"2026-13-01"}).success).toBe(false);
   const href=studentRuleHistoryHref(id,id,null,"all","","2026-10-01","2026-10-15");
   expect(studentRuleHistoryCursorSchema.parse(Object.fromEntries(new URL(href,"https://example.com").searchParams)).to).toBe("2026-10-15");
+ });
+ it("exports only projected audit values and guards spreadsheet cells",()=>{
+  const csv=studentRuleHistoryCsv([{occurredAt:new Date("2026-10-15T00:00:00Z"),module:"projects",change:"=HYPERLINK(1)",actorName:"+SUM(1)"}]);
+  expect(csv).toContain("'=HYPERLINK(1)");
+  expect(csv).toContain("'+SUM(1)");
+  expect(csv).not.toContain("email");
+  const id="92b172ff-3817-44bf-9b48-e9afab2e93d0";
+  expect(studentRuleHistoryExportHref(id,id,null,"projects","","","")).toContain("/history/export?module=projects");
  });
 });
