@@ -72,6 +72,7 @@ export function AnnouncementAdminWorkspace({
   const [expiresAt, setExpiresAt] = useState("");
   const [pinned, setPinned] = useState(false);
   const [editing, setEditing] = useState<AnnouncementAdminItem | null>(null);
+  const [editConsent,setEditConsent]=useState(false);
   const [reviewPublish,setReviewPublish]=useState(false);
   const targetLabels = useMemo(
     () => new Map(targets.map((entry) => [`${entry.type}:${entry.id}`, entry.label])),
@@ -170,6 +171,7 @@ export function AnnouncementAdminWorkspace({
           scheduledAt: isoOrNull(String(data.get("scheduledAt") ?? "")),
           expiresAt: isoOrNull(String(data.get("expiresAt") ?? "")),
           isPinned: data.get("isPinned") === "on",
+          publishConsent:true,
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -184,6 +186,7 @@ export function AnnouncementAdminWorkspace({
         return;
       }
       setEditing(null);
+      setEditConsent(false);
       showToast({ tone: "success", title: "Announcement updated" });
       router.refresh();
     });
@@ -273,7 +276,7 @@ export function AnnouncementAdminWorkspace({
                   <div className="flex shrink-0 flex-wrap gap-2">
                     {!item.deletedAt ? (
                       <>
-                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => setEditing(item)}>Edit</Button>
+                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
                         <Button size="sm" variant="secondary" disabled={pending} onClick={() => mutate(item, "PIN")}>
                           {item.isPinned ? "Unpin" : "Pin"}
                         </Button>
@@ -311,12 +314,16 @@ export function AnnouncementAdminWorkspace({
         footer={
           <>
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
-            <Button disabled={pending} onClick={saveEdit}>{pending ? "Saving…" : "Save changes"}</Button>
+            <Button disabled={pending || !editing || !editConsent} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
           </>
         }
       >
         {editing ? (
           <form id="announcement-edit-form" className="grid gap-4">
+            <label className="flex items-start gap-2 text-sm text-body">
+              <input type="checkbox" checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
+              I reviewed the audience and notice contents and consent to applying changes to recipients.
+            </label>
             <label className="text-sm font-semibold text-body">
               Audience
               <select
