@@ -14,6 +14,7 @@ import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-res
 import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizClockInterval } from "@/modules/courses/learner-quiz-clock-interval-model";
+import { learnerQuizEmptyQuestionMessage } from "@/modules/courses/learner-quiz-empty-question-model";
 import { learnerQuizQuestionNavState } from "@/modules/courses/learner-quiz-question-nav-model";
 import { learnerQuizDeadlineDisplay } from "@/modules/courses/learner-quiz-deadline-display-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
@@ -358,7 +359,9 @@ export function LearnerQuizAttempt() {
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Quiz review</p>
             <h1 className="mt-2 text-2xl font-semibold text-foreground">{quiz.quiz.title}</h1>
             <p className="mt-2 text-sm text-body">
-              {latestAttempt
+              {learnerQuizEmptyQuestionMessage(questions.length)
+                ? learnerQuizEmptyQuestionMessage(questions.length)
+                : latestAttempt
                 ? latestAttempt.resultsVisible
                   ? `Attempt ${latestAttempt.attemptNumber} · ${learnerAttemptResultLabel(latestAttempt)}`
                   : "Your attempt is submitted. Results will appear after Faculty publishes them."
@@ -373,6 +376,14 @@ export function LearnerQuizAttempt() {
           <p role="status" className="mt-4 rounded-lg border border-success p-3 text-sm font-semibold text-body">Your quiz submission was received. Results may remain hidden until published.</p>
         ) : null}
         {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
+        {learnerQuizEmptyQuestionMessage(questions.length) ? (
+          <div role="status" className="mt-6 rounded-xl border border-border bg-surface-subtle p-5">
+            <p className="text-sm text-body">{learnerQuizEmptyQuestionMessage(questions.length)}</p>
+            <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              Return to All Quizzes
+            </Link>
+          </div>
+        ) : null}
         <div className="mt-6 space-y-4">
           {questions.map((question, index) => {
             const submitted = answerMap.get(question.id);
