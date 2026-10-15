@@ -11,6 +11,7 @@ import {matchesWaitingSince} from "./queue-waiting-since";
 import {submittedMarksheets} from "./queue-mark-sheets";
 import {verificationCsv} from "./queue-export";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
+import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import {VerificationQueueLimitError} from "./staff-queue-service";
 
 const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
@@ -18,7 +19,6 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  const filter=verificationQueueFilters.parse(raw);
  const scope=await requireCollegeVerificationActor(context);
  await requireVerificationTables();
- if(filter.sectionId||filter.batchId||filter.branchId)throw Error("VERIFICATION_FILTER_NOT_SUPPORTED");
  const rows=await getDb().select({
   membershipId:collegeMemberships.id,learnerName:users.displayName,
   section:profileVerifications.section,status:profileVerifications.status,
@@ -31,7 +31,8 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),
   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
-  inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"])))
+  inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]),
+  ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
  const selected=rows.filter(row=>{
