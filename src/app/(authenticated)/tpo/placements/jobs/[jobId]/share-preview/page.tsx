@@ -10,7 +10,7 @@ import { listTpoCompanyApplicantShares } from "@/modules/placements/company-shar
 import { CompanyShareControls } from "./company-share-controls";
 import {tpoFilteredSharePreviewExportHref} from "@/modules/placements/tpo-share-preview-export-href";
 import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
-import {companyShareLinksHref} from "@/modules/placements/company-share/link-page-model";
+import {companyShareLinksHref,recoverCompanyShareLinkPage} from "@/modules/placements/company-share/link-page-model";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
@@ -42,7 +42,8 @@ export default async function TpoShortlistSharePreviewPage({
   }
   const parsedStatus=companyShareStatusSchema.safeParse(first(search.shareStatus)??"ALL");
   const shareStatus=parsedStatus.success?parsedStatus.data:"ALL";
-  const shares = await listTpoCompanyApplicantShares(context, data.job.id,shareStatus,first(search.sharePage)??1);
+  const linkPage=recoverCompanyShareLinkPage(first(search.sharePage)??1);
+  const shares = await listTpoCompanyApplicantShares(context, data.job.id,shareStatus,linkPage.page);
   const path = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview";
   return <div className="space-y-5">
     <Link
@@ -107,6 +108,10 @@ export default async function TpoShortlistSharePreviewPage({
        {companyShareStatusLabel(status)}
       </Link>)}
     </nav>
+    {(linkPage.wasInvalid||!parsedStatus.success)?<p role="status"
+      className="rounded border border-border bg-surface p-3 text-sm text-body">
+      An invalid company-share status or page was reset to the default view.
+    </p>:null}
     <CompanyShareControls jobId={data.job.id} ready={shares.ready} status={shareStatus} linkPage={shares.page}
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),
