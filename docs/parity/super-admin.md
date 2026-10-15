@@ -1189,3 +1189,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 College action parent-scope fence — PARTIAL:** If a selected college and organization appear inconsistent, the college-row edit/archive affordances now fail closed on organization mismatch in addition to centralized `college.manage`. The persisted service still rechecks the true parent and authorization; pure negative tests authored, browser pending.
+
+
+**2026-10-15 chat-6 Announcements filtered-empty messaging — PARTIAL:** History distinguishes truly empty Super Admin notice inventory from a filtered view with no matches, with actionable reset guidance while preserving compose/broadcast surfaces. No synthetic zero-success after DB10 readiness disabled. Pure tests authored; browser visual acceptance pending.
