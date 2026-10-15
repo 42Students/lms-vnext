@@ -742,6 +742,10 @@ export const placementJobEligibilityPolicies = pgTable(
     minUndergraduatePctBasisPoints: integer(
       "min_undergraduate_pct_basis_points",
     ),
+    /** P-S2-02: minimum percentage throughout (basis points; 75.25% = 7525). */
+    minPctThroughoutBasisPoints: integer(
+      "min_pct_throughout_basis_points",
+    ),
     maxGapYears: integer("max_gap_years"),
     allowedPassingYears: integer("allowed_passing_years")
       .array()
@@ -785,6 +789,10 @@ export const placementJobEligibilityPolicies = pgTable(
         and (${table.minTwelfthPctBasisPoints} is null or ${table.minTwelfthPctBasisPoints} between 0 and 10000)
         and (${table.minDiplomaPctBasisPoints} is null or ${table.minDiplomaPctBasisPoints} between 0 and 10000)
         and (${table.minUndergraduatePctBasisPoints} is null or ${table.minUndergraduatePctBasisPoints} between 0 and 10000)`,
+    ),
+    check(
+      "placement_job_policy_pct_throughout_ck",
+      sql`${table.minPctThroughoutBasisPoints} is null or ${table.minPctThroughoutBasisPoints} between 0 and 10000`,
     ),
     check(
       "placement_job_eligibility_policy_gap_ck",

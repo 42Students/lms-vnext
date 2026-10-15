@@ -1,0 +1,2 @@
+ALTER TABLE "placement_job_eligibility_policies" ADD COLUMN "min_pct_throughout_basis_points" integer;--> statement-breakpoint
+ALTER TABLE "placement_job_eligibility_policies" ADD CONSTRAINT "placement_job_policy_pct_throughout_ck" CHECK ("placement_job_eligibility_policies"."min_pct_throughout_basis_points" is null or "placement_job_eligibility_policies"."min_pct_throughout_basis_points" between 0 and 10000);
