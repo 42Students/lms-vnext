@@ -39,6 +39,7 @@ import {
   trackerWorkflowUpdateSchema,
 } from "./admin-validation";
 import { TrackerAdminError } from "./admin-errors";
+import {trackerActivityCursorSchema} from "./admin-detail-cursor-model";
 
 type BugRow = typeof db10BugReports.$inferSelect;
 
@@ -200,8 +201,10 @@ export async function listBugTrackerIssuesForAdmin(
 export async function getBugTrackerIssueForAdmin(
   context: RequestContext,
   publicIdInput: string,
+  rawCursor: unknown = {},
 ) {
   requireTrackerAdmin(context);
+  const activityCursor = trackerActivityCursorSchema.parse(rawCursor);
   const publicId = trackerPublicIdSchema.parse(publicIdInput);
   const conditions: SQL[] = [publicIdCondition(publicId)];
   const scope = adminScopeCondition(context);
@@ -215,7 +218,16 @@ export async function getBugTrackerIssueForAdmin(
     .limit(1);
   if (!row) throw new TrackerAdminError("ISSUE_NOT_FOUND");
 
-  const [activities, attachments] = await Promise.all([
+  const activityConditions: SQL[] = [eq(db10BugReportActivities.bugReportId,row.report.id)];
+  if (activityCursor.activityBeforeCreatedAt && activityCursor.activityBeforeId) {
+    const time=activityCursor.activityBeforeCreatedAt;
+    const id=activityCursor.activityBeforeId;
+    activityConditions.push(or(
+      lt(db10BugReportActivities.createdAt,time),
+      and(eq(db10BugReportActivities.createdAt,time),lt(db10BugReportActivities.id,id)),
+    )!);
+  }
+  const [activityRows, attachments] = await Promise.all([
     getDb()
       .select({
         id: db10BugReportActivities.id,
@@ -229,8 +241,9 @@ export async function getBugTrackerIssueForAdmin(
         createdAt: db10BugReportActivities.createdAt,
       })
       .from(db10BugReportActivities)
-      .where(eq(db10BugReportActivities.bugReportId, row.report.id))
-      .orderBy(asc(db10BugReportActivities.createdAt), asc(db10BugReportActivities.id)),
+      .where(and(...activityConditions))
+      .orderBy(desc(db10BugReportActivities.createdAt), desc(db10BugReportActivities.id))
+      .limit(51),
     getDb()
       .select({
         id: db10BugReportAttachments.id,
@@ -244,7 +257,13 @@ export async function getBugTrackerIssueForAdmin(
       .orderBy(asc(db10BugReportAttachments.createdAt)),
   ]);
 
-  return { report: row.report, activities, attachments };
+  const activities=activityRows.slice(0,50);
+  const last=activities.at(-1);
+  return { report:row.report,activities,attachments,
+    nextActivityCursor: activityRows.length>50 && last ? {
+      activityBeforeCreatedAt:last.createdAt.toISOString(),activityBeforeId:last.id,
+    }:null,
+  };
 }
 
 export async function updateBugTrackerWorkflowForAdmin(

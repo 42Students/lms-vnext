@@ -14,6 +14,7 @@ import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { trackerPublicIdSchema } from "@/modules/bug-tracker/admin-validation";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { auditActivityTransition } from "@/modules/bug-tracker/audit-activity-display-model";
+import {parseTrackerActivityCursorParams} from "@/modules/bug-tracker/admin-detail-cursor-model";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -25,13 +26,19 @@ function when(value: Date) {
 
 export default async function TrackerIssueDetailPage({
   params,
+  searchParams,
+  auditMode = false,
 }: {
   params: Promise<{ publicId: string }>;
+  searchParams?: Promise<Record<string,string|string[]|undefined>>;
+  auditMode?: boolean;
 }) {
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
   const { publicId } = await params;
   if (!trackerPublicIdSchema.safeParse(publicId).success) notFound();
+  const cursor = parseTrackerActivityCursorParams(searchParams ? await searchParams : {});
+  if (!cursor) notFound();
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
@@ -47,7 +54,7 @@ export default async function TrackerIssueDetailPage({
 
   let detail;
   try {
-    detail = await getBugTrackerIssueForAdmin(context, publicId);
+    detail = await getBugTrackerIssueForAdmin(context, publicId, cursor);
   } catch (error) {
     if (error instanceof TrackerAdminError && error.code === "ISSUE_NOT_FOUND") notFound();
     throw error;
@@ -147,6 +154,12 @@ export default async function TrackerIssueDetailPage({
             ))}
           </ol>
         )}
+        {detail.nextActivityCursor ? (
+          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams(detail.nextActivityCursor).toString()}
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Older audit events
+          </Link>
+        ) : null}
       </section>
     </div>
   );
