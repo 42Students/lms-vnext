@@ -14,4 +14,5 @@ describe("Super Admin template creation",()=>{
  });
  it("persists user-selected initial task priority and rejects unknown priority",()=>{expect(initialSuperAdminTemplateDraft({...base,priority:"HIGH"}).blueprint.tasks[0].priority).toBe("HIGH");expect(()=>initialSuperAdminTemplateDraft({...base,priority:"UNSAFE"})).toThrow();});
  it("saves trimmed task acceptance criteria and rejects oversized criteria",()=>{expect(initialSuperAdminTemplateDraft({...base,acceptanceCriteria:"  Test evidence  "}).blueprint.tasks[0].acceptanceCriteria).toBe("Test evidence");expect(()=>initialSuperAdminTemplateDraft({...base,acceptanceCriteria:"x".repeat(4001)})).toThrow();});
+ it("persists first release description through validation",()=>{expect(initialSuperAdminTemplateDraft({...base,releaseDescription:"  First release  "}).blueprint.releases[0].description).toBe("First release");expect(()=>initialSuperAdminTemplateDraft({...base,releaseDescription:"x".repeat(4001)})).toThrow();});
 });

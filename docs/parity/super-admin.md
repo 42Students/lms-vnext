@@ -815,3 +815,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 New Template increment 3 (PARTIAL):** First-task acceptance criteria now round-trip into the initial template blueprint, rather than disappearing from create. Zod create schema and existing same-origin server writer remain authoritative. Source unit tests are authored, not executed; exact legacy editor/browser and PostgreSQL acceptance remain open.
+
+
+**2026-10-15 chat-6 New Template 4 (PARTIAL):** First release description now persists on the initial blueprint with bounds checking. Canonical create writer unchanged. Regression tests authored, not executed; multi-entry legacy editor/browser and PG acceptance remain OPEN.
