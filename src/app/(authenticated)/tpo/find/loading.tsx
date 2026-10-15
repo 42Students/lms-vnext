@@ -1,0 +1,1 @@
+export default function Loading(){return <p role="status">Searching TPO records…</p>;}
