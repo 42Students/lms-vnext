@@ -3,6 +3,7 @@ export const hrDriveProposalHistoryQuerySchema=z.strictObject({
  collegeId:z.string().uuid().optional(),
  page:z.coerce.number().int().min(1).max(10000).default(1),
  q:z.string().trim().max(100).default(""),
+ sort:z.enum(["LATEST","OLDEST"]).default("LATEST"),
 });
 export type HrDriveProposalPreview={referenceId:string;title:string};
 /** Deliberately projects the proposal header, not the private description/body. */
