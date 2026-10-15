@@ -14,7 +14,7 @@ export const hrRoundFormSchema=z.strictObject({
   ctx.addIssue({code:"custom",message:"Round kind and name required"});
  if(row.action!=="CREATE" && (!row.roundId||!row.expectedUpdatedAt))
   ctx.addIssue({code:"custom",message:"Round identity and latest version required"});
- if(row.action==="UPDATE"&& !row.name&&!row.mode&&row.durationMinutes===undefined&&!row.kind)
+ if(row.action==="UPDATE"&& !row.name&&row.mode===undefined&&row.durationMinutes===undefined&&!row.kind)
   ctx.addIssue({code:"custom",message:"Nothing to update"});
  if(row.action==="CREATE"&&(row.roundId||row.expectedUpdatedAt))
   ctx.addIssue({code:"custom",message:"New round cannot carry an existing version"});
