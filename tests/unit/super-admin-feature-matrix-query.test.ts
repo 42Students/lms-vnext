@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {adminFeatureQuerySchema} from "@/modules/module-access/admin-feature-query";
+import {adminFeatureQuerySchema,featureRuleCutoff} from "@/modules/module-access/admin-feature-query";
 import {adminFeaturesHref} from "@/modules/module-access/admin-read-model";
 describe("Super Admin feature matrix query",()=>{
  it("accepts code sorting and rejects unrecognized sort modes",()=>{
@@ -27,5 +27,13 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.safeParse({presence:"NO_RULE",storedState:"OFF"}).success).toBe(false);
   expect(adminFeatureQuerySchema.safeParse({presence:"NO_RULE",locks:"LOCKED"}).success).toBe(false);
   expect(adminFeaturesHref({module:"projects",presence:"NO_RULE"})).toContain("presence=NO_RULE");
+ });
+ it("uses one request clock for a bounded persisted-rule freshness window",()=>{
+  const now=new Date("2026-10-15T12:00:00Z");
+  expect(featureRuleCutoff("7D",now)?.toISOString()).toBe("2026-10-08T12:00:00.000Z");
+  expect(featureRuleCutoff("ALL",now)).toBeNull();
+  expect(adminFeatureQuerySchema.safeParse({recent:"1D"}).success).toBe(false);
+  expect(adminFeatureQuerySchema.safeParse({recent:"30D",presence:"NO_RULE"}).success).toBe(false);
+  expect(adminFeaturesHref({recent:"30D"})).toContain("recent=30D");
  });
 });

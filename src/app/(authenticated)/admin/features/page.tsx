@@ -80,6 +80,7 @@ export default async function SuperAdminFeaturesPage({
       storedState: one(params.storedState) || undefined,
       locks: one(params.locks) || undefined,
       presence: one(params.presence) || undefined,
+      recent: one(params.recent) || undefined,
     });
 
   if (!parsed.success) {
@@ -172,6 +173,11 @@ export default async function SuperAdminFeaturesPage({
           <label className="grid gap-2 text-sm font-semibold text-body">College rule presence
             <select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">Stored rule last updated
+            <select name="recent" defaultValue={result.recentFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any date</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option>
             </select>
           </label>
           <button
@@ -332,6 +338,7 @@ export default async function SuperAdminFeaturesPage({
                   storedState: result.stateFilter,
                   locks: result.lockFilter,
                   presence: result.presenceFilter,
+                  recent: result.recentFilter,
                   page: result.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -348,6 +355,7 @@ export default async function SuperAdminFeaturesPage({
                   storedState: result.stateFilter,
                   locks: result.lockFilter,
                   presence: result.presenceFilter,
+                  recent: result.recentFilter,
                   page: result.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
