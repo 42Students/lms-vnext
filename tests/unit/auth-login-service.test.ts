@@ -8,6 +8,7 @@ import {
   startLogin,
   verifyLogin,
   type AttemptRecord,
+  type SessionIssue,
   type LoginDependencies,
   type LoginMembership,
   type LoginRepository,
@@ -34,7 +35,7 @@ class FakeRepository implements LoginRepository {
   };
   superAdmins = new Set<string>();
   recruiterGrants = new Set<string>();
-  attempts = new Map<string, AttemptRecord & { fingerprint: string; ipTag: string | null; emailSentAt: Date | null }>();
+  attempts = new Map<string, AttemptRecord & { fingerprint: string; ipTag: string | null; emailSentAt: Date | null; resends?: number }>();
   now = new Date("2026-10-13T10:00:00Z");
 
   async findUserByPhone(phone: string) {
@@ -51,6 +52,9 @@ class FakeRepository implements LoginRepository {
   }
   async isSuperAdmin(userId: string) {
     return this.superAdmins.has(userId);
+  }
+  async hasAnyRecruiterGrant(userId: string) {
+    return [...this.recruiterGrants].some((g) => g.startsWith(`${userId}:`));
   }
   async hasRecruiterGrantAtCollege(userId: string, collegeId: string) {
     return this.recruiterGrants.has(`${userId}:${collegeId}`);
@@ -104,7 +108,8 @@ class FakeRepository implements LoginRepository {
     const a = this.attempts.get(id);
     return a ? { ...a } : null;
   }
-  async setEmailCode(id: string, mac: string, gapSeconds: number) {
+  async setEmailCode(id: string, mac: string, gapSeconds: number, maxResends = 5) {
+    if ((this.attempts.get(id)?.resends ?? 0) >= maxResends) return false;
     const a = this.attempts.get(id);
     if (!a || a.usedAt || a.expiresAt <= this.now) return false;
     if (
@@ -116,6 +121,7 @@ class FakeRepository implements LoginRepository {
     a.emailCodeMac = mac;
     a.emailCodeExpiresAt = a.expiresAt;
     a.emailSentAt = this.now;
+    a.resends = (a.resends ?? 0) + 1;
     return true;
   }
   async reserveVerification(id: string) {
@@ -126,9 +132,16 @@ class FakeRepository implements LoginRepository {
     a.verificationAttempts += 1;
     return true;
   }
-  async consumeAttempt(id: string) {
+  failSessionInsert = false;
+  sessions: { userId: string; digest: string; previousDigest?: string | null }[] = [];
+  async consumeAttempt(id: string, userId?: string, session?: SessionIssue) {
     const a = this.attempts.get(id);
     if (!a || a.usedAt || a.expiresAt <= this.now) return false;
+    if (session) {
+      // Transactional: a failing insert leaves the attempt unused.
+      if (this.failSessionInsert) throw new Error("insert failed");
+      this.sessions.push({ userId: userId!, digest: session.digest, previousDigest: session.previousDigest });
+    }
     a.usedAt = this.now;
     a.smsCodeMac = a.emailCodeMac = null;
     a.smsCodeExpiresAt = a.emailCodeExpiresAt = null;
@@ -571,9 +584,143 @@ describe("send caps per requester", () => {
       phoneE164: `+9191000700${String(i).padStart(2, "0")}`,
       email: `u${i}@example.test`,
     }));
+    for (const u of repository.users) {
+      repository.memberships[u.id] = [{ id: `m-${u.id}`, collegeId: COLLEGE_A, status: "ACTIVE" }];
+    }
     for (let i = 0; i < 20; i += 1) {
       expect(await start(deps, "pumper", `91000700${String(i).padStart(2, "0")}`)).toBe("OK");
     }
     expect(await start(deps, "pumper", "9100070020")).toBe("TOO_MANY_REQUESTS");
+  });
+});
+
+
+describe("auth audit fixes", () => {
+  async function started(tenantCollegeId: string | null = null) {
+    const ctx = setup();
+    const result = await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId },
+      ctx.deps,
+    );
+    return { ...ctx, attemptId: result.attemptId, sentCode: ctx.sent[0].code };
+  }
+  const start = (deps: LoginDependencies) =>
+    startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: null }, deps);
+
+  it("L1 platform host refuses users holding only suspended or ended memberships", async () => {
+    const { deps, repository } = setup();
+    repository.memberships["user-1"] = [{ id: "m-1", collegeId: COLLEGE_A, status: "SUSPENDED" }];
+    expect(await code(start(deps))).toBe("ACCOUNT_SUSPENDED");
+    repository.memberships["user-1"] = [{ id: "m-1", collegeId: COLLEGE_A, status: "ENDED" }];
+    expect(await code(start(deps))).toBe("NO_ACCOUNT_FOR_DOMAIN");
+    repository.memberships["user-1"] = [];
+    expect(await code(start(deps))).toBe("NO_ACCOUNT_FOR_DOMAIN");
+    repository.recruiterGrants.add(`user-1:${COLLEGE_B}`);
+    expect(await code(start(deps))).toBe("OK");
+  });
+
+  it("L1 platform host allows a super admin without memberships", async () => {
+    const { deps, repository } = setup();
+    repository.memberships["user-1"] = [];
+    repository.superAdmins.add("user-1");
+    expect(await code(start(deps))).toBe("OK");
+  });
+
+  it("L1 is re-checked when the code is consumed on the platform host", async () => {
+    const { deps, attemptId, sentCode, repository } = await started();
+    repository.memberships["user-1"] = [{ id: "m-1", collegeId: COLLEGE_A, status: "ENDED" }];
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: null }, deps)),
+    ).toBe("NO_ACCOUNT_FOR_DOMAIN");
+    expect(repository.attempts.get(attemptId)!.usedAt).toBeNull();
+  });
+
+  it("L3 a missing second code does not spend the verification budget", async () => {
+    const { deps, repository } = setup();
+    repository.superAdmins.add("user-1");
+    const result = await start(deps);
+    expect(
+      await code(verifyLogin({ attemptId: result.attemptId, code: "123456", tenantCollegeId: null }, deps)),
+    ).toBe("SECOND_FACTOR_REQUIRED");
+    expect(repository.attempts.get(result.attemptId)!.verificationAttempts).toBe(0);
+  });
+
+  it("L4 reserve failure reports the real reason", async () => {
+    const { deps, attemptId, sentCode, repository } = await started();
+    repository.attempts.get(attemptId)!.usedAt = repository.now;
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: null }, deps)),
+    ).toBe("INVALID_ATTEMPT");
+
+    const second = await started();
+    // Attempt expires between load and reserve (race): the DB refuses the reserve.
+    const original = second.repository.reserveVerification.bind(second.repository);
+    second.repository.reserveVerification = async (id: string) => {
+      second.repository.now = new Date(second.repository.now.getTime() + 301_000);
+      return original(id);
+    };
+    expect(
+      await code(verifyLogin({ attemptId: second.attemptId, code: second.sentCode, tenantCollegeId: null }, second.deps)),
+    ).toBe("OTP_EXPIRED");
+  });
+
+  it("L5 issues the session with the consume and revokes the previous cookie", async () => {
+    const { deps, attemptId, sentCode, repository } = await started();
+    const verified = await verifyLogin(
+      {
+        attemptId,
+        code: sentCode,
+        tenantCollegeId: null,
+        session: { maxAgeSeconds: 3600, previousToken: "old-token" },
+      },
+      deps,
+    );
+    expect(verified.session?.token).toBeTruthy();
+    expect(repository.sessions).toHaveLength(1);
+    expect(repository.sessions[0].digest).toMatch(/^[0-9a-f]{64}$/);
+    expect(repository.sessions[0].previousDigest).toMatch(/^[0-9a-f]{64}$/);
+    expect(JSON.stringify(repository.sessions)).not.toContain(verified.session!.token);
+  });
+
+  it("L5 a failing session insert leaves the code unburned", async () => {
+    const { deps, attemptId, sentCode, repository } = await started();
+    repository.failSessionInsert = true;
+    await expect(
+      verifyLogin(
+        { attemptId, code: sentCode, tenantCollegeId: null, session: { maxAgeSeconds: 3600 } },
+        deps,
+      ),
+    ).rejects.toThrow("insert failed");
+    expect(repository.attempts.get(attemptId)!.usedAt).toBeNull();
+  });
+
+  it("L6 an unknown address still counts against a coarse per-address bucket", async () => {
+    const { deps, repository } = setup();
+    await start(deps);
+    expect([...repository.attempts.values()][0].ipTag).not.toBeNull();
+  });
+
+  it("caps email resends per challenge", async () => {
+    const { deps, attemptId, repository } = await started();
+    const seen: (number | undefined)[] = [];
+    const original = repository.setEmailCode.bind(repository);
+    repository.setEmailCode = async (id, mac, gap, max) => {
+      seen.push(max);
+      return original(id, mac, gap);
+    };
+    await sendEmailFallback({ attemptId, tenantCollegeId: null }, deps);
+    expect(seen).toEqual([5]);
+  });
+
+  it("uses the database clock for expiry when the repository supplies one", async () => {
+    const { deps, attemptId, sentCode, repository } = await started();
+    const original = repository.loadAttempt.bind(repository);
+    repository.loadAttempt = async (id: string) => {
+      const a = await original(id);
+      return a ? { ...a, dbNow: new Date(a.expiresAt.getTime() + 1000) } : a;
+    };
+    expect(
+      await code(verifyLogin({ attemptId, code: sentCode, tenantCollegeId: null }, deps)),
+    ).toBe("OTP_EXPIRED");
   });
 });
