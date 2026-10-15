@@ -1,9 +1,9 @@
-import {collegeProgressQuerySchema} from "./college-learning-directory-model";
+import {collegeProgressQuerySchema,type CollegeProgressQuery} from "./college-learning-directory-model";
 import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college-directory-export-model";
 export const PROGRESS_EXPORT_CAP=1000;
 export const collegeProgressCsvSchema=collegeProgressQuerySchema.omit({page:true});
 export {exportParams};
-export function collegeProgressCsvHref(query:{q:string;departmentCode?:string;courseStatus?:"ALL"|"ACTIVE"|"ARCHIVED";periodStatus?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED";cohortStatus?:"ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";status:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;periodCode?:string;cohortCode?:string;offeringType?:string;departmentName?:string;activityState?:"ALL"|"RECORDED"|"UNRECORDED";completionEvidence?:"ALL"|"COMPLETED_CONTENT"|"NO_COMPLETED_CONTENT";learningPathPresence?:"ALL"|"HAS_PATH"|"NO_PATH";publishedPathPresence?:"ALL"|"HAS_PUBLISHED_PATH"|"NO_PUBLISHED_PATH"}){
+export function collegeProgressCsvHref(query: Partial<Omit<CollegeProgressQuery, "page">>) {
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.courseCode)p.set("courseCode",query.courseCode);
@@ -16,12 +16,22 @@ export function collegeProgressCsvHref(query:{q:string;departmentCode?:string;co
  if(query.learningPathPresence&&query.learningPathPresence!=="ALL")p.set("learningPathPresence",query.learningPathPresence);
  if(query.publishedPathPresence&&query.publishedPathPresence!=="ALL")p.set("publishedPathPresence",query.publishedPathPresence);
  if(query.offeringType&&query.offeringType!=="ALL")p.set("offeringType",query.offeringType);
- if(query.status!=="ACTIVE")p.set("status",query.status);
+ if(query.status&&query.status!=="ACTIVE")p.set("status",query.status);
  if(query.programStatus&&query.programStatus!=="ALL")p.set("programStatus",query.programStatus);
  if(query.cohortStatus&&query.cohortStatus!=="ALL")p.set("cohortStatus",query.cohortStatus);
  if(query.periodStatus&&query.periodStatus!=="ALL")p.set("periodStatus",query.periodStatus);
  if(query.courseStatus&&query.courseStatus!=="ALL")p.set("courseStatus",query.courseStatus);
  if(query.departmentCode)p.set("departmentCode",query.departmentCode);
+ if(query.lessonPresence&&query.lessonPresence!=="ALL")p.set("lessonPresence",query.lessonPresence);
+ if(query.assignmentPresence&&query.assignmentPresence!=="ALL")p.set("assignmentPresence",query.assignmentPresence);
+ if(query.quizPresence&&query.quizPresence!=="ALL")p.set("quizPresence",query.quizPresence);
+ if(query.resourcePresence&&query.resourcePresence!=="ALL")p.set("resourcePresence",query.resourcePresence);
+ if(query.liveClassPresence&&query.liveClassPresence!=="ALL")p.set("liveClassPresence",query.liveClassPresence);
+ if(query.videoContentState&&query.videoContentState!=="ALL")p.set("videoContentState",query.videoContentState);
+ if(query.publishedContentState&&query.publishedContentState!=="ALL")p.set("publishedContentState",query.publishedContentState);
+ if(query.hiddenContentState&&query.hiddenContentState!=="ALL")p.set("hiddenContentState",query.hiddenContentState);
+ if(query.sharedContentState&&query.sharedContentState!=="ALL")p.set("sharedContentState",query.sharedContentState);
+ if(query.sectionContentState&&query.sectionContentState!=="ALL")p.set("sectionContentState",query.sectionContentState);
  return "/api/academics/college-progress-export"+(p.size?"?"+p.toString():"");
 }
 export function renderCollegeProgressCsv(rows:readonly {
