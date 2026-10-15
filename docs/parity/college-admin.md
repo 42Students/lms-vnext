@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Identity/Education evidence-filter guard PARTIAL (chat-9):** An Identity-only queue cannot silently apply marksheet-present/missing or missing-marksheet triage. Page, service and CSV reject impossible combinations, and switching the visible kind to Identity clears the incompatible fields. Model tests authored; PG/browser acceptance pending.
+
 **Verification card decision-state clarity PARTIAL (chat-9):** The shared queue now clearly labels new SUBMITTED and updated UPDATE_PENDING items with the appropriate review action, while VERIFIED/SENT_BACK cards say View decision rather than suggesting another write. Pure presentation unit cases authored; 375px browser and end-to-end permission acceptance open.
 
 **Submitted-evidence verification CSV PARTIAL (chat-9):** Capped scoped verification CSV now includes the count of submitted Education rows, count of those with no marksheet document reference, and public-safe attention cues, in addition to status/timestamps. Identity rows keep Education counters blank; no raw snapshot, receipt IDs, private URLs or identity values are exported. Formula-neutralized unit cases authored, real DB/browser acceptance outstanding.

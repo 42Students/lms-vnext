@@ -34,3 +34,8 @@ export function verificationEnrollmentFiltersValid(filter:{enrollment:string;pro
 export function verificationAgeBandValid(filter:{tab:string;ageBand:string}):boolean{
  return filter.ageBand==="ANY"||filter.tab==="WAITING";
 }
+
+/** Marksheets are Education evidence only; never silently show an empty Identity queue. */
+export function verificationSectionEvidenceFiltersValid(filter:{kind?:string;marksheets:string;attention:string}):boolean{
+ return filter.kind!=="IDENTITY"||filter.marksheets==="ANY"&&filter.attention!=="MISSING_MARKSHEET";
+}

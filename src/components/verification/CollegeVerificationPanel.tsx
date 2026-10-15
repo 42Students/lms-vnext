@@ -78,7 +78,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} disableLocalSearch allowCollegeStudentLinks
    initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NAME"?"NAME":query.sort==="NEWEST"?"NEWEST":"OLDEST"}
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":""})}
-   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
+   onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query.attention==="MISSING_MARKSHEET"?"ALL":query.attention}:{})})}
    onReview={row=>setSelected(row)}/>
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
