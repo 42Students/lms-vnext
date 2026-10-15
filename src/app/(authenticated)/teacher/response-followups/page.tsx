@@ -4,24 +4,17 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
-  facultyResponseFollowUpHref, facultyResponseFollowUpQuerySchema,
+  facultyResponseFollowUpHref, parseFacultyFollowUpSearchParams,
 } from "@/modules/courses/faculty-response-followup-model";
 import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
 
-type Params = { kind?: string | string[]; search?: string | string[]; page?: string | string[] };
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
+type Params = Record<string,string|string[]|undefined>;
 
 export default async function FacultyResponseFollowUpsPage({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const raw = await searchParams;
-  const parsed = facultyResponseFollowUpQuerySchema.safeParse({
-    kind: first(raw.kind) ?? undefined,
-    search: first(raw.search) ?? undefined,
-    page: first(raw.page) ?? undefined,
-  });
+  const parsed = parseFacultyFollowUpSearchParams(raw);
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid follow-up filters</h1>
     <Link href="/teacher/response-followups" className="text-primary-text underline">Clear filters</Link>

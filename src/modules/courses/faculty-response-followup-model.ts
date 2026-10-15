@@ -66,3 +66,12 @@ export function limitedMissingLearners<T>(
   return { total: learners.length, preview: learners.slice(0, limit),
     hiddenCount: Math.max(0, learners.length - limit) };
 }
+
+export function parseFacultyFollowUpSearchParams(raw:Record<string,string|string[]|undefined>){
+ const allowed=new Set(["kind","search","page"]);
+ if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
+  return facultyResponseFollowUpQuerySchema.safeParse({kind:"INVALID"});
+ return facultyResponseFollowUpQuerySchema.safeParse({
+  kind:raw.kind||undefined,search:raw.search??undefined,page:raw.page||undefined,
+ });
+}
