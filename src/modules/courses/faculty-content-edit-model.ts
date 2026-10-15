@@ -21,6 +21,10 @@ export function facultyContentPatch(input: {
     try { parsed = new URL(url); } catch { throw new Error("Enter a valid HTTPS URL."); }
     if (parsed.protocol !== "https:") throw new Error("Only HTTPS URLs are allowed.");
     if (parsed.username || parsed.password) throw new Error("Remove embedded credentials from the HTTPS URL.");
+    const host = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, "");
+    if (host === "localhost" || host.endsWith(".localhost") || host === "::1" ||
+        host === "0.0.0.0" || /^127(?:\.\d{1,3}){3}$/.test(host))
+      throw new Error("Use a publicly reachable HTTPS hostname.");
     if (input.kind === "YOUTUBE") {
       const host = parsed.hostname.toLowerCase();
       if (host !== "youtube.com" && !host.endsWith(".youtube.com") && host !== "youtu.be")
