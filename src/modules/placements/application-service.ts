@@ -531,7 +531,7 @@ async function loadApplicationDetails(
   return { ...row, history };
 }
 
-function resolveExistingApplication(
+export function resolveExistingApplication(
   existing: typeof placementApplications.$inferSelect,
   channel: "INTERNAL" | "EXTERNAL",
 ) {
@@ -800,6 +800,15 @@ export async function applyToPlacementJob(
       })) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
+
+      // D2: apply idempotency is decided against the locked, persisted
+      // existing role/membership row, not only the optimistic preflight.
+      const [liveExisting] = await tx.select().from(placementApplications)
+        .where(and(
+          eq(placementApplications.roleOptionId, roleOption.id),
+          eq(placementApplications.membershipId, membership.id),
+        )).for("update").limit(1);
+      if (liveExisting) return resolveExistingApplication(liveExisting, channel);
 
       const [application] = await tx
         .insert(placementApplications)
