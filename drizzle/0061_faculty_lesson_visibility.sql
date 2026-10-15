@@ -1,0 +1,2 @@
+ALTER TABLE "lesson_contents" ADD COLUMN "visible_to_students" boolean DEFAULT true NOT NULL;--> statement-breakpoint
+CREATE INDEX "lesson_contents_visible_for_students_idx" ON "lesson_contents" USING btree ("lesson_id","delivery_id","status") WHERE "lesson_contents"."visible_to_students" = true;

@@ -1,0 +1,2 @@
+import {it,expect} from "vitest";import {tpoBatchDecisionSchema,canUndoBatchDecision} from "@/modules/placements/tpo-batch-decision-model";
+it("requires ineligible reasons and precise undo versions",()=>{const base={membershipId:"a1d5c117-1a6e-4d45-b83d-001fc5077011",expectedVersion:"1",decision:"INELIGIBLE"};expect(tpoBatchDecisionSchema.safeParse(base).success).toBe(false);expect(tpoBatchDecisionSchema.safeParse({...base,reason:"No consent"}).success).toBe(true);expect(canUndoBatchDecision("1","2","3")).toBe(false);});

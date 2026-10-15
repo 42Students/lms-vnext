@@ -71,6 +71,8 @@ export default async function CollegeLectureHallsPage({
       roomType: query.roomType === "ALL" ? undefined : query.roomType,
       departmentId: query.departmentId,
       minimumCapacity: query.minimumCapacity,
+      maximumCapacity: query.maximumCapacity,
+      upcoming:query.upcoming==="ALL"?undefined:query.upcoming,
       limit: COLLEGE_LECTURE_HALL_PAGE_SIZE,
       offset: (query.page - 1) * COLLEGE_LECTURE_HALL_PAGE_SIZE,
     }),
@@ -136,6 +138,21 @@ export default async function CollegeLectureHallsPage({
             Minimum seats
             <input name="minimumCapacity" type="number" min={1} max={5000} step={1}
               defaultValue={query.minimumCapacity ?? ""} placeholder="Any capacity"
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Scheduled upcoming classes
+            <select name="upcoming" defaultValue={query.upcoming}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any scheduling</option>
+              <option value="YES">Upcoming classes scheduled</option>
+              <option value="NO">No upcoming scheduled classes</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Maximum seats
+            <input name="maximumCapacity" type="number" min={1} max={5000} step={1}
+              defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <div className="flex items-end gap-2">

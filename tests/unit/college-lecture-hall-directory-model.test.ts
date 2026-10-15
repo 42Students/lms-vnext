@@ -10,7 +10,7 @@ import {
 describe("College Admin lecture hall directory filters", () => {
   it("defaults to all statuses and room types with a bounded first page", () => {
     expect(parseCollegeLectureHallSearchParams({})).toEqual({
-      q: "", status: "ALL", roomType: "ALL", page: 1,
+      q: "", status: "ALL", roomType: "ALL", upcoming:"ALL", page: 1,
     });
     expect(COLLEGE_LECTURE_HALL_PAGE_SIZE).toBe(25);
     expect(collegeLectureHallTotalPages(0)).toBe(1);
@@ -28,7 +28,7 @@ describe("College Admin lecture hall directory filters", () => {
     });
     expect(result).toEqual({
       q: "Comp Lab", status: "ARCHIVED", roomType: "LAB",
-      departmentId: "00000000-0000-4000-8000-000000000001", page: 2,
+      departmentId: "00000000-0000-4000-8000-000000000001", upcoming:"ALL", page: 2,
     });
     expect(parseCollegeLectureHallSearchParams({
       departmentId: "", status: "ALL",
@@ -42,6 +42,10 @@ describe("College Admin lecture hall directory filters", () => {
       { page: "1001" },
       { minimumCapacity: "0" },
       { minimumCapacity: "5001" },
+      { maximumCapacity: "0" },
+      { maximumCapacity: "5001" },
+      { upcoming: "LATER" },
+      { minimumCapacity: "40", maximumCapacity: "39" },
       { status: "DELETED" },
       { roomType: "GYM" },
       { departmentId: "another-college" },
@@ -68,8 +72,14 @@ describe("College Admin lecture hall directory filters", () => {
     const seats = parseCollegeLectureHallSearchParams({ minimumCapacity: "38" });
     expect(seats?.minimumCapacity).toBe(38);
     expect(collegeLectureHallHref(seats!)).toContain("minimumCapacity=38");
+    const maxSeats = parseCollegeLectureHallSearchParams({ maximumCapacity: "38", minimumCapacity: "20" });
+    expect(maxSeats?.maximumCapacity).toBe(38);
+    expect(collegeLectureHallHref(maxSeats!)).toContain("maximumCapacity=38");
     expect(url.searchParams.has("collegeId")).toBe(false);
     expect(hasCollegeLectureHallFilters(query!)).toBe(true);
+    const upcoming = parseCollegeLectureHallSearchParams({upcoming:"NO"});
+    expect(collegeLectureHallHref(upcoming!)).toContain("upcoming=NO");
+    expect(hasCollegeLectureHallFilters(upcoming!)).toBe(true);
     const defaults = parseCollegeLectureHallSearchParams({})!;
     expect(collegeLectureHallHref(defaults)).toBe("/college/lecture-halls");
     expect(hasCollegeLectureHallFilters(defaults)).toBe(false);

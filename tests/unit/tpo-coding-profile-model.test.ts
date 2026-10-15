@@ -1,0 +1,2 @@
+import {it,expect} from "vitest";import {normalizeCodingProfile} from "@/modules/placements/tpo-coding-profile-model";
+it("rejects masquerading hosts and unsafe schemes",()=>{expect(normalizeCodingProfile("GITHUB","https://github.com/student")).toBe("https://github.com/student");expect(normalizeCodingProfile("GITHUB","https://github.com.evil.test/student")).toBeNull();expect(normalizeCodingProfile("GITHUB","javascript:alert(1)")).toBeNull();});

@@ -1,0 +1,2 @@
+import {it,expect} from "vitest";import {buildTpoHomeAttention} from "@/modules/placements/tpo-home-attention-model";
+it("provides one next step and a quiet state",()=>{const row={key:"BATCHES" as const,label:"Batches",count:2,href:"/tpo/batches"};expect(buildTpoHomeAttention([row]).next?.href).toBe("/tpo/batches");expect(buildTpoHomeAttention([{...row,count:0}]).quiet).toBe(true);});

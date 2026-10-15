@@ -115,3 +115,22 @@ describe("W02 Faculty assessment legacy report analytics", () => {
     });
   });
 });
+
+
+describe("Faculty fractional grade bands", () => {
+  it("does not lose fractional percentages between labeled ranges", () => {
+    const bands = buildScoreDistribution([99.9, 89.4, 79.4, 69.4, 59.4]);
+    expect(bands.reduce((sum, bucket) => sum + bucket.count, 0)).toBe(5);
+    expect(bands.map(bucket => bucket.count)).toEqual([1, 1, 1, 1, 1]);
+  });
+});
+
+
+describe("Faculty assignment score precision", () => {
+  it("rounds the final average, not individual fractional marks", () => {
+    const rows = [{ pointsAwarded: 1, gradingStatus: "GRADED" }, { pointsAwarded: 2, gradingStatus: "GRADED" }];
+    const summary = assignmentScoreSummary(rows, 7);
+    expect(summary.averagePercent).toBe(21);
+    expect(summary.distribution.reduce((count, bucket) => count + bucket.count, 0)).toBe(2);
+  });
+});
