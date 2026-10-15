@@ -1004,3 +1004,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 feature matrix descending sorts (PARTIAL):** Name/Code A–Z and Z–A database ordering now use UUID secondary tie-breaks so paging remains deterministic. Validation and URL retention tested in source; PG/browser acceptance open.
+
+
+**2026-10-15 chat-6 strict feature matrix URL contract (PARTIAL):** Rejects repeated filters and unknown query keys before loading scoped college data. Previously first duplicate value was silently chosen and out-of-range array page values could be coerced. Pure tests authored, execution/browser pending.
