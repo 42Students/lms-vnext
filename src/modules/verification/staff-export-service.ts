@@ -5,7 +5,7 @@ import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
-import {verificationQueueFilters} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
 import {matchesVerificationAttention} from "./attention-filter";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
@@ -23,6 +23,7 @@ const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"me
 export async function exportCollegeVerificationCsv(context:RequestContext,raw:unknown,superAdminCollegeId?:string){
  const filter=verificationQueueFilters.parse(raw);
  if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
+ if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const rows=await getDb().select({
@@ -39,7 +40,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
   filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
-  inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]),
+  inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]:[filter.waitingState]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();

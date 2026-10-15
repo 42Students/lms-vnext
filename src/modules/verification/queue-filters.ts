@@ -1,6 +1,7 @@
 import {z} from "zod";
 export const verificationQueueFilters=z.strictObject({
   tab:z.enum(["WAITING","SENT_BACK","VERIFIED"]).default("WAITING"),
+  waitingState:z.enum(["ALL","SUBMITTED","UPDATE_PENDING"]).default("ALL"),
   q:z.string().trim().max(100).default(""),
   membershipId:z.string().uuid().optional(),
   sectionId:z.string().uuid().optional(),
@@ -16,3 +17,8 @@ export const verificationQueueFilters=z.strictObject({
   pageSize:z.coerce.number().int().refine(value=>[10,25,50].includes(value)).default(25),
 });
 export type VerificationQueueFilters=z.infer<typeof verificationQueueFilters>;
+
+/** Exact pending-state triage does not apply to already-decided tabs. */
+export function verificationWaitingStateValid(filter:{tab:string;waitingState:string}):boolean {
+ return filter.waitingState==="ALL"||filter.tab==="WAITING";
+}

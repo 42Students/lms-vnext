@@ -4,7 +4,7 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
 import {profileVerifications,profileVerificationSettings} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
-import {verificationQueueFilters} from "./queue-filters";
+import {verificationQueueFilters,verificationWaitingStateValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
 import {matchesVerificationAttention} from "./attention-filter";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
@@ -25,6 +25,7 @@ export class VerificationQueueLimitError extends Error {
 export async function listCollegeVerificationQueue(context:RequestContext,raw:unknown,superAdminCollegeId?:string) {
  const filter=verificationQueueFilters.parse(raw);
  if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
+ if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
@@ -44,7 +45,7 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
    eq(users.platformStatus,"ACTIVE"),filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
    inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
-   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]),
+   inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]:[filter.waitingState]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
