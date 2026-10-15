@@ -7,7 +7,7 @@ import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
 import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
-import {hrInterviewSlots} from "./hr-interview-staged-schema";
+import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
 import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
