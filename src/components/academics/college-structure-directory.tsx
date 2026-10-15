@@ -149,6 +149,15 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               </select>
             </label>
           ) : null}
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Elective slot academic period linkage
+              <select name="periodState" defaultValue={data.query.periodState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All slots</option>
+                <option value="LINKED">Linked to a period</option>
+                <option value="UNLINKED">No period assigned</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
