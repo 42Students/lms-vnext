@@ -1,10 +1,14 @@
 /** Explicitly distinguish missed, unmeasured and read-only Course Home work. */
 export function learnerCourseHomeCompletion(input:{
- itemsTotal:number;itemsCompleted:number;itemsMissed:number;readOnly:boolean;
+ itemsTotal:number;itemsCompleted:number;itemsMissed:number;readOnly:boolean;hasNextAction?:boolean;
 }){
  if(input.readOnly)return {
   title:"Review the Learning Path",
   detail:"This historical course is read only. Previously published learning materials remain available.",
+ };
+ if(input.itemsMissed>0&&input.hasNextAction)return {
+  title:"Continue learning",
+  detail:"A previous quiz was missed, but other published course work is still available to complete.",
  };
  if(input.itemsMissed>0)return {
   title:"No remaining actionable items",
