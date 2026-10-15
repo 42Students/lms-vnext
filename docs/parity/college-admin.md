@@ -1270,3 +1270,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Lessons PARTIAL:** Parent course lifecycle uses a registered same-college parent lifecycle column (courses.status) before paging and CSV. Unit and isolated-PostgreSQL tests authored; runtime/browser/oracle evidence remains open.
 
 **College Admin Lessons PARTIAL:** Exact department-code filtering uses the registered own-college course department, with matching page, CSV and bounded input. Unit/PG tests authored; execution and browser parity pending.
+
+**College Admin Course Progress PARTIAL:** Parent program lifecycle filters persisted, college-fenced programs.status before offering pagination and CSV. No learner eligibility, course completion or readiness is inferred. Unit and isolated-DB tests authored; execution/legacy/browser verification remains open.

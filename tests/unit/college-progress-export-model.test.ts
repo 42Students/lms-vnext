@@ -19,4 +19,9 @@ describe("college recorded course activity CSV",()=>{
   expect(csv).not.toContain("Completion rate");
   expect(csv).toContain("EXPORT TRUNCATED");
  });
+ it("course progress programStatus is validated before CSV export",()=>{
+    expect(collegeProgressCsvSchema.safeParse({programStatus:"BAD"}).success).toBe(false);
+    expect(collegeProgressCsvHref(collegeProgressCsvSchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
+ });
+
 });
