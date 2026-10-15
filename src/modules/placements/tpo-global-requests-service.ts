@@ -1,5 +1,5 @@
 import "server-only";
-import {globalTpoRequestsQuerySchema} from "@/modules/placements/tpo-global-requests-model";
+import {globalTpoRequestsQuerySchema,tpoRequestAgeCutoff} from "@/modules/placements/tpo-global-requests-model";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -21,7 +21,7 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
     status: query.status,
     requestType:query.requestType==="ALL"?undefined:query.requestType,
     sort:query.sort,
-    requestedBefore:query.age==="OLDER_THAN_7_DAYS"?new Date(Date.now()-7*86400000):undefined,
+    requestedBefore:tpoRequestAgeCutoff(query.age,new Date()),
     search: query.search,
     page: query.page,
     pageSize: query.pageSize,
