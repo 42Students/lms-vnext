@@ -18,6 +18,8 @@ export class TpoBulkPreviewError extends Error {
 /** Only signed, previewed exact rows can be submitted. Existing audited writers own all mutations. */
 export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
  const input=tpoBulkConfirmRequestSchema.parse(raw);
+ if(input.target==="APPLICATIONS"&&process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")
+   throw new TpoBulkPreviewError();
  const plan=tpoBulkPreviewRequestSchema.parse({
    target:input.target,jobId:input.jobId,action:input.action,note:input.note,ids:input.ids,
  });

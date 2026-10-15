@@ -9,8 +9,12 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))
    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
+   const body=await request.json();
+   if(body?.target==="APPLICATIONS"&&process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")
+     return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
+       headers:{"Cache-Control":"private, no-store"}});
    const result=await confirmTpoBulkAction(
-     await getCurrentRequestContext(),await request.json());
+     await getCurrentRequestContext(),body);
    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
    if(error instanceof TpoBulkPreviewError)
