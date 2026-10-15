@@ -2063,3 +2063,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / eligibility import review export (PARTIAL):** The existing server-confirmed preview can now be copied locally as formula-neutralized CSV outcomes, omitting optimistic version tokens and contact PII; copying never commits an import. Full legacy import undo UX and browser/PG acceptance remain open.
 
 **Chat-2 academic CSV validation hardening:** The preview parser now rejects blank/scientific notation numeric cells rather than coercing blank grades/backlogs to zero, and its typed match function retains the parsed fields used by the client preview. Unit cases authored; executed TypeScript/Vitest/browser results remain open.
+
+**Chat-2 academic CSV parser correction:** Repaired regex-literal escapes so numeric validation recognizes actual decimal digits and decimal separators (not literal backslash sequences); blank/scientific values still reject. This is a source correction, not executed-test certification.
