@@ -30,7 +30,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin · Platform"
-        title="Platform settings"
+        title="Tenant Settings"
         description="Read-only inventory of selected effective source limits and college policy values. No settings can be changed from this page."
       />
 

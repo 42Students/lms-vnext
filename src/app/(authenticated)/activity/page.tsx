@@ -174,7 +174,7 @@ export default async function ActivityPage({
     <div className="space-y-6">
       <PageHeader
         eyebrow="Operations"
-        title={isSuperAdmin(context) ? "Super Admin Activity Log" : "Activity Center"}
+        title="Activity Log"
         description="Meaningful college changes, grouped to reduce noise. Low-value request logs stay out of this workspace."
         actions={isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN") ? (
           <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +

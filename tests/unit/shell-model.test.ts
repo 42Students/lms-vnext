@@ -70,19 +70,19 @@ describe("authenticated shell model", () => {
     const shellContext = context(null, ["SUPER_ADMIN"]);
 
     expectInOrder(labels(shellContext), [
-      "Dashboard",
+      "Overview",
       "Organizations",
       "Colleges",
-      "Profile Verification",
+      "Profile verification",
       "Feature Controls",
       "Departments",
       "Academics",
-      "Courses",
+      "Courses & Content",
       "Projects",
       "Placements",
       "People",
       "Domains",
-      "Activity",
+      "Activity Log",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe("Super Admin");
   });

@@ -27,16 +27,16 @@ const dashboard: ShellNavItem = {
 };
 
 const superAdminItems: ShellNavItem[] = [
-  dashboard,
+  { ...dashboard, label: "Overview" },
   { label: "Organizations", href: "/admin/organizations", shortLabel: "O" },
   { label: "Colleges", href: "/admin/colleges", shortLabel: "C" },
-  { label: "Profile Verification", href: "/admin/verification", shortLabel: "V" },
+  { label: "Profile verification", href: "/admin/verification", shortLabel: "V" },
   { label: "Feature Controls", href: "/admin/features", shortLabel: "F" },
   { label: "Departments", href: "/admin/departments", shortLabel: "D" },
   { label: "Academics", href: "/admin/academics", shortLabel: "A" },
   { label: "Lecture Halls", href: "/admin/lecture-halls", shortLabel: "L" },
   { label: "Attendance", href: "/admin/attendance", shortLabel: "T" },
-  { label: "Courses", href: "/admin/courses", shortLabel: "C" },
+  { label: "Courses & Content", href: "/admin/courses", shortLabel: "C" },
   { label: "Projects", href: "/admin/projects", shortLabel: "P" },
   { label: "Placements", href: "/admin/placements", shortLabel: "P" },
   {
@@ -45,13 +45,13 @@ const superAdminItems: ShellNavItem[] = [
     shortLabel: "C",
     icon: "/assets/images/common/calender.svg",
   },
-  { label: "Recruiter Accounts", href: "/admin/recruiters", shortLabel: "R" },
+  { label: "Recruiter accounts", href: "/admin/recruiters", shortLabel: "R" },
   { label: "Announcements", href: "/admin/announcements", shortLabel: "A" },
-  { label: "Inbound Mail", href: "/admin/inbound-mail", shortLabel: "I" },
+  { label: "Inbound mail", href: "/admin/inbound-mail", shortLabel: "I" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
-  { label: "Settings", href: "/admin/settings", shortLabel: "S" },
-  { label: "Activity", href: "/activity", shortLabel: "A" },
+  { label: "Tenant Settings", href: "/admin/settings", shortLabel: "S" },
+  { label: "Activity Log", href: "/activity", shortLabel: "A" },
   { label: "Audit Findings", href: "/tracker/audit-findings", shortLabel: "A" },
 ];
 
