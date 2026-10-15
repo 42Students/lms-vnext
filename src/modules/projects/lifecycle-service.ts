@@ -733,6 +733,19 @@ export async function shipProjectRelease(
       );
     }
 
+    // A planned release with zero sprints cannot be shipped as completed work.
+    const [firstSprint] = await tx
+      .select({ id: projectSprints.id })
+      .from(projectSprints)
+      .where(and(
+        eq(projectSprints.projectId, scope.project.id),
+        eq(projectSprints.releaseId, release.id),
+      ))
+      .limit(1);
+    if (!firstSprint) {
+      throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
+    }
+
     const [openSprint] = await tx
       .select({ id: projectSprints.id })
       .from(projectSprints)
