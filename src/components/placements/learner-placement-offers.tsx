@@ -13,6 +13,7 @@ import {learnerPendingOfferExtensions,type LearnerOfferRequestStatus}
 import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
   from "@/modules/placements/learner-offer-extension-model";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {learnerOffersCsv} from "@/modules/placements/learner-offers-csv-model";
 import { useToast } from "@/components/ui/toast";
 
 export type LearnerPlacementOfferItem = {
@@ -201,6 +202,18 @@ export function LearnerPlacementOffers({
     }catch(error){setExtensionError(error instanceof Error?error.message:"Unable to request extension.");}
     finally{setPendingId(null);}
   }
+  function downloadOwnOffers(){
+    const csv=learnerOffersCsv(sortedOffers);
+    const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+    try {
+      const link=document.createElement("a");
+      link.href=url;
+      link.download="my-placement-offers.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } finally {URL.revokeObjectURL(url);}
+  }
   if (offers.length === 0) {
     return null;
   }
@@ -216,6 +229,10 @@ export function LearnerPlacementOffers({
         </p>
       </div>
 
+      <button type="button" onClick={downloadOwnOffers}
+        className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+        Export displayed offers CSV
+      </button>
       <div className="grid gap-4">
         {sortedOffers.map((item) => (
           <article
