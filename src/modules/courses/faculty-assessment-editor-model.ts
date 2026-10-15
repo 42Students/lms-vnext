@@ -28,3 +28,10 @@ export function facultyAssessmentEditReceiptMatches(
  return row.id===id&&row.status===status&&row.title===expectedTitle &&
    typeof row.updatedAt==="string"&&Number.isFinite(Date.parse(row.updatedAt));
 }
+
+/** Archive never means deleting learner responses; demand the archived state receipt. */
+export function facultyAssessmentArchiveReceiptMatches(
+ kind:"QUIZ"|"ASSIGNMENT",id:string,title:string,raw:unknown,
+){
+ return facultyAssessmentEditReceiptMatches(kind,id,"ARCHIVED",title,raw);
+}
