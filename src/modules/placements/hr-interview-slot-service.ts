@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne} from "drizzle-orm";
+import {and,eq,ne,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
@@ -75,7 +75,8 @@ export async function writeHrInterviewSlot(
    const [round]=await tx.select({id:placementJobRounds.id})
     .from(placementJobRounds).where(and(
      eq(placementJobRounds.id,input.roundId),eq(placementJobRounds.jobId,job.id),
-     eq(placementJobRounds.kind,"INTERVIEW"),ne(placementJobRounds.status,"CANCELLED")))
+     eq(placementJobRounds.kind,"INTERVIEW"),
+     inArray(placementJobRounds.status,["PENDING","SCHEDULED"])))
     .limit(1);
    if(!round)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
    const existing=await tx.select({startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt})
@@ -101,12 +102,14 @@ export async function writeHrInterviewSlot(
    id:hrInterviewSlots.id,roundId:hrInterviewSlots.roundId,status:hrInterviewSlots.status,
    version:hrInterviewSlots.version,bookedCount:hrInterviewSlots.bookedCount,
    capacity:hrInterviewSlots.capacity,createdByUserId:hrInterviewSlots.createdByUserId,
+   startAt:hrInterviewSlots.startAt,
   }).from(hrInterviewSlots).innerJoin(placementJobRounds,and(
    eq(placementJobRounds.id,hrInterviewSlots.roundId),eq(placementJobRounds.jobId,job.id)))
    .where(and(eq(hrInterviewSlots.id,input.slotId),eq(hrInterviewSlots.collegeId,job.collegeId)))
    .for("update").limit(1);
   if(!slot||slot.createdByUserId!==context.user.id)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
-  if(input.expectedVersion!==slot.version || !slotTransitionAllowed(slot.status,input.action))
+  if(input.expectedVersion!==slot.version || slot.startAt<=new Date() ||
+     !slotTransitionAllowed(slot.status,input.action,slot.bookedCount,slot.capacity))
    throw new Error("SLOT_STALE");
   const next=input.action==="OFFER"?"OFFERED":input.action==="BOOK"?"BOOKED":"CANCELLED";
   const bookedCount=input.action==="BOOK"?slot.bookedCount+1:slot.bookedCount;
