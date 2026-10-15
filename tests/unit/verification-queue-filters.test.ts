@@ -19,3 +19,9 @@ describe("missing marksheet attention",()=>{it("selects education requests with 
  expect(matchesVerificationAttention({...base,missingMarksheet:false},"MISSING_MARKSHEET",now)).toBe(false);
  expect(verificationQueueFilters.safeParse({attention:"INVALID"}).success).toBe(false);
 });});
+
+describe("verified-details change attention",()=>{it("finds UPDATE_PENDING and excludes ordinary verified records",()=>{
+ const now=new Date("2026-10-15T00:00:00Z");
+ expect(matchesVerificationAttention({status:"UPDATE_PENDING",section:"IDENTITY",submittedAt:now,missingMarksheet:false},"VERIFIED_DETAILS_CHANGED",now)).toBe(true);
+ expect(matchesVerificationAttention({status:"VERIFIED",section:"IDENTITY",submittedAt:now,missingMarksheet:false},"VERIFIED_DETAILS_CHANGED",now)).toBe(false);
+});});

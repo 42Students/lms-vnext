@@ -99,6 +99,11 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   expect(result.rows.some(row=>row.learnerMembershipId===ids.foreignMember)).toBe(false);
   await expect(listCollegeVerificationQueue(wrongRole,{attention:"MISSING_MARKSHEET"})).rejects.toBeInstanceOf(AuthorizationError);
  });
+ it("checks persisted scope for pending verified-detail changes",async()=>{
+  const result=await listCollegeVerificationQueue(admin,{attention:"VERIFIED_DETAILS_CHANGED"});
+  expect(result.rows.some(x=>x.learnerMembershipId===ids.foreignMember)).toBe(false);
+  await expect(listCollegeVerificationQueue(wrongRole,{attention:"VERIFIED_DETAILS_CHANGED"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
  it("does not accept a context-only wrong-role membership",async()=>{
   await expect(listCollegeVerificationQueue(wrongRole,{})).rejects.toBeInstanceOf(AuthorizationError);
  });
