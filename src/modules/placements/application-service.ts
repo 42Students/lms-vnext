@@ -29,6 +29,7 @@ import {
   placementEligibilityOverrides,
   placementJobs,
   placementJobEligibilityPolicies,
+  placementBatchRegistrations,
   placementJobRoleOptions,
   programs,
   sectionEnrollments,
@@ -48,6 +49,7 @@ import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
+import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
   createPlacementApplicationInputSchema,
@@ -688,6 +690,23 @@ export async function applyToPlacementJob(
         eq(placementBatchLifecycles.cohortId, enrollment.cohortId),
       )).for("share").limit(1);
       if (batch?.finishedAt) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+      // DB08 registration changes take the parent college FOR UPDATE lock.
+      // Having that lock already makes this a commit-boundary consent check,
+      // rather than relying on the earlier uncoupled learner listing.
+      const [registration] = await tx.select({
+        choice: placementBatchRegistrations.choice,
+      }).from(placementBatchRegistrations).where(and(
+        eq(placementBatchRegistrations.collegeId, job.collegeId),
+        eq(placementBatchRegistrations.cohortId, enrollment.cohortId),
+        eq(placementBatchRegistrations.membershipId, membership.id),
+      )).for("share").limit(1);
+      const registrationState = resolveSelfApplyRegistrationChoice(
+        registration?.choice === "PLACEMENTS" ? { choice: "PLACEMENTS" } :
+        registration ? { choice: "NOT_INTERESTED" } : null,
+      );
+      if (registrationState !== "CAN_APPLY") {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
       // Debarment creation/lift also locks the college parent FOR UPDATE;
