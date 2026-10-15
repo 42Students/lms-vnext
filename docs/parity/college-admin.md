@@ -609,6 +609,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Assignments
+**Authenticated batch scope for assessments PARTIAL (2026-10-15):** Assignment and Quiz aggregates now join persisted cohort/program ownership and a separate department alias, requiring the course and cohort program to belong to the selected college. Exact cohort code filtering runs before counts/pagination; strict model and PG own/other batch assertions authored. Runtime/browser gates pending.
+
 **College-owned academic-period assessment filter PARTIAL (2026-10-15):** Both Assignment and Quiz aggregates now join a registered academic period in the signed-in college and optionally filter by exact period code, before pagination and activity counts. URL/model plus positive/negative disposable-PostgreSQL evidence authored; browser/runtime verification pending.
 
 **375px assessment cards PARTIAL (2026-10-15):** Both College Admin assessment catalogues now render stacked min-width-safe cards for narrow viewports, preserving lesson/offering link, scope, due timestamp, points and recorded submissions/attempts, while the desktop table remains. No global horizontal table overflow is required on mobile; browser/accessibility acceptance pending.
