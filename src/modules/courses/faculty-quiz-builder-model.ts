@@ -237,3 +237,11 @@ export function facultyBeginQuizWrite(lock:{current:boolean}):boolean{
  if(lock.current)return false;
  lock.current=true;return true;
 }
+
+/** Preview only authorized unsaved question totals; do not publish on preview. */
+export function facultyQuizDraftReview(questions:readonly {points:number;options:readonly {correct:boolean}[]}[]){
+ return {questionCount:questions.length,
+  optionCount:questions.reduce((sum,q)=>sum+q.options.length,0),
+  totalPoints:questions.reduce((sum,q)=>sum+(Number.isFinite(q.points)?q.points:0),0),
+  missingCorrect:questions.filter(q=>!q.options.some(o=>o.correct)).length};
+}
