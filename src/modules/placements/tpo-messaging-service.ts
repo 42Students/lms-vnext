@@ -4,6 +4,7 @@ import {
   eq,
   isNull,
   ne,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -558,4 +559,42 @@ export async function sendThreadMessage(
 
     return message;
   });
+}
+
+/** Recruiter-only, read-only message history; opening a GET never marks messages read. */
+export async function readRecruiterThreadMessages(
+ context:RequestContext,threadIdInput:unknown,rawPage:unknown=1,
+){
+ const threadId=threadIdSchema.parse(threadIdInput);
+ const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
+ if(!context.recruiter||context.recruiter.status!=="ACTIVE")
+  throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx=>{
+  const [thread]=await tx.select({
+    id:placementTpoMessageThreads.id,collegeId:placementTpoMessageThreads.collegeId,
+    recruiterUserId:placementTpoMessageThreads.recruiterUserId,
+    jobId:placementTpoMessageThreads.jobId,
+  }).from(placementTpoMessageThreads)
+   .where(eq(placementTpoMessageThreads.id,threadId)).for("share").limit(1);
+  if(!thread||thread.recruiterUserId!==context.user.id)
+   throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  const actor=await mutationActor(tx,context,thread.collegeId);
+  if(actor.type!=="RECRUITER"||actor.userId!==thread.recruiterUserId)
+   throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  if(thread.jobId)await assertJobForThread(
+   tx,actor.collegeId,thread.jobId,actor.companyRelationshipId,true,
+  );
+  const [count]=await tx.select({total:sql<number>`count(*)::integer`})
+   .from(placementTpoMessages).where(eq(placementTpoMessages.threadId,thread.id));
+  const total=Number(count?.total??0);
+  const descending=await tx.select({
+    id:placementTpoMessages.id,senderType:placementTpoMessages.senderType,
+    body:placementTpoMessages.body,readAt:placementTpoMessages.readAt,
+    createdAt:placementTpoMessages.createdAt,
+  }).from(placementTpoMessages)
+   .where(eq(placementTpoMessages.threadId,thread.id))
+   .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
+   .limit(40).offset((page-1)*40);
+  return {thread,messages:descending.reverse(),page,pages:Math.max(1,Math.ceil(total/40)),total};
+ });
 }
