@@ -6,6 +6,8 @@ import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
 import {verificationQueueFilters} from "./queue-filters";
+import {matchesVerificationAttention} from "./attention-filter";
+import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab} from "./queue-tabs";
 import {matchesWaitingSince} from "./queue-waiting-since";
@@ -38,6 +40,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
+ const evaluatedAt=new Date();
  const selected=rows.filter(row=>{
   if(verificationTab({status:row.status as VerificationStatus})!==filter.tab)return false;
   if(filter.kind&&row.section!==filter.kind)return false;
@@ -45,7 +48,8 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   const m=submittedMarksheets(row.snapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&m.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&m.count>0&&m.missing===0))return false;
-  return true;
+  return matchesVerificationAttention({status:row.status as VerificationStatus,section:row.section as VerificationSection,
+   submittedAt:row.submittedAt,missingMarksheet:row.section==="EDUCATION"&&m.missing>0},filter.attention,evaluatedAt);
  });
  const output=verificationCsv(selected.map(row=>({
   learnerName:row.learnerName?.trim()||"Learner",section:row.section,status:row.status,

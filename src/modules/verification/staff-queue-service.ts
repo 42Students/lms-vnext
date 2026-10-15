@@ -5,6 +5,7 @@ import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohor
 import {profileVerifications,profileVerificationSettings} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import {verificationQueueFilters} from "./queue-filters";
+import {matchesVerificationAttention} from "./attention-filter";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
@@ -44,13 +45,15 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
+ const evaluatedAt=new Date();
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
   const marks=submittedMarksheets(row.submittedSnapshot);
   if(filter.marksheets==="MISSING"&&!(row.section==="EDUCATION"&&marks.missing>0))return false;
   if(filter.marksheets==="PRESENT"&&!(row.section==="EDUCATION"&&marks.count>0&&marks.missing===0))return false;
-  return true;
+  return matchesVerificationAttention({status:row.status as VerificationStatus,section:row.section as VerificationSection,
+   submittedAt:row.submittedAt,missingMarksheet:row.section==="EDUCATION"&&marks.missing>0},filter.attention,evaluatedAt);
  });
  const counts=verificationTabCounts(filtered.map(r=>({status:r.status as VerificationStatus})));
  const pageRows=filtered.filter(r=>verificationTab({status:r.status as VerificationStatus})===filter.tab);

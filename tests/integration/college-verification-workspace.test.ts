@@ -94,6 +94,11 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   expect(result.items).toHaveLength(new Set(result.items.map(x=>x.id)).size);
   await expect(listVerificationClassOptions(wrongRole)).rejects.toBeInstanceOf(AuthorizationError);
  });
+ it("never includes foreign-college records in missing-marksheet attention filters",async()=>{
+  const result=await listCollegeVerificationQueue(admin,{attention:"MISSING_MARKSHEET"});
+  expect(result.rows.some(row=>row.learnerMembershipId===ids.foreignMember)).toBe(false);
+  await expect(listCollegeVerificationQueue(wrongRole,{attention:"MISSING_MARKSHEET"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
  it("does not accept a context-only wrong-role membership",async()=>{
   await expect(listCollegeVerificationQueue(wrongRole,{})).rejects.toBeInstanceOf(AuthorizationError);
  });
