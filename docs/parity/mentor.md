@@ -1627,3 +1627,15 @@ Approval now writes a separately deduplicated LOCKED activity event, and a mento
 ### PR-S2-07 confirmed UI + authorized new draft after explicit reopen
 
 Readiness now projects the latest approved submission's durable reopen event and permits only its explicitly reopened state to create a new learner draft. The final-delivery view exposes the legacy Reopen for revision confirmation with required review feedback to an eligible Mentor/Admin, hides it after reopen or evaluation and preserves existing archived/complete denial. Browser and real PostgreSQL verification outstanding; attachment metadata still awaits registration.
+
+
+### 2026-10-16 chat-11 priority Postgres regression and parity summary
+
+- PR-S2-03: repaired PostgreSQL's microsecond optimistic timestamp CAS, added current project-learner assignment in the shared review fixture and direct-submit adversarial cases, and updated P6A/Mentor Board/Faculty Project submit fixtures. Added dedicated SQL-microsecond and stale-token integration cases; **source repaired, DB execution on this branch not yet verified**.
+- PR-S2-14: task-status transitions now use the same millisecond-truncated SQL optimistic token. The archive operation already holds the project lock without comparing timestamps.
+- PR-S2-10: archived project restoration compares the client millisecond token in SQL and has a dedicated PostgreSQL replay/stale test; runtime acceptance not certified.
+- PR-S2-07: approved submissions are audit-locked; an authorized explicit reopen event can allow the learner's next draft, with legacy UI and PostgreSQL test added. Attachment metadata is **still staged** pending registration and must not be marked DONE.
+- PR-S2-04: task-type/estimate/date/blocker/comment storage remains **unregistered**. The existing proposal and source validation cannot be safely wired to absent DB columns. This item remains NOT DONE.
+- Projects wording: adjusted Mentor/Learner/Admin workspace headings and empty states to the exact legacy catalogue, including one account-level section strip. Source tests added; full button/form/table/browser/mobile text parity remains open.
+
+No `as never` casts or protected schema changes were introduced. Tests authored in this round have not been executed here. The orchestrator must run the named disposable PostgreSQL integration cases and focused tests against this SHA before certifying any of these items.
