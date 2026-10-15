@@ -183,6 +183,7 @@ export async function listCollegeFacultyAssignments(
     ))
     .where(and(
       query.role !== "ALL" ? eq(courseTeachingAssignments.role, query.role) : undefined,
+      query.courseCode ? eq(courses.code, query.courseCode) : undefined,
       query.status === "ACTIVE" ? and(
         isNull(courseTeachingAssignments.endedAt),
         isNull(courseSectionDeliveries.endedAt),
