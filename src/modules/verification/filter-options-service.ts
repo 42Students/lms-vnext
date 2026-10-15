@@ -22,3 +22,14 @@ export async function listVerificationBranchOptions(context:RequestContext):Prom
   .orderBy(asc(departments.name),asc(departments.id)).limit(201);
  return {items:rows.slice(0,200).map(r=>({id:r.id,label:r.name})),truncated:rows.length>200};
 }
+
+export async function listVerificationClassOptions(context:RequestContext):Promise<VerificationFilterChoiceList>{
+ const scope=await requireCollegeVerificationActor(context);
+ const rows=await getDb().select({id:sections.id,sectionName:sections.name,cohortName:cohorts.name})
+  .from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,scope.collegeId)))
+  .where(eq(sections.status,"ACTIVE"))
+  .orderBy(asc(cohorts.name),asc(sections.name),asc(sections.id)).limit(201);
+ return {items:rows.slice(0,200).map(r=>({id:r.id,label:r.cohortName+" · "+r.sectionName})),truncated:rows.length>200};
+}
