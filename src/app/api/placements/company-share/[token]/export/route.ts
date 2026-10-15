@@ -3,9 +3,9 @@ import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share
 import {tpoShareableShortlistCsv} from "@/modules/placements/tpo-shareable-shortlist-model";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(_request:Request,{params}:{params:Promise<{token:string}>}){
+export async function GET(request:Request,{params}:{params:Promise<{token:string}>}){
  const {token}=await params;
- const result=await getPublicCompanyApplicantShare(token,1,"CSV");
+ const result=await getPublicCompanyApplicantShare(token,1,"CSV",new URL(request.url).searchParams.get("q")??"");
  if(result.kind!=="READY")return NextResponse.json({error:"SHARE_UNAVAILABLE"},{
   status:404,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"},
  });
