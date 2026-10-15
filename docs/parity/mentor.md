@@ -1655,3 +1655,7 @@ Reopen now atomically writes the latest APPROVED submission's `reopened_at` fiel
 ### PR-S2-07 0091 approval locking
 
 APPROVED review now persists `locked_at` and emits append-only LOCKED delivery event in the same transaction for a college-scoped actor membership. Global system-admin reviews without a college membership still record the standard audited event but cannot supply the 0091 event actor (non-null FK); those approval records remain persisted locked. The separately authorized reopen endpoint requires a real college membership and a matching approved/locked row. Disposable PostgreSQL and Super Admin acceptance remain open.
+
+### PR-S2-07 0091 attachments runtime
+
+Learner delivery draft create/edit now accepts up to 10 typed FILE/LINK attachments. FILE references are checked against READY project uploads and TEAM-visible linked resources inside the same transaction; unsafe schemes, foreign/private files and duplicate metadata are rejected. Updates only alter draft attachments, never reviewed submissions. Every explicit metadata mutation writes immutable ATTACHMENTS_CHANGED project_delivery_events. PostgreSQL acceptance and browser remain pending.
