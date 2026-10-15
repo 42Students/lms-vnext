@@ -6,6 +6,7 @@ import {
   parseCollegeRoleDirectorySearchParams,
   canonicalCollegeRoleDirectoryHref,
   selectedDirectoryValueNotListed,
+  collegeRoleContactHref,
   assertCompatibleCollegeRoleDirectoryFilters,
   roleDirectoryDateWindowValid,
   roleDirectoryIstDayStart,
@@ -196,3 +197,5 @@ describe("Contradictory role-directory filters",()=>{
   expect(()=>assertCompatibleCollegeRoleDirectoryFilters("LEARNER",collegeRoleDirectoryQuerySchema.parse({enrollment:"NONE",classPresence:"NONE"}))).not.toThrow();
  });
 });
+
+describe("College role roster masked Contacts drilldown",()=>{it("links the exact membership without accepting a forged URL segment",()=>{const id="00000000-0000-4000-8000-000000000149";expect(collegeRoleContactHref(id)).toBe("/college/contacts/"+id);expect(()=>collegeRoleContactHref("../other-college")).toThrow();});});
