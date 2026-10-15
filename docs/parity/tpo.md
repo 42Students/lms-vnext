@@ -2123,3 +2123,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch registration update recency — PARTIAL:** College-scoped 500-person sampled roster can focus choices updated in 7 days, older than 30 days, or no recorded choice; timestamp comparisons use one server clock and do not infer consent or actual delivery.
 
 **Chat-2 batch registration sorting — PARTIAL:** Authorized roster sample now sorts by name or actual updated timestamp before pagination with deterministic membership-ID ties and unknown timestamps last. Search/source/recency filters compose into the existing CSV.
+
+**Chat-2 / configurable batch registration page size — PARTIAL:** User-validated 25/50/100 rows are selected only after the capped authorized 500-person sample, preserving query state in navigation and current-page CSV. Unknown/too-large page sizes are rejected, not used for unbounded exports.

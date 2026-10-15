@@ -6,6 +6,7 @@ export const tpoBatchRegistrationFilters=z.object({
  source:z.enum(["ALL","SELF","TPO","BACKFILL","UNRECORDED"]).default("ALL"),
  recency:z.enum(["ALL","UPDATED_7_DAYS","OLDER_30_DAYS","NO_RECORD"]).default("ALL"),
  order:z.enum(["NAME_ASC","NAME_DESC","UPDATED_NEWEST","UPDATED_OLDEST"]).default("NAME_ASC"),
+ pageSize:z.coerce.number().int().refine(n=>[25,50,100].includes(n)).default(25),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type BatchRegistrationListRow={membershipId:string;name:string;choice:string|null};
