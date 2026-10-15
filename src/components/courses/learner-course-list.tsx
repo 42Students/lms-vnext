@@ -8,6 +8,7 @@ import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-car
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
 import { resolveLearnerCoursePeriod } from "@/modules/courses/learner-course-current-period-model";
+import { resolveLearnerCourseTypeFilter } from "@/modules/courses/learner-course-type-availability-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
@@ -120,6 +121,7 @@ export function LearnerCourseList({
     (row) => String(row.course.offeringType).toUpperCase() !== "ELECTIVE",
   ).length;
   const electiveCount = periodRows.length - coreCount;
+  const effectiveTypeFilter = resolveLearnerCourseTypeFilter(typeFilter,coreCount,electiveCount);
 
   const visibleRows = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -130,12 +132,12 @@ export function LearnerCourseList({
       .filter((row) => {
         const elective =
           String(row.course.offeringType).toUpperCase() === "ELECTIVE";
-        if (typeFilter === "core" && elective) return false;
-        if (typeFilter === "elective" && !elective) return false;
+        if (effectiveTypeFilter === "core" && elective) return false;
+        if (effectiveTypeFilter === "elective" && !elective) return false;
         return learnerCourseMatchesSearch(row, needle);
       })
       ,sortMode);
-  }, [periodRows, query, typeFilter, continueOnly,sortMode,progressFilter,termState]);
+  }, [periodRows, query, effectiveTypeFilter, continueOnly,sortMode,progressFilter,termState]);
 
   if (rows.length === 0) {
     return (
@@ -211,7 +213,7 @@ export function LearnerCourseList({
                 <button
                   key={value}
                   type="button"
-                  aria-pressed={typeFilter === value}
+                  aria-pressed={effectiveTypeFilter === value}
                   onClick={() => {
                     setTypeFilter(value as "all" | "core" | "elective");
                     setVisibleLimit(PAGE_SIZE);
@@ -266,7 +268,7 @@ export function LearnerCourseList({
             Continue learning only
           </button>
         </div>
-        {learnerCourseHasActiveFilters({query,typeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
+        {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
           <button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
             className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">
             Clear Course filters
@@ -302,7 +304,7 @@ export function LearnerCourseList({
               ? `No courses match “${query.trim()}”`
               : continueOnly
                 ? "No courses with a next step right now."
-                : typeFilter === "elective"
+                : effectiveTypeFilter === "elective"
                   ? "No electives to show right now."
                 : "No regular courses to show right now."}
           </h2>
