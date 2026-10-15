@@ -23,9 +23,10 @@ export const hrRoundFormSchema=z.strictObject({
   ctx.addIssue({code:"custom",message:"Removal cannot change round fields"});
 });
 export function canRecruiterEditRound(input:{
- status:string;createdByUserId:string;recruiterUserId:string;hasResults:boolean;
+ status:string;createdByUserId:string;recruiterUserId:string;hasResults:boolean;hasSlots?:boolean;
 }):boolean{
- return input.status==="PENDING"&&input.createdByUserId===input.recruiterUserId&&!input.hasResults;
+ return input.status==="PENDING"&&input.createdByUserId===input.recruiterUserId&&
+  !input.hasResults&&!input.hasSlots;
 }
 export function duplicateRecruiterRoundName(
  names:readonly {id:string;name:string;status:string}[],name:string,excludeId?:string,

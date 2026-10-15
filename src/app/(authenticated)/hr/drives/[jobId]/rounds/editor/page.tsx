@@ -73,7 +73,7 @@ export default async function HrRoundsEditorPage({params}:{
        </select>
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Save changes</button>
-     </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, already used, or no longer pending; editing is disabled.</p>}
+     </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
