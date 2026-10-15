@@ -48,6 +48,7 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
   const filter=and(
     inArray(projectSubmissionReviews.projectId,ids),
     query.projectId?eq(projectSubmissionReviews.projectId,query.projectId):undefined,
+    query.version!==undefined?eq(projectSubmissions.version,query.version):undefined,
     eq(projectInstances.collegeId,membership.collegeId),
     query.search?ilike(projectInstances.title,"%"+mentorReviewHistoryLiteralSearch(query.search)+"%"):undefined,
     query.decision==="ALL" ? undefined :

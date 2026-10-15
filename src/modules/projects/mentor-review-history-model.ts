@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const mentorReviewHistoryQuerySchema = z.object({
+  version: z.preprocess(value=>value===""?undefined:value,z.coerce.number().int().min(1).max(100000).optional()),
   projectId: z.preprocess(value => value===""?undefined:value,z.string().uuid().optional()),
   decision: z.enum(["ALL", "APPROVED", "CHANGES_REQUESTED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
@@ -23,11 +24,12 @@ export function mentorReviewHistoryLiteralSearch(value: string) {
   return value.replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_");
 }
 export function mentorReviewHistoryHref(query: Pick<MentorReviewHistoryQuery,"decision"|"page"> &
-  {search?:MentorReviewHistoryQuery["search"];projectId?:MentorReviewHistoryQuery["projectId"]}) {
+  {search?:MentorReviewHistoryQuery["search"];projectId?:MentorReviewHistoryQuery["projectId"];version?:MentorReviewHistoryQuery["version"]}) {
   const params = new URLSearchParams();
   if (query.decision!=="ALL") params.set("decision",query.decision);
   if (query.search) params.set("search",query.search);
   if (query.projectId) params.set("projectId",query.projectId);
+  if (query.version!==undefined) params.set("version",String(query.version));
   if (query.page>1) params.set("page",String(query.page));
   return "/mentor/review-history"+(params.size?"?"+params.toString():"");
 }
