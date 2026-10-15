@@ -203,6 +203,38 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
     ]);
     expect(events.rows[0]?.total).toBe("1");
   });
+  it("filters real persisted empty/TODO/DONE Sprint evidence inside exact active Mentor scope",async()=>{
+    const {project,sprint}=await fixture();
+    const onlyTodo=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"TODO",
+    });
+    expect(onlyTodo.items.map(item=>item.id)).toContain(sprint.id);
+    const initiallyEmpty=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"NO_TASKS",
+    });
+    expect(initiallyEmpty.items).toHaveLength(0);
+    await pool.query("update project_tasks set status='DONE' where project_id=$1::uuid",[project.id]);
+    const completed=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"DONE",
+    });
+    expect(completed.items.map(item=>item.id)).toContain(sprint.id);
+    expect((await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"TODO",
+    })).items).toHaveLength(0);
+    await pool.query("delete from project_tasks where project_id=$1::uuid",[project.id]);
+    const noTasks=await getMentorSprintProgress(mentor,{
+      projectId:project.id,taskAttention:"NO_TASKS",
+    });
+    expect(noTasks.items.map(item=>item.id)).toContain(sprint.id);
+    expect(noTasks.items.find(item=>item.id===sprint.id)?.tasks.completionPercent)
+      .toBeNull();
+    await expect(getMentorSprintProgress(learner,{
+      projectId:project.id,taskAttention:"NO_TASKS",
+    })).rejects.toBeDefined();
+    await expect(getMentorSprintProgress(mentor,{
+      projectId:randomUUID(),taskAttention:"NO_TASKS",
+    })).rejects.toBeDefined();
+  });
   it("creates a registered planned sprint, audits three token-checked transitions and denies scope forgery",async()=>{
     const {project,sprint:original}=await fixture();
     const params={projectId:project.id};
