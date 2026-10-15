@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerCourseHomeCompletion } from "@/modules/courses/learner-course-home-completion-model";
 import { learnerCourseHomeActionLabel } from "@/modules/courses/learner-course-home-action-label-model";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -189,7 +190,7 @@ export function LearnerCourseOverview({
   const priorityActivity = readOnly
     ? null
     : selectPriorityLearnerActivity([...overdueAssignmentActions, ...allUpcomingActivity]);
-  const nextAction = priorityActivity
+  const nextAction = readOnly ? null : priorityActivity
     ? {
         title: priorityActivity.title,
         detail: `${("overdue" in priorityActivity && priorityActivity.overdue) ? "Overdue · late submission available" : priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
@@ -247,6 +248,9 @@ export function LearnerCourseOverview({
     )
     .slice(0, 6);
 
+  const homeCompletion = learnerCourseHomeCompletion({
+    itemsTotal:summary.itemsTotal,itemsMissed:summary.itemsMissed,readOnly,
+  });
   const jumpLinks=learnerCourseOverviewJumps({
     hasPublishedPath:pathPreview.totalLessons>0,
     hasUpdates:unifiedUpdates.length>0,
@@ -408,16 +412,12 @@ export function LearnerCourseOverview({
             <h3 className="mt-2 text-xl font-semibold text-foreground">
               {nextAction
                 ? nextAction.title
-                : summary.itemsTotal > 0
-                  ? "Course work complete"
-                  : "Open the learning path"}
+                : homeCompletion.title}
             </h3>
             <p className="mt-1 text-sm text-body">
               {nextAction
                 ? nextAction.detail
-                : summary.itemsTotal > 0
-                  ? "You have completed every currently actionable item."
-                  : "Your course workspace is ready. Start with the first published lesson."}
+                : homeCompletion.detail}
             </p>
           </div>
           <Link
