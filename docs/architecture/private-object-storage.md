@@ -20,6 +20,10 @@ Creating the bucket needs an R2 token with bucket-create permission (the legacy 
 - "Generation" is the object's Last-Modified in epoch milliseconds (numeric, as the DB check requires); it changes on every overwrite or metadata replace.
 - Reads are short-lived presigned GETs issued only after the caller's authorization and attestation; public URLs are never returned or persisted.
 
+## Feature layer (2026-10-16)
+
+Assignment submission files, project resource files and lesson videos use this contract through `src/modules/storage/file-lifecycle.ts` and persist their own scan/attestation state in PostgreSQL (migration 0080) instead of copying objects to replace metadata, because videos reach 4900 MiB. Outside production a clearly named dev-only attestation (`APP_ENV` development or test) marks verified uploads READY; production stays fail closed. See `docs/architecture/file-and-video-storage.md` and `file-and-video-apis.md`.
+
 ## Not yet done
 
 - The private bucket itself (needs a bucket-create token).
