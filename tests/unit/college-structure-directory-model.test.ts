@@ -93,4 +93,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({programStatus:"ARCHIVED"}))).toContain("programStatus=ARCHIVED");
   });
 
+  it("periodCode is an exact bounded class code filter, not arbitrary SQL",()=>{
+    expect(collegeClassQuerySchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({periodCode:""})).toEqual({});
+    expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({periodCode:"A&26"}))).toContain("periodCode=A%2626");
+  });
+
 });

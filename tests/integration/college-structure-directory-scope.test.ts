@@ -243,4 +243,15 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("periodCode restricts registered classes within owning college",async()=>{
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,periodCode:key}),
+      listCollegeClasses(adminA,{q:key,periodCode:"NO-SUCH-CODE"}),
+      listCollegeClasses(adminB,{q:key,periodCode:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

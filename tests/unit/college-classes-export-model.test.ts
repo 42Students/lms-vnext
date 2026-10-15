@@ -45,4 +45,9 @@ describe("College classes safe CSV export", () => {
   expect(classesExportHref({q:"",status:"ACTIVE",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
  });
 
+  it("periodCode is preserved in safe class CSV export",()=>{
+    expect(collegeClassesExportSchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(classesExportHref({q:"",status:"ACTIVE",periodCode:"B&26"})).toContain("periodCode=B%2626");
+  });
+
 });
