@@ -30,11 +30,7 @@ export default async function LearnerCourseProgressPage({
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course overview
       </Link>
-      <PageHeader
-        eyebrow={progress.course.code}
-        title="Course progress by lesson"
-        description={progress.course.name + " · Recorded learner completion, assignments and quizzes."}
-      />
+      <PageHeader title="Course progress by lesson" />
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Progress summary">
         {[
           { label: "Overall", value: progress.summary.overallPercent + "%" },
