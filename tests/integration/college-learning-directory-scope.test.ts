@@ -140,6 +140,12 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     const unknown=await listCollegeLessons(own,{courseCode:"MISSING-CODE"});
     expect(exact.items.map(row=>row.id)).toContain(ids.lesson);
     expect(unknown.items).toEqual([]);
+    const [authored,emptyLessons]=await Promise.all([
+      listCollegeLessons(own,{q:name,contentPresence:"HAS_CONTENT"}),
+      listCollegeLessons(own,{q:name,contentPresence:"EMPTY"}),
+    ]);
+    expect(authored.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(emptyLessons.items).toEqual([]);
     const dep=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const [departmentLessons,otherDepartment]=await Promise.all([
       listCollegeLessons(own,{q:name,departmentCode:dep.rows[0]!.code}),
