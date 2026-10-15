@@ -6,6 +6,8 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { tpoShareableShortlistQuerySchema } from "@/modules/placements/tpo-shareable-shortlist-model";
 import { getTpoShareableShortlist } from "@/modules/placements/tpo-shareable-shortlist-service";
+import { listTpoCompanyApplicantShares } from "@/modules/placements/company-share/manage-service";
+import { CompanyShareControls } from "./company-share-controls";
 
 type SearchParams = { page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
@@ -34,6 +36,7 @@ export default async function TpoShortlistSharePreviewPage({
       error.code === "PLACEMENT_JOB_NOT_FOUND") notFound();
     throw error;
   }
+  const shares = await listTpoCompanyApplicantShares(context, data.job.id);
   const path = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview";
   return <div className="space-y-5">
     <Link
@@ -75,6 +78,11 @@ export default async function TpoShortlistSharePreviewPage({
         </tbody>
       </table>
     </div>}
+    <CompanyShareControls jobId={data.job.id} ready={shares.ready}
+      initialLinks={shares.links.map(link => ({
+        id: link.id, expiresAt: link.expiresAt.toISOString(),
+        revokedAt: link.revokedAt?.toISOString() ?? null,
+      }))} />
     <nav aria-label="Share preview pagination"
       className="flex flex-wrap justify-between gap-3 text-sm">
       <span>Page {data.page} of {data.totalPages}</span>

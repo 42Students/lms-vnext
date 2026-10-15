@@ -980,3 +980,49 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 - Authorized learner membership-rule audit history now supports a stable older-history cursor, Projects/Electives filtering, actor-name search, India-day start/end bounds, and a formula-neutralized CSV export of the **currently selected 40-record page**. Filters are applied in the scoped Activity Log service before pagination; CSV does not expose arbitrary metadata, actor email, or contact data.
 - Read-only Platform Settings rejects unknown or repeated URL query keys rather than silently treating them as valid filters.
 - **Acceptance remains OPEN:** branch pushes did not produce matching GitHub Actions checks; authored Vitest/tests and disposable PostgreSQL checks have **not executed** in this session. Browser/mobile interactions, learner rule mutation/concurrency, history paging, actor-name and time filtering, CSV formula/privacy checks, tenant/role negatives and full legacy oracle comparison must run before any row is declared DONE. No DATABASE tracker closure or production approval is claimed.
+
+
+**2026-10-15 chat-6 feature matrix sorting (PARTIAL):** Server-side name/code sort with UUID tie-breaking, validated URL state and filter-preserving pagination. Unit contracts authored; PostgreSQL/browser evidence not yet executed. Existing module matrix is not parity-closed.
+
+
+**2026-10-15 chat-6 feature matrix stored college-rule module filter (PARTIAL):** Strict Projects/Placements/Electives URL selector now applies an exact persisted COLLEGE rule EXISTS predicate before totals and pagination. It is not an effective per-learner access filter. Authored unit regression, runtime/browser not executed.
+
+
+**2026-10-15 chat-6 feature matrix stored value (PARTIAL):** Server-side persisted COLLEGE-rule On/Off filter applies to the same exact module row and to both count and page; inherited/effective values are not silently relabelled. Pure tests authored, PG/browser pending.
+
+
+**2026-10-15 chat-6 feature matrix explicit locked-rule filter (PARTIAL):** Scoped college-rule EXISTS can require stored locked state, composed on the *same* Projects/Placements/Electives rule with stored On/Off. Count and page agree. Not a claim of learner-level lock evaluation; tests authored, not executed.
+
+
+**2026-10-15 chat-6 feature matrix no-rule inspection (PARTIAL):** Explicit stored COLLEGE-rule absence can now be found per selected module, with contradictory locked/value selectors rejected rather than interpreted as inherited Off. Exact scoped NOT EXISTS affects both count and page. Authored tests; DB/browser pending.
+
+
+**2026-10-15 chat-6 recent persisted college-rule changes (PARTIAL):** Optional 7/30/90-day rule updated-at windows use one server clock and SQL predicate for both totals/page. A missing rule cannot also be recent, so that combination is rejected. No event-history or workflow-causation claim; tests authored, execution pending.
+
+
+**2026-10-15 chat-6 feature matrix name/code search selector (PARTIAL):** Safe literal case-insensitive substring query can target college name, code, or both, preserving filters through database-count/page and navigation; this avoids wildcard expansion and no private-contact searches. Authored unit tests, runtime PG/browser open.
+
+
+**2026-10-15 chat-6 feature matrix descending sorts (PARTIAL):** Name/Code A–Z and Z–A database ordering now use UUID secondary tie-breaks so paging remains deterministic. Validation and URL retention tested in source; PG/browser acceptance open.
+
+
+**2026-10-15 chat-6 strict feature matrix URL contract (PARTIAL):** Rejects repeated filters and unknown query keys before loading scoped college data. Previously first duplicate value was silently chosen and out-of-range array page values could be coerced. Pure tests authored, execution/browser pending.
+
+
+**2026-10-15 chat-6 feature matrix stale-page recovery (PARTIAL):** Search/filter now counts first, clamps stale page bookmarks to its last available page and then fetches the matching scoped row slice instead of presenting a false empty result. Request-level count/query racing changes remain a PostgreSQL/browser acceptance issue; pure boundary tests authored.
+
+
+**2026-10-15 chat-6 matrix CSV page export (PARTIAL):** New authorized Super Admin GET exports exactly the strict-filtered and currently permissioned page (max 20 colleges), effective source-labelled module decisions, formula-neutralized strings and row/total headers with private no-store caching. No recruiter/learner contacts or global raw rule dump. Unit tests authored, PG/browser/download evidence pending.
+
+
+**2026-10-15 chat-6 focused module hierarchy drill-in (PARTIAL):** Matching colleges now carry the selected Projects/Placements/Electives module into their read-only hierarchy view on both mobile cards and desktop rows. Cross-college authorization continues in the destination service. Pure navigation checks authored; browser/back-forward and full legacy parity remain open.
+
+
+**2026-10-15 chat-6 default feature filter correction (PARTIAL):** Normalize the browser form's empty Any-college module selector into no filter before strict Zod service parsing. Unknown module strings still fail closed. Unit default-form regression authored; manual browser submission not yet run.
+
+
+**2026-10-15 chat-6 disposable PostgreSQL filter acceptance fixture (AUTHORED, NOT EXECUTED):** A temporary organization-owned college verifies no-rule → stored locked Off transitions, same-row module/value/lock/recent filters, count and row consistency, foreign selected-college denial and wrong-role denial, plus page CSV. Guarded behind TEST_DATABASE_URL and DB03 isolated target; cleans up temporary rule and college. Execution/CI and visual parity remain blockers.
+
+
+### 2026-10-15 chat-6 college Feature Controls write workflow — PARTIAL, not accepted
+Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly typed and optimistic SET/INHERIT mutation, a transactional high-importance Activity Log event, ancestor GLOBAL/ORGANIZATION lock checks, no-op suppression, and a human-confirmed editor in the college hierarchy. All three optional modules are supported at COLLEGE scope; student lower-level controls remain independent. Recheck and reviewed receipts do not infer downstream participation gates. Authorized, page-bounded audit history and formula-neutralized CSV are accessible from the hierarchy. Pure tests and an isolated-PostgreSQL success/negative fixture have been **authored but not executed** in this environment. Transactional global/organization insert races, cross-role/tenant DB execution, browser confirmation/responsiveness, export paging/privacy, exact legacy Oracle parity and operational acceptance remain open. Do not mark the matrix or DATABASE tracker DONE.

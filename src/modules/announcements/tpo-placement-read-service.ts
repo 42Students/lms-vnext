@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,isNull,isNotNull,or,lte,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {db10Announcements} from "@/db/schema/db10-announcements.draft";
+import {db10Announcements} from "@/db/schema/db10-announcements";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";

@@ -11,6 +11,16 @@ export const collegeStructureQuerySchema = z.object({
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
+  departmentCode: z.string().trim().min(1).max(64).optional(),
+  periodEndsOnOrBefore: z.iso.date().optional(),
+  periodStartsOnOrAfter: z.iso.date().optional(),
+  deliveryPresence: z.enum(["ALL","HAS_DELIVERIES","NO_DELIVERIES"]).default("ALL"),
+  facultyCoverage: z.enum(["ALL","HAS_FACULTY","NO_FACULTY"]).default("ALL"),
+  schedulePresence: z.enum(["ALL","HAS_EVENTS","NO_EVENTS"]).default("ALL"),
+  cohortName: z.string().trim().min(1).max(255).optional(),
+  className: z.string().trim().min(1).max(255).optional(),
+  programCode: z.string().trim().min(1).max(64).optional(),
+  periodLifecycle: z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
   cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).optional(),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   cohortCode: z.string().trim().min(1).max(64).optional(),
@@ -31,6 +41,17 @@ export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapaci
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
+  periodEndsOnOrBefore: z.iso.date().optional(),
+  periodStartsOnOrAfter: z.iso.date().optional(),
+  descriptionPresence: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
+  periodLifecycle: z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
+  semesterThrough: z.coerce.number().int().min(1).max(24).optional(),
+  semesterFrom: z.coerce.number().int().min(1).max(24).optional(),
+  maximumAllowedPicks: z.coerce.number().int().min(1).max(1000).optional(),
+  minimumRequiredPicks: z.coerce.number().int().min(0).max(1000).optional(),
+  departmentCode: z.string().trim().min(1).max(64).optional(),
+  programCode: z.string().trim().min(1).max(64).optional(),
+  slotName: z.string().trim().min(1).max(150).optional(),
   periodState: z.enum(["ALL","LINKED","UNLINKED"]).optional(),
   choiceMode: z.enum(["ALL","FLEXIBLE","FIXED"]).optional(),
   offeringState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
@@ -53,10 +74,10 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "programCode", "departmentCode", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "periodLifecycle", "descriptionPresence", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
+    if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "periodStartsOnOrAfter" || key === "periodEndsOnOrBefore" || key === "departmentCode" || key === "slotName" || key === "minimumRequiredPicks" || key === "maximumAllowedPicks" || key === "semesterFrom" || key === "semesterThrough" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
       result[key] = value;
     }
   }
@@ -92,6 +113,27 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if ("offeringState" in query && query.offeringState && query.offeringState !== "ALL") params.set("offeringState",query.offeringState);
   if ("academicYearState" in query && query.academicYearState && query.academicYearState !== "ALL") params.set("academicYearState",query.academicYearState);
   if ("periodCode" in query && query.periodCode) params.set("periodCode",query.periodCode);
+  if (kind === "CLASSES" && "periodLifecycle" in query && query.periodLifecycle !== "ALL") params.set("periodLifecycle",query.periodLifecycle);
+  if (kind === "CLASSES" && "programCode" in query && query.programCode) params.set("programCode",query.programCode);
+  if (kind === "CLASSES" && "className" in query && query.className) params.set("className",query.className);
+  if (kind === "CLASSES" && "cohortName" in query && query.cohortName) params.set("cohortName",query.cohortName);
+  if (kind === "CLASSES" && "schedulePresence" in query && query.schedulePresence !== "ALL") params.set("schedulePresence",query.schedulePresence);
+  if (kind === "CLASSES" && "facultyCoverage" in query && query.facultyCoverage !== "ALL") params.set("facultyCoverage",query.facultyCoverage);
+  if (kind === "CLASSES" && "deliveryPresence" in query && query.deliveryPresence !== "ALL") params.set("deliveryPresence",query.deliveryPresence);
+  if (kind === "CLASSES" && "periodStartsOnOrAfter" in query && query.periodStartsOnOrAfter) params.set("periodStartsOnOrAfter",query.periodStartsOnOrAfter);
+  if (kind === "CLASSES" && "periodEndsOnOrBefore" in query && query.periodEndsOnOrBefore) params.set("periodEndsOnOrBefore",query.periodEndsOnOrBefore);
+  if (kind === "CLASSES" && "departmentCode" in query && query.departmentCode) params.set("departmentCode",query.departmentCode);
+  if (kind === "ELECTIVES" && "slotName" in query && query.slotName) params.set("slotName", query.slotName);
+  if (kind === "ELECTIVES" && "programCode" in query && query.programCode) params.set("programCode", query.programCode);
+  if (kind === "ELECTIVES" && "departmentCode" in query && query.departmentCode) params.set("departmentCode", query.departmentCode);
+  if (kind === "ELECTIVES" && "minimumRequiredPicks" in query && query.minimumRequiredPicks !== undefined) params.set("minimumRequiredPicks", String(query.minimumRequiredPicks));
+  if (kind === "ELECTIVES" && "maximumAllowedPicks" in query && query.maximumAllowedPicks !== undefined) params.set("maximumAllowedPicks", String(query.maximumAllowedPicks));
+  if (kind === "ELECTIVES" && "semesterFrom" in query && query.semesterFrom !== undefined) params.set("semesterFrom", String(query.semesterFrom));
+  if (kind === "ELECTIVES" && "semesterThrough" in query && query.semesterThrough !== undefined) params.set("semesterThrough", String(query.semesterThrough));
+  if (kind === "ELECTIVES" && "periodLifecycle" in query && query.periodLifecycle !== "ALL") params.set("periodLifecycle", query.periodLifecycle);
+  if (kind === "ELECTIVES" && "descriptionPresence" in query && query.descriptionPresence !== "ALL") params.set("descriptionPresence", query.descriptionPresence);
+  if (kind === "ELECTIVES" && "periodStartsOnOrAfter" in query && query.periodStartsOnOrAfter) params.set("periodStartsOnOrAfter",query.periodStartsOnOrAfter);
+  if (kind === "ELECTIVES" && "periodEndsOnOrBefore" in query && query.periodEndsOnOrBefore) params.set("periodEndsOnOrBefore",query.periodEndsOnOrBefore);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }
