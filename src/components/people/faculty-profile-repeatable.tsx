@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {facultyProfileActiveSearch} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -37,7 +38,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   const [search,setSearch]=useState("");
   const [collapsedIds,setCollapsedIds]=useState<string[]>([]);
   const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
-    facultyProfileRecordMatches(row,fields.map(field=>field.name),search));
+    facultyProfileRecordMatches(row,fields.map(field=>field.name),facultyProfileActiveSearch(search,rows.length)));
   const sectionIssue=facultyProfileRepeatableIssue(section,rows);
   const missingRequired = rows.some(row => fields.some(field =>
     field.required && (typeof row[field.name] !== "string" || !String(row[field.name]).trim()),
