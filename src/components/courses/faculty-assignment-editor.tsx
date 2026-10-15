@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
+import {facultyAssignmentDraftDirty} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -34,6 +35,11 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   if(!confirmed){setError("Confirm the selected action first.");return;}
   if(!assignmentActionAvailable(existing?.status??null,action)){
    setError("This assignment cannot perform the selected action. Reload the Section.");return;
+  }
+  if(action==="PUBLISH" && existing && facultyAssignmentDraftDirty(existing,
+    {title,description,dueAt,maxPoints})){
+    setError("Save the draft changes first. Publish uses only the last saved revision.");
+    return;
   }
   setPending(true);setError(null);setSuccess(null);
   try{
