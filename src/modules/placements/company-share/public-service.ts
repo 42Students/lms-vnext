@@ -8,7 +8,7 @@ import {
 } from "@/db/schema";
 import {projectRecruiterVisibleShortlist} from "../tpo-shareable-shortlist-model";
 import {companyShareTablesReady} from "./readiness";
-import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "./staged-schema";
+import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "@/db/schema/placement-company-shares";
 import {companyShareTokenSchema,hashCompanyShareToken} from "./token-model";
 
 const pageSchema=z.coerce.number().int().min(1).max(10000);
