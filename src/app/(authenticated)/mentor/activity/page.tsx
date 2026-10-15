@@ -25,7 +25,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     <Link href="/mentor/activity" className="text-primary-text underline">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
       actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">Projects</Link>} />
