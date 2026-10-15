@@ -932,3 +932,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 post-round source corrections:** Removed duplicate JSX object keys in student trace, repaired the readiness filter test's callback syntax, retained all company filters through Next-page links, and made explicitly supplied learner stored-rule selectors narrow the queue even when the broad mode remains selected. Tests remain authored/unexecuted.
+
+
+**2026-10-15 chat-6 learner override detail (PARTIAL):** Added explicit Super Admin college/member scoped read-only student override details, linked from the existing verified access trace. The three module cards distinguish persisted member-level values from effective resolver decisions and disclose no student contacts. Pure tests authored, not executed; edit actions, lock mutations, audit and browser gates still open.
