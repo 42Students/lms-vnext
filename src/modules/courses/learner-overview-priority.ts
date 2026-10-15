@@ -9,6 +9,7 @@
 export type LearnerOverviewActivity = {
   type: "Assignment" | "Quiz" | "Live Session";
   priority: number;
+  overdue?: boolean;
 };
 
 export function selectPriorityLearnerActivity<T extends LearnerOverviewActivity>(
@@ -19,7 +20,7 @@ export function selectPriorityLearnerActivity<T extends LearnerOverviewActivity>
 
   for (const item of items) {
     if (!Number.isFinite(item.priority)) continue;
-    const rank = item.type === "Live Session" ? 1 : 0;
+    const rank = item.type === "Assignment" && item.overdue ? -1 : item.type === "Live Session" ? 1 : 0;
     if (
       !selected ||
       rank < selectedRank ||

@@ -16,10 +16,12 @@ import {
   assertCompatibleCollegeRoleDirectoryFilters,
   canonicalCollegeRoleDirectoryHref,
   selectedDirectoryValueNotListed,
+  collegeRoleContactHref,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
-import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
+import { collegeRoleDirectoryExportHref } from "@/modules/people/college-role-directory-export";
+import {collegeLearnerVerificationHref} from "@/modules/verification/admin-links";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -83,7 +85,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 Import CSV
               </Link>
             ) : null}
-            <Link href={collegePeopleExportHref({q:result.filter.q,role:kind,status:result.filter.status})}
+            <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
               className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
               Export {kind === "FACULTY" ? "Faculty" : "Learner"} CSV (max 1,000)
             </Link>
@@ -138,6 +140,26 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="ACTIVE">Has active program enrollment</option>
               <option value="NONE">No active program enrollment</option>
             </select>
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active class / section
+            <select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All classes</option>
+              {selectedDirectoryValueNotListed(result.filter.sectionId,result.sectionOptions.map(row=>row.id)) ?
+                <option value={result.filter.sectionId}>Selected class (outside first 200)</option> : null}
+              {result.sectionOptions.map(row=><option key={row.id} value={row.id}>{row.batchName} · {row.name}</option>)}
+            </select>
+            {result.sectionOptionsTruncated ? <span className="text-xs text-muted-foreground">First 200 classes shown.</span> : null}
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active program
+            <select name="programId" defaultValue={result.filter.programId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All programs</option>
+              {selectedDirectoryValueNotListed(result.filter.programId,result.programOptions.map(row=>row.id)) ?
+                <option value={result.filter.programId}>Selected program (outside first 200)</option> : null}
+              {result.programOptions.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
+            </select>
+            {result.programOptionsTruncated ? <span className="text-xs text-muted-foreground">First 200 programs shown.</span> : null}
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active batch
@@ -306,6 +328,8 @@ export async function CollegeRoleDirectoryWorkspace({
                     <Link href={kind === "LEARNER" ? `/college/students/${item.membershipId}` : `/college/faculty/${item.membershipId}`}
                       className="font-semibold text-primary-text hover:underline">{item.name}</Link>
                     <p className="mt-1 text-xs text-muted-foreground">{item.email ?? "No email recorded"}</p>
+                    <Link href={collegeRoleContactHref(item.membershipId)} className="mt-1 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">View contact card</Link>
+                    {kind==="LEARNER"&&<Link href={collegeLearnerVerificationHref(item.membershipId)} className="ml-3 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">Profile verification</Link>}
                   </td>
                   <td className="px-4 py-4">
                     <StatusBadge tone={item.membershipStatus === "ACTIVE" && item.userStatus === "ACTIVE" ? "success" : "warning"}>
@@ -363,9 +387,8 @@ export async function CollegeRoleDirectoryWorkspace({
         </div>
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
-        CSV applies name/email and membership-status filters only. Platform account,
-        academic enrollment and teaching filters do not apply to export.
-        College Admin CSV includes contacts and is capped at 1,000 rows.
+        CSV applies the same roster filters as this view, not just name and status.
+        Export includes only current-college role memberships, rechecks College Admin access and is capped at 1,000 rows.
       </p>
       <p className="text-xs leading-5 text-muted-foreground">
         Read-only source: registered memberships, roles and related college-owned records.
