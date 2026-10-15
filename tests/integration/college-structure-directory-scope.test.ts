@@ -350,4 +350,14 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(excluded.items).toEqual([]);
     expect(foreign.items).toEqual([]);
   });
+  it("Saved section schedule is observed only on persisted own-college classes",async()=>{
+    const [absent,present,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,schedulePresence:"NO_EVENTS"}),
+      listCollegeClasses(adminA,{q:key,schedulePresence:"HAS_EVENTS"}),
+      listCollegeClasses(adminB,{q:key,schedulePresence:"NO_EVENTS"}),
+    ]);
+    expect(absent.items.map(row=>row.id)).toContain(ids.section);
+    expect(present.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
 });
