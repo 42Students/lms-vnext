@@ -73,6 +73,7 @@ export function facultyResponseFollowUpHref(query: Pick<FacultyResponseFollowUpQ
 export function limitedMissingLearners<T>(
   learners: readonly T[], limit = 12,
 ) {
+  if (!Number.isInteger(limit) || limit < 0 || limit > 12) throw new Error("INVALID_FOLLOWUP_PREVIEW_LIMIT");
   return { total: learners.length, preview: learners.slice(0, limit),
     hiddenCount: Math.max(0, learners.length - limit) };
 }
