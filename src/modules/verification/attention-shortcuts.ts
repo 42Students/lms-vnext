@@ -4,5 +4,6 @@ export const verificationAttentionShortcuts=[
  {attention:"WAITING_OVER_WEEK",label:"Waiting over a week"},
 ] as const;
 export function verificationAttentionShortcutPatch(attention:(typeof verificationAttentionShortcuts)[number]["attention"]){
- return {tab:"WAITING",attention,page:"1"};
+ return {tab:"WAITING",attention,page:"1",waitingState:"ALL",ageBand:"ANY",
+  ...(attention==="MISSING_MARKSHEET"?{kind:"EDUCATION",marksheets:"ANY"}:{})};
 }

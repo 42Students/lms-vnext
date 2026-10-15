@@ -31,6 +31,10 @@ export const collegeContactsQuerySchema=z.strictObject({
   pageSize:z.coerce.number().int().refine(n=>[10,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
 });
 export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
+export function contactRoleAudienceCompatible(filter:{tab:string;audience:string}):boolean {
+ return !(filter.tab==="STUDENT"&&filter.audience==="FACULTY_ONLY")&&
+  !(filter.tab==="FACULTY"&&filter.audience==="LEARNER_ONLY");
+}
 export function contactAcademicFiltersCompatible(filter:{teaching:string;teachingRole:string;enrollment:string;cohortId?:string;programId?:string;sectionId?:string;classPresence:string}):boolean {
  if(filter.enrollment==="NONE"&&(filter.cohortId||filter.programId||filter.sectionId||filter.classPresence==="ASSIGNED"))return false;
  if(filter.classPresence==="NONE"&&filter.sectionId)return false;
@@ -50,6 +54,7 @@ export function collegeContactsHref(filter:CollegeContactsQuery):string{
  if(filter.tab!=="ALL")params.set("tab",filter.tab);
  if(filter.q)params.set("q",filter.q);
  if(filter.initial)params.set("initial",filter.initial);
+ if(filter.membershipId)params.set("membershipId",filter.membershipId);
  if(filter.joinedFrom)params.set("joinedFrom",filter.joinedFrom);
  if(filter.joinedThrough)params.set("joinedThrough",filter.joinedThrough);
  if(filter.status!=="ACTIVE")params.set("status",filter.status);
@@ -88,6 +93,7 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
  const filter=collegeContactsQuerySchema.parse(normalized);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
+ if(!contactRoleAudienceCompatible(filter))throw new Error("INVALID_CONTACT_ROLE_AUDIENCE");
  return filter;
 }
 
