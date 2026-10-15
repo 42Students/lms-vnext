@@ -287,4 +287,10 @@ describe("College Admin classes/electives read-only filters", () => {
   if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Exact semester must fall within the selected semester interval"))).toBe(true);
   expect(collegeElectiveQuerySchema.safeParse({semesterNumber:4,semesterFrom:4,semesterThrough:6}).success).toBe(true);
  });
+ it("rejects unlinked elective period without linked-only selectors on the College Admin electives page",()=>{
+  const invalid=collegeElectiveQuerySchema.safeParse({periodState:"UNLINKED",periodLifecycle:"ACTIVE"});
+  expect(invalid.success).toBe(false);
+  if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Unlinked electives cannot be filtered by a linked academic period"))).toBe(true);
+  expect(collegeElectiveQuerySchema.safeParse({periodState:"LINKED",periodLifecycle:"ACTIVE"}).success).toBe(true);
+ });
 });
