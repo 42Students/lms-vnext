@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+export const ANNOUNCEMENT_SENDER_TYPES = [
+  "SUPER_ADMIN","COLLEGE_ADMIN","FACULTY","LEARNER","TPO","SYSTEM",
+] as const;
+
 export const ANNOUNCEMENT_RECEIVER_TYPES = [
   "COLLEGE","PROGRAM","DEPARTMENT","LEARNER","FACULTY","CLASS",
 ] as const;
@@ -63,6 +67,7 @@ export const announcementAdminListSchema = z.object({
   receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES).optional(),
   visibility: z.enum(["LIVE","SCHEDULED","EXPIRED","DELETED"]).optional(),
   pinned: z.enum(["PINNED","UNPINNED"]).optional(),
+  senderType: z.enum(ANNOUNCEMENT_SENDER_TYPES).optional(),
   includeDeleted: booleanQuery.default(false),
   limit: z.coerce.number().int().min(1).max(ANNOUNCEMENT_LIMITS.maximumPageSize).default(ANNOUNCEMENT_LIMITS.defaultPageSize),
   beforeCreatedAt: instant.optional(),

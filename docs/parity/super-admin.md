@@ -1135,3 +1135,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 pinned/unpinned announcement history (PARTIAL):** Persisted pin status filters before pagination and carries into page bookmarks, deleted toggle, and capped CSV. Strict URL/API schema rejects invalid selection; source unit authored, execution pending.
+
+
+**2026-10-15 chat-6 announcement sender filter (PARTIAL):** Added persisted sender-type filter with DB10 allowed enums for Super Admin history, API and CSV; retains filter when paging and toggling deleted visibility. Unit validation authored, runtime/browser evidence open.

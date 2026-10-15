@@ -17,6 +17,7 @@ import {
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { parseSuperAdminAnnouncementParams } from "@/modules/announcements/super-admin-list-query";
 import { announcementVisibilityAt } from "@/modules/announcements/visibility-model";
+import { ANNOUNCEMENT_SENDER_TYPES } from "@/modules/announcements/validation";
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -59,6 +60,7 @@ export default async function AnnouncementsPage({
       receiverType: params.receiverType,
       visibility: params.visibility,
       pinned: params.pinned,
+      senderType: params.senderType,
       beforeCreatedAt: params.beforeCreatedAt,
       beforeId: params.beforeId,
       limit: 50,
@@ -102,6 +104,7 @@ export default async function AnnouncementsPage({
         ...(params.receiverType ? {receiverType:params.receiverType} : {}),
         ...(params.visibility ? {visibility:params.visibility} : {}),
         ...(params.pinned ? {pinned:params.pinned} : {}),
+        ...(params.senderType ? {senderType:params.senderType} : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -115,7 +118,7 @@ export default async function AnnouncementsPage({
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
           <Link
-            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}) }).toString()}
+            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
@@ -138,6 +141,11 @@ export default async function AnnouncementsPage({
             <option value="">All notices</option><option value="PINNED">Pinned only</option><option value="UNPINNED">Not pinned</option>
           </select>
         </label>
+        <label className="text-sm font-semibold text-body">Published by
+          <select name="senderType" defaultValue={params.senderType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All senders</option>{ANNOUNCEMENT_SENDER_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
+          </select>
+        </label>
         <label className="text-sm font-semibold text-body">Audience type
           <select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
             <option value="">All audiences</option>
@@ -156,6 +164,7 @@ export default async function AnnouncementsPage({
         ...(params.receiverType ? {receiverType:params.receiverType} : {}),
         ...(params.visibility ? {visibility:params.visibility} : {}),
         ...(params.pinned ? {pinned:params.pinned} : {}),
+        ...(params.senderType ? {senderType:params.senderType} : {}),
         ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
       }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this filtered page (CSV)</Link>
