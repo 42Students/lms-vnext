@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {publicPlacementDisclosure} from "@/modules/placements/public-placement-disclosure-model";it("does not imply publication of suppressed numbers",()=>{expect(publicPlacementDisclosure([{label:"Placed",count:null}]).every(x=>x.suppressed)).toBe(true);});
