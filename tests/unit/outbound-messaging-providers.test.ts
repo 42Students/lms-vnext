@@ -8,13 +8,13 @@ const config: OutboundProviderConfig = {
 const req = { channel: "EMAIL" as const, recipient: "test@example.com", templateKey: "notice", variables: { name: "Tester" }, purpose: "notification" };
 describe("messaging provider adapter", () => {
   it("uses the registered campaign template instead of OTP", async () => {
-    const fetcher = vi.fn(async () => new Response("{}", { status: 200 }));
+    const fetcher = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response("{}", { status: 200 }));
     expect(await createOutboundProvider(config, fetcher as typeof fetch).send(req)).toBe(true);
     const init = fetcher.mock.calls[0]?.[1] as RequestInit;
     expect(JSON.parse(String(init.body)).template_key).toBe("notice-registered");
   });
   it("fails closed if template is absent and never calls network", async () => {
-    const fetcher = vi.fn(async () => new Response());
+    const fetcher = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response());
     expect(await createOutboundProvider(config, fetcher as typeof fetch).send({ ...req, templateKey: "missing" })).toBe(false);
     expect(fetcher).not.toHaveBeenCalled();
   });
