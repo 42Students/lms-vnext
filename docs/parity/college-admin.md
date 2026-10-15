@@ -1510,3 +1510,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin semesters and batches empty-state recovery PARTIAL (2026-10-15 chat-3):** Both directories show a keyboard-reachable clear-filters action without choosing another college or exposing tenant data, including empty pages beyond the last result. Regression guard added, browser/accessibility validation pending.
 
 **College Admin classes and electives empty-state recovery PARTIAL (2026-10-15 chat-3):** Both directories show a keyboard-reachable clear-filters action without choosing another college or exposing tenant data, including empty pages beyond the last result. Regression guard added, browser/accessibility validation pending.
+
+**College Admin semester and batch mobile table accessibility PARTIAL (2026-10-15 chat-3):** Result table region has a bounded scroll container, keyboard focus, semantic region label and a small-screen horizontal-scroll hint. Desktop layout unchanged; source regression test authored, actual touch and screen-reader checks pending.
