@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { parseFacultyResultsSearchParams, facultyResultsHref, facultyRecordedResponseRate } from "@/modules/courses/faculty-results-model";
 import { getFacultyAssessmentResults } from "@/modules/courses/faculty-results-service";
+import {facultyResultsCsvHref} from "@/modules/courses/faculty-results-export";
 
 type Search = Record<string,string|string[]|undefined>;
 
@@ -99,7 +100,13 @@ export default async function FacultyAssessmentResultsPage({
         Clear
       </Link>
     </form>
-    <p className="text-sm text-body">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <p className="text-sm text-body">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
+      <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
+       className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+       Export this page CSV (no learner names)
+      </Link>
+    </div>
     {data.items.length === 0 ? <EmptyState title="No matching assessment results"
       description="No assignments or quizzes matched the current teaching Sections and filters. No scores or responses are invented." />
       : <div className="grid gap-3">
