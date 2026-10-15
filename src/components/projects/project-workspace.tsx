@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts, mentorWorkspaceMissingPrimaryMentor, mentorLatestDeliveryVersion } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts, mentorWorkspaceMissingPrimaryMentor, mentorLatestDeliveryVersion, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -937,6 +937,18 @@ export function ProjectWorkspace({
                         </StatusBadge>
                       ) : null}
                     </div>
+                    {mode==="MENTOR" &&
+                      mentorRequiredResourceLinkState(resource)==="TEXT_ONLY" ? (
+                      <p className="mt-2 text-xs text-body">
+                        Required text resource: no safe external link; use the recorded description.
+                      </p>
+                    ) : null}
+                    {mode==="MENTOR" &&
+                      mentorRequiredResourceLinkState(resource)==="LINK_UNAVAILABLE" ? (
+                      <p role="status" className="mt-2 text-xs text-body">
+                        Required resource has no usable external link or description.
+                      </p>
+                    ) : null}
                     {href ? (
                       <a
                         href={href}
