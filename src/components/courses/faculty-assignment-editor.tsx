@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -50,6 +50,8 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
     setError("Save the draft changes first. Publish uses only the last saved revision.");
     return;
   }
+  if(action==="ARCHIVE" && existing &&
+    !window.confirm(facultyAssignmentArchiveWarning(existing.title)))return;
   mutationLock.current=true;
   setPending(true);setError(null);setSuccess(null);
   try{
