@@ -5,33 +5,27 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorPortfolioActivityExportHref} from "@/modules/projects/mentor-portfolio-activity-export-model";
 import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityFormLayout, mentorActivityImportanceLabel } from "@/modules/projects/mentor-portfolio-model";
 
 type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
-function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const raw = await searchParams;
-  const parsed = mentorActivityQuerySchema.safeParse({
-    search:first(raw.search)??undefined,
-    importance: first(raw.importance) ?? undefined,
-    window: first(raw.window) ?? undefined,
-    order:first(raw.order) ?? undefined,
-    projectStatus:first(raw.projectStatus) ?? undefined,
-    projectId:first(raw.projectId) ?? undefined,
-    assignment:first(raw.assignment) ?? undefined,
-    view: first(raw.view) ?? undefined,
-    page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
-  });
+  const parsed = mentorActivityQuerySchema.safeParse(singleValueMentorFilters({
+    search:raw.search,importance:raw.importance,window:raw.window,
+    order:raw.order,projectStatus:raw.projectStatus,projectId:raw.projectId,
+    assignment:raw.assignment,view:raw.view,page:raw.page,pageSize:raw.pageSize,
+  }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid activity filters</h1>
     <Link href="/mentor/activity" className="text-primary-text underline">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
-  return <div className="space-y-6">
+  return <div className="min-w-0 max-w-full space-y-6 overflow-x-clip">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
       actions={<Link href="/mentor/projects" className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-primary-text">Projects</Link>} />
@@ -67,7 +61,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
           <select name="view" defaultValue={data.query.view}
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="ALL">All event groups</option>
-            <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option>
+            <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option><option value="DELIVERIES">Final delivery history</option>
             <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option><option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </select>
         </label>
