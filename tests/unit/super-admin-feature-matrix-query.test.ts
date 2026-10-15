@@ -57,4 +57,12 @@ describe("Super Admin feature matrix query",()=>{
   expect(boundedAdminFeaturePage(3,0,20)).toBe(1);
   expect(boundedAdminFeaturePage(1,21,20)).toBe(1);
  });
+ it("accepts default HTML form module blank as no stored-rule filter",()=>{
+  const parsed=parseAdminFeaturePageParams({
+   q:"",sort:"NAME",module:"",storedState:"ALL",locks:"ALL",presence:"ANY",recent:"ALL",searchField:"ALL",
+  });
+  expect(parsed).not.toBeNull();
+  expect(parsed?.module).toBeUndefined();
+  expect(adminFeatureQuerySchema.safeParse({module:"all"}).success).toBe(false);
+ });
 });
