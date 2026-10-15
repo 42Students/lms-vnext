@@ -2107,3 +2107,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 shared batch Student selection — PARTIAL:** Extracted the pure multi-filter and sort pipeline so the filtered CSV endpoint can reuse the exact page semantics and same authorized roster. This is a consistency guard, not full-cohort SQL filtering.
 
 **Chat-2 filtered batch student CSV — PARTIAL:** TPO-only GET reuses persisted same-college, active learner batch roster; applies identical search/decision/source/registration/order filters to the current 25-row page. Exports only UUID/name/status/source/choice without eligibility notes; formula escaping, no-store headers and no inferred consent. PG/CI/browser verification remains open.
+
+**Chat-2 batch decision-history event-kind filter — PARTIAL:** TPO can review DECIDE versus UNDO within the last 100 scoped cohort events using strict URL values, with honest sample-sized counts and empty states. Full historical pagination still absent.
