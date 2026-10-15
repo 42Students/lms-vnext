@@ -7,6 +7,8 @@ import {canReviewApplicant} from "@/modules/placements/tpo-applicant-review-mode
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoApplicantDetail} from "@/modules/placements/tpo-applicant-detail-service";
+import {listTpoApplicantNotes} from "@/modules/placements/applicant-notes-service";
+import {ApplicantNotesPanel} from "@/components/placements/applicant-notes-panel";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export default async function TpoApplicantDetailPage({params}:Params){
  const context=await getCurrentRequestContext();
@@ -18,6 +20,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
     (error.code==="PLACEMENT_JOB_NOT_FOUND"||error.code==="PLACEMENT_APPLICATION_NOT_FOUND"))notFound();
   throw error;
  }
+ const notes=await listTpoApplicantNotes(context,jobId,applicationId);
  const applicationFields:ReadonlyArray<readonly [string,string|null|undefined]>=[["Application",data.applicantStatus],["Screening",data.screening],
      ["Channel",data.application.channel],["Eligibility",data.application.eligibilityStatus],
      ["Submitted",new Date(data.application.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST"],
@@ -43,6 +46,8 @@ export default async function TpoApplicantDetailPage({params}:Params){
   {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?
    <TpoApplicantReviewForm jobId={jobId} applicationId={applicationId}
      expectedUpdatedAt={data.application.screeningUpdatedAt}/> : null}
+  <ApplicantNotesPanel endpoint={"/api/placements/tpo/jobs/"+jobId+"/applicants/"+applicationId+"/notes"}
+   snapshot={notes} audience="the college placement cell (TPO)"/>
   <section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Applied round outcomes</h2>
    {data.resultsTruncated?<p role="status" className="text-sm text-body">Only 100 applied result versions examined.</p>:null}

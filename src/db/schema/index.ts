@@ -37,3 +37,5 @@ export * from "./identity-auth-attempts";
 export * from "./identity-device-sessions";
 
 export * from "./college-branding";
+
+export * from "./placement-application-notes";

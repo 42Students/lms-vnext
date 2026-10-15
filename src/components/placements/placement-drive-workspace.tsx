@@ -545,6 +545,7 @@ export async function PlacementDriveWorkspace({
                       | "ACCEPTED"
                       | "DECLINED"
                       | "WITHDRAWN",
+                  kind: item.offer.kind === "LOI" ? "LOI" : "OFFER",
                   roleTitle:
                     item.offer.roleTitle,
                   annualCtcInr:

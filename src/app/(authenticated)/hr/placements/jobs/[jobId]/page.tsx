@@ -14,6 +14,8 @@ import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-mod
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
+import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
+import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
@@ -67,6 +69,15 @@ export default async function HrPlacementJobPage({
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
   if (filters.applicant && !selectedApplicant) notFound();
+  let applicantNotes: Awaited<ReturnType<typeof listRecruiterApplicantNotes>> | null = null;
+  if (selectedApplicant) {
+    try {
+      applicantNotes = await listRecruiterApplicantNotes(context, workspace.job.id, selectedApplicant.id);
+    } catch (error) {
+      // Withdrawn applicants are outside the notes scope; any other failure is real.
+      if (!(error instanceof PlacementsServiceError && error.code === "PLACEMENT_APPLICATION_NOT_FOUND")) throw error;
+    }
+  }
   const selectedRound = workspace.rounds.find(round => round.id === filters.roundId) ??
     (filters.roundId ? null : workspace.rounds[0] ?? null);
   if (filters.roundId && !selectedRound) notFound();
@@ -265,7 +276,16 @@ export default async function HrPlacementJobPage({
                 <div><dt className="text-muted-foreground">Placement-cell screening</dt><dd className="text-foreground">{selectedApplicant.screening}</dd></div>
                 <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(selectedApplicant.submittedAt)}</dd></div>
               </dl>
-              <p className="mt-5 text-sm text-muted-foreground">Recruiter notes and round-specific review decisions are not yet persisted by this read-only drawer. The placement team controls official screening.</p>
+              {applicantNotes ? (
+                <div className="mt-5">
+                  <ApplicantNotesPanel
+                    endpoint={"/api/placements/recruiter/jobs/" + workspace.job.id + "/applicants/" + selectedApplicant.id + "/notes"}
+                    snapshot={applicantNotes}
+                    audience="recruiters of your company with access to this drive"
+                  />
+                </div>
+              ) : null}
+              <p className="mt-5 text-sm text-muted-foreground">Round-specific review decisions are not persisted by this drawer. The placement team controls official screening.</p>
               <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"}
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
@@ -299,7 +319,7 @@ export default async function HrPlacementJobPage({
               Export offers CSV
             </Link>
           </div>
-          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. LOI is not stored in the registered schema.</p>
+          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
@@ -315,7 +335,7 @@ export default async function HrPlacementJobPage({
           </div>
           <section className="space-y-2 rounded-lg border border-border bg-surface-secondary p-4">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
-            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, LOI and offer issue workflows remain with the placement team.</p>
+            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, letter-of-intent and offer issue workflows remain with the placement team.</p>
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
           </section>
@@ -334,7 +354,7 @@ export default async function HrPlacementJobPage({
             <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
               <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
               <p className="mt-1 text-sm text-body">{offer.role}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2"><StatusBadge>{offer.status}</StatusBadge>
+              <div className="mt-2 flex flex-wrap items-center gap-2">{offer.kind === "LOI" ? <StatusBadge tone="info">Letter of intent</StatusBadge> : null}<StatusBadge>{offer.status}</StatusBadge>
                 {offer.annualCtcInr != null ? <span className="text-sm text-body">{formatCtc(offer.annualCtcInr)}</span> : null}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">Issued {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(offer.issuedAt)} · Joining {offer.joiningDate ?? "Not set"}</p>
