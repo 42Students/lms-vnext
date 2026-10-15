@@ -1,3 +1,5 @@
+**Academic Setup → Attendance department report entry (2026-10-16, P2 source fix):** The canonical Attendance tab now offers a visible link to its existing College Attendance by Department report beside correction windows and policy, without adding an extra legacy group tab. Unit source-route assertion authored; browser/runtime acceptance pending.
+
 **People → Student groups entry (2026-10-16, P2 source fix):** People Directory links directly to the existing College group list, including membership and nested group detail. Legacy People tab names remain unchanged and this link uses the persisted destination heading. Source regression authored; runtime/browser acceptance open.
 
 **College Dashboard/Profile lost entry links (2026-10-16, P2 source fix):** Announcements is reachable directly from the legacy Dashboard actions; Tenant domains is reachable from College Admin Profile without introducing non-legacy sidebar rows or reusing a Super Admin-only screen. Both routes exist and retain their own server-side permissions. Tests authored, not run; device/browser verification pending.
