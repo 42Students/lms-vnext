@@ -11,8 +11,7 @@ describe("Mentor PR-S2-04 task details editor legacy strings",()=>{
   expect(source).not.toContain(">Blocker reason");
  });
  it("preserves four 0090 persisted task fields and optimistic write",()=>{
-  for(const field of ["taskType:taskType||null","estimatePoints:estimate!==\"\"
-     ?Number(estimate):null","dueDate:dueDate||null","blockerReason:blockerReason.trim()||null"]){
+  for(const field of ["taskType:taskType||null","estimatePoints:estimate!==\"\"?Number(estimate):null","dueDate:dueDate||null","blockerReason:blockerReason.trim()||null"]){
     expect(source.replace(/\s+/g,"")).toContain(field.replace(/\s+/g,""));
   }
  });
