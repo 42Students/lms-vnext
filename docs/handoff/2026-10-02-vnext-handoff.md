@@ -86,7 +86,6 @@ The legacy/current LMS is not in active use and **no legacy production data need
 - Google Cloud Identity Platform + Firebase Admin server sessions
 - Cloud Run
 - Cloud Storage when file workflows need it
-- Vertex AI later behind an app-level abstraction
 - no separate FE/BE repos
 - no microservices/GKE/Kafka/GraphQL/Redis unless production evidence requires them
 - tenant ownership resolved server-side
