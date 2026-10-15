@@ -2125,3 +2125,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch registration sorting — PARTIAL:** Authorized roster sample now sorts by name or actual updated timestamp before pagination with deterministic membership-ID ties and unknown timestamps last. Search/source/recency filters compose into the existing CSV.
 
 **Chat-2 / configurable batch registration page size — PARTIAL:** User-validated 25/50/100 rows are selected only after the capped authorized 500-person sample, preserving query state in navigation and current-page CSV. Unknown/too-large page sizes are rejected, not used for unbounded exports.
+
+**Chat-2 / actual sampled registration breakdown — PARTIAL:** Added source-backed total, recorded, missing, each five choice counts and SELF/TPO/BACKFILL counts over the pre-filtered, already-authorized max-500 roster. Cap is disclosed; no rates or consent assumptions.
