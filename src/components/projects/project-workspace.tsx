@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
+import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import { learnerTaskCriteriaPreview } from "@/modules/projects/learner-task-criteria-model";
 import { MentorTaskCreate } from "./mentor-task-create";
 import { MentorTaskStatusTransition } from "./mentor-task-status-transition";
@@ -700,6 +701,18 @@ export function ProjectWorkspace({
                                       updatedAt={task.updatedAt.toISOString()}
                                     />
                                   ) : null}
+                                {["PLANNED","ACTIVE"].includes(sprint.status) &&
+                                 release.status !== "SHIPPED" &&
+                                 task.status !== "DONE" && task.status !== "IN_REVIEW" ? (
+                                  <ProjectTaskAssigneeControl
+                                    projectId={workspace.project.id}
+                                    taskId={task.id}
+                                    assigneeMembershipId={task.assigneeMembershipId}
+                                    updatedAt={task.updatedAt.toISOString()}
+                                    learners={workspace.members.filter(member=>member.role==="LEARNER").map(member=>({
+                                      membershipId:member.membershipId,displayName:member.displayName,
+                                    }))}
+                                  />
                                 {mode === "MENTOR" ? (
                                   <MentorTaskStatusTransition
                                     projectId={workspace.project.id}
