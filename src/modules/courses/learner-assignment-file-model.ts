@@ -27,7 +27,13 @@ export const learnerAssignmentUploadGrantSchema = z.object({ grant: z.object({
 }).strict() }).strict();
 
 /** Reject response-header injection and credentials-like headers before the cross-origin signed PUT. */
+const requiredUploadHeaders = [
+  "content-type", "x-amz-meta-upload-token", "x-amz-meta-owner-membership-id",
+  "x-amz-meta-college-id", "x-amz-meta-expected-size",
+  "x-amz-meta-malware-scan-status",
+] as const;
 export function learnerAssignmentUploadHeadersSafe(headers: Record<string, string>): boolean {
+  if (!requiredUploadHeaders.every(name => Object.hasOwn(headers, name))) return false;
   return Object.entries(headers).every(([name, value]) =>
     (name === "content-type" || name.startsWith("x-amz-meta-")) &&
     /^[a-z0-9-]+$/.test(name) && value.length > 0 && value.length <= 1024 &&
