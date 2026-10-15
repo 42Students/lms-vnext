@@ -367,6 +367,8 @@ Legacy contract audited:
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Classes / Sections
+**Academic period status PARTIAL (chat-3, 2026-10-15):** Added a college-scoped persisted academic period status selector for the Classes directory, preserved across page links and capped CSV exports. Strict query validation, source unit checks and isolated PostgreSQL success/denial fixtures authored; executed DB/browser acceptance remains open.
+
 **Class capacity combination validation PARTIAL (2026-10-15):** Contradictory minimum/maximum seat filters and numeric bounds combined with UNSET capacity are rejected consistently by the directory and CSV validation; valid adjacent bounds remain supported. Unit tests authored; execution open.
 **Unconfigured capacity filter PARTIAL (2026-10-15):** Admin Classes now distinguish NULL configured class capacity from numeric seat counts before pagination/export. Filter state is URL-persistent and strictly validated; own-college fixture checks genuine unset rows rather than treating them as zero. Acceptance pending.
 

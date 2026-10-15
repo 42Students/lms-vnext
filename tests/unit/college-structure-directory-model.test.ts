@@ -1,3 +1,4 @@
+import {classesExportHref} from "@/modules/academics/college-classes-export-model";
 import { describe, expect, it } from "vitest";
 import {
   classCapacityLabel,
@@ -132,4 +133,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(readCollegeStructureParams({periodCode:["A","B"]})).toBeNull();
   });
 
+  it("validates and carries academic period status through class paging and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({periodLifecycle:"ACTIVE"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("periodLifecycle=");
+    expect(classesExportHref(query)).toContain("periodLifecycle=");
+    expect(collegeClassQuerySchema.safeParse({periodLifecycle:"INVALID"}).success).toBe(false);
+  });
 });
