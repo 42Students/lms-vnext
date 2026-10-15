@@ -71,7 +71,7 @@ export function ProjectTaskSubmissionControl({
       setNote("");
       showToast({
         tone: "success",
-        title: "Task sent for review",
+        title: "Submitted for review.",
       });
       router.refresh();
     } catch (caught) {
@@ -98,8 +98,7 @@ export function ProjectTaskSubmissionControl({
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Submit task for review"
-        description="Share the work artifact the mentor should review. Every attempt is preserved."
+        title="Submit for review"
       >
         <form
           onSubmit={submit}
