@@ -374,3 +374,13 @@ export function facultyQuizTitleConflict(
  return Boolean(normalized)&&rows.some(row=>row.id!==ownQuizId&&
   row.title.trim().toLocaleLowerCase()===normalized);
 }
+
+/** Aggregate invalid bank items without exposing private learner responses. */
+export function facultyQuizReviewIssues(
+ questions:readonly {type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+ options:readonly {text:string;correct:boolean;sequence:number}[]}[],
+):{invalidQuestions:number;totalPoints:number;overLimit:boolean}{
+ const invalidQuestions=questions.filter(question=>facultyQuizQuestionIssue(question)!==null).length;
+ const totalPoints=questions.reduce((sum,question)=>sum+question.points,0);
+ return {invalidQuestions,totalPoints,overLimit:totalPoints>10000};
+}
