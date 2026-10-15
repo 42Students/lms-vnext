@@ -9,6 +9,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {randomUUID} from "node:crypto";
+import {projectTeamAuditInput} from "./mentor-team-audit-model";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -659,7 +661,7 @@ export async function addProjectMember(
         .from(projectInstances).where(eq(projectInstances.id, scope.project.id)).for("update");
       if (input.role === "LEARNER" && project?.teamGroupId)
         throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
-      return tx.insert(projectMembers).values({
+      const [created]=await tx.insert(projectMembers).values({
         projectId: scope.project.id,
         membershipId: input.membershipId,
         role: input.role,
@@ -667,6 +669,11 @@ export async function addProjectMember(
         roleLabel: input.roleLabel ?? null,
         createdByUserId: context.user.id,
       }).returning();
+      if(!created)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ADDED",{
+        projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+      },created));
+      return [created];
     });
     return member;
   } catch (error) {
@@ -704,20 +711,28 @@ export async function updateProjectMember(
   }
 
   try {
-    const [updated] = await getDb()
-      .update(projectMembers)
-      .set({
-        ...(input.isPrimary !== undefined
-          ? { isPrimary: input.isPrimary }
-          : {}),
-        ...(input.roleLabel !== undefined
-          ? { roleLabel: input.roleLabel }
-          : {}),
-        updatedAt: new Date(),
-      })
-      .where(eq(projectMembers.id, member.id))
-      .returning();
-
+    const [updated]=await getDb().transaction(async tx=>{
+      const [fresh]=await tx.select().from(projectMembers)
+        .where(and(
+          eq(projectMembers.id,member.id),eq(projectMembers.projectId,scope.project.id),
+          isNull(projectMembers.endedAt),
+        )).for("update").limit(1);
+      if(!fresh)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      if(input.isPrimary===true&&fresh.role!=="MENTOR")
+        throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
+      const [changed]=await tx.update(projectMembers).set({
+        ...(input.isPrimary!==undefined?{isPrimary:input.isPrimary}:{}),
+        ...(input.roleLabel!==undefined?{roleLabel:input.roleLabel}:{}),
+        updatedAt:new Date(),
+      }).where(and(eq(projectMembers.id,fresh.id),
+        eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
+        .returning();
+      if(!changed)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("UPDATED",{
+        projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+      },changed,randomUUID()));
+      return [changed];
+    });
     return updated;
   } catch (error) {
     throw mapMemberConstraint(error);
@@ -753,8 +768,14 @@ export async function endProjectMember(
     const now = new Date();
     const [ended] = await tx.update(projectMembers)
       .set({ endedAt: now, isPrimary: false, updatedAt: now })
-      .where(eq(projectMembers.id, member.id)).returning();
-    return ended!;
+      .where(and(eq(projectMembers.id, fresh.id),
+        eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
+      .returning();
+    if(!ended)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ENDED",{
+      projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+    },ended));
+    return ended;
   });
 }
 
@@ -790,13 +811,20 @@ export async function listProjectMembers(
       users,
       eq(users.id, collegeMemberships.userId),
     )
+    .innerJoin(
+      membershipRoles,
+      and(
+        eq(membershipRoles.membershipId,collegeMemberships.id),
+        sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+      ),
+    )
     .where(
       and(
-        eq(
-          projectMembers.projectId,
-          scope.project.id,
-        ),
+        eq(projectMembers.projectId,scope.project.id),
         isNull(projectMembers.endedAt),
+        eq(collegeMemberships.collegeId,scope.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"),
       ),
     )
     .orderBy(

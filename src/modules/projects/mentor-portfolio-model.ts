@@ -11,7 +11,7 @@ export const mentorReviewQuerySchema = z.object({
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   order: z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
-  age: z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","OLDER_THAN_7_DAYS"]).default("ALL"),
+  age: z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   ...paging,
 }).strict();
 export const mentorActivityQuerySchema = z.object({
@@ -40,14 +40,15 @@ export function pageMentorPortfolio<T>(
 export function selectMentorReviewQueue(
   alerts: readonly MentorProjectAttention[], search: string,
   order: "NEWEST"|"OLDEST" = "NEWEST",
-  age: "ALL"|"LAST_7_DAYS"|"LAST_30_DAYS"|"OLDER_THAN_7_DAYS" = "ALL", now: Date = new Date(),
+  age: "ALL"|"LAST_7_DAYS"|"LAST_30_DAYS"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS" = "ALL", now: Date = new Date(),
 ) {
   const term = search.trim().toLowerCase();
   return alerts.filter(a => a.kind === "REVIEW")
     .filter(a => { if(age==="ALL")return true;
       const elapsed=now.getTime()-new Date(a.occurredAt).getTime();
       if(!Number.isFinite(elapsed)||elapsed<0)return false;
-      if(age==="OLDER_THAN_7_DAYS")return elapsed>7*86400000;
+      if(age==="OLDER_THAN_7_DAYS" || age==="OLDER_THAN_30_DAYS")
+        return elapsed>(age==="OLDER_THAN_30_DAYS"?30:7)*86400000;
       return elapsed<=(age==="LAST_7_DAYS"?7:30)*86400000;
     })
     .filter(a => !term ||
