@@ -13,7 +13,7 @@ import {requireProjectLifecycleAccess} from "./access";
 import {ProjectsServiceError,postgresConstraintName} from "./errors";
 import {mentorTaskCreateParamsSchema,mentorTaskCreateSchema} from "./mentor-task-create-model";
 
-/** Task creation only. No assignee/workload field exists in registered project_tasks. */
+/** PR-S2-04: create task metadata on registered 0090 fields. */
 export async function createMentorProjectTask(context:RequestContext,rawParams:unknown,rawInput:unknown){
   const {projectId}=mentorTaskCreateParamsSchema.parse(rawParams);
   const input=mentorTaskCreateSchema.parse(rawInput);
@@ -60,6 +60,8 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         title:input.title,description:input.description,
         acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
         status:"TODO",
+        blockerReason:input.blockerReason??null,dueDate:input.dueDate??null,
+        estimatePoints:input.estimatePoints??null,taskType:input.taskType??null,
       }).returning();
       if(!created)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
       // Invalidate other forms holding the old sprint timestamp.
