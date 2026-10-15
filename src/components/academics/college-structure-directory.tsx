@@ -350,7 +350,8 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           </div>
         </form>
       </section>
-      <section aria-label={title + " results"} className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={title + " results"} role="region" tabIndex={0} aria-label={title + " results"} className="max-w-full overflow-x-auto rounded-xl border border-border bg-surface">
+        <p className="px-4 pt-3 text-xs text-muted-foreground sm:hidden">Scroll sideways to view all class or elective columns.</p>
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching {classes ? "classes" : "elective slots"}
         </p>
