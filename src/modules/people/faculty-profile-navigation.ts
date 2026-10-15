@@ -1,3 +1,4 @@
+import type {FacultySelfSection} from "./faculty-self-section-model";
 /** Links to actual existing Faculty self-profile forms; no external data is exposed. */
 export const FACULTY_PROFILE_NAV=[
  {section:"about",label:"About"},
@@ -13,6 +14,6 @@ export const FACULTY_PROFILE_NAV=[
  {section:"education",label:"Education"},
  {section:"languages",label:"Languages"},
 ] as const;
-export function facultyProfileAnchor(section:typeof FACULTY_PROFILE_NAV[number]["section"]):string{
+export function facultyProfileAnchor(section:FacultySelfSection):string{
  return "faculty-"+section;
 }
