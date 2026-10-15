@@ -2,6 +2,26 @@ import { z } from "zod";
 import { facultyProfileDocumentSchema, type FacultyProfileDocument } from "./faculty-profile-document";
 import { facultyMetadataEditableKey } from "./faculty-profile-metadata-model";
 
+/** All document receipts remain administrator-controlled until uploads are approved.
+ * New entries may only have null receipts; existing receipts cannot be replaced or
+ * orphaned by deleting their parent entry.
+ */
+export function facultyReceiptIdsUnchanged<T extends {id:string}>(
+ current:readonly T[], next:readonly T[], names:readonly (keyof T & string)[],
+):boolean {
+ const previous=new Map(current.map(row=>[row.id,row]));
+ for(const original of current){
+  if(names.some(name=>original[name]!=null) && !next.some(row=>row.id===original.id))return false;
+ }
+ for(const row of next){
+  const old=previous.get(row.id);
+  for(const name of names){
+   if((old?.[name]??null)!==(row[name]??null))return false;
+  }
+ }
+ return true;
+}
+
 /** Writable, non-identity sections. Private contact and document receipts stay blocked. */
 export const facultySelfEditableSection = z.enum([
   "about", "personalDetails", "address", "socialProfiles",
@@ -32,5 +52,9 @@ export function updateFacultyProfileSection(
   }
   // Reparse the *whole* document; cross-entry chronology, URLs and IDs apply.
   const copy: Record<string,unknown> = {...current, [patch.section]:patch.value};
-  return facultyProfileDocumentSchema.parse(copy);
+  const next=facultyProfileDocumentSchema.parse(copy);
+  if(patch.section==="education" && !facultyReceiptIdsUnchanged(
+    current.education,next.education,["certificateDocumentId"],
+  ))throw new Error("Private education document receipts cannot be changed");
+  return next;
 }
