@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { learnerCourseHomeCompletion } from "@/modules/courses/learner-course-home-completion-model";
+import { learnerCourseHomeActionLabel } from "@/modules/courses/learner-course-home-action-label-model";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ExpandableCourseDescription } from "./expandable-course-description";
@@ -173,13 +175,25 @@ export function LearnerCourseOverview({
   // cap to hide an assessment when picking the next action.
   const activity = allUpcomingActivity.slice(0, 6);
   const recentLearnerActivity=learnerRecentCourseActivity(workspace.lessons,now).slice(0,2);
+  // Late submissions remain actionable for published assignments. They must
+  // not be hidden merely because the upcoming feed only covers future dates.
+  const overdueAssignmentActions = workspace.lessons.flatMap((lesson) =>
+    lesson.assignments
+      .filter((item) => item.progress.status !== "COMPLETED" &&
+        item.dueAt && Number.isFinite(item.dueAt.getTime()) && item.dueAt.getTime() < now)
+      .map((item) => ({
+        id: item.id, lessonId: lesson.id, title: item.title,
+        type: "Assignment" as const, when: item.dueAt,
+        filter: "assessments", priority: item.dueAt!.getTime(), overdue: true,
+      })),
+  );
   const priorityActivity = readOnly
     ? null
-    : selectPriorityLearnerActivity(allUpcomingActivity);
-  const nextAction = priorityActivity
+    : selectPriorityLearnerActivity([...overdueAssignmentActions, ...allUpcomingActivity]);
+  const nextAction = readOnly ? null : priorityActivity
     ? {
         title: priorityActivity.title,
-        detail: `${priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
+        detail: `${("overdue" in priorityActivity && priorityActivity.overdue) ? "Overdue · late submission available" : priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
         href: `/learn/courses/${deliveryId}/roadmap?filter=${priorityActivity.filter}&lesson=${encodeURIComponent(priorityActivity.lessonId)}&content=${encodeURIComponent(priorityActivity.id)}`,
       }
     : nextContent
@@ -234,6 +248,9 @@ export function LearnerCourseOverview({
     )
     .slice(0, 6);
 
+  const homeCompletion = learnerCourseHomeCompletion({
+    itemsTotal:summary.itemsTotal,itemsMissed:summary.itemsMissed,readOnly,
+  });
   const jumpLinks=learnerCourseOverviewJumps({
     hasPublishedPath:pathPreview.totalLessons>0,
     hasUpdates:unifiedUpdates.length>0,
@@ -386,23 +403,21 @@ export function LearnerCourseOverview({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
-              {priorityActivity
-                ? priorityActivity.type === "Live Session" ? "Upcoming live session" : "Due soon"
-                : nextAction ? "Next up" : summary.itemsTotal > 0 ? "All clear" : "Start here"}
+              {learnerCourseHomeActionLabel({
+                readOnly,priorityType:priorityActivity?.type ?? null,
+                overdue:Boolean(priorityActivity && "overdue" in priorityActivity && priorityActivity.overdue),
+                hasNext:Boolean(nextAction),hasTrackable:summary.itemsTotal>0,
+              })}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
               {nextAction
                 ? nextAction.title
-                : summary.itemsTotal > 0
-                  ? "Course work complete"
-                  : "Open the learning path"}
+                : homeCompletion.title}
             </h3>
             <p className="mt-1 text-sm text-body">
               {nextAction
                 ? nextAction.detail
-                : summary.itemsTotal > 0
-                  ? "You have completed every currently actionable item."
-                  : "Your course workspace is ready. Start with the first published lesson."}
+                : homeCompletion.detail}
             </p>
           </div>
           <Link
