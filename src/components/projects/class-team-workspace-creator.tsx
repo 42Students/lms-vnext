@@ -9,6 +9,7 @@ import { previewClassTeams, type ProjectTeam } from "@/modules/projects/class-te
 import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
 import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
+import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
 type ClassChoice = { id:string;name:string;code:string };
@@ -73,6 +74,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   },[roster,mode,order,size,seed]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
+  const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length);
   async function create() {
     if(!roster||!groups.length||!balanced)return;
     setPending(true);setError("");setNotice("");
@@ -92,6 +94,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     }
   }
   return <div className="space-y-6">
+    {emptyMessages.classes?<p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.classes}</p>:null}
+    {emptyMessages.templates?<p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.templates}</p>:null}
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <label className="block space-y-1 text-sm font-medium">Class
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
