@@ -13,6 +13,7 @@ import {learnerNoticeQuerySchema} from "@/modules/placements/learner-notices-que
 import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-model";
 import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-recent-model";
 import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
+import {learnerNoticeFilterHref} from "@/modules/placements/learner-notices-navigation-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[] }>;
@@ -64,15 +65,13 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear filters</Link> : null}
       </form>
       <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
-        <Link href="/learn/my-placements/announcements" aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>
-        <Link href="/learn/my-placements/announcements?pinned=1" aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>
+        <Link href={learnerNoticeFilterHref({pinned:false,unread:unreadOnly,recent:recentOnly,q:queryText})} aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>
+        <Link href={learnerNoticeFilterHref({pinned:true,unread:unreadOnly,recent:recentOnly,q:queryText})} aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>
       </nav>
       <nav aria-label="Notice recency filter" className="flex flex-wrap gap-3 text-sm">
-        <Link href="/learn/my-placements/announcements" aria-current={!recentOnly ? "page" : undefined}
+        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:false,q:queryText})} aria-current={!recentOnly ? "page" : undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">All available dates</Link>
-        <Link href={"/learn/my-placements/announcements?"+new URLSearchParams({
-          ...(pinnedOnly?{pinned:"1"}:{}),...(unreadOnly?{unread:"1"}:{}),...(queryText?{q:queryText}:{}),recent:"1"
-        }).toString()} aria-current={recentOnly?"page":undefined}
+        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:true,q:queryText})} aria-current={recentOnly?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Last 30 days</Link>
       </nav>
       <p className="text-xs text-muted-foreground">These are college-targeted notices from the registered announcement service. Some may be general college notices; a dedicated placement-only publisher is not yet registered.</p>
@@ -105,8 +104,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-11 items-center border border-border rounded-md px-3 text-primary-text">Next</Link> : null}
       </nav> : null}
       <nav aria-label="Personal alert filter" className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={pinnedOnly?"/learn/my-placements/announcements?pinned=1":"/learn/my-placements/announcements"} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
-        <Link href={pinnedOnly?"/learn/my-placements/announcements?pinned=1&unread=1":"/learn/my-placements/announcements?unread=1"} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
+        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText})} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
+        <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText})} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
       </nav>
       <LearnerPlacementAlerts alerts={personalAlerts} />
     </main>
