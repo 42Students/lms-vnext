@@ -1505,3 +1505,22 @@ This chat-4 batch starts from current `main` and implements the next Faculty Sel
 - **Still OPEN:** orchestrator migration registration and full PostgreSQL execution; desktop/mobile authenticated browser acceptance; Education, Experience, Certifications, Publications, Awards, Languages and Metadata UI; section-scoped upload receipts, identity verification and full legacy profile completeness. The existing contact editing blocker is unchanged.
 
 **Status: PARTIAL only.** Do not relabel the shared matrix or claim live persistence until W01 registers the migration and independent gates verify exact SHA.
+
+## 2026-10-15 Faculty profile repeatable sections — PARTIAL, orchestrator gate outstanding
+
+The next Faculty backlog round added independent section-authoring workflows to the migration-aware `/teacher/profile/details` editor. Every item has an individual pushed commit. No master parity row or legacy-delta section was edited.
+
+- **Shared responsive repeatable editor:** explicit add/edit/remove draft controls, maximum record limits, required-field checks, per-record stable UUIDs and Save confirmation. Deletions are only persisted after Save; complete document Zod revalidation and optimistic versioning remain server authoritative.
+- **Languages:** language name and proficiency, up to 30 entries, including duplicate-ID denial.
+- **Education:** institution, education/degree/program/specialization, year range, in-progress status, grade, qualifying exam, rank and score. Switching to currently pursuing clears and disables the completion year. Preserves existing approved certificate receipt IDs without uploading a file.
+- **Certifications:** name, authority, issue/validity dates, public verification URL and notes. Date chronology checked by the existing Zod section.
+- **Experience:** organization, designation, dates, category, location, paid flag, salary and notes, with date chronology validation. Existing receipt identifiers are preserved unchanged.
+- **Publications:** title, journal, year, DOI, public URL, authors and description; capped at 100.
+- **Awards:** title, issuer, year and description; capped at 100.
+- **Metadata:** editable text attributes only; existing number, boolean and null fields are retained. Secret/identity-name restrictions apply at the UI and server PATCH boundary (cannot be bypassed by hand-written request JSON).
+- **Draft independence:** saving one section updates its revision without remounting forms for other dirty sections. Error and conflict handling retain unsaved edits until the user retries or reloads.
+- **Test coverage authored:** unit tests for all new sections, collection uniqueness, private metadata protection, chronology, cross-section preservation, and a disposable PostgreSQL scenario that updates Languages, Education, Certifications, Experience, Publications and Awards with optimistic versions. Its revoked-role denial uses the latest token, rather than receiving a false pass from a stale token.
+
+**Still PARTIAL / not production-ready:** proposed Faculty private-document columns are not registered through the canonical migration journal; the editor displays an explicit storage unavailable state until deployment. No GitHub CI, real PostgreSQL or authenticated mobile/browser gate was run by this chat. Faculty contact changes, sensitive identification, photo/document uploads and exact legacy Profile completeness remain blocked. Blueprint scheduling/visibility and persisted Quiz shuffle (DB06) are independent PARTIAL surfaces and are not claimed finished.
+
+**Release rule:** no DONE promotion until migration registration, success and negative database tests, and mobile browser acceptance for this exact SHA.
