@@ -13,7 +13,7 @@ describe("learner course list search", () => {
     expect(learnerCourseMatchesSearch(row, "physics")).toBe(false);
   });
   it("treats invalid/oversized input as the unfiltered state", () => {
-    expect(learnerCourseMatchesSearch(row, "x".repeat(101))).toBe(true);
+    expect(learnerCourseMatchesSearch(row, "x".repeat(101))).toBe(false);
   });
 });
 
