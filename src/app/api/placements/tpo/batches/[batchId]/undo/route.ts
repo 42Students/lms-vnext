@@ -7,6 +7,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
+import { placementTableExists } from "@/modules/placements/staged-tables";
 import { undoPlacementParticipation, PlacementBatchError } from "@/modules/placements/batch-participation-service";
 export const runtime="nodejs";
 const inputSchema=z.object({actionId:z.string().uuid()}).strict();
@@ -15,6 +16,8 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
  try{
   const ctx=await getCurrentRequestContext(),{batchId}=await params;
   const {collegeId}=await getTpoBatch(ctx,batchId);
+  if(!await placementTableExists("placement_eligibility_events"))
+   return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
   const {actionId}=inputSchema.parse(await request.json());
   const events=await getDb().select({scopeType:placementEligibilityEvents.scopeType,
    scopeId:placementEligibilityEvents.scopeId})

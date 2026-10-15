@@ -10,12 +10,20 @@ export const collegeStructureQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
-export const collegeClassQuerySchema = collegeStructureQuerySchema.extend({
+export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
   cohortCode: z.string().trim().min(1).max(64).optional(),
   capacityState: z.enum(["ALL","CONFIGURED","UNSET"]).default("ALL"),
   minimumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
   maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
+
+export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number;maximumCapacity?:number;capacityState:"ALL"|"CONFIGURED"|"UNSET"}>>(schema:T){
+  return schema.refine(q=>q.minimumCapacity===undefined||q.maximumCapacity===undefined||q.minimumCapacity<=q.maximumCapacity,
+    {path:["maximumCapacity"],message:"Maximum class capacity must not be below minimum"})
+    .refine(q=>q.capacityState!=="UNSET"||(q.minimumCapacity===undefined&&q.maximumCapacity===undefined),
+      {path:["capacityState"],message:"Unconfigured class capacity cannot be combined with numeric capacity bounds"});
+}
+export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
