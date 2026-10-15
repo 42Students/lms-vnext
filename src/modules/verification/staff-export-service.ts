@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,gte,lt,ilike,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,gte,lt,ilike,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
@@ -47,7 +47,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
   inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]:[filter.waitingState]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
+ .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
  const evaluatedAt=new Date();
  const selected=rows.filter(row=>{

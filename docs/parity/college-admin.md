@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Case-insensitive learner-name sorting PARTIAL (chat-9):** Verification cards, SQL paging, and capped CSV now share a typed learner-name A–Z ordering with membership/section UUID ties, without exposing identity or private contact values. Unit ordering tests authored; DB pagination/locale/browser acceptance pending.
+
 **Database-side verification kind filtering PARTIAL (chat-9):** Education/Identity kind now narrows the current-college PostgreSQL queue and CSV before the 5,001-row safety cap; tab counts remain within the chosen kind. Unit and disposable PostgreSQL wrong-role/foreign negative cases authored. Runtime/index/browser acceptance still open.
 
 **SQL date window before queue safety cap PARTIAL (chat-9):** The inclusive IST from/through submission-date window is now transformed to UTC half-open bounds in both verification queue and capped CSV SQL before the 5,001-row safeguard and in-memory marksheet/attention filters. Pure exact-midnight tests authored; runtime PG index-plan and browser acceptance pending.
