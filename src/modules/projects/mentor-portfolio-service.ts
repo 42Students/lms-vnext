@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import {
@@ -92,7 +92,8 @@ export async function getMentorPortfolioActivity(
       subjectId: activityEvents.subjectId, subjectType: activityEvents.subjectType,
       metadataProjectId, occurredAt: activityEvents.occurredAt,
     }).from(activityEvents).where(filters)
-      .orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id))
+      .orderBy(query.order==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
+        query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
       .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
   ]);
   const total = Number(summary[0]?.total ?? 0);
