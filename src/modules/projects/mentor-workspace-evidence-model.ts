@@ -54,3 +54,10 @@ export function mentorWorkspaceMissingPrimaryMentor(
   return projectStatus!=="ARCHIVED"&&
     !members.some(row=>row.role==="MENTOR"&&row.isPrimary);
 }
+
+export function mentorLatestDeliveryVersion(
+ submissions:readonly {version:number;status:string}[]
+):{version:number;status:string}|null{
+  if(!submissions.length)return null;
+  return submissions.reduce((latest,row)=>row.version>latest.version?row:latest);
+}
