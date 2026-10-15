@@ -375,6 +375,11 @@ export const projectTasks = pgTable(
       .notNull()
       .default("TODO"),
     sequence: integer("sequence").notNull(),
+    /** PR-S2-03: nullable for historical tasks; active-LEARNER-member scoping is enforced in the service. */
+    assigneeMembershipId: uuid("assignee_membership_id").references(
+      () => collegeMemberships.id,
+      { onDelete: "restrict" },
+    ),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -399,6 +404,9 @@ export const projectTasks = pgTable(
       table.projectId,
       table.status,
     ),
+    index("project_tasks_assignee_membership_idx")
+      .on(table.assigneeMembershipId)
+      .where(sql`${table.assigneeMembershipId} is not null`),
     check(
       "project_tasks_sequence_ck",
       sql`${table.sequence} >= 0`,
