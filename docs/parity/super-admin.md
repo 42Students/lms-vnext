@@ -1168,3 +1168,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 scoped college actions — PARTIAL:** College edit/archive actions are now rendered only when `college.manage` is granted for that persisted row's organization and college, on both mobile cards and desktop rows. Read-only setup/readiness links remain. Explicit Super Admin scope and disabled-role tests authored; no mutation/browsing acceptance claim.
+
+
+**2026-10-15 chat-6 Colleges scoped empty state — PARTIAL:** The college directory explicitly distinguishes zero authorized active colleges from a loaded table, without suggesting deletion or exposing foreign tenants. Reset guidance is safe for the current Super Admin scope; source test authored, browser checks pending.
