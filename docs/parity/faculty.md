@@ -1652,3 +1652,18 @@ This branch adds **11 separately committed and pushed Faculty editor changes** u
 - Fourteen focused unit tests are authored at `tests/unit/faculty-profile-round12-{1..14}.test.ts`. Changes use the pre-existing authenticated, same-origin checked `PATCH /api/people/faculty-self-document` and the existing transactional permission and optimistic-token service. No database schema, migration, shared tracker or unrelated account route was changed.
 
 **Acceptance limits:** These commits and unit tests are source-authored; repository-local TypeScript/ESLint/Vitest, disposable PostgreSQL, authenticated desktop/mobile browser, response corruption and multi-tab concurrency scenarios were **not independently executed** in this chat. Profile storage remains conditional on registered columns and approved private-document/identity handling. Faculty Self Profile cannot be declared fully legacy-complete based on this source work; existing master matrix DONE text does not remove the listed open gates. Database/release tracker remains untouched.
+
+## 2026-10-15 Faculty manual assignment grading response and conflict hardening — PARTIAL (chat-4 round 14)
+
+**Before → after:** The existing authenticated Faculty assignment report and its persisted `PATCH /api/courses/assignment-submissions/[submissionId]/grade` and `POST .../publish` routes were already responsible for manual scoring, optimistic version enforcement, and activity events. However, the review client trusted untyped successful mutation JSON and could display a false success after accepting a malformed, stale or foreign submission response.
+
+This round adds **12 independently committed, pushed Faculty-only manual grading improvements**:
+- Authoritative grade-save and publish receipts are Zod-validated against the exact persisted submission, assignment, delivery, membership, next optimistic version, correct grading status and gradePublished transition before replacing local state.
+- The returned points and feedback must match the Faculty-confirmed grading values; publish responses must preserve the previously saved points/feedback. The maximum-point guard remains enforced on both service and client response boundary.
+- A synchronous ref lock prevents overlapping save/publish commands on one submission, avoiding duplicate stale-token writes.
+- A timeout, invalid success payload or other unknown result is reported as a potentially committed operation; no assertion of rollback or automatic retry is made.
+- Publication confirmation quotes the exact saved score with a bounded feedback excerpt, makes learner visibility explicit, and still uses the existing human confirmation.
+- HTTP 409 exposes an explicit re-query action for the current submission revision (save **and** publish). A verified save says `saved privately`; only a verified publish reports learner visibility.
+- Twelve focused tests are authored at `tests/unit/faculty-manual-grading-round14-{1..12}.test.ts`. All grade/publish requests continue through existing authenticated, same-origin-guarded, tenant-scoped, transactional routes; this round changed no permission definitions, schema, migration, or other account.
+
+**Acceptance limits:** the remote code was pushed and source wiring inspected, but TypeScript/ESLint/Vitest, disposable PostgreSQL role denial, grading concurrency, and authenticated browser acceptance were not executed here. Source-only assertions are not independent acceptance evidence. Existing tracker and release gate statuses remain unchanged.
