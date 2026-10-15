@@ -72,6 +72,7 @@ export async function listProjectResources(
           scope.project.id,
         ),
         eq(projectResources.status, "ACTIVE"),
+        scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.visibility, "TEAM"),
       ),
     )
     .orderBy(asc(projectResources.sequence));
@@ -123,6 +124,7 @@ export async function createProjectResource(
           description: input.description ?? null,
           url: input.url ?? null,
           required: input.required ?? false,
+          visibility: input.visibility ?? "TEAM",
           sequence: (latest?.sequence ?? -1) + 1,
         })
         .returning();
@@ -203,6 +205,7 @@ export async function updateProjectResource(
             : resource.url,
         required:
           input.required ?? resource.required,
+        visibility: input.visibility ?? resource.visibility,
       });
 
     const [updated] = await tx
@@ -212,6 +215,7 @@ export async function updateProjectResource(
         description: merged.description ?? null,
         url: merged.url ?? null,
         required: merged.required ?? false,
+        visibility: merged.visibility ?? "TEAM",
         updatedAt: new Date(),
       })
       .where(

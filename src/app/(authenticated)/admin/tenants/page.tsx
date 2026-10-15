@@ -25,6 +25,7 @@ export default async function TenantDirectory({searchParams}:{
   <PageHeader eyebrow="Super Admin · Platform" title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<TenantDirectoryCsvControl href={tenantDirectoryExportHref({q:data.query.q,organizationId:data.query.organizationId,status:data.query.status})} />} />
+  <Link href="/admin/domains" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Domains</Link>
   <Link href="/admin/tenants/setup" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Tenant Setup · Create / Set up →</Link>
   <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-1 text-sm font-semibold text-body">College

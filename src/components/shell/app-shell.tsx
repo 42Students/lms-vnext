@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { RECRUITER_REQUEST_DRIVE_HREF } from "@/modules/placements/recruiter-page-copy";
 import {
   hasMembershipRole,
   isSuperAdmin,
@@ -131,7 +133,7 @@ export async function AppShell({
                 />
               ) : context.recruiter ? (
                 <p className="m-0 hidden text-xs font-semibold text-muted-foreground sm:block">
-                  Employer access
+                  Recruiter
                 </p>
               ) : (
                 <MembershipSwitcher
@@ -139,6 +141,12 @@ export async function AppShell({
                   activeMembershipId={context.membership?.id ?? null}
                 />
               )}
+              {!context.membership && context.recruiter ? (
+                <Link href={RECRUITER_REQUEST_DRIVE_HREF}
+                  className="inline-flex min-h-11 items-center rounded-md bg-primary px-3 text-sm font-semibold text-on-primary">
+                  Request a drive
+                </Link>
+              ) : null}
               <AccountActions showNotifications={!learner} variant={accountVariant} />
             </div>
           </div>

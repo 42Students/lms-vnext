@@ -10,7 +10,7 @@ describe("learner file/video UI route wiring", () => {
     expect(picker).toContain("/submission-files");
     expect(transfer).toContain("/submission-files/");
     expect(transfer).toContain("/complete");
-    expect(transfer).toContain('method: "PUT"');
+    expect(transfer).toContain('request.open("PUT"');
     expect(transfer).toContain("withCredentials = false");
     expect(transfer).not.toContain("/file-upload");
     expect(picker).not.toContain('uploadReceiptId');

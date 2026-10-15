@@ -10,7 +10,6 @@ import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-pr
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
-import { LEARNER_PROJECT_DETAIL_TABS } from "@/modules/projects/learner-project-tab-alias-model";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { learnerBoardCardMetadata } from "@/modules/projects/learner-board-card-model";
@@ -398,7 +397,8 @@ describe("L25-007 learner Board persisted task context",()=>{
 
 describe("L21-010 exact learner final delivery tab",()=>{
   it("loads the own project final-delivery read behind canonical tab",async()=>{
-    expect(LEARNER_PROJECT_DETAIL_TABS.some(item=>item.key==="delivery")).toBe(true);
+    // chat-11 exact-tabs: Final delivery is reached from Overview via ?tab=delivery, not a tab-strip entry.
+    expect(canonicalLearnerProjectTab("delivery")).toBe("delivery");
     const workspace=await getProjectWorkspaceView(context,ids.project);
     expect(workspace.project.id).toBe(ids.project);
     expect(workspace.finalDelivery.submissions).toEqual([]);

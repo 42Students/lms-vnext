@@ -6,13 +6,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cx } from "@/lib/class-names";
 import type { ShellNavItem } from "./shell-model";
+import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-tabs-model";
 
-const TPO_SECTION_LABELS = {
-  operate: "Operate",
-  coordinate: "Coordinate",
-  insights: "Insights",
-  administration: "Administration",
-} as const;
+import { TPO_SECTION_LABELS } from "./shell-model";
 function tpoSectionLabel(item: ShellNavItem): string | null {
   if (!item.href.startsWith("/tpo/") || !item.group ||
     !(item.group in TPO_SECTION_LABELS)) return null;
@@ -48,10 +44,17 @@ export function SidebarNav({
         const tpoSection = tpoSectionLabel(item);
         const showTpoSection = tpoSection &&
           (index === 0 || item.group !== previousGroup);
+        const superAdminGroup=pathname.startsWith("/admin/")
+          ?superAdminLegacyGroupForPath(pathname):null;
+        const isFeatureDetail=pathname.startsWith("/admin/features/");
         const active =
           pathname === item.href ||
           (item.href !== "/dashboard" &&
-            pathname.startsWith(`${item.href}/`));
+            pathname.startsWith(`${item.href}/`) &&
+            !(item.label==="Feature Controls"&&isFeatureDetail)) ||
+          (superAdminGroup!==null&&superAdminGroup.title===item.label) ||
+          (item.label==="Module Access"&&isFeatureDetail) ||
+          (item.label==="Projects"&&pathname.startsWith("/admin/projects/"));
 
         return (
           <Fragment key={item.href}>

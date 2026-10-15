@@ -20,39 +20,38 @@ export type ShellNavItem = {
   group?: "learning" | "tracking" | "career" | "account" | "operate" | "coordinate" | "insights" | "administration";
 };
 
+/** User-approved TPO section headings, shared by desktop and mobile. */
+export const TPO_SECTION_LABELS = {
+  operate: "Operate",
+  coordinate: "Coordinate",
+  insights: "Insights",
+  administration: "Administration",
+} as const;
+
 const dashboard: ShellNavItem = {
   label: "Dashboard",
   href: "/dashboard",
   shortLabel: "D",
 };
 
-const superAdminItems: ShellNavItem[] = [
-  { ...dashboard, label: "Overview" },
-  { label: "Organizations", href: "/admin/organizations", shortLabel: "O" },
-  { label: "Colleges", href: "/admin/colleges", shortLabel: "C" },
-  { label: "Profile verification", href: "/admin/verification", shortLabel: "V" },
-  { label: "Feature Controls", href: "/admin/features", shortLabel: "F" },
-  { label: "Departments", href: "/admin/departments", shortLabel: "D" },
-  { label: "Academics", href: "/admin/academics", shortLabel: "A" },
-  { label: "Lecture Halls", href: "/admin/lecture-halls", shortLabel: "L" },
-  { label: "Attendance", href: "/admin/attendance", shortLabel: "T" },
-  { label: "Courses & Content", href: "/admin/courses", shortLabel: "C" },
-  { label: "Projects", href: "/admin/projects", shortLabel: "P" },
-  { label: "Placements", href: "/admin/placements", shortLabel: "P" },
-  {
-    label: "Placement Interview Calendar",
-    href: "/admin/placements/calendar",
-    shortLabel: "C",
-    icon: "/assets/images/common/calender.svg",
-  },
-  { label: "Recruiter accounts", href: "/admin/recruiters", shortLabel: "R" },
-  { label: "Announcements", href: "/admin/announcements", shortLabel: "A" },
-  { label: "Inbound mail", href: "/admin/inbound-mail", shortLabel: "I" },
-  { label: "People", href: "/admin/people", shortLabel: "P" },
-  { label: "Domains", href: "/admin/domains", shortLabel: "D" },
-  { label: "Tenant Settings", href: "/admin/settings", shortLabel: "S" },
-  { label: "Activity Log", href: "/activity", shortLabel: "A" },
-  { label: "Audit Findings", href: "/tracker/audit-findings", shortLabel: "A" },
+/** Exact legacy 13-row superAdminNavigationMenuFlat, lists.js L234–256.
+ * Group boundaries render dividers after Feature Controls, Inbound mail and People.
+ * Every consolidated destination has an existing Super Admin grouped strip.
+ */
+export const superAdminItems: ShellNavItem[] = [
+  {label:"Overview",href:"/dashboard",shortLabel:"O",group:"operate"},
+  {label:"Tenant Setup",href:"/admin/tenants",shortLabel:"T",group:"operate"},
+  {label:"Feature Controls",href:"/admin/features",shortLabel:"F",group:"operate"},
+  {label:"Module Access",href:"/admin/module-access",shortLabel:"M",group:"coordinate"},
+  {label:"Tenant Settings",href:"/admin/settings",shortLabel:"S",group:"coordinate"},
+  {label:"Activity Log",href:"/admin/audit",shortLabel:"A",group:"coordinate"},
+  {label:"Inbound mail",href:"/admin/inbound-mail",shortLabel:"I",group:"coordinate"},
+  {label:"Academic Setup",href:"/admin/departments",shortLabel:"A",group:"insights"},
+  {label:"Courses & Content",href:"/admin/courses",shortLabel:"C",group:"insights"},
+  {label:"People",href:"/admin/faculty",shortLabel:"P",group:"insights"},
+  {label:"Profile verification",href:"/admin/verification",shortLabel:"V",group:"administration"},
+  {label:"Placements",href:"/admin/placements",shortLabel:"P",group:"administration"},
+  {label:"Projects",href:"/admin/projects/templates",shortLabel:"P",group:"administration"},
 ];
 
 const learnerItems: ShellNavItem[] = [
@@ -188,8 +187,8 @@ const mentorItems: ShellNavItem[] = [
 const tpoItems: ShellNavItem[] = [
   { label: "Home", href: "/tpo/home", shortLabel: "H", group: "operate" },
   { label: "Placement eligibility", href: "/tpo/batches", shortLabel: "P", group: "operate" },
-  { label: "Engage", href: "/tpo/recruiters", shortLabel: "E", group: "operate" },
-  { label: "Drives", href: "/tpo/placements", shortLabel: "D", group: "operate" },
+  { label: "Recruiter Leads", href: "/tpo/recruiters", shortLabel: "E", group: "operate" },
+  { label: "Placement Operations", href: "/tpo/placements", shortLabel: "D", group: "operate" },
   { label: "Team", href: "/tpo/team", shortLabel: "T", group: "operate" },
   { label: "Students", href: "/tpo/students", shortLabel: "S", group: "coordinate" },
   { label: "Requests", href: "/tpo/requests", shortLabel: "R", group: "coordinate" },
@@ -199,7 +198,7 @@ const tpoItems: ShellNavItem[] = [
   { label: "Reports", href: "/tpo/reports", shortLabel: "R", group: "insights" },
   { label: "Messages", href: "/tpo/messages", shortLabel: "M", group: "administration" },
   { label: "Settings", href: "/tpo/settings", shortLabel: "S", group: "administration" },
-  { label: "Audit log", href: "/tpo/audit", shortLabel: "A", group: "administration" },
+  { label: "Audit Log", href: "/tpo/audit", shortLabel: "A", group: "administration" },
   { label: "Notifications", href: "/tpo/notifications", shortLabel: "N", group: "administration" },
 ];
 
@@ -430,7 +429,7 @@ export function getShellRoleLabel(context: RequestContext) {
 
   if (!context.membership) {
     return hasActiveRecruiter(context)
-      ? "Employer Recruiter"
+      ? "Recruiter"
       : "Select membership";
   }
 
@@ -450,7 +449,7 @@ export function getShellRoleLabel(context: RequestContext) {
   );
 
   if (hasActiveRecruiter(context)) {
-    labels.push("Employer Recruiter");
+    labels.push("Recruiter");
   }
 
   return labels.join(" · ");

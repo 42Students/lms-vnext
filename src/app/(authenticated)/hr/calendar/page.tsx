@@ -293,7 +293,7 @@ export default async function HrCalendarPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Employer Recruiter"
+        eyebrow="Recruiter"
         title="Recruiter Calendar"
         description="Scheduled hiring rounds and application deadlines for the jobs your employer is authorized to access. All dates and times are shown in Indian Standard Time."
         actions={
@@ -301,7 +301,7 @@ export default async function HrCalendarPage({
             href="/hr/placements"
             className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
           >
-            Hiring Workspace →
+            Drives →
           </Link>
         }
       />

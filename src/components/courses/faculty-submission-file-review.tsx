@@ -53,6 +53,8 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
           body: JSON.stringify({ disposition: "attachment" }) },
       );
       if (!response.ok) throw new Error(await storageApiError(response));
+      // Event-handler only (async click); the purity rule misreads this closure as render.
+      // eslint-disable-next-line react-hooks/purity
       const grant = parseFileDownloadGrant(await response.json(), Date.now());
       if (grant.file.id !== file.id || grant.file.submissionId !== submissionId)
         throw new Error("The file permission does not match this submission.");

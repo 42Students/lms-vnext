@@ -42,7 +42,7 @@ export default async function RecruiterRequestDrivePage({
   const grants = context.recruiter.grants;
   if (query.fix) {
     return <div className="space-y-6">
-      <PageHeader eyebrow="Employer Recruiter" title="Fix and Resend"
+      <PageHeader eyebrow="Recruiter" title="Fix and Resend"
         description="The request approval and requested-changes persistence is not registered." />
       <ErrorState title="Cannot safely reopen this request"
         description="The original requested changes cannot be verified or saved yet. No request has been modified." />
@@ -68,7 +68,7 @@ export default async function RecruiterRequestDrivePage({
 
   if (!collegeId) {
     return <div className="space-y-6">
-      <PageHeader eyebrow="Employer Recruiter" title="Request a Drive"
+      <PageHeader eyebrow="Recruiter" title="Request a drive"
         description="Choose an authorized college before drafting a hiring request." />
       {grants.length === 0 ? (
         <EmptyState title="No active college access"
@@ -91,7 +91,7 @@ export default async function RecruiterRequestDrivePage({
     : emptyHrDriveDraft();
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="Employer Recruiter" title={fromJob ? "Hire Again · discussion proposal" : "Request a Drive · discussion proposal"}
+    <PageHeader eyebrow="Recruiter" title={fromJob ? "Hire Again · discussion proposal" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". This can send a private discussion proposal; structured request approval is not available."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
       className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
