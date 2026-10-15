@@ -15,6 +15,7 @@ import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { learnerAttendanceRecoveryProjection } from "@/modules/attendance/learner-attendance-recovery-model";
 import { learnerAttendanceThresholdReached } from "@/modules/attendance/learner-attendance-threshold-model";
+import { learnerAttendanceHistoryResetHref } from "@/modules/attendance/learner-attendance-history-reset-model";
 import { learnerAttendanceStatusTone } from "@/modules/attendance/learner-attendance-status-tone-model";
 import { learnerAttendanceExactAbsences } from "@/modules/attendance/learner-attendance-exact-absence-model";
 import { learnerAttendanceOrderSchema, sortLearnerAttendanceHistory, type LearnerAttendanceOrder } from "@/modules/attendance/learner-attendance-history-order-model";
@@ -509,6 +510,12 @@ export function LearnerAttendanceWorkspace({
             {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
         </label>
+        {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
+          <button type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
+            className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+            Reset history filters
+          </button>
+        ) : null}
         </div>
       </div>
       {historyRows.length > 0 ? (
