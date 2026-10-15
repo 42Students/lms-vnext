@@ -1078,3 +1078,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 announcement disposable PostgreSQL fixture (AUTHORED, NOT EXECUTED):** A test against registered `announcements` checks create → scoped list → optimistic edit/stale conflict → soft-delete/restore and inactive/wrong-role denial using seeded identities and cleaned-up rows. It is gated by TEST_DATABASE_URL and DB03_ISOLATED_TEST_DATABASE; full migration replay, runtime and browser acceptance still open.
+
+
+**2026-10-15 chat-6 DB10 tracker disposable PostgreSQL fixture (AUTHORED, NOT EXECUTED):** A registered-table integration scenario now creates an isolated tracker reporter/issue, reads list/detail, writes a version-checked workflow transition with activity, rejects stale mutations, and verifies scoped/role-negative access; teardown removes temporary rows. No task or phase closure is implied until executed evidence exists.
