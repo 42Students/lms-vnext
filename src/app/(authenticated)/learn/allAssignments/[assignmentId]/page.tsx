@@ -28,8 +28,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   if (!item) notFound();
   return <div className="space-y-6">
     <Link href="/learn/allAssignments" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← All Assignments</Link>
-    <PageHeader eyebrow="Learner · Assignment" title={item.title}
-      description={item.courseName + " · " + item.lessonName} />
+    <PageHeader title={item.title} />
     <div className="grid gap-4 sm:grid-cols-2">
       <section className="rounded-xl border border-border bg-surface p-4">
         <h2 className="text-xs font-semibold text-muted-foreground">Due</h2>
@@ -41,9 +40,9 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       </section>
     </div>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-      <h2 className="font-semibold text-foreground">Instructions</h2>
+      <h2 className="font-semibold text-foreground">Instructions & resources</h2>
       <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">
-        {item.description || "No additional instructions were published."}
+        {item.description || "Your faculty hasn't added any resources to this assignment yet."}
       </p>
     </section>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
