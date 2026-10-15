@@ -277,3 +277,12 @@ export function facultyQuizMatchesSearch(quiz:{title:string;status:string},query
  const term=query.trim().toLocaleLowerCase();
  return !term||quiz.title.toLocaleLowerCase().includes(term)||quiz.status.toLocaleLowerCase().includes(term);
 }
+
+/** Question search changes only what is visible, never the saved question order. */
+export function facultyQuizQuestionMatches(
+ question:{prompt:string;options:readonly {text:string}[]},index:number,query:string,
+):boolean {
+ const term=query.trim().toLocaleLowerCase();
+ return !term||String(index+1)===term||question.prompt.toLocaleLowerCase().includes(term)
+  ||question.options.some(option=>option.text.toLocaleLowerCase().includes(term));
+}
