@@ -10,7 +10,7 @@ export const mentorProjectListQuerySchema = z.object({
     "MENTOR_MEETING_SOON","MENTOR_ANY_ATTENTION","MENTOR_NO_ATTENTION"])),
   assignment: optionalSelect(z.enum(["PRIMARY","SUPPORTING"])),
   work: optionalSelect(z.enum(["NO_TASKS","HAS_OPEN_TASKS","ALL_DONE","HAS_DONE_TASKS"])),
-  sort: z.enum(["RECENT","TITLE","PROGRESS","PROGRESS_DESC","OPEN_TASKS"]).default("RECENT"),
+  sort: z.enum(["RECENT","TITLE","PROGRESS","PROGRESS_DESC","OPEN_TASKS","TEAM_SIZE_DESC"]).default("RECENT"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().refine(n => [25,50,100].includes(n)).default(25),
 }).strict();
