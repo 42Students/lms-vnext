@@ -3,7 +3,7 @@ export const adminFeatureQuerySchema=z.strictObject({
  q:z.string().trim().max(100).default(""),
  page:z.coerce.number().int().min(1).max(10000).default(1),
  sort:z.enum(["NAME","CODE","NAME_DESC","CODE_DESC"]).default("NAME"),
- module:z.enum(["projects","placements","electives"]).optional(),
+ module:z.union([z.enum(["projects","placements","electives"]),z.literal("")]).transform(value=>value===""?undefined:value).optional(),
  storedState:z.enum(["ALL","ON","OFF"]).default("ALL"),
  locks:z.enum(["ALL","LOCKED"]).default("ALL"),
  presence:z.enum(["ANY","HAS_RULE","NO_RULE"]).default("ANY"),

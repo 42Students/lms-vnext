@@ -1016,3 +1016,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 focused module hierarchy drill-in (PARTIAL):** Matching colleges now carry the selected Projects/Placements/Electives module into their read-only hierarchy view on both mobile cards and desktop rows. Cross-college authorization continues in the destination service. Pure navigation checks authored; browser/back-forward and full legacy parity remain open.
+
+
+**2026-10-15 chat-6 default feature filter correction (PARTIAL):** Normalize the browser form's empty Any-college module selector into no filter before strict Zod service parsing. Unknown module strings still fail closed. Unit default-form regression authored; manual browser submission not yet run.
