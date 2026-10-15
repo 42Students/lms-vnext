@@ -29,7 +29,11 @@ export function canRecruiterEditRound(input:{
 export function duplicateRecruiterRoundName(
  names:readonly {id:string;name:string;status:string}[],name:string,excludeId?:string,
 ):boolean{
- const canonical=name.trim().replace(/\s+/g," ").toLocaleLowerCase("en");
+ const canonical=canonicalRecruiterRoundName(name);
  return names.some(row=>row.id!==excludeId&&row.status!=="CANCELLED"&&
-  row.name.trim().replace(/\s+/g," ").toLocaleLowerCase("en")===canonical);
+  canonicalRecruiterRoundName(row.name)===canonical);
+}
+
+function canonicalRecruiterRoundName(name:string):string{
+ return name.normalize("NFKC").trim().replace(/\s+/g," ").toLocaleLowerCase("en");
 }
