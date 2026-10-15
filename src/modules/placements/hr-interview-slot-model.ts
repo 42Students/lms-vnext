@@ -21,6 +21,8 @@ export const hrInterviewSlotActionSchema=z.strictObject({
  action:z.enum(["OFFER","BOOK","CANCEL"]),
 });
 export function slotTransitionAllowed(status:string,action:"OFFER"|"BOOK"|"CANCEL",bookedCount=0,capacity=1){
+ if(!Number.isSafeInteger(bookedCount)||bookedCount<0||
+    !Number.isSafeInteger(capacity)||capacity<1||bookedCount>capacity)return false;
  return (status==="PROPOSED"&&(action==="OFFER"||action==="CANCEL"))||
         (status==="OFFERED"&&((action==="BOOK"&&bookedCount<capacity)||action==="CANCEL"))||
         (status==="BOOKED"&&action==="BOOK"&&bookedCount<capacity);
