@@ -18,3 +18,10 @@ it("limits streamed bytes even when Content-Length is missing",async()=>{
  const request=new Request(url,{method:"POST",headers:{"content-type":"application/json"},body:"x".repeat(FACULTY_QUIZ_COMMAND_LIMIT_BYTES+1)});
  await expect(readFacultyQuizCommandBody(request)).rejects.toBeInstanceOf(FacultyQuizBodyError);
 });
+
+it("allows legitimate multi-megabyte Quiz bank JSON under the cap",async()=>{
+ const sizeable={action:"CREATE",questions:[{prompt:"Q".repeat(1024*1024*2)}]};
+ const request=new Request(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(sizeable)});
+ const payload=await readFacultyQuizCommandBody(request);
+ expect(payload).toEqual(sizeable);
+});
