@@ -8,6 +8,7 @@ import { createPlacementJob, publishPlacementJob } from "@/modules/placements/jo
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import {getPublicPlacementStatistics} from "@/modules/placements/public-page/read-service";
 import { minimumOfferResponseDeadline } from "@/modules/placements/offer-college-rules-policy";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
@@ -255,6 +256,35 @@ describe("Section A: placement write/read integration boundaries", () => {
     const deadline=minimumOfferResponseDeadline(issuedAt,row!.min_response_hours);
     expect(deadline.toISOString()).toBe("2026-10-18T19:30:00.000Z");
     expect(deadline.getTime()-issuedAt.getTime()).toBe(90*60_000);
+  });
+
+  it("T-S2-08 hides median/highest CTC when five offers belong to just one learner",async()=>{
+    await pool.query(`
+      INSERT INTO placement_public_page_settings (college_id,enabled,population_count,published_at)
+      VALUES ($1,true,5,now()) ON CONFLICT (college_id)
+      DO UPDATE SET enabled=true,population_count=5,published_at=now()
+    `,[SEED_IDS.collegeA]);
+    try{
+      for(let i=0;i<5;i++){
+        const job=await makeJob("CTC privacy "+i);
+        const app=await applyToPlacementJob(learner,job.id,{});
+        await pool.query(`
+          INSERT INTO placement_offers
+           (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
+          VALUES ($1,1,'OFFER','ISSUED','Privacy engineer',$2,$3,now()+interval '7 days')
+        `,[app.id,500_000+i*10_000,SEED_IDS.facultyUser]);
+      }
+      const pub=await getPublicPlacementStatistics(SEED_IDS.collegeA);
+      expect(pub?.offers).toBe(5);
+      expect(pub?.medianCtcInr).toBeNull();
+      expect(pub?.highestCtcInr).toBeNull();
+      expect(pub?.placed).toBeNull(); // one distinct placed learner
+    }finally{
+      await pool.query(`
+        UPDATE placement_public_page_settings SET enabled=false,published_at=null
+        WHERE college_id=$1
+      `,[SEED_IDS.collegeA]);
+    }
   });
 
   it("P-S1-07 persists exactly-once expiry and rejects acceptance at the deadline", async () => {
