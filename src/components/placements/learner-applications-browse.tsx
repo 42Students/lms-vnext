@@ -14,6 +14,7 @@ import {learnerApplicationMobileSummary} from "@/modules/placements/learner-appl
 import {learnerApplicationStageCounts} from "@/modules/placements/learner-application-stage-chips-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
 import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
+import {learnerApplicationPage} from "@/modules/placements/learner-application-pagination-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
@@ -144,11 +145,10 @@ export function LearnerApplicationsBrowse({
   const rows = browseLearnerApplications(items, filters);
   const viewCounts=learnerApplicationViewCounts(items);
   const emptyKind=learnerApplicationEmptyKind(items.length,rows.length);
-  const totalPages = Math.max(1,Math.ceil(rows.length / PAGE_SIZE));
-  const requested = url.page;
-  const page = Number.isInteger(requested) && requested > 0
-    ? Math.min(requested,totalPages) : 1;
-  const paged = rows.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
+  const pagination = learnerApplicationPage(rows.length,url.page,PAGE_SIZE);
+  const totalPages = pagination.pages;
+  const page = pagination.page;
+  const paged = rows.slice(pagination.start,pagination.end);
   const stages = learnerApplicationStageOptions(items);
   const stageCounts = learnerApplicationStageCounts(items);
   const attention=learnerApplicationAttention(items);
@@ -278,6 +278,11 @@ export function LearnerApplicationsBrowse({
         ):null}
       </div>
 
+      {pagination.corrected && rows.length>0 ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        The requested application page is outside the matching results; showing page {page} of {totalPages}.
+        <button type="button" className="ml-2 min-h-11 font-semibold text-primary-text underline"
+          onClick={()=>updateQuery({page:String(page)})}>Use this page in the link</button>
+      </p> : null}
       {emptyKind==="NO_APPLICATIONS" ? (
         <div className="space-y-3">
           <LearnerPlacementJourney items={[]} />
