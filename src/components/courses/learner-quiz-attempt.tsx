@@ -9,6 +9,7 @@ import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer
 import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
 import { learnerQuizRouteScopeCurrent } from "@/modules/courses/learner-quiz-route-scope-model";
 import { learnerQuizDraftCanPersist } from "@/modules/courses/learner-quiz-autosave-scope-model";
+import { learnerQuizRefreshFailureMessage } from "@/modules/courses/learner-quiz-refresh-failure-model";
 import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
 import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
@@ -115,7 +116,7 @@ export function LearnerQuizAttempt() {
     : "";
   const submitLockKey = storageKey ? `${storageKey}:submit-lock` : "";
 
-  const load = useCallback(async (signal?: AbortSignal) => {
+  const load = useCallback(async (signal?: AbortSignal, afterSubmit = false) => {
     if (!quizId || !deliveryId) {
       setLoadedScopeKey(storageKey);
       setQuiz(null);
@@ -173,9 +174,9 @@ export function LearnerQuizAttempt() {
       setAttempts(Array.isArray(attemptsBody.attempts) ? attemptsBody.attempts : []);
     } catch (cause) {
       if (learnerQuizRequestCurrent(signal)) {
-        setQuiz(null);
+        if (!afterSubmit) setQuiz(null);
         setLoadedScopeKey(storageKey);
-        setError(cause instanceof Error ? cause.message : "Unable to load this quiz.");
+        setError(learnerQuizRefreshFailureMessage(afterSubmit,cause));
       }
     } finally {
       if (learnerQuizRequestCurrent(signal)) setLoading(false);
@@ -308,7 +309,7 @@ export function LearnerQuizAttempt() {
       setConfirmedSubmissionQuizId(quiz.quiz.id);
       // Session storage may be blocked; a confirmed server write is never a failed submission.
       try { window.sessionStorage.removeItem(storageKey); } catch { /* local cleanup is best effort */ }
-      await load();
+      await load(undefined, true);
       setReview(true);
       setStep(0);
       router.replace(
