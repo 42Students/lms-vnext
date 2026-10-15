@@ -91,6 +91,14 @@ describe.skipIf(!enabled)("College Admin lecture hall directory scoped PostgreSQ
     ]);
     expect(fits.items.map(row => row.id)).toContain(hall.id);
     expect(tooSmall.items).toEqual([]);
+    const [max38, max37] = await Promise.all([
+      listLectureHalls(own, {collegeId: SEED_IDS.collegeA, q: hallName, maximumCapacity: 38}),
+      listLectureHalls(own, {collegeId: SEED_IDS.collegeA, q: hallName, maximumCapacity: 37}),
+    ]);
+    expect(max38.items.map(row => row.id)).toContain(hall.id);
+    expect(max37.items).toEqual([]);
+    const boundedCsv = await exportCollegeLectureHalls(own, {q:hallName,maximumCapacity:37});
+    expect(boundedCsv.csv).not.toContain(hallName);
 
     const csv=await exportCollegeLectureHalls(own,{q:hallName});
     expect(csv.csv).toContain(hallName);

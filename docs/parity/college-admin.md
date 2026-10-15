@@ -324,6 +324,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Maximum configured seats filter PARTIAL (2026-10-15):** College Admin rooms support an inclusive maximum-capacity bound, alongside the existing minimum, across the list, pagination and filter-matched CSV. Contradictory bounds are rejected. Added unit and disposable-PostgreSQL fixture assertions; execution and mobile/browser acceptance remain pending.
+
 **Lecture hall CSV PARTIAL (2026-10-15):** The filter-matched College Admin hall directory exports up to 1,000 authorized room rows including configured seats/department/upcoming persisted scheduled-class count, neutralized for spreadsheet formulas with truncation indicators. CSV does not disclose scheduling contacts or personal data. Gated existing hall fixture adds own/foreign/role assertions; executed and UI/browser proof remain open.
 
 **Seating-capacity filter PARTIAL (2026-10-15):** Room directory now accepts 1–5000 minimum configured seats, enforced by the shared scoped list query before pagination and persisted in filter links. Isolated PG fixture checks inclusive boundaries, with existing tenant and wrong-role denials unchanged. Execution and mobile/browser acceptance still open.
