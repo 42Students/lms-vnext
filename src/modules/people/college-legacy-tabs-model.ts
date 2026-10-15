@@ -49,15 +49,29 @@ export const COLLEGE_LEGACY_GROUPS: readonly CollegeLegacyGroup[] = [
   ]},
 ];
 
+/** Secondary pages inherit the selected legacy section without adding new tabs. */
+export function collegeLegacyNavigationPath(pathname: string): string {
+  if (pathname === "/college/groups" || pathname.startsWith("/college/groups/")) {
+    return "/college/people";
+  }
+  if (pathname === "/college/placements/readiness-by-department" ||
+      pathname.startsWith("/college/placements/readiness-by-department/")) {
+    return "/college/hiring-dashboard";
+  }
+  return pathname;
+}
+
 export function collegeLegacyGroupForPath(pathname: string): CollegeLegacyGroup | null {
+  const active = collegeLegacyNavigationPath(pathname);
   const match = COLLEGE_LEGACY_GROUPS.flatMap(group=>group.tabs.map(tab=>({group,tab})))
-    .filter(({tab})=>pathname===tab.href||pathname.startsWith(tab.href+"/"))
+    .filter(({tab})=>active===tab.href||active.startsWith(tab.href+"/"))
     .sort((a,b)=>b.tab.href.length-a.tab.href.length)[0];
   return match?.group ?? null;
 }
 
 export function collegeLegacyTabActive(pathname: string, href: string): boolean {
-  const matches = (candidate: string) => pathname === candidate || pathname.startsWith(candidate + "/");
+  const active = collegeLegacyNavigationPath(pathname);
+  const matches = (candidate: string) => active === candidate || active.startsWith(candidate + "/");
   if (!matches(href)) return false;
   return !COLLEGE_LEGACY_GROUPS.some(group => group.tabs.some(tab =>
     tab.href !== href && tab.href.length > href.length &&

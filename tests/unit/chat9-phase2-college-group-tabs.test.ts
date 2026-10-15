@@ -31,6 +31,18 @@ describe("college group tabs exact legacy navigation labels",()=>{
     expect(collegeLegacyGroupForPath("/college/verification")).toBeNull();
     expect(collegeLegacyTabActive("/college/programs/more","/college/programs")).toBe(true);
   });
+  it("preserves legacy group heading and active tab for secondary routes",()=>{
+    expect(collegeLegacyGroupForPath("/college/groups")?.title).toBe("People");
+    expect(collegeLegacyTabActive("/college/groups/abc","/college/people")).toBe(true);
+    expect(collegeLegacyGroupForPath("/college/placements/readiness-by-department")?.title).toBe("Placements");
+    expect(collegeLegacyTabActive("/college/placements/readiness-by-department",
+      "/college/hiring-dashboard")).toBe(true);
+    expect(collegeLegacyTabActive("/college/placements/readiness-by-department",
+      "/college/placements")).toBe(false);
+    expect(COLLEGE_LEGACY_GROUPS[3]?.tabs.map(t=>t.label)).toEqual([
+      "Drives","Companies","Interviews","Analytics",
+    ]);
+  });
   it("never exposes foreign-scope Companies routes as a college tab",()=>{
     expect(COLLEGE_LEGACY_GROUPS.flatMap(g=>g.tabs).every(t=>t.href.startsWith("/college/"))).toBe(true);
     expect(COLLEGE_LEGACY_GROUPS[3]?.tabs.map(t=>t.label)).toEqual(["Drives","Companies","Interviews","Analytics"]);
