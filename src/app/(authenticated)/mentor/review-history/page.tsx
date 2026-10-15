@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-review-history-model";
 import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
 
-type Search = { window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
+type Search = { projectState?:string|string[];window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -21,6 +21,7 @@ export default async function MentorReviewHistoryPage({
   const parsed=mentorReviewHistoryQuerySchema.safeParse({
     decision:first(raw.decision) ?? undefined, search:first(raw.search) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
+    projectState:first(raw.projectState) ?? undefined,
     version:first(raw.version) ?? undefined,
     order:first(raw.order) ?? undefined,
     window:first(raw.window) ?? undefined,
@@ -56,6 +57,13 @@ export default async function MentorReviewHistoryPage({
           <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
+          <select name="projectState" defaultValue={data.query.projectState} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">Any project state</option><option value="PLANNED">Planned</option>
+            <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
+            <option value="ARCHIVED">Archived</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Delivery submission version
