@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -21,6 +21,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const mutationInFlight=useRef(false);
  const [success,setSuccess]=useState<string|null>(null);
  const [selected,setSelected]=useState("");
+ const [quizSearch,setQuizSearch]=useState("");
  const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [title,setTitle]=useState("");
@@ -37,6 +38,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const availableQuizzes=[...localQuizzes,...quizzes.filter(q=>!localQuizzes.some(local=>local.id===q.id))]
   .filter(q=>q.status!=="ARCHIVED");
  const chosen=availableQuizzes.find(q=>q.id===selected);
+ const visibleQuizzes=availableQuizzes.filter(q=>q.id===selected||facultyQuizMatchesSearch(q,quizSearch));
  const editable=!pending && facultyQuizDraftEditable(chosen?.status);
  const metadataEditable=!pending && facultyQuizMetadataEditable(chosen?.status);
  async function choose(id:string){
@@ -149,12 +151,17 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  }
  return <section className="min-w-0 w-full max-w-full space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Choice-question quiz builder</h2>
+  <label className="grid min-w-0 gap-1 text-sm">Find a quiz
+   <input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
+    placeholder="Title or state" className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/>
+  </label>
   <label className="grid min-w-0 gap-1 text-sm">Quiz
    <select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2">
     <option value="">Create new draft</option>
-    {availableQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
+    {visibleQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
    </select></label>
+  {quizSearch.trim()&&visibleQuizzes.length===0?<p role="status" className="text-sm text-body">No matching quizzes. Clear the search to see all Section quizzes.</p>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
    <button type="button" onClick={copyToNewDraft} className="rounded border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</button>:null}
