@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const querySchema = z.string().trim().max(100).catch("");
+const querySchema = z.string().trim().transform((value) => value.slice(0, 100)).catch("");
 export function learnerCourseMatchesSearch(
   row: { course: { courseName: string; courseCode: string; programName: string; sectionName: string; academicPeriodName: string }; instructorNames: readonly string[] },
   rawQuery: unknown,
