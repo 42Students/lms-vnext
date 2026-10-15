@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   collegeAssessmentHref,
   collegeAssessmentSummary,
+  collegeAssessmentScopeLabel,
   type CollegeAssessmentAggregateItem,
   type CollegeAssessmentKind,
   type CollegeAssessmentListQuery,
@@ -140,7 +141,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         ))}
       </section>
 
-      <section aria-label={name + " records"} className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={name + " records"} className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface">
         {data.items.length === 0 ? (
           <p className="p-6 text-sm text-body">
             {data.total === 0
@@ -148,7 +149,29 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
               : "There are no results on this page. Return to an earlier page."}
           </p>
         ) : (
-          <table className="w-full min-w-[48rem] text-left text-sm">
+          <>
+            <div className="divide-y divide-border sm:hidden">
+              {data.items.map(item=><article key={item.id} className="min-w-0 space-y-3 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
+                  <StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>{item.status}</StatusBadge>
+                </div>
+                <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                  className="inline-block min-h-11 break-words py-2 text-sm font-semibold text-primary-text">
+                  {item.courseName} ({item.courseCode})
+                </Link>
+                <p className="break-words text-sm text-body">{item.lessonName}</p>
+                <dl className="grid grid-cols-2 gap-3 text-xs">
+                  <div><dt className="font-semibold text-muted-foreground">Audience</dt><dd>{collegeAssessmentScopeLabel(item.deliverySpecific)}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">Maximum points</dt><dd>{item.points}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">Due</dt><dd>{formatDue(item.dueAt)}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">{isAssignment?"Submissions":"Attempts"}</dt><dd>{item.activityCount}</dd></div>
+                  {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
+                </dl>
+              </article>)}
+            </div>
+            <div className="hidden overflow-x-auto sm:block">
+              <table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th scope="col" className="px-4 py-3">{isAssignment ? "Assignment" : "Quiz"}</th>
@@ -174,7 +197,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     <p className="mt-1 text-xs text-body">{item.lessonName}</p>
                   </td>
                   <td className="px-4 py-4 text-body">
-                    {item.deliverySpecific ? "Section-specific" : "Shared offering"}
+                    {collegeAssessmentScopeLabel(item.deliverySpecific)}
                   </td>
                   <td className="px-4 py-4">
                     <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>
@@ -187,7 +210,9 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                 </tr>
               ))}
             </tbody>
-          </table>
+              </table>
+            </div>
+          </>
         )}
       </section>
 
