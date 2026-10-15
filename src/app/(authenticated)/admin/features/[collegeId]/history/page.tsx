@@ -1,0 +1,26 @@
+import Link from "next/link";
+import {notFound} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {collegePolicyHistoryQuery,collegePolicyHistoryHref} from "@/modules/module-access/admin-college-rule-history-model";
+import {listCollegeFeatureHistory} from "@/modules/module-access/admin-college-rule-history-service";
+export const dynamic="force-dynamic";
+export default async function SuperAdminCollegeFeatureHistory({params,searchParams}:{
+ params:Promise<{collegeId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>;
+}){
+ const {collegeId}=await params;
+ const cursor=collegePolicyHistoryQuery.safeParse(await searchParams);
+ if(!cursor.success)notFound();
+ const result=await listCollegeFeatureHistory(await getCurrentRequestContext(),collegeId,cursor.data);
+ if(!result)notFound();
+ return <div className="space-y-6">
+  <Link href={"/admin/features/"+encodeURIComponent(collegeId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← College module access</Link>
+  <PageHeader eyebrow="Super Admin · Feature Controls" title="College policy change history" description={"Latest audited Projects, Placements and Electives policy edits for "+result.college.name+"."}/>
+  {result.items.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">No college feature policy changes have been recorded.</p>:
+   <ol className="space-y-3">{result.items.map(item=><li key={item.id} className="rounded-lg border border-border bg-surface p-4">
+    <p className="font-semibold text-foreground">{item.module}</p><p className="mt-1 text-sm text-body">{item.change}</p>
+    <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.at.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+   </li>)}</ol>}
+  {result.nextCursor?<Link href={collegePolicyHistoryHref(collegeId,result.nextCursor)} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">Older changes →</Link>:null}
+ </div>;
+}
