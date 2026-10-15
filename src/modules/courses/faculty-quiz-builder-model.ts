@@ -405,3 +405,16 @@ export function facultyQuizReadErrorMessage(error:unknown):string {
   return error.message;
  return "Could not load the current Section Quiz. Retry or return to the Quiz list.";
 }
+
+/** Explain whether answer removal reassigns the correct answer or merely removes one. */
+export function facultyQuizOptionRemovalPrompt(
+ type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE",
+ options:readonly {correct:boolean}[],questionIndex:number,optionIndex:number,
+):string {
+ const selected=options.filter(option=>option.correct).length;
+ const consequence=type==="SINGLE_CHOICE"||selected===1
+  ?" A remaining choice will be marked correct."
+  :" Other marked correct choices will remain.";
+ return "Remove correct option "+(optionIndex+1)+" from question "+(questionIndex+1)+"?"+
+  consequence;
+}
