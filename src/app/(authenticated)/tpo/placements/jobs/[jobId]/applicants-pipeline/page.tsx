@@ -9,19 +9,26 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
+import {parseTpoApplicantPipelineLink,tpoApplicantPipelineResetHref} from "@/modules/placements/tpo-applicant-pipeline-model";
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
  const {jobId}=await params;const query=await searchParams;
  const columns=first(query.columns)?.slice(0,800);
- const data=await getTpoApplicantPipeline(context,{jobId,...(first(query.stage)?{stage:first(query.stage)}:{}),
-   ...(first(query.search)?{search:first(query.search)}:{}),
-   ...(first(query.channel)?{channel:first(query.channel)}:{}),
-   ...(first(query.eligibility)?{eligibility:first(query.eligibility)}:{}),
-   ...(first(query.sort)?{sort:first(query.sort)}:{}),
-   ...(first(query.submittedWithin)?{submittedWithin:first(query.submittedWithin)}:{}),
-   ...(first(query.page)?{page:first(query.page)}:{})});
+ const filters=parseTpoApplicantPipelineLink({jobId,
+  stage:first(query.stage),search:first(query.search),page:first(query.page),
+  channel:first(query.channel),eligibility:first(query.eligibility),
+  sort:first(query.sort),submittedWithin:first(query.submittedWithin),
+ });
+ if(!filters.success)return <main className="space-y-4">
+  <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
+    description="This URL contains unsupported applicant filters or page values. No applications were loaded."/>
+  <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 items-center text-primary-text underline">
+    Reset applicant filters
+  </Link>
+ </main>;
+ const data=await getTpoApplicantPipeline(context,filters.data);
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  function pageHref(page:number){return {pathname:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline",
   query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin,...(columns?{columns}:{}),page}};}
@@ -77,7 +84,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     target="APPLICATIONS" jobId={jobId}
     rows={data.rows.map(row=>({id:row.id,
       label:(row.student??"Applicant")+" · "+row.role}))}/>:null}
-  {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:
+  {!data.rows.length?<div className="space-y-3">
+    <EmptyState title="No matching applicants" description="No stored applications match the selected stage, channel, eligibility, date and name filters."/>
+    <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear applicant filters</Link>
+   </div>:
    <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
     <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
    </Suspense>}
