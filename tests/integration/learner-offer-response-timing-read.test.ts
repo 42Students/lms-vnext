@@ -22,7 +22,7 @@ beforeEach(async()=>{
       drive.learner.ids.membership,drive.learner.ids.user],
   );
   await pool.query(
-    "INSERT INTO placement_offers(id,application_id,version,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at) VALUES($1,$2,1,'ISSUED','Engineer',1000000,$3,$4)",
+    "INSERT INTO placement_offers(id,application_id,version,status,role_title,annual_ctc_inr,issued_by_user_id,issued_at,expires_at) VALUES($1,$2,1,'ISSUED','Engineer',1000000,$3,'2026-01-01T00:00:00Z',$4)",
     [fixture.offerId,fixture.applicationId,SEED_IDS.collegeAdminUser,"2026-10-15T00:00:00Z"],
   );
 },45000);
