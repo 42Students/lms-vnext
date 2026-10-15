@@ -13,6 +13,7 @@ export const facultySubmissionListQuerySchema=z.object({
 export const facultySubmissionReportPageQuerySchema=facultySubmissionListQuerySchema.extend({
  order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
  q:z.string().trim().max(120).default(""),
+ publication:z.enum(["ALL","PUBLISHED","PRIVATE"]).default("ALL"),
  page:z.union([z.number().int(),z.string().regex(/^[1-9]\d{0,3}$|^10000$/).transform(Number)])
    .pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
@@ -37,12 +38,13 @@ export function facultySubmissionListPage<T>(rows:readonly T[],requested:number)
   return {total,pageSize,totalPages,page,items:rows.slice((page-1)*pageSize,page*pageSize)};
 }
 
-export function facultySubmissionListHref(query:FacultySubmissionListQuery & {order?:"NEWEST"|"OLDEST";q?:string}) {
+export function facultySubmissionListHref(query:FacultySubmissionListQuery & {order?:"NEWEST"|"OLDEST";q?:string;publication?:"ALL"|"PUBLISHED"|"PRIVATE"}) {
   const params=new URLSearchParams({deliveryId:query.deliveryId});
   if(query.filter!=="ALL")params.set("filter",query.filter);
   if(query.page>1)params.set("page",String(query.page));
   if(query.order==="OLDEST")params.set("order","OLDEST");
   if(query.q?.trim())params.set("q",query.q.trim());
+  if(query.publication && query.publication!=="ALL")params.set("publication",query.publication);
   return "/teacher/report/assignment/"+encodeURIComponent(query.assignmentId)+
     "/submissions?"+params.toString();
 }
@@ -85,4 +87,11 @@ export function facultySearchSubmissionReportRows<T extends {learnerDisplayName:
 ):T[]{
  const term=q.trim().toLocaleLowerCase();
  return term?rows.filter(row=>row.learnerDisplayName?.toLocaleLowerCase().includes(term)):[...rows];
+}
+
+/** Publication privacy belongs to the persisted gradePublished bit. */
+export function facultyFilterSubmissionPublication<T extends {gradePublished:boolean}>(
+ rows:readonly T[],mode:"ALL"|"PUBLISHED"|"PRIVATE",
+):T[]{
+ return rows.filter(row=>mode==="ALL"||(mode==="PUBLISHED"?row.gradePublished:!row.gradePublished));
 }
