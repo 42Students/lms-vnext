@@ -1,25 +1,18 @@
-import Link from "next/link";
-import { publicUnsubscribeTokenSchema } from "@/modules/placements/public-campaign-unsubscribe-model";
-
-/** GET is strictly read-only; never change mailing preferences on page load. */
-export default async function CampaignUnsubscribePage({ params }: {
-  params: Promise<{ token: string }>;
-}) {
-  const { token } = await params;
-  const syntacticallyValid = publicUnsubscribeTokenSchema.safeParse(token).success;
-  return (
-    <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-4 py-10">
-      <section className="min-w-0 rounded-xl border border-border bg-surface p-6">
-        <h1 className="text-2xl font-semibold text-foreground">
-          Campaign email preferences
-        </h1>
-        <p role="status" className="mt-4 text-sm leading-6 text-body">
-          {syntacticallyValid
-            ? "You have not been unsubscribed. Confirmation is currently unavailable; no changes were made to your preferences. Contact the placement cell to request removal."
-            : "This unsubscribe link is invalid. No changes were made to any subscription."}
-        </p>
-        <Link href="/" className="mt-5 inline-block text-sm text-primary-text underline">Return home</Link>
-      </section>
-    </main>
-  );
+import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
+import {PageHeader} from "@/components/ui/page-header";
+export default async function CampaignUnsubscribe({params}:{params:Promise<{token:string}>}){
+ const {token}=await params;
+ const claim=verifyUnsubscribeToken(token,process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
+ return <main className="mx-auto max-w-lg space-y-6 px-4 py-10">
+  <PageHeader eyebrow="42Students" title="Campaign email preferences" />
+  {!claim?<p role="alert" className="text-sm text-body">This confirmation link is invalid or expired. No preference was changed.</p>:
+   <section className="rounded-xl border border-border bg-surface p-5">
+    <h2 className="font-semibold text-foreground">Stop campaign emails?</h2>
+    <p className="mt-2 text-sm text-body">Opening this link does not unsubscribe you. Confirm to add this address to the global email suppression list.</p>
+    <form method="post" action="/api/public/campaign-unsubscribe" className="mt-4">
+     <input type="hidden" name="token" value={token}/>
+     <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Confirm unsubscribe</button>
+    </form>
+   </section>}
+ </main>;
 }
