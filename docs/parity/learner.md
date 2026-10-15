@@ -1426,3 +1426,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **L5 discussion delivery-change isolation (source FIXED, proof open):** authorized delivery changes remount the discussion component, clearing the prior college-course's client messages, paging cursors and unsent reply state. Full read authorization remains in the server route. Unit test authored; cross-course browser replay and privacy acceptance pending.
 
 **L8 review availability (source FIXED, proof open):** if a published quiz has no currently available question details but its own previously submitted attempt exists, the review preserves the saved-attempt explanation rather than saying the learner never started a quiz. No grades or answers are invented. Pure regression authored; browser/DB verification pending.
+
+**L4 Attendance record badge parity (source FIXED, proof open):** medical/excused statuses no longer display the same error styling as explicitly absent sessions; late remains warning and unrecognized values are neutral. Persisted counts and policy are unchanged. Focused unit test authored; browser/legacy comparison pending.
