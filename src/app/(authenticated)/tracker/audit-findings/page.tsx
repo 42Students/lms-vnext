@@ -83,7 +83,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
     <h2 className="mt-2 break-words font-semibold"><Link href={`/tracker/audit-findings/${encodeURIComponent(item.publicId)}`} className="text-primary-text">{item.publicId} · {item.issueType}</Link></h2>
     <p className="mt-2 break-words text-sm text-body">{item.description}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.page} · {item.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
-    <div className="mt-3"><AuditFindingStatusAction publicId={item.publicId} current={item.status} version={item.version}/></div>
+    <div className="mt-3"><AuditFindingStatusAction key={item.publicId+":"+item.version} publicId={item.publicId} current={item.status} version={item.version}/></div>
    </article>)}
   </section>}
   {next?<Link href={`/tracker/audit-findings?${next.toString()}`} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold">{query.sort==="newest"?"Older findings →":"Newer findings →"}</Link>:null}
