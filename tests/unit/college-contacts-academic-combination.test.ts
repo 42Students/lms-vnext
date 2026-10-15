@@ -8,3 +8,5 @@ describe("Contacts combined placement input",()=>{
   expect(collegeContactsQuerySchema.safeParse({programId:"cross-tenant"}).success).toBe(false);
  });
 });
+
+describe("Contacts active-class selection in a chosen program",()=>{it("rejects active class selections alongside no current enrollment",()=>{const p=collegeContactsQuerySchema.parse({programId:"00000000-0000-4000-8000-000000000101",classPresence:"ASSIGNED"});expect(contactAcademicFiltersCompatible(p)).toBe(true);expect(contactAcademicFiltersCompatible({...p,enrollment:"NONE"})).toBe(false);});});
