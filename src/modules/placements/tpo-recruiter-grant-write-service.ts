@@ -4,13 +4,13 @@ import { equalsIgnoreCase } from "@/lib/sql-match";
 import { getDb } from "@/db/client";
 import {
   activityEvents, placementCompanies, placementCompanyRelationships,
-  placementRecruiterCollegeGrants, placementRecruiterProfiles, users,
+  placementRecruiterCollegeGrants, placementRecruiterProfiles,
+  placementTpoCollegeSettings, users,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { tpoRecruiterGrantChangeSchema, isRecruiterGrantStale } from "./tpo-recruiter-grant-write-model";
-import { recruiterAccessPoliciesStaged } from "./staged-schema";
 import { recruiterGrantValidUntil } from "./recruiter-grant-expiry-policy";
 
 export class TpoRecruiterGrantConflict extends Error {
@@ -37,9 +37,9 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         throw new TpoRecruiterGrantConflict();
       }
       const [duration] = await tx.select({
-        months: recruiterAccessPoliciesStaged.recruiterAccessMonths,
-      }).from(recruiterAccessPoliciesStaged)
-        .where(eq(recruiterAccessPoliciesStaged.collegeId, collegeId))
+        months: placementTpoCollegeSettings.recruiterAccessMonths,
+      }).from(placementTpoCollegeSettings)
+        .where(eq(placementTpoCollegeSettings.collegeId, collegeId))
         .for("share").limit(1);
       if (!duration || duration.months < 1 || duration.months > 60) {
         throw new TpoRecruiterGrantConflict();
@@ -77,26 +77,20 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       if (existing) {
         // An old ACTIVE row without an expiry or verification is NOT usable.
         const [valid] = await tx.select({
-          ok: sql<boolean>`(to_jsonb(${placementRecruiterCollegeGrants})->>'valid_until')::timestamptz > clock_timestamp()
-            and (to_jsonb(${placementRecruiterCollegeGrants})->>'verification_status')='VERIFIED'`,
+          ok: sql<boolean>`${placementRecruiterCollegeGrants.validUntil} > clock_timestamp()
+            and ${placementRecruiterCollegeGrants.verificationStatus} = 'VERIFIED'`,
         }).from(placementRecruiterCollegeGrants)
           .where(eq(placementRecruiterCollegeGrants.id, existing.id)).limit(1);
         if (!valid?.ok) throw new TpoRecruiterGrantConflict();
         return { outcome: "already-active" as const, grantId: existing.id };
       }
+      const expiry = recruiterGrantValidUntil(new Date(), duration.months);
       const [grant] = await tx.insert(placementRecruiterCollegeGrants).values({
         recruiterUserId: recruiter.id, companyRelationshipId: relationship.id,
-        grantedByUserId: actorUserId,
+        grantedByUserId: actorUserId, validUntil: expiry,
+        capabilities: ["DRIVES"], verificationStatus: "VERIFIED",
       }).returning();
       if (!grant) throw new TpoRecruiterGrantConflict();
-      const expiry = recruiterGrantValidUntil(new Date(), duration.months);
-      // These columns are deliberately STAGED until orchestrator registration.
-      await tx.execute(sql`update placement_recruiter_college_grants
-        set valid_until=${expiry}::timestamptz,
-          capabilities=ARRAY['DRIVES']::text[],
-          verification_status='VERIFIED',
-          updated_at=clock_timestamp()
-        where id=${grant.id}::uuid`);
       await tx.insert(activityEvents).values({
         organizationId: college.organizationId, collegeId, actorUserId, actorMembershipId,
         module: "PLACEMENTS", eventType: "PLACEMENTS_RECRUITER_ACCESS_GRANTED",

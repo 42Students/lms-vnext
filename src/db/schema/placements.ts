@@ -220,6 +220,16 @@ export const placementRecruiterCollegeGrants = pgTable(
     revokedAt: timestamp("revoked_at", {
       withTimezone: true,
     }),
+    /** T-S1-01: NULL fails closed; ACTIVE alone never authorizes access. */
+    validUntil: timestamp("valid_until", { withTimezone: true }),
+    capabilities: text("capabilities")
+      .array()
+      .notNull()
+      .default(sql`ARRAY['DRIVES']::text[]`),
+    verificationStatus: varchar("verification_status", { length: 24 })
+      .notNull()
+      .default("PENDING"),
+    revokeReason: text("revoke_reason"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -245,6 +255,21 @@ export const placementRecruiterCollegeGrants = pgTable(
     index("placement_recruiter_college_grants_relationship_status_idx").on(
       table.companyRelationshipId,
       table.status,
+    ),
+    index("placement_recruiter_grant_validity_idx")
+      .on(table.recruiterUserId, table.validUntil)
+      .where(sql`${table.status} = 'ACTIVE'`),
+    check(
+      "placement_recruiter_grant_verification_ck",
+      sql`${table.verificationStatus} in ('PENDING', 'VERIFIED', 'REJECTED')`,
+    ),
+    check(
+      "placement_recruiter_grant_validity_ck",
+      sql`${table.validUntil} is null or ${table.validUntil} > ${table.createdAt}`,
+    ),
+    check(
+      "placement_recruiter_grant_capabilities_ck",
+      sql`cardinality(${table.capabilities}) > 0 and ${table.capabilities} <@ ARRAY['DRIVES','APPLICANT_EXPORT','INTERVIEWS','MESSAGES']::text[]`,
     ),
     check(
       "placement_recruiter_college_grants_status_ck",

@@ -152,11 +152,10 @@ async function findRecruiterContext(
           placementRecruiterCollegeGrants.status,
           "ACTIVE",
         ),
-        // to_jsonb permits schema registration to lag deployed app code;
-        // missing or NULL validity/verification/capabilities fail closed.
-        sql`(to_jsonb(${placementRecruiterCollegeGrants})->>'valid_until')::timestamptz > clock_timestamp()`,
-        sql`(to_jsonb(${placementRecruiterCollegeGrants})->>'verification_status') = 'VERIFIED'`,
-        sql`(to_jsonb(${placementRecruiterCollegeGrants})->'capabilities') ? 'DRIVES'`,
+        // T-S1-01: NULL validity, unverified or capability-less grants fail closed.
+        sql`${placementRecruiterCollegeGrants.validUntil} > clock_timestamp()`,
+        eq(placementRecruiterCollegeGrants.verificationStatus, "VERIFIED"),
+        sql`${placementRecruiterCollegeGrants.capabilities} @> ARRAY['DRIVES']::text[]`,
         eq(
           placementCompanyRelationships.status,
           "ACTIVE",
