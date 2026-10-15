@@ -2,8 +2,6 @@ import {describe,expect,it} from "vitest";
 import {facultyMetadataFromDraft} from "@/modules/people/faculty-profile-metadata-model";
 import {updateFacultyProfileSection} from "@/modules/people/faculty-self-section-model";
 import {emptyFacultyProfileDocument} from "@/modules/people/faculty-profile-document";
-import {emptyFacultyProfileDocument} from "@/modules/people/faculty-profile-document";
-import {updateFacultyProfileSection} from "@/modules/people/faculty-self-section-model";
 const id="10000000-0000-4000-8000-000000000004";
 describe("Faculty metadata privacy and typed legacy preservation",()=>{
  it("preserves numeric, boolean and null metadata while editing strings",()=>{
