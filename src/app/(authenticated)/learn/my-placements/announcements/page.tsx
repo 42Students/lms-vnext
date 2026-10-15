@@ -28,6 +28,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const recentOnly = filters.success ? filters.data.recent === "1" : false;
   const sorting=learnerNoticeSortSchema.safeParse(query.sort ?? "pinned");
   const sortKey=sorting.success?sorting.data:"pinned";
+  const hadInvalidNoticeFilters = !filters.success || !sorting.success;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) throw new AuthorizationError("placements.read");
   const own = await requireLearnerPlacementAccess(context);
@@ -55,6 +56,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <Link href="/learn/my-placements" className="text-sm text-primary-text underline">Back to My Placements</Link>
         <h1 className="mt-3 text-2xl font-semibold text-foreground">Announcements</h1>
         <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership.</p>
+        {hadInvalidNoticeFilters ? <p role="status" className="mt-2 text-sm text-warning">Some notice filters were invalid and have been reset to safe defaults.</p> : null}
       </div>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
         {pinnedOnly ? <input type="hidden" name="pinned" value="1" /> : null}
