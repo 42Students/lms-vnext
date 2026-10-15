@@ -35,6 +35,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
   ...(query.status!=="ALL"?{status:query.status}:{}),
   ...(query.severity!=="ALL"?{severity:query.severity}:{}),
   ...(query.environment!=="ALL"?{environment:query.environment}:{}),
+  ...(query.sort!=="newest"?{sort:query.sort}:{}),
   beforeCreatedAt:data.nextCursor.beforeCreatedAt.toISOString(),
   beforeId:data.nextCursor.beforeId,
  }):null;
@@ -53,6 +54,11 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
       <option value="ALL">All environments</option>{BUG_ENVIRONMENTS.map(value=><option key={value} value={value}>{value}</option>)}
     </select>
    </label>
+   <label className="min-w-0 text-sm">Order
+    <select name="sort" defaultValue={query.sort} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3">
+     <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
+    </select>
+   </label>
    <div className="flex flex-wrap gap-2 sm:col-span-3">
     <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
     <Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
@@ -67,6 +73,6 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.page} · {item.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
    </article>)}
   </section>}
-  {next?<Link href={`/tracker/audit-findings?${next.toString()}`} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold">Older findings →</Link>:null}
+  {next?<Link href={`/tracker/audit-findings?${next.toString()}`} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold">{query.sort==="newest"?"Older findings →":"Newer findings →"}</Link>:null}
  </div>;
 }
