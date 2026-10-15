@@ -66,3 +66,9 @@ export function mentorProjectActivityHref(query:Pick<MentorProjectActivityQuery,
   return "/mentor/projects/"+encodeURIComponent(query.projectId)+"/activity-history"+
     (suffix?"?"+suffix:"");
 }
+
+/** Prevent nested project-history filters widening a 375px viewport. */
+export const mentorProjectActivityMobileLayout =
+  "min-w-0 max-w-full space-y-6 overflow-x-clip";
+export const mentorProjectActivityMobileFilters =
+  "flex min-w-0 max-w-full flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_select]:w-full [&_select]:min-w-0 [&_select]:max-w-full [&_select]:truncate";
