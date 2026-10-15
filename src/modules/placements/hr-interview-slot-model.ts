@@ -2,8 +2,8 @@ import {z} from "zod";
 export const hrInterviewSlotCreateSchema=z.strictObject({
  action:z.literal("CREATE").optional(),
  roundId:z.string().uuid(),
- startAt:z.coerce.date(),
- endAt:z.coerce.date(),
+ startAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
+ endAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
  timezone:z.literal("Asia/Kolkata"),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),
  meetingLocation:z.string().trim().max(500).optional(),
