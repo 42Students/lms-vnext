@@ -974,3 +974,33 @@ accessibility and browser end-to-end acceptance remain OPEN. Do not mark
 the Mentor Team or College Admin/Super Admin workspace create parity rows CLOSED
 until the gates and legacy semantic checks pass. The Mentor's own Team view
 continues to be read-only for membership management.
+
+
+## 2026-10-15 chat-11 — Mentor queue and assignment navigation (PARTIAL)
+
+Source-authored enhancements to the assigned Mentor Projects list: explicit
+recorded meeting requests, stalled activity, upcoming meetings, any recorded
+attention and no recorded attention filters; primary/supporting Mentor assignment
+scope; stable title A–Z or recent-update sorting with archived projects behind
+current projects. Filtering occurs after the existing persisted active Mentor
+assignment reader; pagination retains selectors and all results remain within
+the same current-college/role scope. **No recorded attention does not mean
+verified project health.** Only registered alert producers are considered,
+and unmigrated legacy blocked/workload fields are not fabricated.
+
+The currently assigned Mentor delivery-review queue also supports recorded
+review-age windows (all, last 7 days, last 30 days), using an explicit server
+snapshot and preserving the selector in pagination. The pending task-review
+queue supports critical-priority-first ordering and filtering by a real positive
+submission version; both are applied in scoped SQL before pagination.
+Zod rejects invalid age/version/order values and the existing membership/role
+checks remain authoritative. No team-membership mutations are exposed to
+Mentors.
+
+Pure unit tests and an extension of the existing isolated PostgreSQL task
+review fixture (success, priority/order/version, learner-role denial) are
+**authored, not executed**. Full legacy page/interaction semantics, complete
+producer coverage, typecheck/lint, DB gates, desktop/375px browser acceptance,
+and fresh-data performance remain OPEN. All parent Mentor Project, Team,
+Reviews, Tasks/Board and Activity rows remain PARTIAL until independent
+acceptance; no parity matrix row was edited.
