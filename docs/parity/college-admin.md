@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Unified verification CSV filter validation PARTIAL (chat-9):** The same strict date-window and pending-state compatibility checks now apply at the CSV URL boundary; invalid/ambiguous filters receive an explicit 400 without triggering protected reads. Disposable DB04-gated fixtures cover exact learner, lower-day and first-submission filters plus wrong-role/foreign tenant denials. These fixtures are authored but have not executed in this session.
+
 **Named bulk review preview PARTIAL (chat-9):** Before a bulk Verify/Send back, the College Admin now sees the actual selected learner names, sections, versions and any locally skipped entries rather than only aggregate counts. Changing selection cancels the old preview; in-flight decisions lock select/clear. No preview claims receipt validation or server commit. Unit coverage authored, browser/DB acceptance remains open.
 
 **Readable per-request bulk decision outcomes PARTIAL (chat-9):** Successful bulk API responses now retain the selected page's authorized learner names when displaying individual success/stale/document/permission outcomes; no shortened membership UUIDs are shown. Attempts/success/failure totals remain exact, and unknown rows use a neutral label. Pure outcome projection authored; browser/PG acceptance open.

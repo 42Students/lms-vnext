@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listCollegeVerificationQueue} from "@/modules/verification/staff-queue-service";
+import {exportCollegeVerificationCsv} from "@/modules/verification/staff-export-service";
 import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions} from "@/modules/verification/filter-options-service";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {reviewCollegeVerificationBulk} from "@/modules/verification/staff-bulk-review-service";
@@ -131,6 +132,24 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
  it("does not leak foreign-college verification details or permit cross-college review",async()=>{
   await expect(reviewProfileVerification(admin,{...ownBody,learnerMembershipId:ids.foreignMember},
    createProfileVerificationRepository())).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("applies exact membership filter before paging without disclosing foreign requests",async()=>{
+  const own=await listCollegeVerificationQueue(admin,{membershipId:ids.ownMember});
+  expect(own.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
+  expect(own.rows.some(row=>row.learnerMembershipId===ids.foreignMember)).toBe(false);
+  const other=await listCollegeVerificationQueue(admin,{membershipId:ids.foreignMember});
+  expect(other.total).toBe(0);
+  await expect(listCollegeVerificationQueue(wrongRole,{membershipId:ids.ownMember})).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("shares IST lower-date and first-submission filters between current-college queue and export",async()=>{
+  const past=await listCollegeVerificationQueue(admin,{membershipId:ids.ownMember,submittedFrom:"2020-01-01",waitingState:"SUBMITTED"});
+  expect(past.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
+  const future=await listCollegeVerificationQueue(admin,{membershipId:ids.ownMember,submittedFrom:"2099-01-01",waitingState:"SUBMITTED"});
+  expect(future.total).toBe(0);
+  const csv=await exportCollegeVerificationCsv(admin,{membershipId:ids.ownMember,submittedFrom:"2020-01-01",waitingState:"SUBMITTED"});
+  expect(csv.csv).toContain("Verification Own College");
+  expect(csv.csv).not.toContain("Verification Foreign College");
+  await expect(exportCollegeVerificationCsv(wrongRole,{membershipId:ids.ownMember,waitingState:"SUBMITTED"})).rejects.toBeInstanceOf(AuthorizationError);
  });
  it("bulk command rejects forged roles and reports foreign rows without leaking data",async()=>{
   const foreignInput={confirm:true,action:"SEND_BACK",reason:"Please provide legible evidence",
