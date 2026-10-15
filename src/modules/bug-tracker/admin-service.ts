@@ -4,6 +4,7 @@ import {
   desc,
   eq,
   gt,
+  gte,
   isNull,
   lt,
   or,
@@ -150,6 +151,7 @@ export async function listBugTrackerIssuesForAdmin(
     conditions.push(eq(db10BugReports.environment, input.environment));
   }
   if (input.issueType) conditions.push(eq(db10BugReports.issueType, input.issueType));
+  if (input.createdFrom) conditions.push(gte(db10BugReports.createdAt,input.createdFrom));
   if (input.q) {
     // Literal substring semantics: '%' and '_' in user input are data, not LIKE wildcards.
     const term=input.q.toLowerCase();

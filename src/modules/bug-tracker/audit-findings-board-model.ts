@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {indiaDayStart} from "./audit-findings-day-model";
 import {BUG_SEVERITIES,BUG_ACCOUNT_ROLES} from "./admin-validation";
 import {BUG_STATUSES,BUG_RESOLUTIONS} from "./workflow";
 const findingStatusOptions=["ALL",...BUG_STATUSES] as const;
@@ -13,6 +14,7 @@ export const auditFindingsQuerySchema=z.strictObject({
  status:z.enum(findingStatusOptions).default("ALL"),
  q:z.string().trim().max(120).default(""),
  issueType:z.string().trim().max(80).default(""),
+ fromDate:z.iso.date().optional(),
  sort:z.enum(["newest","oldest"]).default("newest"),
  beforeCreatedAt:z.iso.datetime({offset:true}).optional(),
  beforeId:z.uuid().optional(),
@@ -28,7 +30,9 @@ export function trackerAuditFindingsInput(x:z.infer<typeof auditFindingsQuerySch
   retestStatus:x.retestStatus==="ALL"?undefined:x.retestStatus,
   productionVerified:x.productionVerified==="ALL"?undefined:x.productionVerified==="YES",
   environment:x.environment==="ALL"?undefined:x.environment,
-  q:x.q||undefined,issueType:x.issueType||undefined,sort:x.sort,limit:50,
+  q:x.q||undefined,issueType:x.issueType||undefined,
+  createdFrom:x.fromDate?indiaDayStart(x.fromDate):undefined,
+  sort:x.sort,limit:50,
   beforeCreatedAt:x.beforeCreatedAt,
   beforeId:x.beforeId,
  };
