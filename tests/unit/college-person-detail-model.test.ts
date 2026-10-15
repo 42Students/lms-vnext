@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   collegePersonIdSchema, collegePersonDetailQuerySchema,
-  recordedAttendanceSummary,
+  recordedAttendanceSummary, collegeStudentEnrollmentQuerySchema,
 } from "@/modules/people/college-person-detail-model";
 
 describe("College person detail contracts", () => {
@@ -9,6 +9,12 @@ describe("College person detail contracts", () => {
     expect(collegePersonIdSchema.safeParse("foreign").success).toBe(false);
     expect(collegePersonDetailQuerySchema.safeParse({ collegeId: "foreign" }).success).toBe(false);
     expect(collegePersonDetailQuerySchema.parse({})).toEqual({});
+  });
+  it("validates history status without allowing caller-controlled college ids",()=>{
+    expect(collegeStudentEnrollmentQuerySchema.parse({})).toEqual({status:"ALL"});
+    expect(collegeStudentEnrollmentQuerySchema.parse({status:"WITHDRAWN"})).toEqual({status:"WITHDRAWN"});
+    expect(collegeStudentEnrollmentQuerySchema.safeParse({status:"ARCHIVED"}).success).toBe(false);
+    expect(collegeStudentEnrollmentQuerySchema.safeParse({collegeId:"foreign"}).success).toBe(false);
   });
   it("does not manufacture attendance from sessions lacking explicit records", () => {
     expect(recordedAttendanceSummary([])).toEqual({

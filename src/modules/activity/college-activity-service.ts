@@ -25,7 +25,8 @@ function requireCollegeActivity(context: RequestContext) {
 export async function listCollegeActivity(context: RequestContext, raw: unknown) {
   const query = collegeActivityQuerySchema.parse(raw);
   requireCollegeActivity(context);
-  const result = await listActivityEvents(context, { ...query, limit: 25 });
+  const { pageSize, ...filter } = query;
+  const result = await listActivityEvents(context, { ...filter, limit: Number(pageSize ?? "25") });
   return { ...result, query };
 }
 

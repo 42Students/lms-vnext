@@ -93,10 +93,11 @@ export async function getCollegeFacultyDetail(
       active: sql<number>`count(*) filter (where ${base.endedAt} is null and ${base.deliveryEndedAt} is null)`.mapWith(Number),
       distinctOfferings: sql<number>`count(distinct ${base.offeringId})`.mapWith(Number),
     }).from(base),
-    db.select().from(base).where(
+    db.select().from(base).where(and(
+      filter.role === "ALL" ? undefined : eq(base.role,filter.role),
       filter.status === "ACTIVE" ? and(isNull(base.endedAt),isNull(base.deliveryEndedAt)) :
       filter.status === "ENDED" ? or(isNotNull(base.endedAt),isNotNull(base.deliveryEndedAt)) : undefined,
-    ).orderBy(asc(base.courseName), asc(base.sectionName), asc(base.id)).limit(101),
+    )).orderBy(asc(base.courseName), asc(base.sectionName), asc(base.id)).limit(101),
   ]);
   const raw = rows.slice(0, 100);
   return {

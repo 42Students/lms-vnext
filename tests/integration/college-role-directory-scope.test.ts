@@ -246,6 +246,50 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{employmentType:"VISITING"}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("partitions own-college Learners by recorded roll number before pagination", async () => {
+    const all = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {});
+    const present = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {rollPresence:"PRESENT"});
+    const missing = await listCollegeRoleDirectory(collegeAdmin, "LEARNER", {rollPresence:"MISSING"});
+    expect(present.total + missing.total).toBe(all.total);
+    expect(present.items.every(row => row.membershipId !== SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(collegeAdmin, "FACULTY", {rollPresence:"MISSING"}))
+      .rejects.toThrow("FACULTY_ROLL_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB, "LEARNER", {rollPresence:"MISSING"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("partitions college Learners by registration-number coverage without losing tenant scope", async () => {
+    const all=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{});
+    const present=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{registrationPresence:"PRESENT"});
+    const missing=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{registrationPresence:"MISSING"});
+    expect(present.total+missing.total).toBe(all.total);
+    expect(missing.items.every(row=>row.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"FACULTY",{registrationPresence:"PRESENT"}))
+      .rejects.toThrow("FACULTY_REGISTRATION_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{registrationPresence:"MISSING"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("partitions Faculty academic title coverage without mixing other colleges", async () => {
+    const all = await listCollegeRoleDirectory(collegeAdmin, "FACULTY", {});
+    const present = await listCollegeRoleDirectory(collegeAdmin, "FACULTY", {titlePresence:"PRESENT"});
+    const missing = await listCollegeRoleDirectory(collegeAdmin, "FACULTY", {titlePresence:"MISSING"});
+    expect(present.total + missing.total).toBe(all.total);
+    expect(present.items.every(person => person.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(collegeAdmin, "LEARNER", {titlePresence:"MISSING"}))
+      .rejects.toThrow("LEARNER_ACADEMIC_TITLE_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB, "FACULTY", {titlePresence:"MISSING"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
+  it("triages missing primary department only for Faculty in the acting college", async () => {
+    const all=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{});
+    const assigned=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{departmentPresence:"ASSIGNED"});
+    const missing=await listCollegeRoleDirectory(collegeAdmin,"FACULTY",{departmentPresence:"MISSING"});
+    expect(assigned.total+missing.total).toBe(all.total);
+    expect(assigned.items.every(row=>row.membershipId!==SEED_IDS.facultyCollegeBMembership)).toBe(true);
+    await expect(listCollegeRoleDirectory(collegeAdmin,"LEARNER",{departmentPresence:"ASSIGNED"}))
+      .rejects.toThrow("LEARNER_PRIMARY_DEPARTMENT_FILTER_UNSUPPORTED");
+    await expect(listCollegeRoleDirectory(facultyInCollegeB,"FACULTY",{departmentPresence:"MISSING"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("rejects forged college selection and out-of-bound page filters", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(collegeAdmin, kind, {

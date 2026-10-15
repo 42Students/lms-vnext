@@ -87,6 +87,18 @@ describe.skipIf(!enabled)("College Student Detail real PG scope", () => {
     expect(result.classes.map(x => x.sectionCode)).toContain(name);
     expect(result.attendance.recordedPercent).toBeNull();
   });
+  it("filters historical enrollment state without hiding current active class/attendance facts",async()=>{
+    const active=await getCollegeStudentDetail(admin,ids.membership,{status:"ACTIVE"});
+    const withdrawn=await getCollegeStudentDetail(admin,ids.membership,{status:"WITHDRAWN"});
+    expect(active.enrollments.map(row=>row.cohortCode)).toContain(name);
+    expect(withdrawn.enrollments).toHaveLength(0);
+    expect(withdrawn.enrollmentTotal).toBe(active.enrollmentTotal);
+    expect(withdrawn.classes).toEqual(active.classes);
+    await expect(getCollegeStudentDetail(foreign,ids.membership,{status:"WITHDRAWN"}))
+      .rejects.toBeInstanceOf(CollegePersonNotFoundError);
+    await expect(getCollegeStudentDetail(learner,ids.membership,{status:"ACTIVE"}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("foreign admin sees same NOT_FOUND result as missing membership", async () => {
     await expect(getCollegeStudentDetail(foreign, ids.membership))
       .rejects.toBeInstanceOf(CollegePersonNotFoundError);

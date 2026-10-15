@@ -10,7 +10,7 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
-  collegePersonDetailQuerySchema, collegePersonIdSchema,
+  collegeStudentEnrollmentQuerySchema, collegePersonIdSchema,
   CollegePersonNotFoundError, recordedAttendanceSummary,
 } from "./college-person-detail-model";
 
@@ -18,7 +18,7 @@ export async function getCollegeStudentDetail(
   context: RequestContext, membershipIdInput: unknown, rawQuery: unknown = {},
 ) {
   const membershipId = collegePersonIdSchema.parse(membershipIdInput);
-  collegePersonDetailQuerySchema.parse(rawQuery);
+  const filter=collegeStudentEnrollmentQuerySchema.parse(rawQuery);
   const owner = context.membership;
   if (!owner || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "people.manage", {collegeId: owner.collegeId, organizationId: owner.organizationId})) {
@@ -117,7 +117,9 @@ export async function getCollegeStudentDetail(
       rollNumber: person.rollNumber,
       registrationNumber: person.registrationNumber,
     },
-    enrollments,
+    filter,
+    enrollments:filter.status === "ALL" ? enrollments : enrollments.filter(row=>row.status===filter.status),
+    enrollmentTotal:enrollments.length,
     classes,
     attendance: recordedAttendanceSummary(attendance),
   };

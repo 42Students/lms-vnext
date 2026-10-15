@@ -30,21 +30,25 @@ export function tokenizeStudentCsv(input: string): string[][] {
   let fields: string[] = [];
   let field = "";
   let quoted = false;
+  let afterQuote = false;
   for (let i = 0; i < input.length; i++) {
     const ch = input[i];
     if (ch === '"') {
       if (quoted && input[i + 1] === '"') { field += '"'; i++; }
-      else if (quoted) quoted = false;
-      else if (field === "") quoted = true;
+      else if (quoted) { quoted = false; afterQuote = true; }
+      else if (field === "" && !afterQuote) quoted = true;
       else throw Error("INVALID_CSV_QUOTE");
     } else if (ch === "," && !quoted) {
-      fields.push(field); field = "";
+      fields.push(field); field = ""; afterQuote = false;
     } else if ((ch === "\n" || ch === "\r") && !quoted) {
       if (ch === "\r" && input[i + 1] === "\n") i++;
       fields.push(field); field = "";
       if (fields.some(v => v.trim() !== "")) result.push(fields);
-      fields = [];
-    } else { field += ch; }
+      fields = []; afterQuote = false;
+    } else {
+      if (afterQuote) throw Error("INVALID_CSV_AFTER_QUOTE");
+      field += ch;
+    }
   }
   if (quoted) throw Error("UNTERMINATED_CSV_QUOTE");
   fields.push(field);
