@@ -527,6 +527,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**College Admin visibility control PARTIAL (2026-10-15):** Registered Video/Resource rows now offer a confirmed mobile/desktop Visible-to-students toggle calling the same-origin, version-checked College Admin mutation. Optimistic UI state updates only after confirmed response; stale/denied/network errors retain the prior state and request a refresh. Unit checks cover accessible labels; independently executed PG/browser/375px acceptance open.
+
 **Student visibility CSV column PARTIAL (2026-10-15):** Capped Video and Resource metadata export now explicitly labels the persisted Visible-to-students boolean as Yes/No instead of inferring visibility from publication. Metadata never includes private media keys or URLs. Formula-safe export unit assertions authored; runtime/browser verification open.
 
 **Owning-offering lifecycle filter PARTIAL (2026-10-15):** RESOURCE metadata now supports a separate offering ACTIVE/ARCHIVED selector, server-enforced inside the own-college ancestry joins before pagination and capped download. Own/missing lifecycle fixture authored; private notes and storage keys still omitted. Browser/DB execution open.
