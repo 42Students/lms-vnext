@@ -10,6 +10,7 @@ export const superAdminCollegeBroadcastSchema=z.strictObject({
  publishConsent:z.literal(true),
 }).superRefine((v,ctx)=>{
  if(v.audienceMode==="ALL_COLLEGES"&&v.collegeIds.length!==0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"All-colleges must not include an explicit target list"});
+ if(new Set(v.collegeIds).size!==v.collegeIds.length)ctx.addIssue({code:"custom",path:["collegeIds"],message:"A college must not appear more than once"});
  if(v.audienceMode==="SELECTED_COLLEGES"&&v.collegeIds.length===0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"Select at least one college"});
  if(v.expiresAt&&v.scheduledAt&&new Date(v.expiresAt)<=new Date(v.scheduledAt))ctx.addIssue({code:"custom",path:["expiresAt"],message:"Expiry must be later than schedule"});
 });
