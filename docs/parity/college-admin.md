@@ -508,6 +508,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Department-specific content search PARTIAL (2026-10-15):** Video/Resource directories can filter by the owning course department code using in-college ancestry. URL/page and bounded CSV preserve this filter; strict inputs plus PostgreSQL own/unknown department fixtures authored. Real execution and browser acceptance open.
+
 **Learning-path lifecycle filter PARTIAL (2026-10-15):** Video and Resource catalogues filter by the actual DRAFT/PUBLISHED/ARCHIVED learning path state independently of content publication, including pagination and capped metadata CSV. A disposable PostgreSQL fixture and strict query tests are authored; executed gates and browser parity open.
 
 **Visibility mutation PostgreSQL fixture PARTIAL (2026-10-15):** In-test real resource verifies College Admin success, foreign-college non-leaking not-found, wrong-role rejection, stale-version denial, persisted visibility filtering and audited restore. Fixture authored for disposable PG execution; not yet executed or browser-accepted.
