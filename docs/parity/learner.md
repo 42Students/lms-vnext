@@ -1434,3 +1434,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **L2 next-action headline truth (source FIXED, acceptance open):** Course Home now displays `In progress` for uncompleted tracked items without an upcoming timestamp and `Attention` for missed items; `All clear` requires an actual completed denominator. No inferred grades or deadlines. Unit regressions authored; browser and producer verification pending.
 
 **L5 discussion create capability fail-closed (source FIXED, proof open):** the composer stays read-only until a successful same-delivery GET explicitly returns `canPost: true`; missing/failed capability responses cannot default to permission. POST still independently enforces same-origin and persisted membership. Unit test authored; historical/browser denial acceptance pending.
+
+**Chat-7 follow-up / L5 pinned discussion visibility (FIXED source; unverified):** the already-authorized GET response now includes the server's delivery-scoped highlighted pinned message even when outside the newest 60-message page. No extra data read, cache remains private/no-store. Regression authored; DB/browser oracle verification pending.
