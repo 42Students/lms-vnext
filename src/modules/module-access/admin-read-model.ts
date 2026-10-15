@@ -83,6 +83,7 @@ export function adminFeaturesHref(filters: {
   q?: string;
   page?: number;
   sort?: "NAME"|"CODE";
+  module?: "projects"|"placements"|"electives";
 }): string {
   const params = new URLSearchParams();
 
@@ -95,6 +96,7 @@ export function adminFeaturesHref(filters: {
   }
 
   if (filters.sort === "CODE") params.set("sort", "CODE");
+  if (filters.module) params.set("module", filters.module);
 
   const query = params.toString();
 
