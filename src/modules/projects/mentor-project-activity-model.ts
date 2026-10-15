@@ -3,9 +3,11 @@ import { z } from "zod";
 export const mentorProjectActivityQuerySchema=z.object({
   projectId:z.string().uuid(),
   importance:z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
-  view:z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM"]).default("ALL"),
-  window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS"]).default("ALL"),
+  view:z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM","DELIVERIES"]).default("ALL"),
+  window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS","LAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
+  order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
+  pageSize:z.coerce.number().int().refine(n=>n===20||n===50).default(20),
 }).strict();
 export type MentorProjectActivityQuery=z.infer<typeof mentorProjectActivityQuerySchema>;
 
@@ -15,6 +17,7 @@ export function mentorProjectActivityEventTypes(view:MentorProjectActivityQuery[
   if(view==="PROJECT")return [
     "projects.project.created","projects.project.archived",
     "projects.project.restored","projects.project.completed",
+    "projects.project.deleted","projects.readiness.overridden",
   ];
   if(view==="TEAM")return [
     "projects.team_member.added","projects.team_member.updated","projects.team_member.ended",
@@ -28,6 +31,10 @@ export function mentorProjectActivityEventTypes(view:MentorProjectActivityQuery[
   if(view==="REVIEWS")return [
     "projects.task.reviewed","projects.delivery.reviewed",
   ];
+  if(view==="DELIVERIES")return [
+    "projects.delivery.draft_created","projects.delivery.draft_updated",
+    "projects.delivery.submitted","projects.delivery.reviewed",
+  ];
   if(view==="MEETINGS")return [
     "projects.meeting.decided","projects.meeting.notes_updated",
     "projects.meeting.rescheduled",
@@ -35,25 +42,33 @@ export function mentorProjectActivityEventTypes(view:MentorProjectActivityQuery[
   return ["projects.task.created","projects.task.details_updated",
     "projects.task.status_changed","projects.task.submitted"];
 }
-export function mentorProjectActivityPage(total:number,requested:number) {
-  const pageSize=20;
+export function mentorProjectActivityPage(total:number,requested:number,pageSize:number=20) {
+  if(pageSize!==20&&pageSize!==50)throw new Error("Invalid mentor activity page size");
   const totalPages=Math.max(1,Math.ceil(total/pageSize));
   const page=Math.min(requested,totalPages);
   return {total,pageSize,totalPages,page};
 }
 
 /** Rolling 7x24h / 30x24h window over stored instants, never a local timezone guess. */
-export function mentorProjectActivitySince(window:"ALL"|"LAST_7_DAYS"|"LAST_30_DAYS",now:Date){
+export function mentorProjectActivitySince(window:"ALL"|"LAST_7_DAYS"|"LAST_30_DAYS"|"LAST_90_DAYS"|"OLDER_THAN_30_DAYS",now:Date){
   if(window==="ALL")return null;
-  return new Date(now.getTime()-(window==="LAST_7_DAYS"?7:30)*86400000);
+  return new Date(now.getTime()-(window==="LAST_7_DAYS"?7:window==="LAST_90_DAYS"?90:30)*86400000);
 }
-export function mentorProjectActivityHref(query:Pick<MentorProjectActivityQuery,"projectId"|"importance"|"view"|"page"> & {window?:MentorProjectActivityQuery["window"]}) {
+export function mentorProjectActivityHref(query:Pick<MentorProjectActivityQuery,"projectId"|"importance"|"view"|"page"> & {window?:MentorProjectActivityQuery["window"];order?:MentorProjectActivityQuery["order"];pageSize?:MentorProjectActivityQuery["pageSize"]}) {
   const params=new URLSearchParams();
   if(query.importance!=="ALL")params.set("importance",query.importance);
   if(query.view!=="ALL")params.set("view",query.view);
   if(query.window&&query.window!=="ALL")params.set("window",query.window);
+  if(query.order==="OLDEST")params.set("order",query.order);
+  if(query.pageSize===50)params.set("pageSize","50");
   if(query.page>1)params.set("page",String(query.page));
   const suffix=params.toString();
   return "/mentor/projects/"+encodeURIComponent(query.projectId)+"/activity-history"+
     (suffix?"?"+suffix:"");
 }
+
+/** Prevent nested project-history filters widening a 375px viewport. */
+export const mentorProjectActivityMobileLayout =
+  "min-w-0 max-w-full space-y-6 overflow-x-clip";
+export const mentorProjectActivityMobileFilters =
+  "flex min-w-0 max-w-full flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4 [&_label]:min-w-0 [&_label]:max-w-full [&_select]:w-full [&_select]:min-w-0 [&_select]:max-w-full [&_select]:truncate";

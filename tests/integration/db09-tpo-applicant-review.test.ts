@@ -5,6 +5,9 @@ import {closeDatabaseConnection} from "@/db/client";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import type {RequestContext} from "@/modules/identity/context";
 import {reviewTpoApplicant} from "@/modules/placements/tpo-applicant-review-service";
+import {previewTpoBulkAction} from "@/modules/placements/tpo-bulk-action-preview-service";
+import {confirmTpoBulkAction,TpoBulkPreviewError} from "@/modules/placements/tpo-bulk-action-confirm-service";
+import {resetAuthConfigForTests} from "@/modules/auth/config";
 import {getTpoApplicantPipeline} from "@/modules/placements/tpo-applicant-pipeline-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -82,4 +85,47 @@ describe.skipIf(!enabled)("TPO review scoped PG",()=>{
   expect(history.rows[0]?.n).toBe(1);
   expect(audit.rows[0]?.n).toBe(1);
  });
+
+ it("previews only redacted scoped applicants, confirms once with immutable audit and skips stale replay",async()=>{
+  if(!pool)throw Error("Test PG required");
+  await cleanup();
+  const fixtureState=await fixture();
+  const oldAuth=process.env.AUTH_SECRET;
+  const oldGate=process.env.DB09_TPO_API_READY;
+  process.env.AUTH_SECRET="isolated-bulk-audit-test-secret-1234567890";
+  process.env.DB09_TPO_API_READY="DB09_VERIFIED";
+  resetAuthConfigForTests();
+  try{
+   const request={target:"APPLICATIONS",jobId:fixtureState.jobId,
+    action:"SHORTLISTED",note:"Candidate reviewed by placement team",
+    ids:[fixtureState.applicationId]};
+   const preview=await previewTpoBulkAction(tpo,request);
+   expect(preview.counts.ready).toBe(1);
+   expect(preview.rows[0]).toMatchObject({status:"ready",label:"Selected row 1"});
+   expect(JSON.stringify(preview.rows)).not.toContain("Candidate reviewed");
+   const command={...request,confirmed:true,previewToken:preview.previewToken,
+    selections:preview.rows.map(row=>({id:row.id,version:row.version}))};
+   const foreign:RequestContext={...tpo,membership:{
+    ...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB,
+   }};
+   await expect(confirmTpoBulkAction(foreign,command)).rejects.toBeInstanceOf(TpoBulkPreviewError);
+   const applied=await confirmTpoBulkAction(tpo,command);
+   expect(applied.counts).toMatchObject({updated:1,skipped:0});
+   const [history,audit]=await Promise.all([
+    pool.query<{n:number}>("SELECT count(*)::int n FROM placement_application_screening_history WHERE application_id=$1",[fixtureState.applicationId]),
+    pool.query<{n:number}>("SELECT count(*)::int n FROM activity_events WHERE subject_id=$1 AND event_type='placements.screening.decided'",[fixtureState.applicationId]),
+   ]);
+   expect(history.rows[0]?.n).toBe(1);
+   expect(audit.rows[0]?.n).toBe(1);
+   const replay=await confirmTpoBulkAction(tpo,command);
+   expect(replay.counts).toMatchObject({updated:0,skipped:1});
+  }finally{
+   if(oldAuth===undefined)delete process.env.AUTH_SECRET;
+   else process.env.AUTH_SECRET=oldAuth;
+   if(oldGate===undefined)delete process.env.DB09_TPO_API_READY;
+   else process.env.DB09_TPO_API_READY=oldGate;
+   resetAuthConfigForTests();
+  }
+ });
+
 });
