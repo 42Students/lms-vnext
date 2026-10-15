@@ -17,6 +17,13 @@ export function collegeContactAcademicScope(collegeId:string){
  const hasPrimaryDepartment=exists(db.select({facultyId:facultyProfiles.membershipId}).from(facultyProfiles)
   .innerJoin(departments,and(eq(departments.id,facultyProfiles.primaryDepartmentId),eq(departments.collegeId,collegeId)))
   .where(eq(facultyProfiles.membershipId,collegeMemberships.id)));
+ const activeClass=exists(db.select({sectionId:sectionEnrollments.id}).from(sectionEnrollments)
+  .innerJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),eq(learnerProgramEnrollments.status,"ACTIVE")))
+  .innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,learnerProgramEnrollments.cohortId),eq(sections.academicPeriodId,sectionEnrollments.academicPeriodId),eq(sections.status,"ACTIVE")))
+  .innerJoin(cohorts,and(eq(cohorts.id,sections.cohortId),eq(cohorts.programId,learnerProgramEnrollments.programId)))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+  .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(sectionEnrollments.status,"ACTIVE"))));
  const activeEnrollment=exists(db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
@@ -27,5 +34,5 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(courseTeachingAssignments.membershipId,collegeMemberships.id),isNull(courseTeachingAssignments.endedAt))));
- return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeEnrollment,activeTeaching};
+ return {learnerProfile,facultyProfile,hasRoll,hasRegistration,hasAcademicTitle,hasPrimaryDepartment,activeClass,activeEnrollment,activeTeaching};
 }
