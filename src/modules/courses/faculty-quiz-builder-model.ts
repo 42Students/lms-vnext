@@ -248,7 +248,8 @@ export function facultyQuizDraftReview(questions:readonly {points:number;options
 
 /** Don't offer a metadata no-op as a real save (the API rejects it). */
 export function facultyQuizCanSaveChanges(status:string|undefined,dirty:boolean,failed:boolean,pending:boolean){
- return !pending&&dirty&&!failed&&["DRAFT","PUBLISHED","CLOSED"].includes(status??"");
+ return !pending&&dirty&&(
+  status==="PUBLISHED"||status==="CLOSED"||(status==="DRAFT"&&!failed));
 }
 
 /** Explicitly reload persisted values or clear the unsaved new Quiz. */
@@ -268,5 +269,5 @@ export function facultyQuizCopyTitle(original:string):string{
 /** Persist the visible drag/button ordering, regardless of cloned draft indexes. */
 export function facultyQuizNormalizeQuestions<T extends {sequence:number;options:{sequence:number}[]}>(items:readonly T[]):T[]{
  return items.map((question,i)=>({...question,sequence:i,
-  options:question.options.map((option,j)=>({...option,sequence:j}))}));
+  options:question.options.map((option,j)=>({...option,sequence:j}))} as T));
 }
