@@ -181,6 +181,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Shared learning path
+              <select name="learningPathPresence" defaultValue={data.query.learningPathPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="HAS_PATH">Has a path</option><option value="NO_PATH">No learning path</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch / cohort code (exact)
               <input name="cohortCode" type="search" maxLength={64}
                 defaultValue={data.query.cohortCode??""}
