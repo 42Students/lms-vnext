@@ -6,6 +6,8 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { projectDeliveryActivity } from "./delivery-activity-model";
 import {
   projectInstances,
   projectSubmissionReviews,
@@ -140,6 +142,12 @@ export async function createProjectSubmissionDraft(
         })
         .returning();
 
+      if (!draft) throw new Error("Project delivery draft insert returned no row");
+      await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+        action: "DRAFT_CREATED", collegeId: scope.collegeId,
+        organizationId: scope.organizationId, projectId: scope.project.id,
+        submissionId: draft.id, version: draft.version,
+      }));
       return draft;
     });
   } catch (error) {
@@ -225,6 +233,11 @@ export async function updateProjectSubmissionDraft(
       );
     }
 
+    await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+      action: "DRAFT_UPDATED", collegeId: scope.collegeId,
+      organizationId: scope.organizationId, projectId: scope.project.id,
+      submissionId: updated.id, version: updated.version,
+    }));
     return updated;
   });
 }
@@ -309,6 +322,11 @@ export async function submitProjectSubmission(
       );
     }
 
+    await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+      action: "SUBMITTED", collegeId: scope.collegeId,
+      organizationId: scope.organizationId, projectId: scope.project.id,
+      submissionId: submitted.id, version: submitted.version,
+    }));
     return submitted;
   });
 }
@@ -403,6 +421,13 @@ export async function reviewProjectSubmission(
         );
       }
 
+      if (!review) throw new Error("Project delivery review insert returned no row");
+      await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+        action: "REVIEWED", collegeId: scope.collegeId,
+        organizationId: scope.organizationId, projectId: scope.project.id,
+        submissionId: updated.id, version: updated.version,
+        decision: input.decision,
+      }));
       return { submission: updated, review };
     });
   } catch (error) {

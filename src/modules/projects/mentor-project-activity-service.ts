@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, lt, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -30,7 +30,7 @@ export async function getMentorProjectActivityHistory(
   const enabled=(await resolveOptionalModuleAccess(context)).projects.enabled;
   const empty=()=>({
     enabled:false as const,title:scope.project.title,query,
-    ...mentorProjectActivityPage(0,1),
+    ...mentorProjectActivityPage(0,1,query.pageSize),
     items:[] as {id:string;label:string;importance:string;occurredAt:Date}[],
   });
   if(!enabled)return empty();
@@ -41,25 +41,30 @@ export async function getMentorProjectActivityHistory(
     allowedTypes?inArray(activityEvents.eventType,allowedTypes):undefined,
     eq(activityEvents.collegeId,scope.collegeId),
     eq(activityEvents.organizationId,scope.organizationId),
-    since?gte(activityEvents.occurredAt,since):undefined,
+    since?(query.window==="OLDER_THAN_30_DAYS"
+      ?lt(activityEvents.occurredAt,since):gte(activityEvents.occurredAt,since)):undefined,
     or(
       and(eq(activityEvents.subjectType,"project"),
         eq(activityEvents.subjectId,scope.project.id)),
-      sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+      and(
+        sql`${activityEvents.subjectType} <> 'project'`,
+        sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+      ),
     ),
     query.importance==="ALL"?undefined:
       eq(activityEvents.importance,query.importance),
   );
   const db=getDb();
   const [summary]=await db.select({total:count()}).from(activityEvents).where(filters);
-  const paging=mentorProjectActivityPage(Number(summary?.total??0),query.page);
+  const paging=mentorProjectActivityPage(Number(summary?.total??0),query.page,query.pageSize);
   const rows=await db.select({
     id:activityEvents.id,
     eventType:activityEvents.eventType,
     importance:activityEvents.importance,
     occurredAt:activityEvents.occurredAt,
   }).from(activityEvents).where(filters)
-    .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id))
+    .orderBy(query.order==="OLDEST"?asc(activityEvents.occurredAt):desc(activityEvents.occurredAt),
+      query.order==="OLDEST"?asc(activityEvents.id):desc(activityEvents.id))
     .limit(paging.pageSize).offset((paging.page-1)*paging.pageSize);
   return {
     enabled:true as const,title:scope.project.title,query,...paging,
