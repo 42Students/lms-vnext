@@ -1,11 +1,12 @@
 import "server-only";
-import {and,asc,eq,inArray} from "drizzle-orm";
+import {and,asc,eq,ilike,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
 import {verificationQueueFilters} from "./queue-filters";
+import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab} from "./queue-tabs";
 import {matchesWaitingSince} from "./queue-waiting-since";
 import {submittedMarksheets} from "./queue-mark-sheets";
@@ -30,6 +31,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),
   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+  filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))

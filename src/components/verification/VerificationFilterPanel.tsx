@@ -1,25 +1,28 @@
 "use client";
-import {useEffect,useState} from "react";
-type Fields={marksheets:string;waitingSince:string;sectionId:string;batchId:string;branchId:string};
-const empty:Fields={marksheets:"ANY",waitingSince:"",sectionId:"",batchId:"",branchId:""};
+import {useState} from "react";
+type Fields={q:string;marksheets:string;waitingSince:string;sectionId:string;batchId:string;branchId:string};
+const empty:Fields={q:"",marksheets:"ANY",waitingSince:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function VerificationFilterPanel({query,onApply}:{query:Record<string,string>;onApply:(filters:Fields)=>void}){
- const selected=():Fields=>({marksheets:query.marksheets??"ANY",waitingSince:query.waitingSince??"",
+ const selected=():Fields=>({q:query.q??"",marksheets:query.marksheets??"ANY",waitingSince:query.waitingSince??"",
   sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
- // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount / reset-on-input synchronisation
- useEffect(()=>{setFields(selected());},[query.marksheets,query.waitingSince,query.sectionId,query.batchId,query.branchId]);
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
  function apply(value:Fields){
+  if(value.q.length>100){setError("Name search is too long");return;}
   for(const key of ["sectionId","batchId","branchId"] as const){
    if(value[key]&&!uuid.test(value[key])){setError(key+" must be a valid UUID");return;}
   }
   setError("");onApply(value);
  }
  return <details className="min-w-0 rounded-lg border p-3">
-  <summary className="cursor-pointer text-sm font-medium">More filters: marksheets, batch, branch, class, waiting since</summary>
+  <summary className="cursor-pointer text-sm font-medium">More filters: learner name, marksheets, batch, branch, class, waiting since</summary>
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
    <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+    <label className="min-w-0 text-sm">Learner name
+     <input type="search" maxLength={100} value={fields.q} onChange={e=>change("q",e.target.value)}
+      placeholder="Search by name" className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>
+    </label>
     <label className="min-w-0 text-sm">Marksheets
      <select value={fields.marksheets} onChange={e=>change("marksheets",e.target.value)}
       className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">

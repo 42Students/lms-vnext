@@ -26,7 +26,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <button type="button" onClick={()=>router.refresh()} className="rounded-md border px-3 py-2 text-sm">Refresh</button>
   </div>
-  <VerificationFilterPanel query={query} onApply={changes=>navigate({...changes,page:"1"})}/>
+  <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    initialTab={activeTab} initialKind={initialKind}
    onTabChange={tab=>navigate({tab,page:"1"})}

@@ -38,7 +38,7 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
    [ids.foreignUser,ids.foreignMember,ids.foreignRole,SEED_IDS.collegeB,ids.foreignRecord],
   ]){
    await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1::uuid,$2::text,$3::text)",
-     [user,"verification-fixture-"+user,"Verification Fixture"]);
+     [user,"verification-fixture-"+user,college===SEED_IDS.collegeA?"Verification Own College":"Verification Foreign College"]);
    await pool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1::uuid,$2::uuid,$3::uuid)",
      [member,user,college]);
    await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1::uuid,$2::uuid,'LEARNER')",
@@ -69,6 +69,14 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   const data=await listCollegeVerificationQueue(admin,{});
   expect(data.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
   expect(data.rows.some(row=>row.learnerMembershipId===ids.foreignMember)).toBe(false);
+ });
+ it("filters learner name in SQL before paging and CSV, without admitting foreign names",async()=>{
+  const own=await listCollegeVerificationQueue(admin,{q:"Own College"});
+  expect(own.rows.some(row=>row.learnerMembershipId===ids.ownMember)).toBe(true);
+  const foreign=await listCollegeVerificationQueue(admin,{q:"Foreign College"});
+  expect(foreign.rows).toHaveLength(0);
+  const escaped=await listCollegeVerificationQueue(admin,{q:"%_"});
+  expect(escaped.rows).toHaveLength(0);
  });
  it("does not accept a context-only wrong-role membership",async()=>{
   await expect(listCollegeVerificationQueue(wrongRole,{})).rejects.toBeInstanceOf(AuthorizationError);
