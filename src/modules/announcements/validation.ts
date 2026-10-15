@@ -35,6 +35,7 @@ export const announcementCreateSchema = z.object({
 export const announcementUpdateSchema = z.object({
   expectedVersion: z.number().int().min(0),
   receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES).optional(),
+  visibility: z.enum(["LIVE","SCHEDULED","EXPIRED","DELETED"]).optional(),
   receiverId: z.string().uuid().optional(),
   title: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.titleCharacters).optional(),
   message: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.messageCharacters).optional(),

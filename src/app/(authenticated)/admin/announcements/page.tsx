@@ -16,6 +16,7 @@ import {
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { parseSuperAdminAnnouncementParams } from "@/modules/announcements/super-admin-list-query";
+import { announcementVisibilityAt } from "@/modules/announcements/visibility-model";
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -56,6 +57,7 @@ export default async function AnnouncementsPage({
       includeDeleted,
       q: params.q,
       receiverType: params.receiverType,
+      visibility: params.visibility,
       beforeCreatedAt: params.beforeCreatedAt,
       beforeId: params.beforeId,
       limit: 50,
@@ -89,13 +91,7 @@ export default async function AnnouncementsPage({
     deletedAt: item.deletedAt?.toISOString() ?? null,
     version: item.version,
     createdAt: item.createdAt.toISOString(),
-    visibilityState: item.deletedAt
-      ? "DELETED"
-      : item.scheduledAt && item.scheduledAt.getTime() > now
-        ? "SCHEDULED"
-        : item.expiresAt && item.expiresAt.getTime() <= now
-          ? "EXPIRED"
-          : "LIVE",
+    visibilityState: announcementVisibilityAt(item, now),
   }));
 
   const next = page.nextCursor
@@ -103,6 +99,7 @@ export default async function AnnouncementsPage({
         ...(includeDeleted ? { deleted: "1" } : {}),
         ...(params.q ? { q: params.q } : {}),
         ...(params.receiverType ? {receiverType:params.receiverType} : {}),
+        ...(params.visibility ? {visibility:params.visibility} : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -116,7 +113,7 @@ export default async function AnnouncementsPage({
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
           <Link
-            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}) }).toString()}
+            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}) }).toString()}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
@@ -125,6 +122,15 @@ export default async function AnnouncementsPage({
       />
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
+        <label className="text-sm font-semibold text-body">Visibility
+          <select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
+            <option value="">All visible states</option>
+            <option value="LIVE">Live</option>
+            <option value="SCHEDULED">Scheduled</option>
+            <option value="EXPIRED">Expired</option>
+            <option value="DELETED">Deleted only</option>
+          </select>
+        </label>
         <label className="text-sm font-semibold text-body">Audience type
           <select name="receiverType" defaultValue={params.receiverType ?? ""} className="mt-1 min-h-11 rounded-md border border-border bg-surface px-3">
             <option value="">All audiences</option>
