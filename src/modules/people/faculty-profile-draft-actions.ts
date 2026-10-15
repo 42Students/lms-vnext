@@ -1,5 +1,6 @@
 import {facultyMetadataEditableKey,facultyMetadataFromDraft,type FacultyMetadataDraftEntry} from "./faculty-profile-metadata-model";
-import type {FacultyProfileDocument} from "./faculty-profile-document";
+import {facultyProfileDocumentSchema,type FacultyProfileDocument} from "./faculty-profile-document";
+import type {FacultySelfSection} from "./faculty-self-section-model";
 /** Restore exactly the persisted text draft after an explicit discard. */
 export function restoreFacultyTextDraft(snapshot:Readonly<Record<string,string>>):Record<string,string>{
  return {...snapshot};
@@ -37,4 +38,14 @@ export function facultyMetadataDraftIssue(
    return "Duplicate or protected metadata key";
   return "Use unique, permitted field names and text within their limits.";
  }
+}
+
+/** Validate Faculty-owned text sections against the same Zod document accepted by PATCH. */
+export function facultyProfileTextDraftIssue(
+ section:FacultySelfSection,draft:Readonly<Record<string,string>>,
+):string|null{
+ if(!["about","personalDetails","address","socialProfiles"].includes(section))
+  return "This profile section cannot be edited as text.";
+ const parsed=facultyProfileDocumentSchema.safeParse({[section]:draft});
+ return parsed.success?null:(parsed.error.issues[0]?.message??"Review this section.");
 }

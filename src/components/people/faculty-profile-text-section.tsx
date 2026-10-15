@@ -2,7 +2,7 @@
 import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {restoreFacultyTextDraft} from "@/modules/people/faculty-profile-draft-actions";
+import {restoreFacultyTextDraft,facultyProfileTextDraftIssue} from "@/modules/people/faculty-profile-draft-actions";
 
 export type FacultyProfileTextField = {
   name:string; label:string; maxLength:number;
@@ -18,9 +18,10 @@ export function FacultyProfileTextSection({
 }){
  const [draft,setDraft]=useState<Record<string,string>>(initial);
  const changed=fields.some(field=>(draft[field.name]??"")!==(initial[field.name]??""));
+ const issue=facultyProfileTextDraftIssue(section,draft);
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(!pending && changed)void onSave(section,draft);
+  if(!pending && changed && !issue)void onSave(section,draft);
  }
  return <form id={facultyProfileAnchor(section)} onSubmit={submit} className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-6" aria-label={title}>
   <div>
@@ -42,7 +43,8 @@ export function FacultyProfileTextSection({
   {changed?<button type="button" disabled={pending} className="mr-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
     onClick={()=>{if(!window.confirm("Discard unsaved changes to "+title+"?"))return;
       setDraft(restoreFacultyTextDraft(initial));}}>Discard edits</button>:null}
-  <button type="submit" disabled={!changed||pending}
+  {changed&&issue?<p role="alert" className="text-sm text-error">Review {title}: {issue}</p>:null}
+  <button type="submit" disabled={!changed||pending||Boolean(issue)}
    className="min-h-11 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
    {pending?"Saving…":"Save "+title}
   </button>
