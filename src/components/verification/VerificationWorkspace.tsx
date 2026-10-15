@@ -5,6 +5,7 @@ import {collegeVerificationStudentHref} from "@/modules/verification/staff-links
 import {verificationTab,verificationTabCounts,type VerificationTab} from "@/modules/verification/queue-tabs";
 import {orderVerificationQueue} from "@/modules/verification/queue-order";
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
+import {verificationQueueCardPresentation} from "@/modules/verification/queue-card-action";
 import type {VerificationRecord} from "@/modules/profile-verification/domain";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
@@ -57,6 +58,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-lg border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
+     <p className="mt-1 text-xs font-semibold text-primary-text">{verificationQueueCardPresentation(row.status).state}</p>
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <label className="mt-2 flex items-center gap-2 text-sm">
@@ -68,7 +70,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
      <button type="button" disabled={!onReview} onClick={()=>onReview?.(row)}
-      className="mt-3 rounded-md border px-3 py-2 text-sm disabled:opacity-50">Review</button>
+      className="mt-3 rounded-md border px-3 py-2 text-sm disabled:opacity-50">{verificationQueueCardPresentation(row.status).action}</button>
     </li>)}
    </ul>}
  </section>;
