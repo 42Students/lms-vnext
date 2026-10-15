@@ -19,6 +19,8 @@ describe("Super Admin company directory projection", () => {
     expect(adminCompaniesQuerySchema.safeParse({trust:"PENDING"}).success).toBe(false);
     expect(adminCompaniesQuerySchema.parse({owner:"UNASSIGNED"}).owner).toBe("UNASSIGNED");
     expect(adminCompaniesQuerySchema.safeParse({owner:"OTHER"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({website:"MISSING_WEBSITE"}).website).toBe("MISSING_WEBSITE");
+    expect(adminCompaniesQuerySchema.safeParse({website:"PRIVATE"}).success).toBe(false);
     expect(adminCompaniesQuerySchema.parse({sort:"RECENT"}).sort).toBe("RECENT");
     expect(adminCompaniesQuerySchema.safeParse({sort:"RANDOM"}).success).toBe(false);
     expect(adminCompaniesQuerySchema.parse({searchField:"DOMAIN"}).searchField).toBe("DOMAIN");

@@ -923,3 +923,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: relationship owner assignment filter — PARTIAL.** Super Admin company relationships can be filtered by persisted owner membership presence, not inferred user names. Count/rows/CSV-page/pagination share the same college/organization permissioned SQL filters, without querying contact data. Strict unit and disposable PG tests authored, not executed.
+
+
+**2026-10-15 chat-6: company website-completeness filter — PARTIAL.** Employer directory distinguishes recorded nonblank website URL from missing/whitespace-only metadata with scoped SQL and strict Zod. Count, pagination and page CSV use the same filter. This is not network verification or trust certification. Tests authored, not executed.
