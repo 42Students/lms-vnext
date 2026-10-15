@@ -41,6 +41,7 @@ export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapaci
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
+  periodStartsOnOrAfter: z.iso.date().optional(),
   descriptionPresence: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
   periodLifecycle: z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
   semesterThrough: z.coerce.number().int().min(1).max(24).optional(),
@@ -130,6 +131,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (kind === "ELECTIVES" && "semesterThrough" in query && query.semesterThrough !== undefined) params.set("semesterThrough", String(query.semesterThrough));
   if (kind === "ELECTIVES" && "periodLifecycle" in query && query.periodLifecycle !== "ALL") params.set("periodLifecycle", query.periodLifecycle);
   if (kind === "ELECTIVES" && "descriptionPresence" in query && query.descriptionPresence !== "ALL") params.set("descriptionPresence", query.descriptionPresence);
+  if (kind === "ELECTIVES" && "periodStartsOnOrAfter" in query && query.periodStartsOnOrAfter) params.set("periodStartsOnOrAfter",query.periodStartsOnOrAfter);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }
