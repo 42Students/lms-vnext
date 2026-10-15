@@ -1,4 +1,6 @@
 import {facultyProfileRecordHasManagedDocument} from "./faculty-receipt-row-policy";
+import {facultyProfileDocumentSchema} from "./faculty-profile-document";
+import type {FacultySelfSection} from "./faculty-self-section-model";
 /** Copy a persisted snapshot before a user explicitly discards local edits. */
 export function restoreFacultyProfileRows<T extends {id:string}>(initial:readonly T[]):T[]{
  return initial.map(row=>({...row}));
@@ -53,4 +55,16 @@ export function facultyProfileRecordMatches(
  const values=row as Record<string,unknown>;
  return fieldNames.some(name=>typeof values[name]==="string" &&
   (values[name] as string).toLocaleLowerCase().includes(term));
+}
+
+/** Preview the existing server Zod contract before asking to save a full section. */
+export function facultyProfileRepeatableIssue(
+ section:FacultySelfSection,rows:readonly object[],
+):string|null{
+ if(!["awards","publications","experiences","certifications","education","languages"].includes(section))
+  return "This section cannot be saved using a repeatable editor.";
+ const result=facultyProfileDocumentSchema.safeParse({[section]:rows});
+ if(result.success)return null;
+ const first=result.error.issues[0];
+ return first?.message??"Review this profile section.";
 }
