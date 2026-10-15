@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { learnerDiscussionCanPost } from "@/modules/courses/learner-discussion-capability-model";
 import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-submit-guard-model";
+import { learnerDiscussionDraftValid, LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH } from "@/modules/courses/learner-discussion-message-limit-model";
 import { learnerDiscussionTimeLabel } from "@/modules/courses/learner-discussion-time-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -223,7 +224,7 @@ export function LearnerCourseDiscussion({
   async function submit(event?: FormEvent) {
     event?.preventDefault();
     const messageText = draft.trim();
-    if (!learnerDiscussionMayPost(messageText,canPost,postLocked.current)) return;
+    if (!learnerDiscussionMayPost(messageText,canPost,postLocked.current) || !learnerDiscussionDraftValid(messageText)) return;
 
     postLocked.current = true;
     setPosting(true);
@@ -570,7 +571,7 @@ export function LearnerCourseDiscussion({
               }
             }}
             rows={3}
-            maxLength={4000}
+            maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
             className="mt-1.5 w-full resize-y rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
           />
@@ -578,9 +579,9 @@ export function LearnerCourseDiscussion({
             <span className="text-xs text-muted-foreground">
               <span className="sm:hidden">Tap Post to send · Enter adds a new line</span>
               <span className="hidden sm:inline">Enter to send · Shift+Enter for a new line</span>
-              {" · "}{draft.length}/4000
+              {" · "}{draft.length}/{LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             </span>
-            <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!draft.trim() || posting}>
+            <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Posting…" : "Post"}
             </Button>
           </div>
