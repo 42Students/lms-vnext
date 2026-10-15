@@ -25,7 +25,9 @@ describe("college group tabs exact legacy navigation labels",()=>{
   });
   it("resolves the longest nested prefix for academic subpages",()=>{
     expect(collegeLegacyGroupForPath("/college/attendance/departments")?.title).toBe("Academic Setup");
-    expect(collegeLegacyGroupForPath("/college/projects/workspaces/id/tasks")?.title).toBe("Projects");
+    expect(collegeLegacyGroupForPath("/college/projects/123/summary")?.title).toBe("Projects");
+    expect(collegeLegacyTabActive("/college/projects/at-risk","/college/projects")).toBe(false);
+    expect(collegeLegacyTabActive("/college/projects/123/summary","/college/projects")).toBe(true);
     expect(collegeLegacyGroupForPath("/college/verification")).toBeNull();
     expect(collegeLegacyTabActive("/college/programs/more","/college/programs")).toBe(true);
   });
