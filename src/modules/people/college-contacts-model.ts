@@ -5,7 +5,7 @@ export const collegeContactsQuerySchema=z.strictObject({
   q:z.string().trim().max(100).default(""),
   status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
   accountStatus:z.enum(["ALL","ACTIVE","DISABLED"]).default("ALL"),
-  sort:z.enum(["NAME","NEWEST"]).default("NAME"),
+  sort:z.enum(["NAME","NEWEST","OLDEST"]).default("NAME"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
   pageSize:z.coerce.number().int().refine(n=>[10,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
 });

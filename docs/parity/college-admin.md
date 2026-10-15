@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Longest-serving Contacts order PARTIAL (2026-10-15, chat-9):** A typed OLDEST order pages by persisted join time then membership UUID, avoiding page churn on identical timestamps. Corresponding URL, UI and export filters preserve order. DB/browser execution pending.
+
+
 **Contacts platform-account filter PARTIAL (2026-10-15, chat-9):** College contacts can independently filter registered ACTIVE/DISABLED user accounts and ACTIVE/SUSPENDED/ENDED college memberships; server SQL applies both before count/paging/CSV. Tenant authorization and student masks remain unchanged. Isolated runtime and browser checks outstanding.
 
 

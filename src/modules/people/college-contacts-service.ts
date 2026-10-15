@@ -45,6 +45,8 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    .where(matches);
   const order=filter.sort==="NEWEST"
    ?[desc(collegeMemberships.createdAt),asc(collegeMemberships.id)]
+   :filter.sort==="OLDEST"
+   ?[asc(collegeMemberships.createdAt),asc(collegeMemberships.id)]
    :[asc(sql`lower(coalesce(${users.displayName}, ''))`),asc(collegeMemberships.id)];
   const rows=await tx.select({
    membershipId:collegeMemberships.id,name:users.displayName,email:users.email,
