@@ -458,4 +458,18 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(csvOwn.csv).toContain(key);
     expect(csvForeign.csv).not.toContain(key);
   });
+  it("Minimum required elective choices restricts persisted College elective lists and CSV",async()=>{
+    const [matching,excluded,foreign,csvMatched,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,minimumRequiredPicks:1}),
+      listCollegeElectives(adminA,{q:key,minimumRequiredPicks:2}),
+      listCollegeElectives(adminB,{q:key,minimumRequiredPicks:1}),
+      exportCollegeElectives(adminA,{q:key,minimumRequiredPicks:1}),
+      exportCollegeElectives(adminA,{q:key,minimumRequiredPicks:2}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatched.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
 });
