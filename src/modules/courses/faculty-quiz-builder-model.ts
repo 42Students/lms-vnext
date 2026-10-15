@@ -360,3 +360,8 @@ export function facultyQuizLoadedBankIssue(status:string|undefined,questionCount
   return "This Quiz has no loaded questions. Retry before editing or publishing.";
  return null;
 }
+
+/** Retrying a failed read replaces the current metadata and local draft. */
+export function facultyQuizRetryNeedsConfirmation(dirty:boolean,loading:boolean):boolean {
+ return dirty&&!loading;
+}
