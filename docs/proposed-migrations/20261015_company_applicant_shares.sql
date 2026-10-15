@@ -24,3 +24,21 @@ CREATE INDEX IF NOT EXISTS pcas_views_share_idx
   ON placement_company_applicant_share_views(share_id,occurred_at DESC);
 -- Registration acceptance: scoped FK verification, indexes, expiry/revocation,
 -- durable view events, negative foreign-college + role tests on disposable PG.
+
+-- Tenant-coupled composite foreign keys, required before DB registration.
+-- The job compound unique index is a supporting index; it does not alter job semantics.
+CREATE UNIQUE INDEX IF NOT EXISTS pcas_jobs_id_college_uq
+  ON placement_jobs(id, college_id);
+CREATE UNIQUE INDEX IF NOT EXISTS pcas_share_id_college_uq
+  ON placement_company_applicant_shares(id, college_id);
+ALTER TABLE placement_company_applicant_shares
+  ADD CONSTRAINT pcas_job_tenant_fk
+  FOREIGN KEY (job_id,college_id) REFERENCES placement_jobs(id,college_id);
+ALTER TABLE placement_company_applicant_shares
+  ADD CONSTRAINT pcas_actor_tenant_fk
+  FOREIGN KEY (created_by_membership_id,college_id)
+  REFERENCES college_memberships(id,college_id);
+ALTER TABLE placement_company_applicant_share_views
+  ADD CONSTRAINT pcas_views_tenant_fk
+  FOREIGN KEY (share_id,college_id)
+  REFERENCES placement_company_applicant_shares(id,college_id);
