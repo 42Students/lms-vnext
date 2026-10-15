@@ -14,6 +14,7 @@ type Params = {
   page?: string | string[];
   pageSize?: string | string[];
   priority?: string | string[];
+  version?: string | string[];
   order?: string | string[];
 };
 function first(value: string | string[] | undefined) {
@@ -30,6 +31,7 @@ export default async function MentorTaskReviewsPage({
     page: first(raw.page) ?? undefined,
     pageSize: first(raw.pageSize) ?? undefined,
     priority: first(raw.priority) ?? undefined,
+    version: first(raw.version) ?? undefined,
     order: first(raw.order) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
@@ -79,11 +81,16 @@ export default async function MentorTaskReviewsPage({
               <option key={priority} value={priority}>{priority}</option>)}
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Submission version
+          <input type="number" name="version" min={1} max={100000}
+            defaultValue={data.query.version ?? ""} placeholder="All versions"
+            className="min-h-10 w-32 rounded-md border border-border bg-background px-3 text-foreground" />
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Review order
           <select name="order" defaultValue={data.query.order}
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Newest first</option>
-            <option value="OLDEST">Oldest first</option>
+            <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
           </select>
         </label>
         <button type="submit"

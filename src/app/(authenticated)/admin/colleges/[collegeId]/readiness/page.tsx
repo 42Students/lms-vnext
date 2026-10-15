@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import {readinessRemediationLink} from "@/modules/colleges/readiness-remediation-links";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   collegeIdSchema,
@@ -202,6 +203,7 @@ export default async function CollegeReadinessPage({
                 {check.status !== "PASS" ? (
                   <p className="mb-0 mt-3 text-xs leading-5 text-muted-foreground">
                     Next step: {check.remediation}
+                    <Link href={readinessRemediationLink(check.id,college.id)} className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open related setup →</Link>
                   </p>
                 ) : null}
               </li>

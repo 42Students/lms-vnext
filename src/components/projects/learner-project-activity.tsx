@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {filterLearnerProjectActivityText} from "@/modules/projects/learner-project-activity-text-model";
+import { learnerProjectActivityPageSummary } from "@/modules/projects/learner-project-activity-page-summary-model";
 import Link from "next/link";
 import { learnerProjectActivityCsv } from "@/modules/projects/learner-project-activity-csv-model";
 import { filterLearnerProjectActivity, learnerProjectActivityCategories,
@@ -61,6 +62,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       </div>
     ) : null}
     {!parsed.success ? <p role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">Choose valid dates with the start on or before the end, and a listed activity type. If this page link is invalid, use Clear to return to recent activity.</p> : null}
+    {parsed.success ? <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerProjectActivityPageSummary(shown.length,pageRows.length,Boolean(textQuery.trim()))}</p> : null}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p role="status" className="text-sm text-muted-foreground">{shown.length} matching events shown</p>
       {parsed.success && shown.length ? (

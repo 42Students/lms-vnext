@@ -185,6 +185,10 @@ export default async function ActivityPage({
         ) : undefined}
       />
 
+      {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        Open audit findings board →
+      </Link> : null}
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label>
