@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {projectTaskExpandedFieldsSchema} from "./pr-s2-04-task-fields-model";
 export const mentorTaskCreateParamsSchema=z.object({
   projectId:z.string().uuid(),
 }).strict();
@@ -9,4 +10,5 @@ export const mentorTaskCreateSchema=z.object({
   acceptanceCriteria:z.string().trim().max(4000).nullable(),
   priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]),
   expectedSprintUpdatedAt:z.iso.datetime({offset:true}),
+  ...projectTaskExpandedFieldsSchema.shape,
 }).strict();

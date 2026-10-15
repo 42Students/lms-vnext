@@ -1,5 +1,5 @@
 import {z} from "zod";
-/** PR-S2-04 validation only: persistence awaits a registered migration. */
+/** PR-S2-04 runtime validation for registered migration 0090. */
 export const projectTaskExpandedFieldsSchema=z.object({
   taskType:z.enum(["STORY","BUG","CHORE","SPIKE"]).optional(),
   blockerReason:z.string().trim().min(1).max(4000).nullable().optional(),

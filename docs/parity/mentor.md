@@ -1639,3 +1639,7 @@ Readiness now projects the latest approved submission's durable reopen event and
 - Projects wording: adjusted Mentor/Learner/Admin workspace headings and empty states to the exact legacy catalogue, including one account-level section strip. Source tests added; full button/form/table/browser/mobile text parity remains open.
 
 No `as never` casts or protected schema changes were introduced. Tests authored in this round have not been executed here. The orchestrator must run the named disposable PostgreSQL integration cases and focused tests against this SHA before certifying any of these items.
+
+### PR-S2-04 0090 validation and registered field models
+
+Task create/edit validation accepts registered taskType, estimatePoints, blockerReason and dueDate; detail change detection extends to all four. Next task transaction and comment paths must enforce these validated columns. Migration 0090 is registered; no staged migrations should be reapplied.
