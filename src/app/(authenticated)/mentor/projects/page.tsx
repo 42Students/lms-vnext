@@ -1,3 +1,4 @@
+import { compareMentorProjects } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
@@ -98,6 +99,7 @@ export default async function MentorProjectsPage({
       attention === "MENTOR_REVIEW" || attention === "MENTOR_REQUESTED" || attention === "MENTOR_STALLED" || attention === "MENTOR_MEETING_SOON" || attention === "MENTOR_ANY_ATTENTION" || attention === "MENTOR_NO_ATTENTION"
         ? attention
         : undefined,
+    sort: one(params.sort) === "TITLE" ? "TITLE" : "RECENT",
     page: pageNumber(
       one(params.page),
     ),
@@ -203,27 +205,7 @@ export default async function MentorProjectsPage({
       );
     })
     .filter((row) => matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
-    .sort((a, b) => {
-      const archivedOrder =
-        Number(
-          a.project.status ===
-            "ARCHIVED",
-        ) -
-        Number(
-          b.project.status ===
-            "ARCHIVED",
-        );
-      if (archivedOrder) {
-        return archivedOrder;
-      }
-      return (
-        b.project.updatedAt.getTime() -
-          a.project.updatedAt.getTime() ||
-        a.project.title.localeCompare(
-          b.project.title,
-        )
-      );
-    });
+    .sort((a,b) => compareMentorProjects(a.project,b.project,query.sort ?? "RECENT"));
 
   const total = filtered.length;
   const totalPages = Math.max(

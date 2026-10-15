@@ -112,6 +112,10 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
 
+      {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Sort
+        <select name="sort" defaultValue={query.sort ?? "RECENT"} className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+          <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
+        </select></label>) : null}
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
         <select name="assignment" defaultValue={query.assignment ?? ""}
           className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
