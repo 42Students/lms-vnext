@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {mentorProjectActivityQuerySchema} from "@/modules/projects/mentor-project-activity-model";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorProjectActivityHistory}
   from "@/modules/projects/mentor-project-activity-service";
 import {mentorActivityCsv} from "@/modules/projects/mentor-project-activity-export-model";
@@ -12,10 +13,12 @@ export async function GET(request:Request,{params}:RouteContext){
   try{
     const {projectId}=await params;
     const url=new URL(request.url);
+    const filters=singleValueMentorExportFilters(url.searchParams,[
+      "importance","view","window",
+    ]);
+    if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
     const query=mentorProjectActivityQuerySchema.parse({
-      projectId,importance:url.searchParams.get("importance")??undefined,
-      view:url.searchParams.get("view")??undefined,
-      window:url.searchParams.get("window")??undefined,page:1,
+      projectId,...filters,page:1,
     });
     const context=await getCurrentRequestContext();
     const first=await getMentorProjectActivityHistory(context,query);
