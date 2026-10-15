@@ -106,3 +106,11 @@ export function facultyProfileMetadataMatches(entry:{key:string;value:string},qu
  return !term||entry.key.toLocaleLowerCase().includes(term)||
   entry.value.toLocaleLowerCase().includes(term);
 }
+
+/** Use an exact draft ID for removal even when the visible list is searched. */
+export function removeFacultyMetadataDraftEntry<T extends {id:string}>(
+ rows:readonly T[],id:string,
+):T[]{
+ if(!rows.some(entry=>entry.id===id))return [...rows];
+ return rows.filter(entry=>entry.id!==id);
+}
