@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
-import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
+import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, facultySubmissionReviewEmptyLabel, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
 import {
   assignmentSubmissionActions,
@@ -505,7 +505,7 @@ export function FacultyAssignmentReview({
       submissions &&
       submissions.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          No learner submissions match this filter.
+          {facultySubmissionReviewEmptyLabel(filter)}
         </p>
       ) : null}
 

@@ -35,3 +35,12 @@ export function facultySubmissionReviewMatchesScope(
 ):boolean {
  return payload.items.every(row=>row.assignmentId===assignmentId&&row.deliveryId===deliveryId);
 }
+
+export function facultySubmissionReviewEmptyLabel(filter:"ALL"|"UNGRADED"|"GRADED"|"LATE"):string {
+ switch(filter){
+ case "ALL":return "No learner submissions have been received for this assignment.";
+ case "UNGRADED":return "No submissions are waiting for grading.";
+ case "GRADED":return "No submissions have been graded yet.";
+ case "LATE":return "No submissions matched the late-submission filter.";
+ }
+}
