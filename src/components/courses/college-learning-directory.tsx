@@ -47,10 +47,35 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
             </select>
           </label>
           {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period code (exact)
+              <input name="periodCode" type="search" maxLength={64}
+                defaultValue={data.query.periodCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Program code (exact)
+              <input name="programCode" type="search" maxLength={64}
+                defaultValue={data.query.programCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course code (exact)
               <input name="courseCode" type="search" maxLength={64}
                 defaultValue={data.query.courseCode??""}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Learning path lifecycle
+              <select name="pathStatus" defaultValue={data.query.pathStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All paths</option>
+                <option value="DRAFT">Draft paths</option><option value="PUBLISHED">Published paths</option>
+                <option value="ARCHIVED">Archived paths</option>
+              </select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
@@ -62,6 +87,27 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                 <option value="ACTIVE">Active offerings</option>
                 <option value="ARCHIVED">Archived offerings</option>
               </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Batch / cohort code (exact)
+              <input name="cohortCode" type="search" maxLength={64}
+                defaultValue={data.query.cohortCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period code (exact)
+              <input name="periodCode" type="search" maxLength={64}
+                defaultValue={data.query.periodCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Program code (exact)
+              <input name="programCode" type="search" maxLength={64}
+                defaultValue={data.query.programCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
             </label>
           ) : null}
           {data.kind === "PROGRESS" ? (

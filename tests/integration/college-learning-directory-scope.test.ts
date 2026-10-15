@@ -140,11 +140,54 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     const unknown=await listCollegeLessons(own,{courseCode:"MISSING-CODE"});
     expect(exact.items.map(row=>row.id)).toContain(ids.lesson);
     expect(unknown.items).toEqual([]);
+    const [programLesson,wrongProgramLesson]=await Promise.all([
+      listCollegeLessons(own,{programCode:name}),
+      listCollegeLessons(own,{programCode:"ANOTHER-PROGRAM"}),
+    ]);
+    expect(programLesson.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(wrongProgramLesson.items).toEqual([]);
+    expect((await exportCollegeLessons(own,{programCode:name})).csv).toContain(name);
+    const [lessonsInPeriod,lessonsOutOfPeriod]=await Promise.all([
+      listCollegeLessons(own,{periodCode:name}),
+      listCollegeLessons(own,{periodCode:"PERIOD-NOT-FOUND"}),
+    ]);
+    expect(lessonsInPeriod.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(lessonsOutOfPeriod.items).toEqual([]);
+    expect((await exportCollegeLessons(own,{periodCode:name})).csv).toContain(name);
+    const [draftPathLesson,archivedPathLesson]=await Promise.all([
+      listCollegeLessons(own,{q:name,pathStatus:"DRAFT"}),
+      listCollegeLessons(own,{q:name,pathStatus:"ARCHIVED"}),
+    ]);
+    expect(draftPathLesson.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(archivedPathLesson.items).toEqual([]);
+    expect((await exportCollegeLessons(own,{q:name,pathStatus:"DRAFT"})).csv).toContain(name);
     const lesson = lessonPage.items.find(row => row.id === ids.lesson);
     const sameCode=await listCollegeCourseProgress(own,{courseCode:name});
     const missingCode=await listCollegeCourseProgress(own,{courseCode:"NOT-THIS-CODE"});
     expect(sameCode.items.map(row=>row.offeringId)).toContain(ids.offering);
     expect(missingCode.items).toEqual([]);
+    const [programMatch,programMiss]=await Promise.all([
+      listCollegeCourseProgress(own,{programCode:name}),
+      listCollegeCourseProgress(own,{programCode:"PROGRAM-ABSENT"}),
+    ]);
+    expect(programMatch.items.some(row=>row.offeringId===ids.offering)).toBe(true);
+    expect(programMiss.items).toEqual([]);
+    const programCsv=await exportCollegeCourseProgress(own,{programCode:name});
+    expect(programCsv.csv).toContain(name);
+    const [matchingPeriod,absentPeriod]=await Promise.all([
+      listCollegeCourseProgress(own,{periodCode:name}),
+      listCollegeCourseProgress(own,{periodCode:"OTHER-PERIOD"}),
+    ]);
+    expect(matchingPeriod.items.some(row=>row.offeringId===ids.offering)).toBe(true);
+    expect(absentPeriod.items).toEqual([]);
+    expect((await exportCollegeCourseProgress(own,{periodCode:name})).csv).toContain(name);
+    const [cohortMatch,cohortAbsent]=await Promise.all([
+      listCollegeCourseProgress(own,{cohortCode:name}),
+      listCollegeCourseProgress(own,{cohortCode:"COHORT-ABSENT"}),
+    ]);
+    expect(cohortMatch.items.some(row=>row.offeringId===ids.offering)).toBe(true);
+    expect(cohortAbsent.items).toEqual([]);
+    expect((await exportCollegeCourseProgress(own,{cohortCode:name})).csv).toContain(name);
     const progress = progressPage.items.find(row => row.offeringId === ids.offering);
     expect(lesson).toMatchObject({ contentCount: 1, publishedContentCount: 1 });
     const [active, archived] = await Promise.all([

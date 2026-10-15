@@ -443,6 +443,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Learning-path lifecycle selector PARTIAL (2026-10-15):** College lesson rows and capped exports can now distinguish DRAFT, PUBLISHED and ARCHIVED owning learning paths independently of lesson and offering state. Query applies at signed-in-college scoped joins before page counts; strict schema and guarded PG inclusion/exclusion authored. Legacy/browser/CI acceptance remains open.
+
+**Period-specific lesson catalogue PARTIAL (2026-10-15):** Lessons now filter by saved academic-period code without conflating numbered semesters and calendar periods; scoped SQL runs before pagination/content counts and matching CSV uses the same selector. Own/other period PostgreSQL fixture authored; runtime/mobile/browser checks remain open.
+
+**Program-scoped lesson catalogue PARTIAL (2026-10-15):** Lesson list and capped CSV can select exact registered program codes, scoped by both course department and cohort-program department. Filter survives pagination and combines with title, course and lifecycle selectors; PG positive/missing tests authored. Execution and browser acceptance remain open.
+
 **Exact course-code lesson catalogue PARTIAL (2026-10-15):** Lessons can now be narrowed by authoritative saved course code, independently from lesson-title text search, with scoped SQL count/pagination, filter-preserving links and capped CSV. Isolated PostgreSQL positive/negative and unit bounds authored; runtime/browser proof remains open.
 
 **Lessons CSV PARTIAL (2026-10-15):** The registered college Lessons catalogue exports bounded filter-matched course/cohort/lesson/path and authored versus published content counts, respecting parent offering lifecycle, 1,000-row cap, formula-neutralized cells and truncation signals. The existing isolated PostgreSQL success/foreign/wrong-role fixture includes export assertions. This is metadata only; file keys and contact details are never selected. Executed/browser and legacy column parity remain open.
@@ -462,6 +468,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Owning-offering lifecycle filter PARTIAL (2026-10-15):** VIDEO and YOUTUBE metadata catalogues now distinguish ACTiVE/ARCHIVED registered course offerings independently of content status; scoped list/CSV preserve the choice and disclose no storage credentials. PostgreSQL fixture authored, executed PG/browser acceptance outstanding.
+
 **Video metadata CSV PARTIAL (2026-10-15):** Admins can export a capped, formula-neutralized set of filtered VIDEO/YOUTUBE rows, including persisted course/lesson/audience metadata and publication state, without meeting URLs, storage keys or private notes. Current-college and wrong-role fixture assertions authored; executed PG/browser checks remain open.
 
 **Persisted audience-scope filter PARTIAL (2026-10-15):** Stored video and YouTube metadata share the offering-shared versus section-specific delivery-scope filter, with current-college authorization, linked filters and isolated PostgreSQL fixture. No playback URL/key disclosure and no executed acceptance claimed.
@@ -485,6 +493,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**Owning-offering lifecycle filter PARTIAL (2026-10-15):** RESOURCE metadata now supports a separate offering ACTIVE/ARCHIVED selector, server-enforced inside the own-college ancestry joins before pagination and capped download. Own/missing lifecycle fixture authored; private notes and storage keys still omitted. Browser/DB execution open.
+
 **Resource metadata CSV PARTIAL (2026-10-15):** Own-college RESOURCE authoring metadata can be exported with matching search/status/course/scope filters and 1,000-row cap, spreadsheet-formula neutralization and truncation disclosure. Private text notes, URLs, keys and meeting links are not returned. Tenant and wrong-role PG fixture assertions authored; executed/browser parity remains open.
 
 **Persisted audience-scope filter PARTIAL (2026-10-15):** Resources list can distinguish offering-shared metadata from section-bound records using nullable deliveryId before pagination; a section-specific scope is never inferred. Strict query validation, URL-persisted selector and PG fixture for shared/section exclusion authored; browser/real-DB acceptance remains pending.
@@ -506,6 +516,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Live Classes
+**Live-session audience filter PARTIAL (2026-10-15):** Live Classes now distinguishes saved shared-offering from section-bound sessions using actual deliveryId and a scoped SQL predicate, not a default assumption. Audience label, pagination and privacy-safe CSV carry the filter; own/empty PG and invalid-value unit fixtures authored. No meeting URL displayed; executed PG/browser validation pending.
+
 **IST date-window CSV parity PARTIAL (2026-10-15):** Downloaded live-class schedule metadata now uses the same chosen from/through IST dates as on-screen pagination, without leaking meeting links. Calendar selectors pass through bounded service validation, with owned/absent-date fixture assertions; runtime and browser proof still pending.
 
 **IST day-range scheduling filter PARTIAL (2026-10-15):** Saved LIVE_CLASS content now filters on configured start/end instants overlapping bounded IST-local days, preserving day selectors in paginated URLs. Strict range and tenant-scoped PostgreSQL fixture authored; independent runtime/browser acceptance remains outstanding.
@@ -552,6 +564,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Registered cohort code filter PARTIAL (2026-10-15):** Course Progress supports a cohort-code filter against persisted offering membership rather than inferred learner groups. Combined course/program/period/cohort selectors survive navigation and scoped CSV. PostgreSQL own/missing-cohort fixtures authored; no completion-rate inference or executed PG/browser sign-off.
+
+**Persisted academic-period filter PARTIAL (2026-10-15):** Course Progress now uses exact academic-period codes from registered offerings, before college-scoped pagination and content-activity counts. Search, CSV and page links preserve the selector; own/other period fixture coverage authored. Runtime/browser verification remains open.
+
+**Exact program-code progress filter PARTIAL (2026-10-15):** Course Progress now supports a bounded persisted program-code selector over own-college offerings, retained in pagination and capped CSV. Positive/negative program-scoped PG evidence authored, without inventing eligibility denominators or activity totals; executed PG/browser closure remains open.
+
 **Exact recorded-course filter PARTIAL (2026-10-15):** Per-offering content-progress evidence now supports an exact registered course-code selector across paginated UI and formula-safe export; it never computes inferred learner completion or attendance. Existing college/foreign PostgreSQL fixture covers a matching and missing code; runtime/browser evidence open.
 
 **Recorded content activity export PARTIAL (2026-10-15):** The College Admin Course Progress page now exports a max-1,000-row CSV of actual per-offering learner-content records, completed content rows and distinct learners with recorded activity (not eligible learner denominator or course completion). Export is restricted to active own-college admins, formula neutralized and truncation labeled. Isolated PG own/foreign/wrong-role coverage authored, unexecuted.
