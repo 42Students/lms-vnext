@@ -48,3 +48,8 @@ export function parseTpoNotificationReadBody(body: string) {
   }
   return tpoNotificationReadBodySchema.parse(value);
 }
+
+export function tpoInboxEmptyNavigation(view:"all"|"unread",itemCount:number){
+ if(itemCount!==0||view!=="unread")return null;
+ return {label:"View all notifications",href:tpoInboxPageHref("all")};
+}

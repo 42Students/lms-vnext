@@ -18,3 +18,13 @@ export function filterTpoReportGallery<T extends {heading:string;cards:readonly 
 export function countVisibleTpoReportCards(groups:readonly {cards:readonly unknown[]}[]){
  return groups.reduce((total,group)=>total+group.cards.length,0);
 }
+
+/** Stable title sorting changes only presentation, never available report authorization. */
+export function alphabetizeTpoReportGallery<T extends {heading:string;cards:readonly {title:string;path:string}[]}>(
+ groups:readonly T[],
+){
+ return groups.map(group=>({
+  ...group,
+  cards:[...group.cards].sort((a,b)=>a.title.localeCompare(b.title)||a.path.localeCompare(b.path)),
+ }));
+}

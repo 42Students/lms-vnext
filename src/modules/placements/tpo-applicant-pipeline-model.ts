@@ -58,3 +58,11 @@ export function tpoApplicantPipelineHasFilters(filter:{
  return filter.stage!=="ALL"||Boolean(filter.search.trim())||filter.channel!=="ALL"||
   filter.eligibility!=="ALL"||filter.submittedWithin!=="ALL";
 }
+
+/** Invalid deep links may never silently expand the learner roster. */
+export function parseTpoApplicantPipelineLink(value:unknown){
+ return tpoApplicantPipelineParams.safeParse(value);
+}
+export function tpoApplicantPipelineResetHref(jobId:string){
+ return "/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants-pipeline";
+}

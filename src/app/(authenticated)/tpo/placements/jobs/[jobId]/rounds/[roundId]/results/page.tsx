@@ -6,14 +6,20 @@ import {TpoRoundResultEntryForm} from "@/components/placements/tpo-round-result-
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoRoundResultTable} from "@/modules/placements/tpo-round-result-table-service";
-type Props={params:Promise<{jobId:string;roundId:string}>};
-export default async function TpoRoundResultTablePage({params}:Props){
+import {tpoRoundResultViewSchema,filterTpoRoundResultRows} from "@/modules/placements/tpo-round-result-table-model";
+type Props={params:Promise<{jobId:string;roundId:string}>;searchParams:Promise<{q?:string|string[];status?:string|string[]}>};
+function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
+export default async function TpoRoundResultTablePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {jobId,roundId}=await params;
+ const raw=await searchParams;
+ const selected=tpoRoundResultViewSchema.safeParse({q:first(raw.q),status:first(raw.status)});
+ if(!selected.success)return <div role="alert" className="space-y-3 p-4"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="text-primary-text underline">Clear filters</Link></div>;
  let data:Awaited<ReturnType<typeof getTpoRoundResultTable>>;
  try{data=await getTpoRoundResultTable(context,{jobId,roundId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
+ const visibleRows=filterTpoRoundResultRows(data.rows,selected.data);
  return <div className="space-y-6">
   <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
@@ -25,9 +31,21 @@ export default async function TpoRoundResultTablePage({params}:Props){
   </section>
   <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<p role="status" className="text-sm text-body">Source capped at 500 application records; counts may be incomplete.</p>:null}
-  {data.rows.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No currently shortlisted submitted applicants for this round.</p>:
+  <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   <label className="min-w-0 flex-1 text-sm">Student or role
+    <input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/>
+   </label>
+   <label className="text-sm">Result state
+    <select name="status" defaultValue={selected.data.status} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+     <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
+    </select>
+   </label>
+   <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Filter</button>
+  </form>
+  <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
+  {visibleRows.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No eligible shortlisted submitted applicants match this round result filter.</p>:
    <section className="grid gap-3" aria-label="Round result entries">
-    {data.rows.map(row=><article key={row.applicationId} className="rounded-xl border border-border bg-surface p-4">
+    {visibleRows.map(row=><article key={row.applicationId} className="rounded-xl border border-border bg-surface p-4">
      <div className="mb-3">
       <h2 className="font-semibold text-foreground">{row.student??"Name unavailable"}</h2>
       <p className="text-sm text-body">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>

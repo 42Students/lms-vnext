@@ -13,6 +13,7 @@ import type {
 } from "@/modules/placements/tpo-round-drive-day-service";
 import { TpoRoundResultRecorder } from "./tpo-round-result-recorder";
 import { TpoBulkRoundResultRecorder } from "./tpo-bulk-round-result-recorder";
+import {tpoDriveDayRoundLinks} from "@/modules/placements/tpo-drive-day-navigation-model";
 
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
@@ -62,6 +63,7 @@ export function TpoRoundDriveDayReadOnly({
 }: {
   data: RoundData;
 }) {
+  const destinations=tpoDriveDayRoundLinks(data.job.id,data.round.id);
   const summary = [
     ["On roster", data.counts.total],
     ["Waiting", data.counts.waiting],
@@ -95,6 +97,10 @@ export function TpoRoundDriveDayReadOnly({
         }
       />
 
+      <nav aria-label="Round operational actions" className="flex flex-wrap gap-3">
+        <Link href={destinations.results} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Review round results →</Link>
+        <Link href={destinations.schedule} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Candidate schedule →</Link>
+      </nav>
       <p className="text-sm text-body">
         <a
           href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
@@ -106,7 +112,7 @@ export function TpoRoundDriveDayReadOnly({
           Current roster only; waiting and unmarked states remain explicit.
         </span>
         <Link
-          href={"/tpo/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows"}
+          href={destinations.noShows}
           className="ml-3 inline-flex min-h-10 items-center font-semibold text-primary-text hover:underline"
         >
           Review explicit no-shows →
