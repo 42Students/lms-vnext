@@ -245,3 +245,8 @@ export function facultyQuizDraftReview(questions:readonly {points:number;options
   totalPoints:questions.reduce((sum,q)=>sum+(Number.isFinite(q.points)?q.points:0),0),
   missingCorrect:questions.filter(q=>!q.options.some(o=>o.correct)).length};
 }
+
+/** Don't offer a metadata no-op as a real save (the API rejects it). */
+export function facultyQuizCanSaveChanges(status:string|undefined,dirty:boolean,failed:boolean,pending:boolean){
+ return !pending&&dirty&&!failed&&["DRAFT","PUBLISHED","CLOSED"].includes(status??"");
+}
