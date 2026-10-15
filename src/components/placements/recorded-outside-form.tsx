@@ -1,10 +1,6 @@
-export function RecordedOutsideForm({collegeId,choices,registered}:{
- collegeId:string;choices:readonly {id:string;name:string}[];registered:boolean;
+export function RecordedOutsideForm({collegeId,choices}:{
+ collegeId:string;choices:readonly {id:string;name:string}[];
 }){
- if(!registered)return <section role="status" className="rounded-xl border border-border bg-surface p-5">
-  <h2 className="font-semibold text-foreground">External drive storage not registered</h2>
-  <p className="mt-2 text-sm text-body">This form is unavailable until the staged provenance migration is registered. No external drive has been recorded.</p>
- </section>;
  return <form method="post" action="/api/placements/recorded-outside" className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
   <input type="hidden" name="collegeId" value={collegeId}/>
   <label className="grid gap-1 text-sm text-body">Company relationship
