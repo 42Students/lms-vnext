@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
+import { exists, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
 import {
@@ -85,8 +86,19 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       query.termNumber !== undefined ? eq(programTerms.termNumber, query.termNumber) : undefined,
       query.minimumCredits !== undefined ? gte(programTerms.totalCredits,query.minimumCredits) : undefined,
       query.maximumCredits !== undefined ? lte(programTerms.totalCredits,query.maximumCredits) : undefined,
+      query.creditState === "CONFIGURED" ? isNotNull(programTerms.totalCredits) :
+        query.creditState === "UNSET" ? isNull(programTerms.totalCredits) : undefined,
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
+      query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
+      query.mappingState === "MAPPED" ? exists(db.select({id:programTermCourses.id}).from(programTermCourses)
+        .innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+        .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
+        .where(eq(programTermCourses.programTermId,programTerms.id))) :
+        query.mappingState === "UNMAPPED" ? not(exists(db.select({id:programTermCourses.id}).from(programTermCourses)
+          .innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+          .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
+          .where(eq(programTermCourses.programTermId,programTerms.id)))) : undefined,
       query.q ? or(
         ilike(programTerms.name, likePattern(query.q)),
         ilike(programs.name, likePattern(query.q)),
@@ -165,11 +177,20 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     .leftJoin(cohortProgressionState, eq(cohortProgressionState.cohortId, cohorts.id))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
+      query.startOnOrAfter ? gte(academicPeriods.startDate,query.startOnOrAfter) : undefined,
+      query.startOnOrBefore ? lte(academicPeriods.startDate,query.startOnOrBefore) : undefined,
       query.yearStart !== undefined ? eq(cohortProgressionState.currentAcademicYearStart, query.yearStart) : undefined,
       query.currentTerm !== undefined ? eq(cohortProgressionState.currentTermNumber, query.currentTerm) : undefined,
       query.progression === "RECORDED" ? isNotNull(cohortProgressionState.cohortId) :
         query.progression === "MISSING" ? isNull(cohortProgressionState.cohortId) : undefined,
       query.status === "ALL" ? undefined : eq(cohorts.status, query.status),
+      query.activeLearnerState === "HAS_ACTIVE" ? exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments).innerJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"))).where(and(eq(learnerProgramEnrollments.cohortId,cohorts.id),eq(learnerProgramEnrollments.status,"ACTIVE")))) :
+        query.activeLearnerState === "NONE_ACTIVE" ? not(exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments).innerJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"))).where(and(eq(learnerProgramEnrollments.cohortId,cohorts.id),eq(learnerProgramEnrollments.status,"ACTIVE"))))) : undefined,
+      query.activeClassState === "HAS_ACTIVE" ? exists(db.select({id:sections.id}).from(sections).where(and(eq(sections.cohortId,cohorts.id),eq(sections.status,"ACTIVE")))) :
+        query.activeClassState === "NONE_ACTIVE" ? not(exists(db.select({id:sections.id}).from(sections).where(and(eq(sections.cohortId,cohorts.id),eq(sections.status,"ACTIVE"))))) : undefined,
+      query.expectedEndState === "SET" ? isNotNull(cohorts.expectedEndPeriodId) : query.expectedEndState === "UNSET" ? isNull(cohorts.expectedEndPeriodId) : undefined,
+      query.academicYearState === "RECORDED" ? isNotNull(cohortProgressionState.currentAcademicYearStart) : query.academicYearState === "UNRECORDED" ? isNull(cohortProgressionState.currentAcademicYearStart) : undefined,
       query.q ? or(
         ilike(cohorts.name, likePattern(query.q)),
         ilike(cohorts.code, likePattern(query.q)),
