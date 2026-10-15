@@ -19,6 +19,8 @@ Every page below also requires:
 
 **Cross-lane delegated TPO spreadsheet wiring PARTIAL (chat-9):** Per orchestrator request, shared grid, column chooser and URL-kept canonical filters are now mounted on TPO Students and drive Applications, retaining scoped server reads and row actions. Export-only fields do not enter visible columns. UI/browser acceptance and legacy inline-edit parity open.
 
+**Cross-lane delegated Custom 500 boundary test PARTIAL (chat-9):** Root global-error.tsx now has an SSR unit test checking heading, retry, Go back/Home and suppression of thrown error messages, digest and stack details. Unit execution/browser recovery and telemetry acceptance still open.
+
 ## Page: Profile Verification (legacy /college-admin/verification)
 **Bulk confirmation draft hygiene PARTIAL (chat-9):** Changing selected learners or switching bulk action clears prior shared correction reasons; controls and draft input lock during in-flight saves. This prevents accidentally applying a previous batch’s correction text to new learners. Count/busy-state unit tests authored; browser/API acceptance remains open.
 **Frozen single-review confirmation inputs PARTIAL (chat-9):** When a Verify/Send back confirmation is open, staff cannot silently change correction reasons or swap actions before clicking Confirm; Cancel returns to editable inputs. In-flight saves remain locked. Pure transition tests authored, browser/end-to-end acceptance pending.
