@@ -666,6 +666,13 @@
       "when": 1792107918206,
       "tag": "0094_placement_external_offers",
       "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "7",
+      "when": 1792108217322,
+      "tag": "0095_tpo_email_campaigns",
+      "breakpoints": true
     }
   ]
 }
