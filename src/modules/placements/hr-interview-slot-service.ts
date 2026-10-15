@@ -89,7 +89,7 @@ export async function writeHrInterviewSlot(
    if(existing.length>100||existing.some(row=>slotsOverlap(input,row)))
     throw new Error("SLOT_OVERLAP");
    const [newSlot]=await tx.insert(hrInterviewSlots).values({
-    collegeId:job.collegeId,roundId:round.id,startAt:input.startAt,endAt:input.endAt,
+    collegeId:job.collegeId,jobId:job.id,roundId:round.id,startAt:input.startAt,endAt:input.endAt,
     timezone:input.timezone,mode:input.mode,meetingLocation:input.meetingLocation??null,
     panelLabel:input.panelLabel??null,capacity:input.capacity,createdByUserId:context.user.id,
    }).returning({id:hrInterviewSlots.id});
