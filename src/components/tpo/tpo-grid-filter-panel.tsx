@@ -1,6 +1,7 @@
 "use client";
 import {useRouter,usePathname,useSearchParams} from "next/navigation";
 import {updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
+import {clearTpoGridFilters} from "@/modules/placements/tpo-grid-filter-reset";
 export type TpoFilterField={key:string;label:string;urlKey?:string;allValue?:string;options:readonly {value:string;label:string}[]};
 export function TpoGridFilterPanel({fields}:{fields:readonly TpoFilterField[]}){
  const router=useRouter(),pathname=usePathname(),query=useSearchParams();
@@ -16,5 +17,8 @@ export function TpoGridFilterPanel({fields}:{fields:readonly TpoFilterField[]}){
     <option value={field.allValue??""}>All</option>{field.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
    </select>
   </label>)}
+  {fields.some(field=>query.has(field.urlKey??"filter."+field.key))&&<button type="button"
+   onClick={()=>{const next=clearTpoGridFilters(new URLSearchParams(query.toString()),fields);router.replace(pathname+(next.size?"?"+next.toString():""));}}
+   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Clear grid filters</button>}
  </aside>;
 }
