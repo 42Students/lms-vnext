@@ -4,6 +4,8 @@ import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema/colleges";
 import {organizations} from "@/db/schema/organizations";
 import {db10Announcements} from "@/db/schema/db10-announcements";
+import {activityEvents} from "@/db/schema/activity";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {AnnouncementError} from "./errors";
@@ -40,7 +42,17 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    expiresAt:input.expiresAt?new Date(input.expiresAt):null,
    isPinned:input.isPinned,
   }));
-  return tx.insert(db10Announcements).values(rows).returning({id:db10Announcements.id,collegeId:db10Announcements.collegeId});
+  const inserted=await tx.insert(db10Announcements).values(rows).returning({id:db10Announcements.id,collegeId:db10Announcements.collegeId});
+  const organizationsByCollege=new Map(targets.map(target=>[target.id,target.organizationId]));
+  await tx.insert(activityEvents).values(inserted.map(row=>({
+   collegeId:row.collegeId,organizationId:organizationsByCollege.get(row.collegeId)!,
+   actorUserId:context.user.id,module:"PLATFORM" as const,
+   eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_ANNOUNCEMENT_PUBLISHED,
+   subjectType:"announcement",subjectId:row.id,
+   importance:"HIGH" as const,summary:"Super Admin published an in-app college notice",
+   metadata:{audienceMode:input.audienceMode,noticeId:row.id},
+  })));
+  return inserted;
  });
  return {count:created.length,noticeIds:created.map(x=>x.id)};
 }
