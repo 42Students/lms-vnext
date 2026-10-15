@@ -93,6 +93,7 @@ export const tpoStudentRequestsQuerySchema = z
       .optional(),
     requestType: z.enum(["APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"]).optional(),
     sort: z.enum(["NEWEST_FIRST","OLDEST_FIRST"]).optional(),
+    requestedBefore:z.date().optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
@@ -1008,6 +1009,7 @@ export async function listTpoStudentRequests(
       return false;
     }
     if(input.requestType&&row.requestType!==input.requestType)return false;
+    if(input.requestedBefore&&row.requestedAt>=input.requestedBefore)return false;
 
     if (!search) return true;
 

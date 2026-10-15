@@ -2027,3 +2027,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 request-kind view — PARTIAL:** The global queue filters persisted application withdrawal, round reschedule, and offer-extension requests before pagination, with a strict URL allowlist. This still excludes unmigrated company request types.
 
 **Chat-2 global Requests sort — PARTIAL:** The authorized request result is now sorted oldest/newest before pagination with immutable deterministic ID ties; no browser/runtime certification claimed.
+
+**Chat-2 aged Requests — PARTIAL:** Global queue supports validated requests older than 7 × 24 hours, evaluated from the server clock before pagination; this is a triage filter, not a promised SLA, expiry or fabricated deadline.

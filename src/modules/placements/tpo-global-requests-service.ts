@@ -21,6 +21,7 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
     status: query.status,
     requestType:query.requestType==="ALL"?undefined:query.requestType,
     sort:query.sort,
+    requestedBefore:query.age==="OLDER_THAN_7_DAYS"?new Date(Date.now()-7*86400000):undefined,
     search: query.search,
     page: query.page,
     pageSize: query.pageSize,
