@@ -73,6 +73,41 @@ async function fixture(){
   const view=await getProjectInstanceWorkspace(mentor,project.id);
   return {project,sprint:view.sprints[0]!};
 }
+describe("Mentor final delivery age and Project lifecycle filters — PostgreSQL",()=>{
+ it("applies persisted project state and older-than-30-day review cutoff before pagination",async()=>{
+  const {project}=await fixture();
+  const submissionId=randomUUID(), reviewId=randomUUID();
+  await pool.query(`insert into project_submissions
+    (id,project_id,version,status,summary,created_by_membership_id,
+     submitted_by_membership_id,submitted_at)
+    values ($1,$2,1,'APPROVED','Age fixture',$3,$3,now())`,[
+    submissionId,project.id,SEED_IDS.learnerCollegeAMembership,
+  ]);
+  await pool.query(`insert into project_submission_reviews
+    (id,project_id,submission_id,decision,feedback,
+     reviewed_by_user_id,reviewed_by_membership_id,reviewed_at)
+    values ($1,$2,$3,'APPROVED','Recorded decision',$4,$5,now()-interval '45 days')`,[
+    reviewId,project.id,submissionId,SEED_IDS.facultyUser,
+    SEED_IDS.facultyCollegeAMembership,
+  ]);
+  const historic=await getMentorReviewHistory(mentor,{
+    projectId:project.id,projectState:project.status,window:"OLDER_THAN_30_DAYS",
+  });
+  expect(historic.items.map(item=>item.id)).toContain(reviewId);
+  expect((await getMentorReviewHistory(mentor,{
+    projectId:project.id,window:"LAST_30_DAYS",
+  })).items).toHaveLength(0);
+  expect((await getMentorReviewHistory(mentor,{
+    projectId:project.id,projectState:"ARCHIVED",
+  })).items).toHaveLength(0);
+  await expect(getMentorReviewHistory(learner,{
+    projectId:project.id,window:"OLDER_THAN_30_DAYS",
+  })).rejects.toBeDefined();
+  await expect(getMentorReviewHistory(mentor,{
+    projectId:randomUUID(),window:"OLDER_THAN_30_DAYS",
+  })).rejects.toBeDefined();
+ });
+});
 describe("Mentor final delivery feedback-filtered review history — PostgreSQL",()=>{
  it("filters only registered decisions and feedback with role and tenant denial",async()=>{
   const {project}=await fixture();
@@ -100,6 +135,18 @@ describe("Mentor final delivery feedback-filtered review history — PostgreSQL"
   })]);
   const history=await getMentorReviewHistory(mentor,{search:"Export project",decision:"CHANGES_REQUESTED"});
   expect(history.items.some(item=>item.projectId===project.id)).toBe(true);
+  const selected=await getMentorReviewHistory(mentor,{
+    projectId:project.id,version:1,order:"OLDEST",window:"LAST_30_DAYS",
+  });
+  expect(selected.items).toEqual([expect.objectContaining({
+    projectId:project.id,version:1,decision:"CHANGES_REQUESTED",
+  })]);
+  const missingVersion=await getMentorReviewHistory(mentor,{
+    projectId:project.id,version:2,
+  });
+  expect(missingVersion.total).toBe(0);
+  await expect(getMentorReviewHistory(mentor,{projectId:randomUUID()}))
+    .rejects.toBeDefined();
   const missing=await getMentorReviewHistory(mentor,{search:"%no-project-match",decision:"ALL"});
   expect(missing.items.some(item=>item.projectId===project.id)).toBe(false);
   await expect(getMentorReviewHistory(learner,{search:"Export project"})).rejects.toBeDefined();

@@ -13,7 +13,7 @@ describe("Mentor registered active team coverage",()=>{
  });
  it("returns an honest 0-match filter result with distinct authorized project count",()=>{
   const rows=[{projectId:"p1",title:"Alpha",status:"ACTIVE",
-    learners:2,mentors:1,hasPrimaryMentor:true}];
+    learners:2,mentors:1,hasPrimaryMentor:true,isPrimaryMentor:true}];
   const result=selectMentorTeamCoverage(rows,{
     filter:"NO_LEARNERS",status:"ALL",search:"",page:99,
   });
