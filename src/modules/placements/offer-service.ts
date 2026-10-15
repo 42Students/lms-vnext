@@ -18,6 +18,7 @@ import {
   placementApplications,
   placementApplicationScreenings,
   placementCompanies,
+  placementCollegeRules,
   placementCompanyRelationships,
   placementJoiningHistory,
   placementJoiningOutcomes,
@@ -37,6 +38,7 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
+import { canAddPlacementHeldOffer } from "./held-offer-policy";
 import {
   issuePlacementOfferInputSchema,
   placementApplicationIdSchema,
@@ -281,6 +283,17 @@ export async function issuePlacementOffer(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Per-learner serialization for cross-drive releases, in the same
+    // membership-before-application order used by learner withdrawal.
+    const [member] = await tx.select({
+      id: collegeMemberships.id,
+      collegeId: collegeMemberships.collegeId,
+    }).from(collegeMemberships).where(
+      eq(collegeMemberships.id, current.application.membershipId),
+    ).for("update").limit(1);
+    if (!member || member.collegeId !== current.job.collegeId) {
+      throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+    }
     const [lockedApplication] =
       await tx
         .select({
@@ -348,6 +361,37 @@ export async function issuePlacementOffer(
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_ACTIVE_EXISTS",
       );
+    }
+
+    // P-S1-05: never release an extra ordinary offer below the uplift
+    // threshold when the learner already holds the configured maximum.
+    // LOIs do not consume the held-offer allowance.
+    if ((input.kind ?? "OFFER") === "OFFER") {
+      const [rules] = await tx.select({
+        maxHeldOffers: placementCollegeRules.maxHeldOffers,
+        upliftPct: placementCollegeRules.upliftPct,
+      }).from(placementCollegeRules)
+        .where(eq(placementCollegeRules.collegeId, current.job.collegeId))
+        .for("share").limit(1);
+      const heldOffers = await tx.select({
+        kind: placementOffers.kind,
+        status: placementOffers.status,
+        annualCtcInr: placementOffers.annualCtcInr,
+      }).from(placementOffers).innerJoin(
+        placementApplications,
+        eq(placementApplications.id, placementOffers.applicationId),
+      ).where(eq(
+        placementApplications.membershipId,
+        current.application.membershipId,
+      )).for("share");
+      if (!canAddPlacementHeldOffer({
+        maxHeldOffers: rules?.maxHeldOffers ?? 1,
+        upliftPct: rules?.upliftPct ?? 40,
+        nextAnnualCtcInr: input.annualCtcInr ?? null,
+        // P-S2-05 dream classification awaits the staged job column.
+        isDream: false,
+        heldOffers,
+      })) throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     }
 
     const [aggregate] = await tx
