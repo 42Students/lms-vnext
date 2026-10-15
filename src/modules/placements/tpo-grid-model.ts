@@ -23,6 +23,16 @@ export function parseTpoGridColumns(raw: string | undefined, allowed: readonly s
   const permitted = new Set(allowed);
   return [...new Set(raw.split(",").map((part) => part.trim()))].filter((name) => permitted.has(name));
 }
+/** URL preferences may only name on-screen, non-sensitive columns. */
+export const TPO_STUDENT_VISIBLE_KEYS = ["student","number","branch","batch","cgpa","backlogs","readiness","registration","participation","best","applications","offers","journey"] as const;
+export const TPO_APPLICATION_VISIBLE_KEYS = ["student","role","stage","application","channel","eligibility","submitted","screening"] as const;
+export function validTpoColumnPreference(raw:string|undefined,allowed:readonly string[]):boolean {
+  if(raw===undefined||raw==="")return true;
+  if(raw.length>800)return false;
+  const keys=raw.split(",").map(key=>key.trim());
+  const valid=new Set(allowed);
+  return keys.length>0&&keys.every(key=>valid.has(key))&&new Set(keys).size===keys.length;
+}
 export function updateTpoGridQuery(query: URLSearchParams, changes: Record<string, string | null>) {
   const result = new URLSearchParams(query);
   for (const [key, value] of Object.entries(changes)) {
