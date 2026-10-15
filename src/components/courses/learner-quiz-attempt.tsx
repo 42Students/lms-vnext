@@ -13,6 +13,7 @@ import { learnerQuizRefreshFailureMessage } from "@/modules/courses/learner-quiz
 import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
 import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
+import { learnerQuizDeadlineDisplay } from "@/modules/courses/learner-quiz-deadline-display-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
 import { learnerQuizSubmitDeadlineOpen } from "@/modules/courses/learner-quiz-submit-deadline-model";
@@ -80,14 +81,7 @@ function messageFrom(response: Response, fallback: string) {
 }
 
 function formatDate(value: string | null) {
-  if (!value) return "No deadline";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? value
-    : new Intl.DateTimeFormat("en-IN", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }).format(date);
+  return learnerQuizDeadlineDisplay(value);
 }
 
 export function LearnerQuizAttempt() {
