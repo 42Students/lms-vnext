@@ -496,6 +496,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Elective description availability PARTIAL (chat-3, 2026-10-15):** Recorded versus NULL description presence, without disclosing freeform text. The filter is included in page navigation and the tenant-scoped CSV with unit/PG fixtures authored; runtime and browser acceptance remain open.
+
 **Linked academic-period lifecycle PARTIAL (chat-3, 2026-10-15):** Persisted same-college period state, with unlinked slots retained only for ALL. The filter is included in page navigation and the tenant-scoped CSV with unit/PG fixtures authored; runtime and browser acceptance remain open.
 
 **Semester through PARTIAL (chat-3, 2026-10-15):** Bounded semester maximum against persisted slot term (not learner progression). The filter is included in page navigation and the tenant-scoped CSV with unit/PG fixtures authored; runtime and browser acceptance remain open.

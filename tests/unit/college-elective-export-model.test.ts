@@ -93,4 +93,9 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("periodLifecycle=");
    expect(electiveCsvSchema.safeParse({periodLifecycle:"INFERRED"}).success).toBe(false);
  });
+ it("exports the validated elective description availability selector",()=>{
+   const q=electiveCsvSchema.parse({descriptionPresence:"MISSING"});
+   expect(electiveCsvHref(q)).toContain("descriptionPresence=");
+   expect(electiveCsvSchema.safeParse({descriptionPresence:"INFERRED"}).success).toBe(false);
+ });
 });
