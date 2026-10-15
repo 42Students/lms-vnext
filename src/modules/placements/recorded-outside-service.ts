@@ -90,7 +90,7 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
    summary:"External placement drive recorded (not published)",
    metadata:{companyRelationshipId:actor.relationship.id,source:actor.role},
   });
-  return {id:saved.id,recordedOutside:true as const};
+  return {id:saved.id,recordedOutside:true as const,role:actor.role};
  });
 }
 export async function recordedOutsideChoices(context:RequestContext,rawCollegeId:unknown){
