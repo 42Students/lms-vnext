@@ -32,3 +32,9 @@ describe("overdue verification attention",()=>{it("uses a consistent seven-day w
  expect(matchesVerificationAttention({status:"SENT_BACK",section:"IDENTITY",submittedAt:old,missingMarksheet:false},"WAITING_OVER_WEEK",now)).toBe(false);
  expect(matchesVerificationAttention({status:"SUBMITTED",section:"IDENTITY",submittedAt:now,missingMarksheet:false},"WAITING_OVER_WEEK",now)).toBe(false);
 });});
+
+describe("verification per-page policy",()=>{it("accepts bounded 10/25/50 and rejects oversized pages",()=>{
+ expect(verificationQueueFilters.parse({pageSize:10}).pageSize).toBe(10);
+ expect(verificationQueueFilters.parse({pageSize:50}).pageSize).toBe(50);
+ expect(verificationQueueFilters.safeParse({pageSize:51}).success).toBe(false);
+});});

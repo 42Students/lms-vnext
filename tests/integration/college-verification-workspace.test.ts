@@ -109,6 +109,13 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   expect(result.rows.some(x=>x.learnerMembershipId===ids.foreignMember)).toBe(false);
   await expect(listCollegeVerificationQueue(wrongRole,{attention:"WAITING_OVER_WEEK"})).rejects.toBeInstanceOf(AuthorizationError);
  });
+ it("applies persisted authorization to 10 and 50 row queue requests",async()=>{
+  const ten=await listCollegeVerificationQueue(admin,{pageSize:10});
+  expect(ten.rows.length).toBeLessThanOrEqual(10);
+  const fifty=await listCollegeVerificationQueue(admin,{pageSize:50});
+  expect(fifty.rows.length).toBeLessThanOrEqual(50);
+  await expect(listCollegeVerificationQueue(wrongRole,{pageSize:10})).rejects.toBeInstanceOf(AuthorizationError);
+ });
  it("does not accept a context-only wrong-role membership",async()=>{
   await expect(listCollegeVerificationQueue(wrongRole,{})).rejects.toBeInstanceOf(AuthorizationError);
  });
