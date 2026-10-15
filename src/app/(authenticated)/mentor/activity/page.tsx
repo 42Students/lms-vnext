@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
 import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -18,6 +18,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     importance: first(raw.importance) ?? undefined,
     window: first(raw.window) ?? undefined,
     order:first(raw.order) ?? undefined,
+    projectStatus:first(raw.projectStatus) ?? undefined,
     view: first(raw.view) ?? undefined,
     page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
   });
@@ -58,6 +59,13 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         <label className="grid gap-1 text-sm font-semibold text-body">Chronology
           <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Newest recorded first</option><option value="OLDEST">Oldest recorded first</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Project lifecycle
+          <select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All assigned projects</option><option value="PLANNED">Planned</option>
+            <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
+            <option value="ARCHIVED">Archived</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size

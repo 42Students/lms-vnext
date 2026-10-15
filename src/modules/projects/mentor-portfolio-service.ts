@@ -58,7 +58,8 @@ export async function getMentorPortfolioActivity(
 ) {
   const query = mentorActivityQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
-  if (!scope.enabled || !scope.projects.length) {
+  const selectedProjects=scope.projects.filter(p=>query.projectStatus==="ALL"||p.status===query.projectStatus);
+  if (!scope.enabled || !selectedProjects.length) {
     return {
       enabled: scope.enabled, query, page: 1, pageSize: query.pageSize,
       total: 0, totalPages: 1,
@@ -66,8 +67,8 @@ export async function getMentorPortfolioActivity(
     };
   }
   const membership = context.membership!;
-  const ids = scope.projects.map(project => project.id);
-  const byId = new Map(scope.projects.map(project => [project.id, project]));
+  const ids = selectedProjects.map(project => project.id);
+  const byId = new Map(selectedProjects.map(project => [project.id, project]));
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
   const types=mentorProjectActivityEventTypes(query.view);
   const cutoff = query.window==="ALL" ? null :
