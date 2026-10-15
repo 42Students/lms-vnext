@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   mentorProjectActivityHref, mentorProjectActivityPage, mentorProjectActivityQuerySchema,
-  mentorProjectActivityEventTypes,
+  mentorProjectActivityEventTypes, mentorProjectActivitySince,
 } from "@/modules/projects/mentor-project-activity-model";
 
 const projectId="00000000-0000-4000-8000-000000000001";
@@ -18,6 +18,10 @@ describe("Mentor exact project event timeline",()=>{
     expect(mentorProjectActivityQuerySchema.safeParse({projectId,importance:"OTHER"}).success).toBe(false);
     expect(mentorProjectActivityQuerySchema.safeParse({projectId,page:"0"}).success).toBe(false);
     expect(mentorProjectActivityQuerySchema.safeParse({projectId,collegeId:projectId}).success).toBe(false);
+    expect(mentorProjectActivityQuerySchema.safeParse({projectId,window:"NEXT_WEEK"}).success).toBe(false);
+    expect(mentorProjectActivitySince("LAST_7_DAYS",new Date("2026-10-15T12:00:00Z"))?.toISOString())
+      .toBe("2026-10-08T12:00:00.000Z");
+    expect(mentorProjectActivitySince("ALL",new Date())).toBeNull();
     expect(mentorProjectActivityQuerySchema.safeParse({projectId,actorId:projectId}).success).toBe(false);
   });
   it("only selects registered event-type groups, not raw event metadata",()=>{
@@ -34,6 +38,8 @@ describe("Mentor exact project event timeline",()=>{
     })).toContain("view=REVIEWS");
   });
   it("preserves project identity in navigation, not an injected actor filter",()=>{
+    expect(mentorProjectActivityHref({projectId,importance:"HIGH",view:"ALL",window:"LAST_30_DAYS",page:3}))
+      .toContain("window=LAST_30_DAYS&page=3");
     expect(mentorProjectActivityHref({projectId,importance:"HIGH",view:"ALL",page:3}))
       .toBe("/mentor/projects/"+projectId+"/activity-history?importance=HIGH&page=3");
   });

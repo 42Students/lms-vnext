@@ -5,7 +5,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsHref}
   from "@/modules/projects/mentor-reports-model";
-type Search={status?:string|string[];attention?:string|string[];assignment?:string|string[];
+type Search={status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
   search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function MentorReportsPage({searchParams}:{
@@ -15,6 +15,7 @@ export default async function MentorReportsPage({searchParams}:{
   const parsed=mentorReportsQuerySchema.safeParse({
     status:first(params.status)??undefined,attention:first(params.attention)??undefined,
     assignment:first(params.assignment)??undefined,
+    order:first(params.order)??undefined,
     search:first(params.search)??undefined,page:first(params.page)??undefined,
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
@@ -90,6 +91,7 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="STALLED">Stalled</option>
             <option value="REQUESTED">Requested meeting</option>
             <option value="MEETING_SOON">Meeting soon</option>
+            <option value="NONE">No currently recorded attention</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Mentor assignment
@@ -98,6 +100,14 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="ALL">All assigned projects</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Report order
+          <select name="order" defaultValue={data.query.order}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="UPDATED">Recently updated</option>
+            <option value="TITLE_AZ">Project title A–Z</option>
+            <option value="TITLE_ZA">Project title Z–A</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
@@ -109,7 +119,7 @@ export default async function MentorReportsPage({searchParams}:{
         <Link href={"/api/mentor/reports/export?"+
           new URLSearchParams({
             status:data.query.status,attention:data.query.attention,
-            assignment:data.query.assignment,
+            assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">

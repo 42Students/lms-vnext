@@ -5,7 +5,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {mentorTimelineHref,mentorTimelineQuerySchema}
   from "@/modules/projects/mentor-project-timeline-model";
 import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeline-service";
-type Search={releaseStatus?:string|string[];page?:string|string[]};
+type Search={releaseStatus?:string|string[];sprintStatus?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorProjectTimelinePage({
   params,searchParams,
@@ -13,6 +13,7 @@ export default async function MentorProjectTimelinePage({
   const [p,q]=await Promise.all([params,searchParams]);
   const parsed=mentorTimelineQuerySchema.safeParse({
     projectId:p.projectId,releaseStatus:first(q.releaseStatus)??undefined,
+    sprintStatus:first(q.sprintStatus)??undefined,
     page:first(q.page)??undefined,
   });
   if(!parsed.success)return <section role="alert" className="space-y-2">
@@ -40,6 +41,14 @@ export default async function MentorProjectTimelinePage({
           })} aria-current={data.query.releaseStatus===status?"page":undefined}
             className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">
             {status.replaceAll("_"," ")}
+          </Link>)}
+      </nav>
+      <nav aria-label="Sprint status filters" className="flex flex-wrap gap-2">
+        {(["ALL","PLANNED","ACTIVE","COMPLETED"] as const).map(status=>
+          <Link key={status} href={mentorTimelineHref({...data.query,sprintStatus:status,page:1})}
+            aria-current={data.query.sprintStatus===status?"page":undefined}
+            className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+            {status==="ALL"?"All Sprint states":status}
           </Link>)}
       </nav>
       <p className="text-sm text-body">

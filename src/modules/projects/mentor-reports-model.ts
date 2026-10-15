@@ -4,8 +4,9 @@ import type {MentorProjectAttention} from "./mentor-attention";
 
 export const mentorReportsQuerySchema=z.object({
   status:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
-  attention:z.enum(["ALL","REVIEW","STALLED","REQUESTED","MEETING_SOON"]).default("ALL"),
+  attention:z.enum(["ALL","REVIEW","STALLED","REQUESTED","MEETING_SOON","NONE"]).default("ALL"),
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
+  order:z.enum(["UPDATED","TITLE_AZ","TITLE_ZA"]).default("UPDATED"),
   search:z.string().trim().max(120).default(""),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
@@ -39,10 +40,15 @@ export function mentorReportsOverview(
     (query.status==="ALL"||p.status===query.status)&&
     (query.assignment==="ALL"||
      (query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
-    (query.attention==="ALL"||kinds.get(p.id)?.has(query.attention))&&
+    (query.attention==="ALL"||
+      (query.attention==="NONE"?!kinds.get(p.id)?.size:kinds.get(p.id)?.has(query.attention)))&&
     (!term||p.title.toLocaleLowerCase("en-IN").includes(term)))
-    .sort((a,b)=>b.updatedAt.getTime()-a.updatedAt.getTime()||
-      a.title.localeCompare(b.title)||a.id.localeCompare(b.id));
+    .sort((a,b)=>query.order==="TITLE_AZ"
+      ? a.title.localeCompare(b.title)||a.id.localeCompare(b.id)
+      : query.order==="TITLE_ZA"
+        ? b.title.localeCompare(a.title)||a.id.localeCompare(b.id)
+        : b.updatedAt.getTime()-a.updatedAt.getTime()||
+          a.title.localeCompare(b.title)||a.id.localeCompare(b.id));
   const total=filtered.length,pageSize=20,totalPages=Math.max(1,Math.ceil(total/pageSize));
   const page=Math.min(query.page,totalPages);
   const projectRow=(p:MentorReportProject)=>({
@@ -61,6 +67,7 @@ export function mentorReportsHref(query:MentorReportsQuery){
   if(query.status!=="ALL")params.set("status",query.status);
   if(query.attention!=="ALL")params.set("attention",query.attention);
   if(query.assignment!=="ALL")params.set("assignment",query.assignment);
+  if(query.order!=="UPDATED")params.set("order",query.order);
   if(query.search)params.set("search",query.search);
   if(query.page>1)params.set("page",String(query.page));
   return "/mentor/reports"+(params.size?"?"+params.toString():"");

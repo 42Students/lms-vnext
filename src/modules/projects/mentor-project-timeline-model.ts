@@ -2,6 +2,7 @@ import {z} from "zod";
 export const mentorTimelineQuerySchema=z.object({
   projectId:z.string().uuid(),
   releaseStatus:z.enum(["ALL","PLANNED","IN_PROGRESS","SHIPPED"]).default("ALL"),
+  sprintStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type MentorTimelineQuery=z.infer<typeof mentorTimelineQuerySchema>;
@@ -11,10 +12,13 @@ type Sprint={id:string;releaseId:string;title:string;sequence:number;status:stri
 type Task={sprintId:string;status:string;};
 export function mentorProjectTimeline(
   releases:readonly Release[],sprints:readonly Sprint[],tasks:readonly Task[],
-  query:MentorTimelineQuery,
+  query:Pick<MentorTimelineQuery,"projectId"|"releaseStatus"|"page"> &
+    {sprintStatus?:MentorTimelineQuery["sprintStatus"]},
 ){
   const filtered=releases.filter(release=>
-    query.releaseStatus==="ALL"||release.status===query.releaseStatus)
+    (query.releaseStatus==="ALL"||release.status===query.releaseStatus)&&
+    (!query.sprintStatus||query.sprintStatus==="ALL"||
+      sprints.some(s=>s.releaseId===release.id&&s.status===query.sprintStatus)))
     .sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id));
   const total=filtered.length,pageSize=10;
   const totalPages=Math.max(1,Math.ceil(total/pageSize));
@@ -23,7 +27,8 @@ export function mentorProjectTimeline(
   return {
     total,page,pageSize,totalPages,
     items:shown.map(release=>({
-      ...release,sprints:sprints.filter(s=>s.releaseId===release.id)
+      ...release,sprints:sprints.filter(s=>s.releaseId===release.id&&
+        (!query.sprintStatus||query.sprintStatus==="ALL"||s.status===query.sprintStatus))
         .sort((a,b)=>a.sequence-b.sequence||a.id.localeCompare(b.id))
         .map(sprint=>{
           const group=tasks.filter(t=>t.sprintId===sprint.id);
@@ -36,9 +41,10 @@ export function mentorProjectTimeline(
     })),
   };
 }
-export function mentorTimelineHref(query:MentorTimelineQuery){
+export function mentorTimelineHref(query:Pick<MentorTimelineQuery,"projectId"|"releaseStatus"|"page"> & {sprintStatus?:MentorTimelineQuery["sprintStatus"]}){
   const params=new URLSearchParams();
   if(query.releaseStatus!=="ALL")params.set("releaseStatus",query.releaseStatus);
+  if(query.sprintStatus&&query.sprintStatus!=="ALL")params.set("sprintStatus",query.sprintStatus);
   if(query.page>1)params.set("page",String(query.page));
   const suffix=params.toString();
   return "/mentor/projects/"+encodeURIComponent(query.projectId)+

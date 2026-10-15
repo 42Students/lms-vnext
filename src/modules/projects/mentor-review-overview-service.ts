@@ -28,6 +28,7 @@ export async function getMentorDeliveryReviewOverview(context:RequestContext,raw
  const feedbackWithout=sql<boolean>`coalesce(trim(${projectSubmissionReviews.feedback}), '') = ''`;
  const filters=and(eq(projectSubmissions.projectId,scope.project.id),
    query.status==="ALL"?undefined:eq(projectSubmissions.status,query.status),
+   query.version!==undefined?eq(projectSubmissions.version,query.version):undefined,
    query.feedback==="WITH"?feedbackWith:
      query.feedback==="WITHOUT"?feedbackWithout:undefined);
  const [totalRow]=await db.select({total:count()}).from(projectSubmissions)

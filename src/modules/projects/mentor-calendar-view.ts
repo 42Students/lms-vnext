@@ -10,6 +10,7 @@ export type MentorMeetingCalendarItem = {
   projectStatus: string;
   title: string;
   status: "REQUESTED" | "SCHEDULED" | "COMPLETED" | "CANCELLED";
+  meetingType?: "GENERAL" | "PLANNING" | "STANDUP" | "REVIEW" | "RETRO";
   startsAt: string;
   endsAt: string;
   timeZone: string;
