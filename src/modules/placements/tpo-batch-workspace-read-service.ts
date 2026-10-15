@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { cohorts, collegeMemberships, departments, learnerProgramEnrollments, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
@@ -43,7 +43,15 @@ export async function getTpoBatch(ctx:RequestContext,rawId:unknown){
  const ready=await placementTableExists("placement_batch_lifecycles");
  const [lifecycle]=ready?await getDb().select().from(placementBatchLifecycles)
  .where(and(eq(placementBatchLifecycles.cohortId,id),eq(placementBatchLifecycles.collegeId,collegeId))).limit(1):[];
- return {batch,collegeId,ready,lifecycle:lifecycle??null};
+ const [stored]=await getDb().select({status:placementEligibilityDecisions.status,
+   reason:placementEligibilityDecisions.reason,note:placementEligibilityDecisions.note,
+   updatedAt:placementEligibilityDecisions.updatedAt})
+  .from(placementEligibilityDecisions)
+  .where(and(eq(placementEligibilityDecisions.collegeId,collegeId),
+    eq(placementEligibilityDecisions.scopeType,"COHORT"),eq(placementEligibilityDecisions.scopeId,id))).limit(1);
+ const decision={status:stored?.status??"NOT_DECIDED",reason:stored?.reason??null,
+  note:stored?.note??null,expectedVersion:stored?.updatedAt.toISOString()??"none"};
+ return {batch,collegeId,ready,lifecycle:lifecycle??null,decision};
 }
 export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPage:unknown=1) {
  const {batch,collegeId}=await getTpoBatch(ctx,rawId);const page=pageSchema.parse(rawPage);
