@@ -74,7 +74,8 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         // An old ACTIVE row without an expiry or verification is NOT usable.
         const [valid] = await tx.select({
           ok: sql<boolean>`${placementRecruiterCollegeGrants.validUntil} > clock_timestamp()
-            and ${placementRecruiterCollegeGrants.verificationStatus} = 'VERIFIED'`,
+            and ${placementRecruiterCollegeGrants.verificationStatus} = 'VERIFIED'
+            and ${placementRecruiterCollegeGrants.capabilities} @> ARRAY['DRIVES']::text[]`,
         }).from(placementRecruiterCollegeGrants)
           .where(eq(placementRecruiterCollegeGrants.id, existing.id)).limit(1);
         if (!valid?.ok) throw new TpoRecruiterGrantConflict();
