@@ -8,3 +8,5 @@ it("matches only upcoming meeting alerts",()=>{expect(f("MENTOR_MEETING_SOON",ne
 it("accepts any recorded assigned-project attention",()=>{expect(f("MENTOR_ANY_ATTENTION",new Set(["REVIEW"]))).toBe(true);expect(f("MENTOR_ANY_ATTENTION",new Set())).toBe(false);expect(f("MENTOR_ANY_ATTENTION",undefined)).toBe(false);});
 
 it("detects absent registered attention without claiming project health",()=>{expect(f("MENTOR_NO_ATTENTION",new Set())).toBe(true);expect(f("MENTOR_NO_ATTENTION",undefined)).toBe(true);expect(f("MENTOR_NO_ATTENTION",new Set(["STALLED"]))).toBe(false);});
+
+it("never treats learner-only action as Mentor attention",()=>{expect(f("LEARNER_ACTION",new Set(["REVIEW"]))).toBe(false);});

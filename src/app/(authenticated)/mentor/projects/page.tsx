@@ -205,7 +205,7 @@ export default async function MentorProjectsPage({
       );
     })
     .filter((row) => matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
-    .sort((a,b) => compareMentorProjects(a.project,b.project,query.sort ?? "RECENT"));
+    .sort((a,b) => compareMentorProjects(a.project,b.project,query.sort === "TITLE" ? "TITLE" : "RECENT"));
 
   const total = filtered.length;
   const totalPages = Math.max(
