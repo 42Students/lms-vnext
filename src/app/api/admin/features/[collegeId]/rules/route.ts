@@ -2,6 +2,8 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminCollegeFeatureSnapshot} from "@/modules/module-access/admin-college-rule-read";
+import {isSameOriginRequest} from "@/auth/origin";
+import {writeSuperAdminCollegeRule} from "@/modules/module-access/admin-college-rule-write";
 export const runtime="nodejs";
 export async function GET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
@@ -12,8 +14,6 @@ export async function GET(_request:Request,{params}:{params:Promise<{collegeId:s
  }catch(error){return apiErrorResponse(error);}
 }
 
-import {isSameOriginRequest} from "@/auth/origin";
-import {writeSuperAdminCollegeRule} from "@/modules/module-access/admin-college-rule-write";
 export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
