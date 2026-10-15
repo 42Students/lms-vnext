@@ -167,8 +167,8 @@ function unscaleHundredths(value: number | null) {
   return value === null ? null : value / 100;
 }
 
-async function loadJob(jobId: string) {
-  const [job] = await getDb()
+async function loadJob(jobId: string, db: Client | Tx = getDb()) {
+  const [job] = await db
     .select()
     .from(placementJobs)
     .where(eq(placementJobs.id, jobId))
@@ -185,8 +185,9 @@ async function loadJob(jobId: string) {
 async function loadLearnerMembership(
   collegeId: string,
   membershipId: string,
+  db: Client | Tx = getDb(),
 ) {
-  const [membership] = await getDb()
+  const [membership] = await db
     .select({
       id: collegeMemberships.id,
       collegeId: collegeMemberships.collegeId,
@@ -781,13 +782,22 @@ export function isPlacementJobTargetCohort(
   );
 }
 
+/** D3: one normalised gate for optimistic and transaction-bound checks. */
+export function placementApplyEligibilityDenial(status: PlacementEligibilityResult["status"]):
+  "PLACEMENT_APPLICATION_INELIGIBLE" | "PLACEMENT_APPLICATION_NEEDS_DATA" | null {
+  if (status === "INELIGIBLE") return "PLACEMENT_APPLICATION_INELIGIBLE";
+  if (status === "NEEDS_DATA") return "PLACEMENT_APPLICATION_NEEDS_DATA";
+  return null;
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
   membershipIdInput?: string,
+  db: Client | Tx = getDb(),
 ): Promise<PlacementEligibilityResult> {
   const jobId = placementJobIdSchema.parse(jobIdInput);
-  const job = await loadJob(jobId);
+  const job = await loadJob(jobId, db);
   let membershipId: string;
 
   if (membershipIdInput) {
@@ -806,9 +816,8 @@ export async function evaluatePlacementEligibility(
   await loadLearnerMembership(
     job.collegeId,
     membershipId,
+    db,
   );
-
-  const db = getDb();
   const [[override], [policy], [evidence], [enrollment]] =
     await Promise.all([
       db
