@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
-import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt} from "@/modules/courses/faculty-manual-grade-receipt";
+import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
@@ -83,6 +83,7 @@ function SubmissionGradeCard({
   const [error, setError] =
     useState<string | null>(null);
   const [success, setSuccess] = useState<string|null>(null);
+  const [needsRefresh,setNeedsRefresh]=useState(false);
   const operationInFlight = useRef(false);
 
   async function saveGrade(
@@ -90,7 +91,7 @@ function SubmissionGradeCard({
   ) {
     event.preventDefault();
     setError(null);
-    setSuccess(null);
+    setSuccess(null);setNeedsRefresh(false);
 
     const parsed = draftState.points;
     if (parsed === null) {
@@ -135,6 +136,7 @@ function SubmissionGradeCard({
       );
 
       if (!response.ok) {
+        setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
           await courseApiError(response),
         );
@@ -163,7 +165,7 @@ function SubmissionGradeCard({
 
   async function publishGrade() {
     setError(null);
-    setSuccess(null);
+    setSuccess(null);setNeedsRefresh(false);
     if (!draftState.canPublish) {
       setError("Save the score and feedback before publishing the grade.");
       return;
@@ -365,6 +367,10 @@ function SubmissionGradeCard({
           {error}
         </p>
       ) : null}
+      {needsRefresh?<button type="button" onClick={()=>onUpdated(submission)}
+       className="mt-2 min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Reload current submission revision
+       </button>:null}
       {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
     </section>
   );
