@@ -1386,3 +1386,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 round 2 / Empty published Learning Paths (PARTIAL):** the learner workspace now distinguishes published paths without lessons, published lesson shells without available items and unpublished paths, without inventing progress. Pure tests authored; mobile/browser parity remains pending.
 
 **Chat-7 round 2 / Attendance month recovery (PARTIAL; L10):** while browsing another month, Learner Attendance now provides a one-tap This month action that preserves the currently authorized Course and history preferences, using the server-supplied IST month rather than browser-local guesses. Model tests authored; URL/Back-Forward and browser acceptance pending.
+
+**Chat-7 round 2 / Quiz question-index accessibility (PARTIAL; L8):** question navigation now exposes exact active-step semantics and answered/unanswered accessible labels, with 44px touch targets on mobile. Status reflects only the local selections, not correctness. Pure tests authored; keyboard/screen-reader/browser acceptance still pending.
