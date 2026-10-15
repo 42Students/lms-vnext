@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
+import { exists, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
 import {
@@ -90,6 +91,14 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
       query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
+      query.mappingState === "MAPPED" ? exists(db.select({id:programTermCourses.id}).from(programTermCourses)
+        .innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+        .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
+        .where(eq(programTermCourses.programTermId,programTerms.id))) :
+        query.mappingState === "UNMAPPED" ? not(exists(db.select({id:programTermCourses.id}).from(programTermCourses)
+          .innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+          .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
+          .where(eq(programTermCourses.programTermId,programTerms.id)))) : undefined,
       query.q ? or(
         ilike(programTerms.name, likePattern(query.q)),
         ilike(programs.name, likePattern(query.q)),

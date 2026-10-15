@@ -1224,3 +1224,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 academic lane PARTIAL:** Semesters now filter registered credit totals as configured versus absent/null, without treating missing as zero; CSV preserves selection. Scoped source, query/CSV models and regression fixtures authored; executed disposable PostgreSQL, browser, and exact legacy UI comparisons remain open.
 
 **2026-10-15 College Admin semesters PARTIAL:** Semester parent program lifecycle filter uses persisted, college-scoped records; URL/pagination and CSV preserve it. Unit/disposable-PostgreSQL regression tests authored, not executed; legacy/browser parity unverified.
+
+**2026-10-15 semesters PARTIAL:** Semester curriculum mapping presence: persisted college-scoped directory/CSV filter with validation and scoped PostgreSQL test authored (not executed). Legacy/browser verification remains open.

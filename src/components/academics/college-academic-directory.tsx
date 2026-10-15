@@ -147,6 +147,15 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
               </select>
             </label>
           ) : null}
+          {data.kind === "SEMESTERS" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Semester curriculum mapping presence
+              <select name="mappingState" defaultValue={data.query.mappingState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All terms</option>
+                <option value="MAPPED">Has mapped courses</option>
+                <option value="UNMAPPED">No mapped courses</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter
