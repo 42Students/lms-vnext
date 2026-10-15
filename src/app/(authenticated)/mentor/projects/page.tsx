@@ -309,7 +309,7 @@ export default async function MentorProjectsPage({
         emptyDescription={
           query.search ||
           query.status ||
-          query.attention || query.assignment
+          query.attention || query.assignment || query.work
             ? "Clear or change the filters to see other assigned Projects."
             : "Projects appear here when a College Admin assigns your Mentor membership to the team."
         }
