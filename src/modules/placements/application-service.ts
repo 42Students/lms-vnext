@@ -23,6 +23,8 @@ import {
   placementCandidateAcademicEvidence,
   placementCompanyRelationships,
   placementCompanies,
+  placementCollegeRules,
+  placementOffers,
   placementDriveDayCoordinatorAssignments,
   placementDebarments,
   placementEligibilityDecisions,
@@ -47,6 +49,7 @@ import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import { hasActivePlacementDebarment } from "./placement-debarment-gate";
+import { canReleaseAnotherHeldOffer } from "./offer-college-rules-policy";
 import {
   createPlacementApplicationInputSchema,
   placementApplicationIdSchema,
@@ -665,6 +668,37 @@ export async function applyToPlacementJob(
         eq(placementDebarments.membershipId, membership.id),
       )).for("share");
       if (hasActivePlacementDebarment(bans, new Date())) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+
+      // P-S1-05: the college's held-offer cap also applies before the
+      // learner enters another drive, not only when a TPO issues its offer.
+      // The current schema has no approved isDreamDrive field; a future
+      // migration must provide that exception rather than guessing it.
+      const [collegeRule] = await tx.select().from(placementCollegeRules)
+        .where(eq(placementCollegeRules.collegeId, job.collegeId))
+        .for("share").limit(1);
+      const heldOffers = await tx.select({
+        annualCtcInr: placementOffers.annualCtcInr,
+      }).from(placementOffers)
+        .innerJoin(placementApplications,
+          eq(placementApplications.id, placementOffers.applicationId))
+        .innerJoin(placementJobs,
+          eq(placementJobs.id, placementApplications.jobId))
+        .where(and(
+          eq(placementApplications.membershipId, membership.id),
+          eq(placementJobs.collegeId, job.collegeId),
+          eq(placementOffers.kind, "OFFER"),
+          inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
+        ));
+      if (!canReleaseAnotherHeldOffer({
+        maxHeldOffers: collegeRule?.maxHeldOffers ?? 1,
+        upliftPct: collegeRule?.upliftPct ?? 40,
+        heldOffers,
+        annualCtcInr: roleOption.minimumAnnualCtcInr ??
+          job.minimumAnnualCtcInr,
+        isDreamDrive: false,
+      })) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
 
