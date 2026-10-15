@@ -689,6 +689,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Student Groups List
+**Navigation parity (2026-10-15):** Legacy keeps the Student Groups route available but hides it from the College Admin sidebar until a generic-groups feature needs it. vNext now omits `/college/groups` from College Admin navigation for single- and mixed-role memberships without deleting its direct route. This resolves the legacy navigation mismatch only; group workflow remains PARTIAL.
+
 **Legacy:** `/college-admin/student-groups`
 
 **CSV validation PARTIAL (2026-10-14):** For STUDY_GROUP only, `/college/groups/[groupId]/import-preview` reads a bounded email CSV (500 rows, 128 KiB) and reports in-college active learner matches, repeated rows, already-present members, capacity blockers and formula-neutralized validation CSV. This route performs no writes and does not claim confirmed imports or enrollment acceptance. All page checks remain open.
