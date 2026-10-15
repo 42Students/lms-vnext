@@ -2,12 +2,13 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportCollegeVerificationCsv} from "@/modules/verification/staff-export-service";
+import {parseVerificationExportQuery} from "@/modules/verification/export-query";
 import {VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 export const runtime="nodejs";
 export async function GET(request:Request){
  try{
-  const params=Object.fromEntries(new URL(request.url).searchParams);
+  const params=parseVerificationExportQuery(new URL(request.url).searchParams);
   const report=await exportCollegeVerificationCsv(await getCurrentRequestContext(),params);
   return new Response(report.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
@@ -18,6 +19,8 @@ export async function GET(request:Request){
  }catch(error){
   if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
   if(error instanceof VerificationQueueLimitError)return NextResponse.json({error:error.message},{status:409});
+  if(error instanceof Error&&error.message==="DUPLICATE_VERIFICATION_EXPORT_FILTER")
+   return NextResponse.json({error:"INVALID_FILTER"},{status:400});
   if(error instanceof Error&&error.message==="VERIFICATION_FILTER_NOT_SUPPORTED")
    return NextResponse.json({error:"FILTER_NOT_SUPPORTED"},{status:400});
   return apiErrorResponse(error);

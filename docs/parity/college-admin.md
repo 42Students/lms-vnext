@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Strict verification CSV query parsing PARTIAL (chat-9):** College Admin export now rejects duplicate filter values and forged tenant parameters rather than silently overwriting them. Only the typed queue filter contract may reach the scoped service; existing formula-safe 1,000-row cap remains. Unit coverage authored; browser and actual runtime acceptance pending.
+
 **Chronological verification queue order PARTIAL (chat-9):** Added typed OLDEST/NEWEST ordering by submitted timestamp with membership-ID ties; the same order is used before queue pagination and capped CSV. Current-college role gate remains enforced; unit plus PG denial checks authored, execution and browser proof open.
 
 **Selectable 10/25/50-row verification pages PARTIAL (chat-9):** College verification queue supports strict bounded server slicing with stable URL navigation, independent full-view tab counts, and same-college authorization. CSV still exports the filtered view independently of page length. Unit and gated PostgreSQL scope fixtures authored; large-roster and browser/real-DB acceptance open.
