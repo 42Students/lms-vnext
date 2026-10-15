@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import { describePrimaryDomainSwitch } from "@/modules/tenant-domains/admin-confirmation-model";
 
 export type TenantDomainClientRow = {
   id: string;
@@ -45,6 +46,7 @@ export function TenantDomainManager({
   const router = useRouter();
   const { showToast } = useToast();
   const [host, setHost] = useState("");
+  const [primaryTarget, setPrimaryTarget] = useState<TenantDomainClientRow | null>(null);
   const [deleteTarget, setDeleteTarget] =
     useState<TenantDomainClientRow | null>(null);
   const [pendingAction, setPendingAction] =
@@ -140,6 +142,9 @@ export function TenantDomainManager({
 
       if (action === "delete") {
         setDeleteTarget(null);
+      }
+      if (action === "primary") {
+        setPrimaryTarget(null);
       }
 
       showToast({
@@ -281,12 +286,7 @@ export function TenantDomainManager({
                         variant="secondary"
                         size="sm"
                         disabled={busy}
-                        onClick={() =>
-                          void runAction(
-                            domain,
-                            "primary",
-                          )
-                        }
+                        onClick={() => setPrimaryTarget(domain)}
                       >
                         {pendingAction === primaryKey
                           ? "Updating…"
@@ -354,6 +354,20 @@ export function TenantDomainManager({
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        open={Boolean(primaryTarget)}
+        onOpenChange={(open) => { if (!open) setPrimaryTarget(null); }}
+        title={primaryTarget ? `Make ${primaryTarget.host} the primary address?` : "Change primary address?"}
+        description={primaryTarget ? describePrimaryDomainSwitch(
+          domains.find(domain => domain.isPrimary)?.host ?? null,
+          primaryTarget.host,
+        ) : undefined}
+        confirmLabel="Confirm primary address"
+        confirmVariant="primary"
+        pending={Boolean(pendingAction)}
+        onConfirm={() => { if (primaryTarget) void runAction(primaryTarget, "primary"); }}
+      />
 
       <ConfirmDialog
         open={Boolean(deleteTarget)}

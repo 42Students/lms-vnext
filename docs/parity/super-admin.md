@@ -839,3 +839,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 hierarchy filter PG fixture follow-up (PARTIAL):** Added disposable-PostgreSQL regression covering per-module count-vs-row filtering, invalid module rejection, and non-admin denial. Multiple `module` query params are rejected before service invocation. Test is committed but NOT executed; real PG and browser acceptance remain open.
+
+
+**2026-10-15 chat-6 Tenant Domains primary confirmation (PARTIAL):** Selecting a newly verified primary host now opens explicit confirmation showing previous and next host, login routing and DNS consequences before invoking the existing same-origin authorized mutation. No DNS edit is claimed; pure-model tests authored but not executed. Redirect/browser acceptance and host-switch race remain open.
