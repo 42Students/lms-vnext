@@ -1,10 +1,11 @@
 import {z} from "zod";
-const modeSchema=z.enum(["NAME","PROGRESS","DUE"]).catch("NAME");
+const modeSchema=z.enum(["NAME","PROGRESS","DUE","RECENT"]).catch("NAME");
 export type LearnerCourseSortMode=z.infer<typeof modeSchema>;
 type CourseCard={
  course:{deliveryId:string;offeringType:string;courseName:string};
  summary:{overallPercent:number|null};
  nextDue:{dueAt:string}|null;
+ lastActivity?:string|null;
 };
 /** Preserve legacy regular-before-elective grouping with alternate within-group order. */
 export function sortLearnerCourseCards<T extends CourseCard>(
@@ -21,6 +22,13 @@ export function sortLearnerCourseCards<T extends CourseCard>(
    if(x===null&&y!==null)return 1;
    if(y===null&&x!==null)return -1;
    if(x!==null&&y!==null&&x!==y)return x-y;
+  }
+  if(mode==="RECENT"){
+   const left=a.lastActivity?Date.parse(a.lastActivity):Number.NaN;
+   const right=b.lastActivity?Date.parse(b.lastActivity):Number.NaN;
+   const x=Number.isFinite(left)?left:Number.NEGATIVE_INFINITY;
+   const y=Number.isFinite(right)?right:Number.NEGATIVE_INFINITY;
+   if(x!==y)return y-x;
   }
   if(mode==="DUE"){
    const x=deadline(a),y=deadline(b);
