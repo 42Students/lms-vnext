@@ -17,11 +17,11 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions}:{rows:r
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
   <TpoGridColumnChooser columns={columns} selected={active} onChange={choose}/>
   {rows.length===0?<p role="status" className="rounded border border-border p-3">No matching records.</p>:<>
-   <div className="hidden overflow-x-auto rounded border border-border md:block"><table className="w-full text-left text-sm">
+   <div className="hidden overflow-x-auto rounded border border-border md:block"><table className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
     <thead><tr>{display.map(col=><th scope="col" className="px-3 py-2" key={col.key}>{col.label}</th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
     <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{display.map(col=><td key={col.key} className="break-words px-3 py-2">{displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
    </table></div>
-   <ul className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded border border-border p-3">
+   <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded border border-border p-3">
     {display.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm"><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{displayTpoGridCell(col.read(row))}</span></div>)}
     {rowActions&&<div aria-label="Row actions">{rowActions(row)}</div>}
    </li>)}</ul>

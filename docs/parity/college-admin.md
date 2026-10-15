@@ -11,6 +11,10 @@ Every page below also requires:
 - responsive behavior;
 - executed regression coverage.
 
+# Chat-9 2026-10-15 follow-up — PARTIAL (runtime acceptance pending)
+
+Contacts now show an honest page range, page-local Faculty/Learner/dual-role breakdown and a count of applied facets without treating a page as the whole college. Strict Contacts parsing rejects special-object keys rather than dropping them; the People membership directory now refuses repeated/unsupported URL params before sensitive listing. In verification, navigation and refresh are fenced while a bulk decision request is pending. Focused Vitest cases were added; actual browser, disposable PostgreSQL and global CI acceptance remain open. These are not DONE parity claims.
+
 # Operations
 
 **Personal-notification unread counts PARTIAL (2026-10-15):** College Admin announcements displays a separate exact unread own-recipient count from registered notifications, independently of the 50-row inbox cap and regardless of unread-only filter. Count reads enforce the signed-in college and recipient; no college-wide send or delivery is inferred. Model, isolated PG tenant/role fixture updates authored; runtime/browser acceptance outstanding.
