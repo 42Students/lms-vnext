@@ -121,8 +121,12 @@ describe("Faculty live session create, edit, cancel with PostgreSQL",()=>{
 describe("Faculty live scheduling persisted revocation",()=>{
  it("blocks a Faculty actor once the FACULTY role is removed from the database",async()=>{
   const {delivery,lesson}=await fixture();
-  await pool.query("delete from membership_roles where membership_id=$1::uuid and role=$2::membership_role",
+  const roles=await pool.query<{id:string}>(
+   "select id from membership_roles where membership_id=$1::uuid and role=$2::membership_role",
    [SEED_IDS.facultyCollegeAMembership,"FACULTY"]);
+  const originalRoleId=roles.rows[0]?.id;
+  expect(originalRoleId).toBeDefined();
+  await pool.query("delete from membership_roles where id=$1::uuid",[originalRoleId]);
   try {
    await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
     action:"CREATE",lessonId:lesson.id,title:"Revoked instructor",
@@ -131,8 +135,8 @@ describe("Faculty live scheduling persisted revocation",()=>{
     endsAt:"2026-10-22T10:00:00+05:30",confirm:true,
    })).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
   }finally{
-   await pool.query("insert into membership_roles(membership_id,role) values($1::uuid,$2::membership_role) on conflict do nothing",
-    [SEED_IDS.facultyCollegeAMembership,"FACULTY"]);
+   await pool.query("insert into membership_roles(id,membership_id,role) values($1::uuid,$2::uuid,$3::membership_role) on conflict do nothing",
+    [originalRoleId,SEED_IDS.facultyCollegeAMembership,"FACULTY"]);
   }
  });
 });
