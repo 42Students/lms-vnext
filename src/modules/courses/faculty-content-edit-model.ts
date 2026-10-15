@@ -51,3 +51,12 @@ export function facultyContentPatch(input: {
     throw new Error("End time must be after a valid start time.");
   return { ...base, startsAt: start.toISOString(), endsAt: end.toISOString() };
 }
+
+export type FacultyContentDraftSnapshot = {
+  title:string; notes:string; url:string; duration:string; starts:string; ends:string;
+};
+/** Compare the form values, not a guessed server revision. */
+export function facultyContentDraftChanged(a:FacultyContentDraftSnapshot,b:FacultyContentDraftSnapshot){
+  return a.title!==b.title || a.notes!==b.notes || a.url!==b.url ||
+    a.duration!==b.duration || a.starts!==b.starts || a.ends!==b.ends;
+}
