@@ -7,18 +7,20 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
+import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import {ownApplicationInterviewLinks} from "@/modules/placements/learner-application-interview-links-model";
 import {ownApplicationAssessmentLinks} from "@/modules/placements/learner-application-assessment-links-model";
 
 export default async function LearnerPlacementApplicationsPage() {
   const context = await getCurrentRequestContext();
-  const [rows,requests]=await Promise.all([
+  const [rows,roundsRead]=await Promise.all([
     getLearnerPlacementJourney(context),
-    getLearnerPlacementRequestWorkspace(context),
+    readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context)),
   ]);
+  const rounds = roundsRead.available ? roundsRead.value.rounds : [];
   const savedCounts = learnerApplicationSavedStatusCounts(rows);
   const interviewLinks=ownApplicationInterviewLinks(
-    requests.rounds.map(row=>({
+    rounds.map(row=>({
       applicationId:row.applicationId,roundId:row.roundId,roundKind:row.roundKind,
       scheduledAt:row.scheduledAt?.toISOString()??null,
       exception:row.exception?{scheduledAt:row.exception.scheduledAt.toISOString()}:null,
@@ -26,7 +28,7 @@ export default async function LearnerPlacementApplicationsPage() {
   );
 
   const assessmentLinks=ownApplicationAssessmentLinks(
-    requests.rounds.map(row=>({
+    rounds.map(row=>({
       applicationId:row.applicationId,roundId:row.roundId,roundKind:row.roundKind,
       scheduledAt:row.scheduledAt?.toISOString()??null,
       exception:row.exception?{scheduledAt:row.exception.scheduledAt.toISOString()}:null,
@@ -69,6 +71,10 @@ export default async function LearnerPlacementApplicationsPage() {
       <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
         Review all official offers →
       </Link>
+      {!roundsRead.available ? <p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+        Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
+        <Link href="/learn/my-placements/applications" className="ml-2 font-semibold text-primary-text underline">Retry round shortcuts</Link>
+      </p> : null}
       <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks} />
       </Suspense>

@@ -7,6 +7,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { messagingHistoryQuerySchema, projectMessagingHistory } from "./receipt-history-model";
+import {messagingHistoryPageWindow} from "./receipt-history-window-model";
 
 const PAGE_SIZE = 25;
 /** Only a live college-scoped placement officer can read aggregate counts. */
@@ -28,10 +29,11 @@ export async function listTpoMessagingHistory(
     await assertPersistedPlatformPermission(tx, context, "placements.manage", {
       organizationId: college.organizationId, collegeId: college.id,
     });
-    const [counts, rows] = await Promise.all([
-    tx.select({ total: sql<number>`count(*)::integer` })
-      .from(messagingDeliveryBatches).where(where),
-    tx.select({
+    const [count] = await tx.select({total:sql<number>`count(*)::integer`})
+      .from(messagingDeliveryBatches).where(where);
+    const total = Number(count?.total ?? 0);
+    const window = messagingHistoryPageWindow(query.page,total,PAGE_SIZE);
+    const rows = await tx.select({
       id: messagingDeliveryBatches.id,
       purpose: messagingDeliveryBatches.purpose,
       total: messagingDeliveryBatches.total,
@@ -43,11 +45,9 @@ export async function listTpoMessagingHistory(
       finalizedAt: messagingDeliveryBatches.finalizedAt,
     }).from(messagingDeliveryBatches)
       .where(where)
-      .orderBy(desc(messagingDeliveryBatches.createdAt), desc(messagingDeliveryBatches.id))
-      .limit(PAGE_SIZE).offset((query.page - 1) * PAGE_SIZE),
-  ]);
-  const total = Number(counts[0]?.total ?? 0);
-    return { rows: projectMessagingHistory(rows), page: query.page, pageSize: PAGE_SIZE,
-      total, pages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
+      .orderBy(desc(messagingDeliveryBatches.createdAt),desc(messagingDeliveryBatches.id))
+      .limit(PAGE_SIZE).offset(window.offset);
+    return { rows: projectMessagingHistory(rows), page: window.page, pageSize: PAGE_SIZE,
+      total, pages: window.pages };
   });
 }

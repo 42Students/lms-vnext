@@ -1,6 +1,9 @@
 "use client";
 
+import { learnerCourseAttendanceMonthShortcutVisible } from "@/modules/attendance/learner-course-attendance-month-shortcut-model";
+import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { useMemo, useState } from "react";
+import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached } from "@/modules/attendance/learner-course-attendance-summary-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -30,15 +33,8 @@ function shiftMonth(
   );
 }
 
-function sameMonth(
-  value: Date,
-  month: Date,
-) {
-  return (
-    value.getFullYear() ===
-      month.getFullYear() &&
-    value.getMonth() === month.getMonth()
-  );
+function sameMonth(value: Date, month: Date) {
+  return learnerCourseAttendanceSameIstMonth(value,monthKey(month));
 }
 
 function dateLabel(value: Date) {
@@ -47,6 +43,7 @@ function dateLabel(value: Date) {
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "Asia/Kolkata",
   }).format(value);
 }
 
@@ -54,6 +51,7 @@ function timeLabel(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
     hour: "numeric",
     minute: "2-digit",
+    timeZone: "Asia/Kolkata",
   }).format(value);
 }
 
@@ -82,34 +80,8 @@ function label(status: string) {
     );
 }
 
-function summarize(
-  rows: readonly AttendanceRecord[],
-) {
-  const held = rows.filter(
-    (row) => row.status !== "SCHEDULED",
-  );
-  const marked = held.filter(
-    (row) => row.status !== "NOT_MARKED",
-  );
-  const present = marked.filter(
-    (row) => row.status === "PRESENT",
-  ).length;
-  const absent = marked.length - present;
-
-  return {
-    heldSessions: held.length,
-    markedSessions: marked.length,
-    unmarkedSessions:
-      held.length - marked.length,
-    present,
-    absent,
-    percentage:
-      marked.length > 0
-        ? Math.round(
-            (present / marked.length) * 100,
-          )
-        : null,
-  };
+function summarize(rows: readonly AttendanceRecord[]) {
+  return learnerCourseAttendanceSummary(rows);
 }
 
 function attendanceHeadroom(
@@ -199,18 +171,16 @@ function Metric({
 export function LearnerCourseAttendance({
   deliveryId,
   workspace,
+  defaultMonth,
 }: {
   deliveryId: string;
   workspace: AttendanceWorkspace;
+  defaultMonth: string;
 }) {
   const [month, setMonth] = useState(
     () => {
-      const now = new Date();
-      return new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        1,
-      );
+      const [year,month]=defaultMonth.split("-").map(Number);
+      return new Date(year,month-1,1);
     },
   );
 
@@ -271,7 +241,7 @@ export function LearnerCourseAttendance({
   if (summary.markedSessions > 0) {
     if (
       summary.percentage !== null &&
-      summary.percentage >= threshold
+      learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
     ) {
       thresholdDetail = Number.isFinite(
         headroom.canMiss,
@@ -362,6 +332,15 @@ export function LearnerCourseAttendance({
                 className="mt-1.5 min-h-9 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
               />
             </label>
+            {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),defaultMonth) ? (
+              <Button size="sm" variant="secondary"
+                onClick={() => {
+                  const [year,nextMonth]=defaultMonth.split("-").map(Number);
+                  setMonth(new Date(year,nextMonth-1,1));
+                }}>
+                This month
+              </Button>
+            ) : null}
             <Button
               size="sm"
               variant="secondary"
@@ -392,7 +371,7 @@ export function LearnerCourseAttendance({
         <Metric
           label="Absent"
           value={summary.absent}
-          detail="Marked sessions not counted as present."
+          detail={`${summary.otherMarked} other marked session(s) are late, excused or medical, not explicitly absent.`}
         />
         <Metric
           label="Attendance"
@@ -423,16 +402,14 @@ export function LearnerCourseAttendance({
             tone={
               summary.percentage === null
                 ? "neutral"
-                : summary.percentage >=
-                    threshold
+                : learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
                   ? "success"
                   : "error"
             }
           >
             {summary.percentage === null
               ? "No marked attendance"
-              : summary.percentage >=
-                  threshold
+              : learnerCourseAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
                 ? "At or above threshold"
                 : "Below threshold"}
           </StatusBadge>

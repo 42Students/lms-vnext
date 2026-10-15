@@ -16,9 +16,9 @@ const detailSchema=z.object({quiz:z.object({questions:z.array(item)}).passthroug
 /** GET /api/courses/quizzes/[id] returns {quiz:{quiz,questions,...}}, not root questions. */
 export function facultyAuthoringQuestionsFromResponse(input:unknown){
  const parsed=detailSchema.parse(input);
- return parsed.quiz.questions.map((q,i)=>({
+ return [...parsed.quiz.questions].sort((a,b)=>a.sequence-b.sequence).map((q,i)=>({
   type:q.type,prompt:q.prompt,points:q.points,sequence:i,
-  options:q.options.map((option,j)=>({
+  options:[...q.options].sort((a,b)=>a.sequence-b.sequence).map((option,j)=>({
    text:option.text,correct:option.correct??false,sequence:j,
   })),
  }));
@@ -270,4 +270,161 @@ export function facultyQuizCopyTitle(original:string):string{
 export function facultyQuizNormalizeQuestions<T extends {sequence:number;options:{sequence:number}[]}>(items:readonly T[]):T[]{
  return items.map((question,i)=>({...question,sequence:i,
   options:question.options.map((option,j)=>({...option,sequence:j}))} as T));
+}
+
+/** A display-only filter: selected Quiz stays mounted while the Faculty member searches. */
+export function facultyQuizMatchesSearch(quiz:{title:string;status:string},query:string):boolean {
+ const term=query.trim().toLocaleLowerCase();
+ return !term||quiz.title.toLocaleLowerCase().includes(term)||quiz.status.toLocaleLowerCase().includes(term);
+}
+
+/** Question search changes only what is visible, never the saved question order. */
+export function facultyQuizQuestionMatches(
+ question:{prompt:string;options:readonly {text:string}[]},index:number,query:string,
+):boolean {
+ const term=query.trim().toLocaleLowerCase();
+ return !term||String(index+1)===term||question.prompt.toLocaleLowerCase().includes(term)
+  ||question.options.some(option=>option.text.toLocaleLowerCase().includes(term));
+}
+
+/** Reuse the server command's shared question schema for inline authoring feedback. */
+export function facultyQuizQuestionIssue(
+ question:{type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+  options:readonly {text:string;correct:boolean;sequence:number}[]},
+):string|null {
+ return facultyQuizDraftIssue("Question check",[question]);
+}
+
+/** Current answer selection is explicit before a confirmation or save. */
+export function facultyQuizAnswerSummary(question:{
+ type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";options:readonly {correct:boolean}[],
+}):string {
+ const count=question.options.filter(option=>option.correct).length;
+ return count+" of "+question.options.length+" answers marked correct";
+}
+
+/** Insert at the point of teaching flow, not only at the end of a 100-item Quiz. */
+export function facultyInsertQuizQuestionAfter<T>(questions:readonly T[],index:number,question:T):T[]{
+ if(index<0||index>=questions.length||questions.length>=100)return [...questions];
+ const next=[...questions];next.splice(index+1,0,question);return next;
+}
+
+/** Dedicated first/last controls avoid dozens of moves in a large question bank. */
+export function facultyMoveQuizQuestionToEdge<T>(items:readonly T[],index:number,edge:"FIRST"|"LAST"):T[]{
+ if(index<0||index>=items.length)return [...items];
+ return facultyMoveQuizQuestion(items,index,edge==="FIRST"?0:items.length-1);
+}
+
+/** Add an unchecked option next to its alternatives while retaining the answer key. */
+export function facultyInsertQuizOptionAfter<T>(options:readonly T[],index:number,newOption:T):T[]{
+ if(options.length>=20||index<0||index>=options.length)return [...options];
+ const next=[...options];next.splice(index+1,0,newOption);return next;
+}
+
+/** Removing a marked answer changes grading semantics; request explicit consent. */
+export function facultyQuizOptionRemovalNeedsConfirmation(
+ options:readonly {correct:boolean}[],index:number,
+):boolean {
+ return index>=0&&index<options.length&&Boolean(options[index]?.correct);
+}
+
+/** Use a short, human-readable destructive action description in the browser dialog. */
+export function facultyQuizQuestionRemovalPrompt(index:number,prompt:string):string {
+ const name=prompt.trim().replace(/\s+/g," ").slice(0,80);
+ return "Remove question "+(index+1)+(name?' ("'+name+'")':"")+
+  "? This removes its options from your unsaved draft.";
+}
+
+/** Bulk option entry may fill an empty draft or append to a valid existing key.
+ * It refuses silent truncation, duplicate labels and blank entries. */
+export function facultyQuizApplyPastedOptions(
+ current:readonly {text:string;correct:boolean;sequence:number}[],raw:string,
+):{ok:true;options:{text:string;correct:boolean;sequence:number}[]}|{ok:false;issue:string}{
+ if(raw.length>40000)return {ok:false,issue:"Pasted answer text is too large."};
+ const normalized=raw.trim();
+ const lines=normalized.split(/\r?\n|\|/).map(line=>line.trim());
+ if(!normalized||lines.length>20||lines.some(line=>!line||line.length>2000))
+  return {ok:false,issue:"Paste nonblank options of at most 2000 characters each."};
+ const filled=current.filter(option=>option.text.trim().length>0);
+ if((filled.length===0&&lines.length<2)||filled.length+lines.length>20)
+  return {ok:false,issue:"A question needs at least two options and supports at most twenty."};
+ const labels=[...filled.map(option=>option.text.trim().toLocaleLowerCase()),
+  ...lines.map(line=>line.toLocaleLowerCase())];
+ if(new Set(labels).size!==labels.length)
+  return {ok:false,issue:"Each option needs unique text, including existing answers."};
+ const newOptions=lines.map((text,i)=>({text,correct:filled.length===0&&i===0,sequence:filled.length+i}));
+ return {ok:true,options:[...filled,...newOptions].map((option,i)=>({...option,sequence:i}))};
+}
+
+/** Empty persisted draft banks cannot be safely published or overwritten. */
+export function facultyQuizLoadedBankIssue(status:string|undefined,questionCount:number):string|null {
+ if(status==="DRAFT"&&questionCount===0)
+  return "This Quiz has no loaded questions. Retry before editing or publishing.";
+ return null;
+}
+
+/** Retrying a failed read replaces the current metadata and local draft. */
+export function facultyQuizRetryNeedsConfirmation(dirty:boolean,loading:boolean):boolean {
+ return dirty&&!loading;
+}
+
+/** Keep the preflight aligned with the Section-scoped server title conflict. */
+export function facultyQuizTitleConflict(
+ rows:readonly {id:string;title:string}[],title:string,ownQuizId:string|undefined,
+):boolean {
+ const normalized=title.trim().toLocaleLowerCase();
+ return Boolean(normalized)&&rows.some(row=>row.id!==ownQuizId&&
+  row.title.trim().toLocaleLowerCase()===normalized);
+}
+
+/** Aggregate invalid bank items without exposing private learner responses. */
+export function facultyQuizReviewIssues(
+ questions:readonly {type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+ options:readonly {text:string;correct:boolean;sequence:number}[]}[],
+):{invalidQuestions:number;totalPoints:number;overLimit:boolean}{
+ const invalidQuestions=questions.filter(question=>facultyQuizQuestionIssue(question)!==null).length;
+ const totalPoints=questions.reduce((sum,question)=>sum+question.points,0);
+ return {invalidQuestions,totalPoints,overLimit:totalPoints>10000};
+}
+
+/** Invalid-only review acts on the full source bank, never a filtered save. */
+export function facultyQuizShouldDisplayQuestion(
+ question:{type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+ options:readonly {text:string;correct:boolean;sequence:number}[]},
+ index:number,search:string,invalidOnly:boolean,
+):boolean {
+ return facultyQuizQuestionMatches(question,index,search)&&
+  (!invalidOnly||facultyQuizQuestionIssue(question)!==null);
+}
+
+/** Never surface arbitrary fetch/JSON exception text to a Faculty user. */
+export function facultyQuizReadErrorMessage(error:unknown):string {
+ if(error instanceof Error &&
+  (error.message==="Cannot load quiz questions for this Section."||
+   error.message==="This Quiz has no loaded questions. Retry before editing or publishing."))
+  return error.message;
+ return "Could not load the current Section Quiz. Retry or return to the Quiz list.";
+}
+
+/** Explain whether answer removal reassigns the correct answer or merely removes one. */
+export function facultyQuizOptionRemovalPrompt(
+ type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE",
+ options:readonly {correct:boolean}[],questionIndex:number,optionIndex:number,
+):string {
+ const selected=options.filter(option=>option.correct).length;
+ const consequence=type==="SINGLE_CHOICE"||selected===1
+  ?" A remaining choice will be marked correct."
+  :" Other marked correct choices will remain.";
+ return "Remove correct option "+(optionIndex+1)+" from question "+(questionIndex+1)+"?"+
+  consequence;
+}
+
+/** A Faculty publish decision must be based on a saved, complete question bank. */
+export function facultyQuizReadyToPublish(
+ status:string|undefined,dirty:boolean,failed:boolean,
+ questions:readonly {type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+ options:readonly {text:string;correct:boolean;sequence:number}[]}[],
+):boolean {
+ return facultyQuizCanPublishSavedDraft(status,dirty,failed)&&
+  questions.length>0&&facultyQuizDraftIssue("Review before publishing",questions)===null;
 }

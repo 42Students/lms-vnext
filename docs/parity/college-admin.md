@@ -19,6 +19,26 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Named bulk review preview PARTIAL (chat-9):** Before a bulk Verify/Send back, the College Admin now sees the actual selected learner names, sections, versions and any locally skipped entries rather than only aggregate counts. Changing selection cancels the old preview; in-flight decisions lock select/clear. No preview claims receipt validation or server commit. Unit coverage authored, browser/DB acceptance remains open.
+
+**Readable per-request bulk decision outcomes PARTIAL (chat-9):** Successful bulk API responses now retain the selected page's authorized learner names when displaying individual success/stale/document/permission outcomes; no shortened membership UUIDs are shown. Attempts/success/failure totals remain exact, and unknown rows use a neutral label. Pure outcome projection authored; browser/PG acceptance open.
+
+**Explicit per-learner decision confirmation PARTIAL (chat-9):** Single-request Verify and Send back now require a second, cancellable confirmation displaying the action and correction reason before invoking the existing version-locked, audited same-origin writer. In-flight confirmation cannot be dismissed. Pure decision-copy tests authored; browser/API acceptance outstanding.
+
+**Previous reviewer decision visibility PARTIAL (chat-9):** The authorized review drawer now displays the persisted last decision timestamp in IST and the stored correction note, explicitly labeling absent history. It does not invent earlier history or expose these fields through the public roster. Pure projection coverage authored; private read/browser acceptance open.
+
+**Verification drawer keyboard dismissal PARTIAL (chat-9):** The private review drawer restores focus to the opener, focuses Close on entry and handles Escape. Dismissal is disabled while a decision request is in flight, avoiding an ambiguous discarded view. Pure keyboard-state tests authored; focus-trap and mobile browser acceptance remain open.
+
+**Review drawer recovery PARTIAL (chat-9):** Authorized staff can explicitly retry an unsuccessful private verification-detail read without closing the drawer, clearing stale error/detail state before the new GET. No automatic repeated private reads or false success. Unit regression authored; browser/network acceptance remains open.
+
+**Newest-first verification ordering repair PARTIAL (chat-9):** The shared card grid now respects the server-selected OLDEST/NEWEST mode instead of always reversing newest pages back into ascending order. The queue and CSV also tie-break same-timestamp, same-learner Education/Identity rows by section; attention flags use one captured read clock. Pure ordering tests authored, PostgreSQL/browser acceptance open.
+
+**Waiting request-state triage PARTIAL (chat-9):** College verification now distinguishes first SUBMITTED requests from UPDATE_PENDING updates through the same status-scoped PostgreSQL query used by its capped CSV; incompatible decided tabs fail closed rather than show a false empty queue. A native dropdown, safe tab reset and pure filter tests authored; executed PG/browser acceptance outstanding.
+
+**Exact learner lookup PARTIAL (chat-9):** College Admin staff can deep-link from a Student roster membership to a filtered verification queue and matching capped export, using a strict membership UUID. The stored-college/learner-role predicates remain authoritative, and foreign or forged IDs reveal no matching details. Unit and route integration coverage authored; real PostgreSQL/browser acceptance open.
+
+**IST lower submission-date filter PARTIAL (chat-9):** Staff queue and capped CSV now support a matching inclusive Asia/Kolkata submitted-from date, with reversed date windows rejected before querying. Bounded URL contract, form feedback and pure date-boundary tests authored; real PostgreSQL/browser verification pending.
+
 **No hidden-row bulk selection PARTIAL (chat-9):** College verification now disables the shared page-local search input while keeping the authorized server-side learner-name filter and status/kind selectors. Consequently select-all and preview address exactly the displayed college-scoped server page; Super Admin and any other consumers retain their existing local-search behavior. Contract tests authored; browser/CI acceptance pending.
 
 **Bulk decision PostgreSQL success+failure fixture PARTIAL (chat-9):** A separate current-college verification fixture is now authored to assert a successful SEND_BACK row-version transition, exactly one activity event, recipient in-app notification, non-leaking foreign-college failure and stale replay without duplicate decision. The same batch includes a JSX duplicate-markup repair caught in source review. Fixture is gated on disposable registered DB04 and has not run here.
@@ -532,13 +552,13 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
-**Exact lesson title PARTIAL (2026-10-15, chat-3):** Adds a bounded exact-title selector over registered lessons (distinct from fuzzy search) with same-college pagination and capped CSV parity. Unit/isolated PG source authored; browser/runtime and full legacy acceptance open.
-
-**Ending lesson order PARTIAL (2026-10-15, chat-3):** A 1-based persisted sequence upper bound narrows Lessons and CSV before pagination, combinable with the existing lower bound. Source tests authored; actual PG/browser and legacy matching open.
+**Saved content lifecycle PARTIAL (2026-10-15, chat-3):** Filter saved DRAFT/PUBLISHED/ARCHIVED lesson-content metadata within tenant-owned lessons before paging and capped CSV. This does not imply visibility to a learner. Source tests authored; runtime/legacy/browser acceptance open.
 
 **Starting lesson order PARTIAL (2026-10-15, chat-3):** The 1-based persisted sequence lower bound filters in-college lesson ordering before paging and CSV. It is not a progress/completion rank. Typed and gated-PG tests authored; execution/browser/legacy acceptance outstanding.
 
-**Saved content lifecycle PARTIAL (2026-10-15, chat-3):** Filter saved DRAFT/PUBLISHED/ARCHIVED lesson-content metadata within tenant-owned lessons before paging and capped CSV. This does not imply visibility to a learner. Source tests authored; runtime/legacy/browser acceptance open.
+**Ending lesson order PARTIAL (2026-10-15, chat-3):** A 1-based persisted sequence upper bound narrows Lessons and CSV before pagination, combinable with the existing lower bound. Source tests authored; actual PG/browser and legacy matching open.
+
+**Exact lesson title PARTIAL (2026-10-15, chat-3):** Adds a bounded exact-title selector over registered lessons (distinct from fuzzy search) with same-college pagination and capped CSV parity. Unit/isolated PG source authored; browser/runtime and full legacy acceptance open.
 
 **Saved content kind PARTIAL (2026-10-15, chat-3):** Exact authored content-kind filter matches persisted lesson content before totals/pagination and follows filter-matched capped CSV. This is metadata only; no signed media is exposed. Unit and disposable-PG fixtures authored, not executed; browser and legacy parity acceptance open.
 
@@ -723,15 +743,15 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
-**Live-class metadata presence PARTIAL (2026-10-15, chat-3):** College Admin progress now finds offering paths containing saved LIVE_CLASS content and separately those without; no external meeting links or attendee states read. Tenant-scoped CSV matches the filter; authored tests need execution and browser acceptance.
-
-**Resource-presence selector PARTIAL (2026-10-15, chat-3):** Filters actual saved RESOURCE records in same-college offerings, before pagination and CSV. No private links or publication inference. Tests authored; runtime and browser validation open.
-
-**Authored quiz triage PARTIAL (2026-10-15, chat-3):** The offering directory can isolate saved quizzes through course lessons without inferring quiz attempt/result evidence; server filters apply before CSV and pages. Unit/isolated-PG tests authored, not run. Browser/legacy acceptance open.
+**Offering authored lesson triage PARTIAL (2026-10-15, chat-3):** Filters on persisted lessons attached through learning paths, before college-scoped counts, paging and safe capped CSV. Source tests authored; independent PG/browser acceptance open.
 
 **Persisted authored assignment triage PARTIAL (2026-10-15, chat-3):** A college-scoped offering filter checks actual assignment records through paths and lessons before totals and CSV. It does not imply submissions, grading or delivery. Tests authored; PG/browser verification open.
 
-**Offering authored lesson triage PARTIAL (2026-10-15, chat-3):** Filters on persisted lessons attached through learning paths, before college-scoped counts, paging and safe capped CSV. Source tests authored; independent PG/browser acceptance open.
+**Authored quiz triage PARTIAL (2026-10-15, chat-3):** The offering directory can isolate saved quizzes through course lessons without inferring quiz attempt/result evidence; server filters apply before CSV and pages. Unit/isolated-PG tests authored, not run. Browser/legacy acceptance open.
+
+**Resource-presence selector PARTIAL (2026-10-15, chat-3):** Filters actual saved RESOURCE records in same-college offerings, before pagination and CSV. No private links or publication inference. Tests authored; runtime and browser validation open.
+
+**Live-class metadata presence PARTIAL (2026-10-15, chat-3):** College Admin progress now finds offering paths containing saved LIVE_CLASS content and separately those without; no external meeting links or attendee states read. Tenant-scoped CSV matches the filter; authored tests need execution and browser acceptance.
 
 **Published learning path triage PARTIAL (2026-10-15):** The Course Progress offering list now distinguishes registered PUBLISHED learning paths from drafts, archived paths or absent paths. This is an authored structure state, not proof of learner visibility or course completion. Filtered totals, safe CSV, strict schema and disposable-PG fixture are authored; execution/browser acceptance open.
 
@@ -767,6 +787,13 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 # People
+**Roster-to-Contacts drilldown PARTIAL (chat-9):** Faculty and Students roster entries now link to their read-only Contacts detail by validated persisted membership UUID, instead of forcing staff to rediscover the same person. The existing current-college detail authorization and masked learner/phone policy remain authoritative. Unit/source authored; browser/permission acceptance pending.
+**Contradictory Contacts academic combinations PARTIAL (chat-9):** An explicit typed gate now prevents impossible no-active-enrollment/program/batch/class and no-active-class/exact-section filters across UI, service and capped CSV, returning input errors rather than misleading zero contacts. Pure boundary tests authored; runtime/browser acceptance open.
+**Faculty academic-title Contacts search PARTIAL (chat-9):** A bounded title-substring filter uses escaped literal ILIKE against persisted faculty-profile academic titles under the existing Faculty membership and college authorization. Same predicate runs before cards/paging/masked CSV. Pure wildcard and URL tests authored; real DB/browser acceptance pending.
+**Faculty live teaching-role Contacts filter PARTIAL (chat-9):** Contacts now filter by persisted PRIMARY, CO_TEACHER or TA assignment on a current-college, non-ended course delivery. The role is independent of employment type, and contradictory no-teaching combinations fail closed in the page/service/export contract. Authored unit checks; PostgreSQL/browser acceptance outstanding.
+**Faculty employment-type Contacts facet PARTIAL (chat-9):** Contact cards and masked CSV now share a same-college Faculty-only exact employment-type filter from persisted faculty profiles. A bounded 100-option current-college dropdown retains the bookmarked choice without exposing other colleges. Unit/source authored; database/browser proof open.
+**Active-class Contacts filtering PARTIAL (chat-9):** The read-only Contacts page now filters learner memberships by registered active section enrollment and same-college cohort/program ancestry, before list/CSV paging, using capped own-college class choices. Faculty-only contacts cannot match; PostgreSQL/browser acceptance remains open.
+**Scoped Contacts program selector PARTIAL (chat-9):** Registered college-owned programs now filter active learner enrollment by exact program before contact pagination and masked CSV export, with a bounded authorized dropdown and neutral unknown-selection label. Faculty-only rows never match. Unit contract authored; PostgreSQL/browser acceptance pending.
 
 **Scoped Contact detail route PARTIAL (2026-10-15, chat-9):** Each Contacts card links to `/college/contacts/[membershipId]` for a read-only public detail anchored to a persisted current-college COLLEGE_ADMIN membership. Foreign IDs return identical not-found, and learner/dual-role email and all phone numbers stay masked. Positive, foreign and wrong-role isolated PG cases authored; execution/375px browser and exact legacy card metadata remain open.
 
@@ -860,6 +887,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Students
+**Filtered Faculty/Students directory CSV PARTIAL (chat-9):** Both role rosters now export their actual validated platform, employment, academic, search, date and sorting facets through a dedicated GET-only current-college permissioned reader, capped at 1,000 rows and spreadsheet-formula neutralized. The previous generic People CSV ignored most roster filters. Each source page rechecks persisted actor authorization; multi-page reads are not one point-in-time snapshot. Pure parser/neutralization tests authored; actual PostgreSQL/browser and large-directory consistency acceptance open.
+**Exact active-class Students filter PARTIAL (chat-9):** Student roster can now isolate live section enrollment by exact registered class ID and same-college program/batch ancestry, with a bounded class picker and neutral bookmarked selection. Faculty and impossible no-class combinations reject before querying. Pure-model and gated-PG denial coverage authored; executed PostgreSQL/browser acceptance open.
+**Exact academic-program Students directory PARTIAL (chat-9):** Learner roster now uses college-joined active program enrollment selection, with bounded authorized program choices, neutral bookmarked IDs and matching paging. Faculty selection throws rather than silently misusing the filter. Unit and gated-PG scope fixtures authored; executed PG/browser acceptance open.
 **Bounded batch-selector bookmark retention PARTIAL (chat-9):** Student directory keeps a selected batch UUID in the filter form even when outside its first 200 current-college choices, showing only a neutral placeholder instead of a foreign name. Server-side academic college scope remains authoritative; source/unit coverage authored, browser acceptance open.
 **Strict quoted CSV tokenization PARTIAL (2026-10-15):** Student CSV preview/import now fails structurally malformed quoted fields with trailing content (for example, a closed quoted name followed by extra characters), rather than silently merging them into identity data before onboarding. Escaped quotes, embedded commas and CRLF remain supported. Pure positive/negative tests authored; identity/PG/browser acceptance outstanding.
 **Learner enrollment lifecycle drilldown PARTIAL (2026-10-15):** Student detail now filters recorded program/batch enrollments by ACTIVE, COMPLETED or WITHDRAWN while retaining the separate all-time enrollment count and current class/recorded attendance views. The filter is exact and no cross-college record is disclosed. Strict model and isolated PG role/not-found tests authored; real execution and browser acceptance remain.
