@@ -1,11 +1,12 @@
 import "server-only";
-import {and,asc,count,desc,eq,exists,gte,ilike,inArray,lt,or,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,exists,gte,ilike,inArray,lt,not,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
+import {collegeContactAcademicScope} from "./college-contacts-academic-scope";
 import {collegeContactsQuerySchema,contactDateWindowValid,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
 
 export type CollegeContactRow={
@@ -30,6 +31,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    tx.select({roleId:membershipRoles.id}).from(membershipRoles).where(and(
     eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,role))));
   const faculty=hasRole("FACULTY"),learner=hasRole("LEARNER");
+  const academic=collegeContactAcademicScope(claim.collegeId);
   const search=filter.q?"%"+filter.q.replace(/[\\%_]/g,"\\$&")+"%":null;
   const matches=and(eq(collegeMemberships.collegeId,claim.collegeId),
    filter.tab==="FACULTY"?faculty:filter.tab==="STUDENT"?learner:or(faculty,learner),
@@ -42,6 +44,16 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.audience==="FACULTY_ONLY"?and(faculty,sql`not (${learner})`):
    filter.audience==="LEARNER_ONLY"?and(learner,sql`not (${faculty})`):
    filter.audience==="DUAL"?and(faculty,learner):undefined,
+   filter.profile==="PROFILED"?or(and(learner,academic.learnerProfile),and(faculty,academic.facultyProfile)):filter.profile==="UNPROFILED"?or(and(learner,not(academic.learnerProfile)),and(faculty,not(academic.facultyProfile))):undefined,
+   filter.enrollment==="ACTIVE"?and(learner,academic.activeEnrollment):filter.enrollment==="NONE"?and(learner,not(academic.activeEnrollment)):undefined,
+   filter.teaching==="ASSIGNED"?and(faculty,academic.activeTeaching):filter.teaching==="NONE"?and(faculty,not(academic.activeTeaching)):undefined,
+   filter.rollPresence==="PRESENT"?and(learner,academic.hasRoll):filter.rollPresence==="MISSING"?and(learner,not(academic.hasRoll)):undefined,
+   filter.registrationPresence==="PRESENT"?and(learner,academic.hasRegistration):filter.registrationPresence==="MISSING"?and(learner,not(academic.hasRegistration)):undefined,
+   filter.titlePresence==="PRESENT"?and(faculty,academic.hasAcademicTitle):filter.titlePresence==="MISSING"?and(faculty,not(academic.hasAcademicTitle)):undefined,
+   filter.departmentPresence==="ASSIGNED"?and(faculty,academic.hasPrimaryDepartment):filter.departmentPresence==="MISSING"?and(faculty,not(academic.hasPrimaryDepartment)):undefined,
+   filter.classPresence==="ASSIGNED"?and(learner,academic.activeClass):filter.classPresence==="NONE"?and(learner,not(academic.activeClass)):undefined,
+   filter.cohortId?and(learner,academic.inCohort(filter.cohortId)):undefined,
+   filter.facultyDepartmentId?and(faculty,academic.inFacultyDepartment(filter.facultyDepartmentId)):undefined,
    search?or(
     ilike(users.displayName,search),
     // Only staff who are not also learners may be located by email.

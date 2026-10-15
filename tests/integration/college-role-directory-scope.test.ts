@@ -128,6 +128,15 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     await expect(listCollegeRoleDirectory(facultyInCollegeB,"LEARNER",{q:"program"}))
       .rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("rejects a forged admin role on an existing non-admin membership", async () => {
+    const forged: RequestContext = {
+      ...collegeAdmin,
+      membership: {...collegeAdmin.membership!, id:SEED_IDS.facultyCollegeAMembership},
+    };
+    for (const kind of ["FACULTY","LEARNER"] as const) {
+      await expect(listCollegeRoleDirectory(forged,kind,{})).rejects.toBeInstanceOf(AuthorizationError);
+    }
+  });
   it("denies a non-admin in another college before any directory read", async () => {
     for (const kind of ["FACULTY", "LEARNER"] as const) {
       await expect(listCollegeRoleDirectory(facultyInCollegeB, kind, {}))
