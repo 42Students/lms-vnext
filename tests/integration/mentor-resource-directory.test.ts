@@ -113,6 +113,7 @@ describe("Mentor scoped resource metadata and links — PostgreSQL",()=>{
   expect(after.items.every(row=>row.projectId===project.id)).toBe(true);
  });
 
+
  it("denies Learner/foreign Resource edits without persisting audit or changing content",async()=>{
   const {project}=await fixture();
   const created=await createProjectResource(admin,project.id,{

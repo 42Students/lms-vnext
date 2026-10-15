@@ -5,6 +5,7 @@ import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {hrConversationDetailHref} from "@/modules/placements/hr-conversation-detail-links-model";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {readRecruiterThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
@@ -43,9 +44,11 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   {!result.messages.length?<p role="status" className="rounded-xl border border-border p-5 text-body">No messages on this page.</p>:null}
   <RecruiterConversationReplyForm threadId={result.thread.id}/>
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
-   {result.page<result.pages?<Link href={"/hr/conversations/"+threadId+"?page="+(result.page+1)}
+   {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newest messages</Link>:null}
+   {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older</Link>:null}
-   {result.page>1?<Link href={"/hr/conversations/"+threadId+"?page="+(result.page-1)}
+   {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newer</Link>:null}
   </nav>
  </main>;

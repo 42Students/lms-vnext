@@ -1,4 +1,5 @@
 import { canContactRecipientAtRuntime } from "./runtime-safety";
+import { opaqueBatchAttemptKey } from "./batch-dedupe";
 import { decideDelivery, normalizeRecipient, outboundSendSchema, type DeliveryPolicy, type OutboundSendRequest, type OutboundStatus } from "./model";
 
 export interface OutboundProvider {
@@ -29,27 +30,48 @@ export async function deliverBatch(args: {
   runtimeEnv?: Record<string, string | undefined>;
 }): Promise<DeliveryRecord[]> {
   if (args.requests.length > 500) throw new Error("OUTBOUND_BATCH_CAP_EXCEEDED");
+  // Validate the entire batch before the first persistence or external send.
+  const requests = args.requests.map(raw => outboundSendSchema.parse(raw));
+  const keyedRequests = await Promise.all(requests.map(async request => ({
+    request,recipientKey:await args.recipientKeyFor(request),
+  })));
+  if(keyedRequests.some(item=>!/^[0-9a-f]{64}$/.test(item.recipientKey)))
+    throw new Error("INVALID_RECIPIENT_KEY");
   const records: DeliveryRecord[] = [];
+  let startingDailySent:number|undefined;
+  let acceptedInBatch=0;
+  const recipientAccepted=new Map<string,{baseline:number;accepted:number}>();
   const seenRecipientPurpose = new Set<string>();
-  for (const raw of args.requests) {
-    const request = outboundSendSchema.parse(raw);
+  for (const {request,recipientKey} of keyedRequests) {
     const policy = await args.policyFor(request);
+    startingDailySent ??= policy.sentToday;
     const initial = decideDelivery(request, policy);
     // Enforce the independently configured AUTH test allowlist even if a caller
     // accidentally builds a permissive DeliveryPolicy object.
     const decision = canContactRecipientAtRuntime(
       request.channel, request.recipient, args.runtimeEnv ?? process.env,
     ) ? initial : {status:"SUPPRESSED" as const, reason:"nonprod-not-allowlisted" as const};
-    const recipientKey = await args.recipientKeyFor(request);
-    if (!/^[0-9a-f]{64}$/.test(recipientKey)) throw new Error("INVALID_RECIPIENT_KEY");
     // Never dispatch the same keyed recipient twice for the same purpose in one batch.
     // Use only the opaque key, never contact details, in the deduplication set.
-    const dedupeKey = request.channel + ":" + recipientKey + ":" + request.purpose;
+    const dedupeKey = opaqueBatchAttemptKey(request.channel,recipientKey,request.purpose,request.templateKey);
     const duplicate = seenRecipientPurpose.has(dedupeKey);
     seenRecipientPurpose.add(dedupeKey);
+    const recipientWindowKey=request.channel+":"+recipientKey;
+    const recipientCounter=recipientAccepted.get(recipientWindowKey)??{
+      baseline:policy.recentRecipientSends,accepted:0,
+    };
+    recipientAccepted.set(recipientWindowKey,recipientCounter);
+    const recipientWindowFull= Math.max(
+      policy.recentRecipientSends,recipientCounter.baseline+recipientCounter.accepted,
+    )>=policy.recipientWindowCap;
+    const capacityDecision = decision.status==="QUEUED" && recipientWindowFull
+      ? {status:"SUPPRESSED" as const,reason:"rate-limited" as const} :
+      decision.status==="QUEUED" &&
+      Math.max(policy.sentToday,startingDailySent+acceptedInBatch)>=policy.dailyCap
+      ? {status:"SUPPRESSED" as const,reason:"daily-cap" as const}:decision;
     const finalDecision = duplicate
       ? {status: "SUPPRESSED" as const, reason: "duplicate-in-batch" as const}
-      : decision;
+      : capacityDecision;
     const record: DeliveryRecord = {
       batchId: args.batchId,
       channel: request.channel,
@@ -68,6 +90,10 @@ export async function deliverBatch(args: {
         record.status = "FAILED";
       }
       await args.repository.update(record);
+      if(record.status==="SENT"){
+        acceptedInBatch++;
+        recipientCounter.accepted++;
+      }
     }
     records.push({ ...record });
   }
