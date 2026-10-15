@@ -160,6 +160,8 @@ Legacy:
 - [ ] stage filters/counts match.
 - [ ] focused review CTA matches.
 - [ ] applicant detail drawer matches.
+**W69 PARTIAL — Applicant notes:** Persisted private applicant notes (migration 0059 `placement_application_notes`, append-only): recruiters see and add notes for company-shared (SHORTLISTED, active) applicants in the HR applicant drawer, visible only to recruiters of the same company; the TPO applicant detail page has a separate TPO-only note list. The two audiences never see each other's notes. Writes use strict Zod, same-origin POST, a stale-token check on the newest note the author saw (409 when someone wrote meanwhile), live ACTIVE recruiter/grant re-verification (new `placements.recruiter.note` permission) or TPO persisted-actor check, and an audit event that records the note id and length but not the text. Notes cannot be edited or deleted. Ratings, per-round review decisions and browser acceptance remain open; the audit event is visible to the college audit log (existence only).
+
 - [ ] recruiter notes/ratings match.
 - [ ] round-selection modal for decisions matches.
 - [ ] access to sensitive fields follows company-share policy.
