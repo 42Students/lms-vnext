@@ -43,3 +43,12 @@ export function minimumOfferResponseDeadline(
   }
   return new Date(cursor);
 }
+
+/** D5: an offer cannot be accepted or declined at its exact expiry instant. */
+export function isPlacementOfferResponseExpired(
+  expiresAt: Date | null,
+  now: Date,
+): boolean {
+  return expiresAt !== null && (!Number.isFinite(expiresAt.getTime()) ||
+    now.getTime() >= expiresAt.getTime());
+}

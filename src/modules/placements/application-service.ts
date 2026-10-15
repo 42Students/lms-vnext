@@ -45,7 +45,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { learnerWithdrawalReasonSchema } from "./learner-withdrawal-model";
-import { evaluatePlacementEligibility, isPlacementJobTargetCohort } from "./eligibility-service";
+import { evaluatePlacementEligibility, isPlacementJobTargetCohort, placementApplyEligibilityDenial } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
@@ -531,7 +531,7 @@ async function loadApplicationDetails(
   return { ...row, history };
 }
 
-function resolveExistingApplication(
+export function resolveExistingApplication(
   existing: typeof placementApplications.$inferSelect,
   channel: "INTERNAL" | "EXTERNAL",
 ) {
@@ -632,16 +632,8 @@ export async function applyToPlacementJob(
       job.id,
     );
 
-  if (eligibility.status === "INELIGIBLE") {
-    throw new PlacementsServiceError(
-      "PLACEMENT_APPLICATION_INELIGIBLE",
-    );
-  }
-  if (eligibility.status === "NEEDS_DATA") {
-    throw new PlacementsServiceError(
-      "PLACEMENT_APPLICATION_NEEDS_DATA",
-    );
-  }
+  const preflightDenial = placementApplyEligibilityDenial(eligibility.status);
+  if (preflightDenial) throw new PlacementsServiceError(preflightDenial);
 
   const created = await getDb().transaction(
     async (tx) => {
@@ -735,13 +727,11 @@ export async function applyToPlacementJob(
       const liveEligibility = await evaluatePlacementEligibility(
         context,
         job.id,
+        undefined,
+        tx,
       );
-      if (liveEligibility.status === "INELIGIBLE") {
-        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
-      }
-      if (liveEligibility.status === "NEEDS_DATA") {
-        throw new PlacementsServiceError("PLACEMENT_APPLICATION_NEEDS_DATA");
-      }
+      const liveDenial = placementApplyEligibilityDenial(liveEligibility.status);
+      if (liveDenial) throw new PlacementsServiceError(liveDenial);
 
       // The manager's coordinator assignment writer takes the same job-row
       // lock. A learner cannot become both applicant and coordinator for one
@@ -790,8 +780,14 @@ export async function applyToPlacementJob(
       }).from(placementOffers)
         .innerJoin(placementApplications, eq(
           placementApplications.id, placementOffers.applicationId,
-        )).where(eq(placementApplications.membershipId, membership.id))
-        .for("share");
+        ))
+        .innerJoin(placementJobs, eq(
+          placementJobs.id, placementApplications.jobId,
+        ))
+        .where(and(
+          eq(placementApplications.membershipId, membership.id),
+          eq(placementJobs.collegeId, job.collegeId),
+        )).for("share");
       if (!canAddPlacementHeldOffer({
         maxHeldOffers: rules?.maxHeldOffers ?? 1,
         upliftPct: rules?.upliftPct ?? 40,
@@ -804,6 +800,15 @@ export async function applyToPlacementJob(
       })) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
+
+      // D2: apply idempotency is decided against the locked, persisted
+      // existing role/membership row, not only the optimistic preflight.
+      const [liveExisting] = await tx.select().from(placementApplications)
+        .where(and(
+          eq(placementApplications.roleOptionId, roleOption.id),
+          eq(placementApplications.membershipId, membership.id),
+        )).for("update").limit(1);
+      if (liveExisting) return resolveExistingApplication(liveExisting, channel);
 
       const [application] = await tx
         .insert(placementApplications)
@@ -1030,6 +1035,14 @@ export async function getPlacementApplication(
   return row;
 }
 
+/** P-S2-11: do not bypass an issued or accepted offer via self-withdrawal. */
+export function canSelfWithdrawPlacementApplication(
+  offers: readonly { status: string }[],
+): boolean {
+  return !offers.some((offer) =>
+    offer.status === "ISSUED" || offer.status === "ACCEPTED");
+}
+
 export async function withdrawPlacementApplication(
   context: RequestContext,
   applicationIdInput: string,
@@ -1112,6 +1125,17 @@ export async function withdrawPlacementApplication(
         .for("share")
         .limit(1);
       if (!liveRole) throw new AuthorizationError("placements.read");
+
+      // P-S2-11: a live official offer belongs to the TPO response flow;
+      // a learner may not remove its application while ISSUED or ACCEPTED.
+      const activeOffers = await tx.select({
+        status: placementOffers.status,
+      }).from(placementOffers)
+        .where(eq(placementOffers.applicationId, applicationId))
+        .for("share");
+      if (!canSelfWithdrawPlacementApplication(activeOffers)) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
 
       const [application] = await tx
         .update(placementApplications)

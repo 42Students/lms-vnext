@@ -13,6 +13,8 @@ import {
   placementCompanies,
   placementJobRoleOptions,
   placementJobs,
+  placementOffers,
+  placementCollegeRules,
   placementJobEligibilityPolicies,
   placementBatchRegistrations,
 } from "@/db/schema";
@@ -24,6 +26,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
+import { canAddPlacementHeldOffer, canShowLearnerSelfApply } from "./held-offer-policy";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
@@ -185,6 +188,27 @@ export async function listLearnerPlacementJobs(
     ),
   );
 
+  // Apply the same current-college held-offer limit that the write path
+  // checks again under locks. This controls only the affordance, not access.
+  const [rules] = await getDb().select({
+    maxHeldOffers: placementCollegeRules.maxHeldOffers,
+    upliftPct: placementCollegeRules.upliftPct,
+  }).from(placementCollegeRules)
+    .where(eq(placementCollegeRules.collegeId, membership.collegeId)).limit(1);
+  const heldOffers = await getDb().select({
+    kind: placementOffers.kind,
+    status: placementOffers.status,
+    annualCtcInr: placementOffers.annualCtcInr,
+  }).from(placementOffers)
+    .innerJoin(placementApplications,
+      eq(placementApplications.id, placementOffers.applicationId))
+    .innerJoin(placementJobs,
+      eq(placementJobs.id, placementApplications.jobId))
+    .where(and(
+      eq(placementApplications.membershipId, membership.id),
+      eq(placementJobs.collegeId, membership.collegeId),
+    ));
+
   const eligibilityByJob = new Map<
     string,
     Promise<PlacementEligibilityResult>
@@ -234,15 +258,22 @@ export async function listLearnerPlacementJobs(
         application,
         eligibility,
         deadlinePassed,
-        canApply:
-          registrationState === "CAN_APPLY" &&
-          !debarred &&
-          participation.canSelfApply &&
-          !application &&
-          !deadlinePassed &&
-          (eligibility.status === "ELIGIBLE" ||
-            eligibility.status ===
-              "ELIGIBLE_WITH_MISSING_EVIDENCE"),
+        canApply: canShowLearnerSelfApply({
+          registrationState,
+          debarred,
+          canSelfApply: participation.canSelfApply,
+          hasApplication: application !== null,
+          deadlinePassed,
+          eligibilityStatus: eligibility.status,
+          heldOfferEligible: canAddPlacementHeldOffer({
+            maxHeldOffers: rules?.maxHeldOffers ?? 1,
+            upliftPct: rules?.upliftPct ?? 40,
+            nextAnnualCtcInr: row.roleOption.minimumAnnualCtcInr ??
+              row.job.minimumAnnualCtcInr,
+            isDream: false,
+            heldOffers,
+          }),
+        }),
       };
     }),
   );
