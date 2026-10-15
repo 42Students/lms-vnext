@@ -184,3 +184,8 @@ export function collegeRoleDirectoryHasActiveFilters(kind:CollegeDirectoryKind,f
  const base=collegeRoleDirectoryHref(kind,{...filter,page:1,pageSize:COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,sort:"NAME"});
  return new URL(base,"https://college.invalid").searchParams.size>0;
 }
+
+export function collegeRoleDirectoryPageRange(page:number,pageSize:number,total:number):{first:number;last:number}{
+ if(total<=0)return {first:0,last:0};
+ return {first:Math.min(total,(page-1)*pageSize+1),last:Math.min(total,page*pageSize)};
+}

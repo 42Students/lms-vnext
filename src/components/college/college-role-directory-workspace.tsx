@@ -11,6 +11,7 @@ import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryFilterMessage,
   collegeRoleDirectoryHasActiveFilters,
+  collegeRoleDirectoryPageRange,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
@@ -371,7 +372,7 @@ export async function CollegeRoleDirectoryWorkspace({
 
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Page {result.filter.page} of {result.totalPages} · {result.pageSize} per page
+          Page {result.filter.page} of {result.totalPages} · Showing {collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first}–{collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last} of {result.total} memberships
         </p>
         <div className="flex gap-2">
           {result.filter.page > 1 ? (
