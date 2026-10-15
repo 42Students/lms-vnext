@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
-import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches} from "@/modules/people/faculty-profile-repeatable-actions";
+import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches,facultyProfileRepeatableIssue} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -33,6 +33,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   const [search,setSearch]=useState("");
   const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
     facultyProfileRecordMatches(row,fields.map(field=>field.name),search));
+  const sectionIssue=facultyProfileRepeatableIssue(section,rows);
   const missingRequired = rows.some(row => fields.some(field =>
     field.required && (typeof row[field.name] !== "string" || !String(row[field.name]).trim()),
   ));
@@ -44,7 +45,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (changed && !pending && !missingRequired) void onSave(section, rows);
+    if (changed && !pending && !missingRequired && !sectionIssue) void onSave(section, rows);
   }
   return (
     <form aria-label={title} onSubmit={submit}
@@ -118,11 +119,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           onClick={() => { setRows(current => [...current, create()]); setChanged(true); }}>
           Add {title.toLowerCase()} record
         </button>
-        <button type="submit" disabled={!changed || pending || missingRequired}
+        <button type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
           className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </button>
       </div>
+      {changed && sectionIssue?<p role="alert" className="text-sm text-error">Review this section: {sectionIssue}</p>:null}
       {changed ? <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
         onClick={()=>{if(!window.confirm("Discard unsaved changes to "+title+"?"))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
