@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
+import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 export function CompanyShareControls({jobId,ready,initialLinks,status}:{
  jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;
@@ -27,13 +28,14 @@ export function CompanyShareControls({jobId,ready,initialLinks,status}:{
   finally{setPending(false);}
  }
  async function revokeLink(id:string){
+  if(!window.confirm("Revoke this company applicant link? Anyone using it will immediately lose access."))return;
   setPending(true);setError("");
   try{
    const res=await fetch(root+"/"+encodeURIComponent(id)+"/revoke",{
     method:"POST",credentials:"same-origin",
    });
    if(!res.ok)throw new Error("Cannot revoke");
-   setLinks(current=>current.map(item=>item.id===id?{...item,revokedAt:new Date().toISOString()}:item));
+   setLinks(current=>afterCompanyShareRevocation(current,id,status,new Date().toISOString()));
    setNewUrl(null);
   }catch{setError("Could not revoke link. Refresh before trying again.");}
   finally{setPending(false);}
