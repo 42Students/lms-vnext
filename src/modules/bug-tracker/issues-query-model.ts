@@ -1,0 +1,17 @@
+import {trackerAdminListSchema} from "./admin-validation";
+const pageKeys=new Set(["status","severity","environment","q","sort","beforeCreatedAt","beforeId"]);
+export function parseTrackerIssuesPageParams(raw:Record<string,string|string[]|undefined>){
+ if(Object.keys(raw).some(key=>!pageKeys.has(key)||Array.isArray(raw[key])))return null;
+ const input={
+  status:raw.status||undefined,
+  severity:raw.severity||undefined,
+  environment:raw.environment||undefined,
+  q:raw.q?.trim()||undefined,
+  sort:raw.sort||undefined,
+  beforeCreatedAt:raw.beforeCreatedAt||undefined,
+  beforeId:raw.beforeId||undefined,
+  limit:50,
+ };
+ const parsed=trackerAdminListSchema.safeParse(input);
+ return parsed.success?{input,display:parsed.data}:null;
+}
