@@ -36,6 +36,7 @@ export async function changeTpoBatchLifecycle(ctx:RequestContext,raw:unknown){
    finishedAt:plan.shouldFinish?new Date():null,updatedAt:new Date(),updatedByUserId:ctx.user.id,
   }).where(and(eq(placementBatchLifecycles.cohortId,input.batchId),
    eq(placementBatchLifecycles.collegeId,collegeId))).returning();
+  if(!updated)throw new TpoBatchLifecycleError("BATCH_NOT_STARTED");
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
