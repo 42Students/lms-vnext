@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
+import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
 import {selectTpoBulkPage,toggleTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
@@ -118,7 +119,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
-    busy={busy||outcomes.length>0} onConfirm={()=>void confirm()}/>:null}
+    busy={busy||outcomes.length>0} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
 }
