@@ -309,4 +309,15 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("Academic period status uses persisted college class parents before pagination",async()=>{
+    const found=await pool!.query<{status:string}>("SELECT status FROM academic_periods WHERE id=$1",[ids.period]);const actual=found.rows[0]!.status;const other=actual==="CLOSED"?"ACTIVE":"CLOSED";
+    const [found,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,periodLifecycle:actual}),
+      listCollegeClasses(adminA,{q:key,periodLifecycle:other}),
+      listCollegeClasses(adminB,{q:key,periodLifecycle:actual}),
+    ]);
+    expect(found.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
 });

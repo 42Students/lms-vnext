@@ -9,7 +9,7 @@ export type ClassExportRow = {
   periodName: string; capacity: number | null; activeLearners: number; status: string;
 };
 
-export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; classCode?: string; periodCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; status: "ALL" | "ACTIVE" | "ARCHIVED"; cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
+export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; classCode?: string; periodCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED"; status: "ALL" | "ACTIVE" | "ARCHIVED"; cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
   const params = new URLSearchParams();
   if (raw.q) params.set("q", raw.q);
   if (raw.programId) params.set("programId", raw.programId);
@@ -22,6 +22,7 @@ export function classesExportHref(raw: { q: string; programId?: string; cohortCo
   if (raw.status !== "ACTIVE") params.set("status", raw.status);
   if(raw.cohortStatus&&raw.cohortStatus!=="ALL")params.set("cohortStatus",raw.cohortStatus);
   if(raw.programStatus&&raw.programStatus!=="ALL")params.set("programStatus",raw.programStatus);
+  if(raw.periodLifecycle && raw.periodLifecycle!=="ALL")params.set("periodLifecycle",raw.periodLifecycle);
   return "/api/academics/college-classes-export" + (params.size ? "?" + params.toString() : "");
 }
 
