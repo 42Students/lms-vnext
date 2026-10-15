@@ -49,3 +49,12 @@ export function facultySubmissionReviewEmptyLabel(filter:"ALL"|"UNGRADED"|"GRADE
 export function facultyReviewRequestCurrent(request:number, latest:number):boolean {
  return Number.isSafeInteger(request)&&request===latest;
 }
+
+/** Never expose scope/tenant details through a failed read. */
+export function facultySubmissionReviewFailure(status:number):string|null {
+ if(status===401)return "Your session has expired. Sign in again before reviewing submissions.";
+ if(status===403||status===404)return "These submissions are no longer available to this teaching Section.";
+ if(status===429)return "Too many review requests. Retry after a short interval.";
+ if(status>=500)return "The review service is temporarily unavailable. Retry later.";
+ return null;
+}
