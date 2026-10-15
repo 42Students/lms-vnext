@@ -1,4 +1,4 @@
-import {facultyMetadataEditableKey,type FacultyMetadataDraftEntry} from "./faculty-profile-metadata-model";
+import {facultyMetadataEditableKey,facultyMetadataFromDraft,type FacultyMetadataDraftEntry} from "./faculty-profile-metadata-model";
 import type {FacultyProfileDocument} from "./faculty-profile-document";
 /** Restore exactly the persisted text draft after an explicit discard. */
 export function restoreFacultyTextDraft(snapshot:Readonly<Record<string,string>>):Record<string,string>{
@@ -23,4 +23,18 @@ export function restoreFacultyMetadataDraft(
 export function removeFacultySkillDraft<T extends {id:string}>(saved:readonly T[],id:string):T[]{
  if(!saved.some(row=>row.id===id))return [...saved];
  return saved.filter(row=>row.id!==id);
+}
+
+/** Inline feedback uses the same metadata writer contract, not a parallel heuristic. */
+export function facultyMetadataDraftIssue(
+ saved:FacultyProfileDocument["metadata"],draft:readonly FacultyMetadataDraftEntry[],
+):string|null{
+ try{
+  facultyMetadataFromDraft(saved,draft);
+  return null;
+ }catch(error){
+  if(error instanceof Error&&error.message==="Duplicate or protected metadata key")
+   return "Duplicate or protected metadata key";
+  return "Use unique, permitted field names and text within their limits.";
+ }
 }

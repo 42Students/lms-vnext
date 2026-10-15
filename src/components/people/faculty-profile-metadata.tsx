@@ -3,13 +3,14 @@ import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import { facultyMetadataFromDraft,facultyMetadataEditableKey,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
-import {restoreFacultyMetadataDraft} from "@/modules/people/faculty-profile-draft-actions";
+import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
  initial:FacultyProfileDocument["metadata"];pending:boolean;
  onSave:(section:FacultySelfSection,value:FacultyProfileDocument["metadata"])=>Promise<void>;
 }){
  const [rows,setRows]=useState<FacultyMetadataDraftEntry[]>(()=>restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));
  const [dirty,setDirty]=useState(false),[error,setError]=useState<string|null>(null);
+ const issue=facultyMetadataDraftIssue(initial,rows);
  function edit(id:string,key:"key"|"value",value:string){
   setRows(current=>current.map(row=>row.id===id?{...row,[key]:value}:row));setDirty(true);
  }
@@ -36,6 +37,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     Remove draft
    </button>
   </div>)}
+  {dirty&&issue?<p role="alert" className="text-sm text-error">{issue}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={pending||rows.length>=100}
@@ -46,7 +48,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     if(!window.confirm("Discard unsaved metadata edits?"))return;
     setRows(restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));setDirty(false);setError(null);
    }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard unsaved metadata</button>:null}
-   <button type="submit" disabled={pending||!dirty} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
+   <button type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
     {pending?"Saving…":"Save metadata"}
    </button>
   </div>
