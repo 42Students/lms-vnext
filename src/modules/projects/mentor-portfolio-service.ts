@@ -44,7 +44,8 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
   if (!scope.enabled || !scope.projects.length) {
     return { enabled: scope.enabled, query, ...pageMentorPortfolio([], query) };
   }
-  const allowed = new Set(scope.projects.map(p => p.id));
+  const allowed = new Set(scope.projects
+    .filter(p=>query.projectStatus==="ALL"||p.status===query.projectStatus).map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(
     alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age,
