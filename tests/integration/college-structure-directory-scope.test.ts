@@ -401,4 +401,16 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(excluded.items).toEqual([]);
     expect(foreign.items).toEqual([]);
   });
+  it("filters classes by the persisted department belonging to their College Admin",async()=>{
+    const department=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const code=department.rows[0]!.code;
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,departmentCode:code}),
+      listCollegeClasses(adminA,{q:key,departmentCode:"NO-MATCHING-DEPARTMENT"}),
+      listCollegeClasses(adminB,{q:key,departmentCode:code}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
 });
