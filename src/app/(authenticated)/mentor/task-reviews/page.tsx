@@ -7,7 +7,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getMentorTaskReviews } from "@/modules/projects/mentor-task-review-service";
 import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 import {
-  mentorTaskReviewHref, mentorTaskReviewQuerySchema, mentorTaskReviewTargetHref,
+  mentorTaskReviewHref, mentorTaskReviewExportHref,
+  mentorTaskReviewQuerySchema, mentorTaskReviewTargetHref,
 } from "@/modules/projects/mentor-task-review-model";
 
 type Params = {
@@ -119,9 +120,7 @@ export default async function MentorTaskReviewsPage({
         </Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/mentor/task-reviews/export?"+new URLSearchParams({
-          search:data.query.search,priority:data.query.priority,order:data.query.order,
-        }).toString()} download
+        <Link href={mentorTaskReviewExportHref(data.query)} download
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
           Export pending task review metadata CSV (max 200)
         </Link>

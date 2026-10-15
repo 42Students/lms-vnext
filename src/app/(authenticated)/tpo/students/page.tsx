@@ -3,6 +3,7 @@ import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError} from "@/modules/placements/tpo-students-url-guard";
+import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -574,6 +575,11 @@ export default async function TpoStudentsPage({
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
           <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
         </Suspense>
+
+        <TpoBulkActionPanel key={"students:"+roster.page+":"+query.search+":"+query.journeyState}
+          target="STUDENTS"
+          rows={roster.items.map(student=>({id:student.membershipId,
+            label:student.displayName+" · "+student.branchName}))}/>
 
         {manageAllowed ? (
           <TpoStudentsBulkAdd
