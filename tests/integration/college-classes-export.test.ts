@@ -45,6 +45,14 @@ describe.skipIf(!enabled)("College classes export persisted PostgreSQL scope",()
     const result=await exportCollegeClasses(own,{q:label,status:"ALL"});
     expect(result.exported).toBe(1);
     expect(result.csv).toContain(label);
+    const unsetCapacity = await exportCollegeClasses(own,{q:label,status:"ALL",capacityState:"UNSET"});
+    const configuredCapacity = await exportCollegeClasses(own,{q:label,status:"ALL",capacityState:"CONFIGURED"});
+    expect(unsetCapacity.csv).toContain(label);
+    expect(configuredCapacity.exported).toBe(0);
+    const withBatchCode = await exportCollegeClasses(own,{q:label,status:"ALL",cohortCode:label});
+    expect(withBatchCode.csv).toContain(label);
+    const otherBatch = await exportCollegeClasses(own,{q:label,status:"ALL",cohortCode:"nonexistent-cohort"});
+    expect(otherBatch.exported).toBe(0);
     const foreign=await exportCollegeClasses(other,{q:label,status:"ALL"});
     expect(foreign.exported).toBe(0);
     expect(foreign.csv).not.toContain(label);

@@ -23,6 +23,7 @@ export default async function CollegeSemesterCoursesPage({
     Object.fromEntries(
       Object.entries({
         q: first(raw.q),
+        courseCode: first(raw.courseCode),
         programId: first(raw.programId),
         periodId: first(raw.periodId),
         type: first(raw.type),
@@ -65,6 +66,11 @@ export default async function CollegeSemesterCoursesPage({
           <label className="grid gap-1 text-sm font-semibold text-body">
             Course / cohort search
             <input name="q" type="search" defaultValue={query.q} maxLength={100}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">
+            Exact course code
+            <input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">

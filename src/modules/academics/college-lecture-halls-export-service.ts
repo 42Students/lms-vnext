@@ -20,6 +20,7 @@ export async function exportCollegeLectureHalls(context:RequestContext,raw:unkno
   roomType:query.roomType==="ALL"?undefined:query.roomType,
   departmentId:query.departmentId,minimumCapacity:query.minimumCapacity,
   maximumCapacity:query.maximumCapacity,
+  upcoming:query.upcoming==="ALL"?undefined:query.upcoming,
  };
  const first=await listLectureHalls(context,{...filters,limit,offset:0});
  const rows=[...first.items];
