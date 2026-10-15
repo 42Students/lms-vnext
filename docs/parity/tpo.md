@@ -2097,3 +2097,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch Students inheritance source filter — PARTIAL:** Explicit LEARNER/CLASS/BATCH/NONE selection now composes over the authorized page and supports source audit; missing source never implies eligibility. Cohort-wide filtering and acceptance open.
 
 **Chat-2 batch Students registration evidence filter — PARTIAL:** Current-page recorded/unrecorded selection is permitted only when registration storage is available; unavailable never means unrecorded or consent. Page-scope/browser acceptance pending.
+
+**Chat-2 batch Students query parsing hardening:** All decision/source/registration URL parameters are now validated and applied rather than silently defaulting to ALL. Adds exact multi-filter regression tests; browser acceptance open.

@@ -26,3 +26,8 @@ export function batchStudentPageHref(batchId:string,page:number,filters:{q:strin
  if(filters.registration!=="ALL")params.set("registration",filters.registration);
  return "/tpo/batches/"+encodeURIComponent(batchId)+"/students?"+params.toString();
 }
+
+export function parseBatchStudentSearchParams(raw:{q?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[]}){
+ const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+ return batchStudentViewSchema.safeParse({q:first(raw.q),decision:first(raw.decision),source:first(raw.source),registration:first(raw.registration)});
+}
