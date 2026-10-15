@@ -3,7 +3,7 @@ import {and,asc,count,eq,gt,ilike,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {
- colleges,collegeMemberships,placementApplications,placementApplicationScreenings,
+ colleges,collegeMemberships,organizations,placementApplications,placementApplicationScreenings,
  placementJobs,users,
 } from "@/db/schema";
 import {projectRecruiterVisibleShortlist} from "../tpo-shareable-shortlist-model";
@@ -40,6 +40,10 @@ export async function getPublicCompanyApplicantShare(
    .innerJoin(placementJobs,and(eq(placementJobs.id,shares.jobId),
      eq(placementJobs.collegeId,shares.collegeId)))
    .innerJoin(colleges,and(eq(colleges.id,shares.collegeId),eq(colleges.status,"ACTIVE")))
+   .innerJoin(organizations,and(
+     eq(organizations.id,colleges.organizationId),
+     eq(organizations.status,"ACTIVE"),
+   ))
    .where(and(eq(shares.tokenHash,hashCompanyShareToken(valid.data)),
       isNull(shares.revokedAt),gt(shares.expiresAt,sql`clock_timestamp()`),
       inArray(placementJobs.status,["PUBLISHED","CLOSED"])))
