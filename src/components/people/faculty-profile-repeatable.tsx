@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch,facultyProfileCanReorderVisible} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileCanReorderVisible,facultyProfileSearchAfterInsertion,facultyProfileSearchSummary} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -65,6 +65,10 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
           className="mt-1.5 w-full rounded-md border border-border bg-background p-3" placeholder="Search section fields"/>
       </label>:null}
+      {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
+        <button type="button" className="rounded border border-border px-2 py-1" onClick={()=>setSearch("")}>Clear search</button>
+      </div>:null}
       {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No matching records. Clear search to restore the full list.</p>:null}
       {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
@@ -111,7 +115,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             </div>
             <button type="button" disabled={pending || rows.length >= maxItems} onClick={() => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
-              setChanged(true);
+              setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);
             }} className="mt-3 mr-2 min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
               Duplicate draft
             </button>
@@ -128,7 +132,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       <div className="flex flex-wrap gap-3">
         <button type="button" disabled={pending || rows.length >= maxItems}
           className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
-          onClick={() => { setRows(current => [...current, create()]); setChanged(true); }}>
+          onClick={() => { setRows(current => [...current, create()]); setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true); }}>
           Add {title.toLowerCase()} record
         </button>
         <button type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
