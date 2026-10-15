@@ -81,11 +81,6 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if ("periodStatus" in query && query.periodStatus !== "ALL") params.set("periodStatus",query.periodStatus);
   if ("courseStatus" in query && query.courseStatus !== "ALL") params.set("courseStatus",query.courseStatus);
   if ("departmentCode" in query && query.departmentCode) params.set("departmentCode",query.departmentCode);
-  if ("programStatus" in query && query.programStatus !== "ALL") params.set("programStatus",query.programStatus);
-  if ("cohortStatus" in query && query.cohortStatus !== "ALL") params.set("cohortStatus",query.cohortStatus);
-  if ("periodStatus" in query && query.periodStatus !== "ALL") params.set("periodStatus",query.periodStatus);
-  if ("courseStatus" in query && query.courseStatus !== "ALL") params.set("courseStatus",query.courseStatus);
-  if ("departmentCode" in query && query.departmentCode) params.set("departmentCode",query.departmentCode);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }

@@ -158,4 +158,17 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({departmentCode:"C & S"}))).toContain("departmentCode=C+%26+S");
   });
 
+  it("shared parent filters serialize exactly once for lessons and progress", () => {
+    for (const kind of ["LESSONS","PROGRESS"] as const) {
+      const schema = kind === "LESSONS" ? collegeLessonQuerySchema : collegeProgressQuerySchema;
+      const href = collegeLearningHref(kind, schema.parse({
+        programStatus:"ACTIVE",cohortStatus:"PLANNED",periodStatus:"ACTIVE",
+        courseStatus:"ARCHIVED",departmentCode:"CS & EE",
+      }));
+      const params = new URL(href,"https://college.test").searchParams;
+      for (const key of ["programStatus","cohortStatus","periodStatus","courseStatus","departmentCode"])
+        expect(params.getAll(key)).toHaveLength(1);
+    }
+  });
+
 });
