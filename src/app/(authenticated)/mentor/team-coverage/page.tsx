@@ -90,7 +90,7 @@ export default async function MentorTeamCoveragePage({
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Team-size order
             <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
-              <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option>
+              <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </select>
           </label>
           <button type="submit"
