@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const mentorTeamCoverageQuerySchema = z.object({
   filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR"]).default("ALL"),
+  assignment: z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   status: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
@@ -27,6 +28,7 @@ export type MentorTeamCoverageRow = {
   learners: number;
   mentors: number;
   hasPrimaryMentor: boolean;
+  isPrimaryMentor: boolean;
 };
 
 export function selectMentorTeamCoverage(
@@ -37,6 +39,7 @@ export function selectMentorTeamCoverage(
   const matches = rows.filter(row =>
     (!term || row.title.toLowerCase().includes(term)) &&
     (query.status === "ALL" || row.status === query.status) &&
+    (query.assignment === "ALL" || (query.assignment === "PRIMARY") === row.isPrimaryMentor) &&
     (query.filter === "ALL" ||
       (query.filter === "NO_LEARNERS" && row.learners === 0) ||
       (query.filter === "NO_PRIMARY_MENTOR" && !row.hasPrimaryMentor) ||
@@ -58,6 +61,7 @@ export function mentorTeamCoverageHref(query: MentorTeamCoverageQuery) {
   const params = new URLSearchParams();
   if (query.filter !== "ALL") params.set("filter",query.filter);
   if (query.status !== "ALL") params.set("status",query.status);
+  if (query.assignment !== "ALL") params.set("assignment",query.assignment);
   if (query.search) params.set("search",query.search);
   if (query.page > 1) params.set("page",String(query.page));
   const suffix = params.toString();
