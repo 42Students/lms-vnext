@@ -1604,3 +1604,7 @@ The task board now has the legacy Assignee picker limited to the current project
 ### PR-S2-04 task extras — PROPOSED / NOT DONE
 
 Prepared migration proposal for blocker_reason, due_date, estimate_points, task_type, scoped comment history and composite (project_id,id) FK; source-only validators and tests are ready. None of this is registered in 0082–0084; write endpoints, comment access filtering, UI and executed PG acceptance must follow migration review. Do not infer task fields or comments work from this staged proposal.
+
+### PR-S2-07 final delivery lock/reopen/attachments — PROPOSED / NOT DONE
+
+Safe immutable lock/reopen history and attachments require additional registered persistence. Proposed project_submissions fields, composite project/submission FK and delivery event table under docs/proposed-migrations; built standalone validation and guard models with tests. No endpoint is wired and the existing APPROVED review is not rewritten or silently reopened. Orchestrator must register schema, add atomic gate to draft creation and implement secure attachment verification before marking done.
