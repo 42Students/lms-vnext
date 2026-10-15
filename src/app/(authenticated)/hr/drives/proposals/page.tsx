@@ -5,7 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
-import {hrSentProposalHistoryHref} from "@/modules/placements/hr-drive-proposal-history-links";
+import {hrSentProposalHistoryHref,hrSentProposalExportHref} from "@/modules/placements/hr-drive-proposal-history-links";
 
 export default async function RecruiterDriveProposalHistory({
  searchParams,
@@ -49,6 +49,12 @@ export default async function RecruiterDriveProposalHistory({
     </label>
     <button type="submit" className="self-end min-h-11 rounded-md border border-border px-4 text-primary-text">Search</button>
    </form>
+   {data.items.length?<Link
+     href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
+      page:data.page,sort:input.data.sort})}
+     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+     Export this page (summary CSV)
+    </Link>:null}
    <p role="status" className="text-sm text-body">
     {data.total} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
