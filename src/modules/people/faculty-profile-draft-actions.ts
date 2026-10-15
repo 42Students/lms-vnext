@@ -80,3 +80,12 @@ export function facultyProfileSkillsIssue(
  const parsed=facultyProfileDocumentSchema.safeParse({skills:rows});
  return parsed.success?null:(parsed.error.issues[0]?.message??"Review Skills.");
 }
+
+/** The Skill search affects only visibility, not the complete saved section. */
+export function facultyProfileSkillMatches(
+ item:{skill:string;proficiency:string},query:string,
+):boolean{
+ const term=query.trim().toLocaleLowerCase();
+ return !term||item.skill.toLocaleLowerCase().includes(term)||
+  item.proficiency.toLocaleLowerCase().includes(term);
+}

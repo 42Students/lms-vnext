@@ -4,7 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
-import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue} from "@/modules/people/faculty-profile-draft-actions";
+import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue,facultyProfileSkillMatches} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
 export function FacultyProfileSkills({initial,pending,onSave}:{
  initial:FacultyProfileDocument["skills"];pending:boolean;
@@ -12,6 +12,8 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
 }){
  const [rows,setRows]=useState<Skill[]>(initial);
  const [changed,setChanged]=useState(false);
+ const [search,setSearch]=useState("");
+ const visibleSkills=rows.map((skill,index)=>({skill,index})).filter(({skill})=>facultyProfileSkillMatches(skill,search));
  const skillsIssue=facultyProfileSkillsIssue(rows);
  useFacultyProfileUnsavedWarning(changed);
  function edit(id:string,field:"skill"|"proficiency",value:string){
@@ -28,8 +30,13 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
    <p className="mt-1 text-sm text-muted-foreground">Add up to 100 professional skills and optional proficiency levels. Changes are saved only when you submit.</p>
   </div>
   {rows.length===0?<p className="text-sm text-muted-foreground">No skills added yet.</p>:null}
+  {rows.length>5?<label className="block text-sm text-body">Find skill
+    <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+     className="mt-1 w-full rounded-md border border-border bg-background p-3"/>
+   </label>:null}
+  {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
   <div className="space-y-3">
-   {rows.map((skill,index)=><div key={skill.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+   {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
     <label className="min-w-0 text-sm font-semibold text-body">Skill {index+1}
      <input className="mt-1.5 w-full min-w-0 rounded-md border border-border bg-background p-3" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
