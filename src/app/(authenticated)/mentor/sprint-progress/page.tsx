@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-sprint-progress-model";
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 
-type Params = { state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
+type Params = { projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -21,6 +21,7 @@ export default async function MentorSprintProgressPage({
   const raw = await searchParams;
   const parsed = mentorSprintProgressQuerySchema.safeParse({
     state: first(raw.state) ?? undefined,
+    projectId:first(raw.projectId) ?? undefined,
     release: first(raw.release) ?? undefined,
     search: first(raw.search) ?? undefined,
     page: first(raw.page) ?? undefined,
@@ -47,6 +48,12 @@ export default async function MentorSprintProgressPage({
           <input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             placeholder="Sprint, release or project" className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground" />
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assigned project
+          <select name="projectId" defaultValue={data.query.projectId??""} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="">All assigned projects</option>
+            {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint status
           <select name="state" defaultValue={data.query.state}
             className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
@@ -70,6 +77,7 @@ export default async function MentorSprintProgressPage({
         <Link href={"/api/mentor/sprint-progress/export?"+
           new URLSearchParams({
             state:data.query.state,release:data.query.release,search:data.query.search,
+            projectId:data.query.projectId??"",
           }).toString()}
           download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export filtered sprint CSV (max 100)
