@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const mentorTeamCoverageQuerySchema = z.object({
   filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR","MULTIPLE_MENTORS"]).default("ALL"),
+  order: z.enum(["TITLE","FEWEST_LEARNERS","MOST_LEARNERS"]).default("TITLE"),
   assignment: z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   status: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
@@ -46,8 +47,10 @@ export function selectMentorTeamCoverage(
       (query.filter === "HAS_LEARNERS" && row.learners > 0) ||
       (query.filter === "HAS_PRIMARY_MENTOR" && row.hasPrimaryMentor) ||
       (query.filter === "MULTIPLE_MENTORS" && row.mentors > 1)),
-  ).sort((a,b) => a.title.localeCompare(b.title) ||
-    a.projectId.localeCompare(b.projectId));
+  ).sort((a,b) =>
+    (query.order==="FEWEST_LEARNERS" ? a.learners-b.learners :
+      query.order==="MOST_LEARNERS" ? b.learners-a.learners : 0) ||
+    a.title.localeCompare(b.title) || a.projectId.localeCompare(b.projectId));
   const total = matches.length;
   const pageSize = 20;
   const totalPages = Math.max(1,Math.ceil(total/pageSize));
@@ -60,6 +63,7 @@ export function selectMentorTeamCoverage(
 
 export function mentorTeamCoverageHref(query: MentorTeamCoverageQuery) {
   const params = new URLSearchParams();
+  if (query.order !== "TITLE") params.set("order",query.order);
   if (query.filter !== "ALL") params.set("filter",query.filter);
   if (query.status !== "ALL") params.set("status",query.status);
   if (query.assignment !== "ALL") params.set("assignment",query.assignment);
