@@ -24,6 +24,7 @@ import {
   placementCompanyRelationships,
   placementCompanies,
   placementDriveDayCoordinatorAssignments,
+  placementDebarments,
   placementEligibilityDecisions,
   placementEligibilityOverrides,
   placementJobs,
@@ -45,6 +46,7 @@ import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
+import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 import {
   createPlacementApplicationInputSchema,
   placementApplicationIdSchema,
@@ -656,6 +658,16 @@ export async function applyToPlacementJob(
         job.id,
         membership.id,
       );
+      // P-S1-02: a job-level INCLUDE override cannot bypass a live
+      // college debarment. Check in the write transaction before INSERT.
+      const bans = await tx.select().from(placementDebarments).where(and(
+        eq(placementDebarments.collegeId, job.collegeId),
+        eq(placementDebarments.membershipId, membership.id),
+      )).for("share");
+      if (hasActivePlacementDebarment(bans, new Date())) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+
       // Re-run both the paid/inherited placement gate and the job-specific
       // policy after the ordering locks above. The pre-transaction checks are
       // fail-fast only; this live result is the one persisted with application.
