@@ -1438,3 +1438,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / L5 pinned discussion visibility (FIXED source; unverified):** the already-authorized GET response now includes the server's delivery-scoped highlighted pinned message even when outside the newest 60-message page. No extra data read, cache remains private/no-store. Regression authored; DB/browser oracle verification pending.
 
 **Chat-7 follow-up / L5 discussion composer parity (FIXED source; unverified):** the same exported 3,900-character limit now governs the server's Zod boundary and the learner's visible input cap, counter, and Post validation. Overlimit/blank payloads fail closed; authorizations unchanged. Boundary tests authored; execution/browser pending.
+
+**Chat-7 follow-up / L5 polling response order (FIXED source; unverified):** Discussion GET responses now carry a local request generation; stale/failed older requests cannot overwrite a newer authorized feed, permission flag, or error state. This is per-component only; no cross-delivery cache. Unit regression authored; browser network-throttling proof pending.

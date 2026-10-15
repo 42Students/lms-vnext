@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { learnerDiscussionCanPost } from "@/modules/courses/learner-discussion-capability-model";
 import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-submit-guard-model";
+import { learnerDiscussionRefreshIsCurrent } from "@/modules/courses/learner-discussion-refresh-order-model";
 import { learnerDiscussionDraftValid, LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH } from "@/modules/courses/learner-discussion-message-limit-model";
 import { learnerDiscussionTimeLabel } from "@/modules/courses/learner-discussion-time-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -70,6 +71,7 @@ export function LearnerCourseDiscussion({
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const postLocked = useRef(false);
+  const latestRefreshId = useRef(0);
   const loadedOnce = useRef(false);
   const previousMessages = useRef<DiscussionMessage[]>([]);
   const forceBottomOnNextLoad = useRef(false);
@@ -77,6 +79,7 @@ export function LearnerCourseDiscussion({
   const locallyDeletedIds = useRef(new Set<string>());
 
   const load = useCallback(async (silent = false) => {
+    const refreshId = ++latestRefreshId.current;
     if (!silent && !loadedOnce.current) setLoading(true);
     try {
       const response = await fetch(
@@ -85,6 +88,7 @@ export function LearnerCourseDiscussion({
       );
       if (!response.ok) throw new Error("discussion_load_failed");
       const payload = await response.json();
+      if (!learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) return;
       const received = Array.isArray(payload.messages) ? payload.messages as DiscussionMessage[] : [];
       const incoming = received.filter((row) => !locallyDeletedIds.current.has(row.id));
       setMessages((previous) => loadedOnce.current
@@ -100,10 +104,12 @@ export function LearnerCourseDiscussion({
       setLoadError(false);
       loadedOnce.current = true;
     } catch {
-      setCanPost(false);
-      setLoadError(true);
+      if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) {
+        setCanPost(false);
+        setLoadError(true);
+      }
     } finally {
-      if (!silent) setLoading(false);
+      if (!silent && learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) setLoading(false);
     }
   }, [deliveryId]);
 
