@@ -1,4 +1,4 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, gt, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges,
@@ -9,6 +9,8 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
 import {
   createRecruiterInviteCredential,
+  canRemindRecruiterInvite,
+  recruiterInviteReminderPatch,
   isRecruiterInviteFirstOpen,
   isRecruiterInviteTokenShape,
   recruiterInviteTokenHash,
@@ -155,6 +157,67 @@ export async function issueTpoRecruiterInvite(
       emailAvailable: Boolean(updated?.emailNorm ?? lead.emailNorm),
       emailed: false,
     };
+  });
+}
+
+/**
+ * T-S2-03 staged reminder delivery. The caller supplies an approved
+ * delivery adapter; there is no public endpoint or scheduled sender until
+ * delivery and retry/audit acceptance have been verified.
+ */
+export async function remindTpoRecruiterInvite(
+  context: RequestContext, collegeIdInput: string, leadIdInput: string,
+  deliver: (email: string, token: string, expiresAt: Date) => Promise<boolean>,
+  now = new Date(),
+): Promise<{ reminded: true }> {
+  if (process.env.TPO_RECRUITER_REMINDER_READY !== "VERIFIED") {
+    throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+  }
+  const collegeId = tpoCrmCollegeIdSchema.parse(collegeIdInput);
+  const leadId = tpoCrmLeadIdSchema.parse(leadIdInput);
+  await requirePlacementManageScope(context, collegeId);
+  return getDb().transaction(async tx => {
+    const [lead] = await tx.select().from(placementTpoLeads)
+      .where(and(eq(placementTpoLeads.collegeId, collegeId),
+        eq(placementTpoLeads.id, leadId))).for("update").limit(1);
+    if (!lead || !lead.inviteSentAt || !lead.emailNorm) {
+      throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+    }
+    const [contact] = await tx.select({ id: placementTpoLeadActivities.id })
+      .from(placementTpoLeadActivities).where(and(
+        eq(placementTpoLeadActivities.collegeId, collegeId),
+        eq(placementTpoLeadActivities.leadId, leadId),
+        eq(placementTpoLeadActivities.isSystem, false),
+        gt(placementTpoLeadActivities.createdAt, lead.inviteSentAt),
+      )).limit(1);
+    if (!canRemindRecruiterInvite({
+      ...policyState(lead),
+      emailNorm: lead.emailNorm,
+      inviteClickedAt: lead.inviteClickedAt,
+      inviteReminderSentAt: lead.inviteReminderSentAt,
+    }, Boolean(contact), now)) {
+      throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+    }
+    const issued = createRecruiterInviteCredential(policyState(lead), now);
+    const originalExpiry = new Date(lead.inviteSentAt.getTime() + 7*24*60*60*1000);
+    if (!await deliver(lead.emailNorm, issued.token, originalExpiry)) {
+      throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+    }
+    const [updated] = await tx.update(placementTpoLeads)
+      .set(recruiterInviteReminderPatch(issued.hash, now))
+      .where(and(
+        eq(placementTpoLeads.id, lead.id),
+        eq(placementTpoLeads.collegeId, collegeId),
+        eq(placementTpoLeads.inviteTokenHash, lead.inviteTokenHash!),
+        isNull(placementTpoLeads.inviteReminderSentAt),
+        isNull(placementTpoLeads.inviteClickedAt),
+      )).returning({ id: placementTpoLeads.id });
+    if (!updated) throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+    await tx.insert(placementTpoLeadActivities).values({
+      collegeId, leadId, type: "SYSTEM", isSystem: true,
+      note: "Invite reminder sent", createdAt: now,
+    });
+    return { reminded: true };
   });
 }
 
