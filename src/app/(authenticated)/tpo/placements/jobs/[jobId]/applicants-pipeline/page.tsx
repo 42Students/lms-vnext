@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
+import {tpoApplicantPipelineHasFilters} from "@/modules/placements/tpo-applicant-pipeline-model";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
@@ -85,7 +86,13 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     target="APPLICATIONS" jobId={jobId}
     rows={data.rows.map(row=>({id:row.id,
       label:(row.student??"Applicant")+" · "+row.role}))}/>:null}
-  {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:null}
+  {!data.rows.length?<div className="space-y-2">
+   <EmptyState title="No matching applicants" description={tpoApplicantPipelineHasFilters(data)
+    ?"No applications match the selected stage, channel, search or submission window."
+    :"No applications are available for this drive."}/>
+   {tpoApplicantPipelineHasFilters(data)?<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"}
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear applicant filters</Link>:null}
+  </div>:null}
   <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
    <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
   </Suspense>
