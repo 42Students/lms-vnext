@@ -36,6 +36,7 @@ export const COLLEGE_LEGACY_GROUPS: readonly CollegeLegacyGroup[] = [
   ]},
   {title:"Placements",tabs:[
     {label:"Drives",href:"/college/placements"},
+    {label:"Companies",href:"/college/companies"},
     {label:"Interviews",href:"/college/placements/calendar"},
   ]},
   {title:"Projects",tabs:[
