@@ -30,12 +30,33 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
     {label:"Recruiter accounts",href:"/admin/recruiters"},
     {label:"Announcements",href:"/admin/announcements"},
   ]},
+  {title:"Projects",tabs:[
+    {label:"Templates",href:"/admin/projects/templates"},
+    {label:"Workspaces",href:"/admin/projects"},
+    {label:"At Risk",href:"/admin/projects/at-risk"},
+    {label:"Readiness",href:"/admin/projects/readiness"},
+    {label:"Submissions",href:"/admin/projects/submissions"},
+    {label:"Audit",href:"/admin/projects/audit"},
+  ]},
 ];
 
 export function superAdminLegacyNavigationPath(pathname:string):string {
+  if(pathname==="/admin/projects/reassign-mentor" ||
+     pathname.startsWith("/admin/projects/workspaces/"))return "/admin/projects";
   return pathname;
 }
+
+/** Project/template detail surfaces own their inner section strips. */
+export function superAdminProjectDetailPath(pathname:string):boolean {
+  if(pathname.startsWith("/admin/projects/templates/"))
+    return pathname!=="/admin/projects/templates";
+  if(!pathname.startsWith("/admin/projects/"))return false;
+  const first=pathname.slice("/admin/projects/".length).split("/")[0];
+  return Boolean(first&&!["at-risk","readiness","submissions","audit",
+    "reassign-mentor","workspaces","templates"].includes(first));
+}
 export function superAdminLegacyGroupForPath(pathname:string):SuperAdminLegacyGroup|null {
+  if(superAdminProjectDetailPath(pathname))return null;
   const path=superAdminLegacyNavigationPath(pathname);
   const found=SUPER_ADMIN_LEGACY_GROUPS.flatMap(group=>group.tabs.map(tab=>({group,tab})))
     .filter(({tab})=>path===tab.href||path.startsWith(tab.href+"/"))
@@ -43,6 +64,7 @@ export function superAdminLegacyGroupForPath(pathname:string):SuperAdminLegacyGr
   return found?.group??null;
 }
 export function superAdminLegacyTabActive(pathname:string,href:string):boolean {
+  if(superAdminProjectDetailPath(pathname))return false;
   const path=superAdminLegacyNavigationPath(pathname);
   if(path!==href&&!path.startsWith(href+"/"))return false;
   return !SUPER_ADMIN_LEGACY_GROUPS.some(group=>group.tabs.some(tab=>
