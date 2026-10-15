@@ -79,6 +79,9 @@ export async function publishVerifiedEducation(
   const passingYear=year(pg?.endYear) ?? year(ug?.endYear);
   const percentages={
     cgpaHundredths:cgpaHundredths(ug),
+    // These optional fields are not in the verified Education snapshot.
+    // Do not relabel earlier SELF assertions as VERIFIED after approval.
+    activeBacklogs:null,pastBacklogs:null,gapYears:null,isLateralEntry:false,
     tenthPctBasisPoints:computed.get("10TH") ?? null,
     twelfthPctBasisPoints:computed.get("12TH") ?? null,
     diplomaPctBasisPoints:computed.get("DIPLOMA") ?? null,
