@@ -1523,3 +1523,7 @@ College Admin may record the legacy **Force unlock (ready)** / **Force block (no
 ## Phase 2 PR-S2-08 — expanded Project member role kinds (STAGED / NOT DONE)
 
 The proposed member model distinguishes MENTOR, CO_MENTOR, OBSERVER, REVIEWER and QA and includes an explicit persisted can_mutate flag. Source-only policy denies all observer/QA/reviewer mutations even when a flag is incorrectly true. Migration SQL is staged only; the existing registered member table and runtime access guards are unchanged. **Do not treat read-only observer accounts as supported until the orchestrator registers the migration, active-role/tenant joins and authorization/service/UI wiring are executed and verified.** Commit reference is in branch history.
+
+## Phase 2 PR-S2-10 — archived Project restoration (source fixed; tests pending execution)
+
+A college-admin-authorized, same-origin POST restores an archived project only after a fresh project-row lock, matching updatedAt token, and a persisted current ACTIVE primary mentor membership and platform user check. The restored state is taken from the latest college-scoped archive activity event (falling back to PLANNED for missing/invalid history), resets archivedAt and writes a restoration event in the same transaction. Source tests added; PostgreSQL races, browser action wiring and role-negative acceptance remain OPEN. Commit reference: branch history.
