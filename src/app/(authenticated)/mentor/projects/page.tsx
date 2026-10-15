@@ -1,3 +1,4 @@
+import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
 import { compareMentorProjects } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
@@ -16,34 +17,6 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
-
-function pageSize(
-  value: string | undefined,
-) {
-  const parsed = Number(value);
-  return parsed === 50 ||
-    parsed === 100
-    ? parsed
-    : 25;
-}
-
-function pageNumber(
-  value: string | undefined,
-) {
-  const parsed = Number(value);
-  return Number.isInteger(parsed) &&
-    parsed > 0
-    ? parsed
-    : 1;
-}
 
 export default async function MentorProjectsPage({
   searchParams,
@@ -77,36 +50,18 @@ export default async function MentorProjectsPage({
   }
 
   const params = await searchParams;
-  const status =
-    one(params.status);
-  const attention =
-    one(params.attention);
-  const query: ProjectParticipantListQuery = {
-    search:
-      one(params.search)?.trim() ||
-      undefined,
-    status:
-      status === "CURRENT" ||
-      status === "PLANNED" ||
-      status === "ACTIVE" ||
-      status === "COMPLETED" ||
-      status === "ARCHIVED"
-        ? status
-        : undefined,
-    assignment: one(params.assignment) === "PRIMARY" || one(params.assignment) === "SUPPORTING"
-      ? one(params.assignment) as "PRIMARY" | "SUPPORTING" : undefined,
-    attention:
-      attention === "MENTOR_REVIEW" || attention === "MENTOR_REQUESTED" || attention === "MENTOR_STALLED" || attention === "MENTOR_MEETING_SOON" || attention === "MENTOR_ANY_ATTENTION" || attention === "MENTOR_NO_ATTENTION"
-        ? attention
-        : undefined,
-    sort: one(params.sort) === "TITLE" ? "TITLE" : "RECENT",
-    page: pageNumber(
-      one(params.page),
-    ),
-    pageSize: pageSize(
-      one(params.pageSize),
-    ),
-  };
+  const parsed = mentorProjectListQuerySchema.safeParse(
+    Object.fromEntries(Object.entries(params).map(([key, value]) => [
+      key, Array.isArray(value) ? value[0] : value,
+    ])),
+  );
+  if (!parsed.success) {
+    return <section role="alert" className="space-y-3">
+      <h1 className="text-xl font-semibold">Invalid Project filters</h1>
+      <Link href="/mentor/projects" className="text-primary-text underline">Clear filters</Link>
+    </section>;
+  }
+  const query: ProjectParticipantListQuery = parsed.data;
 
   const [allRows, attentionRows] =
     await Promise.all([
