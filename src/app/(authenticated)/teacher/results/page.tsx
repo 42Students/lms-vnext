@@ -77,6 +77,12 @@ export default async function FacultyAssessmentResultsPage({
           <option value="TITLE">Assessment title</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Records per page
+        <select name="pageSize" defaultValue={data.query.pageSize}
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          <option value="5">5</option><option value="10">10</option>
+        </select>
+      </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
       </button>

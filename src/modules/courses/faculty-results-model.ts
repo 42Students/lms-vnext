@@ -7,6 +7,7 @@ export const facultyResultsQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   sort:z.enum(["DUE_DESC","DUE_ASC","TITLE"]).default("DUE_DESC"),
+  pageSize:z.coerce.number().int().refine(value=>value===5||value===10).default(5),
 }).strict();
 
 export type FacultyResultsQuery = z.infer<typeof facultyResultsQuerySchema>;
@@ -60,6 +61,7 @@ export function facultyResultsHref(query: FacultyResultsQuery): string {
   if (query.search) params.set("search", query.search);
   if (query.page > 1) params.set("page", String(query.page));
   if (query.sort!=="DUE_DESC") params.set("sort",query.sort);
+  if(query.pageSize!==5) params.set("pageSize",String(query.pageSize));
   return "/teacher/results" + (params.size ? "?" + params.toString() : "");
 }
 
@@ -72,12 +74,12 @@ export function facultyRecordedResponseRate(eligible: number, responded: number)
 
 /** Never silently accept duplicate or unknown filtering selectors from Next searchParams. */
 export function parseFacultyResultsSearchParams(raw:Record<string,string|string[]|undefined>){
- const allowed=new Set(["kind","status","deliveryId","search","page","sort"]);
+ const allowed=new Set(["kind","status","deliveryId","search","page","sort","pageSize"]);
  if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
   return facultyResultsQuerySchema.safeParse({kind:"INVALID"});
  return facultyResultsQuerySchema.safeParse({
   kind:raw.kind||undefined,status:raw.status||undefined,
   deliveryId:raw.deliveryId||undefined,search:raw.search??undefined,
-  page:raw.page||undefined,sort:raw.sort||undefined,
+  page:raw.page||undefined,sort:raw.sort||undefined,pageSize:raw.pageSize||undefined,
  });
 }
