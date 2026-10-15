@@ -2087,3 +2087,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / Live round drive navigation — PARTIAL:** Each TPO live round now links to its persisted parent drive via authorized job ID, independently guarded by the existing drive workspace; no mutable job state is inferred.
 
 **Chat-2 / Live round venue — PARTIAL:** TPO live cards now include persisted round venue or an explicit unrecorded label; location and attendance are never inferred. Existing job-scoped permissions remain unchanged.
+
+**Chat-2 / Drive Day evidence-based follow-up label — PARTIAL:** Live cards now prioritize purely observed unrecorded, pending and explicitly absent attendance, distinguish empty rosters, and avoid fabricated contact/delivery states. Manual operator review remains required.

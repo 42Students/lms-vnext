@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import {tpoLiveAttendanceAttention} from "@/modules/placements/tpo-live-attendance-attention-model";
 import {tpoLiveRoundVenueLabel} from "@/modules/placements/tpo-live-round-venue-model";
 import {tpoLiveRoundJobHref} from "@/modules/placements/tpo-live-round-job-link-model";
 import {tpoLiveCsvHref} from "@/modules/placements/tpo-live-drive-day-csv-model";
@@ -99,6 +100,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     Open round
                   </Link></div>
                 </div>
+                <p role="status" className="mt-3 text-sm text-body">{tpoLiveAttendanceAttention(round.counts)}</p>
                 <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
                   {([
                     ["Roster", round.counts.total], ["Checked in", round.counts.checkedIn],
