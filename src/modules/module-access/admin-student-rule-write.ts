@@ -10,7 +10,7 @@ import {getSuperAdminLearnerAccessTrace} from "./admin-trace-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
 export const studentRuleWriteInput=z.discriminatedUnion("action",[
- z.strictObject({action:z.literal("SET"),module:z.enum(["projects","electives"]),enabled:z.boolean(),locked:z.literal(false)}),
+ z.strictObject({action:z.literal("SET"),module:z.enum(["projects","electives"]),enabled:z.boolean(),locked:z.boolean()}),
  z.strictObject({action:z.literal("INHERIT"),module:z.enum(["projects","electives"])}),
 ]);
 export class StudentRuleConflict extends Error {
@@ -45,10 +45,10 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
   if(input.action==="INHERIT"){
    if(previous)await tx.delete(moduleAccessRules).where(eq(moduleAccessRules.id,previous.id));
   }else if(previous){
-   await tx.update(moduleAccessRules).set({enabled:input.enabled,locked:false,updatedByUserId:context.user.id,updatedAt:new Date()}).where(eq(moduleAccessRules.id,previous.id));
+   await tx.update(moduleAccessRules).set({enabled:input.enabled,locked:input.locked,updatedByUserId:context.user.id,updatedAt:new Date()}).where(eq(moduleAccessRules.id,previous.id));
   }else{
    await tx.insert(moduleAccessRules).values({scopeType:"MEMBERSHIP",scopeId:member.id,module:input.module,
-    enabled:input.enabled,locked:false,updatedByUserId:context.user.id});
+    enabled:input.enabled,locked:input.locked,updatedByUserId:context.user.id});
   }
   if(!previous && input.action==="INHERIT")return {module:input.module,enabled:null,locked:false};
   await tx.insert(activityEvents).values({
@@ -57,8 +57,8 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
    subjectType:"MEMBERSHIP",subjectId:member.id,
    summary:"Super Admin updated a learner module override",
    metadata:{module:input.module,before:previous?{enabled:previous.enabled,locked:previous.locked}:null,
-    after:input.action==="INHERIT"?null:{enabled:input.enabled,locked:false}},
+    after:input.action==="INHERIT"?null:{enabled:input.enabled,locked:input.locked}},
   });
-  return {module:input.module,enabled:input.action==="INHERIT"?null:input.enabled,locked:false};
+  return {module:input.module,enabled:input.action==="INHERIT"?null:input.enabled,locked:input.action==="INHERIT"?false:input.locked};
  });
 }

@@ -941,3 +941,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 student INHERIT mutation — PARTIAL:** Server write contract now explicitly supports removing an existing Projects/Electives membership rule, distinct from writing an Off value. Missing rule is a no-op without invented audit, while actual removal writes tenant-scoped audit metadata in the same transaction. Strict discriminated Zod denies mixed actions. Tests authored, unexecuted; client editing and concurrency gates remain open.
+
+
+**2026-10-15 chat-6 student lock mutation — PARTIAL:** Explicit membership-level Projects/Electives lock states may now be set/cleared with the authenticated rule write and atomic audit record. The server still forbids ignored Placements member edits and denies overrides masked by a broader locked scope. Exact enabled/locked values are both written; unit and negative PG fixtures authored, unexecuted. UI and concurrency acceptance open.
