@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Named bulk review preview PARTIAL (chat-9):** Before a bulk Verify/Send back, the College Admin now sees the actual selected learner names, sections, versions and any locally skipped entries rather than only aggregate counts. Changing selection cancels the old preview; in-flight decisions lock select/clear. No preview claims receipt validation or server commit. Unit coverage authored, browser/DB acceptance remains open.
+
 **Readable per-request bulk decision outcomes PARTIAL (chat-9):** Successful bulk API responses now retain the selected page's authorized learner names when displaying individual success/stale/document/permission outcomes; no shortened membership UUIDs are shown. Attempts/success/failure totals remain exact, and unknown rows use a neutral label. Pure outcome projection authored; browser/PG acceptance open.
 
 **Explicit per-learner decision confirmation PARTIAL (chat-9):** Single-request Verify and Send back now require a second, cancellable confirmation displaying the action and correction reason before invoking the existing version-locked, audited same-origin writer. In-flight confirmation cannot be dismissed. Pure decision-copy tests authored; browser/API acceptance outstanding.
