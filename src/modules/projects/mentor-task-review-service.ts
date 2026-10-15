@@ -47,7 +47,9 @@ export async function getMentorTaskReviews(
   const projects = assigned.map(row => ({id:row.project.id,title:row.project.title}));
   if (query.projectId && !ids.includes(query.projectId))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  if (!ids.length) {
+  const selectedIds=assigned.filter(row=>query.assignment==="ALL"||
+    (query.assignment==="PRIMARY")===row.isPrimaryMentor).map(row=>row.project.id);
+  if (!selectedIds.length) {
     return {
       enabled: true as const, query, projects,
       ...mentorTaskReviewSummary({ total: 0, ...query }),
@@ -58,7 +60,7 @@ export async function getMentorTaskReviews(
   const escaped=mentorTaskReviewLiteralSearch(query.search);
   const cutoff=query.age==="ALL"?null:new Date(new Date().getTime()-7*86400000);
   const conditions = and(
-    inArray(projectTaskSubmissions.projectId, ids),
+    inArray(projectTaskSubmissions.projectId, selectedIds),
     query.projectId?eq(projectTaskSubmissions.projectId,query.projectId):undefined,
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
