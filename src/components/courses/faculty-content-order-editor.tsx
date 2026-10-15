@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
-import { facultyMoveContentId, facultyContentOrderDirty } from "@/modules/courses/faculty-content-order-ui-model";
+import { facultyMoveContentId, facultyContentOrderDirty, facultyResetContentOrder } from "@/modules/courses/faculty-content-order-ui-model";
 
 type Item = {
   id: string;
@@ -106,6 +106,10 @@ function FacultyContentOrderEditorInner({
             Section only. Assessments keep their own sequence.
           </p>
         </div>
+        {dirty ? <Button type="button" size="sm" variant="secondary"
+          disabled={pending} onClick={()=>setOrder(facultyResetContentOrder(items))}>
+          Reset order
+        </Button> : null}
         <Button
           type="button"
           size="sm"

@@ -12,3 +12,8 @@ export function facultyMoveContentId(ids:readonly string[],from:number,delta:num
 export function facultyContentOrderDirty(initial:readonly string[],draft:readonly string[]):boolean{
  return initial.length!==draft.length || initial.some((id,i)=>id!==draft[i]);
 }
+
+/** Reset only to the latest server-provided order, not an old local snapshot. */
+export function facultyResetContentOrder<T extends {id:string}>(items:readonly T[]):string[]{
+ return items.map(item=>item.id);
+}
