@@ -16,6 +16,7 @@ import {
 } from "@/modules/module-access/admin-read-model";
 import {
   adminModuleTraceHref,
+  membershipOverrideSummary,
 } from "@/modules/module-access/admin-trace-model";
 import {
   adminModuleTraceQuerySchema,
@@ -374,6 +375,22 @@ export default async function SuperAdminLearnerAccessTracePage({
               than silently treated as configured rules.
             </p>
           </div>
+
+          <section className="min-w-0 rounded-xl border border-border bg-surface p-5" aria-label="Student overrides and locks">
+            <h3 className="text-base font-semibold text-foreground">Student overrides and locks</h3>
+            <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner's final access is enabled.</p>
+            <dl className="mt-3 grid min-w-0 gap-3 sm:grid-cols-3">
+              {membershipOverrideSummary(selected.modules).map(item => (
+                <div key={item.module} className="min-w-0 rounded-lg border border-border p-3">
+                  <dt className="break-words text-sm font-semibold">{item.label}</dt>
+                  <dd className="mt-1 text-sm">{item.stored === null ? "Inherit" : item.stored ? "Stored On" : "Stored Off"}</dd>
+                  <dd className="mt-1 text-xs text-muted-foreground">{item.ignored ? "Ignored for Placements" : item.stored === null ? "No membership override" : item.winner ? "Membership rule selected" : "Overridden by another rule"}</dd>
+                  {item.locked ? <dd className="mt-1 text-xs font-semibold">Locked at membership</dd> : null}
+                </div>
+              ))}
+            </dl>
+            <p className="mt-3 text-xs text-muted-foreground">Read-only inspection. Student-level edits require a separately approved, audit-logged workflow; the existing production resolver remains authoritative.</p>
+          </section>
 
           {selected.modules.map((module) => (
             <article
