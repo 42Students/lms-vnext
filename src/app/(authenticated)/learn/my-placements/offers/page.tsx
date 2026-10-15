@@ -3,6 +3,7 @@ import {learnerOfferStatusTabLabel} from "@/modules/placements/learner-offer-sta
 import {learnerExpiredIssuedOffers} from "@/modules/placements/learner-offer-issued-expired-model";
 import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-empty-state-model";
 import Link from "next/link";
+import { LEARNER_LEGACY_OFFERS_TITLE } from "@/modules/placements/learner-placement-copy-model";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
 import {learnerOfferStatusHref,learnerOfferClearFiltersHref,learnerOfferHasActiveFacets} from "@/modules/placements/learner-offers-navigation-model";
@@ -102,7 +103,7 @@ export default async function LearnerOffersPage({
       </Link>
       <PageHeader
         eyebrow="My Placements"
-        title="My offers"
+        title={LEARNER_LEGACY_OFFERS_TITLE}
         description="Official persisted offers, current response status and recorded joining outcomes."
       />
       {conflictingDeadlines ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">

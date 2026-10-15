@@ -58,10 +58,12 @@ export function LearnerCareerCalendar({
   rounds,
   initialAnchor,
   todayAnchor=initialAnchor,
+  surface="calendar",
 }: {
   rounds: readonly CareerCalendarSourceRound[];
   initialAnchor: string;
   todayAnchor?:string;
+  surface?: "calendar" | "schedule";
 }) {
   const params=useSearchParams();
   const state=readLearnerCalendarUrl(params.toString(),todayAnchor);
@@ -69,7 +71,7 @@ export function LearnerCareerCalendar({
   const previousDate=learnerCareerNavigationDate(anchor,view,-1);
   const nextDate=learnerCareerNavigationDate(anchor,view,1);
   function changeCalendar(patch:Partial<LearnerCalendarUrlState>){
-    window.history.pushState(null,"",learnerCalendarHref({...state,...patch}));
+    window.history.pushState(null,"",learnerCalendarHref({...state,...patch},surface));
     setSelectedKey(null);
   }
   const [selectedKey,setSelectedKey]=useState<string|null>(null);
