@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Bounded confirmed bulk-review contract PARTIAL (chat-9):** Registered schema validates explicit user confirmation, at most 20 unique membership+section keys, positive expected versions, and reasoned send-back; caller-supplied tenant IDs and duplicate entries are rejected. Pure regression tests authored; service/UI and independent PG/browser acceptance remain open.
+
+
 **Unambiguous verification URL parsing PARTIAL (chat-9):** College Admin queue now fails closed on repeated query parameters instead of silently using the first value, while rejecting caller-supplied college scope and preserving strict typed filters. Invalid input is shown without querying protected data. Unit tests authored, browser/running-service acceptance outstanding.
 
 **Queue page-boundary recovery PARTIAL (chat-9):** If a filtered queue shrinks after a decision, the College Admin page redirects to the actual last page while preserving every validated filter, chosen page size and sort instead of displaying an empty page. Error and queue-limit rendering now occur outside try/catch. Pure model tests authored; browser and database state-transition verification still open.
