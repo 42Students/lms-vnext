@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**One-click triage shortcuts PARTIAL (chat-9):** The College queue presents three accessible needs-a-closer-look quick actions that switch to Waiting, preserve other filters and reset to first page, plus a reset to all states. These navigate the server-authorized filters, not current-page-only cards. Unit URL-patch acceptance authored; keyboard/mobile browser verification open.
+
 **Seven-day overdue attention triage PARTIAL (chat-9):** Queue and CSV now filter only SUBMITTED/UPDATE_PENDING entries older than seven complete days using a single per-request server clock and pure shared domain attention rules. Sent-back/verified records never appear as overdue. Unit and gated tenant-denial coverage authored, pending execution/browser proof.
 
 **Changed verified details triage PARTIAL (chat-9):** Added a queue-wide UPDATE_PENDING attention filter, across visible tabs and shared CSV, honoring the underlying verified-details state rather than guessing from a snapshot diff. Pure acceptance cases and role/tenant tests authored; executed PostgreSQL/mobile/browser and notification delivery checks open.
