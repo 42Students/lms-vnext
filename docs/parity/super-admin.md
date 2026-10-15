@@ -719,3 +719,27 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `superadmin/sectio
 
 
 **2026-10-15 chat-6 round 5 / Screening Queue detail — PARTIAL:** Added `/admin/placements/screenings/[applicationId]` with exact selected-college/org membership and job guard, PENDING/HOLD/REJECTED persisted screening statuses, application eligibility/channel/IST decision and submission dates. UUID malformed/foreign/missing or a now-shortlisted record returns non-leaking 404; internalReason and candidate contacts excluded. Directory deep-link and pure ID/date tests authored; decision writes/PG/browser parity still open.
+
+
+**2026-10-15 chat-6 round 6 / Faculty CSV — PARTIAL:** Added filtered selected-college FACULTY membership CSV through the existing scoped people service, strict q/status URL with rejection of organization/college/page overrides and duplicate params, 250-row cap/truncation notice, formula-neutralized CSV and privacy-safe contact-free projection, linked download/error state. Model/unit tests authored; execution/browser and full faculty lifecycle parity remain open.
+
+
+**2026-10-15 chat-6 round 6 / Students CSV — PARTIAL:** Added `/api/admin/students/export` and in-page filtered CSV download, using the existing authorized selected-college directory service and search/status rules. Role-restricted LEARNER records only; no email or phone. Strict URL rejects organization/college/page override and repeated keys; 250 records maximum, truncation notice, formula-safe UTF-8 CSV, no-store response, error/pending UI. Pure query unit tests authored, execution/browser and full legacy operations parity open.
+
+
+**2026-10-15 chat-6 round 6 / Batches CSV — PARTIAL:** Added `/api/admin/batches/export` and in-page filtered CSV download, using the existing authorized selected-college directory service and search/status. Persisted batch, program, start period and lifecycle; no cross-college cohorts. Strict URL rejects organization/college/page override and repeated keys; 250 records maximum, truncation notice, formula-safe UTF-8 CSV, no-store response, error/pending UI. Pure query unit tests authored, execution/browser and full legacy operations parity open.
+
+
+**2026-10-15 chat-6 round 6 / Classes CSV — PARTIAL:** Added `/api/admin/classes/export` and in-page filtered CSV download using the selected-college classes service, exact cohort/program/department/period scope checks and status filters. Registered class, cohort, academic period, class code and capacity from the selected college only. Strict URL rejects caller college/org/page override and duplicates; cap 250, formula-neutralized CSV, truncation notice, no-cache response and pending/error UI. Unit authored; PostgreSQL/browser and legacy class editing parity open.
+
+
+**2026-10-15 chat-6 round 6 / Semesters CSV — PARTIAL:** Added `/api/admin/semesters/export` and status/search-matched download for selected-college program semesters, with registered names, term number and credits, CSV formula-neutralization and 250-row bounded truncation disclosure. Strict request rejects duplicated params, explicit tenant/college/page override and unsupported statuses; authorized scoped-read service and pending/error UI reused. Unit authored; PostgreSQL/browser and full semester editing parity open.
+
+
+**2026-10-15 chat-6 round 6 / Semester–Course Mapping CSV — PARTIAL:** Added `/api/admin/semester-courses/export` and in-page filtered CSV download; mapping records use the authorized selected-college SQL joins for program AND course department, term state, course code, mapping credits/type. Strict filters forbid tenant/college/page override and duplicates. CSV capped to 250 with truncation footer and formula neutralization, no-store and pending/error states. Unit authored; mapping write UI and PG/browser parity remain open.
+
+
+**2026-10-15 chat-6 round 6 / Faculty Assignment CSV — PARTIAL:** Added `/api/admin/faculty-assignment/export` plus in-page filtered CSV on persisted teaching assignments; exact college-scoped course/section/faculty joins and active/ended state already enforced by the read service. Search/status retained and caller org/college/page/repeated filters rejected. Contact-free projection, 250-row bounded cap, formula-neutralized export and truncation footer, no-store, client pending/error. Unit authored; reassignment workflow and PostgreSQL/browser acceptance open.
+
+
+**2026-10-15 chat-6 round 6 / Placement Applications CSV — PARTIAL:** Added `/api/admin/placements/applications/export` and in-page filtered CSV download for exact selected-college applicant/job/role/membership records, SUBMITTED/WITHDRAWN plus search. Persisted applications, role/job and membership within the same college; no private contact, screening internals or invented shortlist state. Formula-protected UTF-8 CSV, 250-row cap and explicit truncation footer; strict parser refuses college/organization/page overrides or duplicate filter keys, no-store/private response and client pending/error. Pure model unit authored; full applicant export parity, execution and browser acceptance remain open.
