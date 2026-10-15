@@ -346,6 +346,11 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               <input name="sequenceFrom" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceFrom ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Last lesson order (1-based)
+              <input name="sequenceThrough" type="number" min={1} max={10000} step={1} defaultValue={data.query.sequenceThrough ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
