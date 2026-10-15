@@ -7,3 +7,8 @@ export function facultyLiveEditorDraft(session:FacultyLiveEditableSession){
   startsAt:authoringLocalDateTime(session.startsAt),
   endsAt:authoringLocalDateTime(session.endsAt)};
 }
+
+/** Never carry the selected published session into a new CREATE request. */
+export function emptyFacultyLiveDraft(){
+ return {title:"",meetingUrl:"",startsAt:"",endsAt:""};
+}

@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
 import {facultyLiveEditorCommand} from "@/modules/courses/faculty-live-editor-command";
 import {facultyLiveSaveFeedback} from "@/modules/courses/faculty-live-save-feedback";
-import {facultyLiveEditorDraft} from "@/modules/courses/faculty-live-editor-model";
+import {facultyLiveEditorDraft,emptyFacultyLiveDraft} from "@/modules/courses/faculty-live-editor-model";
 import {facultyLiveSessionOption} from "@/modules/courses/faculty-live-session-option";
 import {facultyLiveConfirmText} from "@/modules/courses/faculty-live-confirmation";
 
@@ -44,7 +44,14 @@ export function FacultyLiveClassEditor({
   }
   function changeAction(next:typeof action){
     setAction(next);
-    if(next!=="CREATE"&&chosen)preloadSession(chosen.id);
+    if(next==="CREATE"){
+      // Do not accidentally reuse another published meeting as a new draft.
+      const clean=emptyFacultyLiveDraft();
+      setTitle(clean.title);setMeetingUrl(clean.meetingUrl);
+      setStartsAt(clean.startsAt);setEndsAt(clean.endsAt);
+    }else if(chosen){
+      preloadSession(chosen.id);
+    }
     setError(null);
   }
   async function save(){
