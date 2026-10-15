@@ -1502,3 +1502,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** exact elective semester inside selected interval rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
 
 **College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** unlinked elective period without linked-only selectors rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
+
+**College Admin Classes filter validation PARTIAL (2026-10-15 chat-3):** Reversed linked academic-period date bounds now fail identically in the class page query and same-college CSV; authored unit cases, executed PG/browser and legacy parity pending.
