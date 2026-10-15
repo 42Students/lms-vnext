@@ -151,6 +151,14 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   expect(csv.csv).not.toContain("Verification Foreign College");
   await expect(exportCollegeVerificationCsv(wrongRole,{membershipId:ids.ownMember,waitingState:"SUBMITTED"})).rejects.toBeInstanceOf(AuthorizationError);
  });
+ it("applies kind before paging and preserves current-college protection",async()=>{
+  const identity=await listCollegeVerificationQueue(admin,{kind:"IDENTITY"});
+  expect(identity.rows.every(row=>row.section==="IDENTITY")).toBe(true);
+  const education=await listCollegeVerificationQueue(admin,{kind:"EDUCATION"});
+  expect(education.rows.every(row=>row.section==="EDUCATION")).toBe(true);
+  expect(identity.rows.some(row=>row.learnerMembershipId===ids.foreignMember)).toBe(false);
+  await expect(listCollegeVerificationQueue(wrongRole,{kind:"IDENTITY"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
  it("bulk command rejects forged roles and reports foreign rows without leaking data",async()=>{
   const foreignInput={confirm:true,action:"SEND_BACK",reason:"Please provide legible evidence",
    items:[{learnerMembershipId:ids.foreignMember,section:"IDENTITY",expectedVersion:1}]};
