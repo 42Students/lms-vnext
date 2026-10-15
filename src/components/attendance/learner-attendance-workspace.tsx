@@ -14,6 +14,7 @@ import { learnerAttendanceHistoryFilterSchema, filterLearnerAttendanceHistory, L
 import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner-attendance-history-link-model";
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { learnerAttendanceRecoveryProjection } from "@/modules/attendance/learner-attendance-recovery-model";
+import { learnerAttendanceStatusTone } from "@/modules/attendance/learner-attendance-status-tone-model";
 import { learnerAttendanceOrderSchema, sortLearnerAttendanceHistory, type LearnerAttendanceOrder } from "@/modules/attendance/learner-attendance-history-order-model";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -142,21 +143,6 @@ function timeLabel(value: string) {
     hour: "numeric",
     minute: "2-digit",
   }).format(new Date(value));
-}
-
-function statusTone(
-  status: RecordRow["status"],
-) {
-  if (status === "PRESENT") {
-    return "success" as const;
-  }
-  if (status === "NOT_MARKED") {
-    return "warning" as const;
-  }
-  if (status === "SCHEDULED") {
-    return "neutral" as const;
-  }
-  return "error" as const;
 }
 
 function statusLabel(
@@ -597,7 +583,7 @@ export function LearnerAttendanceWorkspace({
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge
-                        tone={statusTone(
+                        tone={learnerAttendanceStatusTone(
                           row.status,
                         )}
                       >
@@ -634,7 +620,7 @@ export function LearnerAttendanceWorkspace({
                     </p>
                   </div>
                   <StatusBadge
-                    tone={statusTone(
+                    tone={learnerAttendanceStatusTone(
                       row.status,
                     )}
                   >
