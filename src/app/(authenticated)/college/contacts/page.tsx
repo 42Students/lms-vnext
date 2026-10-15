@@ -121,6 +121,9 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      {choices.cohorts.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </select>{choices.cohortsTruncated&&<span className="mt-1 block text-xs">First 200 cohorts shown.</span>}
    </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Faculty academic title contains
+    <input type="search" name="facultyTitleQ" maxLength={80} defaultValue={filter.facultyTitleQ??""} placeholder="e.g. Associate Professor" className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3"/>
+   </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Faculty employment type
     <select name="employmentType" defaultValue={filter.employmentType??""} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
      <option value="">Any employment type</option>
@@ -163,7 +166,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
-    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,teachingRole:filter.teachingRole,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.programId?{programId:filter.programId}:{}),...(filter.sectionId?{sectionId:filter.sectionId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),...(filter.employmentType?{employmentType:filter.employmentType}:{}),sort:filter.sort,
+    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,teachingRole:filter.teachingRole,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.programId?{programId:filter.programId}:{}),...(filter.sectionId?{sectionId:filter.sectionId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),...(filter.employmentType?{employmentType:filter.employmentType}:{}),...(filter.facultyTitleQ?{facultyTitleQ:filter.facultyTitleQ}:{}),sort:filter.sort,
    }).toString()} className="inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold">
     Export filtered contacts CSV
    </Link>

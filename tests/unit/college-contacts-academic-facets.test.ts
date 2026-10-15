@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {collegeContactsQuerySchema,collegeContactsHref,clearedCollegeContactsHref} from "@/modules/people/college-contacts-model";
+import {collegeContactsQuerySchema,collegeContactsHref,collegeContactLiteralPattern,clearedCollegeContactsHref} from "@/modules/people/college-contacts-model";
 
 describe("Contact profile availability",()=>{it("round-trips valid facet through filtered contact links and rejects unsupported options",()=>{
  const q=collegeContactsQuerySchema.parse({profile:"UNPROFILED"});expect(collegeContactsHref(q)).toContain("profile=UNPROFILED");expect(collegeContactsQuerySchema.safeParse({profile:"PRIVATE"}).success).toBe(false);
@@ -32,3 +32,5 @@ describe("College Contacts active class selection",()=>{it("persists only a stri
 describe("Contacts employment type filter",()=>{it("round-trips bounded Faculty employment type",()=>{expect(collegeContactsHref(collegeContactsQuerySchema.parse({employmentType:"VISITING"}))).toContain("employmentType=VISITING");expect(collegeContactsQuerySchema.safeParse({employmentType:"X".repeat(129)}).success).toBe(false);});});
 
 describe("Active Faculty teaching-role contact filter",()=>{it("round-trips only registered teaching roles",()=>{const input=collegeContactsQuerySchema.parse({teachingRole:"CO_TEACHER"});expect(collegeContactsHref(input)).toContain("teachingRole=CO_TEACHER");expect(collegeContactsQuerySchema.safeParse({teachingRole:"PROFESSOR"}).success).toBe(false);});});
+
+describe("Contact Faculty academic-title text facet",()=>{it("escapes LIKE wildcard input, validates and retains search on CSV URL",()=>{expect(collegeContactLiteralPattern("50%_")).toBe("%50\\%\\_%");const query=collegeContactsQuerySchema.parse({facultyTitleQ:"Associate Prof."});expect(collegeContactsHref(query)).toContain("facultyTitleQ=Associate+Prof.");expect(collegeContactsQuerySchema.safeParse({facultyTitleQ:"x".repeat(81)}).success).toBe(false);});});
