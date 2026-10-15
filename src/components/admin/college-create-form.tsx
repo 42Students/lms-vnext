@@ -103,7 +103,7 @@ export function CollegeCreateForm({
           htmlFor="college-name"
           className="mb-1.5 block text-xs font-semibold text-body"
         >
-          College name
+          College Name
         </label>
         <Input
           id="college-name"
@@ -111,7 +111,7 @@ export function CollegeCreateForm({
           onChange={(event) => setName(event.target.value)}
           required
           maxLength={255}
-          placeholder="College name"
+          placeholder="e.g., Engineering College"
         />
       </div>
       <div>
@@ -119,7 +119,7 @@ export function CollegeCreateForm({
           htmlFor="college-code"
           className="mb-1.5 block text-xs font-semibold text-body"
         >
-          Code
+          Unique ID / Code
         </label>
         <Input
           id="college-code"
@@ -127,7 +127,7 @@ export function CollegeCreateForm({
           onChange={(event) => setCode(event.target.value)}
           required
           maxLength={64}
-          placeholder="CODE"
+          placeholder="e.g., nsrit or eng-college"
         />
       </div>
       <Button
@@ -139,7 +139,7 @@ export function CollegeCreateForm({
           !code.trim()
         }
       >
-        {pending ? "Creating…" : "Create college"}
+        {pending ? "Creating…" : "Create College"}
       </Button>
       {error ? (
         <p role="alert" className="m-0 text-xs font-semibold text-error lg:col-span-4">
