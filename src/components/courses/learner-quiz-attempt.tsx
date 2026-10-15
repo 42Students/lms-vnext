@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
+import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -109,7 +110,7 @@ export function LearnerQuizAttempt() {
     : "";
   const submitLockKey = storageKey ? `${storageKey}:submit-lock` : "";
 
-  async function load() {
+  const load = useCallback(async (signal?: AbortSignal) => {
     if (!quizId || !deliveryId) {
       setError("This quiz link is incomplete. Open the quiz again from All Quizzes.");
       setLoading(false);
@@ -120,13 +121,14 @@ export function LearnerQuizAttempt() {
     try {
       const query = `deliveryId=${encodeURIComponent(deliveryId)}`;
       const [quizResponse, attemptsResponse] = await Promise.all([
-        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}?${query}`, { cache: "no-store" }),
-        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}/my-attempts?${query}`, { cache: "no-store" }),
+        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}?${query}`, { cache: "no-store", signal }),
+        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}/my-attempts?${query}`, { cache: "no-store", signal }),
       ]);
       if (!quizResponse.ok) throw new Error(await messageFrom(quizResponse, "Unable to load this quiz."));
       if (!attemptsResponse.ok) throw new Error(await messageFrom(attemptsResponse, "Unable to load your attempts."));
       const quizBody = await quizResponse.json();
       const attemptsBody = await attemptsResponse.json();
+      if (!learnerQuizRequestCurrent(signal)) return;
       const loadedAtMs = Date.now();
       const deadlinePassed = quizBody.quiz?.quiz?.dueAt
         ? new Date(quizBody.quiz.quiz.dueAt).getTime() < loadedAtMs
@@ -161,19 +163,20 @@ export function LearnerQuizAttempt() {
       setQuiz(quizBody.quiz);
       setAttempts(Array.isArray(attemptsBody.attempts) ? attemptsBody.attempts : []);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to load this quiz.");
+      if (learnerQuizRequestCurrent(signal)) {
+        setError(cause instanceof Error ? cause.message : "Unable to load this quiz.");
+      }
     } finally {
-      setLoading(false);
+      if (learnerQuizRequestCurrent(signal)) setLoading(false);
     }
-  }
+  }, [quizId, deliveryId, reviewRequested, storageKey]);
 
   useEffect(() => {
-    // Defer the load callback outside the effect's synchronous phase.
-    const handle = window.setTimeout(() => void load(), 0);
-    return () => window.clearTimeout(handle);
-    // quiz/delivery identify a fresh attempt surface.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quizId, deliveryId]);
+    const controller = new AbortController();
+    // Defer the initial load without synchronously setting state in an effect.
+    const handle = window.setTimeout(() => void load(controller.signal), 0);
+    return () => { controller.abort(); window.clearTimeout(handle); };
+  }, [load]);
 
   useEffect(() => {
     const handle = window.setInterval(() => setNowMs(Date.now()), 30_000);
