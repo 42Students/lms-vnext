@@ -434,7 +434,7 @@ describe("authenticated shell model", () => {
       admin.find((item) => item.href === "/mentor/projects")?.label,
     ).toBe("Projects · Mentoring");
     expect(
-      admin.find((item) => item.href === "/college/projects/workspaces")?.label,
+      admin.find((item) => item.href === "/college/projects")?.label,
     ).toBe("Projects · College");
   });
 
