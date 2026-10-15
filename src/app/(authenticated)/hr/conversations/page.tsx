@@ -37,11 +37,18 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/></label>
     <button type="submit" className="self-end rounded-md border border-border px-4 py-3 text-primary-text">Search</button>
    </form>
+   <p role="status" className="text-sm text-body">
+    {result.unreadInView} unread placement cell messages in these conversations
+   </p>
    {result.truncated?<p role="status" className="text-sm text-body">Showing the latest 100 conversations.</p>:null}
    {result.items.length?<ol className="space-y-3">
     {result.items.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
      <Link href={"/hr/conversations/"+row.id}
       className="block break-words font-semibold text-primary-text">{row.jobTitle}</Link>
+     {row.unread>0?<span aria-label={row.unread+" unread messages"}
+      className="mt-2 inline-flex rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">
+      {row.unread} unread
+     </span>:null}
      <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?"Last update "+when(row.lastMessageAt):"No messages yet"} · Private employer thread</p>
     </li>)}
    </ol>:<p role="status" className="rounded-xl border border-border p-5 text-body">No matching conversations with the placement cell for this college.</p>}
