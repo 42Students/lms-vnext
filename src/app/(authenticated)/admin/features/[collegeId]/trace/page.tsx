@@ -388,6 +388,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                 : ""}
             </p>
 
+            <Link href={`/admin/features/${encodeURIComponent(college.id)}?scope=MEMBERSHIP&scopeId=${encodeURIComponent(selected.membershipId)}`}
+              className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Inspect this learner&apos;s stored rules in the hierarchy →</Link>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               Resolution checks the current membership,
               section, cohort, program, department,

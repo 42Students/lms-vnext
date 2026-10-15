@@ -64,6 +64,10 @@ describe("module access admin read against PostgreSQL", () => {
     const storedOff=await getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{storedState:"OFF"});
     expect(storedOff).not.toBeNull();
     expect(storedOff!.descendants.every(row=>!row.enabled)).toBe(true);
+    const selected=await getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{scope:"MEMBERSHIP",scopeId:SEED_IDS.learnerCollegeAMembership});
+    expect(selected).not.toBeNull();
+    expect(selected!.descendants.every(row=>row.scopeId===SEED_IDS.learnerCollegeAMembership)).toBe(true);
+    await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{scopeId:SEED_IDS.learnerCollegeAMembership})).rejects.toBeDefined();
     await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{storedState:"UNKNOWN"})).rejects.toBeDefined();
     await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{locks:"UNKNOWN"})).rejects.toBeDefined();
     await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{scope:"GLOBAL"})).rejects.toBeDefined();
