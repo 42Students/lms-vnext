@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Select-all and bulk preview PARTIAL (chat-9):** College Admin can select up to 20 currently visible waiting requests, clear the working selection and preview Verify/Send back eligibility using the existing status/version planner. Preview performs no mutation; Super Admin retains its existing single-review UI. Pure selection regression and browser acceptance open.
+
+
 **Scoped verification card selection PARTIAL (chat-9):** Only submitted/updated waiting rows offer accessible selection checkboxes in the reusable workspace when mounted by College Admin; selection uses membership+section composite identity, is capped at 20 and is intersected with the current server-authorized page, with no bulk writes yet. Pure-model and browser acceptance open.
 
 
