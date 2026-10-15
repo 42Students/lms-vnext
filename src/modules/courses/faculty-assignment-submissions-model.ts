@@ -129,3 +129,16 @@ export function facultySubmissionReportEmptyState(query:{
  };
  return {title:"No matching submissions",description:"No persisted submissions match the selected filters."};
 }
+
+/**
+ * The existing server-owned CSV supports only the saved grade/timing filter.
+ * Avoid claiming that this page's name, privacy and ordering controls affect it.
+ */
+export function facultySubmissionCsvScopeNote(query:{
+ q:string;publication:"ALL"|"PUBLISHED"|"PRIVATE";order:"NEWEST"|"OLDEST";
+}):string {
+ const extras=Boolean(query.q.trim())||query.publication!=="ALL"||query.order!=="NEWEST";
+ return extras
+ ? "CSV includes the authorized Section and selected grading/timing filter; name search, grade visibility and date ordering apply to this page only."
+ : "CSV includes the authorized Section and selected grading/timing filter, not just this page.";
+}

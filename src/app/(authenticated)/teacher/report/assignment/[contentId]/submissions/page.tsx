@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
-  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,facultySearchSubmissionReportRows,facultyFilterSubmissionPublication,facultySubmissionReportEmptyState,
+  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,facultySearchSubmissionReportRows,facultyFilterSubmissionPublication,facultySubmissionReportEmptyState,facultySubmissionCsvScopeNote,
   facultySubmissionReportPageQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
 } from "@/modules/courses/faculty-assignment-submissions-model";
 
@@ -90,9 +90,12 @@ export default async function FacultyAssignmentSubmissionsPage({
       <p className="text-sm text-body">
         {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
-      <Link href={csvHref} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
-        Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
-      </Link>
+      <div className="min-w-0 space-y-1">
+        <Link href={csvHref} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
+        </Link>
+        <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>
+      </div>
     </div>
     {data.items.length===0?<EmptyState title={empty.title}
       description={empty.description} />
@@ -120,15 +123,15 @@ export default async function FacultyAssignmentSubmissionsPage({
           </li>;
         })}
       </ol>}
-    <nav aria-label="Submission pages" className="flex justify-between gap-3">
+    <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
       <span className="text-sm text-muted-foreground">
         Page {data.page} of {data.totalPages}
       </span>
       <div className="flex gap-3">
         {data.page>1?<Link href={facultySubmissionListHref({...query,page:data.page-1})}
-          className="text-sm font-semibold text-primary-text">Previous</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>:null}
         {data.page<data.totalPages?<Link href={facultySubmissionListHref({...query,page:data.page+1})}
-          className="text-sm font-semibold text-primary-text">Next</Link>:null}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>:null}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">
