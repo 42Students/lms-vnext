@@ -53,6 +53,27 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
     "insert into placement_company_applicant_share_views(share_id,college_id,event_kind) values($1,$2,'VIEW')",
     [share,SEED_IDS.collegeA],
    );
+   await client.query(
+    "insert into placement_company_applicant_share_views(share_id,college_id,event_kind) values($1,$2,'CSV')",
+    [share,SEED_IDS.collegeA],
+   );
+   const csvEvents=await client.query<{count:string}>(
+    "select count(*)::text as count from placement_company_applicant_share_views where share_id=$1 and event_kind='CSV'",
+    [share],
+   );
+   expect(csvEvents.rows[0]?.count).toBe("1");
+   await client.query("SAVEPOINT duplicate_token_hash");
+   await expect(client.query(
+    "insert into placement_company_applicant_shares(college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,clock_timestamp()+interval '1 day')",
+    [SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,digest],
+   )).rejects.toMatchObject({code:"23505"});
+   await client.query("ROLLBACK TO SAVEPOINT duplicate_token_hash");
+   await client.query("SAVEPOINT invalid_expiry");
+   await expect(client.query(
+    "insert into placement_company_applicant_shares(college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,clock_timestamp()-interval '1 day')",
+    [SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,createHash("sha256").update(randomUUID()).digest("hex")],
+   )).rejects.toMatchObject({code:"23514"});
+   await client.query("ROLLBACK TO SAVEPOINT invalid_expiry");
    const events=await client.query<{count:string}>(
     "select count(*)::text as count from placement_company_applicant_share_views where share_id=$1 and event_kind='VIEW'",
     [share],
