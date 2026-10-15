@@ -28,6 +28,7 @@ export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapaci
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
+  periodState: z.enum(["ALL","LINKED","UNLINKED"]).optional(),
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
   minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
   maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
@@ -44,7 +45,7 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
@@ -76,6 +77,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
     params.set("maximumCredits",String(query.maximumCredits));
   if ("cohortStatus" in query && query.cohortStatus && query.cohortStatus !== "ALL") params.set("cohortStatus",query.cohortStatus);
   if ("programStatus" in query && query.programStatus && query.programStatus !== "ALL") params.set("programStatus",query.programStatus);
+  if ("periodState" in query && query.periodState && query.periodState !== "ALL") params.set("periodState",query.periodState);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }

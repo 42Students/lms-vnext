@@ -218,4 +218,16 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("periodState uses the persisted same-college academic relation",async()=>{
+    
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodState:"LINKED"}),
+      listCollegeElectives(adminA,{q:key,periodState:"UNLINKED"}),
+      listCollegeElectives(adminB,{q:key,periodState:"LINKED"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

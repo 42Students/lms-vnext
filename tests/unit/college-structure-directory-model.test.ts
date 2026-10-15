@@ -83,4 +83,9 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
   });
 
+  it("periodState electives query is validated and retained in navigation",()=>{
+    expect(collegeElectiveQuerySchema.safeParse({periodState:"INVALID"}).success).toBe(false);
+    expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({periodState:"LINKED"}))).toContain("periodState=LINKED");
+  });
+
 });

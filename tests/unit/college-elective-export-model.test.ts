@@ -23,4 +23,9 @@ describe("college electives CSV",()=>{
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(csv).toContain("Minimum picks");
  });
+ it("periodState is applied to electives CSV",()=>{
+  expect(electiveCsvSchema.safeParse({periodState:"INVALID"}).success).toBe(false);
+  expect(electiveCsvHref({q:"",status:"ACTIVE",periodState:"LINKED"})).toContain("periodState=LINKED");
+ });
+
 });
