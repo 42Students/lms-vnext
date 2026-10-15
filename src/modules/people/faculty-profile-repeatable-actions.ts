@@ -68,3 +68,8 @@ export function facultyProfileRepeatableIssue(
  const first=result.error.issues[0];
  return first?.message??"Review this profile section.";
 }
+
+/** Collapse only the edited record's input fields; keep its controls visible. */
+export function toggleFacultyProfileCollapsed(ids:readonly string[],id:string):string[]{
+ return ids.includes(id)?ids.filter(value=>value!==id):[...ids,id];
+}
