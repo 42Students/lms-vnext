@@ -20,11 +20,17 @@ export function CompanyShareControls({jobId,ready,initialLinks,status}:{
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({expiresInDays:days}),
    });
-   if(!res.ok)throw new Error("Cannot issue share link");
+   if(!res.ok){
+    const code=(await res.json().catch(()=>({}))) as {error?:string};
+    if(code.error==="ACTIVE_LINK_LIMIT")throw new Error("ACTIVE_LINK_LIMIT");
+    throw new Error("CREATE_FAILED");
+   }
    const data=await res.json() as {shareId:string;token:string;expiresAt:string};
    if(shouldDisplayNewCompanyShare(status))setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}},...current]);
    setNewUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
-  }catch{setError("Link could not be created. Confirm access and try again.");}
+  }catch(error){setError(error instanceof Error&&error.message==="ACTIVE_LINK_LIMIT"?
+   "This drive already has 10 active share links. Revoke one before creating another.":
+   "Link could not be created. Confirm access and try again.");}
   finally{setPending(false);}
  }
  async function revokeLink(id:string){
@@ -43,7 +49,7 @@ export function CompanyShareControls({jobId,ready,initialLinks,status}:{
  return <section aria-label="Company applicant sharing"
    className="space-y-3 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold text-foreground">Share shortlisted applicants with a company</h2>
-  <p className="text-sm text-body">Links disclose only the same three fields shown above,
+  <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum seven-day lifetime, and may be revoked immediately. Resume downloads
    and private learner details are excluded.</p>
   {!ready?<p role="status" className="text-sm text-body">
