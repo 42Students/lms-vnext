@@ -70,9 +70,8 @@ export default async function TpoMorePage() {
 
       <p className="text-xs leading-5 text-muted-foreground">
         Only implemented TPO destinations are linked.
-        This navigation does not claim that legacy
-        Messages, Settings or Notifications workflows
-        have been reproduced.
+        This navigation links to the implemented scoped tools; complete
+        legacy Messages and Settings parity remains open.
       </p>
     </div>
   );

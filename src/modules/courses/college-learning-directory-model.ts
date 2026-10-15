@@ -12,6 +12,12 @@ export const collegeLearningQuerySchema = z.object({
 }).strict();
 export type CollegeLearningQuery = z.infer<typeof collegeLearningQuerySchema>;
 export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
+  contentType: z.enum(["ALL","RESOURCE","VIDEO","YOUTUBE","LIVE_CLASS"]).default("ALL"),
+  programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
+  cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
+  periodStatus: z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
+  courseStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
+  departmentCode: z.string().trim().min(1).max(64).optional(),
   offeringStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   courseCode: z.string().trim().min(1).max(64).optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
@@ -28,6 +34,11 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
+  departmentCode:z.string().trim().min(1).max(64).optional(),
+  courseStatus:z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
+  periodStatus:z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
+  cohortStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
+  programStatus:z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   courseCode:z.string().trim().min(1).max(64).optional(),
   programCode:z.string().trim().min(1).max(64).optional(),
   periodCode:z.string().trim().min(1).max(64).optional(),
@@ -46,6 +57,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if (kind === "LESSONS" && "contentType" in query && query.contentType !== "ALL") params.set("contentType", query.contentType);
   if (kind === "PROGRESS" && "departmentName" in query && query.departmentName) params.set("departmentName",query.departmentName);
   if(kind==="PROGRESS"&&"activityState" in query&&query.activityState!=="ALL")params.set("activityState",query.activityState);
   if(kind==="PROGRESS"&&"completionEvidence" in query&&query.completionEvidence!=="ALL")params.set("completionEvidence",query.completionEvidence);
@@ -66,6 +78,11 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if (kind === "LESSONS" && "pathStatus" in query && query.pathStatus !== "ALL") params.set("pathStatus",query.pathStatus);
   if (kind === "LESSONS" && "offeringStatus" in query && query.offeringStatus !== "ALL")
     params.set("offeringStatus", query.offeringStatus);
+  if ("programStatus" in query && query.programStatus !== "ALL") params.set("programStatus",query.programStatus);
+  if ("cohortStatus" in query && query.cohortStatus !== "ALL") params.set("cohortStatus",query.cohortStatus);
+  if ("periodStatus" in query && query.periodStatus !== "ALL") params.set("periodStatus",query.periodStatus);
+  if ("courseStatus" in query && query.courseStatus !== "ALL") params.set("courseStatus",query.courseStatus);
+  if ("departmentCode" in query && query.departmentCode) params.set("departmentCode",query.departmentCode);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
