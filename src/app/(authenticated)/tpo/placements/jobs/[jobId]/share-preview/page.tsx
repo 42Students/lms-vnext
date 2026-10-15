@@ -10,8 +10,9 @@ import { listTpoCompanyApplicantShares } from "@/modules/placements/company-shar
 import { CompanyShareControls } from "./company-share-controls";
 import {tpoFilteredSharePreviewExportHref} from "@/modules/placements/tpo-share-preview-export-href";
 import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
+import {companyShareLinksHref} from "@/modules/placements/company-share/link-page-model";
 
-type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; q?:string|string[] };
+type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -41,7 +42,7 @@ export default async function TpoShortlistSharePreviewPage({
   }
   const parsedStatus=companyShareStatusSchema.safeParse(first(search.shareStatus)??"ALL");
   const shareStatus=parsedStatus.success?parsedStatus.data:"ALL";
-  const shares = await listTpoCompanyApplicantShares(context, data.job.id,shareStatus);
+  const shares = await listTpoCompanyApplicantShares(context, data.job.id,shareStatus,first(search.sharePage)??1);
   const path = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview";
   return <div className="space-y-5">
     <Link
@@ -102,16 +103,23 @@ export default async function TpoShortlistSharePreviewPage({
       {companyShareStatusSchema.options.map(status=><Link key={status}
        aria-current={shareStatus===status?"page":undefined}
        className="rounded border border-border px-3 py-2 font-semibold text-primary-text"
-       href={path+"?"+new URLSearchParams({shareStatus:status,...(parsed.data.q?{q:parsed.data.q}:{})})}>
+       href={companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page)}>
        {companyShareStatusLabel(status)}
       </Link>)}
     </nav>
-    <CompanyShareControls jobId={data.job.id} ready={shares.ready} status={shareStatus}
+    <CompanyShareControls jobId={data.job.id} ready={shares.ready} status={shareStatus} linkPage={shares.page}
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),
         revokedAt: link.revokedAt?.toISOString() ?? null,
         audit:link.audit,
       }))} />
+    <nav aria-label="Company-share link pages" className="flex flex-wrap items-center gap-3 text-sm">
+      <span>{shares.total} matching link(s) · Page {shares.page} of {shares.totalPages}</span>
+      {shares.page>1?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page-1,parsed.data.q,data.page)}
+        className="font-semibold text-primary-text underline">Previous links</Link>:null}
+      {shares.page<shares.totalPages?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page+1,parsed.data.q,data.page)}
+        className="font-semibold text-primary-text underline">Next links</Link>:null}
+    </nav>
     <nav aria-label="Share preview pagination"
       className="flex flex-wrap justify-between gap-3 text-sm">
       <span>Page {data.page} of {data.totalPages}</span>

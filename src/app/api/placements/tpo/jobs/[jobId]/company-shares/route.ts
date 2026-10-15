@@ -19,7 +19,7 @@ function errorResponse(error:unknown) {
 export async function GET(request:Request,{params}:RouteContext) {
   try {
     const {jobId}=await params;
-    const result=await listTpoCompanyApplicantShares(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("status")??"ALL");
+    const result=await listTpoCompanyApplicantShares(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("status")??"ALL",new URL(request.url).searchParams.get("page")??1);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return errorResponse(error);}
 }

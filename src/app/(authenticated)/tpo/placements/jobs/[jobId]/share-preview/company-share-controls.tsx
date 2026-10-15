@@ -2,9 +2,10 @@
 import {useState} from "react";
 import {companyShareEmptyMessage,shouldDisplayNewCompanyShare,type CompanyShareStatus} from "@/modules/placements/company-share/status-model";
 import {afterCompanyShareRevocation} from "@/modules/placements/company-share/revoke-ui-model";
+import {companyShareIssueFailureMessage} from "@/modules/placements/company-share/issue-message-model";
 type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
-export function CompanyShareControls({jobId,ready,initialLinks,status}:{
- jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;
+export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:{
+ jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;linkPage:number;
 }){
  const [links,setLinks]=useState(initialLinks);
  const [days,setDays]=useState(2);
@@ -26,11 +27,11 @@ export function CompanyShareControls({jobId,ready,initialLinks,status}:{
     throw new Error("CREATE_FAILED");
    }
    const data=await res.json() as {shareId:string;token:string;expiresAt:string};
-   if(shouldDisplayNewCompanyShare(status))setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}},...current]);
+   if(linkPage===1&&shouldDisplayNewCompanyShare(status))setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}},...current]);
    setNewUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
   }catch(error){setError(error instanceof Error&&error.message==="ACTIVE_LINK_LIMIT"?
-   "This drive already has 10 active share links. Revoke one before creating another.":
-   "Link could not be created. Confirm access and try again.");}
+   companyShareIssueFailureMessage("ACTIVE_LINK_LIMIT"):
+   companyShareIssueFailureMessage(undefined));}
   finally{setPending(false);}
  }
  async function revokeLink(id:string){
