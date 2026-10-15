@@ -1,0 +1,22 @@
+import {z} from "zod";
+export const superAdminCollegeBroadcastSchema=z.strictObject({
+ audienceMode:z.enum(["ALL_COLLEGES","SELECTED_COLLEGES"]),
+ collegeIds:z.array(z.uuid()).max(500),
+ title:z.string().trim().min(1).max(255),
+ message:z.string().trim().min(1).max(10000),
+ scheduledAt:z.iso.datetime({offset:true}).nullable(),
+ expiresAt:z.iso.datetime({offset:true}).nullable(),
+ isPinned:z.boolean(),
+ publishConsent:z.literal(true),
+}).superRefine((v,ctx)=>{
+ if(v.audienceMode==="ALL_COLLEGES"&&v.collegeIds.length!==0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"All-colleges must not include an explicit target list"});
+ if(v.audienceMode==="SELECTED_COLLEGES"&&v.collegeIds.length===0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"Select at least one college"});
+ if(v.expiresAt&&v.scheduledAt&&new Date(v.expiresAt)<=new Date(v.scheduledAt))ctx.addIssue({code:"custom",path:["expiresAt"],message:"Expiry must be later than schedule"});
+});
+export function requestedBroadcastCollegeIds(ids:readonly string[]):string[]{
+ return [...new Set(ids)];
+}
+export function broadcastConsentSummary(mode:"ALL_COLLEGES"|"SELECTED_COLLEGES",count:number,scheduled:boolean){
+ return (mode==="ALL_COLLEGES"?"All currently active authorized colleges":"Selected authorized colleges")+
+  " · "+count+" college"+(count===1?"":"s")+" · "+(scheduled?"scheduled":"immediate")+" in-app notices";
+}

@@ -18,8 +18,13 @@ describe("W02 legacy QuizzesContent expired row parity", () => {
       dueAt: "2026-10-09T09:00:00.000Z",
       progressStatus: "MISSED",
     }, now)).toMatchObject({
-      label: "Missed", action: "View answers", review: true,
+      label: "Missed", action: "View quiz", review: true,
     });
+  });
+  it("read-only missed quiz must not promise unpublished answers", () => {
+    const result=quizOverviewActionState({...base,status:"CLOSED",resultsPublished:false,attemptsUsed:0},now);
+    expect(result.action).toBe("View quiz");
+    expect(result.review).toBe(true);
   });
   it("previously submitted expired quiz is review, never retake", () => {
     expect(quizOverviewActionState({
@@ -57,4 +62,33 @@ describe("W02 legacy QuizzesContent expired row parity", () => {
     }, now).review).toBe(false);
     expect(quizOverviewActionState({ ...base, dueAt: null }, now).review).toBe(false);
   });
+});
+
+describe("zero remaining learner quiz attempts",()=>{
+ it("never offers Start Quiz without an available attempt",()=>{
+  const result=quizOverviewActionState({...base,attemptsRemaining:0,attemptsUsed:0},now);
+  expect(result).toMatchObject({label:"No attempts remaining",action:"View quiz",review:true});
+ });
+});
+
+describe("unknown learner quiz deadlines",()=>{
+ it("fails closed on malformed persisted timestamps but not a real null deadline",()=>{
+  expect(quizOverviewActionState({...base,dueAt:"not-a-date"},now)).toMatchObject({
+   label:"Deadline unavailable",review:true,
+  });
+  expect(quizOverviewActionState({...base,dueAt:null},now).review).toBe(false);
+ });
+});
+
+describe("published learner results at attempt exhaustion",()=>{
+ it("shows View Result after a released exhausted attempt",()=>{
+  expect(quizOverviewActionState({
+   ...base,attemptsUsed:2,attemptsRemaining:0,resultsPublished:true,
+  },now)).toMatchObject({label:"Results published",action:"View Result",review:true});
+ });
+ it("does not claim an unpublished result",()=>{
+  expect(quizOverviewActionState({
+   ...base,attemptsUsed:2,attemptsRemaining:0,resultsPublished:false,
+  },now).action).toBe("Review attempt");
+ });
 });

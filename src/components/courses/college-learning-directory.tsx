@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
-import { collegeLearningHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
+import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
   listCollegeCourseProgress,
   listCollegeLessons,
@@ -461,6 +461,56 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               </select>
             </label>
           ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact lesson ID
+              <input name="lessonId" defaultValue={data.query.lessonId??""} placeholder="Lesson UUID"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Offering ID
+              <input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact offering ID
+              <input name="offeringId" defaultValue={data.query.offeringId??""} placeholder="Course offering UUID"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Exact learning path ID
+              <input name="pathId" defaultValue={data.query.pathId??""} placeholder="Path UUID"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Minimum authored items
+              <input type="number" name="minContentCount" min={1} max={1000} defaultValue={data.query.minContentCount??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Maximum authored items
+              <input type="number" name="maxContentCount" min={0} max={1000} defaultValue={data.query.maxContentCount??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Draft lesson content
+              <select name="draftContentState" defaultValue={data.query.draftContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="HAS_DRAFT">Contains drafts</option><option value="NO_DRAFT">No saved drafts</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Archived lesson content
+              <select name="archivedContentState" defaultValue={data.query.archivedContentState} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="HAS_ARCHIVED">Contains archived items</option><option value="NO_ARCHIVED">No archived items</option>
+              </select>
+            </label>
+          ) : null}
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -510,6 +560,10 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                     <td className="px-4 py-4 text-body">Path: {item.pathStatus}; Lesson: {item.status}</td>
                     <td className="px-4 py-4 text-body">{item.publishedContentCount} published / {item.contentCount} authored
                       <p className="mt-1 text-xs text-muted-foreground">{item.publishedAndVisibleFlagCount} published and flagged visible to students</p>
+                      <Link href={collegeOfferingProgressHref(item.offeringId)}
+                        className="mt-2 inline-block font-semibold text-primary-text hover:underline">
+                        View recorded course activity
+                      </Link>
                     </td>
                   </tr>
                 ))
@@ -519,6 +573,10 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                       <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
                         className="font-semibold text-primary-text hover:underline">{item.courseName} ({item.courseCode})</Link>
                       <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
+                      <Link href={collegeOfferingLessonsHref(item.offeringId)}
+                        className="mt-2 inline-block font-semibold text-primary-text hover:underline">
+                        View authored lessons
+                      </Link>
                     </td>
                     <td className="px-4 py-4 text-body">{item.offeringStatus}</td>
                     <td className="px-4 py-4 text-body">{collegeProgressDescription(item)}</td>

@@ -9,9 +9,11 @@ export function learnerOfferResponseTiming(raw:unknown,snapshotNowIso:string){
   // three timing fields against the strict boundary schema.
   const source:Record<string,unknown>=typeof raw==="object"&&raw!==null
     ? raw as Record<string,unknown> : {};
-  const row=learnerOfferResponseTimingSchema.parse({
+  const parsed=learnerOfferResponseTimingSchema.safeParse({
     status:source.status,expiresAt:source.expiresAt,issuedAt:source.issuedAt,
   });
+  if(!parsed.success)return {expired:true,canRespond:false,urgency:"INVALID" as const};
+  const row=parsed.data;
   const now=Date.parse(snapshotNowIso);
   if(!Number.isFinite(now))throw new Error("Invalid server snapshot");
   const until=row.expiresAt===null?null:Date.parse(row.expiresAt)-now;
@@ -28,7 +30,11 @@ export function prioritizeLearnerOffers<T extends {status:"ISSUED"|"ACCEPTED"|"D
     const t=learnerOfferResponseTiming(item,snapshotNowIso);
     return t.canRespond?0:item.status==="ISSUED"?1:2;
   };
-  const time=(item:T)=>item.expiresAt?Date.parse(item.expiresAt):Number.POSITIVE_INFINITY;
+  const time=(item:T)=>{
+    const parsed=item.expiresAt?Date.parse(item.expiresAt):Number.POSITIVE_INFINITY;
+    return Number.isNaN(parsed)?Number.POSITIVE_INFINITY:parsed;
+  };
+  const issued=(item:T)=>{const parsed=Date.parse(item.issuedAt);return Number.isFinite(parsed)?parsed:0;};
   return [...items].sort((a,b)=>rank(a)-rank(b)||
-    (rank(a)===0?time(a)-time(b):Date.parse(b.issuedAt)-Date.parse(a.issuedAt)));
+    (rank(a)===0?time(a)-time(b):issued(b)-issued(a)));
 }

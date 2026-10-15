@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
+import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
@@ -82,13 +83,15 @@ function SubmissionGradeCard({
   const [error, setError] =
     useState<string | null>(null);
   const [success, setSuccess] = useState<string|null>(null);
+  const [needsRefresh,setNeedsRefresh]=useState(false);
+  const operationInFlight = useRef(false);
 
   async function saveGrade(
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
     setError(null);
-    setSuccess(null);
+    setSuccess(null);setNeedsRefresh(false);
 
     const parsed = draftState.points;
     if (parsed === null) {
@@ -111,6 +114,7 @@ function SubmissionGradeCard({
       return;
     }
 
+    if(!beginFacultyManualGradeOperation(operationInFlight))return;
     setSaving(true);
     try {
       const response = await fetch(
@@ -132,46 +136,46 @@ function SubmissionGradeCard({
       );
 
       if (!response.ok) {
+        setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
           await courseApiError(response),
         );
         return;
       }
 
-      const payload =
-        (await response.json()) as {
-          submission: Submission;
-        };
-      setSuccess("Grade state saved. Refresh the report to verify visibility.");
+      const saved = facultyManualGradeReceipt(await response.json(),submission,"GRADE",maxPoints,{
+        points:parsed,feedback:feedback.trim()||null,
+      });
+      setSuccess(facultyManualGradeSuccessMessage("GRADE",saved.version));
       onUpdated({
         ...submission,
-        ...payload.submission,
+        ...saved,
         learnerDisplayName:
           submission.learnerDisplayName,
         learnerEmail:
           submission.learnerEmail,
       });
     } catch {
-      setError(
-        "Could not save this grade. Check your connection and try again.",
-      );
+      setError(facultyManualGradeUncertainMessage("GRADE"));
     } finally {
+      operationInFlight.current=false;
       setSaving(false);
     }
   }
 
   async function publishGrade() {
     setError(null);
-    setSuccess(null);
+    setSuccess(null);setNeedsRefresh(false);
     if (!draftState.canPublish) {
       setError("Save the score and feedback before publishing the grade.");
       return;
     }
     if (!window.confirm(
-      "Publish this grade and feedback to the learner? Verify both before continuing.",
+      facultyManualGradePublishPrompt(submission.pointsAwarded,maxPoints,submission.feedback),
     )) {
       return;
     }
+    if(!beginFacultyManualGradeOperation(operationInFlight))return;
     setPublishing(true);
 
     try {
@@ -191,30 +195,29 @@ function SubmissionGradeCard({
       );
 
       if (!response.ok) {
+        setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
           await courseApiError(response),
         );
         return;
       }
 
-      const payload =
-        (await response.json()) as {
-          submission: Submission;
-        };
-      setSuccess("Grade state saved. Refresh the report to verify visibility.");
+      const saved = facultyManualGradeReceipt(await response.json(),submission,"PUBLISH",maxPoints,{
+        points:submission.pointsAwarded ?? -1,feedback:submission.feedback,
+      });
+      setSuccess(facultyManualGradeSuccessMessage("PUBLISH",saved.version));
       onUpdated({
         ...submission,
-        ...payload.submission,
+        ...saved,
         learnerDisplayName:
           submission.learnerDisplayName,
         learnerEmail:
           submission.learnerEmail,
       });
     } catch {
-      setError(
-        "Could not publish this grade. Check your connection and try again.",
-      );
+      setError(facultyManualGradeUncertainMessage("PUBLISH"));
     } finally {
+      operationInFlight.current=false;
       setPublishing(false);
     }
   }
@@ -365,6 +368,10 @@ function SubmissionGradeCard({
           {error}
         </p>
       ) : null}
+      {needsRefresh?<button type="button" onClick={()=>onUpdated(submission)}
+       className="mt-2 min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        Reload current submission revision
+       </button>:null}
       {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
     </section>
   );

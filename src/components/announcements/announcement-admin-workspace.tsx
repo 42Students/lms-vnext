@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import {platformAnnouncementPublicationSummary} from "@/modules/announcements/super-admin-publish-consent-model";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
@@ -71,6 +72,8 @@ export function AnnouncementAdminWorkspace({
   const [expiresAt, setExpiresAt] = useState("");
   const [pinned, setPinned] = useState(false);
   const [editing, setEditing] = useState<AnnouncementAdminItem | null>(null);
+  const [editConsent,setEditConsent]=useState(false);
+  const [reviewPublish,setReviewPublish]=useState(false);
   const targetLabels = useMemo(
     () => new Map(targets.map((entry) => [`${entry.type}:${entry.id}`, entry.label])),
     [targets],
@@ -98,6 +101,7 @@ export function AnnouncementAdminWorkspace({
           scheduledAt: isoOrNull(scheduledAt),
           expiresAt: isoOrNull(expiresAt),
           isPinned: pinned,
+          publishConsent:true,
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -110,6 +114,7 @@ export function AnnouncementAdminWorkspace({
         return;
       }
       resetCreate();
+      setReviewPublish(false);
       showToast({ tone: "success", title: "Announcement created" });
       router.refresh();
     });
@@ -166,6 +171,7 @@ export function AnnouncementAdminWorkspace({
           scheduledAt: isoOrNull(String(data.get("scheduledAt") ?? "")),
           expiresAt: isoOrNull(String(data.get("expiresAt") ?? "")),
           isPinned: data.get("isPinned") === "on",
+          publishConsent:true,
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -180,6 +186,7 @@ export function AnnouncementAdminWorkspace({
         return;
       }
       setEditing(null);
+      setEditConsent(false);
       showToast({ tone: "success", title: "Announcement updated" });
       router.refresh();
     });
@@ -233,8 +240,8 @@ export function AnnouncementAdminWorkspace({
               Pin for recipients
             </label>
             <div className="md:col-span-2">
-              <Button disabled={pending || !title.trim() || !message.trim() || !target} onClick={create}>
-                {pending ? "Creating…" : "Create announcement"}
+              <Button disabled={pending || !title.trim() || !message.trim() || !target} onClick={()=>setReviewPublish(true)}>
+                Review publication
               </Button>
             </div>
           </div>
@@ -269,7 +276,7 @@ export function AnnouncementAdminWorkspace({
                   <div className="flex shrink-0 flex-wrap gap-2">
                     {!item.deletedAt ? (
                       <>
-                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => setEditing(item)}>Edit</Button>
+                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
                         <Button size="sm" variant="secondary" disabled={pending} onClick={() => mutate(item, "PIN")}>
                           {item.isPinned ? "Unpin" : "Pin"}
                         </Button>
@@ -286,6 +293,19 @@ export function AnnouncementAdminWorkspace({
         )}
       </section>
 
+      <Dialog open={reviewPublish} onOpenChange={setReviewPublish} title="Confirm announcement publication"
+       description="The selected recipients will see this notice when it becomes visible. This does not send external SMS or email."
+       footer={<><Button variant="secondary" disabled={pending} onClick={()=>setReviewPublish(false)}>Cancel</Button>
+         <Button disabled={pending} onClick={create}>{pending?"Publishing…":"Confirm and publish"}</Button></>}>
+       <ul className="list-disc space-y-1 pl-5 text-sm text-body">
+        {platformAnnouncementPublicationSummary({
+          receiverType:splitTarget(target).receiverType,
+          receiverLabel:targetLabels.get(target)??"Selected audience",
+          title,scheduledAt:isoOrNull(scheduledAt),expiresAt:isoOrNull(expiresAt),isPinned:pinned,
+        }).map(line=><li key={line}>{line}</li>)}
+       </ul>
+       <p className="mt-3 text-xs text-muted-foreground">You are confirming publication to the selected audience. No external outbound delivery is initiated.</p>
+      </Dialog>
       <Dialog
         open={Boolean(editing)}
         onOpenChange={(open) => { if (!open) setEditing(null); }}
@@ -294,12 +314,16 @@ export function AnnouncementAdminWorkspace({
         footer={
           <>
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
-            <Button disabled={pending} onClick={saveEdit}>{pending ? "Saving…" : "Save changes"}</Button>
+            <Button disabled={pending || !editing || !editConsent} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
           </>
         }
       >
         {editing ? (
           <form id="announcement-edit-form" className="grid gap-4">
+            <label className="flex items-start gap-2 text-sm text-body">
+              <input type="checkbox" checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
+              I reviewed the audience and notice contents and consent to applying changes to recipients.
+            </label>
             <label className="text-sm font-semibold text-body">
               Audience
               <select

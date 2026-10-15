@@ -41,6 +41,11 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       videoEvidence:first(params.videoEvidence),
       resourceEvidence:first(params.resourceEvidence),
       liveEvidence:first(params.liveEvidence),
+      lessonId:first(params.lessonId)||undefined,
+      offeringId:first(params.offeringId)||undefined,
+      pathId:first(params.pathId)||undefined,
+      minContentCount:first(params.minContentCount)||undefined,
+      maxContentCount:first(params.maxContentCount)!==undefined && first(params.maxContentCount)!==""?first(params.maxContentCount):undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
