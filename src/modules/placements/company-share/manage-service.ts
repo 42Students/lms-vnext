@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, count, desc, eq, gt, inArray, isNotNull, isNull, lte } from "drizzle-orm";
 import { projectCompanyShareAudit } from "./audit-history-model";
 import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, placementJobs, users } from "@/db/schema";
@@ -9,6 +9,7 @@ import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
 import { placementCompanyApplicantShares as shares, placementCompanyApplicantShareViews as views } from "./staged-schema";
 import { companyShareAuditTotals } from "./audit-model";
+import { companyShareStatusSchema } from "./status-model";
 import { isShareableJob } from "./scope-model";
 import {
   companyShareExpiry, companyShareIssueSchema,
@@ -70,14 +71,18 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
   if (!row) throw new CompanyShareError("NOT_SHAREABLE");
   return {shareId:row.id,token,expiresAt:expiresAt.toISOString()};
 }
-export async function listTpoCompanyApplicantShares(context: RequestContext, rawJobId: unknown) {
+export async function listTpoCompanyApplicantShares(context: RequestContext, rawJobId: unknown, rawStatus:unknown="ALL") {
+  const status=companyShareStatusSchema.parse(rawStatus);
   const jobId = companyShareIssueSchema.shape.jobId.parse(rawJobId);
   const college = await tpoJob(context,jobId);
   if (!await companyShareTablesReady()) return {ready:false,links:[]};
   const links = await getDb().select({
     id:shares.id, expiresAt:shares.expiresAt, revokedAt:shares.revokedAt,
     createdAt:shares.createdAt,
-  }).from(shares).where(and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId)))
+  }).from(shares).where(and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId),
+    status==="ACTIVE"?and(isNull(shares.revokedAt),gt(shares.expiresAt,new Date())):
+    status==="EXPIRED"?and(isNull(shares.revokedAt),lte(shares.expiresAt,new Date())):
+    status==="REVOKED"?isNotNull(shares.revokedAt):undefined))
     .orderBy(desc(shares.createdAt),desc(shares.id)).limit(50);
   const ids=links.map(link=>link.id);
   const stats=ids.length?await getDb().select({

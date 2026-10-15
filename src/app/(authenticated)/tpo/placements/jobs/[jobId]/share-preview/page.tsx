@@ -8,8 +8,9 @@ import { tpoShareableShortlistQuerySchema } from "@/modules/placements/tpo-share
 import { getTpoShareableShortlist } from "@/modules/placements/tpo-shareable-shortlist-service";
 import { listTpoCompanyApplicantShares } from "@/modules/placements/company-share/manage-service";
 import { CompanyShareControls } from "./company-share-controls";
+import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
 
-type SearchParams = { page?: string | string[] };
+type SearchParams = { page?: string | string[]; shareStatus?: string|string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -36,7 +37,9 @@ export default async function TpoShortlistSharePreviewPage({
       error.code === "PLACEMENT_JOB_NOT_FOUND") notFound();
     throw error;
   }
-  const shares = await listTpoCompanyApplicantShares(context, data.job.id);
+  const parsedStatus=companyShareStatusSchema.safeParse(first(search.shareStatus)??"ALL");
+  const shareStatus=parsedStatus.success?parsedStatus.data:"ALL";
+  const shares = await listTpoCompanyApplicantShares(context, data.job.id,shareStatus);
   const path = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview";
   return <div className="space-y-5">
     <Link
@@ -82,6 +85,15 @@ export default async function TpoShortlistSharePreviewPage({
      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
      View company-share access history
     </Link>
+    <nav aria-label="Company-share link status filters"
+      className="flex flex-wrap gap-3 text-sm">
+      {companyShareStatusSchema.options.map(status=><Link key={status}
+       aria-current={shareStatus===status?"page":undefined}
+       className="rounded border border-border px-3 py-2 font-semibold text-primary-text"
+       href={path+"?shareStatus="+encodeURIComponent(status)}>
+       {companyShareStatusLabel(status)}
+      </Link>)}
+    </nav>
     <CompanyShareControls jobId={data.job.id} ready={shares.ready}
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),

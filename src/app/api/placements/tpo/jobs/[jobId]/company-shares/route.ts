@@ -16,10 +16,10 @@ function errorResponse(error:unknown) {
   }
   return apiErrorResponse(error);
 }
-export async function GET(_request:Request,{params}:RouteContext) {
+export async function GET(request:Request,{params}:RouteContext) {
   try {
     const {jobId}=await params;
-    const result=await listTpoCompanyApplicantShares(await getCurrentRequestContext(),jobId);
+    const result=await listTpoCompanyApplicantShares(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("status")??"ALL");
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return errorResponse(error);}
 }
