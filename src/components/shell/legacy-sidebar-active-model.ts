@@ -12,9 +12,18 @@ export function legacySidebarItemActive(
  const college=href.startsWith("/college/")||href==="/college";
  const featureDetail=pathname.startsWith("/admin/features/");
  const exact=pathname===href;
+ const utilityOwners:Record<string,string>={
+  "/college/announcements":"/college",
+  "/college/domains":"/college/profile",
+  "/college/college-profile":"/college/profile",
+  "/college/branding":"/college/profile",
+  "/college/contacts":"/college/faculty",
+ };
+ const utilityOwner=Object.entries(utilityOwners).some(([base,owner])=>
+   href===owner&&(pathname===base||pathname.startsWith(base+"/")));
  const descendant=href!=="/dashboard"&&href!=="/college"&&
    pathname.startsWith(href+"/")&&!(href==="/admin/features"&&featureDetail);
- return exact||descendant||
+ return exact||descendant||utilityOwner||
    (admin&&superAdminGroup!==null&&superAdminGroup===item.label)||
    (college&&collegeGroup!==null&&collegeGroup===item.label)||
    (href==="/admin/module-access"&&featureDetail)||
