@@ -17,7 +17,7 @@ export default async function HrProfilePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Employer Recruiter"
+        eyebrow="Recruiter"
         title="Your Profile"
         description="Your recruiter identity, company and college access."
       />
