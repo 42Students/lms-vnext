@@ -82,6 +82,7 @@ export default async function TpoShortlistSharePreviewPage({
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),
         revokedAt: link.revokedAt?.toISOString() ?? null,
+        audit:link.audit,
       }))} />
     <nav aria-label="Share preview pagination"
       className="flex flex-wrap justify-between gap-3 text-sm">

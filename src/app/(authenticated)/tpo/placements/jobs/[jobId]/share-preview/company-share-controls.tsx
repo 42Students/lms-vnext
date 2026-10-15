@@ -1,6 +1,6 @@
 "use client";
 import {useState} from "react";
-type LinkFact={id:string;expiresAt:string;revokedAt:string|null};
+type LinkFact={id:string;expiresAt:string;revokedAt:string|null;audit:{views:number;exports:number}};
 export function CompanyShareControls({jobId,ready,initialLinks}:{
  jobId:string;ready:boolean;initialLinks:LinkFact[];
 }){
@@ -20,7 +20,7 @@ export function CompanyShareControls({jobId,ready,initialLinks}:{
    });
    if(!res.ok)throw new Error("Cannot issue share link");
    const data=await res.json() as {shareId:string;token:string;expiresAt:string};
-   setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null},...current]);
+   setLinks(current=>[{id:data.shareId,expiresAt:data.expiresAt,revokedAt:null,audit:{views:0,exports:0}},...current]);
    setNewUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
   }catch{setError("Link could not be created. Confirm access and try again.");}
   finally{setPending(false);}
@@ -69,6 +69,9 @@ export function CompanyShareControls({jobId,ready,initialLinks}:{
     className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
     <span>Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
      {link.revokedAt?" Revoked":" Not revoked (validity checked when opened)"}</span>
+    <span className="text-xs text-muted-foreground">
+     {link.audit.views} views · {link.audit.exports} CSV downloads
+    </span>
     {!link.revokedAt?<button type="button" disabled={pending}
      onClick={()=>void revokeLink(link.id)}
      className="font-semibold text-primary-text underline">Revoke</button>:null}
