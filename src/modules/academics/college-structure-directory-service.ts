@@ -91,6 +91,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.cohortCode ? eq(cohorts.code, query.cohortCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.capacityState === "CONFIGURED" ? isNotNull(sections.capacity) :
         query.capacityState === "UNSET" ? isNull(sections.capacity) : undefined,
       query.minimumCapacity !== undefined ? gte(sections.capacity, query.minimumCapacity) : undefined,
