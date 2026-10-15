@@ -41,7 +41,7 @@ export function DataTable<Row>({
                 key={column.key}
                 scope="col"
                 className={cx(
-                  "border-b border-border px-4 py-3 font-semibold text-body",
+                  "relative border-b border-border px-4 py-3 font-semibold text-body",
                   column.className,
                 )}
               >

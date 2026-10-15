@@ -90,11 +90,11 @@ export async function ProjectAdminSubmissionsPage({
         title="Project submissions"
         description="Final-delivery versions across project workspaces, newest activity first."
       />
-      <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
+      <section className="break-words rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
         Legacy delivery supports Under Review, Locked and
         Reopen states. DB07 vNext cannot represent those
         states yet, so this queue reports only persisted
-        DRAFT/SUBMITTED/CHANGES_REQUESTED/APPROVED values
+        DRAFT, SUBMITTED, CHANGES_REQUESTED or APPROVED values
         until the staged delivery-event/state work is
         promoted.
       </section>
