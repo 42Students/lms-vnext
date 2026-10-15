@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {collegeContactsQuerySchema,collegeContactsHref,collegeContactLiteralPattern,clearedCollegeContactsHref} from "@/modules/people/college-contacts-model";
+import {collegeContactsQuerySchema,collegeContactsHref,collegeContactLiteralPattern,contactAcademicFiltersCompatible,clearedCollegeContactsHref} from "@/modules/people/college-contacts-model";
 
 describe("Contact profile availability",()=>{it("round-trips valid facet through filtered contact links and rejects unsupported options",()=>{
  const q=collegeContactsQuerySchema.parse({profile:"UNPROFILED"});expect(collegeContactsHref(q)).toContain("profile=UNPROFILED");expect(collegeContactsQuerySchema.safeParse({profile:"PRIVATE"}).success).toBe(false);
@@ -34,3 +34,5 @@ describe("Contacts employment type filter",()=>{it("round-trips bounded Faculty 
 describe("Active Faculty teaching-role contact filter",()=>{it("round-trips only registered teaching roles",()=>{const input=collegeContactsQuerySchema.parse({teachingRole:"CO_TEACHER"});expect(collegeContactsHref(input)).toContain("teachingRole=CO_TEACHER");expect(collegeContactsQuerySchema.safeParse({teachingRole:"PROFESSOR"}).success).toBe(false);});});
 
 describe("Contact Faculty academic-title text facet",()=>{it("escapes LIKE wildcard input, validates and retains search on CSV URL",()=>{expect(collegeContactLiteralPattern("50%_")).toBe("%50\\%\\_%");const query=collegeContactsQuerySchema.parse({facultyTitleQ:"Associate Prof."});expect(collegeContactsHref(query)).toContain("facultyTitleQ=Associate+Prof.");expect(collegeContactsQuerySchema.safeParse({facultyTitleQ:"x".repeat(81)}).success).toBe(false);});});
+
+describe("Contacts contradictory academic facets",()=>{it("rejects incompatible no-enrollment and no-class selections",()=>{const defaults=collegeContactsQuerySchema.parse({});for(const inconsistent of [{enrollment:"NONE" as const,programId:"00000000-0000-4000-8000-000000000101"},{enrollment:"NONE" as const,classPresence:"ASSIGNED" as const},{classPresence:"NONE" as const,sectionId:"00000000-0000-4000-8000-000000000102"}])expect(contactAcademicFiltersCompatible({...defaults,...inconsistent})).toBe(false);expect(contactAcademicFiltersCompatible(defaults)).toBe(true);});});
