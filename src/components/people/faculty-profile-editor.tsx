@@ -2,7 +2,7 @@
 import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileNeedsReload,facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileNeedsReload,facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode} from "@/modules/people/faculty-profile-error-model";
 import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -47,9 +47,10 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
     body:JSON.stringify({section,value,expectedVersion:version}),
    });
    if(!response.ok){
-    const problem=await response.json().catch(()=>({error:"UNKNOWN"})) as {error?:string};
-    setNeedsReload(facultyProfileNeedsReload(problem.error));
-    setError(facultyProfileSaveFailure(problem.error,response.status));return;
+    const problem:unknown=await response.json().catch(()=>null);
+    const code=facultyProfileErrorCode(problem);
+    setNeedsReload(facultyProfileNeedsReload(code));
+    setError(facultyProfileSaveFailure(code,response.status));return;
    }
    const result=facultyProfileSaveReceipt(await response.json(),version);
    setDocument(result.document);setVersion(result.version);

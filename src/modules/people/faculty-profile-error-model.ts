@@ -14,3 +14,12 @@ export function facultyProfileSaveFailure(code:string|undefined,status:number):s
 export function facultyProfileUnconfirmedSaveMessage():string{
  return "The save response could not be verified. Your change may have been saved. Review the latest profile before submitting it again.";
 }
+
+/** Never trust untyped error JSON or expose a server exception body to the browser. */
+export function facultyProfileErrorCode(raw:unknown):string|undefined{
+ if(!raw||typeof raw!=="object"||Array.isArray(raw))return undefined;
+ const candidate=(raw as Record<string,unknown>).error;
+ if(typeof candidate!=="string"||candidate.length>128||!/^[A-Z][A-Z0-9_]*$/.test(candidate))
+  return undefined;
+ return candidate;
+}
