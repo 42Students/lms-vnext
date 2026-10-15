@@ -29,12 +29,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
           <p className="mt-2 text-xs text-muted-foreground">{describeDriveMetric(name)}</p>
         </article>)}
     </section>
-    <nav aria-label="Drive detail sections" className="flex flex-wrap gap-4 text-sm font-semibold">
-      <Link href={`/college/placements/jobs/${drive.id}/applications`} className="text-primary-text underline">Applications</Link>
-      <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-primary-text underline">Shortlisted</Link>
-      <Link href={`/college/placements/jobs/${drive.id}/interviews`} className="text-primary-text underline">Interviews</Link>
-      <Link href={`/college/placements/jobs/${drive.id}/settings`} className="text-primary-text underline">Settings</Link>
-    </nav>
+    <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-sm font-semibold text-primary-text underline">Shortlisted</Link>
     <p className="text-xs text-muted-foreground">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
   </div>;
 }
