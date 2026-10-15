@@ -291,4 +291,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(foreign.items).toEqual([]);
   });
 
+  it("startOnOrBefore filters registered own-college cohort period starts",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,startOnOrBefore:"2026-07-02"}),
+      listCollegeBatches(adminA,{q:label,startOnOrBefore:"2026-06-30"}),
+      listCollegeBatches(adminB,{q:label,startOnOrBefore:"2026-07-02"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
