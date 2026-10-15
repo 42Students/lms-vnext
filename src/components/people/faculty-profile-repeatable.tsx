@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
+import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -31,7 +32,9 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
     field.required && (typeof row[field.name] !== "string" || !String(row[field.name]).trim()),
   ));
   function update(id: string, name: keyof T & string, value: string | boolean) {
-    setRows(current => current.map(row => row.id === id ? { ...row, [name]: value } : row));
+    setRows(current => current.map(row => row.id === id ?
+      (section === "education" ? { ...row, ...facultyEducationFieldEdit(row, name, value) } : { ...row, [name]: value })
+      : row));
     setChanged(true);
   }
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -53,6 +56,8 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             <div className="grid gap-3 sm:grid-cols-2">
               {fields.map(field => {
                 const value = row[field.name];
+                const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
+                  "isCurrentlyPursuing" in row && row.isCurrentlyPursuing === true;
                 return <label key={field.name} className="block min-w-0 text-sm font-semibold text-body">
                   {field.label}
                   {field.kind === "checkbox" ? (
@@ -61,13 +66,13 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                   ) : field.multiline ? (
                     <textarea className="mt-1.5 min-h-24 w-full min-w-0 rounded-md border border-border bg-background p-3"
                       maxLength={field.maxLength} value={typeof value === "string" ? value : ""}
-                      disabled={pending} required={field.required}
+                      disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   ) : (
                     <input className="mt-1.5 w-full min-w-0 rounded-md border border-border bg-background p-3"
                       type={field.kind ?? "text"} maxLength={field.maxLength}
                       value={typeof value === "string" ? value : ""}
-                      disabled={pending} required={field.required}
+                      disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   )}
                 </label>;
