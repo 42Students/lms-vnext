@@ -33,7 +33,7 @@ const columns: DataTableColumn<AdminProgramRow>[] = [
     key: "actions",
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
-    cell: (item) => <ProgramActions program={{
+    cell: (item) => <ProgramActions displayDurationYears program={{
       id: item.id,
       name: item.name,
       code: item.code,
