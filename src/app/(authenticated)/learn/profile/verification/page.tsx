@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getOwnLearnerVerificationStatus } from "@/modules/placements/learner-verification-status-service";
+import {LearnerVerificationSubmit} from "@/components/profile/learner-verification-submit";
 
 const details = [
-  { key: "education", heading: "Education", edit: "/learn/profile?section=education" },
-  { key: "identity", heading: "Identity", edit: "/learn/profile?section=identity" },
+  { key: "education", section:"EDUCATION", heading: "Education", edit: "/learn/profile?section=education" },
+  { key: "identity", section:"IDENTITY", heading: "Identity", edit: "/learn/profile?section=identity" },
 ] as const;
 
 export default async function LearnerVerificationPage() {
@@ -27,7 +28,8 @@ export default async function LearnerVerificationPage() {
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
-        <p className="mt-3 text-xs text-muted-foreground">Updating your details does not automatically submit evidence for re-verification.</p>
+        <p className="mt-3 text-xs text-muted-foreground">Update profile details and privately uploaded evidence before submitting. The server checks the real stored documents; a pending upload is not sufficient.</p>
+        {row.canResubmit ? <LearnerVerificationSubmit section={item.section as "EDUCATION"|"IDENTITY"} expectedVersion={row.version} status={row.status} /> : null}
         <Link href={item.edit} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review {item.heading.toLowerCase()} details</Link>
       </section>;
     })}</div>
