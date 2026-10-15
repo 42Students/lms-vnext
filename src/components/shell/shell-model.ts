@@ -17,7 +17,7 @@ export type ShellNavItem = {
   shortLabel: string;
   icon?: string;
   activeIcon?: string;
-  group?: "learning" | "tracking" | "career" | "account";
+  group?: "learning" | "tracking" | "career" | "account" | "operate" | "coordinate" | "insights" | "administration";
 };
 
 const dashboard: ShellNavItem = {
@@ -184,91 +184,32 @@ const mentorItems: ShellNavItem[] = [
   { label: "Notifications", href: "/mentor/notifications", shortLabel: "N", icon: "/assets/images/common/notification.svg", group: "learning" },
 ];
 
+/** Exact legacy sidebar order from docs/audit/legacy-copy-B.md section A. */
 const tpoItems: ShellNavItem[] = [
-  { label: "Recruiter Leads", href: "/tpo/recruiters", shortLabel: "R" },
-  {
-    label: "Companies",
-    href: "/tpo/companies",
-    shortLabel: "C",
-  },
-  {
-    label: "Placement Operations",
-    href: "/tpo/placements",
-    shortLabel: "P",
-  },
-  {
-    label: "Students",
-    href: "/tpo/students",
-    shortLabel: "S",
-  },
-  {
-    label: "Calendar",
-    href: "/tpo/calendar",
-    shortLabel: "C",
-    icon: "/assets/images/common/calender.svg",
-  },
-  {
-    label: "Reports",
-    href: "/tpo/reports",
-    shortLabel: "R",
-    group: "tracking",
-  },
-  {
-    label: "Messages",
-    href: "/tpo/messages",
-    shortLabel: "M",
-    group: "account",
-  },
-  {
-    label: "Settings",
-    href: "/tpo/settings",
-    shortLabel: "S",
-    group: "account",
-  },
-  {
-    label: "Audit Log",
-    href: "/tpo/audit",
-    shortLabel: "A",
-    group: "tracking",
-  },
-  {
-    label: "More",
-    href: "/tpo/more",
-    shortLabel: "M",
-    group: "account",
-  },
+  { label: "Home", href: "/tpo/home", shortLabel: "H", group: "operate" },
+  { label: "Placement eligibility", href: "/tpo/batches", shortLabel: "P", group: "operate" },
+  { label: "Engage", href: "/tpo/recruiters", shortLabel: "E", group: "operate" },
+  { label: "Drives", href: "/tpo/placements", shortLabel: "D", group: "operate" },
+  { label: "Team", href: "/tpo/team", shortLabel: "T", group: "operate" },
+  { label: "Students", href: "/tpo/students", shortLabel: "S", group: "coordinate" },
+  { label: "Requests", href: "/tpo/requests", shortLabel: "R", group: "coordinate" },
+  { label: "Verification", href: "/tpo/verification", shortLabel: "V", group: "coordinate" },
+  { label: "Calendar", href: "/tpo/calendar", shortLabel: "C", icon: "/assets/images/common/calender.svg", group: "coordinate" },
+  { label: "Announcements", href: "/tpo/announcements", shortLabel: "A", group: "coordinate" },
+  { label: "Reports", href: "/tpo/reports", shortLabel: "R", group: "insights" },
+  { label: "Messages", href: "/tpo/messages", shortLabel: "M", group: "administration" },
+  { label: "Settings", href: "/tpo/settings", shortLabel: "S", group: "administration" },
+  { label: "Audit log", href: "/tpo/audit", shortLabel: "A", group: "administration" },
+  { label: "Notifications", href: "/tpo/notifications", shortLabel: "N", group: "administration" },
 ];
 
+/** Recruiter legacy has five sidebar rows; no generic Dashboard or Profile. */
 const recruiterItems: ShellNavItem[] = [
-  {
-    label: "Today",
-    href: "/hr/home",
-    shortLabel: "T",
-  },
-  {
-    label: "Hiring Workspace",
-    href: "/hr/placements",
-    shortLabel: "H",
-  },
-  {
-    label: "Calendar",
-    href: "/hr/calendar",
-    shortLabel: "C",
-    icon: "/assets/images/common/calender.svg",
-    group: "tracking",
-  },
-  {
-    label: "Company & Team",
-    href: "/hr/company",
-    shortLabel: "C",
-    group: "account",
-  },
-  {
-    label: "Profile",
-    href: "/hr/profile",
-    shortLabel: "P",
-    group: "account",
-  },
+  { label: "Today", href: "/hr/home", shortLabel: "T", group: "learning" },
+  { label: "Drives", href: "/hr/drives", shortLabel: "D", group: "learning" },
+  { label: "Calendar", href: "/hr/calendar", shortLabel: "C", icon: "/assets/images/common/calender.svg", group: "learning" },
+  { label: "Messages", href: "/hr/messages", shortLabel: "M", group: "learning" },
+  { label: "Company & Team", href: "/hr/company", shortLabel: "C", group: "account" },
 ];
 
 /** Legacy college sidebar, source: docs/audit/legacy-copy-A.md lists.js L192–212. */
@@ -415,6 +356,16 @@ export function getShellNavigation(
     !hasActiveRecruiter(context)
   ) {
     return collegeAdminItems;
+  }
+
+  // A TPO-only or recruiter-only account must see exactly the legacy
+  // sidebar, rather than a generic Dashboard plus role-specific links.
+  if (context.membership && context.membership.roles.length === 1 &&
+      hasMembershipRole(context, "TPO") && !hasActiveRecruiter(context)) {
+    return tpoItems;
+  }
+  if (!context.membership && hasActiveRecruiter(context)) {
+    return recruiterItems;
   }
 
   const items: ShellNavItem[] = hasMembershipRole(context, "COLLEGE_ADMIN")
