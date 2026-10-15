@@ -1596,3 +1596,7 @@ Project access resolves persisted role_kind and can_mutate, projecting observers
 ### PR-S2-11 0084: signed-file confidentiality (registered runtime)
 
 Learner/observer Project file lists exclude files linked to MENTOR_ONLY resources by SQL NOT EXISTS; direct signed download grants also load and verify the linked resource in the current project and deny a private or inactive resource with a non-leaking STORAGE_NOT_FOUND. Unlinked project uploads keep their existing team-visible behavior. Real DB tenant/leak tests and complete alternative file routes require execution before certifying closure.
+
+### PR-S2-03 Mentor/Admin assignee picker (source delivered)
+
+The task board now has the legacy Assignee picker limited to the current project Learner roster and a version-checked assignment PATCH. Integration helper explicitly assigns before submission. Earlier isolated tests that submit without an assignee may need dedicated fixture updates. Real DB/role-negative/browser tests remain unrun.
