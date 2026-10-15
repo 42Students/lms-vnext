@@ -20,11 +20,16 @@ export function issueUnsubscribeToken(claim: UnsubscribeClaim, key: string): str
 export function verifyUnsubscribeToken(token: string, key: string, nowMs: number): UnsubscribeClaim | null {
   const parts = token.split(".");
   if (parts.length !== 2 || !parts[0] || !parts[1] || token.length > 2048) return null;
+  // Reject noncanonical base64url spellings; token parsing must be unambiguous.
+  if (!/^[A-Za-z0-9_-]+$/.test(parts[0]) || !/^[A-Za-z0-9_-]+$/.test(parts[1])) return null;
   try {
     const expected = mac(parts[0], key);
     const given = Buffer.from(parts[1], "base64url");
+    if (given.toString("base64url") !== parts[1]) return null;
+    const payload = Buffer.from(parts[0], "base64url");
+    if (payload.toString("base64url") !== parts[0]) return null;
     if (given.length !== expected.length || !timingSafeEqual(expected, given)) return null;
-    const claim = payloadSchema.parse(JSON.parse(Buffer.from(parts[0], "base64url").toString("utf8")));
+    const claim = payloadSchema.parse(JSON.parse(payload.toString("utf8")));
     return claim.expiresAt > nowMs ? claim : null;
   } catch {
     return null;

@@ -6,7 +6,13 @@ export const outboundSendSchema = z.object({
   channel: outboundChannelSchema,
   recipient: z.string().trim().min(1).max(320),
   templateKey: z.string().trim().min(1).max(160),
-  variables: z.record(z.string(), z.string().max(4000)),
+  variables: z.record(z.string(), z.string().max(4000)).superRefine((values, ctx) => {
+    const entries = Object.entries(values);
+    if (entries.length > 25 || entries.some(([key]) => !/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)) ||
+        entries.reduce((size, [key, value]) => size + key.length + value.length, 0) > 12000) {
+      ctx.addIssue({ code: "custom", message: "INVALID_TEMPLATE_VARIABLES" });
+    }
+  }),
   purpose: z.string().trim().min(1).max(160),
 });
 export type OutboundSendRequest = z.infer<typeof outboundSendSchema>;

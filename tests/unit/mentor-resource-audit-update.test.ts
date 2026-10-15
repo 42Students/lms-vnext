@@ -4,7 +4,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 it("keeps update resource audit inside the project transaction with safe metadata",()=>{
  const input=projectResourceAuditInput("UPDATED",{
   projectId:"project-a",collegeId:"college-a",organizationId:"org-a",
- },{id:"resource-a",title:"Reference =unsafe"},nonce-a);
+ },{id:"resource-a",title:"Reference =unsafe"},"nonce-a");
  expect(input.eventType).toBe(ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED);
  expect(input).toMatchObject({collegeId:"college-a",organizationId:"org-a",
   metadata:{projectId:"project-a",resourceId:"resource-a"},
