@@ -1,15 +1,14 @@
 import {readFileSync} from "node:fs";
 import {expect,it} from "vitest";
-it("checks persisted scope before disclosing outside-drive storage readiness",()=>{
- const source=readFileSync("src/modules/placements/recorded-outside-service.ts","utf8");
- const start=source.indexOf("export async function recordOutsideDrive");
- const actor=source.indexOf("await outsideActor(",start);
- const permission=source.indexOf('placements.recruiter.outside.record',start);
- const persisted=source.indexOf("if(!current)throw",start);
- const gate=source.indexOf('placementTableExists("placement_outside_drive_records")',start);
- expect(start).toBeGreaterThan(-1);
+it("validates persisted grants before writing to the registered outside-drive table",()=>{
+ const src=readFileSync("src/modules/placements/recorded-outside-service.ts","utf8");
+ const start=src.indexOf("export async function recordOutsideDrive");
+ const actor=src.indexOf("await outsideActor(",start);
+ const grant=src.indexOf("if(!current)throw",start);
+ const insert=src.indexOf("tx.insert(placementOutsideDriveRecords)",start);
  expect(actor).toBeGreaterThan(start);
- expect(permission).toBeGreaterThan(actor);
- expect(persisted).toBeGreaterThan(permission);
- expect(gate).toBeGreaterThan(persisted);
+ expect(grant).toBeGreaterThan(actor);
+ expect(insert).toBeGreaterThan(grant);
+ expect(src).toContain('from "@/db/schema/placement-outside-drives"');
+ expect(src).not.toContain("placementTableExists");
 });
