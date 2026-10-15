@@ -35,6 +35,12 @@ describe.skipIf(!enabled)("HR job activity PG scopes",()=>{
   expect(result.status).toBe("READY");
   expect(result.events.some(e=>e.jobId===own.id)).toBe(true);
   expect(result.events.some(e=>e.jobId===other.id)).toBe(false);
+  const searched=await listRecruiterJobActivity(hr(a.company.id,a.relationship.id),
+   {collegeId:SEED_IDS.collegeA,q:"HR Feed Own "+n});
+  expect(searched.events.some(e=>e.jobId===own.id)).toBe(true);
+  const missing=await listRecruiterJobActivity(hr(a.company.id,a.relationship.id),
+   {collegeId:SEED_IDS.collegeA,q:"Definitely unmatched"});
+  expect(missing.events).toEqual([]);
   const csv=buildHrActivityCsv(result.events,false).csv;
   expect(csv).toContain(own.id);
   expect(csv).not.toContain(other.id);
