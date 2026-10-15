@@ -1418,3 +1418,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **2026-10-15 chat-7 next round (L2-011 FIXED source, acceptance open):** Course Home no longer reports a no-deadline incomplete Course as 'Course work complete'. It distinguishes real persisted `itemsCompleted` from `itemsTotal`; no item status is guessed. Focused regression authored, browser/PostgreSQL acceptance pending.
 
 **L2-016 (source fix, unverified):** Course Home upcoming quiz actions exclude persisted missed/completed quizzes, validate actual finite due instants and retain only the authorized next-14-day window. Pure regression authored; producer/consumer and browser acceptance open.
+
+**L1 next-due attention (source FIXED, proof open):** missed/completed quizzes and invalid timestamps no longer leak into actionable Course-card due dates. No new read or mutation. Pure regressions authored; runtime/browser verification pending.
