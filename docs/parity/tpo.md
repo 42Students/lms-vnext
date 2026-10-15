@@ -2071,3 +2071,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 2026-10-15 / Live Drive Day search — PARTIAL:** TPO-only live, already-scoped and capped rounds can be filtered by company/job/round name with a validated 100-character URL term. This does not expand the 20-round sample or expose coordinator-only learner rosters. Runtime/browser verification pending.
 
 **Chat-2 live unrecorded attendance — PARTIAL:** Added separate UNKNOWN focus on actual records, never classifying unknown as a no-show; filters operate on authorized, capped rounds. Integration/browser verification remains open.
+
+**Chat-2 live unresolved attention — PARTIAL:** Added pending-or-unrecorded focus from persisted counts. Explicit absent-only rounds are excluded and unrecorded is not inferred absent; TPO live sample cap persists.
