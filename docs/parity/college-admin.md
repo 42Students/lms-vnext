@@ -723,6 +723,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Live-class metadata presence PARTIAL (2026-10-15, chat-3):** College Admin progress now finds offering paths containing saved LIVE_CLASS content and separately those without; no external meeting links or attendee states read. Tenant-scoped CSV matches the filter; authored tests need execution and browser acceptance.
+
 **Resource-presence selector PARTIAL (2026-10-15, chat-3):** Filters actual saved RESOURCE records in same-college offerings, before pagination and CSV. No private links or publication inference. Tests authored; runtime and browser validation open.
 
 **Authored quiz triage PARTIAL (2026-10-15, chat-3):** The offering directory can isolate saved quizzes through course lessons without inferring quiz attempt/result evidence; server filters apply before CSV and pages. Unit/isolated-PG tests authored, not run. Browser/legacy acceptance open.
