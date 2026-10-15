@@ -12,10 +12,8 @@ import {
   collegeModuleCardSummary,
   type AdminModuleDecision,
 } from "@/modules/module-access/admin-read-model";
-import {
-  adminFeatureQuerySchema,
-  listSuperAdminFeatureControls,
-} from "@/modules/module-access/admin-read-service";
+import {listSuperAdminFeatureControls} from "@/modules/module-access/admin-read-service";
+import {parseAdminFeaturePageParams} from "@/modules/module-access/admin-feature-query";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import { placementFeatureEffects } from "@/modules/platform-settings/placement-feature-controls-model";
 
@@ -24,15 +22,7 @@ type SearchParams = Record<
   string | string[] | undefined
 >;
 
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
-
-function ModuleState({
+ function ModuleState({
   decision,
 }: {
   decision: AdminModuleDecision;
@@ -71,20 +61,9 @@ export default async function SuperAdminFeaturesPage({
     await getCurrentRequestContext();
 
   const params = await searchParams;
-  const parsed =
-    adminFeatureQuerySchema.safeParse({
-      q: one(params.q) || undefined,
-      page: one(params.page) || undefined,
-      sort: one(params.sort) || undefined,
-      module: one(params.module) || undefined,
-      storedState: one(params.storedState) || undefined,
-      locks: one(params.locks) || undefined,
-      presence: one(params.presence) || undefined,
-      recent: one(params.recent) || undefined,
-      searchField: one(params.searchField) || undefined,
-    });
+  const parsed = parseAdminFeaturePageParams(params);
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <PageHeader
@@ -111,7 +90,7 @@ export default async function SuperAdminFeaturesPage({
   const result =
     await listSuperAdminFeatureControls(
       context,
-      parsed.data,
+      parsed,
     );
 
   const firstItem =

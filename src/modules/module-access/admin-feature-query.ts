@@ -19,3 +19,10 @@ export function featureRuleCutoff(recent:"ALL"|"7D"|"30D"|"90D",now:Date):Date|n
  const days=recent==="7D"?7:recent==="30D"?30:recent==="90D"?90:0;
  return days?new Date(now.getTime()-days*86400000):null;
 }
+
+/** Reject repeated and unknown URL parameters before any feature matrix DB read. */
+export function parseAdminFeaturePageParams(raw:Record<string,string|string[]|undefined>):AdminFeatureQuery|null {
+ if(Object.values(raw).some(value=>Array.isArray(value)))return null;
+ const parsed=adminFeatureQuerySchema.safeParse(raw);
+ return parsed.success?parsed.data:null;
+}

@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {adminFeatureQuerySchema,featureRuleCutoff} from "@/modules/module-access/admin-feature-query";
+import {adminFeatureQuerySchema,featureRuleCutoff,parseAdminFeaturePageParams} from "@/modules/module-access/admin-feature-query";
 import {adminFeaturesHref} from "@/modules/module-access/admin-read-model";
 describe("Super Admin feature matrix query",()=>{
  it("accepts code sorting and rejects unrecognized sort modes",()=>{
@@ -45,5 +45,11 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.parse({sort:"NAME_DESC"}).sort).toBe("NAME_DESC");
   expect(adminFeatureQuerySchema.parse({sort:"CODE_DESC"}).sort).toBe("CODE_DESC");
   expect(adminFeaturesHref({sort:"CODE_DESC",page:2})).toContain("sort=CODE_DESC");
+ });
+ it("rejects duplicated pagination and unknown matrix selectors before database reads",()=>{
+  expect(parseAdminFeaturePageParams({page:["1","200"]})).toBeNull();
+  expect(parseAdminFeaturePageParams({module:["projects","electives"]})).toBeNull();
+  expect(parseAdminFeaturePageParams({q:"A",credential:"unexpected"})).toBeNull();
+  expect(parseAdminFeaturePageParams({module:"projects",sort:"CODE_DESC"})).toMatchObject({module:"projects",sort:"CODE_DESC"});
  });
 });
