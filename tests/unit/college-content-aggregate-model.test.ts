@@ -17,20 +17,22 @@ describe("College Admin content aggregate model", () => {
 
   it("rejects unscoped college overrides and invalid filters", () => {
     expect(collegeContentQuerySchema.parse({})).toEqual({
-      q: "", status: "ALL", format: "ALL", scope: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", scope: "ALL", visibility: "ALL", page: 1,
     });
     expect(collegeContentQuerySchema.parse({ q: "  safety  ", status: "PUBLISHED", page: "2" }))
-      .toEqual({ q: "safety", status: "PUBLISHED", format: "ALL", scope: "ALL", page: 2 });
+      .toEqual({ q: "safety", status: "PUBLISHED", format: "ALL", scope: "ALL", visibility: "ALL", page: 2 });
     for (const invalid of [
       { collegeId: "another-college" },
       { status: "CLOSED" },
       { format: "EXTERNAL_URL" },
       { scope: "OTHER" },
+      { visibility: "MAYBE" },
       { offeringStatus: "CANCELLED" },
       { page: 0 },
       { page: 1001 },
       { q: "a".repeat(101) },
       { courseCode: "x".repeat(65) },
+      { programCode: "x".repeat(65) },
     ]) {
       expect(collegeContentQuerySchema.safeParse(invalid).success).toBe(false);
     }
@@ -41,7 +43,7 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentQuerySchema.safeParse(
       collegeContentSearchParams({ status: ["DRAFT"] }),
     ).success).toBe(false);
-    const href = collegeContentHref("VIDEO", { q: "a & b", courseCode: "CS-101", status: "ARCHIVED", format: "YOUTUBE", scope: "SECTION", page: 2 });
+    const href = collegeContentHref("VIDEO", { q: "a & b", courseCode: "CS-101", status: "ARCHIVED", format: "YOUTUBE", scope: "SECTION", visibility: "ALL", page: 2 });
     const url = new URL(href, "https://example.test");
     expect(url.pathname).toBe("/college/videos");
     expect(url.searchParams.get("q")).toBe("a & b");
@@ -51,8 +53,10 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentHref("RESOURCE",{...collegeContentQuerySchema.parse({offeringStatus:"ARCHIVED"})}))
       .toContain("offeringStatus=ARCHIVED");
     expect(url.searchParams.has("collegeId")).toBe(false);
+    expect(collegeContentHref("VIDEO",collegeContentQuerySchema.parse({programCode:"B&Tech"}))).toContain("programCode=B%26Tech");
+    expect(collegeContentHref("RESOURCE",collegeContentQuerySchema.parse({visibility:"HIDDEN"}))).toContain("visibility=HIDDEN");
     expect(collegeContentHref("RESOURCE", {
-      q: "", status: "ALL", format: "ALL", scope: "ALL", page: 1,
+      q: "", status: "ALL", format: "ALL", scope: "ALL", visibility: "ALL", page: 1,
     })).toBe("/college/resources");
   });
 
