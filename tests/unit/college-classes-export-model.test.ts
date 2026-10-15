@@ -35,4 +35,9 @@ describe("College classes safe CSV export", () => {
     expect(csv).toContain("EXPORT TRUNCATED");
     expect(csv).toContain("Only first 1,000");
   });
+ it("cohortStatus is applied to classes CSV",()=>{
+  expect(collegeClassesExportSchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
+  expect(classesExportHref({q:"",status:"ACTIVE",cohortStatus:"ACTIVE"})).toContain("cohortStatus=ACTIVE");
+ });
+
 });

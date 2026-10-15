@@ -73,4 +73,9 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(electiveSelectionLabel(1, 1)).toBe("Select 1");
     expect(electiveSelectionLabel(1, 3)).toBe("Select 1–3");
   });
+  it("cohortStatus classes query is validated and retained in navigation",()=>{
+    expect(collegeClassQuerySchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
+    expect(collegeStructureHref("CLASSES",collegeClassQuerySchema.parse({cohortStatus:"ACTIVE"}))).toContain("cohortStatus=ACTIVE");
+  });
+
 });

@@ -129,6 +129,17 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
+          {data.kind === "CLASSES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Class parent batch lifecycle
+              <select name="cohortStatus" defaultValue={data.query.cohortStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All batches</option>
+                <option value="PLANNED">Planned</option>
+                <option value="ACTIVE">Active</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
