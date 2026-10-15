@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { cohorts, collegeMemberships, departments, learnerProgramEnrollments, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
@@ -112,7 +112,13 @@ export async function listTpoBatchHistory(ctx:RequestContext,rawId:unknown){
   scopeId:placementEligibilityEvents.scopeId,
  }).from(placementEligibilityEvents)
   .where(and(eq(placementEligibilityEvents.collegeId,collegeId),
-   inArray(placementEligibilityEvents.scopeId,scope.ids)))
+   or(
+    and(eq(placementEligibilityEvents.scopeType,"COHORT"),eq(placementEligibilityEvents.scopeId,batch.id)),
+    ...(members.length?[and(eq(placementEligibilityEvents.scopeType,"MEMBERSHIP"),
+     inArray(placementEligibilityEvents.scopeId,members.slice(0,500).map(m=>m.id)))]:[]),
+    ...(classes.length?[and(eq(placementEligibilityEvents.scopeType,"SECTION"),
+     inArray(placementEligibilityEvents.scopeId,classes.slice(0,500).map(c=>c.id)))]:[]),
+   )))
   .orderBy(desc(placementEligibilityEvents.sequence)).limit(101);
  return {batch,ready:true,events:found.slice(0,100),
   limited:scope.limited||classes.length>500||found.length>100,
