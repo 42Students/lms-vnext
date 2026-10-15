@@ -3,7 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
-import {collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
+import {activeCollegeContactFilterCount,collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
@@ -38,6 +38,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <span>Showing the bookmarked contact record only.</span>
    <Link href={collegeContactsWithoutMemberHref(filter)} className="font-semibold text-primary-text underline">Show matching contact directory</Link>
   </div>}
+  <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
   <form action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-lg border bg-surface p-4">
    <input type="hidden" name="tab" value={filter.tab}/>
