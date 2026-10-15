@@ -26,3 +26,9 @@ export function parseAdminFeaturePageParams(raw:Record<string,string|string[]|un
  const parsed=adminFeatureQuerySchema.safeParse(raw);
  return parsed.success?parsed.data:null;
 }
+
+/** Clamp stale browser bookmarks to the last nonempty filtered page. */
+export function boundedAdminFeaturePage(requested:number,total:number,pageSize:number):number {
+ const last=Math.max(1,Math.ceil(total/pageSize));
+ return Math.max(1,Math.min(requested,last));
+}
