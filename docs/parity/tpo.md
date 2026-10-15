@@ -2049,3 +2049,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch registration reminder preparation (PARTIAL):** A scoped reminder draft uses live DB08 registration-summary counts, distinguishes unavailable evidence from zero, warns for finished batches and links to unrecorded-choice rosters; no contacts, consent, outbound send or delivery receipts are inferred.
 
 **Chat-2 / batch WhatsApp/nudge preparation (PARTIAL):** A scoped 25-learner page exposes the registered no-choice subset and a manually copyable neutral reminder; unavailable registrations and already recorded choices are excluded, no contact data or outbound sending is performed. Full batch selection, contact consent/delivery and actual bulk messaging remain open.
+
+**Chat-2 / Student Notices settings hub (PARTIAL):** TPO settings now has a distinct Notices/Preparation page linked to the live scoped announcements producer and registered prep-readiness editor with explicit missing-storage states. Bulk recipient notices, opt-in controls, external email templates/delivery, and browser parity remain open.
