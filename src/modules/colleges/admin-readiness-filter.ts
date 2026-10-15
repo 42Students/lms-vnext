@@ -16,3 +16,14 @@ export function visibleReadinessChecks(checks:readonly CollegeReadinessCheck[],s
  if(status==="NEEDS_ATTENTION")return areaChecks.filter(check=>check.status!=="PASS");
  return areaChecks.filter(check=>check.status===status);
 }
+
+/** No first-value wins for repeated readiness filters or unknown keys. */
+export function parseSuperAdminReadinessParams(raw:Record<string,string|string[]|undefined>):SuperAdminReadinessQuery|null{
+ if(Object.keys(raw).some(key=>key!=="status"&&key!=="area"))return null;
+ if(Object.values(raw).some(Array.isArray))return null;
+ const result=superAdminReadinessQuerySchema.safeParse({
+  status:raw.status===""?undefined:raw.status,
+  area:raw.area===""?undefined:raw.area,
+ });
+ return result.success?result.data:null;
+}

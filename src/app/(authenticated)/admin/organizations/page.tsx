@@ -6,6 +6,7 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { can } from "@/modules/permissions/policy";
 import { listOrganizations } from "@/modules/organizations/service";
 
@@ -61,6 +62,7 @@ export default async function OrganizationsPage() {
         description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
       {canCreate ? <OrganizationCreateForm /> : null}
+      {organizations.length===0 ? <EmptyState title="No organizations in this scope" description="There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."/> : null}
       <div className="grid min-w-0 gap-3 lg:hidden" aria-label="Organization cards">
         {organizations.map((organization) => (
           <article key={organization.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">

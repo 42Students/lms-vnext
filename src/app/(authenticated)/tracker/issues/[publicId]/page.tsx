@@ -11,7 +11,10 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { TrackerAdminError } from "@/modules/bug-tracker/admin-errors";
 import { getBugTrackerIssueForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import { trackerPublicIdSchema } from "@/modules/bug-tracker/admin-validation";
 import { isSuperAdmin } from "@/modules/identity/context";
+import { auditActivityTransition } from "@/modules/bug-tracker/audit-activity-display-model";
+import {parseTrackerActivityCursorParams} from "@/modules/bug-tracker/admin-detail-cursor-model";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -23,20 +26,27 @@ function when(value: Date) {
 
 export default async function TrackerIssueDetailPage({
   params,
+  searchParams,
+  auditMode = false,
 }: {
   params: Promise<{ publicId: string }>;
+  searchParams?: Promise<Record<string,string|string[]|undefined>>;
+  auditMode?: boolean;
 }) {
   const context = await getCurrentRequestContext();
-  if (!isSuperAdmin(context)) redirect("/dashboard");
+  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
   const { publicId } = await params;
+  if (!trackerPublicIdSchema.safeParse(publicId).success) notFound();
+  const cursor = parseTrackerActivityCursorParams(searchParams ? await searchParams : {});
+  if (!cursor) notFound();
 
   if (!trackerAdminRuntimeEnabled()) {
     return (
       <div className="space-y-6">
-        <PageHeader eyebrow="42 Tracker" title={publicId} description="Tracker database activation is pending." />
+        <PageHeader eyebrow="42 Tracker" title={publicId} description="Migration 0076 is registered; tracker runtime activation is pending." />
         <TrackerAdminNav />
         <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          DB10 tracker migrations are not verified yet. No issue query was executed.
+          Apply migration 0076 and verify DB10_TRACKER_READY=DB10_VERIFIED before this page reads tracker data.
         </p>
       </div>
     );
@@ -44,7 +54,7 @@ export default async function TrackerIssueDetailPage({
 
   let detail;
   try {
-    detail = await getBugTrackerIssueForAdmin(context, publicId);
+    detail = await getBugTrackerIssueForAdmin(context, publicId, cursor);
   } catch (error) {
     if (error instanceof TrackerAdminError && error.code === "ISSUE_NOT_FOUND") notFound();
     throw error;
@@ -122,6 +132,16 @@ export default async function TrackerIssueDetailPage({
             ))}
           </div>
         )}
+        {detail.nextAttachmentCursor ? (
+          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams({
+            ...detail.nextAttachmentCursor,
+            ...(cursor.activityBeforeCreatedAt && cursor.activityBeforeId ? {
+              activityBeforeCreatedAt:cursor.activityBeforeCreatedAt,activityBeforeId:cursor.activityBeforeId,
+            }:{}),
+          }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Older screenshot metadata
+          </Link>
+        ) : null}
       </section>
 
       <section className="space-y-3">
@@ -134,13 +154,27 @@ export default async function TrackerIssueDetailPage({
               <li key={activity.id} className="rounded-xl border border-border bg-surface p-4">
                 <p className="m-0 text-sm font-semibold text-foreground">{activity.type}</p>
                 <p className="mt-1 text-sm text-body">
-                  {[activity.fromValue, activity.toValue].filter(Boolean).join(" → ") || activity.note || "Workflow update"}
+                  {auditActivityTransition(activity)}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">{when(activity.createdAt)}</p>
+                {activity.note ? <p className="mt-1 whitespace-pre-wrap text-sm text-body">{activity.note}</p> : null}
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {activity.actorName ?? (activity.actorUserId ? "Platform administrator" : "Authorized tracker reporter")} · {when(activity.createdAt)}
+                </p>
               </li>
             ))}
           </ol>
         )}
+        {detail.nextActivityCursor ? (
+          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams({
+            ...detail.nextActivityCursor,
+            ...(cursor.attachmentBeforeCreatedAt && cursor.attachmentBeforeId ? {
+              attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
+            }:{}),
+          }).toString()}
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Older audit events
+          </Link>
+        ) : null}
       </section>
     </div>
   );

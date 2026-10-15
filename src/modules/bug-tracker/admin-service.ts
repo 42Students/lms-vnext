@@ -4,7 +4,8 @@ import {
   desc,
   eq,
   gt,
-  ilike,
+  gte,
+  isNull,
   lt,
   or,
   sql,
@@ -39,6 +40,7 @@ import {
   trackerWorkflowUpdateSchema,
 } from "./admin-validation";
 import { TrackerAdminError } from "./admin-errors";
+import {trackerActivityCursorSchema} from "./admin-detail-cursor-model";
 
 type BugRow = typeof db10BugReports.$inferSelect;
 
@@ -140,16 +142,25 @@ export async function listBugTrackerIssuesForAdmin(
   if (scope) conditions.push(scope);
   if (input.status) conditions.push(eq(db10BugReports.status, input.status));
   if (input.severity) conditions.push(eq(db10BugReports.severity, input.severity));
+  if (input.accountRole) conditions.push(eq(db10BugReports.accountRole, input.accountRole));
+  if (input.resolution === "UNRESOLVED") conditions.push(isNull(db10BugReports.resolution));
+  else if (input.resolution) conditions.push(eq(db10BugReports.resolution, input.resolution));
+  if (input.retestStatus) conditions.push(eq(db10BugReports.retestStatus, input.retestStatus));
+  if (input.productionVerified !== undefined) conditions.push(eq(db10BugReports.productionVerified, input.productionVerified));
   if (input.environment) {
     conditions.push(eq(db10BugReports.environment, input.environment));
   }
+  if (input.issueType) conditions.push(eq(db10BugReports.issueType, input.issueType));
+  if (input.createdFrom) conditions.push(gte(db10BugReports.createdAt,input.createdFrom));
+  if (input.createdBefore) conditions.push(lt(db10BugReports.createdAt,input.createdBefore));
   if (input.q) {
-    const pattern = `%${input.q}%`;
+    // Literal substring semantics: '%' and '_' in user input are data, not LIKE wildcards.
+    const term=input.q.toLowerCase();
     conditions.push(or(
-      ilike(db10BugReports.publicId, pattern),
-      ilike(db10BugReports.reporterName, pattern),
-      ilike(db10BugReports.page, pattern),
-      ilike(db10BugReports.description, pattern),
+      sql`position(${term}::text in lower(${db10BugReports.publicId})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.reporterName})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.page})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.description})) > 0`,
     )!);
   }
   if (input.beforeCreatedAt && input.beforeId) {
@@ -194,8 +205,10 @@ export async function listBugTrackerIssuesForAdmin(
 export async function getBugTrackerIssueForAdmin(
   context: RequestContext,
   publicIdInput: string,
+  rawCursor: unknown = {},
 ) {
   requireTrackerAdmin(context);
+  const activityCursor = trackerActivityCursorSchema.parse(rawCursor);
   const publicId = trackerPublicIdSchema.parse(publicIdInput);
   const conditions: SQL[] = [publicIdCondition(publicId)];
   const scope = adminScopeCondition(context);
@@ -209,7 +222,24 @@ export async function getBugTrackerIssueForAdmin(
     .limit(1);
   if (!row) throw new TrackerAdminError("ISSUE_NOT_FOUND");
 
-  const [activities, attachments] = await Promise.all([
+  const activityConditions: SQL[] = [eq(db10BugReportActivities.bugReportId,row.report.id)];
+  if (activityCursor.activityBeforeCreatedAt && activityCursor.activityBeforeId) {
+    const time=activityCursor.activityBeforeCreatedAt;
+    const id=activityCursor.activityBeforeId;
+    activityConditions.push(or(
+      lt(db10BugReportActivities.createdAt,time),
+      and(eq(db10BugReportActivities.createdAt,time),lt(db10BugReportActivities.id,id)),
+    )!);
+  }
+  const attachmentConditions: SQL[] = [eq(db10BugReportAttachments.bugReportId,row.report.id)];
+  if(activityCursor.attachmentBeforeCreatedAt && activityCursor.attachmentBeforeId){
+    const at=activityCursor.attachmentBeforeCreatedAt,id=activityCursor.attachmentBeforeId;
+    attachmentConditions.push(or(
+      lt(db10BugReportAttachments.createdAt,at),
+      and(eq(db10BugReportAttachments.createdAt,at),lt(db10BugReportAttachments.id,id)),
+    )!);
+  }
+  const [activityRows, attachmentRows] = await Promise.all([
     getDb()
       .select({
         id: db10BugReportActivities.id,
@@ -223,8 +253,9 @@ export async function getBugTrackerIssueForAdmin(
         createdAt: db10BugReportActivities.createdAt,
       })
       .from(db10BugReportActivities)
-      .where(eq(db10BugReportActivities.bugReportId, row.report.id))
-      .orderBy(asc(db10BugReportActivities.createdAt), asc(db10BugReportActivities.id)),
+      .where(and(...activityConditions))
+      .orderBy(desc(db10BugReportActivities.createdAt), desc(db10BugReportActivities.id))
+      .limit(51),
     getDb()
       .select({
         id: db10BugReportAttachments.id,
@@ -234,11 +265,23 @@ export async function getBugTrackerIssueForAdmin(
         createdAt: db10BugReportAttachments.createdAt,
       })
       .from(db10BugReportAttachments)
-      .where(eq(db10BugReportAttachments.bugReportId, row.report.id))
-      .orderBy(asc(db10BugReportAttachments.createdAt)),
+      .where(and(...attachmentConditions))
+      .orderBy(desc(db10BugReportAttachments.createdAt),desc(db10BugReportAttachments.id))
+      .limit(51),
   ]);
 
-  return { report: row.report, activities, attachments };
+  const activities=activityRows.slice(0,50);
+  const attachments=attachmentRows.slice(0,50);
+  const lastAttachment=attachments.at(-1);
+  const last=activities.at(-1);
+  return { report:row.report,activities,attachments,
+    nextAttachmentCursor:attachmentRows.length>50 && lastAttachment ? {
+      attachmentBeforeCreatedAt:lastAttachment.createdAt.toISOString(),attachmentBeforeId:lastAttachment.id,
+    }:null,
+    nextActivityCursor: activityRows.length>50 && last ? {
+      activityBeforeCreatedAt:last.createdAt.toISOString(),activityBeforeId:last.id,
+    }:null,
+  };
 }
 
 export async function updateBugTrackerWorkflowForAdmin(

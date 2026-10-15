@@ -1026,3 +1026,172 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 ### 2026-10-15 chat-6 college Feature Controls write workflow — PARTIAL, not accepted
 Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly typed and optimistic SET/INHERIT mutation, a transactional high-importance Activity Log event, ancestor GLOBAL/ORGANIZATION lock checks, no-op suppression, and a human-confirmed editor in the college hierarchy. All three optional modules are supported at COLLEGE scope; student lower-level controls remain independent. Recheck and reviewed receipts do not infer downstream participation gates. Authorized, page-bounded audit history and formula-neutralized CSV are accessible from the hierarchy. Pure tests and an isolated-PostgreSQL success/negative fixture have been **authored but not executed** in this environment. Transactional global/organization insert races, cross-role/tenant DB execution, browser confirmation/responsiveness, export paging/privacy, exact legacy Oracle parity and operational acceptance remain open. Do not mark the matrix or DATABASE tracker DONE.
+
+### 2026-10-15 chat-6: DB10 Super Admin announcements and audit findings — PARTIAL
+
+**Before:** migration 0076 registered `announcements`, `bug_reports`, `bug_report_activities` and related tables; the Super Admin announcements page had single-recipient create/edit/list but no enforced publication-consent step or all/selected-college broadcast. Audit Findings had a read-only DB10 listing and linked the generic tracker detail/status workflow.
+
+**After (source committed on chatgpt/chat-6):**
+- Super Admin single-recipient announcement CREATE and UPDATE require explicit publication consent in the service, with a review dialog for creation and an explicit checkbox for edits. The shared College Admin composer remains unchanged through an opt-in prop. Ordinary activity in the announcement inbox does **not** send SMS or email.
+- A separate same-origin POST publishes one notice per active, authorized college for ALL_COLLEGES or SELECTED_COLLEGES, with strict Zod input, server-validated selected IDs, 500-college safety cap, confirmed audience/expiry/pinned review, per-college `college.manage` checks, an atomic Drizzle insert and an accompanying high-importance Activity Log row per notice. No external-delivery fanout is claimed; producer status and recipient visibility still require runtime verification.
+- Audit Findings has strict URL validation, environment and sort filters, cursor retention, a dedicated finding-detail deep link reusing the existing permitted tracker detail/status/retest UI, inline confirmed status transitions through the existing same-origin versioned PATCH, and privacy-minimized, 50-row page CSV export. Reporter names, descriptions, private notes, raw attachment keys and signed download URLs are excluded from the CSV.
+- Added focused unit tests plus disposable-PostgreSQL integration fixtures for the DB10 tracker status/retest/audit cycle and the consented selected-college broadcast/audit transaction. These tests are **authored, not executed**, in this GitHub-only builder session.
+- Readiness remains gated by `DB10_ANNOUNCEMENTS_READY=DB10_VERIFIED` and `DB10_TRACKER_READY=DB10_VERIFIED`. The migration must be **applied and independently replay/verified** in the target environment before setting either flag. Registered SQL is not execution evidence. Do not mark these surfaces DONE or imply external sending.
+
+**Still open for acceptance:** execute targeted Vitest, typecheck, disposable PostgreSQL migration 0076 replay/real transaction and role/tenant negatives, same-origin route tests, browser review/consent and stale-version flows, pagination/CSV privacy, and compare the DEV-ONLY legacy surfaces against approved oracle SHAs. No change to authoritative DATABASE tracker counts.
+
+
+**2026-10-15 chat-6 DB10 notices route fence (PARTIAL):** The Super Admin announcement UI now checks both role and active platform account before reporting feature flags or reading tenant notices. Source/unit contract authored; scoped browser verification remains open.
+
+
+**2026-10-15 chat-6 notices URL contract (PARTIAL):** Announcements history rejects repeated/unknown parameters, invalid deleted selector and incomplete cursor before issuing DB queries. Cursor validation is covered by authored unit tests; browser evidence remains open.
+
+
+**2026-10-15 chat-6 notices list API strict filters (PARTIAL):** DB10 announcements GET now rejects duplicate/unknown query keys and validates its cursor, page size and deleted selector prior to DB access. Tests authored; runtime evidence pending.
+
+
+**2026-10-15 chat-6 DB10 broadcast duplicate-recipient safety (PARTIAL):** Strict server-side selected-college input now rejects duplicate college IDs rather than silently deduplicating before publishing. Authored schema tests, database/browser verification open.
+
+
+**2026-10-15 chat-6 broadcast local-time preflight (PARTIAL):** Publication review now remains disabled for invalid local datetimes or expiry preceding schedule; no silent invalid-date fallback or thrown ISO conversion. Tests authored; mobile/browser evidence open.
+
+
+**2026-10-15 chat-6 scoped composer local-time preflight (PARTIAL):** Create and edit both validate local schedule/expiry rather than converting malformed input into an immediate notice. Source and timing-model unit tests authored, interactive parity pending.
+
+
+**2026-10-15 chat-6 DB10 tracker query normalizer (PARTIAL):** Issues board now accepts ordinary empty form filters, rejects repeated/unknown keys, and preserves raw ISO cursors for service validation (avoiding transformed-Date double parsing on later pages). Pure tests authored; browser pagination evidence open.
+
+
+**2026-10-15 chat-6 tracker list API strictness (PARTIAL):** Tracker GET now rejects ambiguous duplicate keys, unknown filters, out-of-bound limits and incomplete cursors before querying DB10, without passing transformed Date values twice through Zod. Source/unit tests authored; API runtime checks open.
+
+
+**2026-10-15 chat-6 invalid tracker finding URL denial (PARTIAL):** Both tracker issue and audit-finding detail (shared entrypoint) now return standard not-found for malformed public IDs rather than propagating validation into a generic server error. Guard contract tests authored; interactive route evidence open.
+
+
+**2026-10-15 chat-6 DB10 announcement account-status denial (PARTIAL):** The shared announcement services now deny suspended/inactive platform actors for admin list, mutation, audience targets and recipient feed, in addition to existing membership and tenant fences. Authored unit contract, negative DB/runtime tests still required.
+
+
+**2026-10-15 chat-6 immutable tracker activity readability (PARTIAL):** The finding detail no longer drops retest notes when the same audit record has from/to values; it renders transition, note, and non-secret actor attribution separately. Pure tests authored; browser history acceptance pending.
+
+
+**2026-10-15 chat-6 DB10 private response caching (PARTIAL):** Authenticated announcement-admin and tracker list/detail JSON endpoints now send explicit private, no-store headers to prevent accidental intermediary persistence of tenant-scoped notice and issue data. Unit source regression authored; HTTP runtime headers still require verification.
+
+
+**2026-10-15 chat-6 DB10 announcement disposable PostgreSQL fixture (AUTHORED, NOT EXECUTED):** A test against registered `announcements` checks create → scoped list → optimistic edit/stale conflict → soft-delete/restore and inactive/wrong-role denial using seeded identities and cleaned-up rows. It is gated by TEST_DATABASE_URL and DB03_ISOLATED_TEST_DATABASE; full migration replay, runtime and browser acceptance still open.
+
+
+**2026-10-15 chat-6 DB10 tracker disposable PostgreSQL fixture (AUTHORED, NOT EXECUTED):** A registered-table integration scenario now creates an isolated tracker reporter/issue, reads list/detail, writes a version-checked workflow transition with activity, rejects stale mutations, and verifies scoped/role-negative access; teardown removes temporary rows. No task or phase closure is implied until executed evidence exists.
+
+
+**2026-10-15 chat-6 Super Admin broadcast actor-status fence (PARTIAL):** Both broadcast college enumeration and publication now explicitly deny inactive platform actors even if a stale Super Admin role appears in the request context; guards precede DB access. Unit source contract authored; live negative authorization and browser checks remain pending.
+
+
+**2026-10-15 chat-6 tracker page actor-status route fence (PARTIAL):** Both issue list/detail and the Audit Findings board require an active platform Super Admin before returning migration-flag status or fetching data. Routes use the standard dashboard redirect; unit source assertions authored, browser permission negatives pending.
+
+
+**2026-10-15 chat-6 DB10 announcements literal search (PARTIAL):** Super Admin notices now support bounded title/message substring search, protected from SQL wildcard expansion by `position(...)`; server-side filtering occurs before cursor paging, search is carried into Older/Include deleted links, and malformed query states fail closed. Authored pure validation tests; runtime/PG/browser evidence remains open.
+
+
+**2026-10-15 chat-6 DB10 announcement audience filter (PARTIAL):** Super Admin history now filters persisted `receiver_type` before page limit and retains the exact filter across deleted/search/cursor links. Invalid audience enum values are rejected at UI/API boundaries. Unit tests authored, browser/PG still pending.
+
+
+**2026-10-15 chat-6 persisted DB10 visibility filtering (PARTIAL):** The announcement history can now filter LIVE/SCHEDULED/EXPIRED/DELETED before cursor paging using one database clock per request, with a boundary-tested status model; `DELETED` explicitly selects soft-deleted rows regardless of the Include deleted convenience toggle. Browser/PG evidence still open.
+
+
+**2026-10-15 chat-6 bounded announcement CSV (PARTIAL):** Scoped Super Admin notice history has a 50-row current-page export, using identical DB10 search/audience/visibility/cursor filters. Only notice metadata is included, with spreadsheet-formula-safe values and private no-store headers; no content body or recipient contact export. Pure tests authored; download/PG/browser checks pending.
+
+
+**2026-10-15 chat-6 Audit Findings account-role filter (PARTIAL):** The real DB10 board and CSV export now share persisted `account_role` filtering, with strict role enums and cursor-state retention; the underlying service constrains the SQL page before fetching. Unit validation tests authored; integration and browser acceptance pending.
+
+
+**2026-10-15 chat-6 Audit Findings persisted resolution (PARTIAL):** A strict resolution filter distinguishes SQL NULL (UNRESOLVED) from each DB10 resolution enum; the same predicate applies before pagination/export and survives bookmark/cursor navigation. Unit tests authored; database evidence pending.
+
+
+**2026-10-15 chat-6 Audit Findings retest status (PARTIAL):** DB10 persisted retest PASS/FAIL/NOT_RETESTED can be independently filtered in the board and CSV, scoped and paginated by service SQL. Unit enum and query tests authored, integration/browser acceptance still open.
+
+
+**2026-10-15 chat-6 Audit Findings verified-state filter (PARTIAL):** The persisted `production_verified` boolean can now be filtered as Yes/No/All, including false without treating it as absent; status survives pagination/export without exposing private metadata. Validation tests authored, browser/DB evidence open.
+
+
+**2026-10-15 chat-6 bounded tracker activity history (PARTIAL):** DB10 issue/finding details now retrieve a deterministic newest-first 50-event page with timestamp/UUID keyset cursor and an Older audit events link. Both detail routes and the private API validate incomplete/duplicate cursors; scoped ownership is verified before activity data loads. Authored cursor tests; high-volume PG/browser acceptance remains open.
+
+
+**2026-10-15 chat-6 bounded screenshot metadata (PARTIAL):** DB10 finding detail now uses independent 50-row attachment keyset pages, preserving activity-history pagination when navigating screenshots (and vice versa); all attachment lookups remain behind scoped issue ownership, and no storage keys or public download URLs are returned. Authored cursor regression tests; PG/browser checks remain open.
+
+
+**2026-10-15 chat-6 visibility schema contract correction (PARTIAL):** Moved notice visibility selector onto admin-list Zod schema; edit requests remain strict and cannot smuggle ignored visibility fields. Regression unit confirms read query acceptance and write rejection. Executed typecheck/DB/browser still pending.
+
+
+**2026-10-15 chat-6 DB10 announcements filtered PostgreSQL fixture (AUTHORED, NOT EXECUTED):** Extends isolated registered-table lifecycle with literal title search, persisted audience and LIVE/SCHEDULED/DELETED filtering before page limit, export projection and cross-tenant history check. Requires a disposable migrated PG runner; no false acceptance claim.
+
+
+**2026-10-15 chat-6 DB10 Audit Findings filtered PostgreSQL fixture (AUTHORED, NOT EXECUTED):** Extends isolated real-table tracker workflow with account-role, resolution-null, retest state, production-verification boolean (including false), and status selection before pagination, alongside existing foreign-scope and wrong-role denials. Execution and browser acceptance pending.
+
+
+**2026-10-15 chat-6 DB10 soft-delete stale-retry guard — PARTIAL:** An already-deleted announcement cannot acknowledge a stale delete as successful; the caller version is checked after authorization even for no-op repeat requests. Source-only regression test added; transactional PostgreSQL/browser acceptance pending.
+
+
+**2026-10-15 chat-6 DB10 restoration stale-retry guard — PARTIAL:** Already-restored announcements still enforce caller expectedVersion; concurrent edits cannot be mistaken for an accepted no-op restore. Source regression authored, DB/browser execution pending.
+
+
+**2026-10-15 chat-6 DB10 pinned/unpinned announcement history (PARTIAL):** Persisted pin status filters before pagination and carries into page bookmarks, deleted toggle, and capped CSV. Strict URL/API schema rejects invalid selection; source unit authored, execution pending.
+
+
+**2026-10-15 chat-6 announcement sender filter (PARTIAL):** Added persisted sender-type filter with DB10 allowed enums for Super Admin history, API and CSV; retains filter when paging and toggling deleted visibility. Unit validation authored, runtime/browser evidence open.
+
+
+**2026-10-15 chat-6 broadcast reviewed college-set fence (PARTIAL):** Publication now optionally verifies the exact reviewed college IDs against resolved active/authorized targets, returning a recoverable 409 on directory drift instead of silently changing the broadcast audience. The Super Admin UI sends reviewed IDs and explains re-review. Does not claim snapshot-isolated active-college locks or provider delivery; unit source tests authored.
+
+
+**2026-10-15 chat-6 announcement blank-search recovery (PARTIAL):** Form query consisting solely of whitespace now resolves to an unfiltered server history instead of a false malformed-link error; nonblank values remain trimmed/capped and unknown keys fail closed. Source tests authored, browser execution open.
+
+
+**2026-10-15 chat-6 Audit Findings persisted issue-type filter (PARTIAL):** Added explicit exact issue_type predicate from the real DB10 report table. Form/server validation bounds the search to 80 characters, carries it into both cursor and CSV, and never substitutes synthetic categories. Authored unit tests, PG/browser acceptance still open.
+
+
+**2026-10-15 chat-6 Audit Findings IST start-date filter (PARTIAL):** `created_at` now supports an inclusive IST calendar-day lower bound (start 00:00 +05:30) before service pagination. Exact date URL survives CSV and cursor links, validation rejects invalid dates, no timezone inference. Tests authored; PG/browser pending.
+
+
+**2026-10-15 chat-6 Audit Findings IST end-date filter (PARTIAL):** Upper bound is exclusive midnight the following IST day so records throughout the selected end date are included. Reversed ranges fail server Zod validation; query travels into CSV and cursor links. Source unit authored, PG/browser acceptance open.
+
+
+**2026-10-15 chat-6 DB10 single-notice audit transaction (PARTIAL):** A Super Admin per-college notice is now inserted in the same PostgreSQL transaction as the high-importance Activity Log publication receipt, mirroring multi-college broadcast attribution. Failure of activity insertion rolls back notice creation; event metadata includes only notice ID and audience type, not message bodies or contacts. Disposable PG verification source authored; runtime/browser acceptance open.
+
+
+**2026-10-15 chat-6 transactional notice audit fixture (AUTHORED, NOT EXECUTED):** Extended disposable DB10 lifecycle fixture to assert exactly one persisted Activity Log publication receipt without notice text, stale no-op delete/restore 409 semantics, and deterministic cleanup of activity and notice fixture rows. Do not interpret authored coverage as executed migration acceptance.
+
+
+**2026-10-15 chat-6 HR recruiter strict URL boundary — PARTIAL:** The /admin/hr and recruiter alias now reject duplicate/unknown query keys and malformed filters, normalize blank status/search/page selections without defaulting to the first duplicated value, and retain the existing non-leaking reset state. Pure tests authored; browser/PG acceptance pending.
+
+
+**2026-10-15 chat-6 readiness strict URL contract — PARTIAL:** Selected-college readiness checks now reject unrelated, repeated or malformed status/area parameters instead of silently ignoring them; blank native-select defaults normalize to ALL. Scoped database lookup remains authoritative; no readiness count is fabricated. Pure tests authored; execution pending.
+
+
+**2026-10-15 chat-6 scoped college actions — PARTIAL:** College edit/archive actions are now rendered only when `college.manage` is granted for that persisted row's organization and college, on both mobile cards and desktop rows. Read-only setup/readiness links remain. Explicit Super Admin scope and disabled-role tests authored; no mutation/browsing acceptance claim.
+
+
+**2026-10-15 chat-6 Colleges scoped empty state — PARTIAL:** The college directory explicitly distinguishes zero authorized active colleges from a loaded table, without suggesting deletion or exposing foreign tenants. Reset guidance is safe for the current Super Admin scope; source test authored, browser checks pending.
+
+
+**2026-10-15 chat-6 college setup navigation parity — PARTIAL:** Desktop college rows now provide the same persisted-tenant setup action mobile already had; mobile cards expose Branding alongside Readiness. Links resolve encoded persisted college IDs and leave authorization to destination services. Unit source assertions authored; browser/micro-layout unverified.
+
+
+**2026-10-15 chat-6 Organizations scoped empty state — PARTIAL:** Added a clear no-visible-active-organization state, avoiding a silent blank table under restrictive scopes; create affordance remains permission-gated. Responsive page and authored unit source check; browser acceptance pending.
+
+
+**2026-10-15 chat-6 Domains no-selection authorization fence — PARTIAL:** Before showing the choose-college informational empty state, the Super Admin domains route now requires central `admin-scope.select`, so an unauthorized signed-in user cannot enumerate the existence or expected shape of this administration surface. Exact college lookups still require the domains service guard. Unit role and page contract authored; browser evidence open.
+
+
+**2026-10-15 chat-6 Settings invalid-filter early return — PARTIAL:** Validate strict `q`/`section` URL before any settings inventory database read while retaining the central Super Admin authorization fence before returning an error. Invalid params no longer cause avoidable selected-college policy queries; unit route contract authored, browser execution open.
+
+
+**2026-10-15 chat-6 Recruiter Accounts literal search — PARTIAL:** Scoped recruiter directory text search escapes `%`, `_` and backslash before parameterized ILIKE, preventing user-provided wildcard expansion to unrelated recruiters while keeping existing DB visibility predicates and count/page consistent. Pure escaping tests authored; isolated PG and browser acceptance pending.
+
+
+**2026-10-15 chat-6 College action parent-scope fence — PARTIAL:** If a selected college and organization appear inconsistent, the college-row edit/archive affordances now fail closed on organization mismatch in addition to centralized `college.manage`. The persisted service still rechecks the true parent and authorization; pure negative tests authored, browser pending.
+
+
+**2026-10-15 chat-6 Announcements filtered-empty messaging — PARTIAL:** History distinguishes truly empty Super Admin notice inventory from a filtered view with no matches, with actionable reset guidance while preserving compose/broadcast surfaces. No synthetic zero-success after DB10 readiness disabled. Pure tests authored; browser visual acceptance pending.
+
+
+**2026-10-15 chat-6 Readiness no-filter-matches state — PARTIAL:** Readiness page now announces when a valid status/area filter yields zero checks without presenting a false ten-check zero verdict. Overall readiness and raw counts remain computed from all persisted inputs. Responsive content and source test authored; browser/PG proof pending.
