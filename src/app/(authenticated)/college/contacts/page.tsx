@@ -5,6 +5,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {collegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
+import {contactRecordLinks} from "@/modules/people/college-contacts-links";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 export default async function CollegeContactsPage({searchParams}:{searchParams:Promise<RawSearch>}){
@@ -67,6 +68,8 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
       <p className="break-all text-sm">Email: {contact.email}</p>
       <p className="text-sm">Phone: {contact.phone}</p>
       <p className="text-xs text-muted-foreground">Joined {dateFormat.format(contact.joinedAt)} IST</p>
+      <div className="flex flex-wrap gap-2">{contactRecordLinks(contact).map(link=>
+       <Link key={link.href} href={link.href} className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold">{link.label}</Link>)}</div>
      </li>)}
     </ul>}
   </section>
