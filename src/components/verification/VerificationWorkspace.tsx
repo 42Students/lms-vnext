@@ -13,11 +13,11 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,selectionDisabled=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
- disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;
+ disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;selectionDisabled?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
@@ -62,9 +62,9 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <label className="mt-2 flex items-center gap-2 text-sm">
-       <input type="checkbox" aria-label={"Select "+row.learnerName+" "+row.section}
+       <input type="checkbox" disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}
         checked={selectedKeys?.has(verificationSelectionKey(row))??false}
-        onChange={e=>onSelectionChange(row,e.target.checked)}/>Select for bulk review
+        onChange={e=>{if(!selectionDisabled)onSelectionChange(row,e.target.checked);}}/>Select for bulk review
       </label>}
      <p className="text-sm text-muted-foreground">{row.section==="EDUCATION"?"Education":"Identity"} · {row.batchName??"No batch"} · {row.branchName??"No branch"}</p>
      <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
