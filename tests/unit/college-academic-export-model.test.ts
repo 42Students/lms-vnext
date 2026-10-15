@@ -59,5 +59,10 @@ describe("college semester CSV",()=>{
    expect(academicExportHref("BATCHES",{q:"",status:"ALL",startOnOrAfter:"2026-07-01"})).toContain("startOnOrAfter=2026-07-01");
  });
 
+ it("startOnOrBefore is included in CSV and rejects malformed dates",()=>{
+  expect(batchCsvSchema.safeParse({startOnOrBefore:"2026-13-01"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",startOnOrBefore:"2026-07-01"})).toContain("startOnOrBefore=2026-07-01");
+ });
+
 });
 

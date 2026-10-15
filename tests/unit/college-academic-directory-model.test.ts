@@ -138,4 +138,10 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({startOnOrAfter:"2026-07-01"}))).toContain("startOnOrAfter=2026-07-01");
   });
 
+  it("startOnOrBefore validates actual ISO dates and survives batch links",()=>{
+    expect(collegeBatchDirectorySchema.safeParse({startOnOrBefore:"2026-02-30"}).success).toBe(false);
+    expect(academicDirectorySearchParams({startOnOrBefore:""})).toEqual({});
+    expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({startOnOrBefore:"2026-07-01"}))).toContain("startOnOrBefore=2026-07-01");
+  });
+
 });
