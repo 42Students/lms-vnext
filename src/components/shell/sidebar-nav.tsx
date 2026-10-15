@@ -58,6 +58,9 @@ export function SidebarNav({
           (superAdminGroup!==null&&superAdminGroup.title===item.label) ||
           (collegeGroup!==null&&collegeGroup.title===item.label) ||
           (item.label==="Module Access"&&isFeatureDetail) ||
+          (item.label==="Activity Log"&&
+            (pathname==="/tracker/audit-findings"||
+             pathname.startsWith("/tracker/audit-findings/"))) ||
           (item.label==="Projects"&&pathname.startsWith("/admin/projects/"));
 
         return (

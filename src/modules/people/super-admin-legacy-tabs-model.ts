@@ -41,6 +41,9 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
 ];
 
 export function superAdminLegacyNavigationPath(pathname:string):string {
+  // The retained /admin/hr implementation serves the Recruiter accounts tab.
+  if(pathname==="/admin/hr"||pathname.startsWith("/admin/hr/"))
+    return "/admin/recruiters";
   if(pathname==="/admin/domains"||pathname.startsWith("/admin/domains/"))
     return "/admin/tenants";
   if(pathname==="/admin/academics"||pathname.startsWith("/admin/academics/"))
