@@ -330,6 +330,8 @@ Legacy contract:
 - [ ] Loading/error states match.
 
 ## Page: Lecture Halls
+**Upcoming-schedule filter PARTIAL (2026-10-15):** Administrators can isolate rooms with or without any future SCHEDULED class. The database predicate applies before pagination and capped CSV export; missing sessions are never interpreted as occupancy. Bounded choices and PostgreSQL fixture added; real execution/mobile review remain open.
+
 **Maximum configured seats filter PARTIAL (2026-10-15):** College Admin rooms support an inclusive maximum-capacity bound, alongside the existing minimum, across the list, pagination and filter-matched CSV. Contradictory bounds are rejected. Added unit and disposable-PostgreSQL fixture assertions; execution and mobile/browser acceptance remain pending.
 
 **Lecture hall CSV PARTIAL (2026-10-15):** The filter-matched College Admin hall directory exports up to 1,000 authorized room rows including configured seats/department/upcoming persisted scheduled-class count, neutralized for spreadsheet formulas with truncation indicators. CSV does not disclose scheduling contacts or personal data. Gated existing hall fixture adds own/foreign/role assertions; executed and UI/browser proof remain open.
