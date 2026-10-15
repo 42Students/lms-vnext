@@ -90,13 +90,14 @@ export default async function RecruiterRequestDrivePage({
     : emptyHrDriveDraft();
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="Employer Recruiter" title={fromJob ? "Hire Again · draft preview" : "Request a Drive · draft preview"}
-      description={context.recruiter.companyName + " · " + grant.collegeName + ". A local-only preview until employer request persistence is available."} />
+    <PageHeader eyebrow="Employer Recruiter" title={fromJob ? "Hire Again · discussion proposal" : "Request a Drive · discussion proposal"}
+      description={context.recruiter.companyName + " · " + grant.collegeName + ". This can send a private discussion proposal; structured request approval is not available."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
       className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
       ← Back to drives
     </Link>
     <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
-      storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)} />
+      storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
+      collegeId={collegeId} sourceJobId={fromJob?.job.id??null} />
   </div>;
 }
