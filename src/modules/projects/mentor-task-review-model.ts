@@ -3,7 +3,7 @@ import { z } from "zod";
 export const mentorTaskReviewQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
   priority: z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
-  order: z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
+  order: z.enum(["NEWEST","OLDEST","PRIORITY"]).default("NEWEST"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
 }).strict();
