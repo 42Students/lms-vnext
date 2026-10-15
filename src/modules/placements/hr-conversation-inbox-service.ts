@@ -1,13 +1,13 @@
 import "server-only";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementTpoMessages} from "@/db/schema/tpo-collaboration";
+import {placementTpoMessages,placementTpoMessageThreads} from "@/db/schema/tpo-collaboration";
 import {conversationSnippet} from "./hr-conversation-snippet-model";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listMessageThreads} from "./tpo-messaging-service";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrConversationQuerySchema,filterRecruiterConversations,HR_CONVERSATION_PAGE_SIZE,hrConversationPageBounds} from "./hr-conversation-inbox-model";
+import {hrConversationQuerySchema,filterRecruiterConversations,HR_CONVERSATION_PAGE_SIZE,hrConversationPageBounds,onlyUnreadRecruiterThreads} from "./hr-conversation-inbox-model";
 export async function listHrConversations(context:RequestContext,raw:unknown={}){
  const query=hrConversationQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter)throw new AuthorizationError("placements.recruiter.read");
@@ -26,7 +26,20 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
  const recruiterOwned=threads.filter(thread=>thread.recruiterUserId===context.user.id);
- const filtered=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles);
+ const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles);
+ const unreadRows=query.unreadOnly==="true"?await getDb().selectDistinct({
+   threadId:placementTpoMessages.threadId,
+ }).from(placementTpoMessages)
+  .innerJoin(placementTpoMessageThreads,
+   eq(placementTpoMessageThreads.id,placementTpoMessages.threadId))
+  .where(and(
+   eq(placementTpoMessageThreads.collegeId,collegeId),
+   eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
+   eq(placementTpoMessages.senderType,"TPO"),
+   isNull(placementTpoMessages.readAt),
+  )):[];
+ const filtered=onlyUnreadRecruiterThreads(accessible,
+   new Set(unreadRows.map(row=>row.threadId)),query.unreadOnly==="true");
  const pagination=hrConversationPageBounds(query.page,filtered.length);
  const visible=filtered.slice(
   (pagination.page-1)*HR_CONVERSATION_PAGE_SIZE,pagination.page*HR_CONVERSATION_PAGE_SIZE,
