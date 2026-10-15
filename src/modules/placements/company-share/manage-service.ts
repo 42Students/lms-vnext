@@ -1,11 +1,13 @@
 import "server-only";
-import { and, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementJobs } from "@/db/schema";
+import { collegeMemberships, membershipRoles, placementJobs, users } from "@/db/schema";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
 import { placementCompanyApplicantShares as shares } from "./staged-schema";
+import { isShareableJob } from "./scope-model";
 import {
   companyShareExpiry, companyShareIssueSchema,
   companyShareRevokeSchema, issueCompanyShareToken,
@@ -16,13 +18,30 @@ export class CompanyShareError extends Error {
     super(code);
   }
 }
-export function isShareableJob(
-  expectedCollege: string, actualCollege: string | null, status: string | null,
-) {
-  return expectedCollege === actualCollege && (status === "PUBLISHED" || status === "CLOSED");
+async function requirePersistedShareOfficer(context:RequestContext, collegeId:string){
+  const membershipId=context.membership?.id;
+  if(!membershipId)throw new AuthorizationError("placements.manage");
+  const [actor]=await getDb().select({id:collegeMemberships.id})
+    .from(collegeMemberships)
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"TPO"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
+    .where(and(
+      eq(collegeMemberships.id,membershipId),
+      eq(collegeMemberships.collegeId,collegeId),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.status,"ACTIVE"),
+    )).limit(1);
+  if(!actor)throw new AuthorizationError("placements.manage");
 }
 async function tpoJob(context: RequestContext, jobId: string) {
   const college = await requireTpoReadCollege(context);
+  await requirePersistedShareOfficer(context,college.id);
   const [job] = await getDb().select({
     id: placementJobs.id, collegeId: placementJobs.collegeId,
     status: placementJobs.status,
