@@ -65,6 +65,17 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
     <Link href="/tracker/audit-findings" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
    </div>
   </form>
+  <Link href={"/api/tracker/audit-findings/export?"+new URLSearchParams({
+   ...(query.q?{q:query.q}:{}),
+   ...(query.status!=="ALL"?{status:query.status}:{}),
+   ...(query.severity!=="ALL"?{severity:query.severity}:{}),
+   ...(query.environment!=="ALL"?{environment:query.environment}:{}),
+   ...(query.sort!=="newest"?{sort:query.sort}:{}),
+   ...(query.beforeCreatedAt?{beforeCreatedAt:query.beforeCreatedAt}:{}),
+   ...(query.beforeId?{beforeId:query.beforeId}:{}),
+  }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+   Export this findings page (CSV)
+  </Link>
   {data.items.length===0?<p role="status" className="rounded-xl border border-border p-5">No recorded tracker findings match these filters.</p>:
   <section className="grid min-w-0 gap-3" aria-label="Audit findings">
    {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
