@@ -1,14 +1,14 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
-import { facultyMetadataFromDraft, type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
+import { facultyMetadataFromDraft,facultyMetadataEditableKey,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
  initial:FacultyProfileDocument["metadata"];pending:boolean;
  onSave:(section:FacultySelfSection,value:FacultyProfileDocument["metadata"])=>Promise<void>;
 }){
  const [rows,setRows]=useState<FacultyMetadataDraftEntry[]>(()=>Object.entries(initial)
-  .filter((entry):entry is [string,string]=>typeof entry[1]==="string")
+  .filter((entry):entry is [string,string]=>typeof entry[1]==="string" && facultyMetadataEditableKey(entry[0]))
   .map(([key,value])=>({id:crypto.randomUUID(),key,value})));
  const [dirty,setDirty]=useState(false),[error,setError]=useState<string|null>(null);
  function edit(id:string,key:"key"|"value",value:string){
