@@ -32,6 +32,7 @@ import {
 function runtimeIdentityDirectory() {
   if (
     process.env.NODE_ENV !== "production" &&
+    process.env.APP_ENV === "development" &&
     process.env.E2E_AUTH_ENABLED === "true"
   ) {
     return e2eIdentityDirectory;
