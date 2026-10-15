@@ -780,8 +780,14 @@ export async function applyToPlacementJob(
       }).from(placementOffers)
         .innerJoin(placementApplications, eq(
           placementApplications.id, placementOffers.applicationId,
-        )).where(eq(placementApplications.membershipId, membership.id))
-        .for("share");
+        ))
+        .innerJoin(placementJobs, eq(
+          placementJobs.id, placementApplications.jobId,
+        ))
+        .where(and(
+          eq(placementApplications.membershipId, membership.id),
+          eq(placementJobs.collegeId, job.collegeId),
+        )).for("share");
       if (!canAddPlacementHeldOffer({
         maxHeldOffers: rules?.maxHeldOffers ?? 1,
         upliftPct: rules?.upliftPct ?? 40,

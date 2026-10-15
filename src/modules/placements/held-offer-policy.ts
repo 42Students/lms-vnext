@@ -1,3 +1,5 @@
+import { canReleaseAnotherHeldOffer } from "./offer-college-rules-policy";
+
 /**
  * P-S1-05: Legacy college held-offer cap with the higher-CTC uplift exception.
  *
@@ -19,26 +21,17 @@ export function canAddPlacementHeldOffer(input: {
   isDream: boolean;
   heldOffers: readonly HeldPlacementOffer[];
 }): boolean {
-  const held = input.heldOffers.filter(
+  const activeOffers = input.heldOffers.filter(
     (offer) => offer.kind === "OFFER" &&
       (offer.status === "ISSUED" || offer.status === "ACCEPTED"),
   );
-
-  if (held.length < input.maxHeldOffers || input.isDream) return true;
-
-  const next = input.nextAnnualCtcInr;
-  if (next === null || !Number.isSafeInteger(next) || next < 0) {
-    return false;
-  }
-  const ctc = held.map((offer) => offer.annualCtcInr);
-  if (ctc.some((value) =>
-    value === null || !Number.isSafeInteger(value) || value < 0
-  )) return false;
-
-  const best = Math.max(...(ctc as number[]));
-  if (!Number.isFinite(best) || input.maxHeldOffers < 1 ||
-      input.upliftPct < 0) return false;
-  return next * 100 >= best * (100 + input.upliftPct);
+  return canReleaseAnotherHeldOffer({
+    maxHeldOffers: input.maxHeldOffers,
+    upliftPct: input.upliftPct,
+    annualCtcInr: input.nextAnnualCtcInr,
+    isDreamDrive: input.isDream,
+    heldOffers: activeOffers,
+  });
 }
 
 /** P-S1-04: same list affordance predicates as the self-apply write gate. */
