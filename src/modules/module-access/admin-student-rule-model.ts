@@ -1,9 +1,7 @@
-import type {LearnerModuleTrace} from "./admin-trace-model";
-import {membershipOverrideSummary} from "./admin-trace-model";
-export function studentRuleCards(modules:readonly LearnerModuleTrace[]){
- return membershipOverrideSummary(modules).map(item=>({
-  ...item,
-  state:item.stored===null?"Inherit":item.stored?"On":"Off",
-  consequence:item.ignored?"Stored only: placements ignores member scope":item.winner?"Selected by resolver":"Inherits or is masked by another rule",
- }));
+import {z} from "zod";
+export const previousStudentRuleSchema=z.strictObject({enabled:z.boolean(),locked:z.boolean()}).nullable();
+export type PreviousStudentRule=z.infer<typeof previousStudentRuleSchema>;
+export function studentRuleMatches(expected:PreviousStudentRule,actual:PreviousStudentRule){
+ if(expected===null||actual===null)return expected===actual;
+ return expected.enabled===actual.enabled&&expected.locked===actual.locked;
 }

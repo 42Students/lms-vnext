@@ -944,3 +944,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 student lock mutation — PARTIAL:** Explicit membership-level Projects/Electives lock states may now be set/cleared with the authenticated rule write and atomic audit record. The server still forbids ignored Placements member edits and denies overrides masked by a broader locked scope. Exact enabled/locked values are both written; unit and negative PG fixtures authored, unexecuted. UI and concurrency acceptance open.
+
+
+**2026-10-15 chat-6 optimistic member-rule edits — PARTIAL:** Every SET/INHERIT request now includes the caller's previously observed stored state (including locked bit). The mutation serializes on the persisted college membership row and rejects an updated rule with 409 STALE_RULE instead of blind overwrite; audit and update stay in one transaction. Pure and negative PG tests authored, unexecuted; browser concurrent editing and ancestor rule races remain open.
