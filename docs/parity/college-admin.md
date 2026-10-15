@@ -660,6 +660,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Missing shared learning path triage PARTIAL (2026-10-15):** College Admin now distinguishes offerings with/without a persisted course_learning_paths row before activity pagination and CSV. An offering without a path is not described as failed learning or absent enrollment. Strict Zod/URL and own-college PostgreSQL fixtures authored; execution and browser acceptance open.
+
 **Recorded completed-content triage PARTIAL (2026-10-15):** A second college-scoped EXISTS predicate distinguishes offerings with at least one LEARNER-role record whose completedAt is populated from those without. It does not classify whole courses as complete. Strict URL/CVS and disposable-PG fixture tests authored; browser and CI execution pending.
 
 **Observed activity versus no events PARTIAL (2026-10-15):** The offering directory now filters by EXISTS/NOT EXISTS of real LEARNER-role learner-content progress, restricted to college memberships and course learning paths before pagination and capped CSV. An empty result does not mean attendance or enrollment absence. Strict and disposable-PG tests authored, execution/browser acceptance open.
