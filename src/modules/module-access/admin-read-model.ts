@@ -82,7 +82,7 @@ export function describeModuleDecision(
 export function adminFeaturesHref(filters: {
   q?: string;
   page?: number;
-  sort?: "NAME"|"CODE";
+  sort?: "NAME"|"CODE"|"NAME_DESC"|"CODE_DESC";
   module?: "projects"|"placements"|"electives";
   storedState?: "ALL"|"ON"|"OFF";
   locks?: "ALL"|"LOCKED";
@@ -100,7 +100,7 @@ export function adminFeaturesHref(filters: {
     params.set("page", String(filters.page));
   }
 
-  if (filters.sort === "CODE") params.set("sort", "CODE");
+  if (filters.sort && filters.sort !== "NAME") params.set("sort", filters.sort);
   if (filters.module) params.set("module", filters.module);
   if (filters.storedState && filters.storedState !== "ALL") params.set("storedState", filters.storedState);
   if (filters.locks === "LOCKED") params.set("locks", "LOCKED");

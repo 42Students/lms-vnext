@@ -153,7 +153,7 @@ export default async function SuperAdminFeaturesPage({
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Sort colleges
             <select name="sort" defaultValue={result.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-              <option value="NAME">College name</option><option value="CODE">College code</option>
+              <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
             </select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-body">Explicit college rule for

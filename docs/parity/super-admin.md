@@ -1001,3 +1001,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 feature matrix name/code search selector (PARTIAL):** Safe literal case-insensitive substring query can target college name, code, or both, preserving filters through database-count/page and navigation; this avoids wildcard expansion and no private-contact searches. Authored unit tests, runtime PG/browser open.
+
+
+**2026-10-15 chat-6 feature matrix descending sorts (PARTIAL):** Name/Code A–Z and Z–A database ordering now use UUID secondary tie-breaks so paging remains deterministic. Validation and URL retention tested in source; PG/browser acceptance open.
