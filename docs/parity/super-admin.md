@@ -1117,3 +1117,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 bounded screenshot metadata (PARTIAL):** DB10 finding detail now uses independent 50-row attachment keyset pages, preserving activity-history pagination when navigating screenshots (and vice versa); all attachment lookups remain behind scoped issue ownership, and no storage keys or public download URLs are returned. Authored cursor regression tests; PG/browser checks remain open.
+
+
+**2026-10-15 chat-6 visibility schema contract correction (PARTIAL):** Moved notice visibility selector onto admin-list Zod schema; edit requests remain strict and cannot smuggle ignored visibility fields. Regression unit confirms read query acceptance and write rejection. Executed typecheck/DB/browser still pending.
