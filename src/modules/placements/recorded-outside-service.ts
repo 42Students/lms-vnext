@@ -10,7 +10,6 @@ import {can} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {placementOutsideDriveRecords} from "@/db/schema/placement-outside-drives";
 import {recordedOutsideDriveSchema} from "./recorded-outside-model";
-import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
 import {z} from "zod";
 
@@ -81,9 +80,6 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
      eq(placementRecruiterCollegeGrants.status,"ACTIVE"))).for("share").limit(1);
    if(!current)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   }
-  // Check table readiness only after transactional TPO permission or live recruiter grant.
-  if(!await placementTableExists("placement_outside_drive_records"))
-   throw new Error("RECORDED_OUTSIDE_NOT_REGISTERED");
   const [saved]=await tx.insert(placementOutsideDriveRecords).values({
    collegeId:actor.relationship.collegeId,companyRelationshipId:actor.relationship.id,
    title:input.title,externalReferenceUrl:input.externalReferenceUrl??null,
@@ -117,15 +113,13 @@ export async function recordedOutsideChoices(context:RequestContext,rawCollegeId
   try{await outsideActor(context,collegeId,row.id);authorized.push(row);}
   catch(error){if(!(error instanceof PlacementsServiceError))throw error;}
  }
- return {status:await placementTableExists("placement_outside_drive_records")?"READY" as const:"NOT_REGISTERED" as const,
-  choices:authorized};
+ return {status:"READY" as const,choices:authorized};
 }
 
 /** A URL parameter is not evidence a record was saved. Verify against DB. */
 export async function verifyRecordedOutsideConfirmation(context:RequestContext,collegeId:string,rawId:unknown){
  const parsed=z.string().uuid().safeParse(rawId);
- if(!parsed.success||!await placementTableExists("placement_outside_drive_records"))
-  return false;
+ if(!parsed.success)return false;
  const [record]=await getDb().select({
   id:placementOutsideDriveRecords.id,companyRelationshipId:placementOutsideDriveRecords.companyRelationshipId,
  }).from(placementOutsideDriveRecords).where(and(
