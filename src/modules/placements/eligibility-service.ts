@@ -164,7 +164,7 @@ export function scaleHundredths(value: number | null): number | null {
   if (value === null) return null;
   if (!Number.isFinite(value) || value < 0) throw new RangeError("Invalid percentage");
   const decimal = String(value);
-  const parts = /^(\\d+)(?:\\.(\\d+))?$/.exec(decimal);
+  const parts = /^(\d+)(?:\.(\d+))?$/.exec(decimal);
   if (!parts) throw new RangeError("Unsupported percentage precision");
   const whole = BigInt(parts[1]!);
   const digits = (parts[2] ?? "").padEnd(3, "0");
