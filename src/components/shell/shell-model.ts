@@ -20,6 +20,14 @@ export type ShellNavItem = {
   group?: "learning" | "tracking" | "career" | "account" | "operate" | "coordinate" | "insights" | "administration";
 };
 
+/** User-approved TPO section headings, shared by desktop and mobile. */
+export const TPO_SECTION_LABELS = {
+  operate: "Operate",
+  coordinate: "Coordinate",
+  insights: "Insights",
+  administration: "Administration",
+} as const;
+
 const dashboard: ShellNavItem = {
   label: "Dashboard",
   href: "/dashboard",
@@ -188,8 +196,8 @@ const mentorItems: ShellNavItem[] = [
 const tpoItems: ShellNavItem[] = [
   { label: "Home", href: "/tpo/home", shortLabel: "H", group: "operate" },
   { label: "Placement eligibility", href: "/tpo/batches", shortLabel: "P", group: "operate" },
-  { label: "Engage", href: "/tpo/recruiters", shortLabel: "E", group: "operate" },
-  { label: "Drives", href: "/tpo/placements", shortLabel: "D", group: "operate" },
+  { label: "Recruiter Leads", href: "/tpo/recruiters", shortLabel: "E", group: "operate" },
+  { label: "Placement Operations", href: "/tpo/placements", shortLabel: "D", group: "operate" },
   { label: "Team", href: "/tpo/team", shortLabel: "T", group: "operate" },
   { label: "Students", href: "/tpo/students", shortLabel: "S", group: "coordinate" },
   { label: "Requests", href: "/tpo/requests", shortLabel: "R", group: "coordinate" },
@@ -199,7 +207,7 @@ const tpoItems: ShellNavItem[] = [
   { label: "Reports", href: "/tpo/reports", shortLabel: "R", group: "insights" },
   { label: "Messages", href: "/tpo/messages", shortLabel: "M", group: "administration" },
   { label: "Settings", href: "/tpo/settings", shortLabel: "S", group: "administration" },
-  { label: "Audit log", href: "/tpo/audit", shortLabel: "A", group: "administration" },
+  { label: "Audit Log", href: "/tpo/audit", shortLabel: "A", group: "administration" },
   { label: "Notifications", href: "/tpo/notifications", shortLabel: "N", group: "administration" },
 ];
 
@@ -442,7 +450,7 @@ export function getShellRoleLabel(context: RequestContext) {
 
   if (!context.membership) {
     return hasActiveRecruiter(context)
-      ? "Employer Recruiter"
+      ? "Recruiter"
       : "Select membership";
   }
 
@@ -462,7 +470,7 @@ export function getShellRoleLabel(context: RequestContext) {
   );
 
   if (hasActiveRecruiter(context)) {
-    labels.push("Employer Recruiter");
+    labels.push("Recruiter");
   }
 
   return labels.join(" · ");

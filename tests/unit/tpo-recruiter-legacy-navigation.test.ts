@@ -20,9 +20,9 @@ describe("Phase 2 legacy exact sidebar contract (legacy-copy-B.md)", () => {
   it("TPO labels and visible groups match all 15 old LMS rows in order", () => {
     const items = getShellNavigation(tpo);
     expect(items.map(item => item.label)).toEqual([
-      "Home", "Placement eligibility", "Engage", "Drives", "Team",
+      "Home", "Placement eligibility", "Recruiter Leads", "Placement Operations", "Team",
       "Students", "Requests", "Verification", "Calendar", "Announcements",
-      "Reports", "Messages", "Settings", "Audit log", "Notifications",
+      "Reports", "Messages", "Settings", "Audit Log", "Notifications",
     ]);
     expect(items.map(item => item.group)).toEqual([
       ...Array(5).fill("operate"), ...Array(5).fill("coordinate"),
@@ -44,5 +44,6 @@ describe("Phase 2 legacy exact sidebar contract (legacy-copy-B.md)", () => {
     expect(items.map(item => item.href)).toEqual([
       "/hr/home", "/hr/drives", "/hr/calendar", "/hr/messages", "/hr/company",
     ]);
+    expect(items.some(item => item.label === "Dashboard" || item.label === "More" || item.label === "Companies")).toBe(false);
   });
 });

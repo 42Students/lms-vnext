@@ -20,8 +20,8 @@ export default async function HrPlacementsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Employer Recruiter"
-        title="Hiring Workspace"
+        eyebrow="Recruiter"
+        title="Drives"
         description="Only opportunities belonging to your employer and explicitly granted colleges appear here. College-private CRM notes and placement-cell actions are not exposed."
       />
       <RecruiterPlacementPortfolio
