@@ -2,7 +2,7 @@ import {notFound} from "next/navigation";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 
 export const dynamic="force-dynamic";
-export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students"};
+export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
 export default async function CompanySharePage({
  params,searchParams,
 }:{params:Promise<{token:string}>;searchParams:Promise<{page?:string}>}){
