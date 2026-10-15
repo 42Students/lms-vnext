@@ -17,6 +17,6 @@ export default async function TpoSettingsIndex({
   redirect(
     tab === "rules"
       ? "/tpo/settings/rules"
-      : "/tpo/settings/season",
+      : "/tpo/settings/rules",
   );
 }
