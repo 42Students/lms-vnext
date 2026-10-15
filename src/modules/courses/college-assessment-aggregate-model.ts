@@ -29,6 +29,10 @@ export function parseCollegeAssessmentQuery(
   return result;
 }
 
+export function collegeAssessmentScopeLabel(deliverySpecific:boolean){
+  return deliverySpecific?"Section-specific":"Shared offering";
+}
+
 export function collegeAssessmentSummary(
   rows: readonly { status: string; activityCount: number }[],
 ) {

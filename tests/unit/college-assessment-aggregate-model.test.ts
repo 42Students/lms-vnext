@@ -3,6 +3,7 @@ import {
   collegeAssessmentHref,
   collegeAssessmentListQuerySchema,
   collegeAssessmentSummary,
+  collegeAssessmentScopeLabel,
   parseCollegeAssessmentQuery,
 } from "@/modules/courses/college-assessment-aggregate-model";
 
@@ -58,6 +59,11 @@ describe("College Admin assignment and quiz aggregate model", () => {
     expect(collegeAssessmentHref("ASSIGNMENT", {
       q: "", status: "ALL", scope:"ALL", results:"ALL", duePresence:"ALL", dueWindow:"ALL", page: 1,
     })).toBe("/college/assignments");
+  });
+
+  it("labels only actual shared or section-specific authoring scope",()=>{
+    expect(collegeAssessmentScopeLabel(false)).toBe("Shared offering");
+    expect(collegeAssessmentScopeLabel(true)).toBe("Section-specific");
   });
 
   it("reports page-scoped counts without inventing an overall activity denominator", () => {
