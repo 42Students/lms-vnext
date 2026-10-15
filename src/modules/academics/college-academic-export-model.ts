@@ -1,8 +1,8 @@
-import { collegeBatchDirectorySchema,collegeSemesterDirectoryBaseSchema,withCollegeSemesterCreditCheck } from "./college-academic-directory-model";
+import { collegeBatchDirectoryBaseSchema,withCollegeBatchFilterCheck,collegeSemesterDirectoryBaseSchema,withCollegeSemesterCreditCheck } from "./college-academic-directory-model";
 import { buildCollegeDirectoryCsv,exportParams } from "./college-directory-export-model";
 export const ACADEMIC_EXPORT_CAP=1000;
 export const semesterCsvSchema=withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema.omit({page:true}));
-export const batchCsvSchema=collegeBatchDirectorySchema.omit({page:true});
+export const batchCsvSchema=withCollegeBatchFilterCheck(collegeBatchDirectoryBaseSchema.omit({page:true}));
 export type AcademicCsvKind="SEMESTERS"|"BATCHES";
 export function academicExportHref(kind:AcademicCsvKind,query:{
  q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;maximumCredits?:number;creditState?:"ALL"|"CONFIGURED"|"UNSET";yearStart?:number;currentTerm?:number;progression?:"ALL"|"RECORDED"|"MISSING";
