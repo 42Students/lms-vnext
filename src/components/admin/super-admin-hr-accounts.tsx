@@ -126,7 +126,7 @@ function pageHref(
   const query = params.toString();
 
   return query
-    ? `/admin/hr?${query}`
+    ? `/admin/recruiters?${query}`
     : "/admin/recruiters";
 }
 
@@ -677,7 +677,7 @@ export function SuperAdminHrAccounts({
 
       {loadError ? (
         <ErrorState
-          title="Could not load HR accounts"
+          title="Could not load recruiter accounts"
           description={loadError}
           action={
             <Button
@@ -704,7 +704,7 @@ export function SuperAdminHrAccounts({
 
           {list.items.length === 0 ? (
             <EmptyState
-              title="No HR accounts found"
+              title="No recruiter accounts found"
               description={
                 filters.q || filters.status
                   ? "No recruiters match the current search or status filters. Clear the filters to see other accounts."
@@ -720,7 +720,7 @@ export function SuperAdminHrAccounts({
                   </Link>
                 ) : (
                   <Button onClick={openCreate}>
-                    Add first HR account
+                    Add first recruiter account
                   </Button>
                 )
               }
@@ -737,7 +737,7 @@ export function SuperAdminHrAccounts({
 
           {list.total > 0 ? (
             <nav
-              aria-label="HR account pages"
+              aria-label="Recruiter account pages"
               className="flex flex-wrap items-center justify-between gap-3 text-sm text-body"
             >
               <p className="m-0">
@@ -868,7 +868,7 @@ export function SuperAdminHrAccounts({
             ? `Revoke ${confirmation.grant.collegeName} access?`
             : confirmation?.kind === "terminate"
               ? `Terminate all sessions for ${confirmation.name}?`
-              : "Confirm HR account action"
+              : "Confirm recruiter account action"
         }
         description={
           confirmation?.kind === "revoke"
