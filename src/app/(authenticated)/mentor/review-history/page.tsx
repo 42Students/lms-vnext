@@ -76,7 +76,7 @@ export default async function MentorReviewHistoryPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Recorded decision within
           <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
-            <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option>
+            <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>

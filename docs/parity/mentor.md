@@ -1193,3 +1193,8 @@ The authorized current assigned-Mentor Sprint progress UI and its existing cappe
 ## 2026-10-15 chat-11 — project-state-review-history (PARTIAL)
 
 The currently-assigned Mentor delivery-decision history filters by persisted Project PLANNED/ACTIVE/COMPLETED/ARCHIVED lifecycle without widening project membership scope. Only registered review metadata is shown. The UI, Zod query, SQL-scoped service and pagination URL are updated together. A focused source regression is authored, not executed. Independent PostgreSQL, TypeScript, lint, mobile/desktop browser, current legacy-oracle and upstream-producer verification remain OPEN; this does not close the Mentor Delivery review row.
+
+
+## 2026-10-15 chat-11 — older-recorded-reviews (PARTIAL)
+
+The project-scoped review timeline distinguishes persisted decisions older than 30 rolling days from recent 7/30-day decisions; the SQL cutoff is applied before counting or paginating and does not assert missing legacy review rows. The UI, Zod query, SQL-scoped service and pagination URL are updated together. A focused source regression is authored, not executed. Independent PostgreSQL, TypeScript, lint, mobile/desktop browser, current legacy-oracle and upstream-producer verification remain OPEN; this does not close the Mentor Delivery review row.
