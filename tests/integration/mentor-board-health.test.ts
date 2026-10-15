@@ -15,6 +15,7 @@ import {scheduleProjectMeeting} from "@/modules/projects/meeting-service";
 import {decideMentorProjectMeeting} from "@/modules/projects/mentor-meeting-decision-service";
 import {decideMentorFinalDelivery} from "@/modules/projects/mentor-final-delivery-decision-service";
 import {submitProjectTask,reviewProjectTaskSubmission} from "@/modules/projects/task-submission-service";
+import {assignProjectTaskToLearner} from "./support/projects-review-fixture";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires isolated disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -185,6 +186,7 @@ describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",
 describe("Mentor feedback CAS persisted by SQL default",()=>{
  it("allows only current own-task Mentor version and records one event",async()=>{
   const {project,mentor,foreign,learner,task,sprint}=await fixture();
+  await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
   await startProjectSprint(mentor,project.id,sprint.id);
   const submitted=await submitProjectTask(learner,project.id,task.id,{
    submissionUrl:"https://example.invalid/review/"+project.id,
@@ -212,6 +214,7 @@ describe("Mentor feedback CAS persisted by SQL default",()=>{
 describe("Mentor task review queue after a persisted decision",()=>{
  it("shows a current submission and excludes its stale version after review",async()=>{
   const {project,mentor,foreign,learner,task,sprint}=await fixture();
+  await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
   await startProjectSprint(mentor,project.id,sprint.id);
   const submitted=await submitProjectTask(learner,project.id,task.id,{
    submissionUrl:"https://example.invalid/mentor-review/"+project.id,
