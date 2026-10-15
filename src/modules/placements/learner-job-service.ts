@@ -8,6 +8,8 @@ import {
 import { getDb } from "@/db/client";
 import {
   learnerProgramEnrollments,
+  sectionEnrollments,
+  sections,
   placementApplications,
   placementCompanyRelationships,
   placementCompanies,
@@ -32,6 +34,7 @@ import { isPlacementApplicationDeadlinePassed } from "./application-deadline-pol
 import {
   evaluatePlacementEligibility,
   isPlacementJobTargetCohort,
+  isPlacementJobTargetSection,
   type PlacementEligibilityResult,
 } from "./eligibility-service";
 
@@ -151,6 +154,7 @@ export async function listLearnerPlacementJobs(
   // A learner may only discover published jobs targeting the persisted
   // active academic cohort/program. A duplicate enrollment is ambiguous.
   const enrollments = await getDb().select({
+    id: learnerProgramEnrollments.id,
     cohortId: learnerProgramEnrollments.cohortId,
     programId: learnerProgramEnrollments.programId,
   }).from(learnerProgramEnrollments).where(and(
@@ -158,6 +162,16 @@ export async function listLearnerPlacementJobs(
     eq(learnerProgramEnrollments.status, "ACTIVE"),
   )).limit(2);
   if (enrollments.length !== 1) return [];
+  const activeSections = await getDb().select({id:sections.id})
+    .from(sectionEnrollments)
+    .innerJoin(sections,eq(sections.id,sectionEnrollments.sectionId))
+    .where(and(
+      eq(sectionEnrollments.learnerEnrollmentId,enrollments[0]!.id),
+      eq(sectionEnrollments.status,"ACTIVE"),
+      eq(sections.status,"ACTIVE"),
+      eq(sections.cohortId,enrollments[0]!.cohortId),
+    ));
+  const activeSectionIds = activeSections.map(row=>row.id);
   const [registration] = await getDb().select({
     choice: placementBatchRegistrations.choice,
   }).from(placementBatchRegistrations).where(and(
@@ -175,6 +189,7 @@ export async function listLearnerPlacementJobs(
         jobId: placementJobEligibilityPolicies.jobId,
         allowedProgramIds: placementJobEligibilityPolicies.allowedProgramIds,
         allowedCohortIds: placementJobEligibilityPolicies.allowedCohortIds,
+        allowedSectionIds: placementJobEligibilityPolicies.allowedSectionIds,
       }).from(placementJobEligibilityPolicies).where(inArray(
         placementJobEligibilityPolicies.jobId,
         [...new Set(rows.map((row) => row.job.id))],
@@ -185,6 +200,8 @@ export async function listLearnerPlacementJobs(
     isPlacementJobTargetCohort(
       policyByJobId.get(row.job.id),
       enrollments[0]!,
+    ) && isPlacementJobTargetSection(
+      policyByJobId.get(row.job.id)?.allowedSectionIds ?? [],activeSectionIds,
     ),
   );
 

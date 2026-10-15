@@ -6,6 +6,9 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementCompanyRelationships,
   placementCompanies,
+  placementApplications,
+  placementOffers,
+  placementOfferStatusHistory,
   placementDebarmentDriveEvents,
   placementDebarments,
   placementJobs,
@@ -523,6 +526,37 @@ export async function publishPlacementJob(
   });
 }
 
+type PlacementTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
+/** P-S2-12 / D11: closing a drive revokes only still-actionable letters. */
+export function mustWithdrawPendingOfferOnDriveStop(status: string): boolean {
+  return status === "ISSUED";
+}
+
+async function withdrawJobIssuedOffers(
+  tx: PlacementTx, jobId: string, actorUserId: string, now: Date,
+): Promise<number> {
+  const offers = await tx.select({id:placementOffers.id,status:placementOffers.status})
+    .from(placementOffers)
+    .innerJoin(placementApplications,
+      eq(placementApplications.id,placementOffers.applicationId))
+    .where(and(eq(placementApplications.jobId,jobId),
+      eq(placementOffers.status,"ISSUED"))).for("update");
+  for (const offer of offers) {
+    if (!mustWithdrawPendingOfferOnDriveStop(offer.status)) continue;
+    await tx.update(placementOffers).set({
+      status:"WITHDRAWN",withdrawnByUserId:actorUserId,
+      withdrawnAt:now,updatedAt:now,
+    }).where(and(eq(placementOffers.id,offer.id),
+      eq(placementOffers.status,"ISSUED")));
+    await tx.insert(placementOfferStatusHistory).values({
+      offerId:offer.id,fromStatus:"ISSUED",toStatus:"WITHDRAWN",
+      actorUserId,
+    });
+  }
+  return offers.length;
+}
+
 export async function closePlacementJob(
   context: RequestContext,
   jobIdInput: string,
@@ -566,6 +600,7 @@ export async function closePlacementJob(
       );
     }
 
+    await withdrawJobIssuedOffers(tx, closed.id, context.user.id, now);
     await recordActivityEventInTransaction(
       tx,
       context,
@@ -591,6 +626,30 @@ export async function closePlacementJob(
   });
 }
 
+/** P-S2-12: cancelled drives cease accepting applications and pending offers. */
+export function canCancelPublishedPlacementJob(status: string): boolean {
+  return status === "PUBLISHED";
+}
+
+export async function cancelPlacementJob(context: RequestContext, jobIdInput: string) {
+  const jobId = placementJobIdSchema.parse(jobIdInput);
+  const current = await loadJob(jobId);
+  await requirePlacementManageScope(context, current.collegeId);
+  if (!canCancelPublishedPlacementJob(current.status)) {
+    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
+  }
+  return getDb().transaction(async tx => {
+    const now = new Date();
+    const [cancelled] = await tx.update(placementJobs).set({
+      status:"CANCELLED",closedAt:now,updatedAt:now,
+    }).where(and(eq(placementJobs.id,jobId),
+      eq(placementJobs.status,"PUBLISHED"))).returning();
+    if (!cancelled) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
+    await withdrawJobIssuedOffers(tx,jobId,context.user.id,now);
+    return cancelled;
+  });
+}
+
 export async function archivePlacementJob(
   context: RequestContext,
   jobIdInput: string,
@@ -606,11 +665,19 @@ export async function archivePlacementJob(
   }
   if (current.status === "ARCHIVED") return current;
 
-  const now = new Date();
-  const [archived] = await getDb()
-    .update(placementJobs)
-    .set({ status: "ARCHIVED", archivedAt: now, updatedAt: now })
-    .where(eq(placementJobs.id, jobId))
-    .returning();
-  return archived;
+  return getDb().transaction(async tx => {
+    const [locked] = await tx.select({status:placementJobs.status})
+      .from(placementJobs).where(eq(placementJobs.id,jobId)).for("update").limit(1);
+    if (!locked || locked.status === "PUBLISHED") {
+      throw new PlacementsServiceError("PLACEMENT_JOB_CLOSE_BEFORE_ARCHIVE");
+    }
+    if (locked.status === "ARCHIVED") return current;
+    const now = new Date();
+    await withdrawJobIssuedOffers(tx,jobId,context.user.id,now);
+    const [archived] = await tx.update(placementJobs)
+      .set({status:"ARCHIVED",archivedAt:now,updatedAt:now})
+      .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,locked.status)))
+      .returning();
+    return archived;
+  });
 }

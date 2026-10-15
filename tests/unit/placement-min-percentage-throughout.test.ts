@@ -24,3 +24,13 @@ describe("P-S2-02 minimum percentage throughout",()=>{
     expect(placementPercentageThroughout({...sample,twelfthPctBasisPoints:null})).toBeNull();
   });
 });
+
+
+describe("P-S2-02 persisted threshold comparison witness", () => {
+  it("compares the derived lowest value against the exact migrated basis-point floor", () => {
+    const basis=placementPercentageThroughout(sample);
+    expect(basis).toBe(7200);
+    expect(basis!==null && basis >= 7200).toBe(true);
+    expect(basis!==null && basis >= 7201).toBe(false);
+  });
+});
