@@ -59,3 +59,4 @@ export * from "./tpo-internal";
 export * from "./placement-registration";
 
 export * from "./placement-debarments";
+export * from "./placement-public-page";
