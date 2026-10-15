@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceTeamFacts } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -411,6 +411,14 @@ export function ProjectWorkspace({
             />
           ) : null}
         </div>
+        {mode==="MENTOR" ? (() => {
+          const facts=mentorWorkspaceTeamFacts(workspace.members);
+          return <p className="text-sm text-body">
+            Current recorded roster: {facts.learners} Learner{facts.learners===1?"":"s"} ·
+            {" "}{facts.mentors} Mentor{facts.mentors===1?"":"s"} ·
+            {" "}{facts.primaryMentors} primary Mentor assignment{facts.primaryMentors===1?"":"s"}
+          </p>;
+        })() : null}
         {workspace.project.teamGroupId ? (
           <p className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
             Learner assignments in this workspace come from its managed class team.

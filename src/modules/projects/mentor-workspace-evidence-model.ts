@@ -41,3 +41,9 @@ export function mentorTaskFeedbackHref(projectId:string,taskId:string){
   return "/mentor/projects/"+encodeURIComponent(projectId)+"/tasks/"+
     encodeURIComponent(taskId)+"/feedback";
 }
+
+export function mentorWorkspaceTeamFacts(members:readonly {role:string;isPrimary:boolean}[]){
+  return {learners:members.filter(row=>row.role==="LEARNER").length,
+    mentors:members.filter(row=>row.role==="MENTOR").length,
+    primaryMentors:members.filter(row=>row.role==="MENTOR"&&row.isPrimary).length};
+}
