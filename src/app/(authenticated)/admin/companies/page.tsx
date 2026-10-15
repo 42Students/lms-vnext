@@ -14,7 +14,7 @@ export default async function SuperAdminCompaniesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, status: params.status, companyStatus: params.companyStatus, trust: params.trust, sort: params.sort, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId,
+    q: params.q, status: params.status, companyStatus: params.companyStatus, trust: params.trust, sort: params.sort, searchField: params.searchField, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId,
   });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
@@ -34,6 +34,11 @@ export default async function SuperAdminCompaniesPage({
       <label className="grid gap-1 text-sm font-semibold text-body">Company
         <input name="q" defaultValue={data.query.q} placeholder="Search companies"
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Search in
+        <select name="searchField" defaultValue={data.query.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="NAME">Company name</option><option value="DOMAIN">Primary domain</option>
+        </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship
         <select name="status" defaultValue={data.query.status}
@@ -112,7 +117,7 @@ export default async function SuperAdminCompaniesPage({
     </div> : <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">No company relationships match the current scope and filters.</p>}
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
-      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,companyStatus:data.query.companyStatus,sort:data.query.sort,trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
+      {data.query.page > 1 ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,searchField:data.query.searchField,companyStatus:data.query.companyStatus,sort:data.query.sort,trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
       {data.query.page < data.totalPages ? <Link className="font-semibold text-primary-text" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,trust:data.query.trust,page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
     </nav>
     <Link href="/admin/placements" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← Placement operations</Link>
