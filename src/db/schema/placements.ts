@@ -463,6 +463,8 @@ export const placementJobs = pgTable(
     status: varchar("status", { length: 24 })
       .notNull()
       .default("DRAFT"),
+    /** P-S1-05: persisted dream-drive classification (exempt from held-offer cap). */
+    isDream: boolean("is_dream").notNull().default(false),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     closedAt: timestamp("closed_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
@@ -958,6 +960,8 @@ export const placementApplicationStatusHistory = pgTable(
         onDelete: "restrict",
       }),
     reason: text("reason"),
+    /** P-S1-06: durable cascade correlation id (nullable). */
+    cascadeId: uuid("cascade_id"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -968,6 +972,9 @@ export const placementApplicationStatusHistory = pgTable(
     index(
       "placement_application_status_history_application_idx",
     ).on(table.applicationId, table.createdAt),
+    index("placement_application_history_cascade_id_idx")
+      .on(table.cascadeId)
+      .where(sql`${table.cascadeId} is not null`),
     check(
       "placement_application_status_history_from_ck",
       sql`${table.fromStatus} is null or ${table.fromStatus} in ('SUBMITTED', 'WITHDRAWN')`,
@@ -979,7 +986,8 @@ export const placementApplicationStatusHistory = pgTable(
     check(
       "placement_application_status_history_transition_ck",
       sql`(${table.fromStatus} is null and ${table.toStatus} = 'SUBMITTED')
-        or (${table.fromStatus} = 'SUBMITTED' and ${table.toStatus} = 'WITHDRAWN')`,
+        or (${table.fromStatus} = 'SUBMITTED' and ${table.toStatus} = 'WITHDRAWN')
+        or (${table.fromStatus} = 'WITHDRAWN' and ${table.toStatus} = 'SUBMITTED')`,
     ),
   ],
 );
@@ -1519,6 +1527,8 @@ export const placementOfferStatusHistory = pgTable(
         onDelete: "restrict",
       }),
     reason: text("reason"),
+    /** P-S1-06: durable cascade correlation id (nullable). */
+    cascadeId: uuid("cascade_id"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -1529,6 +1539,9 @@ export const placementOfferStatusHistory = pgTable(
     index(
       "placement_offer_status_history_offer_idx",
     ).on(table.offerId, table.createdAt),
+    index("placement_offer_history_cascade_id_idx")
+      .on(table.cascadeId)
+      .where(sql`${table.cascadeId} is not null`),
     check(
       "placement_offer_status_history_status_ck",
       sql`(${table.fromStatus} is null or ${table.fromStatus} in ('ISSUED', 'ACCEPTED', 'DECLINED', 'WITHDRAWN', 'EXPIRED'))
@@ -1538,7 +1551,8 @@ export const placementOfferStatusHistory = pgTable(
       "placement_offer_status_history_transition_ck",
       sql`(${table.fromStatus} is null and ${table.toStatus} = 'ISSUED')
         or (${table.fromStatus} = 'ISSUED' and ${table.toStatus} in ('ACCEPTED', 'DECLINED', 'WITHDRAWN', 'EXPIRED'))
-        or (${table.fromStatus} = 'ACCEPTED' and ${table.toStatus} = 'WITHDRAWN')`,
+        or (${table.fromStatus} = 'ACCEPTED' and ${table.toStatus} in ('WITHDRAWN', 'ISSUED'))
+        or (${table.fromStatus} = 'DECLINED' and ${table.toStatus} = 'ISSUED')`,
     ),
   ],
 );

@@ -425,7 +425,7 @@ export async function issuePlacementOffer(
         upliftPct: rules?.upliftPct ?? 40,
         heldOffers,
         annualCtcInr: input.annualCtcInr ?? null,
-        isDreamDrive: false,
+        isDreamDrive: current.job.isDream,
       })) {
         throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
       }
