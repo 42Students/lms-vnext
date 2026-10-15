@@ -15,6 +15,7 @@ export const mentorReviewQuerySchema = z.object({
   ...paging,
 }).strict();
 export const mentorActivityQuerySchema = z.object({
+  assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
@@ -94,6 +95,7 @@ export function mentorPortfolioHref(
   if (area === "activity" && query.order && query.order !== "NEWEST")params.set("order",query.order);
   if (area === "activity" && query.projectStatus && query.projectStatus !== "ALL")params.set("projectStatus",query.projectStatus);
   if (area === "activity" && query.projectId)params.set("projectId",query.projectId);
+  if (area === "activity" && query.assignment && query.assignment !== "ALL")params.set("assignment",query.assignment);
   if (query.page && query.page > 1) params.set("page", String(query.page));
   if (query.pageSize && query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
   return "/mentor/" + area + (params.size ? "?" + params.toString() : "");
