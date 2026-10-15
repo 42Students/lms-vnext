@@ -4,6 +4,7 @@ export function learnerRecentCollegeNoticePreview<T extends LearnerCollegeNotice
  if(!Number.isSafeInteger(limit)||limit<1||limit>5)throw new Error("INVALID_PREVIEW_LIMIT");
  return [...rows].sort((a,b)=>{
   if(a.isPinned!==b.isPinned)return a.isPinned?-1:1;
-  return Date.parse(b.createdAt)-Date.parse(a.createdAt)||a.id.localeCompare(b.id);
+  const time=(value:string)=>{const parsed=Date.parse(value);return Number.isFinite(parsed)?parsed:0;};
+  return time(b.createdAt)-time(a.createdAt)||a.id.localeCompare(b.id);
  }).slice(0,limit);
 }
