@@ -33,13 +33,13 @@ export function validTpoColumnPreference(raw:string|undefined,allowed:readonly s
   const valid=new Set(allowed);
   return keys.length>0&&keys.every(key=>valid.has(key))&&new Set(keys).size===keys.length;
 }
-export function updateTpoGridQuery(query: URLSearchParams, changes: Record<string, string | null>) {
+export function updateTpoGridQuery(query: URLSearchParams, changes: Record<string, string | null>, resetPage = true) {
   const result = new URLSearchParams(query);
   for (const [key, value] of Object.entries(changes)) {
     if (value === null || value === "") result.delete(key);
     else result.set(key, value);
   }
-  if (!Object.hasOwn(changes, "page")) result.delete("page");
+  if (resetPage && !Object.hasOwn(changes, "page")) result.delete("page");
   return result;
 }
 export function csvSafeGridCell(raw: string | number | null | undefined) {
