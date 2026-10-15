@@ -1,3 +1,9 @@
 import{expect,it}from"vitest";import{selectMentorReviewQueue,mentorReviewQuerySchema,mentorPortfolioHref}from"@/modules/projects/mentor-portfolio-model";
 const now=new Date("2026-10-15T00:00:00.000Z");const a=(key:string,day:number)=>({key,projectId:"one",kind:"REVIEW"as const,title:"Review",description:"Pending",href:"/mentor",occurredAt:new Date(now.getTime()-day*86400000).toISOString()});
 it("last seven days retains only fresh recorded submissions",()=>{const alerts=[a("recent",3),a("old",20),a("ancient",45)];expect(selectMentorReviewQueue(alerts,"","NEWEST","LAST_7_DAYS",now).map(x=>x.key)).toEqual(["recent"]);expect(selectMentorReviewQueue(alerts,"","NEWEST","LAST_30_DAYS",now).map(x=>x.key)).toEqual(["recent","old"])});it("rejects unknown age",()=>expect(mentorReviewQuerySchema.safeParse({age:"CUSTOM"}).success).toBe(false));it("preserves age in navigation",()=>expect(mentorPortfolioHref("reviews",{age:"LAST_7_DAYS",page:2})).toContain("age=LAST_7_DAYS"));
+it("isolates review submissions waiting more than 7 days",()=>{
+  const alerts=[a("recent",3),a("old",20),a("older",45)];
+  expect(selectMentorReviewQueue(alerts,"","NEWEST","OLDER_THAN_7_DAYS",now).map(row=>row.key))
+    .toEqual(["old","older"]);
+  expect(mentorReviewQuerySchema.parse({age:"OLDER_THAN_7_DAYS"}).age).toBe("OLDER_THAN_7_DAYS");
+});

@@ -59,7 +59,7 @@ export default async function MentorReviewsPage({
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Submitted within
           <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
-            <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option>
+            <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_7_DAYS">Waiting over 7 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Assigned Project lifecycle
