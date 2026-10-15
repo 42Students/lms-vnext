@@ -811,13 +811,20 @@ export async function listProjectMembers(
       users,
       eq(users.id, collegeMemberships.userId),
     )
+    .innerJoin(
+      membershipRoles,
+      and(
+        eq(membershipRoles.membershipId,collegeMemberships.id),
+        sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+      ),
+    )
     .where(
       and(
-        eq(
-          projectMembers.projectId,
-          scope.project.id,
-        ),
+        eq(projectMembers.projectId,scope.project.id),
         isNull(projectMembers.endedAt),
+        eq(collegeMemberships.collegeId,scope.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"),
       ),
     )
     .orderBy(

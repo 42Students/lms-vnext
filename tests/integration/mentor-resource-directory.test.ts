@@ -7,8 +7,7 @@ import {SEED_IDS} from "../../scripts/db-seed-data";
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege}
   from "@/modules/projects/template-service";
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
-import {addProjectMember,updateProjectMember,endProjectMember} from "@/modules/projects/member-service";
-import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-service";
+import {addProjectMember,updateProjectMember,endProjectMember,listProjectMembers} from "@/modules/projects/member-service";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
 import {createProjectResource,updateProjectResource,archiveProjectResource} from "@/modules/projects/resource-service";
 import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-service";
@@ -93,6 +92,9 @@ describe("Mentor scoped resource metadata and links — PostgreSQL",()=>{
     roleLabel:"Malicious label",
   })).rejects.toBeDefined();
   await endProjectMember(admin,project.id,memberId);
+  const liveRoster=await listProjectMembers(mentor,project.id);
+  expect(liveRoster.map(row=>row.id)).not.toContain(memberId);
+  expect(liveRoster.every(row=>row.role==="MENTOR")).toBe(true);
   const rows=await pool.query<{event_type:string;metadata:Record<string,string>;
     subject_label:string;college_id:string}>(`select event_type,metadata,subject_label,college_id
     from activity_events where subject_type='project_member' and subject_id=$1`,[memberId]);
