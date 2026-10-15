@@ -1061,7 +1061,7 @@ describe("Faculty Quiz reordered bank persistence",()=>{
   const quiz=await commandFacultyQuiz(faculty,{deliveryId:structure.deliveryA.id},command);
   const actual=await getCourseQuiz(faculty,quiz.id,structure.deliveryA.id);
   expect(actual.questions.map(q=>q.prompt)).toEqual(["Select linear structures","Which structure uses FIFO?"]);
-  expect(actual.questions[0]?.options.map(o=>o.text)).toEqual(["Linked list","Tree","Array"]);
+  expect(actual.questions[0]?.options.map(o=>o.text)).toEqual(["Linked list","Array","Tree"]);
   await expect(commandFacultyQuiz(faculty,{deliveryId:structure.deliveryB.id},command))
    .rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
  });
