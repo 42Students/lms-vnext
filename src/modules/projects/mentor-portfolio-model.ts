@@ -8,6 +8,7 @@ const paging = {
 export const mentorReviewQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
   order: z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
+  age: z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS"]).default("ALL"),
   ...paging,
 }).strict();
 export const mentorActivityQuerySchema = z.object({
@@ -30,9 +31,14 @@ export function pageMentorPortfolio<T>(
 export function selectMentorReviewQueue(
   alerts: readonly MentorProjectAttention[], search: string,
   order: "NEWEST"|"OLDEST" = "NEWEST",
+  age: "ALL"|"LAST_7_DAYS"|"LAST_30_DAYS" = "ALL", now: Date = new Date(),
 ) {
   const term = search.trim().toLowerCase();
   return alerts.filter(a => a.kind === "REVIEW")
+    .filter(a => { if(age==="ALL")return true;
+      const elapsed=now.getTime()-new Date(a.occurredAt).getTime();
+      return Number.isFinite(elapsed) && elapsed>=0 && elapsed<=(age==="LAST_7_DAYS"?7:30)*86400000;
+    })
     .filter(a => !term ||
       [a.title, a.description].some(v => v.toLowerCase().includes(term)))
     .sort((a,b) => (order === "OLDEST"
@@ -64,11 +70,12 @@ export function safeMentorProjectEventLabel(eventType: string): string {
 }
 export function mentorPortfolioHref(
   area: "reviews" | "activity",
-  query: { search?: string; page?: number; pageSize?: number; order?: string; importance?: string; view?: string },
+  query: { search?: string; page?: number; pageSize?: number; order?: string; age?: string; importance?: string; view?: string },
 ) {
   const params = new URLSearchParams();
   if (area === "reviews" && query.search) params.set("search", query.search);
   if (area === "reviews" && query.order && query.order !== "NEWEST") params.set("order", query.order);
+  if (area === "reviews" && query.age && query.age !== "ALL") params.set("age",query.age);
   if (area === "activity" && query.importance && query.importance !== "ALL") params.set("importance",query.importance);
   if (area === "activity" && query.view && query.view !== "ALL") params.set("view",query.view);
   if (query.page && query.page > 1) params.set("page", String(query.page));

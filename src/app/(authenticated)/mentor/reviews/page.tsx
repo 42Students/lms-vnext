@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorReviewQueue } from "@/modules/projects/mentor-portfolio-service";
 import { mentorPortfolioHref, mentorReviewQuerySchema } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { search?: string | string[]; order?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorReviewsPage({
@@ -19,6 +19,7 @@ export default async function MentorReviewsPage({
   const parsed = mentorReviewQuerySchema.safeParse({
     search: first(raw.search) ?? undefined,
     order: first(raw.order) ?? undefined,
+    age: first(raw.age) ?? undefined,
     page: first(raw.page) ?? undefined,
     pageSize: first(raw.pageSize) ?? undefined,
   });
@@ -53,6 +54,11 @@ export default async function MentorReviewsPage({
             className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Newest submitted first</option>
             <option value="OLDEST">Oldest submitted first</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Submitted within
+          <select name="age" defaultValue={data.query.age} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size
