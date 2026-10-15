@@ -505,6 +505,27 @@
       "when": 1792055466903,
       "tag": "0071_db08_registration_debarments",
       "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1792062175842,
+      "tag": "0072_placement_public_page",
+      "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1792062749355,
+      "tag": "0073_placement_public_joins",
+      "breakpoints": true
+    },
+    {
+      "idx": 74,
+      "version": "7",
+      "when": 1792063165788,
+      "tag": "0074_placement_public_enquiries",
+      "breakpoints": true
     }
   ]
 }
