@@ -532,6 +532,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Starting lesson order PARTIAL (2026-10-15, chat-3):** The 1-based persisted sequence lower bound filters in-college lesson ordering before paging and CSV. It is not a progress/completion rank. Typed and gated-PG tests authored; execution/browser/legacy acceptance outstanding.
+
 **Saved content lifecycle PARTIAL (2026-10-15, chat-3):** Filter saved DRAFT/PUBLISHED/ARCHIVED lesson-content metadata within tenant-owned lessons before paging and capped CSV. This does not imply visibility to a learner. Source tests authored; runtime/legacy/browser acceptance open.
 
 **Saved content kind PARTIAL (2026-10-15, chat-3):** Exact authored content-kind filter matches persisted lesson content before totals/pagination and follows filter-matched capped CSV. This is metadata only; no signed media is exposed. Unit and disposable-PG fixtures authored, not executed; browser and legacy parity acceptance open.
