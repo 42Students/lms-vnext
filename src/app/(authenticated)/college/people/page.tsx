@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { hasMembershipRole } from "@/modules/identity/context";
 import { PersonMembershipActions } from "@/components/admin/person-membership-actions";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -41,12 +42,12 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
 ];
 
 export default async function CollegePeoplePage({ searchParams }: { searchParams: Promise<Search> }) {
+  const context = await getCurrentRequestContext();
+  const membership = context.membership;
+  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
   const raw = await searchParams;
   let filter:CollegePeopleDirectoryFilter|null=null;
   try{filter=parseCollegePeopleDirectorySearchParams(raw);}catch{filter=null;}
-  const context = await getCurrentRequestContext();
-  const membership = context.membership;
-  if (!membership) redirect("/dashboard");
 
   if (!filter) {
     return <div className="space-y-5">
