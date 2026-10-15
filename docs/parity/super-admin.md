@@ -1045,3 +1045,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 notices URL contract (PARTIAL):** Announcements history rejects repeated/unknown parameters, invalid deleted selector and incomplete cursor before issuing DB queries. Cursor validation is covered by authored unit tests; browser evidence remains open.
+
+
+**2026-10-15 chat-6 notices list API strict filters (PARTIAL):** DB10 announcements GET now rejects duplicate/unknown query keys and validates its cursor, page size and deleted selector prior to DB access. Tests authored; runtime evidence pending.
