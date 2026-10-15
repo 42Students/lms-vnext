@@ -7,6 +7,9 @@ import {
 import { getDb } from "@/db/client";
 import {
   courseTeachingAssignments,
+  collegeMemberships,
+  membershipRoles,
+  users,
   learnerProgramEnrollments,
   sectionEnrollments,
 } from "@/db/schema";
@@ -52,6 +55,20 @@ async function hasFacultyDeliveryAccess(
       id: courseTeachingAssignments.id,
     })
     .from(courseTeachingAssignments)
+    .innerJoin(collegeMemberships, and(
+      eq(collegeMemberships.id, courseTeachingAssignments.membershipId),
+      eq(collegeMemberships.userId, context.user.id),
+      eq(collegeMemberships.status, "ACTIVE"),
+      eq(collegeMemberships.collegeId, context.membership.collegeId),
+    ))
+    .innerJoin(users, and(
+      eq(users.id, collegeMemberships.userId),
+      eq(users.platformStatus, "ACTIVE"),
+    ))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "FACULTY"),
+    ))
     .where(
       and(
         eq(
