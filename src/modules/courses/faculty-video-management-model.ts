@@ -105,3 +105,18 @@ export const facultyVideoArchiveIntentSchema=z.object({
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  confirmed:z.literal(true),
 }).strict();
+
+/** UI explanation only. The backend performs enrollment and membership access checks. */
+export function facultyVideoLearnerVisible(
+ video:FacultyLessonVideo,context:{lessonPublished:boolean;learnerAuthorized:boolean},
+):boolean {
+ return context.learnerAuthorized&&context.lessonPublished&&
+  video.contentStatus==="PUBLISHED"&&video.visibleToStudents&&video.processingStatus==="READY";
+}
+export function facultyVideoVisibilityLabel(
+ video:FacultyLessonVideo,lessonPublished:boolean,
+):string {
+ if(video.processingStatus!=="READY")return "Unavailable until video processing clears";
+ if(video.contentStatus!=="PUBLISHED"||!lessonPublished)return "Not published to learners";
+ return video.visibleToStudents?"Visible to eligible learners":"Hidden from learners";
+}
