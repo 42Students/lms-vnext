@@ -6,6 +6,7 @@ import {
   safeLearnerPlacementUrl,
 } from "@/modules/placements/learner-job-detail-model";
 import {learnerJobAvailabilityBanner} from "@/modules/placements/learner-job-availability-banner-model";
+import {learnerDriveEvidenceRequirements} from "@/modules/placements/learner-drive-evidence-requirements-model";
 
 function humanize(value: string) {
   return value.toLowerCase().split("_").map((part) =>
@@ -37,6 +38,7 @@ export function LearnerPlacementJobDetail({
   const website = safeLearnerPlacementUrl(item.company.websiteUrl);
   const availability=learnerJobAvailabilityBanner(items);
   const failed = items.filter((row) => row.eligibility.status === "INELIGIBLE");
+  const requirements=learnerDriveEvidenceRequirements(items);
 
   return (
     <main className="space-y-6" aria-label="Published placement drive">
@@ -124,6 +126,40 @@ export function LearnerPlacementJobDetail({
           ) : null}
         </aside>
       ) : null}
+
+      <section className="rounded-xl border border-border bg-surface p-4 sm:p-6"
+        aria-label="Registration and evidence requirements">
+        <h2 className="text-base font-semibold text-foreground">Registration and evidence requirements</h2>
+        <p className="mt-2 text-sm leading-6 text-body">
+          These are role-specific eligibility checks from your college placement data.
+          Separate placement registration or consent status is not established by this checklist.
+        </p>
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {requirements.map(role=>(
+            <li key={role.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
+              <p className="break-words text-sm font-semibold text-foreground">{role.title}</p>
+              <p className="mt-2 text-xs text-body">
+                {role.checked===0?"No detailed requirement checks available":
+                 `${role.passed} met · ${role.missing} missing evidence · ${role.failed} not met`}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {role.actionable?"Application action currently available":
+                 "Review the role status and any missing evidence below"}
+              </p>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 flex flex-wrap gap-4">
+          <Link href="/learn/my-placements/rules"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Review placement rules →
+          </Link>
+          <Link href="/learn/profile"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Review profile evidence →
+          </Link>
+        </div>
+      </section>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <section className="rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="about-drive">

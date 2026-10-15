@@ -67,9 +67,22 @@ export function availableLearnerJobFacets<T extends BrowseJobShape>(items: reado
   return {
     types: [...new Set(items.map((row) => row.roleOption.employmentType))]
       .filter(Boolean).sort((a,b) => a.localeCompare(b)),
-    locations: [...new Set(items.flatMap((row) => row.roleOption.locations))]
-      .filter(Boolean).sort((a,b) => a.localeCompare(b)),
+    locations: [...new Map(items.flatMap(row=>row.roleOption.locations)
+      .map(value=>value.trim()).filter(Boolean)
+      .map(value=>[value.toLocaleLowerCase(),value] as const)).values()]
+      .sort((a,b)=>a.localeCompare(b)),
   };
+}
+
+/** Role-option counts for filter facets; no unauthorized global catalog lookup. */
+export function learnerJobEmploymentTypeCounts(items:readonly BrowseJobShape[]){
+ const counts=new Map<string,number>();
+ for(const row of items){
+  const type=row.roleOption.employmentType;
+  if(!type)continue;
+  counts.set(type,(counts.get(type)??0)+1);
+ }
+ return counts;
 }
 
 export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
@@ -79,7 +92,9 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   const search = filters.search.trim().toLocaleLowerCase();
   const rows = items.filter((row) => {
     if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
-    if (filters.eligibleOnly && !row.canApply) return false;
+    // Eligibility may be true for a historical snapshot even after closure.
+    // Never offer a closed drive as actionable in the eligible-only view.
+    if(filters.eligibleOnly&&(row.deadlinePassed||!row.canApply))return false;
     if (filters.closingSoon) {
       const deadline = row.job.applicationDeadline
         ? Date.parse(row.job.applicationDeadline) : Number.NaN;
@@ -91,8 +106,8 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     }
     if (filters.employmentType !== "all" &&
         row.roleOption.employmentType !== filters.employmentType) return false;
-    if (filters.location !== "all" &&
-        !row.roleOption.locations.includes(filters.location)) return false;
+    if(filters.location!=="all"&&!row.roleOption.locations.some(place=>
+      place.trim().toLocaleLowerCase()===filters.location.trim().toLocaleLowerCase()))return false;
     if (!search) return true;
     return [
       row.company.name,

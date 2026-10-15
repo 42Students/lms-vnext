@@ -13,6 +13,7 @@ import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/p
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
 import {learnerApplicationStageCounts} from "@/modules/placements/learner-application-stage-chips-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
+import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
@@ -20,11 +21,17 @@ import {
   browseLearnerApplications,
   learnerApplicationStage,
   learnerApplicationStageOptions,
+  learnerApplicationViewCounts,
   DEFAULT_LEARNER_APPLICATION_FILTERS,
   type LearnerApplicationBrowseFilters,
 } from "@/modules/placements/learner-applications-browse-model";
 
 const PAGE_SIZE = 20;
+const viewOptions=[
+  {key:"all",label:"All"},
+  {key:"progress",label:"In progress"},
+  {key:"completed",label:"Final recorded status"},
+] as const;
 
 function humanize(value: string) {
   return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -135,6 +142,8 @@ export function LearnerApplicationsBrowse({
     ...DEFAULT_LEARNER_APPLICATION_FILTERS,search,view,stage:url.stage,sort,
   };
   const rows = browseLearnerApplications(items, filters);
+  const viewCounts=learnerApplicationViewCounts(items);
+  const emptyKind=learnerApplicationEmptyKind(items.length,rows.length);
   const totalPages = Math.max(1,Math.ceil(rows.length / PAGE_SIZE));
   const requested = url.page;
   const page = Number.isInteger(requested) && requested > 0
@@ -151,11 +160,6 @@ export function LearnerApplicationsBrowse({
   const selectedInterview=selected
     ? interviewLinks.find(link=>link.applicationId===selected.applicationId)??null
     : null;
-  const viewOptions = [
-    {key:"all", label:"All"},
-    {key:"progress", label:"In Progress"},
-    {key:"completed", label:"Completed"},
-  ] as const;
 
   return (
     <div className="space-y-5">
@@ -210,9 +214,13 @@ export function LearnerApplicationsBrowse({
               className={view===option.key
                 ? "min-h-10 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
                 : "min-h-10 rounded-full border border-border px-4 text-sm font-semibold text-body"}
-            >{option.label}</button>
+            >{option.label} ({viewCounts[option.key]})</button>
           ))}
         </div>
+        <p className="text-xs leading-5 text-muted-foreground">
+          Final recorded status means rejected or withdrawn here. Shortlisting and applied round results
+          do not by themselves prove an offer, hiring, or employer completion.
+        </p>
         <div role="group" aria-label="Screening stage filter chips" className="flex flex-wrap gap-2">
           {stageCounts.map(({stage:stageKey,count})=>(
             <button type="button" key={stageKey} aria-pressed={filters.stage===stageKey}
@@ -270,9 +278,19 @@ export function LearnerApplicationsBrowse({
         ):null}
       </div>
 
-      {items.length===0 ? (
-        <LearnerPlacementJourney items={[]} />
-      ) : rows.length===0 ? (
+      {emptyKind==="NO_APPLICATIONS" ? (
+        <div className="space-y-3">
+          <LearnerPlacementJourney items={[]} />
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <p className="text-sm text-body">No applications have been recorded for this learner yet.
+              Browse your published college drives and check eligibility before applying.</p>
+            <Link href="/learn/my-placements/jobs"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              Browse available drives →
+            </Link>
+          </div>
+        </div>
+      ) : emptyKind==="FILTERED_OUT" ? (
         <div className="rounded-xl border border-border bg-surface p-6 text-center">
           <p className="font-semibold text-foreground">No applications match these filters.</p>
           <button type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}

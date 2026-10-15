@@ -9,9 +9,12 @@ import {
   availableLearnerJobFacets,
   filterLearnerPlacementJobs,
   learnerDriveAvailabilityCounts,
+  learnerJobEmploymentTypeCounts,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
+import {learnerDriveOverview} from "@/modules/placements/learner-drive-overview-model";
+import {learnerDrivePageState} from "@/modules/placements/learner-drive-pagination-model";
 import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mobile-model";
 import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
 
@@ -70,13 +73,14 @@ export function LearnerJobsBrowse({
 
   const filters:LearnerJobBrowseFilters={...urlState.filters,search};
   const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
+  const employmentCounts=useMemo(()=>learnerJobEmploymentTypeCounts(items),[items]);
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityCounts(items),[items]);
+  const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
   const visible = filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso));
-  const parsedPage = urlState.page;
-  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
-  const page = Number.isInteger(parsedPage) && parsedPage > 0
-    ? Math.min(parsedPage, totalPages) : 1;
-  const paged = visible.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const parsedPage=urlState.page;
+  const pagination=learnerDrivePageState(visible.length,parsedPage,PAGE_SIZE);
+  const {page,totalPages}=pagination;
+  const paged=visible.slice(pagination.startIndex,pagination.endIndex);
   const empty=learnerDrivesEmptyState(items.length,visible.length,filters);
 
   const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
@@ -110,7 +114,7 @@ export function LearnerJobsBrowse({
               className={selectClass}>
               <option value="all">All types</option>
               {facets.types.map((type) => (
-                <option key={type} value={type}>{humanize(type)}</option>
+                <option key={type} value={type}>{humanize(type)} ({employmentCounts.get(type)??0})</option>
               ))}
             </select>
           </label>
@@ -188,11 +192,30 @@ export function LearnerJobsBrowse({
         </div>
       </section>
 
+      <section aria-label="All published drives summary" className="rounded-xl border border-border bg-surface p-4">
+        <h2 className="text-base font-semibold text-foreground">All drives</h2>
+        <p className="mt-1 text-sm text-body">
+          {allDrives.drives} published {allDrives.drives===1?"drive":"drives"} · {allDrives.roles} role options
+          · {allDrives.withApplications} {allDrives.withApplications===1?"drive has":"drives have"} your application.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Role filters below show options, not distinct employers or separate drives.
+        </p>
+      </section>
       <p role="status" className="text-sm text-body">
-        {visible.length === 0
-          ? "No matching drives"
-          : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, visible.length)} of ${visible.length} matching roles`}
+        {visible.length===0?"No matching drives":
+          `Showing ${pagination.firstNumber}–${pagination.lastNumber} of ${visible.length} matching roles`}
       </p>
+      {pagination.recovered ? (
+        <p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+          Your requested results page is no longer available after filtering.
+          Showing page {page} instead.
+          <button type="button" onClick={()=>updateQuery({page:String(page)})}
+            className="ml-2 min-h-10 font-semibold text-primary-text underline">
+            Update page link
+          </button>
+        </p>
+      ):null}
 
       {empty.kind==="NO_PUBLISHED" ? (
         <div className="space-y-3">
