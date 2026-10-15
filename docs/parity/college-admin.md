@@ -1496,3 +1496,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** elective semester interval rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
 
 **College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** elective required versus allowed picks rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.
+
+**College Admin Electives filter validation PARTIAL (2026-10-15 chat-3):** elective linked period date interval rejects contradictory persisted-term choices before read queries and capped CSV exports. Authored unit page/CSV regression cases; runtime, browser and legacy parity remain OPEN.

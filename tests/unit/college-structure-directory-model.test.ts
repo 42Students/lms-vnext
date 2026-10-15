@@ -275,4 +275,10 @@ describe("College Admin classes/electives read-only filters", () => {
   if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Maximum allowed choices cannot be below minimum required choices"))).toBe(true);
   expect(collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:2,maximumAllowedPicks:3}).success).toBe(true);
  });
+ it("rejects elective linked period date interval on the College Admin electives page",()=>{
+  const invalid=collegeElectiveQuerySchema.safeParse({periodStartsOnOrAfter:"2026-12-01",periodEndsOnOrBefore:"2026-11-30"});
+  expect(invalid.success).toBe(false);
+  if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Linked period end limit cannot precede its start limit"))).toBe(true);
+  expect(collegeElectiveQuerySchema.safeParse({periodStartsOnOrAfter:"2026-07-01",periodEndsOnOrBefore:"2026-12-31"}).success).toBe(true);
+ });
 });
