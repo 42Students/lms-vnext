@@ -1348,3 +1348,8 @@ The registered Project resource archive write now emits `projects.resource.archi
 ## 2026-10-15 chat-11 — resource-positive-event-lifecycle (PARTIAL)
 
 Source regression in existing seeded disposable PostgreSQL suite for Resource activity producer. Verifies real tenant-scoped actor/audit data, safe Mentor event labels, and denied mutations with no phantom events. Tests have not been executed; no DONE or legacy source fidelity certification.
+
+
+## 2026-10-15 chat-11 — resource-cross-role-write-denials (PARTIAL)
+
+Source regression in existing seeded disposable PostgreSQL suite for Resource activity producer. Verifies real tenant-scoped actor/audit data, safe Mentor event labels, and denied mutations with no phantom events. Tests have not been executed; no DONE or legacy source fidelity certification.

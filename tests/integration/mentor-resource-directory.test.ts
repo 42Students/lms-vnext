@@ -75,6 +75,33 @@ async function fixture(){
   return {project,sprint:view.sprints[0]!};
 }
 describe("Mentor scoped resource metadata and links — PostgreSQL",()=>{
+ it("denies Learner/foreign Resource edits without persisting audit or changing content",async()=>{
+  const {project}=await fixture();
+  const created=await createProjectResource(admin,project.id,{
+    title:"Bound resource",description:"Stored safely",required:true,
+  });
+  await expect(updateProjectResource(learner,project.id,created.id,{
+    title:"Unauthorized edit",
+  })).rejects.toBeDefined();
+  await expect(archiveProjectResource(learner,project.id,created.id)).rejects.toBeDefined();
+  const foreign:RequestContext={...mentor,membership:{...mentor.membership!,
+    id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
+  await expect(updateProjectResource(foreign,project.id,created.id,{
+    title:"Wrong college",
+  })).rejects.toBeDefined();
+  const resource=await pool.query<{title:string;status:string}>(
+    "select title,status from project_resources where id=$1",[created.id],
+  );
+  expect(resource.rows).toEqual([{title:"Bound resource",status:"ACTIVE"}]);
+  const events=await pool.query<{event_type:string}>(
+    "select event_type from activity_events where subject_type='project_resource' and subject_id=$1",[created.id],
+  );
+  expect(events.rows).toEqual([{event_type:"projects.resource.created"}]);
+  await expect(getMentorPortfolioActivity(learner,{
+    projectId:project.id,view:"RESOURCES",
+  })).rejects.toBeDefined();
+ });
+
  it("writes all three Resource event types atomically and exposes only redacted Mentor labels",async()=>{
   const {project}=await fixture();
   const created=await createProjectResource(admin,project.id,{
