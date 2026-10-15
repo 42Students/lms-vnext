@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { learnerDiscussionCanPost } from "@/modules/courses/learner-discussion-capability-model";
 import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-submit-guard-model";
+import { createLearnerDiscussionHistoryFlight } from "@/modules/courses/learner-discussion-history-flight-model";
 import { learnerDiscussionRefreshIsCurrent } from "@/modules/courses/learner-discussion-refresh-order-model";
 import { learnerDiscussionDraftValid, LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH } from "@/modules/courses/learner-discussion-message-limit-model";
 import { learnerDiscussionTimeLabel } from "@/modules/courses/learner-discussion-time-model";
@@ -71,6 +72,7 @@ export function LearnerCourseDiscussion({
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const composerRef = useRef<HTMLTextAreaElement | null>(null);
   const postLocked = useRef(false);
+  const historyFlight = useRef(createLearnerDiscussionHistoryFlight());
   const latestRefreshId = useRef(0);
   const loadedOnce = useRef(false);
   const previousMessages = useRef<DiscussionMessage[]>([]);
@@ -109,12 +111,12 @@ export function LearnerCourseDiscussion({
         setLoadError(true);
       }
     } finally {
-      if (!silent && learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) setLoading(false);
+      if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) setLoading(false);
     }
   }, [deliveryId]);
 
   const loadOlder = useCallback(async () => {
-    if (!olderCursor || loadingOlder) return;
+    if (!olderCursor || !historyFlight.current.begin()) return;
     setLoadingOlder(true);
     setOlderError(false);
     try {
@@ -143,9 +145,10 @@ export function LearnerCourseDiscussion({
     } catch {
       setOlderError(true);
     } finally {
+      historyFlight.current.end();
       setLoadingOlder(false);
     }
-  }, [deliveryId, loadingOlder, olderCursor]);
+  }, [deliveryId, olderCursor]);
 
   useEffect(() => {
     // Defer initial fetch to avoid synchronous cascading state updates.
