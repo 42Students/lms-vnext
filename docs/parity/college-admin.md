@@ -1,3 +1,5 @@
+**Placements → Analytics department-readiness entry (2026-10-16, P2 source fix):** Analytics header now links to the existing College Placement Evidence by Department report in both normal and invalid-filter branches. It remains within College authorization scope and is not a new fifth Placements legacy tab. Query/browser/security acceptance pending.
+
 **Projects → Bulk mentor reassignment entry (2026-10-16, P2 source fix):** The existing Workspaces landing page now links to the dedicated College Admin mentor reassignment workflow without adding a seventh non-legacy group tab. The route retains its persisted same-college project and mentor selection guards. Source link test authored, not run. Browser and permission-negative acceptance remain open.
 
 **Academic Setup → Attendance department report entry (2026-10-16, P2 source fix):** The canonical Attendance tab now offers a visible link to its existing College Attendance by Department report beside correction windows and policy, without adding an extra legacy group tab. Unit source-route assertion authored; browser/runtime acceptance pending.
