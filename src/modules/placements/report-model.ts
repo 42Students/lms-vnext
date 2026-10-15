@@ -553,6 +553,7 @@ export type PlacementReportDetailedOffer = {
   companyName: string;
   employmentType: string;
   status: string;
+  kind?: string;
   annualCtcInr: number | null;
   expiresAt: string | null;
   joiningStatus: string | null;
@@ -701,6 +702,7 @@ function countJoining(
 export function summarizePlacementReportDetails(input: {
   registeredLearners: readonly PlacementReportPoolLearner[];
   offers: readonly PlacementReportDetailedOffer[];
+  countsAsPlacedAt?: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
   asOf: string;
 }): PlacementReportDetails {
   const asOfMs = Date.parse(input.asOf);
@@ -726,7 +728,12 @@ export function summarizePlacementReportDetails(input: {
 
   const placedMemberships = new Set(
     offers
-      .filter((offer) => offer.status === "ACCEPTED" && offer.employmentType === "FULL_TIME")
+      .filter((offer) => countsAsPlacedByCollegeRule({
+        employmentType: offer.employmentType,
+        offerStatus: offer.status,
+        offerKind: offer.kind,
+        countsAsPlacedAt: input.countsAsPlacedAt ?? "OFFER_ACCEPTED",
+      }))
       .map((offer) => offer.membershipId),
   );
 
