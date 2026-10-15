@@ -33,7 +33,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       <Link href={`/college/placements/jobs/${drive.id}/applications`} className="text-primary-text underline">Applications</Link>
       <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-primary-text underline">Shortlisted</Link>
       <Link href={`/college/placements/jobs/${drive.id}/interviews`} className="text-primary-text underline">Interviews</Link>
-      <Link href={`/college/placements/jobs/${drive.id}`} className="text-primary-text underline">Operations and settings</Link>
+      <Link href={`/college/placements/jobs/${drive.id}/settings`} className="text-primary-text underline">Settings</Link>
     </nav>
     <p className="text-xs text-muted-foreground">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
   </div>;
