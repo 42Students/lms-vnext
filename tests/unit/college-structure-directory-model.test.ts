@@ -126,4 +126,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",collegeElectiveQuerySchema.parse({periodCode:"P&26"}))).toContain("periodCode=P%2626");
   });
 
+  it("omits blank exact-code selectors and rejects repeated values", () => {
+    expect(readCollegeStructureParams({classCode:"",periodCode:""})).toEqual({});
+    expect(readCollegeStructureParams({classCode:["A","B"]})).toBeNull();
+    expect(readCollegeStructureParams({periodCode:["A","B"]})).toBeNull();
+  });
+
 });

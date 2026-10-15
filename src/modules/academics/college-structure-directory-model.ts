@@ -13,7 +13,8 @@ export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
   cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).optional(),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
-  cohortCode: z.string().trim().min(1).max(64).optional(),  classCode: z.string().trim().min(1).max(64).optional(),
+  cohortCode: z.string().trim().min(1).max(64).optional(),
+  classCode: z.string().trim().min(1).max(64).optional(),
   periodCode: z.string().trim().min(1).max(64).optional(),
 
   capacityState: z.enum(["ALL","CONFIGURED","UNSET"]).default("ALL"),
@@ -52,10 +53,10 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodCode", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
+    if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
       result[key] = value;
     }
   }
