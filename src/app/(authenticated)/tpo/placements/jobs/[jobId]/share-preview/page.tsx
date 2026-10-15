@@ -10,7 +10,7 @@ import { listTpoCompanyApplicantShares } from "@/modules/placements/company-shar
 import { CompanyShareControls } from "./company-share-controls";
 import {tpoFilteredSharePreviewExportHref} from "@/modules/placements/tpo-share-preview-export-href";
 import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
-import {companyShareLinksHref,recoverCompanyShareLinkPage} from "@/modules/placements/company-share/link-page-model";
+import {companyShareLinksHref,recoverCompanyShareLinkPage,companySharePreviewSearchState} from "@/modules/placements/company-share/link-page-model";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
@@ -45,6 +45,7 @@ export default async function TpoShortlistSharePreviewPage({
   const linkPage=recoverCompanyShareLinkPage(first(search.sharePage)??1);
   const shares = await listTpoCompanyApplicantShares(context, data.job.id,shareStatus,linkPage.page);
   const path = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview";
+  const preservedHistory=companySharePreviewSearchState(shareStatus,linkPage.page);
   return <div className="space-y-5">
     <Link
       href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
@@ -60,6 +61,8 @@ export default async function TpoShortlistSharePreviewPage({
       </a>}
     />
     <form action={path} method="get" className="flex flex-wrap items-end gap-3">
+      {preservedHistory.shareStatus?<input type="hidden" name="shareStatus" value={preservedHistory.shareStatus}/>:null}
+      {preservedHistory.sharePage?<input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
       <label className="grid gap-2 text-sm font-semibold text-body">Search shortlisted learner
         <input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner name" className="min-h-10 rounded border border-border bg-surface px-3"/>
