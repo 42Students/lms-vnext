@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { CollegeLegacyGroupTabs } from "@/components/college/college-legacy-group-tabs";
 
 export default async function CollegeAdminLayout({
   children,
@@ -13,5 +14,8 @@ export default async function CollegeAdminLayout({
     redirect("/dashboard");
   }
 
-  return children;
+  return <>
+    <CollegeLegacyGroupTabs />
+    {children}
+  </>;
 }
