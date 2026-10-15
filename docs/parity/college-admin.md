@@ -1,3 +1,5 @@
+**Phase 2 College Companies (UNKNOWN → PARTIAL, not closed):** Dedicated `/college/companies` now uses the registered, College Admin-authorized `listPlacementCompanies` + `listPlacementRelationshipOwners` services and existing scoped relationship actions. The legacy Placements tab label is exact `Companies`; no cross-college or Super Admin directory. Full legacy create/edit/delete UX, integration/browser acceptance and all feedback copy remain open. Source + scope contract test authored, not executed. Severity: P1 (previously missing daily-use surface).
+
 # College Admin — Detailed Page Parity Spec
 
 Legacy sidebar: Dashboard, Activity Log, Academic Setup, Courses & Content, People, Placements, Placement Cell, Projects, Profile.
