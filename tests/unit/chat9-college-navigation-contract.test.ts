@@ -8,7 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 const expected=[
   ["Dashboard","/college"],["Activity Log","/college/activity"],
   ["Academic Setup","/college/departments"],["Courses & Content","/college/courses"],
-  ["People","/college/people"],["Profile verification","/college/verification"],
+  ["People","/college/faculty"],["Profile verification","/college/verification"],
   ["Placements","/college/placements"],["Placement cell","/tpo/home"],
   ["Projects","/college/projects"],["Profile","/college/profile"],
 ] as const;

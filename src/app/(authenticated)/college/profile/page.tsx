@@ -14,7 +14,7 @@ export default async function CollegeAdminProfilePage() {
   const account=await getOwnAccountSummary(context);
   if(!account)return <EmptyState title="Profile unavailable" description="Your account could not be loaded. Sign out and sign in again." />;
   return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-6">
-    <PageHeader eyebrow="College Admin" title="My profile"
+    <PageHeader eyebrow="College Admin" title="Profile"
       description="Your personal and contact details. College contact information is managed separately."
       actions={<Link href="/account/security" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Signed-in devices</Link>}
     />

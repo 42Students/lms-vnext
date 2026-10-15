@@ -180,7 +180,7 @@ export default async function ActivityPage({
           <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
             (exportParams.size ? "?" + exportParams.toString() : "")}
             className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
-            Export filtered CSV (max 1,000)
+            Export
           </a>
         ) : undefined}
       />

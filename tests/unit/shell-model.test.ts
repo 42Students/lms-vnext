@@ -131,7 +131,10 @@ describe("authenticated shell model", () => {
       const links = getShellNavigation(context(roles)).map((item) => item.href);
       expect(links).not.toContain("/college/groups");
       // Legacy grouped sidebar: Students live under People.
-      expect(links).toContain("/college/people");
+      expect(links).toContain("/college/faculty");
+      // People Directory is reached from the existing legacy People tab strip,
+      // not by an extra sidebar entry.
+      expect(links).not.toContain("/college/people");
     }
   });
 
