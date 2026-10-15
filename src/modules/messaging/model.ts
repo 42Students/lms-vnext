@@ -13,7 +13,8 @@ export const outboundSendSchema = z.strictObject({
       ctx.addIssue({ code: "custom", message: "INVALID_TEMPLATE_VARIABLES" });
     }
   }),
-  purpose: z.string().trim().min(1).max(160),
+  purpose: z.string().trim().min(1).max(160)
+    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid outbound purpose"}),
 });
 export type OutboundSendRequest = z.infer<typeof outboundSendSchema>;
 export type OutboundStatus = z.infer<typeof outboundStatusSchema>;
