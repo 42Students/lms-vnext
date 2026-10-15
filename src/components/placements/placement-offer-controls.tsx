@@ -32,6 +32,7 @@ export type PlacementOfferCandidateItem = {
   offer: {
     id: string;
     status: OfferStatus;
+    kind?: "OFFER" | "LOI";
     roleTitle: string;
     annualCtcInr: number | null;
     joiningDate: string | null;
@@ -46,6 +47,7 @@ export type PlacementOfferCandidateItem = {
 };
 
 type Draft = {
+  kind: "OFFER" | "LOI";
   roleTitle: string;
   annualCtcInr: string;
   joiningDate: string;
@@ -105,6 +107,7 @@ export function PlacementOfferControls({
         candidates.map((item) => [
           item.applicationId,
           {
+            kind: item.offer?.kind ?? "OFFER",
             roleTitle:
               item.offer?.roleTitle ??
               item.roleTitle ??
@@ -204,6 +207,7 @@ export function PlacementOfferControls({
           "/offers",
         "POST",
         {
+          kind: draft.kind,
           roleTitle:
             draft.roleTitle.trim(),
           annualCtcInr:
@@ -224,9 +228,9 @@ export function PlacementOfferControls({
       );
       showToast({
         tone: "success",
-        title: "Offer issued",
+        title: draft.kind === "LOI" ? "Letter of intent issued" : "Offer issued",
         description:
-          "The learner can now review and respond to the durable offer.",
+          "The learner can now review and respond to the durable record.",
       });
       router.refresh();
     } catch (error) {
@@ -442,6 +446,7 @@ export function PlacementOfferControls({
                 {item.offer ? (
                   <div className="rounded-lg border border-border bg-muted p-4 text-sm text-body">
                     <p className="m-0 font-semibold text-foreground">
+                      {item.offer.kind === "LOI" ? "Letter of intent · " : ""}
                       {item.offer.roleTitle}
                     </p>
                     <p className="mt-1">
@@ -464,6 +469,28 @@ export function PlacementOfferControls({
                 item.offerReady &&
                 draft ? (
                   <div className="grid gap-3 lg:grid-cols-4">
+                    <label>
+                      <span className="mb-1 block text-xs font-semibold text-body">
+                        Record type
+                      </span>
+                      <select
+                        aria-label={"Record type for " + (item.displayName ?? "candidate")}
+                        className={inputClass}
+                        value={draft.kind}
+                        onChange={(event) =>
+                          setDrafts((current) => ({
+                            ...current,
+                            [item.applicationId]: {
+                              ...draft,
+                              kind: event.target.value === "LOI" ? "LOI" : "OFFER",
+                            },
+                          }))
+                        }
+                      >
+                        <option value="OFFER">Offer</option>
+                        <option value="LOI">Letter of intent</option>
+                      </select>
+                    </label>
                     <label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Role title
@@ -615,7 +642,7 @@ export function PlacementOfferControls({
                         "issue:" +
                           item.applicationId
                           ? "Issuing…"
-                          : "Issue offer"}
+                          : draft.kind === "LOI" ? "Issue letter of intent" : "Issue offer"}
                       </Button>
                     </div>
                   </div>

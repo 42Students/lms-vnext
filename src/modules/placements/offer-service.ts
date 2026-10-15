@@ -225,6 +225,7 @@ function sameOfferPayload(
   >,
 ) {
   return (
+    offer.kind === (input.kind ?? "OFFER") &&
     offer.roleTitle === input.roleTitle &&
     offer.annualCtcInr ===
       (input.annualCtcInr ?? null) &&
@@ -372,6 +373,7 @@ export async function issuePlacementOffer(
           Number(
             aggregate?.maxVersion ?? 0,
           ) + 1,
+        kind: input.kind ?? "OFFER",
         roleTitle: input.roleTitle,
         annualCtcInr:
           input.annualCtcInr ?? null,
@@ -433,8 +435,9 @@ export async function issuePlacementOffer(
           subjectId: offer.id,
           subjectLabel: input.roleTitle,
           summary:
-            `Offer issued for ${current.job.title}`,
+            `${input.kind === "LOI" ? "Letter of intent" : "Offer"} issued for ${current.job.title}`,
           metadata: {
+            kind: input.kind ?? "OFFER",
             jobId: current.job.id,
             applicationId:
               current.application.id,
@@ -455,9 +458,9 @@ export async function issuePlacementOffer(
       event.id,
       [recipient.userId],
       {
-        title: "Placement offer received",
+        title: input.kind === "LOI" ? "Letter of intent received" : "Placement offer received",
         body:
-          `You received a ${input.roleTitle} offer for ${current.job.title}. Review and respond to it.`,
+          `You received a ${input.roleTitle} ${input.kind === "LOI" ? "letter of intent" : "offer"} for ${current.job.title}. Review and respond to it.`,
         actionHref: "/learn/placements",
       },
     );
