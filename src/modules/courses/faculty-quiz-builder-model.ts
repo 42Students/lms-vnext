@@ -226,3 +226,8 @@ export function facultyDuplicateQuizOption<T extends {correct:boolean}>(options:
  const next=[...options];next.splice(index+1,0,cloned);
  return next;
 }
+
+/** Switching quizzes while editing must not silently discard a draft. */
+export function facultyQuizSwitchNeedsConfirmation(unsaved:boolean,fromId:string,toId:string):boolean {
+ return unsaved&&fromId!==toId;
+}
