@@ -1580,3 +1580,7 @@ Four integration files (eight stale call sites) now use the actual Learner task 
 ### PR-S2-03 registered schema enforcement — task submission (commit in branch history)
 
 With migration 0082 registered, task submission now enforces an exact persisted `assignee_membership_id` match **under the task lock**. Unassigned tasks and submissions from other learners fail closed. This must be paired with assignee selection in task creation/edit and corresponding integration fixture updates; no PostgreSQL acceptance is claimed.
+
+### PR-S2-03 0082 assignment write path
+
+The new mentor/admin PATCH task-assignee mutation validates an active same-project LEARNER membership and college under the project+task row locks, requires expectedUpdatedAt and rejects review-owned/finished tasks. Matching source tests added; PostgreSQL and user interaction remain open.
