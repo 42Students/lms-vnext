@@ -1060,3 +1060,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 tracker query normalizer (PARTIAL):** Issues board now accepts ordinary empty form filters, rejects repeated/unknown keys, and preserves raw ISO cursors for service validation (avoiding transformed-Date double parsing on later pages). Pure tests authored; browser pagination evidence open.
+
+
+**2026-10-15 chat-6 tracker list API strictness (PARTIAL):** Tracker GET now rejects ambiguous duplicate keys, unknown filters, out-of-bound limits and incomplete cursors before querying DB10, without passing transformed Date values twice through Zod. Source/unit tests authored; API runtime checks open.
