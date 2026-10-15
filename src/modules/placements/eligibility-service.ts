@@ -761,6 +761,26 @@ function numericCheck(
   });
 }
 
+/**
+ * P-S1-03: Job audiences are a hard cohort/program boundary, not a score.
+ * An individual eligibility override must not reveal an untargeted drive.
+ */
+export function isPlacementJobTargetCohort(
+  policy: {
+    allowedProgramIds: readonly string[];
+    allowedCohortIds: readonly string[];
+  } | null | undefined,
+  enrollment: { programId: string; cohortId: string },
+): boolean {
+  if (!policy) return true;
+  return (
+    (policy.allowedProgramIds.length === 0 ||
+      policy.allowedProgramIds.includes(enrollment.programId)) &&
+    (policy.allowedCohortIds.length === 0 ||
+      policy.allowedCohortIds.includes(enrollment.cohortId))
+  );
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
@@ -847,6 +867,27 @@ export async function evaluatePlacementEligibility(
         )
         .limit(1),
     ]);
+
+  if (policy && enrollment && !isPlacementJobTargetCohort(policy, enrollment)) {
+    // Reuse the existing legacy-facing Program/Cohort check vocabulary.
+    const wrongProgram = policy.allowedProgramIds.length > 0 &&
+      !policy.allowedProgramIds.includes(enrollment.programId);
+    return {
+      status: "INELIGIBLE",
+      checks: [{
+        criterion: wrongProgram ? "Program" : "Cohort",
+        status: "FAIL",
+        actual: wrongProgram ? enrollment.programId : enrollment.cohortId,
+        required: wrongProgram
+          ? "One of the eligible programs"
+          : "One of the eligible cohorts",
+        detail: wrongProgram
+          ? "Program is not eligible"
+          : "Cohort is not eligible",
+      }],
+      override: null,
+    };
+  }
 
   if (override) {
     return {

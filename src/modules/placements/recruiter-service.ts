@@ -3,9 +3,9 @@ import {
   asc,
   desc,
   eq,
-  ilike,
   inArray,
 } from "drizzle-orm";
+import { equalsIgnoreCase } from "@/lib/sql-match";
 import { getDb } from "@/db/client";
 import {
   colleges,
@@ -187,7 +187,7 @@ export async function grantPlacementRecruiter(
       .from(users)
       .where(
         and(
-          ilike(users.email, input.email),
+          equalsIgnoreCase(users.email, input.email),
           eq(users.platformStatus, "ACTIVE"),
         ),
       )
