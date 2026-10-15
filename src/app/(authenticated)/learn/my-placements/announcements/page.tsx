@@ -9,12 +9,15 @@ import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placeme
 import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
 import {getOwnLearnerPlacementAlerts} from "@/modules/placements/learner-placement-alerts-service";
 import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-alerts";
+import {learnerNoticeQuerySchema} from "@/modules/placements/learner-notices-query-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
-  searchParams: Promise<{ pinned?: string | string[] }>;
+  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[] }>;
 }) {
   const query = await searchParams;
-  const pinnedOnly = query.pinned === "1";
+  const filters=learnerNoticeQuerySchema.safeParse(query);
+  const pinnedOnly = filters.success ? filters.data.pinned==="1" : false;
+  const unreadOnly = filters.success ? filters.data.unread==="1" : false;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) throw new AuthorizationError("placements.read");
   const own = await requireLearnerPlacementAccess(context);
@@ -27,7 +30,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     ? learnerPlacementNoticeFeed(await listVisibleAnnouncementsForMembership(context))
     : [];
   const notices = learnerPlacementNoticeView(allNotices, pinnedOnly);
-  const personalAlerts = await getOwnLearnerPlacementAlerts(context);
+  const personalAlerts = await getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20});
   return (
     <main className="min-w-0 space-y-6">
       <div>
@@ -62,6 +65,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           ))}
         </ul>
       )}
+      <nav aria-label="Personal alert filter" className="flex flex-wrap items-center gap-3 text-sm">
+        <Link href={pinnedOnly?"/learn/my-placements/announcements?pinned=1":"/learn/my-placements/announcements"} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
+        <Link href={pinnedOnly?"/learn/my-placements/announcements?pinned=1&unread=1":"/learn/my-placements/announcements?unread=1"} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
+      </nav>
       <LearnerPlacementAlerts alerts={personalAlerts} />
     </main>
   );
