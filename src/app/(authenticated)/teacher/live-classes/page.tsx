@@ -24,7 +24,9 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     choices={data.lessonChoices}
     sessions={data.items.map(item=>({
       id:item.id,deliveryId:item.deliveryId,title:item.title,
+      courseName:item.courseName,sectionName:item.sectionName,
       startsAt:item.startsAt.toISOString(),endsAt:item.endsAt.toISOString(),
+      meetingUrl:item.joinUrl,
       expectedUpdatedAt:item.updatedAt?.toISOString()??null,
     }))}
   />
