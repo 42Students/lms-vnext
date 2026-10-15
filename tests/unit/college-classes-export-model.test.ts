@@ -35,4 +35,24 @@ describe("College classes safe CSV export", () => {
     expect(csv).toContain("EXPORT TRUNCATED");
     expect(csv).toContain("Only first 1,000");
   });
+ it("cohortStatus is applied to classes CSV",()=>{
+  expect(collegeClassesExportSchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
+  expect(classesExportHref({q:"",status:"ACTIVE",cohortStatus:"ACTIVE"})).toContain("cohortStatus=ACTIVE");
+ });
+
+ it("programStatus is applied to classes CSV",()=>{
+  expect(collegeClassesExportSchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+  expect(classesExportHref({q:"",status:"ACTIVE",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
+  it("periodCode is preserved in safe class CSV export",()=>{
+    expect(collegeClassesExportSchema.safeParse({periodCode:"x".repeat(65)}).success).toBe(false);
+    expect(classesExportHref({q:"",status:"ACTIVE",periodCode:"B&26"})).toContain("periodCode=B%2626");
+  });
+
+  it("classCode is preserved in safe class CSV export",()=>{
+    expect(collegeClassesExportSchema.safeParse({classCode:"x".repeat(65)}).success).toBe(false);
+    expect(classesExportHref({q:"",status:"ACTIVE",classCode:"B&26"})).toContain("classCode=B%2626");
+  });
+
 });

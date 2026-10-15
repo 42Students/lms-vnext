@@ -61,3 +61,4 @@ export * from "./placement-registration";
 export * from "./placement-debarments";
 export * from "./placement-public-page";
 export * from "./placement-public-joins";
+export * from "./placement-public-enquiries";
