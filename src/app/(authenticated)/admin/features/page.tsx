@@ -364,7 +364,7 @@ export default async function SuperAdminFeaturesPage({
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner's effective access. The CSV includes only the current permissioned page (up to 20 colleges) and excludes contacts. Source: module_access_rules and the existing
+        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner&apos;s effective access. The CSV includes only the current permissioned page (up to 20 colleges) and excludes contacts. Source: module_access_rules and the existing
         optional-module resolver. A persisted global,
         organization or college rule can override the
         source defaults. This matrix shows college-level

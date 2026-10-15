@@ -11,9 +11,9 @@ export function superAdminFeaturePageCsv(rows:readonly FeatureCsvRow[]):string{
  const headings=["College","Code",...OPTIONAL_MODULE_KEYS.flatMap(key=>[key+" effective",key+" rule source",key+" locked"])];
  const lines=rows.slice(0,20).map(row=>{
   const moduleValues=OPTIONAL_MODULE_KEYS.flatMap(key=>{
-   const module=row.modules.find(item=>item.module===key);
-   if(!module)return ["Unknown","Unknown","Unknown"];
-   return [module.enabled?"On":"Off",module.source==="PERSISTED"?module.level:"Source default",module.locked?"Yes":"No"];
+   const entry=row.modules.find(item=>item.module===key);
+   if(!entry)return ["Unknown","Unknown","Unknown"];
+   return [entry.enabled?"On":"Off",entry.source==="PERSISTED"?entry.level:"Source default",entry.locked?"Yes":"No"];
   });
   return [row.name,row.code,...moduleValues].map(csvCell).join(",");
  });
