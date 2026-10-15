@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
-import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityFormLayout } from "@/modules/projects/mentor-portfolio-model";
+import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityFormLayout, mentorActivityImportanceLabel } from "@/modules/projects/mentor-portfolio-model";
 
 type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
@@ -100,7 +100,10 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         description="No persisted events match your assigned projects. Missing events do not imply no work occurred." />
         : <ol className="grid gap-3">{data.items.map(event =>
           <li key={event.id} className="rounded-xl border border-border bg-surface p-4">
-            <p className="text-sm font-semibold text-foreground">{event.label}</p>
+            <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+              <p className="min-w-0 break-words text-sm font-semibold text-foreground">{event.label}</p>
+              <span className="text-xs text-muted-foreground">{mentorActivityImportanceLabel(event.importance)}</span>
+            </div>
             <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
               className="mt-1 block break-words text-sm font-semibold text-primary-text hover:underline">
               {event.projectTitle} →
