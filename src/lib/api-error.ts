@@ -16,6 +16,7 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { ActivityServiceError } from "@/modules/activity/errors";
+import { StorageFileError } from "@/modules/storage/file-errors";
 import { logError } from "@/observability/logger";
 import {StudentRuleConflict} from "@/modules/module-access/admin-student-rule-write";
 
@@ -25,6 +26,10 @@ export function apiErrorResponse(error: unknown) {
       { error: "INVALID_REQUEST", issues: error.issues },
       { status: 400 },
     );
+  }
+
+  if (error instanceof StorageFileError) {
+    return NextResponse.json({ error: error.code }, { status: error.status });
   }
 
   if (error instanceof SessionAuthenticationError) {

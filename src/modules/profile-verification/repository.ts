@@ -1,4 +1,5 @@
 import "server-only";
+import { randomBytes } from "node:crypto";
 import { and, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -13,6 +14,7 @@ import {
 } from "./domain";
 import { evaluateVerificationEvidence, usablePrivateReceipt, validateSubmittedEvidence, type Receipt } from "./evidence";
 import { postgresLockedVerificationTransition } from "./transaction-writer";
+import { saltedIdentityFingerprint, stableIdentitySalt } from "./identity-fingerprint";
 import type { VerificationTransactionRepository } from "./service";
 
 type ObjectEvidenceVerifier = (receipt: Receipt) => Promise<boolean>;
@@ -41,7 +43,8 @@ export function createProfileVerificationRepository(
       .where(eq(learnerProfiles.membershipId, membershipId)).limit(1);
     return learnerProfileDocumentSchema.parse(row?.profileDocument ?? {});
   };
-  const prepare = async (membershipId: string, section: VerificationSection) => {
+  const prepare = async (membershipId: string, section: VerificationSection,
+    priorSnapshot?: SafeSnapshot | null) => {
     const profile = await currentProfile(membershipId);
     const receipts = await loadReceipts(membershipId);
     const verifiedObjects = verifyPrivateObject
@@ -65,9 +68,18 @@ export function createProfileVerificationRepository(
     const doc = (purpose: Receipt["purpose"], relatedEntryId: string | null = null) =>
       accepted.find(r => r.purpose === purpose && r.relatedEntryId === relatedEntryId)?.id;
     const mask = (raw:string) => raw ? "XXXXXXXX" + raw.slice(-4) : "";
+    // Reuse the previous submitted salt for this learner only, so editing an
+    // unchanged identity number does not create a false "new" submission.
+    const identitySalt = stableIdentitySalt(priorSnapshot?.identityHashSalt,
+      ()=>randomBytes(32).toString("hex"));
     const raw: SafeSnapshot = section === "IDENTITY"
       ? { aadhaarNumber:mask(profile.identity.aadhaarNumber),
           panNumber:mask(profile.identity.panNumber),
+          identityHashSalt:identitySalt,
+          ...(profile.identity.aadhaarNumber ? {aadhaarHash:
+            saltedIdentityFingerprint("AADHAAR",profile.identity.aadhaarNumber,identitySalt)} : {}),
+          ...(profile.identity.panNumber ? {panHash:
+            saltedIdentityFingerprint("PAN",profile.identity.panNumber,identitySalt)} : {}),
           ...(doc("AADHAAR") ? {aadhaarDocumentId:doc("AADHAAR")!}:{}),
           ...(doc("PAN") ? {panDocumentId:doc("PAN")!}:{}) }
       : { education:profile.education.map(e => ({
@@ -128,7 +140,8 @@ export function createProfileVerificationRepository(
         .where(eq(profileVerificationSettings.collegeId,collegeId)).limit(1);
       return row?.enabled ?? true; // exact legacy default
     },
-    readCurrentSectionForSubmission:async (membershipId,section) => prepare(membershipId,section),
+    readCurrentSectionForSubmission:async (membershipId,section,priorSnapshot) =>
+      prepare(membershipId,section,priorSnapshot),
     async submittedEvidenceIsValid(membershipId,section,snapshot) {
       // Documents are bound to the immutable submitted snapshot. A learner
       // can edit draft profile details without silently replacing the review.

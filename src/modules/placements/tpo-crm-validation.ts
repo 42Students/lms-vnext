@@ -48,7 +48,7 @@ export const createTpoLeadSchema = z.object({
   collegeId: id,
   name: z.string().trim().min(1).max(150),
   email: email.optional(),
-  phone: phone.optional(),
+  phone: phone.nullable().optional(),
   designation: z.string().trim().max(100).nullable().optional(),
   companyName: z.string().trim().max(150).nullable().optional(),
   source: tpoLeadSourceSchema.optional(),

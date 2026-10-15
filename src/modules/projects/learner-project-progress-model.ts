@@ -1,3 +1,4 @@
+import { projectCompletionPercent } from "./progress-percentage-policy";
 export type LearnerProjectTaskStatus = { projectId: string; status: string };
 export type LearnerProjectProgress = {
   projectId: string;
@@ -25,6 +26,6 @@ export function summarizeLearnerProjectProgress(
     const item = byId.get(projectId)!;
     return {projectId,totalTasks:item.total,completedTasks:item.done,
       blockedTasks:item.blocked,
-      percentage:item.total ? Math.round(item.done * 100 / item.total) : null};
+      percentage: projectCompletionPercent(item.done, item.total)};
   });
 }

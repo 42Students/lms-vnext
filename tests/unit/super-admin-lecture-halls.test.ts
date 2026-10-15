@@ -42,7 +42,8 @@ describe("Super Admin lecture halls surface", () => {
       },
     };
     const collegeNav = getShellNavigation(collegeContext);
-    expect(collegeNav.some((item) => item.href === "/college/lecture-halls")).toBe(true);
+    // Legacy grouped sidebar: Lecture Halls is reached from Academic Setup.
+    expect(collegeNav.some((item) => item.href === "/college/departments")).toBe(true);
     expect(collegeNav.some((item) => item.href === "/admin/lecture-halls")).toBe(false);
   });
 

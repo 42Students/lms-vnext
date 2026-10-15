@@ -293,6 +293,14 @@ export async function issuePlacementOffer(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    const [member] = await tx.select({
+      id: collegeMemberships.id, collegeId: collegeMemberships.collegeId,
+    }).from(collegeMemberships)
+      .where(eq(collegeMemberships.id, current.application.membershipId))
+      .for("update").limit(1);
+    if (!member || member.collegeId !== current.job.collegeId) {
+      throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+    }
     // A cancellation locks this job first, then revokes pending offers.
     // Issuance must take the same lock order and only target open drives.
     const [liveJob] = await tx.select({
