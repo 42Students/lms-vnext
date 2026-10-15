@@ -4,6 +4,7 @@ import { getDb } from "@/db/client";
 import { messagingDeliveryBatches } from "@/db/schema/messaging-receipts";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { messagingHistoryQuerySchema, projectMessagingHistory } from "./receipt-history-model";
 
@@ -23,10 +24,14 @@ export async function listTpoMessagingHistory(
     ...(query.purpose ? [eq(messagingDeliveryBatches.purpose, query.purpose)] : []),
   );
   const db = getDb();
-  const [counts, rows] = await Promise.all([
-    db.select({ total: sql<number>`count(*)::integer` })
+  return db.transaction(async tx => {
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      organizationId: college.organizationId, collegeId: college.id,
+    });
+    const [counts, rows] = await Promise.all([
+    tx.select({ total: sql<number>`count(*)::integer` })
       .from(messagingDeliveryBatches).where(where),
-    db.select({
+    tx.select({
       id: messagingDeliveryBatches.id,
       purpose: messagingDeliveryBatches.purpose,
       total: messagingDeliveryBatches.total,
@@ -42,6 +47,7 @@ export async function listTpoMessagingHistory(
       .limit(PAGE_SIZE).offset((query.page - 1) * PAGE_SIZE),
   ]);
   const total = Number(counts[0]?.total ?? 0);
-  return { rows: projectMessagingHistory(rows), page: query.page, pageSize: PAGE_SIZE,
-    total, pages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
+    return { rows: projectMessagingHistory(rows), page: query.page, pageSize: PAGE_SIZE,
+      total, pages: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
+  });
 }
