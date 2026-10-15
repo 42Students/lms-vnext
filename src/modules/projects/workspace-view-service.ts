@@ -1,4 +1,5 @@
 import type { RequestContext } from "@/modules/identity/context";
+import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model";
 import {
   getProjectInstanceWorkspace,
 } from "./instance-service";
@@ -69,5 +70,10 @@ export async function getProjectWorkspaceView(
     taskSubmissions,
     evaluation,
     activity,
+    mentorEvidence: buildMentorWorkspaceEvidence({
+      tasks: workspace.tasks,
+      members,
+      submissions: finalDelivery.submissions,
+    }),
   };
 }
