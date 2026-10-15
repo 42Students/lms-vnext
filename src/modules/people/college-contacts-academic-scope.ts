@@ -51,7 +51,7 @@ export function collegeContactAcademicScope(collegeId:string){
   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE"))));
- const teachingInRole=(role:typeof courseTeachingAssignments.role.enumValues[number])=>exists(db.select({assignmentId:courseTeachingAssignments.id}).from(courseTeachingAssignments)
+ const teachingInRole=(role:"PRIMARY"|"CO_TEACHER"|"TA")=>exists(db.select({assignmentId:courseTeachingAssignments.id}).from(courseTeachingAssignments)
   .innerJoin(courseSectionDeliveries,and(eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId),isNull(courseSectionDeliveries.endedAt)))
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))

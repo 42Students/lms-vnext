@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
+import { exportCollegeRoleDirectoryCsv } from "@/modules/people/college-role-directory-export-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -337,6 +338,15 @@ describe.skipIf(!enabled)("College Admin role directory PostgreSQL tenant/denial
     expect(result.total).toBe(0);
     expect(result.items).toEqual([]);
   });
+  it("exports only authorized Student directory records under the same strict roster filters",async()=>{
+    const result=await listCollegeRoleDirectory(collegeAdmin,"LEARNER",{programId:SEED_IDS.collegeB});
+    const exported=await exportCollegeRoleDirectoryCsv(collegeAdmin,"LEARNER",{programId:SEED_IDS.collegeB});
+    expect(result.total).toBe(0);
+    expect(exported.exported).toBe(0);
+    expect(exported.csv).not.toContain(SEED_IDS.learnerCollegeAMembership);
+    await expect(exportCollegeRoleDirectoryCsv(facultyInCollegeB,"LEARNER",{})).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
 });
 
 // Filtered role CSV reuses the same scoped reader, rather than a generic unfiltered people export.

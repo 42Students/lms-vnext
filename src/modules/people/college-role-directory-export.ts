@@ -21,7 +21,11 @@ export function parseCollegeRoleDirectoryExportQuery(params:URLSearchParams){
  const {kind,...raw}=parsed.data;
  const filter=collegeRoleDirectoryQuerySchema.parse(raw);
  if(!roleDirectoryDateWindowValid(filter))throw new Error("INVALID_ROLE_DIRECTORY_EXPORT");
- try{assertCompatibleCollegeRoleDirectoryFilters(kind,filter);}
+ try{
+  assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
+  if(kind==="FACULTY"&&(filter.enrollment!=="ALL"||filter.cohortId||filter.programId||filter.sectionId||filter.classPresence!=="ALL"||filter.registrationPresence!=="ALL"||filter.rollPresence!=="ALL"))throw new Error("INCOMPATIBLE_FACULTY_FILTER");
+  if(kind==="LEARNER"&&(filter.teaching!=="ALL"||filter.teachingRole!=="ALL"||filter.facultyDepartmentId||filter.employmentType||filter.titlePresence!=="ALL"||filter.departmentPresence!=="ALL"))throw new Error("INCOMPATIBLE_LEARNER_FILTER");
+ }
  catch{throw new Error("INVALID_ROLE_DIRECTORY_EXPORT");}
  return {kind,filter};
 }
