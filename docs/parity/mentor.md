@@ -948,3 +948,29 @@ Exact-project Resource Directory now filters records with/without nonblank regis
 Current-assignment global Mentor Meetings now filters actual registered PLANNED/ACTIVE/COMPLETED/ARCHIVED project lifecycle status alongside meeting status/type/IST period/search. The same scoped roster drives UI and capped metadata CSV; invalid states are rejected, archived data never gains new write rights. Pure tests authored. Execute typecheck, lint, unit/PG and browser to verify full legacy calendar parity.
 
 Round 6 AU follow-up: a blank optional delivery-version HTML input is normalized to absent before Zod numeric coercion, so the unfiltered view does not fail validation. The corresponding empty-input unit assertion is source-authored; execution pending.
+
+
+## Class-based Project team workspace creation — source-only PARTIAL (2026-10-15)
+
+Shared College Admin (`/college/projects/workspaces/new`) and scoped Super Admin
+(`/admin/projects/workspaces/new`) creators now support selecting a persisted
+active class and published assigned Project template, deterministic roll-order or
+seeded shuffle, balanced team size (default 5), whole-class single group, preview
+moves or explicit two-learner swaps, and one atomic, serializable create operation.
+
+The creator revalidates the current learner roster and preview version inside
+the transaction; inserts registered `lms_groups`, `lms_group_members`,
+`project_instances`, Project membership and materialized release/sprint/task/
+resource rows, and records registered Project-created audit events. No new schema
+or migration is introduced. Managed class-team membership editing is not exposed
+to Mentors, and generic admin member controls are hidden where the managed group
+is authoritative. Admin scope and persisted College Admin membership/role
+checks are required.
+
+Pure models and isolated-PostgreSQL success, role/scope denial, stale-token,
+invalid mentor and rollback tests have been **authored but not executed**.
+Independent typecheck, lint, fresh PostgreSQL, concurrency, mobile 375px,
+accessibility and browser end-to-end acceptance remain OPEN. Do not mark
+the Mentor Team or College Admin/Super Admin workspace create parity rows CLOSED
+until the gates and legacy semantic checks pass. The Mentor's own Team view
+continues to be read-only for membership management.

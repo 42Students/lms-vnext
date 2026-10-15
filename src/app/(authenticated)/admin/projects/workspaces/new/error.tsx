@@ -1,0 +1,3 @@
+"use client";
+import { Button } from "@/components/ui/button";
+export default function ClassWorkspaceError({reset}:{error:Error&{digest?:string};reset:()=>void}){return <div className="mx-auto max-w-5xl space-y-4 p-4" role="alert"><h2 className="text-lg font-semibold">Could not load workspace creator</h2><p className="text-sm text-muted-foreground">The class and Project templates could not be loaded. Retry, or return to Projects.</p><Button onClick={reset}>Retry</Button></div>}

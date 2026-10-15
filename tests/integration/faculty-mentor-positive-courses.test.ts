@@ -1062,14 +1062,14 @@ describe("Faculty active teaching membership cannot be forged by stale context",
 describe("Faculty assignment command rejects stale membership state", () => {
   it("denies an optimistic Faculty context after its persisted role is revoked", async () => {
     const {delivery}=await fixture();
-    await pool.query("delete from membership_roles where membership_id=$1::uuid and role=$2::text", [facultyOnlyMembershipId,"FACULTY"]);
+    await pool.query("delete from membership_roles where membership_id=$1::uuid and role=$2::membership_role", [facultyOnlyMembershipId,"FACULTY"]);
     try {
       await expect(commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
         action:"CREATE",lessonId:randomUUID(),sequence:1,title:"Denied",description:null,
         dueAt:null,maxPoints:10,confirmed:true,
       })).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
     } finally {
-      await pool.query("insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,$3::text) on conflict (id) do nothing",
+      await pool.query("insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,$3::membership_role) on conflict (id) do nothing",
         [facultyOnlyRoleId,facultyOnlyMembershipId,"FACULTY"]);
     }
   });
@@ -1103,13 +1103,13 @@ describe("Faculty discussion moderation revoked role", () => {
   it("does not allow stale Faculty membership to pin or delete an earlier message", async () => {
     const {delivery}=await fixture();
     const posted=await createCourseDiscussionMessage(facultyOnly,delivery.id,{messageText:"Scoped note"});
-    await pool.query("delete from membership_roles where membership_id=$1::uuid and role=$2::text",[facultyOnlyMembershipId,"FACULTY"]);
+    await pool.query("delete from membership_roles where membership_id=$1::uuid and role=$2::membership_role",[facultyOnlyMembershipId,"FACULTY"]);
     try {
       const token={expectedUpdatedAt:posted.updatedAt.toISOString(),confirmed:true};
       await expect(toggleCourseDiscussionPin(facultyOnly,posted.id,delivery.id,token)).rejects.toBeDefined();
       await expect(deleteCourseDiscussionMessage(facultyOnly,posted.id,delivery.id,token)).rejects.toBeDefined();
     } finally {
-      await pool.query("insert into membership_roles(id,membership_id,role) values ($1::uuid,$2::uuid,$3::text) on conflict(id) do nothing",[facultyOnlyRoleId,facultyOnlyMembershipId,"FACULTY"]);
+      await pool.query("insert into membership_roles(id,membership_id,role) values ($1::uuid,$2::uuid,$3::membership_role) on conflict(id) do nothing",[facultyOnlyRoleId,facultyOnlyMembershipId,"FACULTY"]);
     }
   });
 });
