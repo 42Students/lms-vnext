@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 
 export default async function CollegePlacementsPage() {
   const context = await getCurrentRequestContext();
@@ -20,7 +21,7 @@ export default async function CollegePlacementsPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="College Admin"
-        title="Placements"
+        title={COLLEGE_LEGACY_PAGE_TITLES.drives}
         description="Placement operations inside your active college membership."
         actions={
           <Link
