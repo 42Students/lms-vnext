@@ -4,6 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { FacultyProfileTextSection } from "./faculty-profile-text-section";
 import { FacultyProfileSkills } from "./faculty-profile-skills";
+import { FacultyProfileMetadata } from "./faculty-profile-metadata";
 import { FacultyProfileRepeatable } from "./faculty-profile-repeatable";
 import { newFacultyAward } from "@/modules/people/faculty-profile-row-factories";
 import { newFacultyPublication } from "@/modules/people/faculty-profile-row-factories";
@@ -73,6 +74,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    fields={SOCIAL_PROFILES_FIELDS}
    initial={{linkedIn:document.socialProfiles.linkedIn,github:document.socialProfiles.github,portfolio:document.socialProfiles.portfolio,twitter:document.socialProfiles.twitter,googleScholar:document.socialProfiles.googleScholar,researchGate:document.socialProfiles.researchGate}} pending={pending} onSave={save}/>
   <FacultyProfileSkills key={"skills-"+version} initial={document.skills} pending={pending} onSave={save}/>
+  <FacultyProfileMetadata key={"metadata-"+version} initial={document.metadata} pending={pending} onSave={save}/>
   <FacultyProfileRepeatable key={"awards-"+version}
    section="awards" title="Awards" description="Maintain your own awards history. Draft deletions require Save."
    initial={document.awards} fields={AWARDS_FIELDS} maxItems={100}
