@@ -1,3 +1,4 @@
+import { projectCompletionPercent } from "./progress-percentage-policy";
 export type MentorProjectWorkFilter = "NO_TASKS" | "HAS_OPEN_TASKS" | "ALL_DONE" | "HAS_DONE_TASKS";
 export function matchesMentorProjectWork(filter:MentorProjectWorkFilter|undefined,counts:{total:number;open:number}|undefined):boolean {
   if(filter===undefined)return true;
@@ -11,5 +12,5 @@ export function matchesMentorProjectWork(filter:MentorProjectWorkFilter|undefine
 export function mentorTaskProgress(counts:{total:number;open:number}|undefined){
   if(!counts||counts.total<=0)return null;
   const complete=Math.max(0,Math.min(counts.total,counts.total-counts.open));
-  return {percent:Math.round(100*complete/counts.total),label:complete+" of "+counts.total+" recorded tasks done"};
+  return {percent:projectCompletionPercent(complete,counts.total),label:complete+" of "+counts.total+" recorded tasks done"};
 }
