@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {learnerAssessmentEmptyMessage} from "@/modules/courses/learner-assessment-empty-model";
 import { learnerAssessmentCourseScopeCount } from "@/modules/courses/learner-assessment-course-scope-count-model";
 import { learnerAssessmentPageSummary } from "@/modules/courses/learner-assessment-page-summary-model";
 import { learnerAssessmentDateLabel } from "@/modules/courses/learner-assessment-date-label-model";
@@ -319,8 +320,7 @@ export function LearnerAssessmentOverview({
       </p>
       {filtered.length === 0 ? (
         <EmptyState
-          title="No matching assessments"
-          description="Change the search, course or state filter to see other published assessments."
+          {...learnerAssessmentEmptyMessage({kind,courseSelected:Boolean(activeCourseId),search,stateFilter})}
         />
       ) : (
         <div
