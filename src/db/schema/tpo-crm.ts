@@ -5,6 +5,7 @@ import {
   date,
   foreignKey,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -217,6 +218,75 @@ export const placementTpoFollowups = pgTable(
     check(
       "placement_tpo_followups_done_time_ck",
       sql`${t.doneAt} is null or ${t.doneAt} >= ${t.createdAt}`,
+    ),
+  ],
+);
+
+/**
+ * T-S1-03: hashed recruiter-invite OTP challenge. Stores only HMAC digests,
+ * never the six-digit code or a credential. Scoped FK keeps the challenge in
+ * the lead's college.
+ */
+export const recruiterInviteCodes = pgTable(
+  "recruiter_invite_code",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    leadId: uuid("lead_id")
+      .notNull()
+      .references(() => placementTpoLeads.id, { onDelete: "restrict" }),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    tokenHash: varchar("token_hash", { length: 64 }).notNull(),
+    codeHash: varchar("code_hash", { length: 64 }).notNull(),
+    sentAt: timestamp("sent_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    failedAttempts: integer("failed_attempts").notNull().default(0),
+    consumedAt: timestamp("consumed_at", { withTimezone: true }),
+    deliveryState: varchar("delivery_state", { length: 16 })
+      .notNull()
+      .default("PENDING"),
+  },
+  (t) => [
+    foreignKey({
+      name: "recruiter_invite_code_scoped_fk",
+      columns: [t.collegeId, t.leadId],
+      foreignColumns: [placementTpoLeads.collegeId, placementTpoLeads.id],
+    }).onDelete("restrict"),
+    index("recruiter_invite_code_lead_sent_idx").on(t.leadId, t.sentAt.desc()),
+    index("recruiter_invite_code_college_sent_idx").on(
+      t.collegeId,
+      t.sentAt.desc(),
+    ),
+    index("recruiter_invite_code_token_active_idx").on(
+      t.tokenHash,
+      t.sentAt.desc(),
+    ),
+    check(
+      "recruiter_invite_code_token_hash_ck",
+      sql`${t.tokenHash} ~ '^[0-9a-f]{64}$'`,
+    ),
+    check(
+      "recruiter_invite_code_code_hash_ck",
+      sql`${t.codeHash} ~ '^[0-9a-f]{64}$'`,
+    ),
+    check(
+      "recruiter_invite_code_expiry_ck",
+      sql`${t.expiresAt} > ${t.sentAt} and ${t.expiresAt} <= ${t.sentAt} + interval '10 minutes'`,
+    ),
+    check(
+      "recruiter_invite_code_attempts_ck",
+      sql`${t.failedAttempts} between 0 and 5`,
+    ),
+    check(
+      "recruiter_invite_code_delivery_state_ck",
+      sql`${t.deliveryState} in ('PENDING', 'SENT', 'FAILED')`,
+    ),
+    check(
+      "recruiter_invite_code_time_ck",
+      sql`${t.consumedAt} is null or ${t.consumedAt} >= ${t.sentAt}`,
     ),
   ],
 );
