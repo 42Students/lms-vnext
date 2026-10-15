@@ -1,0 +1,2 @@
+import{describe,it,expect}from"vitest";import{matchesMentorProjectAssignment as f}from"@/modules/projects/mentor-project-assignment-filter-model";
+describe("Mentor assignment filter",()=>{it("includes all by default",()=>{expect(f(undefined,true)).toBe(true);expect(f(undefined,false)).toBe(true)});it("isolates primary assignments",()=>{expect(f("PRIMARY",true)).toBe(true);expect(f("PRIMARY",false)).toBe(false)});it("isolates supporting assignments",()=>{expect(f("SUPPORTING",false)).toBe(true);expect(f("SUPPORTING",true)).toBe(false)});});

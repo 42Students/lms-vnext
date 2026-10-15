@@ -10,7 +10,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const raw=await searchParams,parsed=batchDirectoryFilterSchema.safeParse({q:Array.isArray(raw.q)?raw.q[0]:raw.q,state:Array.isArray(raw.state)?raw.state[0]:raw.state});
  if(!parsed.success)return <div role="alert">Invalid search. <Link href="/tpo/batches">Clear search</Link></div>;
  const data=await listTpoBatches(await getCurrentRequestContext());
- const batches=filterTpoBatchDirectory(data.batches,parsed.data);
+ const batches=filterTpoBatchDirectory(data.batches,data.ready?parsed.data:{...parsed.data,state:"ALL"});
  const summary=summarizeTpoBatchStates(data.batches);
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title="Placement batches" description="Make placement eligibility decisions cohort by cohort. This list does not guess inherited learner eligibility."/>
@@ -19,6 +19,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Planning</option><option value="INVITED">Invited</option><option value="FINISHED">Finished</option></select></label>
    <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Search</button>
   </form>
+  {!data.ready&&parsed.data.state!=="ALL"?<p role="status" className="text-sm">State filtering is unavailable until batch lifecycle storage is registered. Showing all matching batch names.</p>:null}
   {!data.ready?<p role="status" className="rounded border border-border p-3">Placement batch lifecycle migration is pending. Academic cohorts remain visible; invitation and completion status is unavailable.</p>:null}
   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
   ["Total batches",summary.total],["Planning",summary.planning],["Invited",summary.invited],["Finished",summary.finished],

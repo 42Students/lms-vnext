@@ -102,6 +102,13 @@ describe("Mentor pending task review triage PostgreSQL",()=>{
     expect(all.items.map(row=>row.priority)).toEqual(["HIGH","LOW"]);
     const newest=await getMentorTaskReviews(mentor,{...query,priority:"ALL",order:"NEWEST"});
     expect(newest.items.map(row=>row.priority)).toEqual(["LOW","HIGH"]);
+    const priorityFirst=await getMentorTaskReviews(mentor,{...query,priority:"ALL",order:"PRIORITY"});
+    expect(priorityFirst.items.map(row=>row.priority)).toEqual(["HIGH","LOW"]);
+    const versionOne=await getMentorTaskReviews(mentor,{...query,priority:"ALL",version:1});
+    expect(versionOne.total).toBe(2);
+    const absentVersion=await getMentorTaskReviews(mentor,{...query,priority:"ALL",version:2});
+    expect(absentVersion.total).toBe(0);
+    await expect(getMentorTaskReviews(learner,{...query,version:1})).rejects.toBeDefined();
     await expect(getMentorTaskReviews(learner,query)).rejects.toBeDefined();
     const foreign:RequestContext={...mentor,membership:{...mentor.membership!,
       id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};

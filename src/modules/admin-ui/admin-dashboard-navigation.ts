@@ -78,4 +78,6 @@ export const SUPER_ADMIN_COLLEGE_LINKS = [
   { label: "People", href: "/admin/people" },
   { label: "Placements", href: "/admin/placements" },
   { label: "Project Templates", href: "/admin/projects/templates" },
+  { label: "Profile Verification", href: "/admin/verification" },
+  { label: "Audit Findings", href: "/tracker/audit-findings" },
 ] as const;

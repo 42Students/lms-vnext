@@ -14,7 +14,7 @@ describe("own learner quiz attempt history selector",()=>{
   });
   it("never turns a withheld or null score into a public result",()=>{
     expect(learnerAttemptResultLabel({resultsVisible:false,score:9,maxScore:10})).toBe("Result not published");
-    expect(learnerAttemptResultLabel({resultsVisible:true,score:null,maxScore:10})).toBe("Result not published");
+    expect(learnerAttemptResultLabel({resultsVisible:true,score:null,maxScore:10})).toBe("Score unavailable");
     expect(learnerAttemptResultLabel({resultsVisible:true,score:9,maxScore:10})).toBe("9 / 10 points");
   });
 });

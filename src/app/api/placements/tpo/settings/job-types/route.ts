@@ -1,0 +1,17 @@
+import {NextResponse} from "next/server";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {isSameOriginRequest} from "@/auth/origin";
+import {apiErrorResponse} from "@/lib/api-error";
+import {createTpoJobType,TpoConfigError} from "@/modules/placements/tpo-job-type-write-service";
+export const runtime="nodejs";
+export async function POST(request:Request){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const result=await createTpoJobType(await getCurrentRequestContext(),await request.json());
+  return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){
+  if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
+   status:error.code==="TPO_JOB_TYPE_EXISTS"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
+  return apiErrorResponse(error);
+ }
+}
