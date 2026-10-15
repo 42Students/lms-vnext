@@ -44,5 +44,10 @@ describe("college semester CSV",()=>{
   expect(academicExportHref("BATCHES",{q:"",status:"ALL",expectedEndState:"UNSET"})).toContain("expectedEndState=UNSET");
  });
 
+ it("academicYearState: export uses the same validated filter",()=>{
+  expect(batchCsvSchema.safeParse({academicYearState:"INVALID"}).success).toBe(false);
+  expect(academicExportHref("BATCHES",{q:"",status:"ALL",academicYearState:"RECORDED"})).toContain("academicYearState=RECORDED");
+ });
+
 });
 
