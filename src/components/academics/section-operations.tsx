@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateIst, formatDateTimeIst } from "@/lib/format-date";
 import {
   useState,
   useTransition,
@@ -327,7 +328,7 @@ export function SectionOperations({
       key: "started",
       header: "Started",
       cell: (row: RosterRow) =>
-        new Date(row.startedAt).toLocaleDateString(),
+        formatDateIst(row.startedAt),
     },
     {
       key: "actions",
@@ -459,9 +460,9 @@ export function SectionOperations({
       header: "Time",
       cell: (row: ScheduleEvent) => (
         <span>
-          {new Date(row.startsAt).toLocaleString()}
+          {formatDateTimeIst(row.startsAt)}
           {" → "}
-          {new Date(row.endsAt).toLocaleString()}
+          {formatDateTimeIst(row.endsAt)}
         </span>
       ),
     },

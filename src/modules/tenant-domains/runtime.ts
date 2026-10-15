@@ -60,11 +60,13 @@ export function setPrimaryTenantDomainWithRuntime(
 export function deleteTenantDomainWithRuntime(
   context: RequestContext,
   domainId: string,
+  confirmationHost?: string,
 ) {
   return deleteTenantDomain(
     context,
     domainId,
     drizzleTenantDomainRepository,
+    confirmationHost,
   );
 }
 

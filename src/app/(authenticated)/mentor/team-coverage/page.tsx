@@ -13,6 +13,8 @@ import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-s
 type Params = {
   filter?: string | string[];
   status?: string | string[];
+  assignment?: string | string[];
+  order?: string | string[];
   search?: string | string[];
   page?: string | string[];
 };
@@ -27,6 +29,8 @@ export default async function MentorTeamCoveragePage({
   const parsed = mentorTeamCoverageQuerySchema.safeParse({
     filter:first(raw.filter) ?? undefined,
     status:first(raw.status) ?? undefined,
+    assignment:first(raw.assignment) ?? undefined,
+    order:first(raw.order) ?? undefined,
     search:first(raw.search) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
@@ -65,6 +69,10 @@ export default async function MentorTeamCoveragePage({
               <option value="NO_PRIMARY_MENTOR">No active primary Mentor</option>
               <option value="HAS_LEARNERS">Has active learners</option>
               <option value="HAS_PRIMARY_MENTOR">Has active primary Mentor</option>
+              <option value="MULTIPLE_MENTORS">Multiple active Mentors</option>
+              <option value="FIVE_PLUS_LEARNERS">Five or more active learners</option>
+              <option value="NO_LEARNERS_NO_PRIMARY">No learners and no primary Mentor</option>
+              <option value="SINGLE_MENTOR">Exactly one active Mentor</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Project state
@@ -73,6 +81,16 @@ export default async function MentorTeamCoveragePage({
               <option value="ALL">All current assignments</option>
               <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
               <option value="COMPLETED">Completed</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">My Mentor assignment
+            <select name="assignment" defaultValue={data.query.assignment} className="min-h-10 rounded-md border border-border bg-background px-3">
+              <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Team-size order
+            <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+              <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </select>
           </label>
           <button type="submit"

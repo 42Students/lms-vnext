@@ -19,6 +19,7 @@ export default async function HrMessagesPage({searchParams}:{
  });
  if(!query.success)return <div className="space-y-4">
   <PageHeader eyebrow="Employer Recruiter" title="Messages & Notifications"/>
+  <Link href="/hr/conversations" className="text-primary-text">Recruiter conversations</Link>
   <p role="alert">Invalid inbox filter.</p><Link href="/hr/messages" className="text-primary-text">Reset</Link>
  </div>;
  const result=await listHrNotifications(context,query.data);
@@ -27,7 +28,10 @@ export default async function HrMessagesPage({searchParams}:{
  }).format(d);
  return <div className="space-y-6">
   <PageHeader eyebrow="Employer Recruiter" title="Messages & Notifications"
-   description="Read-only in-app drive lifecycle notifications for your authorized employer and college."/>
+   description="In-app drive notifications for your authorized employer and college. Conversations with the placement cell are separate."/>
+  <Link href="/hr/conversations" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+   Open recruiter conversations
+  </Link>
   {result.status!=="READY"?<section className="space-y-3 rounded-lg border border-border bg-surface p-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    {result.choices.map(grant=><Link key={grant.id}
