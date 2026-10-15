@@ -127,3 +127,5 @@ export function mentorActivityImportanceLabel(importance:string){
   default:return "Importance not classified";
  }
 }
+
+export type MentorActivityQuery = z.infer<typeof mentorActivityQuerySchema>;
