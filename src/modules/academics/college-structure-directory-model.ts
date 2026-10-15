@@ -34,6 +34,7 @@ export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend
   choiceMode: z.enum(["ALL","FLEXIBLE","FIXED"]).optional(),
   offeringState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
   academicYearState: z.enum(["ALL","RECORDED","MISSING"]).optional(),
+  periodCode: z.string().trim().min(1).max(64).optional(),
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
@@ -51,7 +52,7 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodCode", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
@@ -89,6 +90,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if ("choiceMode" in query && query.choiceMode && query.choiceMode !== "ALL") params.set("choiceMode",query.choiceMode);
   if ("offeringState" in query && query.offeringState && query.offeringState !== "ALL") params.set("offeringState",query.offeringState);
   if ("academicYearState" in query && query.academicYearState && query.academicYearState !== "ALL") params.set("academicYearState",query.academicYearState);
+  if ("periodCode" in query && query.periodCode) params.set("periodCode",query.periodCode);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }
