@@ -384,3 +384,13 @@ export function facultyQuizReviewIssues(
  const totalPoints=questions.reduce((sum,question)=>sum+question.points,0);
  return {invalidQuestions,totalPoints,overLimit:totalPoints>10000};
 }
+
+/** Invalid-only review acts on the full source bank, never a filtered save. */
+export function facultyQuizShouldDisplayQuestion(
+ question:{type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;
+ options:readonly {text:string;correct:boolean;sequence:number}[]},
+ index:number,search:string,invalidOnly:boolean,
+):boolean {
+ return facultyQuizQuestionMatches(question,index,search)&&
+  (!invalidOnly||facultyQuizQuestionIssue(question)!==null);
+}

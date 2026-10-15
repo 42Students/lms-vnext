@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionMatches,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizWriteMessage,facultyQuizCanRetryDetails,facultyQuizCanPublishSavedDraft,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionMatches,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
@@ -23,6 +23,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [selected,setSelected]=useState("");
  const [quizSearch,setQuizSearch]=useState("");
  const [questionSearch,setQuestionSearch]=useState("");
+ const [invalidOnly,setInvalidOnly]=useState(false);
  const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [title,setTitle]=useState("");
@@ -37,7 +38,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [error,setError]=useState<string|null>(null);
  const review=facultyQuizDraftReview(questions);
  const reviewIssues=facultyQuizReviewIssues(questions);
- const matchingQuestions=questions.map((q,i)=>({q,i})).filter(({q,i})=>facultyQuizQuestionMatches(q,i,questionSearch));
+ const matchingQuestions=questions.map((q,i)=>({q,i})).filter(({q,i})=>facultyQuizShouldDisplayQuestion(q,i,questionSearch,invalidOnly));
  const availableQuizzes=[...localQuizzes,...quizzes.filter(q=>!localQuizzes.some(local=>local.id===q.id))]
   .filter(q=>q.status!=="ARCHIVED");
  const chosen=availableQuizzes.find(q=>q.id===selected);
@@ -197,7 +198,9 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
     placeholder="Question number, prompt, or option" className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/>
   </label>
-  {matchingQuestions.length===0?<p role="status" className="text-sm text-body">No question matches your search. Clear it to edit every question.</p>:null}
+  <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={invalidOnly}
+    onChange={e=>setInvalidOnly(e.target.checked)}/>Show only questions needing correction</label>
+  {matchingQuestions.length===0?<p role="status" className="text-sm text-body">No questions match these review filters. Clear the search or invalid-only filter to view the entire bank.</p>:null}
   {matchingQuestions.map(({q,i})=><fieldset key={i} disabled={!editable}
    className="min-w-0 max-w-full space-y-3 rounded-lg border border-border p-4">
    <legend className="text-sm font-semibold">Question {i+1}</legend>
