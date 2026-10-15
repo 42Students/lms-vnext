@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, lt } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectSubmissionReviews, projectSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -32,19 +32,30 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
   }
   const modules=await resolveOptionalModuleAccess(context);
   if (!modules.projects.enabled) {
-    return {enabled:false as const,query,
+    return {enabled:false as const,query,projects:[] as {id:string;title:string}[],
       ...mentorReviewHistoryPagination(0,1),items:[]};
   }
   const assigned=(await listMyProjectInstances(context))
     .filter(row=>row.memberRole==="MENTOR");
   const ids=assigned.map(row=>row.project.id);
+  const projects=assigned.map(row=>({id:row.project.id,title:row.project.title}));
+  if(query.projectId&&!ids.includes(query.projectId))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if (!ids.length) {
-    return {enabled:true as const,query,
+    return {enabled:true as const,query,projects,
       ...mentorReviewHistoryPagination(0,1),items:[]};
   }
+  const cutoff=query.window==="ALL"?null:
+    new Date(new Date().getTime()-(query.window==="LAST_7_DAYS"?7:30)*86400000);
   const filter=and(
     inArray(projectSubmissionReviews.projectId,ids),
+    query.projectId?eq(projectSubmissionReviews.projectId,query.projectId):undefined,
+    query.version!==undefined?eq(projectSubmissions.version,query.version):undefined,
     eq(projectInstances.collegeId,membership.collegeId),
+    query.projectState==="ALL"?undefined:eq(projectInstances.status,query.projectState),
+    cutoff?(query.window==="OLDER_THAN_30_DAYS"
+      ? lt(projectSubmissionReviews.reviewedAt,cutoff)
+      : gte(projectSubmissionReviews.reviewedAt,cutoff)):undefined,
     query.search?ilike(projectInstances.title,"%"+mentorReviewHistoryLiteralSearch(query.search)+"%"):undefined,
     query.decision==="ALL" ? undefined :
       eq(projectSubmissionReviews.decision,query.decision),
@@ -71,8 +82,9 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
       eq(projectSubmissions.id,projectSubmissionReviews.submissionId),
       eq(projectSubmissions.projectId,projectSubmissionReviews.projectId),
     )).where(filter)
-    .orderBy(desc(projectSubmissionReviews.reviewedAt),desc(projectSubmissionReviews.id))
+    .orderBy(query.order==="OLDEST"?asc(projectSubmissionReviews.reviewedAt):desc(projectSubmissionReviews.reviewedAt),
+      query.order==="OLDEST"?asc(projectSubmissionReviews.id):desc(projectSubmissionReviews.id))
     .limit(pagination.pageSize)
     .offset((pagination.page-1)*pagination.pageSize);
-  return {enabled:true as const,query,...pagination,items};
+  return {enabled:true as const,query,projects,...pagination,items};
 }

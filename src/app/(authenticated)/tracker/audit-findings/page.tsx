@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
@@ -13,6 +15,7 @@ type Params=Record<string,string|string[]|undefined>;
 const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function AuditFindingsBoard({searchParams}:{searchParams:Promise<Params>}) {
  const ctx=await getCurrentRequestContext();
+ if(!isSuperAdmin(ctx))redirect("/dashboard");
  requirePermission(ctx,"admin-scope.select",{
   organizationId:ctx.adminScope?.organizationId,
   collegeId:ctx.adminScope?.collegeId,
