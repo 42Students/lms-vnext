@@ -73,7 +73,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} disableLocalSearch
-   initialTab={activeTab} initialKind={initialKind}
+   initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NEWEST"?"NEWEST":"OLDEST"}
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":""})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
    onReview={row=>setSelected(row)}/>
