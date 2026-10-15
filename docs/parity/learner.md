@@ -1408,3 +1408,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 follow-up / Aggregate Assignments and Quizzes date resilience (L6/L7 PARTIAL):** malformed persisted creation/deadline strings display `Date unavailable` rather than an untrusted raw value or crashing the list, while null deadlines remain `No deadline`. Same date renderer covers assignment detail drawer and quiz list. Unit tests authored; responsive browser proof outstanding.
 
 **Chat-7 follow-up / Course Attendance current-month navigation (L4 PARTIAL):** learners can return to the server-derived IST current month from historical attendance without losing the own Course delivery or mutating attendance. Unit regression authored; mobile/browser acceptance open.
+
+**Chat-7 follow-up / latest quiz-attempt review (L8 PARTIAL):** the standalone quiz review selects the largest persisted attempt number, not whatever array element happens to be last, preventing stale reordering from showing earlier results. Pure regression authored; PG/browser acceptance pending.

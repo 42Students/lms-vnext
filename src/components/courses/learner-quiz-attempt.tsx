@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { selectLearnerLatestQuizAttempt } from "@/modules/courses/learner-latest-quiz-attempt-model";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
@@ -206,7 +207,7 @@ export function LearnerQuizAttempt() {
   const current = questions[step] ?? null;
   const answerProgress=learnerQuizAnswerProgress(questions,answers);
   const reviewRows=learnerQuizReviewRows(questions,answers);
-  const latestAttempt = attempts.at(-1) ?? null;
+  const latestAttempt = selectLearnerLatestQuizAttempt(attempts);
   const answerMap = useMemo(
     () => new Map((latestAttempt?.answers ?? []).map((answer) => [answer.questionId, answer])),
     [latestAttempt],
