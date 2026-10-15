@@ -15,14 +15,23 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
   <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)}
    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">← Student overrides</Link>
   <PageHeader eyebrow="Super Admin · Module Access" title="Student module-rule history"
-   description={"Recent authorized module override and lock changes for "+(result.learnerName||"this learner")+". Changes are shown 40 at a time, newest first."}/>
+   description={"Recent authorized module override and lock changes for "+(result.learnerName||"this learner")+". Changes are shown 40 at a time, newest first. The optional module filter is applied to the scoped audit query."}/>
+  <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   <label className="grid gap-1 text-sm font-semibold text-body">Module
+    <select name="module" defaultValue={cursor.data.module} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+     <option value="all">All modules</option><option value="projects">Projects</option><option value="electives">Electives</option>
+    </select>
+   </label>
+   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter history</button>
+   <Link href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center text-primary-text">Clear</Link>
+  </form>
   {result.items.length===0?<p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No module override changes have been recorded for this membership.</p>:
    <ol className="space-y-3">{result.items.map(item=><li key={item.id} className="rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">{item.module}</h2>
     <p className="mt-2 text-sm text-body">{item.change}</p>
     <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.occurredAt.toLocaleString("en-IN")}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor)} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Older changes →</Link>:null}
+  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module)} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Older changes →</Link>:null}
   <Link href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open scoped Activity Log →</Link>
  </div>;

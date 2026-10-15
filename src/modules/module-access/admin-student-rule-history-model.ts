@@ -28,13 +28,15 @@ export function safeStudentRuleHistory(rows:readonly {
 export const studentRuleHistoryCursorSchema=z.strictObject({
  beforeOccurredAt:z.iso.datetime({offset:true}).optional(),
  beforeId:z.uuid().optional(),
+ module:z.enum(["all","projects","electives"]).default("all"),
 }).refine(value=>Boolean(value.beforeOccurredAt)===Boolean(value.beforeId),{
  message:"Both pagination cursor fields are required",
 });
 export function studentRuleHistoryHref(collegeId:string,membershipId:string,
- next:{beforeOccurredAt:Date;beforeId:string}|null){
+ next:{beforeOccurredAt:Date;beforeId:string}|null,module:"all"|"projects"|"electives"="all"){
  const base="/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history";
- if(!next)return base;
- const query=new URLSearchParams({beforeOccurredAt:next.beforeOccurredAt.toISOString(),beforeId:next.beforeId});
- return base+"?"+query.toString();
+ const query=new URLSearchParams();
+ if(module!=="all")query.set("module",module);
+ if(next){query.set("beforeOccurredAt",next.beforeOccurredAt.toISOString());query.set("beforeId",next.beforeId);}
+ return query.size?base+"?"+query.toString():base;
 }
