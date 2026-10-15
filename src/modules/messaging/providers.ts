@@ -1,7 +1,7 @@
 import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
 import { readZeptoMailConfig, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
 import type { OutboundProvider } from "./service";
-import type { OutboundSendRequest } from "./model";
+import {outboundSendSchema,type OutboundSendRequest } from "./model";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
 import {isExotelAcceptedResponse} from "./provider-acceptance-model";
 import {isCampaignTemplateKey} from "./template-boundary-model";
@@ -30,6 +30,7 @@ export function createOutboundProvider(
   return {
     async send(request: OutboundSendRequest): Promise<boolean> {
       // This guard is inside the provider: callers cannot bypass it by passing an unsafe policy.
+      if (!outboundSendSchema.safeParse(request).success) return false;
       if (!canContactRecipientAtRuntime(request.channel, request.recipient, env)) return false;
       const template = config.templates[request.templateKey];
       if (!template || !isCampaignTemplateKey(request.templateKey)) return false;
