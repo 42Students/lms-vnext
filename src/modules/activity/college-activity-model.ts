@@ -16,6 +16,7 @@ export const collegeActivityQuerySchema = z.strictObject({
   actorName: z.string().trim().min(1).max(100).optional(),
   subjectType: z.string().trim().min(1).max(80).optional(),
   subjectId: z.string().trim().min(1).max(500).optional(),
+  pageSize: z.enum(["10","25","50"]).optional(),
   from: dateOnly.optional(),
   to: dateOnly.optional(),
   beforeOccurredAt: z.string().datetime({ offset: true }).optional(),
@@ -49,6 +50,7 @@ export function collegeActivityHref(
   if (filter.actorName) params.set("actorName", filter.actorName);
   if (filter.subjectType) params.set("subjectType", filter.subjectType);
   if (filter.subjectId) params.set("subjectId", filter.subjectId);
+  if (filter.pageSize && filter.pageSize !== "25") params.set("pageSize",filter.pageSize);
   if (filter.from) params.set("from", filter.from);
   if (filter.to) params.set("to", filter.to);
   if (cursor) {

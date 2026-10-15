@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, not, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, not, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -58,6 +58,12 @@ export async function listCollegeRoleDirectory(
   if (kind === "FACULTY" && filter.classPresence !== "ALL") {
     throw new RangeError("FACULTY_CLASS_FILTER_UNSUPPORTED");
   }
+  if (kind === "FACULTY" && filter.registrationPresence !== "ALL") {
+    throw new RangeError("FACULTY_REGISTRATION_FILTER_UNSUPPORTED");
+  }
+  if (kind === "FACULTY" && filter.rollPresence !== "ALL") {
+    throw new RangeError("FACULTY_ROLL_FILTER_UNSUPPORTED");
+  }
   if (kind === "FACULTY" && filter.enrollment !== "ALL") {
     throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
   }
@@ -69,6 +75,12 @@ export async function listCollegeRoleDirectory(
   }
   if (kind === "LEARNER" && filter.employmentType) {
     throw new RangeError("LEARNER_EMPLOYMENT_FILTER_UNSUPPORTED");
+  }
+  if (kind === "LEARNER" && filter.departmentPresence !== "ALL") {
+    throw new RangeError("LEARNER_PRIMARY_DEPARTMENT_FILTER_UNSUPPORTED");
+  }
+  if (kind === "LEARNER" && filter.titlePresence !== "ALL") {
+    throw new RangeError("LEARNER_ACADEMIC_TITLE_FILTER_UNSUPPORTED");
   }
   if (kind === "LEARNER" && filter.facultyDepartmentId) {
     throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
@@ -114,6 +126,16 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.cohortId,filter.cohortId),
       eq(learnerProgramEnrollments.status,"ACTIVE"),
     ))) : undefined;
+  const hasRoll = exists(db.select({ memberId: learnerProfiles.membershipId })
+    .from(learnerProfiles).where(and(
+      eq(learnerProfiles.membershipId, collegeMemberships.id),
+      sql`nullif(btrim(${learnerProfiles.rollNumber}), '') is not null`,
+    )));
+  const hasRegistration = exists(db.select({ memberId: learnerProfiles.membershipId })
+    .from(learnerProfiles).where(and(
+      eq(learnerProfiles.membershipId, collegeMemberships.id),
+      sql`nullif(btrim(${learnerProfiles.registrationNumber}), '') is not null`,
+    )));
   const matchesLearnerIdentity = (search: string) => exists(db.select({ member: learnerProfiles.membershipId })
     .from(learnerProfiles).where(and(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
@@ -138,6 +160,18 @@ export async function listCollegeRoleDirectory(
       ilike(facultyProfiles.employmentType,search),
       ilike(departments.name,search),
     ))));
+  const hasAcademicTitle = exists(db.select({ memberId: facultyProfiles.membershipId })
+    .from(facultyProfiles).where(and(
+      eq(facultyProfiles.membershipId, collegeMemberships.id),
+      sql`nullif(btrim(${facultyProfiles.academicTitle}), '') is not null`,
+    )));
+  const hasPrimaryDepartment = exists(db.select({ memberId: facultyProfiles.membershipId })
+    .from(facultyProfiles)
+    .innerJoin(departments,and(
+      eq(departments.id,facultyProfiles.primaryDepartmentId),
+      eq(departments.collegeId,collegeId),
+    ))
+    .where(eq(facultyProfiles.membershipId,collegeMemberships.id)));
   const matchesEmployment = filter.employmentType ? exists(db.select({membershipId:facultyProfiles.membershipId})
     .from(facultyProfiles)
     .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),
@@ -179,6 +213,14 @@ export async function listCollegeRoleDirectory(
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       kind === "FACULTY" ? facultyInDepartment : undefined,
+      kind === "FACULTY" && filter.titlePresence !== "ALL"
+        ? (filter.titlePresence === "PRESENT" ? hasAcademicTitle : not(hasAcademicTitle)) : undefined,
+      kind === "FACULTY" && filter.departmentPresence !== "ALL"
+        ? (filter.departmentPresence === "ASSIGNED" ? hasPrimaryDepartment : not(hasPrimaryDepartment)) : undefined,
+      kind === "LEARNER" && filter.rollPresence !== "ALL"
+        ? (filter.rollPresence === "PRESENT" ? hasRoll : not(hasRoll)) : undefined,
+      kind === "LEARNER" && filter.registrationPresence !== "ALL"
+        ? (filter.registrationPresence === "PRESENT" ? hasRegistration : not(hasRegistration)) : undefined,
       kind === "FACULTY" ? matchesEmployment : undefined,
       kind === "LEARNER" ? belongsToCohort : undefined,
       kind === "LEARNER" && filter.classPresence !== "ALL"

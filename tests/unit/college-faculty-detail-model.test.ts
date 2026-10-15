@@ -3,8 +3,9 @@ import { collegeFacultyAssignmentHistoryQuerySchema, facultyTeachingAssignmentSt
 
 describe("College Admin Faculty detail", () => {
   it("validates history filters and rejects attempts to select a different college", () => {
-    expect(collegeFacultyAssignmentHistoryQuerySchema.parse({})).toEqual({status:"ALL"});
-    expect(collegeFacultyAssignmentHistoryQuerySchema.parse({status:"ENDED"})).toEqual({status:"ENDED"});
+    expect(collegeFacultyAssignmentHistoryQuerySchema.parse({})).toEqual({status:"ALL",role:"ALL"});
+    expect(collegeFacultyAssignmentHistoryQuerySchema.parse({status:"ENDED",role:"TA"})).toEqual({status:"ENDED",role:"TA"});
+    expect(collegeFacultyAssignmentHistoryQuerySchema.safeParse({role:"VISITOR"}).success).toBe(false);
     expect(collegeFacultyAssignmentHistoryQuerySchema.safeParse({status:"ARCHIVED"}).success).toBe(false);
     expect(collegeFacultyAssignmentHistoryQuerySchema.safeParse({collegeId:"foreign"}).success).toBe(false);
   });

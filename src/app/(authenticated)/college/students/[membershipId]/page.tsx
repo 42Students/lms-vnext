@@ -5,14 +5,16 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getCollegeStudentDetail } from "@/modules/people/college-student-detail-service";
 import { CollegePersonNotFoundError } from "@/modules/people/college-person-detail-model";
 
-export default async function CollegeStudentDetailPage({ params }: {
+export default async function CollegeStudentDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
+  searchParams: Promise<{status?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const { membershipId } = await params;
+  const query=await searchParams;
   let data: Awaited<ReturnType<typeof getCollegeStudentDetail>>;
   try {
-    data = await getCollegeStudentDetail(context, membershipId);
+    data = await getCollegeStudentDetail(context, membershipId, {status:query.status ?? "ALL"});
   } catch (error) {
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
@@ -31,7 +33,22 @@ export default async function CollegeStudentDetailPage({ params }: {
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Program and batch enrollments</h2>
-      {data.enrollments.length === 0 ? <p className="mt-3 text-sm text-body">No persisted program enrollment recorded.</p> :
+      <form method="get" className="mt-3 flex flex-wrap items-end gap-3"
+        action={`/college/students/${encodeURIComponent(membershipId)}`}>
+        <label className="grid gap-2 text-sm font-semibold text-body">
+          Enrollment lifecycle
+          <select name="status" defaultValue={data.filter.status}
+            className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="ALL">All enrollments</option>
+            <option value="ACTIVE">Active</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="WITHDRAWN">Withdrawn</option>
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+      </form>
+      <p className="mt-2 text-xs text-muted-foreground">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
+      {data.enrollments.length === 0 ? <p className="mt-3 text-sm text-body">No program enrollment matches the selected lifecycle status.</p> :
         <ul className="mt-3 space-y-2">{data.enrollments.map(row =>
           <li key={row.id} className="text-sm text-body">
             {row.programName} ({row.programCode}) · {row.cohortName} ({row.cohortCode}) · {row.status}

@@ -48,11 +48,15 @@ export async function CollegeRoleDirectoryWorkspace({
     status: first(params.status),
     accountStatus: first(params.accountStatus),
     enrollment: first(params.enrollment),
+    rollPresence: first(params.rollPresence),
+    registrationPresence: first(params.registrationPresence),
     cohortId: first(params.cohortId),
     classPresence: first(params.classPresence),
     teaching: first(params.teaching),
     teachingRole: first(params.teachingRole),
     facultyDepartmentId: first(params.facultyDepartmentId),
+    titlePresence: first(params.titlePresence),
+    departmentPresence: first(params.departmentPresence),
     employmentType: first(params.employmentType),
     sort: first(params.sort),
     page: first(params.page),
@@ -172,6 +176,24 @@ export async function CollegeRoleDirectoryWorkspace({
             </span> : null}
           </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Roll number coverage
+            <select name="rollPresence" defaultValue={result.filter.rollPresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learners</option>
+              <option value="PRESENT">Roll recorded</option>
+              <option value="MISSING">Roll missing</option>
+            </select>
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Registration number coverage
+            <select name="registrationPresence" defaultValue={result.filter.registrationPresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learners</option>
+              <option value="PRESENT">Registration recorded</option>
+              <option value="MISSING">Registration missing</option>
+            </select>
+          </label> : null}
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class placement
             <select name="classPresence" defaultValue={result.filter.classPresence}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -201,6 +223,24 @@ export async function CollegeRoleDirectoryWorkspace({
             {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
               First 100 distinct types shown.
             </span> : null}
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Academic title coverage
+            <select name="titlePresence" defaultValue={result.filter.titlePresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All faculty</option>
+              <option value="PRESENT">Title recorded</option>
+              <option value="MISSING">Title missing</option>
+            </select>
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Primary department coverage
+            <select name="departmentPresence" defaultValue={result.filter.departmentPresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All faculty</option>
+              <option value="ASSIGNED">Department recorded</option>
+              <option value="MISSING">Department missing</option>
+            </select>
           </label> : null}
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Course teaching

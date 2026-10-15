@@ -98,6 +98,16 @@ describe.skipIf(!enabled)("College Admin Activity Log PG cursor and denial",()=>
     expect(empty.items).toHaveLength(0);
     await expect(listCollegeActivity(faculty,{from,to})).rejects.toBeInstanceOf(AuthorizationError);
   });
+  it("paginates 10, 25 or 50 events using bounded user-selected read size",async()=>{
+    const ten=await listCollegeActivity(admin,{subjectType:subject,pageSize:"10"});
+    expect(ten.items).toHaveLength(10);
+    expect(ten.nextCursor).not.toBeNull();
+    const fifty=await listCollegeActivity(admin,{subjectType:subject,pageSize:"50"});
+    expect(fifty.items).toHaveLength(27);
+    expect(fifty.nextCursor).toBeNull();
+    await expect(listCollegeActivity(admin,{subjectType:subject,pageSize:"100"})).rejects.toBeDefined();
+    await expect(listCollegeActivity(faculty,{pageSize:"50"})).rejects.toBeInstanceOf(AuthorizationError);
+  });
   it("filters persisted event module, importance and exact event type before cursor pagination",async()=>{
     const match=await listCollegeActivity(admin,{subjectType:subject,module:"ACADEMICS",
       importance:"NORMAL",eventType:"academics.program.updated"});

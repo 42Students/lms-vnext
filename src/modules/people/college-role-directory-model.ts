@@ -11,11 +11,15 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   status: z.enum(["ALL", "ACTIVE", "SUSPENDED", "ENDED"]).default("ALL"),
   accountStatus: z.enum(["ALL", "ACTIVE", "DISABLED"]).default("ALL"),
   enrollment: z.enum(["ALL", "ACTIVE", "NONE"]).default("ALL"),
+  rollPresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
+  registrationPresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
   cohortId: z.string().uuid().optional(),
   classPresence: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teaching: z.enum(["ALL", "ASSIGNED", "NONE"]).default("ALL"),
   teachingRole: z.union([z.literal("ALL"), z.enum(COURSE_TEACHING_ROLES)]).default("ALL"),
   facultyDepartmentId: z.string().uuid().optional(),
+  titlePresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
+  departmentPresence: z.enum(["ALL", "ASSIGNED", "MISSING"]).default("ALL"),
   employmentType: z.string().trim().min(1).max(128).optional(),
   sort: z.enum(["NAME", "NEWEST", "OLDEST"]).default("NAME"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
@@ -68,11 +72,15 @@ export function collegeRoleDirectoryHref(
   if (filter.status !== "ALL") params.set("status", filter.status);
   if (filter.accountStatus !== "ALL") params.set("accountStatus", filter.accountStatus);
   if (kind === "LEARNER" && filter.enrollment !== "ALL") params.set("enrollment", filter.enrollment);
+  if (kind === "LEARNER" && filter.rollPresence !== "ALL") params.set("rollPresence", filter.rollPresence);
+  if (kind === "LEARNER" && filter.registrationPresence !== "ALL") params.set("registrationPresence", filter.registrationPresence);
   if (kind === "LEARNER" && filter.cohortId) params.set("cohortId",filter.cohortId);
   if (kind === "LEARNER" && filter.classPresence !== "ALL") params.set("classPresence", filter.classPresence);
   if (kind === "FACULTY" && filter.teaching !== "ALL") params.set("teaching", filter.teaching);
   if (kind === "FACULTY" && filter.teachingRole !== "ALL") params.set("teachingRole", filter.teachingRole);
   if (kind === "FACULTY" && filter.facultyDepartmentId) params.set("facultyDepartmentId", filter.facultyDepartmentId);
+  if (kind === "FACULTY" && filter.titlePresence !== "ALL") params.set("titlePresence", filter.titlePresence);
+  if (kind === "FACULTY" && filter.departmentPresence !== "ALL") params.set("departmentPresence", filter.departmentPresence);
   if (kind === "FACULTY" && filter.employmentType) params.set("employmentType",filter.employmentType);
   if (filter.sort !== "NAME") params.set("sort", filter.sort);
   if (filter.page > 1) params.set("page", String(filter.page));
