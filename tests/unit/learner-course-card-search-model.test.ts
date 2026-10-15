@@ -13,6 +13,16 @@ describe("learner course list search", () => {
     expect(learnerCourseMatchesSearch(row, "physics")).toBe(false);
   });
   it("treats invalid/oversized input as the unfiltered state", () => {
-    expect(learnerCourseMatchesSearch(row, "x".repeat(101))).toBe(true);
+    expect(learnerCourseMatchesSearch(row, "x".repeat(101))).toBe(false);
+  });
+});
+
+// A long pasted query must never turn into an empty search that shows every course.
+describe("long search input", () => {
+  it("keeps a meaningful prefix instead of falling back to a blank query", () => {
+    const row = { course: { courseName: "Physics", courseCode: "PHY", programName: "BSc",
+      sectionName: "A", academicPeriodName: "Semester 1" }, instructorNames: ["Rao"] };
+    expect(learnerCourseMatchesSearch(row, "x".repeat(101))).toBe(false);
+    expect(learnerCourseMatchesSearch(row, "Physics" + " ".repeat(101))).toBe(true);
   });
 });
