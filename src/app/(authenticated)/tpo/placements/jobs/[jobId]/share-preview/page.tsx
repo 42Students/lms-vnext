@@ -106,7 +106,7 @@ export default async function TpoShortlistSharePreviewPage({
        {companyShareStatusLabel(status)}
       </Link>)}
     </nav>
-    <CompanyShareControls jobId={data.job.id} ready={shares.ready}
+    <CompanyShareControls jobId={data.job.id} ready={shares.ready} status={shareStatus}
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),
         revokedAt: link.revokedAt?.toISOString() ?? null,
