@@ -23,6 +23,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   contentPresence: z.enum(["ALL","HAS_CONTENT","EMPTY"]).optional(),
   publishedContent: z.enum(["ALL","HAS_PUBLISHED","NONE_PUBLISHED"]).default("ALL"),
   flaggedVisibility:z.enum(["ALL","HAS_FLAGGED","NONE_FLAGGED"]).default("ALL"),
+  assignmentPresence:z.enum(["ALL","HAS_ASSIGNMENTS","NO_ASSIGNMENTS"]).default("ALL"),
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
@@ -50,6 +51,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if ("programCode" in query && query.programCode) params.set("programCode",query.programCode);
   if ("periodCode" in query && query.periodCode) params.set("periodCode",query.periodCode);
   if ("cohortCode" in query && query.cohortCode) params.set("cohortCode",query.cohortCode);
+  if (kind === "LESSONS" && "assignmentPresence" in query && query.assignmentPresence!=="ALL") params.set("assignmentPresence",query.assignmentPresence);
   if (kind === "LESSONS" && "flaggedVisibility" in query && query.flaggedVisibility!=="ALL") params.set("flaggedVisibility",query.flaggedVisibility);
   if (kind === "LESSONS" && "publishedContent" in query && query.publishedContent!=="ALL") params.set("publishedContent",query.publishedContent);
   if (kind === "LESSONS" && "contentPresence" in query && query.contentPresence && query.contentPresence!=="ALL")params.set("contentPresence",query.contentPresence);
