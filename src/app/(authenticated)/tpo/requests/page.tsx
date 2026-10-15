@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
-import {GLOBAL_TPO_REQUEST_TYPES} from "@/modules/placements/tpo-global-requests-model";
+import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
@@ -25,12 +25,13 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const data = await getTpoGlobalRequestsInbox(context, {
     status:first(raw.status),age:first(raw.age),sort:first(raw.sort),requestType:first(raw.requestType), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
   });
+  const statusCounts=tpoRequestStatusCounts(data.summary);
   return <main className="min-w-0 space-y-5">
     <PageHeader eyebrow="TPO · Operations" title="Requests" description="College-wide learner placement requests. Decisions update recorded applications, rounds or offers only through the existing verified action." />
     <nav aria-label="Request statuses" className="flex flex-wrap gap-2">
-      {(["PENDING","APPROVED","REJECTED","CANCELLED"] as const).map(status=>
+      {TPO_REQUEST_STATUSES.map(status=>
         <Link key={status} href={href({...data.query,status,page:1})} aria-current={data.query.status===status?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text">{status.toLowerCase().replaceAll("_"," ")}</Link>)}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text">{status.toLowerCase().replaceAll("_"," ")} · {statusCounts[status]}</Link>)}
     </nav>
     <form method="get" action="/tpo/requests" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
       <input type="hidden" name="status" value={data.query.status}/>

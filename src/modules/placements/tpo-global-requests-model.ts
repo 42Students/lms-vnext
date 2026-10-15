@@ -21,3 +21,8 @@ export function sortTpoRequestRows<T extends {id:string;requestedAt:Date}>(rows:
 export function isTpoRequestOlderThan(requestedAt:Date,now:Date,days:number):boolean{
  return requestedAt.getTime()<now.getTime()-days*86400000;
 }
+
+export const TPO_REQUEST_STATUSES=["PENDING","APPROVED","REJECTED","CANCELLED"] as const;
+export function tpoRequestStatusCounts(summary:{pending:number;approved:number;rejected:number;cancelled:number}){
+ return {PENDING:summary.pending,APPROVED:summary.approved,REJECTED:summary.rejected,CANCELLED:summary.cancelled};
+}
