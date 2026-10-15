@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,eq,gt,ilike,inArray,isNull} from "drizzle-orm";
+import {and,asc,count,eq,gt,ilike,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {
@@ -22,7 +22,7 @@ export type PublicCompanyApplicantShare =
  * No authenticated user context: the 256-bit opaque token is the sole capability.
  * Validation, college/job scoping, current shortlist and durable audit all run in
  * one transaction. FOR SHARE prevents concurrent revocation completing before
- * this response's audited read finishes. Audit failures deny the response.
+ * this response's audited read finishes. Evaluate expiry on the DB clock after\n * acquiring the row lock, never against a clock sampled before lock waiting.\n * Audit failures deny the response.
  */
 export async function getPublicCompanyApplicantShare(
  token:unknown,rawPage:unknown=1,eventKind:"VIEW"|"CSV"="VIEW",rawSearch:unknown="",
@@ -32,7 +32,6 @@ export async function getPublicCompanyApplicantShare(
  const search=publicApplicantSearchSchema.safeParse(rawSearch);
  if(!valid.success||!page.success||!search.success||!await companyShareTablesReady())
   return {kind:"UNAVAILABLE"};
- const now=new Date();
  return getDb().transaction(async tx=>{
   const [grant]=await tx.select({
    shareId:shares.id,collegeId:shares.collegeId,jobId:shares.jobId,
@@ -42,7 +41,7 @@ export async function getPublicCompanyApplicantShare(
      eq(placementJobs.collegeId,shares.collegeId)))
    .innerJoin(colleges,and(eq(colleges.id,shares.collegeId),eq(colleges.status,"ACTIVE")))
    .where(and(eq(shares.tokenHash,hashCompanyShareToken(valid.data)),
-      isNull(shares.revokedAt),gt(shares.expiresAt,now),
+      isNull(shares.revokedAt),gt(shares.expiresAt,sql`clock_timestamp()`),
       inArray(placementJobs.status,["PUBLISHED","CLOSED"])))
    .limit(1).for("share",{of:shares});
   if(!grant)return {kind:"UNAVAILABLE" as const};
