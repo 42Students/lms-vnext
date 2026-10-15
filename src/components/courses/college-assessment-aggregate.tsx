@@ -98,6 +98,14 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             </select>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Deadline window
+            <select name="dueWindow" defaultValue={data.query.dueWindow}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
+              <option value="FUTURE">Deadline upcoming</option>
+            </select>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">

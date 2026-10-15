@@ -10,6 +10,7 @@ export const collegeAssessmentListQuerySchema = z.object({
   scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
   results:z.enum(["ALL","PUBLISHED","HIDDEN"]).default("ALL"),
   duePresence:z.enum(["ALL","SCHEDULED","UNSCHEDULED"]).default("ALL"),
+  dueWindow:z.enum(["ALL","PAST","FUTURE"]).default("ALL"),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "CLOSED", "ARCHIVED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
@@ -48,6 +49,7 @@ export function collegeAssessmentHref(
   if (query.scope!=="ALL") params.set("scope",query.scope);
   if(kind==="QUIZ"&&query.results!=="ALL")params.set("results",query.results);
   if(query.duePresence!=="ALL")params.set("duePresence",query.duePresence);
+  if(query.dueWindow!=="ALL")params.set("dueWindow",query.dueWindow);
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.page > 1) params.set("page", String(query.page));
   const base = kind === "ASSIGNMENT" ? "/college/assignments" : "/college/quizzes";

@@ -74,6 +74,8 @@ export async function listCollegeAssessmentAggregate(
         query.scope==="SECTION"?isNotNull(courseAssignments.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseAssignments.dueAt):
         query.duePresence==="UNSCHEDULED"?isNull(courseAssignments.dueAt):undefined,
+      query.dueWindow==="PAST"?sql`${courseAssignments.dueAt} < now()`:
+        query.dueWindow==="FUTURE"?sql`${courseAssignments.dueAt} >= now()`:undefined,
       query.q ? ilike(courseAssignments.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
@@ -113,6 +115,8 @@ export async function listCollegeAssessmentAggregate(
         query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
       query.duePresence==="SCHEDULED"?isNotNull(courseQuizzes.dueAt):
         query.duePresence==="UNSCHEDULED"?isNull(courseQuizzes.dueAt):undefined,
+      query.dueWindow==="PAST"?sql`${courseQuizzes.dueAt} < now()`:
+        query.dueWindow==="FUTURE"?sql`${courseQuizzes.dueAt} >= now()`:undefined,
       query.results!=="ALL"?eq(courseQuizzes.resultsPublished,query.results==="PUBLISHED"):undefined,
       query.q ? ilike(courseQuizzes.title, textPattern(query.q)) : undefined,
     );
