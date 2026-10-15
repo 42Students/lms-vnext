@@ -77,6 +77,9 @@ export function safeMentorProjectEventLabel(eventType: string): string {
     case "projects.task.details_updated": return "Task details updated";
     case "projects.task.submitted": return "Task submission";
     case "projects.task.reviewed": return "Task review decision recorded";
+    case "projects.delivery.draft_created": return "Final delivery draft created";
+    case "projects.delivery.draft_updated": return "Final delivery draft updated";
+    case "projects.delivery.submitted": return "Final delivery submitted";
     case "projects.delivery.reviewed": return "Final delivery review decision recorded";
     case "projects.meeting.decided": return "Meeting decision recorded";
     case "projects.meeting.notes_updated": return "Meeting outcome notes updated";
