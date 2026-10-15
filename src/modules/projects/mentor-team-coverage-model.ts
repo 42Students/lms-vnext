@@ -34,13 +34,15 @@ export type MentorTeamCoverageRow = {
 
 export function selectMentorTeamCoverage(
   rows: readonly MentorTeamCoverageRow[],
-  query: MentorTeamCoverageQuery,
+  query: Pick<MentorTeamCoverageQuery,"filter"|"status"|"search"|"page"> &
+    Partial<Pick<MentorTeamCoverageQuery,"assignment"|"order">>,
 ) {
   const term = query.search.toLowerCase();
   const matches = rows.filter(row =>
     (!term || row.title.toLowerCase().includes(term)) &&
     (query.status === "ALL" || row.status === query.status) &&
-    (query.assignment === "ALL" || (query.assignment === "PRIMARY") === row.isPrimaryMentor) &&
+    (!query.assignment || query.assignment === "ALL" ||
+      (query.assignment === "PRIMARY") === row.isPrimaryMentor) &&
     (query.filter === "ALL" ||
       (query.filter === "NO_LEARNERS" && row.learners === 0) ||
       (query.filter === "NO_PRIMARY_MENTOR" && !row.hasPrimaryMentor) ||
