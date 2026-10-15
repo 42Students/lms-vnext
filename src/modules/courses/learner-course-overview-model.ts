@@ -13,12 +13,14 @@ export function learnerCourseListSignals(
   const activity=lessons.flatMap(lesson=>[
     ...lesson.contents.map(item=>item.progress.completedAt?.getTime()??null),
     ...lesson.assignments.map(item=>item.submittedAt?.getTime()??null),
-  ]).filter((value):value is number=>value!==null && Number.isFinite(value));
-  const lastActivity=activity.length ? new Date(Math.max(...activity)).toISOString() : null;
+  ]).filter((value):value is number=>value!==null && Number.isFinite(value) && Number.isFinite(now.getTime()) && value<=now.getTime());
+  // Spreading a long history into Math.max overflows the argument stack.
+  const latest=activity.reduce((value,when)=>Math.max(value,when),Number.NEGATIVE_INFINITY);
+  const lastActivity=Number.isFinite(latest)?new Date(latest).toISOString():null;
   const due=lessons.flatMap(lesson=>[
     ...lesson.assignments.filter(item=>!item.submittedAt && item.dueAt)
       .map(item=>({title:item.title,dueAt:item.dueAt!,kind:"Assignment" as const})),
-    ...lesson.quizzes.filter(item=>item.progress.status==="NOT_STARTED" && item.dueAt)
+    ...lesson.quizzes.filter(item=>(item.progress.status==="NOT_STARTED" || item.progress.status==="IN_PROGRESS") && item.dueAt)
       .map(item=>({title:item.title,dueAt:item.dueAt!,kind:"Quiz" as const})),
   ]).filter(item=>Number.isFinite(now.getTime()) && Number.isFinite(item.dueAt.getTime()) && item.dueAt.getTime()>=now.getTime())
     .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime());
