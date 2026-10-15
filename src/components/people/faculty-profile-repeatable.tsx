@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
-import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow} from "@/modules/people/faculty-profile-repeatable-actions";
+import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches} from "@/modules/people/faculty-profile-repeatable-actions";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -30,6 +30,9 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
 }) {
   const [rows, setRows] = useState<T[]>(() => initial.map(row => ({ ...row })));
   const [changed, setChanged] = useState(false);
+  const [search,setSearch]=useState("");
+  const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
+    facultyProfileRecordMatches(row,fields.map(field=>field.name),search));
   const missingRequired = rows.some(row => fields.some(field =>
     field.required && (typeof row[field.name] !== "string" || !String(row[field.name]).trim()),
   ));
@@ -51,8 +54,13 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
+      {rows.length>5?<label className="block text-sm font-semibold text-body">Find {title.toLowerCase()} records
+        <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+          className="mt-1.5 w-full rounded-md border border-border bg-background p-3" placeholder="Search section fields"/>
+      </label>:null}
+      {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No matching records. Clear search to restore the full list.</p>:null}
       <div className="space-y-3">
-        {rows.map((row, index) => (
+        {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 rounded-lg border border-border p-3 sm:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
             <div className="grid gap-3 sm:grid-cols-2">

@@ -43,3 +43,14 @@ export function moveFacultyProfileDraftRow<T extends {id:string}>(
  const result=[...rows];const [item]=result.splice(from,1);result.splice(toIndex,0,item!);
  return result;
 }
+
+/** Filter visible authored fields while persisting the unfiltered draft. */
+export function facultyProfileRecordMatches(
+ row:object,fieldNames:readonly string[],query:string,
+):boolean{
+ const term=query.trim().toLocaleLowerCase();
+ if(!term)return true;
+ const values=row as Record<string,unknown>;
+ return fieldNames.some(name=>typeof values[name]==="string" &&
+  (values[name] as string).toLocaleLowerCase().includes(term));
+}
