@@ -271,3 +271,9 @@ export function facultyQuizNormalizeQuestions<T extends {sequence:number;options
  return items.map((question,i)=>({...question,sequence:i,
   options:question.options.map((option,j)=>({...option,sequence:j}))} as T));
 }
+
+/** A display-only filter: selected Quiz stays mounted while the Faculty member searches. */
+export function facultyQuizMatchesSearch(quiz:{title:string;status:string},query:string):boolean {
+ const term=query.trim().toLocaleLowerCase();
+ return !term||quiz.title.toLocaleLowerCase().includes(term)||quiz.status.toLocaleLowerCase().includes(term);
+}
