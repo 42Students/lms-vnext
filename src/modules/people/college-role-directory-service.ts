@@ -21,6 +21,7 @@ import {
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
   collegeRoleDirectoryQuerySchema,
   type CollegeDirectoryKind,
@@ -84,7 +85,16 @@ export async function listCollegeRoleDirectory(
   if (kind === "LEARNER" && filter.facultyDepartmentId) {
     throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
   }
-  const db = getDb();
+  return getDb().transaction(async db => {
+  const checked = await assertPersistedPlatformPermission(db, context, "people.manage", {
+    collegeId,
+    organizationId: context.membership!.organizationId,
+  });
+  if (!checked.membership || checked.membership.id !== context.membership!.id ||
+      checked.membership.collegeId !== collegeId ||
+      !checked.membership.roles.includes("COLLEGE_ADMIN")) {
+    throw new AuthorizationError("people.manage");
+  }
   const activeEnrollment = exists(db.select({ enrollmentId: learnerProgramEnrollments.id })
     .from(learnerProgramEnrollments)
     .innerJoin(programs, eq(programs.id, learnerProgramEnrollments.programId))
@@ -365,5 +375,5 @@ export async function listCollegeRoleDirectory(
     departmentOptionsTruncated:departmentRows.length>200,
     pageSize: filter.pageSize,
     totalPages: Math.max(1, Math.ceil(total / filter.pageSize)),
-  };
+  }  });
 }

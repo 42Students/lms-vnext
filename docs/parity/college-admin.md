@@ -770,6 +770,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 
 ## Page: Faculty
+**Persisted College Admin roster guard PARTIAL (chat-9):** Faculty and Students listing now executes its actor SHARE-lock/role/college recheck and paged academic joins inside one read transaction, rejecting forged or revoked membership claims without cross-college leakage. Isolated PostgreSQL forged-admin fixture authored; real DB/browser execution outstanding.
 **Reverse-name role directory sort PARTIAL (chat-9):** Persisted-name Z–A ordering with case-folded comparison and membership-ID tie-break now applies before paging in both Faculty and Students. Strict URL handling and pure URL regression authored; PG/browser acceptance open.
 **Bounded Faculty/Students page sizes PARTIAL (chat-9):** Both directories now offer 10/25/50-row server paging with typed query bounds, correct database LIMIT/OFFSET/count-driven page total and URL-preserved navigation. Pure validation authored; PG/browser execution pending.
 **Directory stale-page recovery PARTIAL (chat-9):** Faculty and Students redirect an out-of-range page to the final authorized page while preserving validated filters instead of leaving an empty/invalid page after roster changes. Pure URL regression authored; browser/PG acceptance remains open.
