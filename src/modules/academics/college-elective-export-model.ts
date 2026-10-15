@@ -6,6 +6,7 @@ export {exportParams};
 export function electiveCsvHref(q:{
  q:string;programId?:string;status:"ALL"|"ACTIVE"|"ARCHIVED";semesterNumber?:number;minimumCredits?:number;maximumCredits?:number;
  periodState?:"ALL"|"LINKED"|"UNLINKED";
+ choiceMode?:"ALL"|"FLEXIBLE"|"FIXED";
  programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
 }){
  const p=new URLSearchParams();
@@ -17,6 +18,7 @@ export function electiveCsvHref(q:{
  if(q.maximumCredits!==undefined)p.set("maximumCredits",String(q.maximumCredits));
  if(q.programStatus&&q.programStatus!=="ALL")p.set("programStatus",q.programStatus);
  if(q.periodState&&q.periodState!=="ALL")p.set("periodState",q.periodState);
+ if(q.choiceMode&&q.choiceMode!=="ALL")p.set("choiceMode",q.choiceMode);
  return "/api/academics/college-electives-export"+(p.size?"?"+p.toString():"");
 }
 export function renderElectivesCsv(rows:readonly {

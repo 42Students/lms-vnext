@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
+import { ne, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
@@ -193,6 +194,8 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.semesterNumber !== undefined ? eq(electiveSlots.semesterNumber, query.semesterNumber) : undefined,
+      query.choiceMode === "FLEXIBLE" ? ne(electiveSlots.minPick,electiveSlots.maxPick) :
+        query.choiceMode === "FIXED" ? not(ne(electiveSlots.minPick,electiveSlots.maxPick)) : undefined,
       query.minimumCredits !== undefined ? gte(electiveSlots.credits,query.minimumCredits) : undefined,
       query.maximumCredits !== undefined ? lte(electiveSlots.credits,query.maximumCredits) : undefined,
       query.status === "ALL" ? undefined : eq(electiveSlots.status, query.status),

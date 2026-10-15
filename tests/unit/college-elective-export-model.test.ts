@@ -33,4 +33,9 @@ describe("college electives CSV",()=>{
     expect(electiveCsvHref({q:"",status:"ACTIVE",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
  });
 
+ it("choiceMode is retained in scoped elective CSV filters",()=>{
+    expect(electiveCsvSchema.safeParse({choiceMode:"ASSUMED"}).success).toBe(false);
+    expect(electiveCsvHref({q:"",status:"ACTIVE",choiceMode:"FIXED"})).toContain("choiceMode=FIXED");
+ });
+
 });
