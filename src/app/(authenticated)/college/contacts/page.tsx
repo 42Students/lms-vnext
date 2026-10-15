@@ -95,6 +95,13 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="NONE">none</option>
     </select>
    </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Academic program
+    <select name="programId" defaultValue={filter.programId??""} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="">Any program</option>
+     {filter.programId&&!choices.programs.some(x=>x.id===filter.programId)&&<option value={filter.programId}>Selected program (outside first 200)</option>}
+     {choices.programs.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
+    </select>{choices.programsTruncated&&<span className="mt-1 block text-xs">First 200 programs shown.</span>}
+   </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Cohort / batch
     <select name="cohortId" defaultValue={filter.cohortId??""} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
      <option value="">Any cohort</option>
@@ -137,7 +144,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
-    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),sort:filter.sort,
+    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.programId?{programId:filter.programId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),sort:filter.sort,
    }).toString()} className="inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold">
     Export filtered contacts CSV
    </Link>
