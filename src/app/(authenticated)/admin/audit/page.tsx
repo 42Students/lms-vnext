@@ -14,6 +14,7 @@ export default async function SuperAdminAuditPage({ searchParams }: {
   const parsed = validateSuperAdminAuditRouteQuery(await searchParams);
   if (!parsed) return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="Super Admin" title="Activity Log" />
+    <Link href="/tracker/audit-findings" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Audit Findings</Link>
     <ErrorState title="Invalid audit filters" description="Check date range, UUIDs and event filters. No events were queried."
       action={<Link href="/admin/audit" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;

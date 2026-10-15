@@ -1,3 +1,5 @@
+**Super Admin grouped-sidebar orphan prevention (2026-10-16, source stage; acceptance NOT DONE):** Tenant Setup links the existing Domains service page, Academic Setup / Departments links the preexisting Academics overview, and Activity Log links Audit Findings on invalid-filter state; valid Activity Log already links Audit Findings in the shared activity page. All existing Super Admin pages keep their role/scope guards. Six role-based group strips and a dedicated Module Access directory were added ahead of the final 13-row sidebar change. Source tests are authored but not executed; 375px browser, HTTP/role-negative and CI review remain open.
+
 # Super Admin — Detailed Page Parity Spec
 
 Super Admin adds global/org/college scope to the shared academic/course/people/placement/project surfaces and owns platform administration.
