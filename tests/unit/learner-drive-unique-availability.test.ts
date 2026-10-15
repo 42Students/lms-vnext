@@ -11,6 +11,6 @@ describe("distinct learner drive availability",()=>{
   expect(learnerDriveAvailabilityDriveCounts(rows)).toEqual({all:3,open:1,"not-open":1,closed:1});
  });
  it("does not count a closed role as a second drive",()=>{
-  expect(learnerDriveAvailabilityDriveCounts([role("a","one",false,true),role("a","two",false,true)]).toMatchObject({all:1,closed:1});
+  expect(learnerDriveAvailabilityDriveCounts([role("a","one",false,true),role("a","two",false,true)])).toMatchObject({all:1,closed:1});
  });
 });

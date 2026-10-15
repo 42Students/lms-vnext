@@ -48,7 +48,7 @@ The first matrix was not exhaustive enough. The deep route/navigation/section au
 - HR `/hr/colleges` is a retired redirect; the actual college chooser behavior lives on HR Home.
 - TPO, Mentor and other role-specific Notifications had been overclaimed as DONE merely because a shared vNext Notifications route exists.
 - TPO Settings, TPO Reports, TPO Students, TPO Drive detail, HR Drive detail, Super Admin Tenant Setup/Settings/Module Access/HR Accounts and Admin Project workspaces were represented by umbrella rows that could hide unfinished sections.
-- public/shared flows — recruiter invite, company applicant share, auth handoff, AI grading, tracker/ops, marketing/legal and error surfaces — were absent from the account-only matrix.
+- public/shared flows — recruiter invite, company applicant share, auth handoff, tracker/ops, marketing/legal and error surfaces — were absent from the account-only matrix.
 
 ## Status vocabulary
 

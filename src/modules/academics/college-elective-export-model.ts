@@ -10,6 +10,17 @@ export function electiveCsvHref(q:{
  academicYearState?:"ALL"|"RECORDED"|"MISSING";
  offeringState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
  choiceMode?:"ALL"|"FLEXIBLE"|"FIXED";
+ slotName?:string;
+ programCode?:string;
+ departmentCode?:string;
+ minimumRequiredPicks?:number;
+ maximumAllowedPicks?:number;
+ semesterFrom?:number;
+ semesterThrough?:number;
+ periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED";
+ descriptionPresence?:"ALL"|"RECORDED"|"MISSING";
+ periodStartsOnOrAfter?:string;
+ periodEndsOnOrBefore?:string;
  programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
 }){
  const p=new URLSearchParams();
@@ -25,6 +36,17 @@ export function electiveCsvHref(q:{
  if(q.offeringState&&q.offeringState!=="ALL")p.set("offeringState",q.offeringState);
  if(q.academicYearState&&q.academicYearState!=="ALL")p.set("academicYearState",q.academicYearState);
  if(q.periodCode)p.set("periodCode",q.periodCode);
+ if(q.slotName)p.set("slotName",q.slotName);
+ if(q.programCode)p.set("programCode",q.programCode);
+ if(q.departmentCode)p.set("departmentCode",q.departmentCode);
+ if(q.minimumRequiredPicks!==undefined)p.set("minimumRequiredPicks",String(q.minimumRequiredPicks));
+ if(q.maximumAllowedPicks!==undefined)p.set("maximumAllowedPicks",String(q.maximumAllowedPicks));
+ if(q.semesterFrom!==undefined)p.set("semesterFrom",String(q.semesterFrom));
+ if(q.semesterThrough !==undefined)p.set("semesterThrough",String(q.semesterThrough));
+ if(q.periodLifecycle &&q.periodLifecycle!=="ALL")p.set("periodLifecycle",q.periodLifecycle);
+ if(q.descriptionPresence &&q.descriptionPresence!=="ALL")p.set("descriptionPresence",q.descriptionPresence);
+ if(q.periodStartsOnOrAfter)p.set("periodStartsOnOrAfter",q.periodStartsOnOrAfter);
+ if(q.periodEndsOnOrBefore)p.set("periodEndsOnOrBefore",q.periodEndsOnOrBefore);
  return "/api/academics/college-electives-export"+(p.size?"?"+p.toString():"");
 }
 export function renderElectivesCsv(rows:readonly {

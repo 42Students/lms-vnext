@@ -4,7 +4,8 @@ export type AnnouncementErrorCode =
   | "ANNOUNCEMENT_NOT_FOUND"
   | "ANNOUNCEMENT_DELETED"
   | "STALE_VERSION"
-  | "INVALID_SCHEDULE";
+  | "INVALID_SCHEDULE"
+  | "CONSENT_REQUIRED";
 
 export class AnnouncementError extends Error {
   constructor(public readonly code: AnnouncementErrorCode) {
