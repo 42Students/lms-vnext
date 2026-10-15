@@ -6,7 +6,7 @@ import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listMessageThreads} from "./tpo-messaging-service";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
-import {hrConversationQuerySchema,filterRecruiterConversations} from "./hr-conversation-inbox-model";
+import {hrConversationQuerySchema,filterRecruiterConversations,HR_CONVERSATION_PAGE_SIZE,hrConversationPageBounds} from "./hr-conversation-inbox-model";
 export async function listHrConversations(context:RequestContext,raw:unknown={}){
  const query=hrConversationQuerySchema.parse(raw);
  if(!hasActiveRecruiter(context)||!context.recruiter)throw new AuthorizationError("placements.recruiter.read");
@@ -25,7 +25,10 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
  const filtered=filterRecruiterConversations(threads,knownJobIds,query.q,titles);
- const visible=filtered.slice(0,100);
+ const visible=filtered.slice(
+  (query.page-1)*HR_CONVERSATION_PAGE_SIZE,query.page*HR_CONVERSATION_PAGE_SIZE,
+ );
+ const pagination=hrConversationPageBounds(query.page,filtered.length);
  const counts=visible.length?await getDb().select({
    threadId:placementTpoMessages.threadId,
    unread:sql<number>`count(*)::integer`,
@@ -41,6 +44,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
    id:t.id,jobId:t.jobId,jobTitle:t.jobId?(titles.get(t.jobId)??"Authorized drive"):"General conversation",
    lastMessageAt:t.lastMessageAt,createdAt:t.createdAt,
    unread:byThread.get(t.id)??0,
-  })),truncated:filtered.length>100,
+  })),pages:pagination.pages,page:query.page,total:filtered.length,
+  first:pagination.first,last:pagination.last,
   unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
 }
