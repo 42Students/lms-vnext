@@ -240,6 +240,7 @@ export async function CollegeRoleDirectoryWorkspace({
             <select name="sort" defaultValue={result.filter.sort}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="NAME">Name A–Z</option>
+              <option value="NAME_DESC">Name Z–A</option>
               <option value="NEWEST">Newest membership</option>
               <option value="OLDEST">Oldest membership</option>
             </select>

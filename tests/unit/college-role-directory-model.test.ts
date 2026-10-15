@@ -131,3 +131,12 @@ describe("College directory bounded page sizes",()=>{
     expect(collegeRoleDirectoryHref("FACULTY",query)).toBe("/college/faculty?page=3&pageSize=50");
   });
 });
+
+describe("Reverse name sort in both role directories",()=>{
+  it("retains NAME_DESC and rejects unsupported ordering",()=>{
+    const filter=collegeRoleDirectoryQuerySchema.parse({sort:"NAME_DESC",page:2});
+    expect(collegeRoleDirectoryHref("LEARNER",filter)).toBe("/college/students?sort=NAME_DESC&page=2");
+    expect(collegeRoleDirectoryHref("FACULTY",filter)).toBe("/college/faculty?sort=NAME_DESC&page=2");
+    expect(collegeRoleDirectoryQuerySchema.safeParse({sort:"RANDOM"}).success).toBe(false);
+  });
+});

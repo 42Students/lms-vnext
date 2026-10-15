@@ -22,7 +22,6 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {
-  COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,
   collegeRoleDirectoryQuerySchema,
   type CollegeDirectoryKind,
   type CollegeRoleDirectoryRow,
@@ -244,7 +243,9 @@ export async function listCollegeRoleDirectory(
     db.select().from(query)
       .orderBy(
         filter.sort === "NEWEST" ? desc(query.joinedAt) :
-          filter.sort === "OLDEST" ? asc(query.joinedAt) : asc(query.name),
+          filter.sort === "OLDEST" ? asc(query.joinedAt) :
+          filter.sort === "NAME_DESC" ? desc(sql`lower(coalesce(${query.name}, ''))`) :
+          asc(sql`lower(coalesce(${query.name}, ''))`),
         asc(query.membershipId),
       )
       .limit(filter.pageSize)

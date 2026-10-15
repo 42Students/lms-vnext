@@ -770,6 +770,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 
 ## Page: Faculty
+**Reverse-name role directory sort PARTIAL (chat-9):** Persisted-name Z–A ordering with case-folded comparison and membership-ID tie-break now applies before paging in both Faculty and Students. Strict URL handling and pure URL regression authored; PG/browser acceptance open.
 **Bounded Faculty/Students page sizes PARTIAL (chat-9):** Both directories now offer 10/25/50-row server paging with typed query bounds, correct database LIMIT/OFFSET/count-driven page total and URL-preserved navigation. Pure validation authored; PG/browser execution pending.
 **Directory stale-page recovery PARTIAL (chat-9):** Faculty and Students redirect an out-of-range page to the final authorized page while preserving validated filters instead of leaving an empty/invalid page after roster changes. Pure URL regression authored; browser/PG acceptance remains open.
 **Role-directory URL ambiguity PARTIAL (2026-10-15, chat-9):** Faculty and Students directories now reject repeated/unknown query parameters before protected reads, rather than silently choosing the first of multiple values. Pure unit regressions authored; executable service/browser acceptance outstanding.
