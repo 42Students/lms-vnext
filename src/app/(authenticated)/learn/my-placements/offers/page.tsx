@@ -1,4 +1,5 @@
 import { learnerOffersQueryHasInvalidFields } from "@/modules/placements/learner-offers-query-feedback-model";
+import {learnerExpiredIssuedOffers} from "@/modules/placements/learner-offer-issued-expired-model";
 import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-empty-state-model";
 import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
@@ -56,6 +57,7 @@ export default async function LearnerOffersPage({
   const expiryParsed=learnerOfferExpirySchema.safeParse(query.expiry??"all");
   const expiry=expiryParsed.success?expiryParsed.data:"all";
   const dueOnly=expiry==="all"&&query.due==="1";
+  const conflictingDeadlines=expiry!=="all"&&query.due==="1";
   const context = await getCurrentRequestContext();
   const [offers,requestRead] = await Promise.all([
     getOwnLearnerOfferBrowse(context,view),
@@ -63,6 +65,7 @@ export default async function LearnerOffersPage({
   ]);
   const requests = requestRead.items;
   const snapshotNowIso = new Date().toISOString();
+  const expiredIssuedCount=learnerExpiredIssuedOffers(offers.items,Date.parse(snapshotNowIso));
   const kindInput=learnerOfferKindSchema.safeParse(query.kind ?? "all");
   const kind=kindInput.success?kindInput.data:"all";
   const joiningInput=learnerJoiningFilterSchema.safeParse(query.joining ?? "all");
@@ -76,6 +79,7 @@ export default async function LearnerOffersPage({
   const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
   const focused = resolveLearnerOfferFocus(sorted,requestedPage,query.focus);
   const paginated = paginateOwnOffers(sorted,focused.page,15);
+  const pageClamped=!focused.found && sorted.length>0 && requestedPage>paginated.page;
   const hasActiveFacets = learnerOfferHasActiveFacets({searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry});
   const emptyState = learnerOffersEmptyState(offers.counts.all, Boolean(searchTerm) || dueOnly || kind !== "all" || joiningFilter !== "all" || expiry !== "all");
   const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
@@ -100,6 +104,9 @@ export default async function LearnerOffersPage({
         title="My offers"
         description="Official persisted offers, current response status and recorded joining outcomes."
       />
+      {conflictingDeadlines ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
+      </p> : null}
       {invalidQuery ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</p> : null}
       <nav aria-label="Offer status" className="flex flex-wrap gap-2">
         {tabs.map((tab) => (
@@ -115,6 +122,14 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      {view==="pending"&&expiredIssuedCount>0 ? (
+        <p role="status" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
+          {expiredIssuedCount} issued {expiredIssuedCount===1?"offer has":"offers have"} passed the recorded response deadline. They remain in issued history but cannot be accepted or declined after expiry.
+          <Link href="/learn/my-placements/offers?status=pending&expiry=expired" className="ml-2 font-semibold text-primary-text underline">
+            View expired issued offers
+          </Link>
+        </p>
+      ) : null}
       <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
         {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
         {dueOnly ? <input type="hidden" name="due" value="1" /> : null}
@@ -189,6 +204,12 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      {pageClamped ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
+          <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Use this page link</Link>
+        </p>
+      ) : null}
       {learnerOfferFocusMissing(query.focus,focused.found) ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           The linked offer is not displayed in these results. It may be outside the selected filters or no longer accessible.
