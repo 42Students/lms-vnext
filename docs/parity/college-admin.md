@@ -18,6 +18,7 @@ Every page below also requires:
 **Announcements personal inbox unread filter PARTIAL (2026-10-15):** College Admin notices can filter unread, own-recipient *registered* notifications within the signed-in college before the 50-row cap. Toggle preserves the deleted-announcement selector. The draft college-wide DB10 announcement table remains gated and no broadcast sending is claimed. Pure model and isolated PG own/foreign/wrong-role tests authored; runtime/browser acceptance open.
 
 ## Page: Profile Verification (legacy /college-admin/verification)
+**Selected-tab SQL export pushdown PARTIAL (chat-9):** CSV now narrows SQL to the selected verification status tab (and first-submission/update substate) before the 5,001-row cap instead of reading unrelated decision history. Queue still reads all statuses for truthful cross-tab counts. Author-time status matrix tests added; disposable PostgreSQL/CI evidence pending.
 **Elapsed-age SQL pushdown PARTIAL (chat-9):** Waiting-age selections now apply elapsed timestamp bounds in scoped queue and CSV SQL before the working-set cap, using one read clock and retaining row checks. Boundary unit tests authored; database execution pending.
 
 **Verification review modal keyboard focus containment PARTIAL (chat-9):** Tab and Shift+Tab now wrap inside the private review dialog instead of moving focus to underlying college pages; keyboard Escape and opener-focus restoration remain in place. Pure focus-boundary cases authored; screen-reader/browser focus QA still required.
