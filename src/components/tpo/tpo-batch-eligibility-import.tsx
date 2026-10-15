@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import {parseTpoEligibilityCsv} from "@/modules/placements/tpo-eligibility-import-model";
 type ImportRow=ReturnType<typeof parseTpoEligibilityCsv>[number];
 type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
@@ -10,6 +11,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const router=useRouter(),[csv,setCsv]=useState("studentCode,decision,reason\n");
  const [preview,setPreview]=useState<Preview|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [lastActionId,setLastActionId]=useState<string|null>(null);
  async function previewChanges(){
   if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);
   try{
@@ -35,6 +37,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    });
    const data=await response.json() as {changedCount?:number;skipped?:number;actionId?:string|null;error?:string};
    if(!response.ok)throw Error(response.status===409?"Preview became stale. Review the latest eligibility decisions and preview again.":data.error??"Import failed.");
+   setLastActionId(data.actionId??null);
    setNotice((data.changedCount??0)+" changes saved; "+(data.skipped??0)+" skipped."+(data.actionId?" Action ID: "+data.actionId:""));
    setPreview(null);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Import could not be confirmed.");}
@@ -58,5 +61,6 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
+  {lastActionId?<TpoBatchUndoControl batchId={batchId} actionId={lastActionId}/>:null}
  </section>;
 }
