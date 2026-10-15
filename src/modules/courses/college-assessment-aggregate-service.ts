@@ -72,6 +72,8 @@ export async function listCollegeAssessmentAggregate(
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.scope==="SHARED"?isNull(courseAssignments.deliveryId):
         query.scope==="SECTION"?isNotNull(courseAssignments.deliveryId):undefined,
+      query.duePresence==="SCHEDULED"?isNotNull(courseAssignments.dueAt):
+        query.duePresence==="UNSCHEDULED"?isNull(courseAssignments.dueAt):undefined,
       query.q ? ilike(courseAssignments.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
@@ -109,6 +111,8 @@ export async function listCollegeAssessmentAggregate(
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.scope==="SHARED"?isNull(courseQuizzes.deliveryId):
         query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
+      query.duePresence==="SCHEDULED"?isNotNull(courseQuizzes.dueAt):
+        query.duePresence==="UNSCHEDULED"?isNull(courseQuizzes.dueAt):undefined,
       query.results!=="ALL"?eq(courseQuizzes.resultsPublished,query.results==="PUBLISHED"):undefined,
       query.q ? ilike(courseQuizzes.title, textPattern(query.q)) : undefined,
     );
