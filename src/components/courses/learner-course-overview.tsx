@@ -173,13 +173,25 @@ export function LearnerCourseOverview({
   // cap to hide an assessment when picking the next action.
   const activity = allUpcomingActivity.slice(0, 6);
   const recentLearnerActivity=learnerRecentCourseActivity(workspace.lessons,now).slice(0,2);
+  // Late submissions remain actionable for published assignments. They must
+  // not be hidden merely because the upcoming feed only covers future dates.
+  const overdueAssignmentActions = workspace.lessons.flatMap((lesson) =>
+    lesson.assignments
+      .filter((item) => item.progress.status !== "COMPLETED" &&
+        item.dueAt && Number.isFinite(item.dueAt.getTime()) && item.dueAt.getTime() < now)
+      .map((item) => ({
+        id: item.id, lessonId: lesson.id, title: item.title,
+        type: "Assignment" as const, when: item.dueAt,
+        filter: "assessments", priority: item.dueAt!.getTime(), overdue: true,
+      })),
+  );
   const priorityActivity = readOnly
     ? null
-    : selectPriorityLearnerActivity(allUpcomingActivity);
+    : selectPriorityLearnerActivity([...overdueAssignmentActions, ...allUpcomingActivity]);
   const nextAction = priorityActivity
     ? {
         title: priorityActivity.title,
-        detail: `${priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
+        detail: `${priorityActivity.overdue ? "Overdue · late submission available" : priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
         href: `/learn/courses/${deliveryId}/roadmap?filter=${priorityActivity.filter}&lesson=${encodeURIComponent(priorityActivity.lessonId)}&content=${encodeURIComponent(priorityActivity.id)}`,
       }
     : nextContent
