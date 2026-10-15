@@ -6,7 +6,7 @@ export {exportParams};
 export function lectureHallsCsvHref(q:{
  q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";
  roomType:"ALL"|"CLASSROOM"|"LECTURE_HALL"|"LAB"|"SEMINAR_HALL"|"AUDITORIUM"|"CONFERENCE_ROOM";
- departmentId?:string;minimumCapacity?:number;
+ departmentId?:string;minimumCapacity?:number;maximumCapacity?:number;
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
@@ -14,6 +14,7 @@ export function lectureHallsCsvHref(q:{
  if(q.roomType!=="ALL")p.set("roomType",q.roomType);
  if(q.departmentId)p.set("departmentId",q.departmentId);
  if(q.minimumCapacity!==undefined)p.set("minimumCapacity",String(q.minimumCapacity));
+ if(q.maximumCapacity!==undefined)p.set("maximumCapacity",String(q.maximumCapacity));
  return "/api/academics/college-lecture-halls-export"+(p.size?"?"+p.toString():"");
 }
 export function renderLectureHallsCsv(rows:readonly {
