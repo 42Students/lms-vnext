@@ -100,14 +100,14 @@ export function collegeRoleDirectoryHref(
 
 /** Reject ambiguous or forged directory queries before loading any college people. */
 export function parseCollegeRoleDirectorySearchParams(raw: Record<string, string | string[] | undefined>): CollegeRoleDirectoryQuery {
-  const input: Record<string, string> = {};
+  const entries: [string,string][] = [];
   for (const [key, value] of Object.entries(raw)) {
-    if (!(key in collegeRoleDirectoryQuerySchema.shape) || Array.isArray(value)) {
+    if (!Object.hasOwn(collegeRoleDirectoryQuerySchema.shape,key) || Array.isArray(value)) {
       throw new Error("INVALID_ROLE_DIRECTORY_FILTERS");
     }
-    if (value !== undefined && value !== "") input[key] = value;
+    if (value !== undefined && value !== "") entries.push([key,value]);
   }
-  const filter=collegeRoleDirectoryQuerySchema.parse(input);
+  const filter=collegeRoleDirectoryQuerySchema.parse(Object.fromEntries(entries));
   if (!roleDirectoryDateWindowValid(filter)) throw new Error("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
   return filter;
 }
