@@ -869,3 +869,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Companies exact-college filter (PARTIAL):** Company relationship table has a validated college UUID filter intersected with the selected Super Admin safety scope; selected-college mismatch is denied before querying. The dropdown lists only authorized active colleges from the shared service; pagination keeps the college selection. Does not reveal recruiter PII or cross-tenant CRM notes. Unit and disposable-PostgreSQL success/foreign-scope tests authored but unexecuted, browser/privacy acceptance still open.
+
+
+**2026-10-15 chat-6 primary-host deletion atomic guard (PARTIAL):** Conditional repository DELETE now independently checks the persisted primary flag against the exact confirmed hostname at mutation time; stale UI decisions cannot bypass the database predicate. Existing authorization remains in service; regression fixture authored, not executed. Concurrent host switching and DNS redirect E2E still need certification.

@@ -59,7 +59,7 @@ export interface TenantDomainRepository {
     input: VerificationResult & { checkedAt: Date },
   ): Promise<TenantDomainView>;
   setPrimary(domainId: string): Promise<TenantDomainView>;
-  deleteDomain(domainId: string): Promise<void>;
+  deleteDomain(domainId: string, confirmationHost?: string): Promise<void>;
   resolveVerifiedHost(host: string): Promise<ResolvedTenantHost | null>;
 }
 
@@ -229,7 +229,7 @@ export async function deleteTenantDomain(
   if (domain.isPrimary && confirmationHost !== domain.host) {
     throw new TenantDomainServiceError("PRIMARY_HOST_CONFIRMATION_REQUIRED");
   }
-  await repository.deleteDomain(domain.id);
+  await repository.deleteDomain(domain.id, confirmationHost);
 }
 
 export async function resolveTenantFromHost(
