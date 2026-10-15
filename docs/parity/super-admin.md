@@ -1141,3 +1141,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 broadcast reviewed college-set fence (PARTIAL):** Publication now optionally verifies the exact reviewed college IDs against resolved active/authorized targets, returning a recoverable 409 on directory drift instead of silently changing the broadcast audience. The Super Admin UI sends reviewed IDs and explains re-review. Does not claim snapshot-isolated active-college locks or provider delivery; unit source tests authored.
+
+
+**2026-10-15 chat-6 announcement blank-search recovery (PARTIAL):** Form query consisting solely of whitespace now resolves to an unfiltered server history instead of a false malformed-link error; nonblank values remain trimmed/capped and unknown keys fail closed. Source tests authored, browser execution open.
