@@ -9,6 +9,7 @@ import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/proje
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege} from "@/modules/projects/template-service";
 import {createMentorProjectTask} from "@/modules/projects/mentor-task-create-service";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
+import {getProjectWorkspaceView} from "@/modules/projects/workspace-view-service";
 import {getMentorProjectTimeline} from "@/modules/projects/mentor-project-timeline-service";
 
 if(!process.env.TEST_DATABASE_URL)throw new Error(
@@ -92,6 +93,31 @@ async function fixture(){
   return {project,sprint};
 }
 describe("Mentor task create — migrated PostgreSQL",()=>{
+  it("derives Mentor evidence from real persisted Project tasks, roster and versioned data",async()=>{
+    const {project,sprint}=await fixture();
+    const first=await getProjectWorkspaceView(mentor,project.id);
+    expect(first.mentorEvidence.team).toEqual({
+      learners:1,mentors:1,primaryMentors:1,
+    });
+    expect(first.mentorEvidence.tasksBySprint[sprint.id])
+      .toMatchObject({total:1,done:0,blocked:0,inReview:0,completionPercent:0});
+    expect(first.mentorEvidence.latestDelivery).toBeNull();
+
+    await createMentorProjectTask(mentor,{projectId:project.id},{
+      sprintId:sprint.id,title:"Evidence task",description:null,
+      acceptanceCriteria:"Demonstrate an authorized review",priority:"HIGH",
+      expectedSprintUpdatedAt:sprint.updatedAt.toISOString(),
+    });
+    const updated=await getProjectWorkspaceView(mentor,project.id);
+    expect(updated.mentorEvidence.tasksBySprint[sprint.id])
+      .toMatchObject({total:2,done:0,completionPercent:0});
+    const foreign:RequestContext={...mentor,membership:{
+      ...mentor.membership!,id:SEED_IDS.facultyCollegeBMembership,
+      collegeId:SEED_IDS.collegeB,
+    }};
+    await expect(getProjectWorkspaceView(foreign,project.id)).rejects.toBeDefined();
+  });
+
   it("reads registered Release/Sprint timeline and denies other roles and colleges",async()=>{
     const {project}=await fixture();
     const view=await getMentorProjectTimeline(mentor,{projectId:project.id});
