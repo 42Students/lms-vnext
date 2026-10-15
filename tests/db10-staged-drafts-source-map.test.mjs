@@ -6,8 +6,8 @@ const ledger = JSON.parse(readFileSync(
   "docs/planning/database-parity-db10-field-ledger.json",
   "utf8",
 ));
-const announcements = readFileSync("src/db/schema/db10-announcements.draft.ts", "utf8");
-const tracker = readFileSync("src/db/schema/db10-bug-tracker.draft.ts", "utf8");
+const announcements = readFileSync("src/db/schema/db10-announcements.ts", "utf8");
+const tracker = readFileSync("src/db/schema/db10-bug-tracker.ts", "utf8");
 const leases = readFileSync("src/db/schema/db10-scheduled-job-leases.draft.ts", "utf8");
 const barrel = readFileSync("src/db/schema/index.ts", "utf8");
 const leaseStore = readFileSync(
@@ -105,9 +105,9 @@ test("DB40 announcement soft-delete source field resolves both normalized column
   for (const ref of targetRefs(row.proposedTarget)) assertTargetExists(ref);
 });
 
-test("DB40 isolated drafts are not exported through the shared schema barrel", () => {
-  assert.doesNotMatch(barrel, /db10-announcements\.draft/);
-  assert.doesNotMatch(barrel, /db10-bug-tracker\.draft/);
+test("DB40 registered announcements/tracker schemas are exported; remaining drafts are not", () => {
+  assert.match(barrel, /db10-announcements"/);
+  assert.match(barrel, /db10-bug-tracker"/);
   assert.doesNotMatch(barrel, /db10-scheduled-job-leases\.draft/);
   assert.equal(ledger.counts.verified, 0);
   assert.ok(rows.every(row => row.status === "UNMAPPED"));
