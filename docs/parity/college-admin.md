@@ -770,6 +770,15 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 
 ## Page: Faculty
+**Contradictory academic roster filters PARTIAL (chat-9):** Faculty cannot request no current teaching and a specific active teaching role simultaneously; Students cannot combine no active enrollment with an active batch or class. The page and service reject invalid combinations instead of silently showing zero people. Unit cases authored; real PostgreSQL/browser acceptance pending.
+**IST joined-date range PARTIAL (chat-9):** Faculty and Students now support strict inclusive IST local join-date intervals, validated before protected reads and applied as UTC-timestamp SQL bounds before paging/count. Reversed/impossible dates fail closed; pure boundary tests authored. Executed scoped-PG, browser and oracle acceptance remain open.
+**Faculty employment-type bookmark retention PARTIAL (chat-9):** A selected employment-type URL filter remains visible when it is outside the bounded first 100 options. No new values or records are inferred; persisted college-filtered SQL and strict 128-character bound remain authoritative. Unit/source authored, execution pending.
+**Bounded Faculty department bookmark retention PARTIAL (chat-9):** Current-college department option lists retain a previously selected filter UUID beyond the first 200 via a neutral placeholder and preserve server-side college ownership checks. Unit/source authored; 375px and PG/browser acceptance open.
+**Persisted College Admin roster guard PARTIAL (chat-9):** Faculty and Students listing now executes its actor SHARE-lock/role/college recheck and paged academic joins inside one read transaction, rejecting forged or revoked membership claims without cross-college leakage. Isolated PostgreSQL forged-admin fixture authored; real DB/browser execution outstanding.
+**Reverse-name role directory sort PARTIAL (chat-9):** Persisted-name Z–A ordering with case-folded comparison and membership-ID tie-break now applies before paging in both Faculty and Students. Strict URL handling and pure URL regression authored; PG/browser acceptance open.
+**Bounded Faculty/Students page sizes PARTIAL (chat-9):** Both directories now offer 10/25/50-row server paging with typed query bounds, correct database LIMIT/OFFSET/count-driven page total and URL-preserved navigation. Pure validation authored; PG/browser execution pending.
+**Directory stale-page recovery PARTIAL (chat-9):** Faculty and Students redirect an out-of-range page to the final authorized page while preserving validated filters instead of leaving an empty/invalid page after roster changes. Pure URL regression authored; browser/PG acceptance remains open.
+**Role-directory URL ambiguity PARTIAL (2026-10-15, chat-9):** Faculty and Students directories now reject repeated/unknown query parameters before protected reads, rather than silently choosing the first of multiple values. Pure unit regressions authored; executable service/browser acceptance outstanding.
 **Faculty history teaching-role drilldown PARTIAL (2026-10-15):** The Faculty detail history can filter registered PRIMARY, CO_TEACHER or TA assignments in conjunction with active/ended lifecycle before its 100-row cap, while separately retaining all-time totals. Strict no-forged-college model and own-college PG fixture tests authored; runtime/browser acceptance pending.
 **Primary-department assignment coverage PARTIAL (2026-10-15):** Faculty roster now distinguishes registered same-college primary department assignments from absent/invalid links before pagination; archived departments remain distinguishable from missing links, without exposing other college names. Model and isolated PostgreSQL partition/role tests authored, not executed; legacy UI acceptance remains open.
 **Academic-title profile completeness PARTIAL (2026-10-15):** The Faculty roster filters memberships with and without a nonblank academic title in persisted faculty profiles, before scoped pagination; no title is inferred from teaching duties or employment type. Pure model and gated PG partition/wrong-role fixtures authored; runtime/browser acceptance remains outstanding.
@@ -831,6 +840,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/prerequisite/error states match.
 
 ## Page: Students
+**Bounded batch-selector bookmark retention PARTIAL (chat-9):** Student directory keeps a selected batch UUID in the filter form even when outside its first 200 current-college choices, showing only a neutral placeholder instead of a foreign name. Server-side academic college scope remains authoritative; source/unit coverage authored, browser acceptance open.
 **Strict quoted CSV tokenization PARTIAL (2026-10-15):** Student CSV preview/import now fails structurally malformed quoted fields with trailing content (for example, a closed quoted name followed by extra characters), rather than silently merging them into identity data before onboarding. Escaped quotes, embedded commas and CRLF remain supported. Pure positive/negative tests authored; identity/PG/browser acceptance outstanding.
 **Learner enrollment lifecycle drilldown PARTIAL (2026-10-15):** Student detail now filters recorded program/batch enrollments by ACTIVE, COMPLETED or WITHDRAWN while retaining the separate all-time enrollment count and current class/recorded attendance views. The filter is exact and no cross-college record is disclosed. Strict model and isolated PG role/not-found tests authored; real execution and browser acceptance remain.
 **Registration-number coverage triage PARTIAL (2026-10-15):** Student roster now filters learners with a nonblank recorded registration number or missing registration data, preserving role/college query scope and server pagination. Distinct from roll number; no inferred identity values. Strict URL/model and disposable PostgreSQL partition/denial tests authored; executed acceptance pending.
@@ -1189,6 +1199,28 @@ College Admin can act inside TPO in the legacy product.
 **Status: PARTIAL / tests authored, not executed.**
 
 
+**Contact profile availability PARTIAL (chat-9, 2026-10-15):** All/Faculty/Student contact tabs can isolate memberships with or without persisted learner/faculty role profile records; mixed-role memberships remain eligible if the corresponding role is incomplete. Scoped SQL is combined with status, account and role predicates before pagination and formula-safe CSV; learner and dual-role contact details remain masked. Source and gated PostgreSQL cases authored; independent execution/browser acceptance pending.
+
+**Learner active enrollment PARTIAL (chat-9):** Separates learner-role contacts with ACTIVE owned program enrollment from learners without one; no inferred completion state. Filtered count and 1,000-row capped CSV share the same current-college SQL predicate, with learner masking unchanged. Unit and disposable PG coverage authored; execution/browser acceptance open.
+
+**Faculty current teaching PARTIAL (chat-9):** Distinguishes Faculty-role contacts who hold current active college-delivery teaching assignments, without leaking learner-only rows. Filtered count and 1,000-row capped CSV share the same current-college SQL predicate, with learner masking unchanged. Unit and disposable PG coverage authored; execution/browser acceptance open.
+
+**Learner roll number availability PARTIAL (chat-9):** Allows admins to locate LEARNER members with or without saved nonblank roll values without returning roll identifiers. Applied to same-college SQL before result totals, paging and masked CSV; private profile values are not returned. Unit and gated PostgreSQL tests authored; runtime/browser acceptance pending.
+
+**Learner registration availability PARTIAL (chat-9):** Separates absent and persisted nonblank learner registration numbers without showing those identifiers. Applied to same-college SQL before result totals, paging and masked CSV; private profile values are not returned. Unit and gated PostgreSQL tests authored; runtime/browser acceptance pending.
+
+**Faculty academic-title availability PARTIAL (chat-9):** Distinguishes FACULTY members who have saved nonblank academic titles from those missing them, without guessing from teaching assignments. Applied to same-college SQL before result totals, paging and masked CSV; private profile values are not returned. Unit and gated PostgreSQL tests authored; runtime/browser acceptance pending.
+
+**Faculty primary-department coverage PARTIAL (chat-9):** Faculty-role contacts can identify missing valid own-college primary-department links without displaying foreign department metadata. Query predicates apply before SQL count, paginated cards and formula-safe masked CSV; College Admin scope comes from persisted membership. Unit and isolated-PG tests authored; execution and mobile browser acceptance open.
+
+**Learner active-class placement PARTIAL (chat-9):** Learner contacts can be filtered by active section enrollment linked through matching cohort/period and a current-college department, without misrepresenting a missing class as withdrawal. Query predicates apply before SQL count, paginated cards and formula-safe masked CSV; College Admin scope comes from persisted membership. Unit and isolated-PG tests authored; execution and mobile browser acceptance open.
+
+**College Contacts cohort selector PARTIAL (chat-9):** A native, name-labeled current-college cohort chooser filters active learner enrollments before SQL count, pagination and masked CSV. Selector is capped to 200 with truncation disclosure; bookmarked unknown UUIDs show a neutral placeholder, never a foreign-college name. Unit plus gated PG role/tenant coverage authored, pending runtime/browser execution.
+
+**Contacts faculty department chooser PARTIAL (chat-9):** Native dropdown lists up to 200 own-college nonarchived departments, carrying exact Faculty primary-department filter to SQL, paging and CSV. Bookmark ids beyond the bound get a neutral option without leaking foreign department labels. Unit and gated PG actor/tenant regression cases authored; browser/PG execution remains open.
+
+**Clear all Contacts facets PARTIAL (chat-9):** Clearing the Contacts directory now resets all advanced academic, status, date, search, and paging filters while preserving the selected role tab, rather than retaining hidden stale facets. Pure model regression authored; browser acceptance remains open.
+
 **Read-only College Contacts workspace PARTIAL (2026-10-15, chat-9):** New `/college/contacts` has distinct server-filtered All Contacts, Faculty Contacts and Student Contacts tabs, rather than pretending `/college/people` membership mutations clone the legacy contact directory. The underlying PostgreSQL read uses persisted College Admin membership/role checks, strictly derives the college from that actor, de-duplicates dual-role people by membership, filters name or authorized staff email and membership lifecycle, supports name/newest sort with 25-row server paging, and recovers from out-of-range pages. Student and dual-role learner contacts are masked in cards and exports; phone is masked for all roles. Student email search is intentionally disabled to prevent masked-address enumeration; this privacy deviation needs a need-to-know product review before claiming exact legacy parity.
 
 **Contacts operations PARTIAL:** Source-specific Faculty/Student detail links use already scoped role detail routes. The separate `/college/people` page remains the role/lifecycle management surface and now links to Contacts; the College Admin overview links to Contacts and Profile Verification. Export is a read-only, college-scoped GET, strictly parsed with duplicate-key rejection, 1,000-row cap, formula-safe CSV and explicit truncation metadata. Narrow mobile cards, status/search/sort forms, loading/invalid/error/retry states and stable pagination are authored. Pure model/unit tests and a disposable-Postgres in-test fixture covering own-college, foreign-college, wrong-role and masked CSV reads have been authored but **not executed here**.
@@ -1256,27 +1288,3 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 Electives PARTIAL:** Elective selection choice constraints reflects persisted, tenant-scoped min/max choice constraints, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
 
 **2026-10-15 Electives PARTIAL:** Elective active offering presence reflects persisted, tenant-scoped active linked course offerings, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
-
-**2026-10-15 Electives PARTIAL:** Slot academic-year evidence now distinguishes persisted null from configured values across list/CSV. Browser/executed PostgreSQL and legacy acceptance remain open.
-
-**2026-10-15 Electives PARTIAL:** Exact, college-scoped linked academic period code lookup now works in the paginated page and bounded CSV; unit/PG fixtures authored, run/browser acceptance still pending.
-
-**Chat-3 College Admin Lessons PARTIAL:** Parent program lifecycle is filtered against registered, college-fenced programs.status before pagination and CSV export. Unit and isolated PostgreSQL regression source authored; execution, browser and exact legacy parity still open.
-
-**Chat-3 College Admin Lessons PARTIAL:** Parent batch lifecycle is filtered against registered, college-fenced cohorts.status before pagination and CSV export. Unit and isolated PostgreSQL regression source authored; execution, browser and exact legacy parity still open.
-
-**College Admin Lessons PARTIAL:** Academic period lifecycle uses a registered same-college parent lifecycle column (academicPeriods.status) before paging and CSV. Unit and isolated-PostgreSQL tests authored; runtime/browser/oracle evidence remains open.
-
-**College Admin Lessons PARTIAL:** Parent course lifecycle uses a registered same-college parent lifecycle column (courses.status) before paging and CSV. Unit and isolated-PostgreSQL tests authored; runtime/browser/oracle evidence remains open.
-
-**College Admin Lessons PARTIAL:** Exact department-code filtering uses the registered own-college course department, with matching page, CSV and bounded input. Unit/PG tests authored; execution and browser parity pending.
-
-**College Admin Course Progress PARTIAL:** Parent program lifecycle filters persisted, college-fenced programs.status before offering pagination and CSV. No learner eligibility, course completion or readiness is inferred. Unit and isolated-DB tests authored; execution/legacy/browser verification remains open.
-
-**College Admin Course Progress PARTIAL:** Parent batch lifecycle filters persisted, college-fenced cohorts.status before offering pagination and CSV. No learner eligibility, course completion or readiness is inferred. Unit and isolated-DB tests authored; execution/legacy/browser verification remains open.
-
-**College Admin Course Progress PARTIAL:** Academic period lifecycle applies academicPeriods.status to college-scoped registered parent records before pagination/CSV; counts remain recorded-evidence-only, tests authored but runtime and browser acceptance pending.
-
-**College Admin Course Progress PARTIAL:** Parent course lifecycle applies courses.status to college-scoped registered parent records before pagination/CSV; counts remain recorded-evidence-only, tests authored but runtime and browser acceptance pending.
-
-**College Admin Course Progress PARTIAL:** Exact course-department code lookup is restricted by the existing joined same-college department, paired with bounded page/CSV controls and unit/isolated PG tests. Execution/browser/oracle comparison pending.

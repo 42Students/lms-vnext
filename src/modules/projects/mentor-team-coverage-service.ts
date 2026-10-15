@@ -78,6 +78,7 @@ export async function getMentorTeamCoverage(
     projectId: row.project.id,
     title: row.project.title,
     status: row.project.status,
+    isPrimaryMentor: row.isPrimaryMentor,
     ...summarizeActiveProjectTeam(grouped.get(row.project.id) ?? []),
   }));
   return {

@@ -5,6 +5,7 @@ import {
   asc,
   countDistinct,
   eq,
+  exists,
   inArray,
   isNull,
   or,
@@ -50,6 +51,7 @@ export const adminModuleTraceQuerySchema =
       .min(1)
       .max(10000)
       .default(1),
+    overridesOnly: z.enum(["all","only","locked"]).default("all"),
     membershipId: z
       .string()
       .uuid()
@@ -184,6 +186,14 @@ export async function getSuperAdminLearnerAccessTrace(
       membershipRoles.role,
       "LEARNER",
     ),
+    query.overridesOnly !== "all"
+      ? exists(db.select({id:moduleAccessRules.scopeId}).from(moduleAccessRules).where(and(
+          eq(moduleAccessRules.scopeType,"MEMBERSHIP"),
+          eq(moduleAccessRules.scopeId,collegeMemberships.id),
+          inArray(moduleAccessRules.module,[...OPTIONAL_MODULE_KEYS]),
+          query.overridesOnly === "locked" ? eq(moduleAccessRules.locked,true) : undefined,
+        )))
+      : undefined,
     query.q
       ? sql<boolean>`(
           position(

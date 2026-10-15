@@ -1,0 +1,2 @@
+"use client";
+export default function ErrorView({reset}:{error:Error&{digest?:string};reset:()=>void}){return <main role="alert" className="space-y-3 p-5"><h2 className="font-semibold">Conversations unavailable</h2><p className="text-sm text-body">Your employer messages could not be loaded.</p><button type="button" onClick={reset} className="min-h-11 rounded-md border border-border px-4">Retry</button></main>;}
