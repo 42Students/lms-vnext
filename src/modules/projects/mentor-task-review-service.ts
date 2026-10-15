@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, lt, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTasks, projectTaskSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -53,10 +53,14 @@ export async function getMentorTaskReviews(
   }
 
   const escaped=mentorTaskReviewLiteralSearch(query.search);
+  const cutoff=query.age==="ALL"?null:new Date(new Date().getTime()-7*86400000);
   const conditions = and(
     inArray(projectTaskSubmissions.projectId, ids),
     eq(projectTaskSubmissions.status, "SUBMITTED"),
     eq(projectTasks.status, "IN_REVIEW"),
+    cutoff?(query.age==="OLDER_THAN_7_DAYS"
+      ? lt(projectTaskSubmissions.submittedAt,cutoff)
+      : gte(projectTaskSubmissions.submittedAt,cutoff)):undefined,
     query.priority==="ALL"?undefined:eq(projectTasks.priority,query.priority),
     query.version===undefined?undefined:eq(projectTaskSubmissions.version,query.version),
     sql`not exists (select 1 from project_task_submissions newer
