@@ -50,3 +50,15 @@ describe("learner course Home next-action priority", () => {
     ])?.id).toBe("valid");
   });
 });
+
+
+describe("overdue still-submittable Course Home assignments", () => {
+  it("prioritizes overdue published assignments over upcoming quizzes and sessions", () => {
+    const events = [
+      { id: "quiz", type: "Quiz" as const, priority: 30 },
+      { id: "late", type: "Assignment" as const, priority: 10, overdue: true },
+      { id: "live", type: "Live Session" as const, priority: 2 },
+    ];
+    expect(selectPriorityLearnerActivity(events)?.id).toBe("late");
+  });
+});
