@@ -1539,3 +1539,7 @@ The Mentor sidebar already carried the exact legacy visible labels **Projects**,
 ## PR-S1-01 follow-up — remove approval/submission circular dependency
 
 After the single COMPLETED transition was assigned to Mentor closeout, the prior final-delivery submission check still required COMPLETED before submission, leaving no reachable approval path. The submission transaction now uses the same persisted all-releases-shipped, all-sprints-completed, all-tasks-done execution condition that the readiness reader uses; ACTIVE is valid for final-delivery submission and review before mentor closeout. FORCE_BLOCK/UNLOCK remains applied atomically to this checked gate. No project status is fabricated. Unit policy and source checks authored; real DB and UI acceptance pending. Commit reference: Git history.
+
+## Phase 2 PR-S2-05 College Admin override UI (implemented, not browser-verified)
+
+College and Super Admin per-workspace readiness deep links now resolve to a scoped readiness view and submit the audited override endpoint using the exact legacy labels for state, note, confirmation, success and failure. The list's obsolete “override is not persisted” banner was removed and a legacy **Manage** action added. Real PostgreSQL, permission-negative, lifecycle, mobile/browser and keyboard verification remains OPEN.
