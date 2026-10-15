@@ -12,6 +12,7 @@ import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules
 import {verificationBulkPreviewRows} from "@/modules/verification/bulk-preview-display";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 import {canStartVerificationBulkPreview} from "@/modules/verification/bulk-action-guard";
+import {emptyVerificationBulkFeedback} from "@/modules/verification/bulk-feedback-reset";
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
@@ -31,9 +32,12 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
  const preview=bulkAction?verificationBulkPreviewRows(selectedRows,bulkAction):null;
+ function resetBulkFeedback(){const state=emptyVerificationBulkFeedback();
+  setBulkAction(state.pendingAction);setBulkReason(state.reason);setBulkError(state.error);setBulkResult(state.result);
+ }
  function choose(row:VerificationQueueCard,checked:boolean){
   if(bulkBusy)return;
-  setBulkAction(null);setBulkReason("");
+  resetBulkFeedback();
   setSelection(current=>{
    const next=new Set([...current].filter(key=>available.has(key))),key=verificationSelectionKey(row);
    if(checked&&next.size<20)next.add(key);else if(!checked)next.delete(key);
@@ -57,6 +61,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   finally{setBulkBusy(false);}
  }
  function navigate(patch:Record<string,string>){
+  setSelection(new Set());resetBulkFeedback();
   const params=new URLSearchParams(query);
   Object.entries(patch).forEach(([key,value])=>{if(value)params.set(key,value);else params.delete(key);});
   router.push("/college/verification?"+params.toString());
@@ -84,8 +89,8 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="space-y-3 rounded-md border p-3">
    <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));setBulkAction(null);setBulkReason("");}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
-    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());setBulkAction(null);setBulkReason("");}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} className="rounded-md border px-3 py-2 text-sm">Select first 20 waiting</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelection(new Set());resetBulkFeedback();}} className="rounded-md border px-3 py-2 text-sm">Clear selection</button>
     <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("VERIFY");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview verify</button>
     <button type="button" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setBulkReason("");setBulkAction("SEND_BACK");}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Preview send back</button>
    </div>
