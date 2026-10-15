@@ -3,6 +3,7 @@ import { readZeptoMailConfig, type ZeptoMailConfig } from "@/modules/notificatio
 import type { OutboundProvider } from "./service";
 import type { OutboundSendRequest } from "./model";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
+import {isExotelAcceptedResponse} from "./provider-acceptance-model";
 
 /** Templates are explicitly provisioned; OTP identifiers must never be reused for campaigns. */
 export type OutboundTemplate = {
@@ -68,8 +69,7 @@ export function createOutboundProvider(
         });
         if (!response.ok) return false;
         const result = (await response.json()) as { SMSMessage?: { Sid?: string; Status?: string } };
-        return Boolean(result.SMSMessage?.Sid && result.SMSMessage.Status &&
-          !result.SMSMessage.Status.toLowerCase().startsWith("failed"));
+        return isExotelAcceptedResponse(result);
       } catch {
         // No credentials, recipients or rendered messages enter logs.
         return false;
