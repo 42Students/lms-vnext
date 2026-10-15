@@ -2015,3 +2015,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 2026-10-15 / Batch deadline presentation — PARTIAL:** Each cohort card now displays a real registered lifecycle deadline formatted in IST, an explicit no-deadline status, or unavailable when lifecycle storage cannot be read. No reminder, eligibility or consent is inferred.
 
 **Chat-2 2026-10-15 / Batch next-action navigation — PARTIAL:** Per-batch primary links now use actual planning/invited/finished lifecycle facts to label the appropriate follow-up; all navigate to the existing authorized batch workspace. Unknown lifecycle state remains Review cohort, never an implied sent invitation.
+
+**Chat-2 2026-10-15 / Drive Day explicit no-show filter — PARTIAL:** TPO-only live rounds can be filtered to those with persisted explicit ABSENT/no-show evidence, without treating WAITING or unknown attendance as absence. The first-20-round source cap is preserved and disclosed; browser acceptance remains open.

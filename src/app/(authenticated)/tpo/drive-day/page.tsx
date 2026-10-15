@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import { tpoDriveDayIssueSchema, filterTpoDriveDayIssues } from "@/modules/placements/tpo-drive-day-issue-filter-model";
 import { getTpoLiveDriveDaySummary } from "@/modules/placements/tpo-live-drive-day-service";
 
 function formatWhen(
@@ -20,7 +21,7 @@ function formatWhen(
   }).format(value);
 }
 
-export default async function DriveDayPage() {
+export default async function DriveDayPage({searchParams}:{searchParams:Promise<{issue?:string|string[];sort?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
   if (!context.membership ||
@@ -31,19 +32,27 @@ export default async function DriveDayPage() {
   // A dual-role student coordinator retains the existing assignment view.
   // TPO-only staff see a scoped operational snapshot, not a coordinator roster.
   if (hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "LEARNER")) {
+    const raw=await searchParams;
+    const issue=tpoDriveDayIssueSchema.safeParse(Array.isArray(raw.issue)?raw.issue[0]:raw.issue);
+    if(!issue.success)return <section role="alert">Invalid Drive Day filter. <Link href="/tpo/drive-day">Clear filters</Link></section>;
     const snapshot = await getTpoLiveDriveDaySummary(context);
+    const liveRows=filterTpoDriveDayIssues(snapshot.rows,issue.data);
     return (
       <div className="space-y-6">
         <PageHeader eyebrow="TPO · Drive Day" title="Live rounds"
           description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
+        <form action="/tpo/drive-day" method="get" className="flex flex-wrap gap-3">
+          <label className="text-sm">Attendance focus<select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option></select></label>
+          <button type="submit" className="self-end min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
+        </form>
         {snapshot.truncated ? (
           <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
             Only the first 20 live rounds are shown; more records may exist.
           </p>
         ) : null}
-        {snapshot.rows.length === 0 ? (
+        {liveRows.length === 0 ? (
           <section className="rounded-xl border border-border bg-surface p-6">
-            <h2 className="text-base font-semibold text-foreground">No verified round happening now</h2>
+            <h2 className="text-base font-semibold text-foreground">{snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"}</h2>
             <p className="mt-2 text-sm text-body">
               Only published scheduled rounds with a recorded start and duration count as live.
               A round without duration is not assumed active. No check-ins or no-shows are inferred.
@@ -51,7 +60,7 @@ export default async function DriveDayPage() {
           </section>
         ) : (
           <div className="grid gap-4">
-            {snapshot.rows.map((round) => (
+            {liveRows.map((round) => (
               <article key={round.id} className="rounded-xl border border-border bg-surface p-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
