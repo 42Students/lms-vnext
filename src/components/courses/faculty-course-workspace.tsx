@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
+import { FacultyLessonVideoManager } from "./faculty-lesson-video-manager";
 import { FacultyContentEditor } from "./faculty-content-editor";
 import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 import { FacultyItemActions } from "./faculty-item-actions";
@@ -558,6 +559,12 @@ export function FacultyCourseWorkspace({
                         nextQuizSequence={
                           nextSequence
                         }
+                      />
+
+                      <FacultyLessonVideoManager
+                        lessonId={lesson.id}
+                        deliveryId={course.deliveryId}
+                        nextContentSequence={nextSequence}
                       />
 
                       <FacultyContentOrderEditor
