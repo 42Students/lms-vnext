@@ -898,3 +898,53 @@ Delivery decision history now filters by literal project title with SQL wildcard
 
 ## 2026-10-15 chat-11 AI — global Mentor project activity importance filter (PARTIAL)
 The cross-assignment sanitized activity feed now supports registered event importance LOW/NORMAL/HIGH/CRITICAL. SQL applies the selector before count/pagination over current same-college assigned Mentor projects; URLs and page-size controls preserve the filter. Only safe labels/timestamps and authorized project links are shown, no raw event summary/metadata/learner identities. Strict unit and PG wrong-role denial assertions authored. Independent CLI/PG/browser and legacy activity completeness still open.
+
+## 2026-10-15 chat-11 AJ — reviewed task priority triage (PARTIAL)
+Reviewed task-submission history now filters registered task priority alongside decision and literal search in the scoped SQL count/page, including the capped sanitized CSV. Pure model and positive own-project PostgreSQL assertions are authored. No new writes, learner contact or feedback export; runtime/PG/browser and legacy verification remain OPEN.
+
+## 2026-10-15 chat-11 AK — registered primary Mentor history (PARTIAL)
+Exact-project Team membership history can isolate registered primary Mentor assignment records, preserving role/open-ended/paging filters in authorized SQL. It does not grant role editing, expose former names or reconstruct missing history. Pure and fixture PostgreSQL assertions authored, including correction of a pre-existing two-meeting count assertion. CI/PG/browser acceptance remains open.
+
+## 2026-10-15 chat-11 AL — Mentor timeline Sprint lifecycle drill-in (PARTIAL)
+Exact-project Release/Sprint timeline now filters actual planned/active/completed Sprint statuses and includes only Releases containing matching Sprints when filtered. Pagination and Release state navigation retain the filter. Query rejects unregistered states; zero-task progress remains unknown. Unit regression cases authored; CLI/PG/browser and complete legacy parity open.
+
+## 2026-10-15 chat-11 AM — meeting outcome-presence filter (PARTIAL)
+Exact-project meeting history now selects meetings with/without nonblank persisted outcome text; SQL count/paging share the filter and current Mentor/college guards. Actual outcome content remains private in list. Strict unit and test-owned PostgreSQL cases authored; execution/browser and full lifecycle parity OPEN.
+
+## 2026-10-15 chat-11 AN — exact-project recent activity windows (PARTIAL)
+Registered safe Project activity can filter events recorded within rolling 7×24h or 30×24h windows, shared by SQL count/page and the capped sanitized CSV. Only stored occurred_at instants, assigned Mentor authorization and existing fixed safe event labels are used. Pure cutoff/selector tests authored; time moves between export page requests, so cross-page snapshot isolation and browser/CI remain outstanding. Legacy activity history remains PARTIAL.
+
+## 2026-10-15 chat-11 AO — global Mentor project activity event categories (PARTIAL)
+Across currently assigned Mentor projects, the safe activity feed now filters persisted registered Project lifecycle, review, meeting and task event-type allowlists before SQL count and pagination. The exact-project activity allowlist is reused; only fixed labels/time/project links, no raw metadata or contacts. Strict Zod and pure tests authored. PG/browser/legacy event producer completeness remain open.
+
+## 2026-10-15 chat-11 AP — report projects without recorded attention (PARTIAL)
+Mentor assigned-project reporting can now isolate projects with no current review/stalled/meeting-request/meeting-soon alert emitted by registered producers. The filter applies consistently to paginated UI and existing safe 100-row CSV, and does not equate missing alerts with verified health or reconstruct unmigrated activity. Tenant/assignment scope unchanged; model regression authored, execution/browser and legacy acceptance open.
+
+## 2026-10-15 chat-11 AQ — Resource Directory recorded sequence vs title order (PARTIAL)
+Scoped Resource Directory now supports deterministic recorded-sequence and title A–Z sorting, consistently before pagination and the existing capped formula-neutralized metadata CSV. Registered resource fields only; safe HTTPS filtering, required flags, access checks and no raw URL export remain unchanged. Strict Zod and unit regression cases authored; independently executed tests/browser and full legacy Resource parity open.
+
+## 2026-10-15 chat-11 round 6 AR — global meeting type triage (PARTIAL)
+The current-Mentor global Meetings calendar now carries registered meeting_type through its already tenant/active-grant-scoped reader and filters GENERAL/PLANNING/STANDUP/REVIEW/RETRO consistently for UI and capped safe CSV. Strict selector and pure tests authored; full DB/browser parity and executed checks remain open.
+
+## 2026-10-15 chat-11 round 6 AS — meeting chronological order (PARTIAL)
+Exact-project team meeting history supports persisted start-time oldest/newest ordering, deterministic UUID tie-breaks and URL-preserved paging, alongside current-Mentor authorization and recorded status/type/outcome/title filters. Query and href regression cases source-authored. Real PostgreSQL, TypeScript, browser and legacy verification remain open.
+
+## 2026-10-15 chat-11 round 6 AT — reviewed task decision chronology (PARTIAL)
+Currently assigned Mentor task-review history now supports oldest/newest recorded review ordering with deterministic ID tie-break; paginated UI and capped safe CSV retain the selector. Decision/priority/literal title and current college/role scope still apply in SQL. Pure strict-selector tests authored; executed gates/browser and historical parity remain open.
+
+## 2026-10-15 chat-11 round 6 AU — exact recorded delivery version lookup (PARTIAL)
+The current assigned Mentor exact-project delivery review overview now filters by an actual positive registered version number, shared by SQL count/page and metadata-only capped export; status and feedback-presence controls remain. Strict Zod rejects unknown tenant selectors and invalid versions. Unit cases authored; browser/PG and full legacy delivery parity remain open.
+
+## 2026-10-15 chat-11 round 6 AV — team assignment history chronology (PARTIAL)
+The current authorized Mentor exact-project Team history supports earliest/latest recorded membership start order, stable UUID tie-break, scope-aware SQL pagination and view/role/primary filters retained in page links. Former/inactive names remain masked; no membership changes. Strict-selector source tests authored; CLI/PG/browser and complete historic data coverage unverified.
+
+## 2026-10-15 chat-11 round 6 AW — project reports ordering (PARTIAL)
+Registered currently assigned Mentor project reports now allow updated-first and title A–Z/Z–A sort, consistently before pagination and capped formula-neutralized CSV. Strict URL validation and deterministic tie-break preserve status/attention/assignment filters and whole-scope totals. Model tests authored; CI/PG/browser and full reports parity remain open.
+
+## 2026-10-15 chat-11 round 6 AX — written Resource description completeness (PARTIAL)
+Exact-project Resource Directory now filters records with/without nonblank registered descriptions, alongside required/safe HTTPS/ordering/search, before pagination and capped safe metadata CSV. Presence tests treat whitespace-only notes as absent. Current live same-college Mentor checks reused; no new resource writes or file providers. Unit/browser/PG/legacy parity remain PARTIAL.
+
+## 2026-10-15 chat-11 round 6 AY — Meetings assigned-project state (PARTIAL)
+Current-assignment global Mentor Meetings now filters actual registered PLANNED/ACTIVE/COMPLETED/ARCHIVED project lifecycle status alongside meeting status/type/IST period/search. The same scoped roster drives UI and capped metadata CSV; invalid states are rejected, archived data never gains new write rights. Pure tests authored. Execute typecheck, lint, unit/PG and browser to verify full legacy calendar parity.
+
+Round 6 AU follow-up: a blank optional delivery-version HTML input is normalized to absent before Zod numeric coercion, so the unfiltered view does not fail validation. The corresponding empty-input unit assertion is source-authored; execution pending.

@@ -13,7 +13,8 @@ export async function GET(request:Request,{params}:RouteContext){
   const {projectId}=await params,url=new URL(request.url);
   const query=mentorReviewOverviewSchema.parse({
    projectId,status:url.searchParams.get("status")??undefined,
-   feedback:url.searchParams.get("feedback")??undefined,page:1,
+   feedback:url.searchParams.get("feedback")??undefined,
+   version:url.searchParams.get("version")??undefined,page:1,
   });
   const context=await getCurrentRequestContext();
   const first=await getMentorDeliveryReviewOverview(context,query);

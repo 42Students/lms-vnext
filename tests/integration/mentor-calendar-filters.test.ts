@@ -113,6 +113,10 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
       projectId:project.id,view:"ALL",role:"MENTOR",page:1,
     });
     expect(mentors.items.every(row=>row.role==="MENTOR")).toBe(true);
+    const primaryMentors=await getMentorTeamHistory(mentor,{
+      projectId:project.id,primary:"PRIMARY",role:"ALL",view:"ALL",page:1,
+    });
+    expect(primaryMentors.items).toEqual([expect.objectContaining({role:"MENTOR",isPrimary:true})]);
     await expect(getMentorTeamHistory(learner,{
       projectId:project.id,view:"ALL",role:"LEARNER",page:1,
     })).rejects.toBeDefined();
@@ -133,8 +137,10 @@ describe("Mentor global calendar filters — migrated PostgreSQL",()=>{
     });
     expect(selected.total).toBe(1);
     expect(selected.items.map(row=>row.id)).toEqual([meetingId]);
-    expect((await getMentorTeamMeetings(mentor,{projectId:project.id,type:"GENERAL"})).total).toBe(1);
+    expect((await getMentorTeamMeetings(mentor,{projectId:project.id,type:"GENERAL"})).total).toBe(2);
     expect((await getMentorTeamMeetings(mentor,{projectId:project.id,type:"RETRO"})).total).toBe(0);
+    expect((await getMentorTeamMeetings(mentor,{projectId:project.id,outcome:"NOT_RECORDED"})).total).toBe(2);
+    expect((await getMentorTeamMeetings(mentor,{projectId:project.id,outcome:"RECORDED"})).total).toBe(0);
     const literal=await getMentorTeamMeetings(mentor,{
       projectId:project.id,search:"%",page:1,
     });

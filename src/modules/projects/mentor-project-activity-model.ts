@@ -4,6 +4,7 @@ export const mentorProjectActivityQuerySchema=z.object({
   projectId:z.string().uuid(),
   importance:z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
   view:z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS"]).default("ALL"),
+  window:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type MentorProjectActivityQuery=z.infer<typeof mentorProjectActivityQuerySchema>;
@@ -32,10 +33,16 @@ export function mentorProjectActivityPage(total:number,requested:number) {
   return {total,pageSize,totalPages,page};
 }
 
-export function mentorProjectActivityHref(query:MentorProjectActivityQuery) {
+/** Rolling 7x24h / 30x24h window over stored instants, never a local timezone guess. */
+export function mentorProjectActivitySince(window:"ALL"|"LAST_7_DAYS"|"LAST_30_DAYS",now:Date){
+  if(window==="ALL")return null;
+  return new Date(now.getTime()-(window==="LAST_7_DAYS"?7:30)*86400000);
+}
+export function mentorProjectActivityHref(query:Pick<MentorProjectActivityQuery,"projectId"|"importance"|"view"|"page"> & {window?:MentorProjectActivityQuery["window"]}) {
   const params=new URLSearchParams();
   if(query.importance!=="ALL")params.set("importance",query.importance);
   if(query.view!=="ALL")params.set("view",query.view);
+  if(query.window&&query.window!=="ALL")params.set("window",query.window);
   if(query.page>1)params.set("page",String(query.page));
   const suffix=params.toString();
   return "/mentor/projects/"+encodeURIComponent(query.projectId)+"/activity-history"+

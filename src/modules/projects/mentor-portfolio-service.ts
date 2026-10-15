@@ -10,6 +10,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 import { listMyMentorProjectAttention } from "./mentor-attention-service";
+import { mentorProjectActivityEventTypes } from "./mentor-project-activity-model";
 import {
   mentorActivityQuerySchema, mentorReviewQuerySchema,
   pageMentorPortfolio, safeMentorProjectEventLabel, selectMentorReviewQueue,
@@ -68,11 +69,13 @@ export async function getMentorPortfolioActivity(
   const ids = scope.projects.map(project => project.id);
   const byId = new Map(scope.projects.map(project => [project.id, project]));
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
+  const types=mentorProjectActivityEventTypes(query.view);
   const filters = and(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
     eq(activityEvents.organizationId, membership.organizationId),
     query.importance === "ALL" ? undefined : eq(activityEvents.importance,query.importance),
+    types?inArray(activityEvents.eventType,types):undefined,
     or(
       and(eq(activityEvents.subjectType, "project"), inArray(activityEvents.subjectId, ids)),
       inArray(metadataProjectId, ids),

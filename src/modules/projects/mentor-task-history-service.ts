@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTasks, projectTaskSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -40,6 +40,7 @@ export async function getMentorTaskReviewHistory(context:RequestContext,rawQuery
     inArray(projectTaskSubmissions.status,["APPROVED","CHANGES_REQUESTED"]),
     eq(projectInstances.collegeId,membership.collegeId),
     query.decision==="ALL" ? undefined : eq(projectTaskSubmissions.status,query.decision),
+    query.priority==="ALL" ? undefined : eq(projectTasks.priority,query.priority),
     escaped ? or(
       ilike(projectTasks.title,"%"+escaped+"%"),
       ilike(projectInstances.title,"%"+escaped+"%"),
@@ -68,7 +69,9 @@ export async function getMentorTaskReviewHistory(context:RequestContext,rawQuery
     ))
     .innerJoin(projectInstances,eq(projectInstances.id,projectTaskSubmissions.projectId))
     .where(filters)
-    .orderBy(desc(projectTaskSubmissions.reviewedAt),desc(projectTaskSubmissions.id))
+    .orderBy(...(query.order==="OLDEST"
+      ? [asc(projectTaskSubmissions.reviewedAt),asc(projectTaskSubmissions.id)]
+      : [desc(projectTaskSubmissions.reviewedAt),desc(projectTaskSubmissions.id)]))
     .limit(paging.pageSize).offset((paging.page-1)*paging.pageSize);
   return {enabled:true,query,...paging,items};
 }

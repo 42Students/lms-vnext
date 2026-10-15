@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,count,desc,eq,ilike,isNull,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,ilike,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   collegeMemberships,membershipRoles,projectMeetings,projectMembers,users,
@@ -41,7 +41,12 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     "%"+escapeMentorMeetingSearch(query.search)+"%"):undefined;
   const meetingFilters=and(eq(projectMeetings.projectId,scope.project.id),
     query.status==="ALL"?undefined:eq(projectMeetings.status,query.status),
-    query.type==="ALL"?undefined:eq(projectMeetings.meetingType,query.type),search);
+    query.type==="ALL"?undefined:eq(projectMeetings.meetingType,query.type),
+    query.outcome==="ALL"?undefined:
+      query.outcome==="RECORDED"
+        ? sql`nullif(btrim(${projectMeetings.outcome}), '') is not null`
+        : sql`nullif(btrim(${projectMeetings.outcome}), '') is null`,
+    search);
   const [teamRows,summary]=await Promise.all([
     db.select({role:projectMembers.role,isPrimary:projectMembers.isPrimary})
       .from(projectMembers)
@@ -70,7 +75,9 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     updatedAt:projectMeetings.updatedAt,
   }).from(projectMeetings)
     .where(meetingFilters)
-    .orderBy(desc(projectMeetings.startsAt),desc(projectMeetings.id))
+    .orderBy(...(query.order==="OLDEST"
+      ? [asc(projectMeetings.startsAt),asc(projectMeetings.id)]
+      : [desc(projectMeetings.startsAt),desc(projectMeetings.id)]))
     .limit(page.pageSize).offset((page.page-1)*page.pageSize);
   return {
     enabled:true as const,query,projectTitle:scope.project.title,

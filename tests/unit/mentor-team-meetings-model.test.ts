@@ -9,6 +9,14 @@ describe("Mentor exact-project Team and Meeting log",()=>{
     expect(mentorTeamMeetingsQuerySchema.safeParse({projectId,collegeId:projectId}).success).toBe(false);
     expect(mentorTeamMeetingsQuerySchema.safeParse({projectId,status:"RESCHEDULED"}).success).toBe(false);
     expect(mentorTeamMeetingsQuerySchema.safeParse({projectId,type:"EMAIL"}).success).toBe(false);
+    expect(mentorTeamMeetingsQuerySchema.safeParse({projectId,outcome:"YES"}).success).toBe(false);
+    expect(mentorTeamMeetingsQuerySchema.safeParse({projectId,order:"SECRET"}).success).toBe(false);
+    expect(mentorTeamMeetingsQuerySchema.parse({projectId,order:"OLDEST"}).order).toBe("OLDEST");
+    expect(mentorTeamMeetingsHref({projectId,status:"ALL",order:"OLDEST",page:2}))
+      .toContain("order=OLDEST&page=2");
+    expect(mentorTeamMeetingsQuerySchema.parse({projectId,outcome:"RECORDED"}).outcome).toBe("RECORDED");
+    expect(mentorTeamMeetingsHref({projectId,status:"ALL",outcome:"NOT_RECORDED",page:2}))
+      .toContain("outcome=NOT_RECORDED&page=2");
     expect(mentorTeamMeetingsQuerySchema.parse({projectId,type:"RETRO"}).type).toBe("RETRO");
     expect(mentorTeamMeetingsHref({projectId,status:"ALL",type:"REVIEW",page:2})).toContain("type=REVIEW&page=2");
     expect(mentorTeamMeetingsQuerySchema.safeParse({projectId,page:0}).success).toBe(false);

@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-service";
 import { mentorActivityQuerySchema, mentorPortfolioHref } from "@/modules/projects/mentor-portfolio-model";
 
-type Params = { importance?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(v: string | string[] | undefined) { return Array.isArray(v) ? v[0] : v; }
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
@@ -16,6 +16,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   const raw = await searchParams;
   const parsed = mentorActivityQuerySchema.safeParse({
     importance: first(raw.importance) ?? undefined,
+    view: first(raw.view) ?? undefined,
     page: first(raw.page) ?? undefined, pageSize: first(raw.pageSize) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
@@ -37,6 +38,14 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             <option value="ALL">All importance</option><option value="LOW">Low</option>
             <option value="NORMAL">Normal</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Recorded event group
+          <select name="view" defaultValue={data.query.view}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All event groups</option>
+            <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option>
+            <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Page size

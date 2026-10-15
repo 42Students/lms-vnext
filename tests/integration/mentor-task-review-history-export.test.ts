@@ -90,6 +90,10 @@ describe("Mentor reviewed task history CSV — disposable PostgreSQL",()=>{
     const query={decision:"APPROVED" as const,search:"",page:1};
     const data=await getMentorTaskReviewHistory(mentor,query);
     expect(data.enabled).toBe(true);
+    expect((await getMentorTaskReviewHistory(mentor,{...query,priority:"HIGH"})).items
+      .some(row=>row.id===submissionId)).toBe(true);
+    expect((await getMentorTaskReviewHistory(mentor,{...query,priority:"LOW"})).items
+      .some(row=>row.id===submissionId)).toBe(false);
     expect(data.items).toEqual(expect.arrayContaining([
       expect.objectContaining({id:submissionId,projectId:project.id,status:"APPROVED"}),
     ]));

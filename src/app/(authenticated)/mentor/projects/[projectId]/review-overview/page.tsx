@@ -4,7 +4,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {mentorReviewOverviewSchema,mentorReviewOverviewHref} from "@/modules/projects/mentor-review-overview-model";
 import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
-type Search={status?:string|string[];feedback?:string|string[];page?:string|string[]};
+type Search={status?:string|string[];feedback?:string|string[];version?:string|string[];page?:string|string[]};
 export default async function MentorReviewOverviewPage({
  params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Search>}){
@@ -13,6 +13,7 @@ export default async function MentorReviewOverviewPage({
   projectId,page:Array.isArray(query.page)?query.page[0]:query.page,
   status:Array.isArray(query.status)?query.status[0]:query.status,
   feedback:Array.isArray(query.feedback)?query.feedback[0]:query.feedback,
+  version:Array.isArray(query.version)?query.version[0]:query.version,
  });
  if(!parsed.success)return <section role="alert">
  <h1 className="text-xl font-semibold">Invalid project review filters</h1>
@@ -42,6 +43,11 @@ export default async function MentorReviewOverviewPage({
     <option value="WITHOUT">Not recorded</option>
    </select>
   </label>
+  <label className="grid gap-1 text-sm font-semibold text-body">Exact delivery version
+   <input type="number" name="version" min={1} max={1000000}
+    defaultValue={data.query.version??""}
+    placeholder="All versions" className="min-h-10 rounded-md border border-border bg-background px-3"/>
+  </label>
   <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
    Filter
   </button>
@@ -50,7 +56,8 @@ export default async function MentorReviewOverviewPage({
  </form>
  <div className="flex flex-wrap items-center gap-3 text-sm">
   <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
-   new URLSearchParams({status:data.query.status,feedback:data.query.feedback}).toString()}
+   new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
+    ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
    download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
    Export filtered delivery review CSV (max 200)
   </Link>

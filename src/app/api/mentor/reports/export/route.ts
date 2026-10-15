@@ -13,6 +13,7 @@ export async function GET(request:Request){
       status:url.searchParams.get("status")??undefined,
       attention:url.searchParams.get("attention")??undefined,
       assignment:url.searchParams.get("assignment")??undefined,
+      order:url.searchParams.get("order")??undefined,
       search:url.searchParams.get("search")??undefined,page:1,
     });
     const report=await getMentorReports(await getCurrentRequestContext(),query);

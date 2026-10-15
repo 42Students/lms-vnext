@@ -8,7 +8,7 @@ import {
   mentorTeamMeetingsHref,mentorTeamMeetingsQuerySchema,
 } from "@/modules/projects/mentor-team-meetings-model";
 
-type Params={status?:string|string[];type?:string|string[];search?:string|string[];page?:string|string[]};
+type Params={status?:string|string[];type?:string|string[];outcome?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorTeamMeetingsPage({
   params,searchParams,
@@ -17,6 +17,8 @@ export default async function MentorTeamMeetingsPage({
   const parsed=mentorTeamMeetingsQuerySchema.safeParse({
     projectId,status:first(raw.status)??undefined,
     type:first(raw.type)??undefined,
+    outcome:first(raw.outcome)??undefined,
+    order:first(raw.order)??undefined,
     search:first(raw.search)??undefined,
     page:first(raw.page)??undefined,
   });
@@ -73,6 +75,20 @@ export default async function MentorTeamMeetingsPage({
             <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Recorded outcome
+          <select name="outcome" defaultValue={data.query.outcome}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
+            <option value="NOT_RECORDED">Without written outcome</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Meeting order
+          <select name="order" defaultValue={data.query.order}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="NEWEST">Most recent first</option>
+            <option value="OLDEST">Oldest first</option>
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Meeting title
           <input type="search" name="search" maxLength={100}
             defaultValue={data.query.search}
@@ -82,7 +98,7 @@ export default async function MentorTeamMeetingsPage({
           className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
-        <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",search:"",page:1})}
+        <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
           className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
       </form>
       <p className="text-sm text-body">{data.total} registered meeting{data.total===1?"":"s"} match</p>
