@@ -3,7 +3,7 @@ import { z } from "zod";
 export const facultyResponseFollowUpQuerySchema = z.object({
   kind: z.enum(["ALL", "ASSIGNMENT", "QUIZ"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
+  page: z.union([z.number().int().min(1).max(10000), z.string().regex(/^[1-9]\d{0,4}$/).transform(Number).pipe(z.number().max(10000))]).default(1),
   deliveryId:z.string().uuid().optional(),
   sort:z.enum(["RECENT_DUE","OLDEST_DUE","TITLE"]).default("RECENT_DUE"),
   pageSize:z.coerce.number().int().refine(value=>value===5||value===10).default(5),
