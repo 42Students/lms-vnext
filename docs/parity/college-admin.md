@@ -552,6 +552,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Exact offering-scoped lessons PARTIAL (chat-3, 2026-10-15):** A validated offering UUID narrows lessons before paging and capped CSV, enabling direct navigation from existing course workspaces without accepting a caller-supplied college. Unknown/foreign offerings show no rows; unit/PG fixtures authored, runtime/browser pending.
+
 **Exact lesson drill-in PARTIAL (chat-3, 2026-10-15):** The directory and filtered CSV accept a strictly validated persisted lesson UUID, resolved through the existing college-owned paths and offering joins. Unknown and foreign lessons yield no records; authored unit/disposable-PG cases await execution and browser proof.
 
 **Live-content coverage PARTIAL (chat-3, 2026-10-15):** A true persisted LIVE_CLASS authoring-presence facet is now available for Lessons and its college-fenced CSV; it does not imply a meeting took place or expose links. Authored unit and isolated PG cases require execution and browser parity review.
