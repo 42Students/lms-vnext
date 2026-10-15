@@ -1283,3 +1283,8 @@ Scoped count now executes before the page read and requested pages clamp to the 
 ## 2026-10-15 chat-11 — search-assigned-project-activity (PARTIAL)
 
 Added literal trimmed project-title search over already authorized active Mentor project assignments, with strict 120-character Zod validation and URL-preserved pagination. No raw private event summary search or cross-tenant title discovery. Pure tests authored; independent PostgreSQL, unit, lint, typecheck, browser and legacy-oracle acceptance remain open. Mentor activity remains PARTIAL.
+
+
+## 2026-10-15 chat-11 — older-than-30-days-portfolio-events (PARTIAL)
+
+Mentor Activity can isolate genuinely older persisted events with a SQL strict-before 30-day cutoff, versus last-30-day inclusive window. Uses only scoped, fixed-label events. Unit source cases authored; runtime, database, 375px/desktop browser and complete legacy producers remain unverified.

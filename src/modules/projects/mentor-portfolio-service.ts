@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, lt, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import {
@@ -88,7 +88,9 @@ export async function getMentorPortfolioActivity(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),
     eq(activityEvents.organizationId, membership.organizationId),
-    cutoff?gte(activityEvents.occurredAt,cutoff):undefined,
+    cutoff?(query.window==="OLDER_THAN_30_DAYS"
+      ?lt(activityEvents.occurredAt,cutoff)
+      :gte(activityEvents.occurredAt,cutoff)):undefined,
     query.importance === "ALL" ? undefined : eq(activityEvents.importance,query.importance),
     types?inArray(activityEvents.eventType,types):undefined,
     or(
