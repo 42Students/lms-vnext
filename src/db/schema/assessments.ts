@@ -187,6 +187,12 @@ export const assignmentSubmissions = pgTable(
       table.assignmentId,
       table.membershipId,
     ),
+    // Parent key for assignment_submission_files composite tenant/owner FK.
+    uniqueIndex("assignment_submissions_id_assignment_member_uq").on(
+      table.id,
+      table.assignmentId,
+      table.membershipId,
+    ),
     index(
       "assignment_submissions_assignment_delivery_idx",
     ).on(
@@ -207,13 +213,15 @@ export const assignmentSubmissions = pgTable(
         (${table.submissionType} = 'LINK'
           and ${table.submissionUrl} is not null
           and ${table.textContent} is null)
+        or
+        (${table.submissionType} = 'FILE'
+          and ${table.textContent} is null
+          and ${table.submissionUrl} is null)
       )`,
     ),
-    // DB-017 / DB053 fail-closed bridge: the PostgreSQL enum may know FILE so
-    // application types compile, but direct FILE persistence remains rejected
-    // until course_upload_receipts + assignment_submission_files and their
-    // deferred completeness/tenant guards are registered and verified. DB053
-    // removes/expands this payload gate atomically with that migration.
+    // FILE submissions carry their files in assignment_submission_files; a
+    // deferred constraint trigger (migration 0080) requires at least one
+    // READY file at commit time.
     check(
       "assignment_submissions_points_ck",
       sql`${table.pointsAwarded} is null or ${table.pointsAwarded} >= 0`,
