@@ -7,7 +7,7 @@ import {SEED_IDS} from "../../scripts/db-seed-data";
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege}
   from "@/modules/projects/template-service";
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
-import {addProjectMember} from "@/modules/projects/member-service";
+import {addProjectMember,updateProjectMember,endProjectMember,listProjectMembers} from "@/modules/projects/member-service";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
 import {createProjectResource,updateProjectResource,archiveProjectResource} from "@/modules/projects/resource-service";
 import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-service";
@@ -75,6 +75,45 @@ async function fixture(){
   return {project,sprint:view.sprints[0]!};
 }
 describe("Mentor scoped resource metadata and links — PostgreSQL",()=>{
+ it("emits real Team add, update and end history without leaking membership contacts",async()=>{
+  const {project}=await fixture();
+  const existing=await pool.query<{id:string}>(`select id from project_members
+    where project_id=$1 and membership_id=$2 and ended_at is null`,[
+    project.id,SEED_IDS.learnerCollegeAMembership,
+  ]);
+  const memberId=existing.rows[0]?.id;
+  if(!memberId)throw new Error("Fixture missing active learner member");
+  await updateProjectMember(admin,project.id,memberId,{roleLabel:"Delivery contributor"});
+  const denied=await getMentorPortfolioActivity(mentor,{
+    projectId:project.id,view:"TEAM",
+  });
+  expect(denied.items.some(row=>row.label==="Project team member updated")).toBe(true);
+  await expect(updateProjectMember(learner,project.id,memberId,{
+    roleLabel:"Malicious label",
+  })).rejects.toBeDefined();
+  await endProjectMember(admin,project.id,memberId);
+  const liveRoster=await listProjectMembers(mentor,project.id);
+  expect(liveRoster.map(row=>row.id)).not.toContain(memberId);
+  expect(liveRoster.every(row=>row.role==="MENTOR")).toBe(true);
+  const rows=await pool.query<{event_type:string;metadata:Record<string,string>;
+    subject_label:string;college_id:string}>(`select event_type,metadata,subject_label,college_id
+    from activity_events where subject_type='project_member' and subject_id=$1`,[memberId]);
+  expect(rows.rows.map(row=>row.event_type).sort()).toEqual([
+    "projects.team_member.added","projects.team_member.ended",
+    "projects.team_member.updated",
+  ]);
+  for(const row of rows.rows){
+    expect(row.college_id).toBe(SEED_IDS.collegeA);
+    expect(row.subject_label).toBe("Project team membership");
+    expect(row.metadata).toEqual({projectId:project.id,projectMemberId:memberId,role:"LEARNER"});
+    expect(JSON.stringify(row.metadata)).not.toContain(SEED_IDS.learnerCollegeAMembership);
+  }
+  const after=await getMentorPortfolioActivity(mentor,{projectId:project.id,view:"TEAM"});
+  expect(after.items.some(row=>row.label==="Project team membership ended")).toBe(true);
+  expect(after.items.every(row=>row.projectId===project.id)).toBe(true);
+ });
+
+
  it("denies Learner/foreign Resource edits without persisting audit or changing content",async()=>{
   const {project}=await fixture();
   const created=await createProjectResource(admin,project.id,{

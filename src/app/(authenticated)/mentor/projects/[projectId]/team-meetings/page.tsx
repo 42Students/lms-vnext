@@ -4,24 +4,23 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {MentorMeetingReschedule} from "@/components/projects/mentor-meeting-reschedule";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
+import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 import {
   mentorTeamMeetingsHref,mentorTeamMeetingsQuerySchema,
 } from "@/modules/projects/mentor-team-meetings-model";
 
 type Params={status?:string|string[];type?:string|string[];outcome?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorTeamMeetingsPage({
   params,searchParams,
 }:{params:Promise<{projectId:string}>;searchParams:Promise<Params>}){
   const [{projectId},raw]=await Promise.all([params,searchParams]);
-  const parsed=mentorTeamMeetingsQuerySchema.safeParse({
-    projectId,status:first(raw.status)??undefined,
-    type:first(raw.type)??undefined,
-    outcome:first(raw.outcome)??undefined,
-    order:first(raw.order)??undefined,
-    search:first(raw.search)??undefined,
-    page:first(raw.page)??undefined,
+  const normalized=singleValueMentorFilters({
+    status:raw.status,type:raw.type,outcome:raw.outcome,
+    order:raw.order,search:raw.search,page:raw.page,
   });
+  const parsed=mentorTeamMeetingsQuerySchema.safeParse(
+    normalized ? {projectId,...normalized} : null,
+  );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid meeting history filters</h1>
     <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
