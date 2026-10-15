@@ -4,7 +4,7 @@ import { can, AuthorizationError } from "@/modules/permissions/policy";
 import { hasActiveMembership,hasMembershipRole,type RequestContext } from "@/modules/identity/context";
 import { getFacultyCourseWorkspace } from "./faculty-course-service";
 import { getFacultyQuizReport } from "./faculty-assessment-report-service";
-import { facultyQuizAttemptsPage, facultyQuizAttemptsQuerySchema } from "./faculty-quiz-attempts-model";
+import { facultyQuizAttemptsPage, facultyQuizAttemptsQuerySchema, facultySearchQuizAttempts } from "./faculty-quiz-attempts-model";
 
 /** Faculty-only attempt analysis, guarded by the exact live teaching delivery. */
 export async function getFacultyQuizAttemptDrilldown(context:RequestContext,raw:unknown) {
@@ -16,7 +16,7 @@ export async function getFacultyQuizAttemptDrilldown(context:RequestContext,raw:
     }))throw new AuthorizationError("courses.read");
   await getFacultyCourseWorkspace(context,query.deliveryId);
   const report=await getFacultyQuizReport(context,query.quizId,query.deliveryId);
-  const page=facultyQuizAttemptsPage(report.attempts,query.page,query.order);
+  const page=facultyQuizAttemptsPage(facultySearchQuizAttempts(report.attempts,query.q),query.page,query.order);
   return {
     query,quiz:report.quiz,questions:report.questions,
     ...page,

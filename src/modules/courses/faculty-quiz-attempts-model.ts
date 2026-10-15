@@ -3,6 +3,7 @@ import { z } from "zod";
 export const facultyQuizAttemptsQuerySchema = z.object({
   quizId:z.string().uuid(),deliveryId:z.string().uuid(),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
+  q:z.string().trim().max(120).default(""),
   page:z.union([
     z.number().int(),
     z.string().regex(/^[1-9]\d{0,3}$|^10000$/).transform(Number),
@@ -21,10 +22,20 @@ export function facultyQuizAttemptsPage<T extends {id:string;submittedAt:Date}>(
   return {total,page,pageSize,totalPages,items:ordered.slice((page-1)*pageSize,page*pageSize)};
 }
 
-export function facultyQuizAttemptsHref(quizId:string,deliveryId:string,page=1,order:"NEWEST"|"OLDEST"="NEWEST") {
+export function facultyQuizAttemptsHref(quizId:string,deliveryId:string,page=1,order:"NEWEST"|"OLDEST"="NEWEST",q="") {
   const path="/teacher/report/quiz/"+encodeURIComponent(quizId)+"/attempts";
   const query=new URLSearchParams({deliveryId});
   if(page>1)query.set("page",String(page));
   if(order!=="NEWEST")query.set("order",order);
+  if(q.trim())query.set("q",q.trim());
   return path+"?"+query.toString();
+}
+
+/** Filter only the already-scoped attempt rows; never broaden Faculty access. */
+export function facultySearchQuizAttempts<T extends {
+  learnerDisplayName:string|null;learnerEmail:string|null;
+}>(rows:readonly T[],term:string):T[]{
+ const needle=term.trim().toLocaleLowerCase();
+ return needle?rows.filter(row=>[row.learnerDisplayName,row.learnerEmail]
+   .some(value=>value?.toLocaleLowerCase().includes(needle))):[...rows];
 }
