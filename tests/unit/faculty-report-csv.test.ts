@@ -87,6 +87,6 @@ describe("Faculty CSV bounded direct serializer", () => {
  it("rejects bypass of the 500 learner export cap", () => {
   const rows = Array.from({length: 501}, () => basic.rows[0]);
   expect(() => facultyReportCsv({...basic, rows})).toThrow();
-  expect(facultyReportCsv({...basic, rows: rows.slice(0, 500)}).split("\\r\\n")).toHaveLength(502);
+  expect(facultyReportCsv({...basic, rows: rows.slice(0, 500)}).split("\r\n")).toHaveLength(502);
  });
 });
