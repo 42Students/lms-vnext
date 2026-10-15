@@ -39,12 +39,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
         ← Course attendance
       </Link>
-      <PageHeader
-        eyebrow={attendance.course.courseCode}
-        title="Course attendance history"
-        description={attendance.course.courseName + " · " +
-          attendance.course.academicPeriodName + " · Marked classes and month breakdown."}
-      />
+      <PageHeader title="Course attendance history" />
       <section aria-label="All-time course attendance" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Marked attendance", value: attendance.overall?.markedSessions ?? 0 },
