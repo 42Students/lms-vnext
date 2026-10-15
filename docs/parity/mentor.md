@@ -1450,3 +1450,32 @@ Mentor Project history now includes deleted/completed/readiness lifecycle events
 small-screen-safe history/review filters, and a full filter reset including page size.
 Those improvements are source-level parity only; browser and persisted PostgreSQL
 validation remain OPEN. No official tracker task was marked DONE.
+
+## 2026-10-15 chat-11: bulk-operation and Mentor delivery review deepening (PARTIAL)
+
+After merging current main's spreadsheet table components, the TPO current-page
+bulk-actions panel remains available only to authorized manage-capable TPO
+operators. Its explicit action labels distinguish eligibility overrides from
+applicant shortlist/rejection decisions; the selected-row cap is communicated
+and enforced on checkboxes, and selection/preview can be cleared without a
+write. Both POST endpoints require the existing same-origin protection and now
+reject malformed JSON, non-JSON media types and payloads over 16 KiB before
+domain processing. All confirmations retain the signed five-minute preview
+and current persisted actor/college, version, and row-eligibility checks.
+
+The Mentor final-delivery pending review queue now exposes a filter-aware,
+capped 200-row CSV of assigned-project metadata only, with formula-safe values,
+truncation disclosure and stable age boundaries across export pages. It does
+not reveal learner identity, feedback or source audit metadata. Assigned Mentor
+activity CSV time windows similarly reuse one instant for all fetched pages.
+The Mentor pending Task review filters gained narrow-screen-safe controls and
+an explicit page-one recovery link for an out-of-range empty state.
+
+These are **source-authored PARTIAL improvements**, not finished parity:
+focused unit tests were added, but a successful run of Vitest, TypeScript,
+disposable PostgreSQL tenant/permission/audit coverage, real browser/mobile
+checks and an independent clone-family comparison is still required. DB09
+application action registration is separately gated by
+`DB09_TPO_API_READY=DB09_VERIFIED`; do not claim it available merely because
+UI and handlers exist. No database migration, global tracker DONE or legacy
+parity checkbox is changed here.

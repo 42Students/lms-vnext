@@ -17,10 +17,12 @@ export function mentorReviewExportCsv(rows:readonly MentorReviewExportRow[],omit
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  });
  const lines=["Project ID,Assigned project,Review needed,Submitted (IST)"];
- for(const row of rows){
+ const limited=rows.slice(0,200);
+ const totalOmitted=Math.max(0,omitted)+Math.max(0,rows.length-limited.length);
+ for(const row of limited){
   const submitted=Number.isFinite(row.occurredAt.getTime())?fmt.format(row.occurredAt)+" IST":"Unknown";
   lines.push([row.projectId,row.projectTitle,"Final delivery awaiting review",submitted].map(csvSafeCell).join(","));
  }
- if(omitted>0)lines.push(["","Export capped",omitted+" more matching deliveries",""].map(csvSafeCell).join(","));
+ if(totalOmitted>0)lines.push(["","Export capped",totalOmitted+" more matching deliveries",""].map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
