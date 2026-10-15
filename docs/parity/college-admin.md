@@ -17,6 +17,10 @@ Contacts now show an honest page range, page-local Faculty/Learner/dual-role bre
 
 # Operations
 
+**Chat-9 October 15 follow-up — PARTIAL; final acceptance open:** Faculty and Student directories now reject inherited/ambiguous URL query keys, give non-leaking reasons for incompatible role/date filters, distinguish unfiltered-empty from no-match states with clear-filter recovery, show bounded page ordinals and offer semantic narrow-screen cards with the same profile, Contacts, verification, class-move and faculty lifecycle actions. College People distinguishes no college memberships from filtered-empty results. College Contacts and People guard COLLEGE_ADMIN before parsing invalid filters; the verification queue likewise role-gates first, reuses one actor context and explains typed invalid date/tab/education combinations without echoing URL values. Bulk-review navigation remains frozen during in-flight decisions. Authored focused unit cases and source guards do not substitute for disposable PG denial, 375px mobile/browser, or final CI execution. No row is marked DONE solely from these changes.
+
+
+
 **Personal-notification unread counts PARTIAL (2026-10-15):** College Admin announcements displays a separate exact unread own-recipient count from registered notifications, independently of the 50-row inbox cap and regardless of unread-only filter. Count reads enforce the signed-in college and recipient; no college-wide send or delivery is inferred. Model, isolated PG tenant/role fixture updates authored; runtime/browser acceptance outstanding.
 
 **Announcements personal inbox unread filter PARTIAL (2026-10-15):** College Admin notices can filter unread, own-recipient *registered* notifications within the signed-in college before the 50-row cap. Toggle preserves the deleted-announcement selector. The draft college-wide DB10 announcement table remains gated and no broadcast sending is claimed. Pure model and isolated PG own/foreign/wrong-role tests authored; runtime/browser acceptance open.
