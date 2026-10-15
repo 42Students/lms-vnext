@@ -131,3 +131,12 @@ describe("DB04 Faculty profile document contract", () => {
     });
   });
 });
+
+
+describe("Faculty certification chronology", () => {
+  it("rejects a validity date preceding issue date", () => {
+    const certification = { id, name: "Safety", certificationDate: "2026-10-15", validityDate: "2026-10-14" };
+    expect(facultyProfileDocumentSchema.safeParse({ certifications: [certification] }).success).toBe(false);
+    expect(facultyProfileDocumentSchema.safeParse({ certifications: [{ ...certification, validityDate: "2027-10-15" }] }).success).toBe(true);
+  });
+});
