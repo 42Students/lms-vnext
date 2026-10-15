@@ -97,7 +97,7 @@ export function SuperAdminHrDetailDrawer({
       title={
         account
           ? hrDisplayName(account)
-          : "HR account details"
+          : "Recruiter account details"
       }
       description="Recruiter identity, company, college access and account security."
       footer={

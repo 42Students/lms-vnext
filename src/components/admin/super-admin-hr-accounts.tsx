@@ -126,8 +126,8 @@ function pageHref(
   const query = params.toString();
 
   return query
-    ? `/admin/hr?${query}`
-    : "/admin/hr";
+    ? `/admin/recruiters?${query}`
+    : "/admin/recruiters";
 }
 
 export function SuperAdminHrAccounts({
@@ -328,7 +328,7 @@ export function SuperAdminHrAccounts({
 
         showToast({
           tone: "success",
-          title: "HR account created",
+          title: "Recruiter account created",
           description:
             "The recruiter account and first college grant were created.",
         });
@@ -400,7 +400,7 @@ export function SuperAdminHrAccounts({
 
         showToast({
           tone: "success",
-          title: "HR account updated",
+          title: "Recruiter account updated",
           description:
             values.status === "ARCHIVED" &&
             existing.status !== "ARCHIVED"
@@ -610,7 +610,7 @@ export function SuperAdminHrAccounts({
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin"
-        title="HR Accounts"
+        title="Recruiter Accounts"
         description="Manage employer recruiters, their college access and signed-in devices. Results follow the current platform or selected tenant safety scope."
         actions={
           <Button onClick={openCreate}>
@@ -626,7 +626,7 @@ export function SuperAdminHrAccounts({
           filters.pageSize,
         ].join("|")}
         method="get"
-        action="/admin/hr"
+        action="/admin/recruiters"
         className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
       >
         <label className="grid min-w-52 flex-1 gap-1 text-xs font-semibold text-body">
@@ -668,7 +668,7 @@ export function SuperAdminHrAccounts({
         <Button type="submit">Apply filters</Button>
 
         <Link
-          href="/admin/hr"
+          href="/admin/recruiters"
           className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:bg-muted"
         >
           Clear
@@ -677,7 +677,7 @@ export function SuperAdminHrAccounts({
 
       {loadError ? (
         <ErrorState
-          title="Could not load HR accounts"
+          title="Could not load recruiter accounts"
           description={loadError}
           action={
             <Button
@@ -704,7 +704,7 @@ export function SuperAdminHrAccounts({
 
           {list.items.length === 0 ? (
             <EmptyState
-              title="No HR accounts found"
+              title="No recruiter accounts found"
               description={
                 filters.q || filters.status
                   ? "No recruiters match the current search or status filters. Clear the filters to see other accounts."
@@ -713,14 +713,14 @@ export function SuperAdminHrAccounts({
               action={
                 filters.q || filters.status ? (
                   <Link
-                    href="/admin/hr"
+                    href="/admin/recruiters"
                     className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"
                   >
                     Clear filters
                   </Link>
                 ) : (
                   <Button onClick={openCreate}>
-                    Add first HR account
+                    Add first recruiter account
                   </Button>
                 )
               }
@@ -737,7 +737,7 @@ export function SuperAdminHrAccounts({
 
           {list.total > 0 ? (
             <nav
-              aria-label="HR account pages"
+              aria-label="Recruiter account pages"
               className="flex flex-wrap items-center justify-between gap-3 text-sm text-body"
             >
               <p className="m-0">
@@ -868,7 +868,7 @@ export function SuperAdminHrAccounts({
             ? `Revoke ${confirmation.grant.collegeName} access?`
             : confirmation?.kind === "terminate"
               ? `Terminate all sessions for ${confirmation.name}?`
-              : "Confirm HR account action"
+              : "Confirm recruiter account action"
         }
         description={
           confirmation?.kind === "revoke"
