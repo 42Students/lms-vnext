@@ -38,7 +38,7 @@ export function facultySubmissionReviewMatchesScope(
 
 export function facultySubmissionReviewEmptyLabel(filter:"ALL"|"UNGRADED"|"GRADED"|"LATE"):string {
  switch(filter){
- case "ALL":return "No learner submissions have been received for this assignment.";
+ case "ALL":return "No submissions yet";
  case "UNGRADED":return "No submissions are waiting for grading.";
  case "GRADED":return "No submissions have been graded yet.";
  case "LATE":return "No submissions matched the late-submission filter.";

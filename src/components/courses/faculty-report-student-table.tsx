@@ -8,9 +8,11 @@ import { facultyReportStudentPage, type FacultyReportStudentRow } from "@/module
 export function FacultyReportStudentTable({
   rows,
   title,
+  emptyMessage = "No learners have submitted yet.",
 }: {
   rows: readonly FacultyReportStudentRow[];
   title: string;
+  emptyMessage?: string;
 }) {
   const [search, setSearch] = useState("");
   const [requestedPage, setRequestedPage] = useState(1);
@@ -44,7 +46,7 @@ export function FacultyReportStudentTable({
       </div>
 
       {rows.length === 0 ? (
-        <p className="mt-4 text-sm text-body">No learners have submitted yet.</p>
+        <p className="mt-4 text-sm text-body">{emptyMessage}</p>
       ) : result.rows.length === 0 ? (
         <p className="mt-4 text-sm text-body">No students match this search.</p>
       ) : (

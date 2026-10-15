@@ -50,7 +50,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
         `/api/courses/assignment-submission-files/${encodeURIComponent(file.id)}/download-grant`,
         { method: "POST", credentials: "same-origin", cache: "no-store", signal: controller.signal,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ disposition: "attachment" }) },
+          body: JSON.stringify({ disposition: "inline" }) },
       );
       if (!response.ok) throw new Error(await storageApiError(response));
       // Event-handler only (async click); the purity rule misreads this closure as render.
@@ -65,12 +65,11 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.referrerPolicy = "no-referrer";
-      link.download = grant.file.originalName;
       document.body.append(link);
       link.click();
       link.remove();
     } catch (cause) {
-      if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : "Could not open submitted file.");
+      if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : "Unable to load this submitted file");
     } finally {
       grantRef.current = null;
       setWorkingId(null);
@@ -86,11 +85,11 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
       {files.map(file => {
         const state = fileStatusDescriptor(file.status);
         return <li key={file.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2">
-          <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
+          <span className="min-w-0 flex-1 break-words text-sm text-body"><span className="sr-only">Uploaded File: </span>{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
           {state.usable ? <Button size="sm" type="button" variant="secondary"
             disabled={workingId !== null} onClick={() => void open(file)}>
-            {workingId === file.id ? "Preparing file…" : "Download"}
+            {workingId === file.id ? "Preparing file…" : "Open file"}
           </Button> : null}
         </li>;
       })}
