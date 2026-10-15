@@ -311,6 +311,7 @@ describe("Projects P3 deterministic materialization", () => {
       superAdmin,
       createdTemplate.template.id,
       {
+        expectedVersion: createdTemplate.version.version,
         title: "P3 Materialization V2",
         blueprint: blueprint("V2"),
         changeNote: "New future version",

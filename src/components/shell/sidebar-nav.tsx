@@ -7,6 +7,18 @@ import { usePathname } from "next/navigation";
 import { cx } from "@/lib/class-names";
 import type { ShellNavItem } from "./shell-model";
 
+const TPO_SECTION_LABELS = {
+  operate: "Operate",
+  coordinate: "Coordinate",
+  insights: "Insights",
+  administration: "Administration",
+} as const;
+function tpoSectionLabel(item: ShellNavItem): string | null {
+  if (!item.href.startsWith("/tpo/") || !item.group ||
+    !(item.group in TPO_SECTION_LABELS)) return null;
+  return TPO_SECTION_LABELS[item.group as keyof typeof TPO_SECTION_LABELS];
+}
+
 export function SidebarNav({
   items,
   compact = false,
@@ -33,6 +45,9 @@ export function SidebarNav({
           index > 0 &&
           Boolean(item.group) &&
           item.group !== previousGroup;
+        const tpoSection = tpoSectionLabel(item);
+        const showTpoSection = tpoSection &&
+          (index === 0 || item.group !== previousGroup);
         const active =
           pathname === item.href ||
           (item.href !== "/dashboard" &&
@@ -40,7 +55,10 @@ export function SidebarNav({
 
         return (
           <Fragment key={item.href}>
-            {startsNewGroup && !compact ? (
+            {showTpoSection && !compact ? (
+              <p className="mt-3 mb-1 px-3 text-xs font-semibold text-muted-foreground">{tpoSection}</p>
+            ) : null}
+            {startsNewGroup && !compact && !showTpoSection ? (
               <div
                 role="separator"
                 aria-hidden="true"

@@ -134,7 +134,7 @@ describe("authenticated shell model", () => {
     expect(tpoHrefs).not.toContain("/admin/inbound-mail");
 
     const collegeHrefs = hrefs(context(["COLLEGE_ADMIN"]));
-    expect(collegeHrefs).toContain("/college/placements/calendar");
+    expect(collegeHrefs).not.toContain("/college/placements/calendar");
     expect(collegeHrefs).not.toContain("/admin/placements/calendar");
 
     const learnerHrefs = hrefs(context(["LEARNER"]));
@@ -151,7 +151,8 @@ describe("authenticated shell model", () => {
     ] as const) {
       const links = getShellNavigation(context(roles)).map((item) => item.href);
       expect(links).not.toContain("/college/groups");
-      expect(links).toContain("/college/students");
+      // Legacy grouped sidebar: Students live under People.
+      expect(links).toContain("/college/people");
     }
   });
 
@@ -160,15 +161,15 @@ describe("authenticated shell model", () => {
 
     expectInOrder(labels(shellContext), [
       "Dashboard",
-      "My College",
-      "Departments",
-      "Academics",
-      "Courses",
-      "Projects",
-      "Placements",
+      "Activity Log",
+      "Academic Setup",
+      "Courses & Content",
       "People",
-      "Domains",
-      "Activity",
+      "Profile verification",
+      "Placements",
+      "Placement cell",
+      "Projects",
+      "Profile",
     ]);
     expect(labels(shellContext)).not.toContain("Organizations");
     expect(labels(shellContext)).not.toContain("Colleges");
@@ -252,20 +253,17 @@ describe("authenticated shell model", () => {
 
     // Teaching and mentoring come first, the admin workspace is added after.
     expectInOrder(hrefs(shellContext), [
-      "/dashboard",
       "/teacher/courses",
       "/mentor/projects",
       "/college",
       "/college/departments",
     ]);
     expectInOrder(labels(shellContext), [
-      "My College",
-      "Departments",
-      "Academics",
-      "Placements",
+      "Dashboard",
+      "Academic Setup",
       "People",
-      "Domains",
-      "Activity",
+      "Profile verification",
+      "Placements",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "College Admin · Faculty · Mentor",
@@ -313,41 +311,11 @@ describe("authenticated shell model", () => {
       },
     };
 
-    expect(getShellNavigation(shellContext)).toEqual([
-      {
-        label: "Dashboard",
-        href: "/dashboard",
-        shortLabel: "D",
-      },
-      {
-        label: "Today",
-        href: "/hr/home",
-        shortLabel: "T",
-      },
-      {
-        label: "Hiring Workspace",
-        href: "/hr/placements",
-        shortLabel: "H",
-      },
-      {
-        label: "Calendar",
-        href: "/hr/calendar",
-        shortLabel: "C",
-        icon: "/assets/images/common/calender.svg",
-        group: "tracking",
-      },
-      {
-        label: "Company & Team",
-        href: "/hr/company",
-        shortLabel: "C",
-        group: "account",
-      },
-      {
-        label: "Profile",
-        href: "/hr/profile",
-        shortLabel: "P",
-        group: "account",
-      },
+    expect(getShellNavigation(shellContext).map(item => item.label)).toEqual([
+      "Today", "Drives", "Calendar", "Messages", "Company & Team",
+    ]);
+    expect(getShellNavigation(shellContext).map(item => item.href)).toEqual([
+      "/hr/home", "/hr/drives", "/hr/calendar", "/hr/messages", "/hr/company",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Employer Recruiter",
@@ -360,20 +328,20 @@ describe("authenticated shell model", () => {
     expectInOrder(labels(shellContext), [
       "Dashboard",
       "Courses",
-      "Recruiter Leads",
-      "Companies",
-      "Placement Operations",
+      "Placement eligibility",
+      "Engage",
+      "Drives",
       "Students",
       "Calendar",
     ]);
     expect(hrefs(shellContext)).toContain("/teacher/courses");
     expect(hrefs(shellContext)).toContain("/tpo/calendar");
     expect(hrefs(shellContext)).toContain("/tpo/students");
-    expect(hrefs(shellContext)).toContain("/tpo/companies");
+    expect(hrefs(shellContext)).toContain("/tpo/team");
     expect(hrefs(shellContext)).toContain("/tpo/audit");
     expect(hrefs(shellContext)).toContain("/tpo/messages");
     expect(hrefs(shellContext)).toContain("/tpo/settings");
-    expect(hrefs(shellContext)).toContain("/tpo/more");
+    expect(hrefs(shellContext)).toContain("/tpo/notifications");
     expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · TPO",
@@ -388,7 +356,8 @@ describe("authenticated shell model", () => {
     expect(tpoNavigation).toContain("/tpo/calendar");
     expect(tpoNavigation).not.toContain("/college/placements/calendar");
 
-    expect(collegeNavigation).toContain("/college/placements/calendar");
+    // The legacy College Admin sidebar has no calendar entry of its own.
+    expect(collegeNavigation).not.toContain("/college/placements/calendar");
     expect(collegeNavigation).not.toContain("/tpo/calendar");
 
     expect(learnerNavigation).not.toContain("/tpo/calendar");
@@ -404,7 +373,7 @@ describe("authenticated shell model", () => {
         label: "Reports",
         href: "/tpo/reports",
         shortLabel: "R",
-        group: "tracking",
+        group: "insights",
       },
     ]);
 
@@ -460,12 +429,12 @@ describe("authenticated shell model", () => {
     );
     expect(
       admin.find((item) => item.href === "/college/courses")?.label,
-    ).toBe("Courses · College");
+    ).toBe("Courses & Content");
     expect(
       admin.find((item) => item.href === "/mentor/projects")?.label,
     ).toBe("Projects · Mentoring");
     expect(
-      admin.find((item) => item.href === "/college/projects")?.label,
+      admin.find((item) => item.href === "/college/projects/workspaces")?.label,
     ).toBe("Projects · College");
   });
 

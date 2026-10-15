@@ -19,7 +19,6 @@ import {
   completeProjectSprint,
   shipProjectRelease,
   startProjectSprint,
-  updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {
   createProjectEvaluation,
@@ -38,6 +37,7 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {approveProjectTaskThroughReview} from "./support/projects-review-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -326,12 +326,7 @@ async function finishExecution(
     projectId,
     sprint.id,
   );
-  await updateProjectTaskStatus(
-    mentor,
-    projectId,
-    task.id,
-    { status: "DONE" },
-  );
+  await approveProjectTaskThroughReview({learner,mentor,projectId,taskId:task.id});
   await completeProjectSprint(
     mentor,
     projectId,

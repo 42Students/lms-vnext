@@ -284,6 +284,7 @@ export function ProjectWorkspace({
                 projectId={workspace.project.id}
                 projectTitle={workspace.project.title}
                 status={workspace.project.status}
+                expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
               />
             ) : null}
           </div>

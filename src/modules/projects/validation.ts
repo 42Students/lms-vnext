@@ -5,7 +5,6 @@ import {
   PROJECT_TASK_PRIORITIES,
   PROJECT_SUBMISSION_REVIEW_DECISIONS,
   PROJECT_TASK_REVIEW_DECISIONS,
-  PROJECT_TASK_STATUSES,
 } from "./constants";
 
 const projectKeySchema = z
@@ -274,6 +273,7 @@ export const publishableProjectTemplateBlueprintSchema =
 
 export const reviseProjectTemplateInputSchema = z
   .object({
+    expectedVersion: projectTemplateVersionSchema,
     title: titleSchema,
     summary: z.string().trim().min(1).max(2000).optional(),
     blueprint: projectTemplateBlueprintSchema,
@@ -429,7 +429,8 @@ export const projectTaskIdSchema = z.string().uuid();
 
 export const updateProjectTaskStatusInputSchema = z
   .object({
-    status: z.enum(PROJECT_TASK_STATUSES),
+    status: z.enum(["TODO", "IN_PROGRESS", "BLOCKED"]),
+    expectedUpdatedAt: z.iso.datetime({ offset: true }),
   })
   .strict();
 

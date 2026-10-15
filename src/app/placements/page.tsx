@@ -26,6 +26,10 @@ export default async function PublicPlacementsPage() {
     { label: "Offers received", count: published?.offers ?? null },
     { label: "Recruiting employers", count: published?.employers ?? null },
   ]);
+  const money = (value: number | null | undefined) => value == null
+    ? "Not enough data yet" : new Intl.NumberFormat("en-IN", {
+      style: "currency", currency: "INR", maximumFractionDigits: 0,
+    }).format(value);
   return (
     <main className="mx-auto min-h-screen w-full max-w-4xl px-4 py-10 sm:px-8">
       <header className="space-y-3">
@@ -63,6 +67,14 @@ export default async function PublicPlacementsPage() {
           </article>
         ))}
       </section>
+      {published && (published.medianCtcInr !== null || published.highestCtcInr !== null)
+        ? <section aria-label="Package summary" className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
+          {([["Median", published.medianCtcInr], ["Highest package", published.highestCtcInr]] as const)
+            .map(([label, value]) => <article key={label} className="rounded-xl border border-border bg-surface p-5">
+              <h2 className="text-sm font-medium text-muted-foreground">{label}</h2>
+              <p className="mt-2 text-lg font-semibold text-foreground">{money(value)}</p>
+            </article>)}
+        </section> : null}
       <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6">
         <h2 className="text-xl font-semibold text-foreground">Recruit from us</h2>
         <p className="mt-2 text-sm leading-6 text-body">
