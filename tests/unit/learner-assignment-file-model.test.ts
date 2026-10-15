@@ -55,7 +55,7 @@ describe("learner assignment private-file boundary", () => {
     expect(uploaded).toEqual({ receiptId: receipt, originalName: "proof.pdf", expiresAt: grant.expiresAt });
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(fetcher.mock.calls[0]?.[0]).toBe("/api/courses/assignments/assignment/file-upload");
-    expect(fetcher.mock.calls[1]).toEqual([grant.uploadUrl, expect.objectContaining({ method: "PUT", credentials: "omit", body: file, headers: grant.requiredHeaders })]);
+    expect(fetcher.mock.calls[1]).toEqual([grant.uploadUrl, expect.objectContaining({ method: "PUT", credentials: "omit", redirect: "error", body: file, headers: grant.requiredHeaders })]);
   });
   it("does not PUT bytes after a rejected, mismatched or expired grant", async () => {
     const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
@@ -69,6 +69,17 @@ describe("learner assignment private-file boundary", () => {
       await expect(transferLearnerAssignmentFile("assignment", delivery, file, new AbortController().signal, fetcher)).rejects.toThrow();
       expect(fetcher).toHaveBeenCalledTimes(1);
     }
+  });
+  it("fails closed when object storage responds with a redirect", async () => {
+    const file = new File(["proof"], "proof.pdf", { type: "application/pdf" });
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json({ grant }))
+      .mockRejectedValueOnce(new TypeError("redirect blocked"));
+    await expect(transferLearnerAssignmentFile("assignment", delivery, file,
+      new AbortController().signal, fetcher)).rejects.toThrow("redirect blocked");
+    expect(fetcher.mock.calls[1]?.[1]).toEqual(expect.objectContaining({
+      credentials: "omit", redirect: "error", method: "PUT",
+    }));
   });
   it("does not report a ready receipt when signed PUT fails", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(Response.json({ grant }))
