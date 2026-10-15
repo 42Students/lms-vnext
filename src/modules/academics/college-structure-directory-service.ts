@@ -206,6 +206,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       isNull(electiveSlots.deletedAt),
       or(isNull(electiveSlots.academicPeriodId), sql`${academicPeriods.id} is not null`),
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.periodEndsOnOrBefore ? lte(academicPeriods.endDate,query.periodEndsOnOrBefore) : undefined,
       query.periodStartsOnOrAfter ? gte(academicPeriods.startDate,query.periodStartsOnOrAfter) : undefined,
       query.descriptionPresence === "RECORDED" ? isNotNull(electiveSlots.description) : query.descriptionPresence === "MISSING" ? isNull(electiveSlots.description) : undefined,
       query.periodLifecycle !== "ALL" ? eq(academicPeriods.status,query.periodLifecycle) : undefined,

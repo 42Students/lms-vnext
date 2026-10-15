@@ -555,4 +555,18 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(csvMatch.csv).toContain(key);
     expect(csvExcluded.csv).not.toContain(key);
   });
+  it("Elective linked period ends on or before excludes nonmatching own-college period dates",async()=>{
+    const [matching,excluded,foreign,csvMatch,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+      listCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-30"}),
+      listCollegeElectives(adminB,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+      exportCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+      exportCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-30"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
 });

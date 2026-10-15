@@ -496,6 +496,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Elective linked period ends on or before PARTIAL (chat-3, 2026-10-15):** Inclusive validated ISO date filter uses only the persisted same-college linked academic period; slots without a period do not match a dated query. Page navigation and tenant-scoped capped CSV share the predicate; unit/disposable-PostgreSQL fixtures authored. Browser, executed PG and legacy workflow acceptance remain open.
+
 **Elective linked period starts on or after PARTIAL (chat-3, 2026-10-15):** Inclusive validated ISO date filter uses only the persisted same-college linked academic period; slots without a period do not match a dated query. Page navigation and tenant-scoped capped CSV share the predicate; unit/disposable-PostgreSQL fixtures authored. Browser, executed PG and legacy workflow acceptance remain open.
 
 **Elective description availability PARTIAL (chat-3, 2026-10-15):** Recorded versus NULL description presence, without disclosing freeform text. The filter is included in page navigation and the tenant-scoped CSV with unit/PG fixtures authored; runtime and browser acceptance remain open.
