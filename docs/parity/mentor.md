@@ -1303,3 +1303,8 @@ Both assigned-project portfolio and exact-project activity screens can isolate a
 ## 2026-10-15 chat-11 — mentor-sprint-change-events (PARTIAL)
 
 Both assigned Mentor portfolio and exact-project event readers now support sprint changes filtered to projects.sprint.updated. Existing active membership/college/role SQL gates and redacted event labels remain; unit tests authored, not executed. Browser and legacy event producer verification still open.
+
+
+## 2026-10-15 chat-11 — mentor-assignment-change-events (PARTIAL)
+
+Mentor assignment/reassignment events can now be selected in the assigned-project portfolio and exact-project audit screens using the registered projects.mentor.reassigned taxonomy. Current Mentor grants and tenant scoping, no actor PII, no raw audit metadata, and bounded SQL filters are retained. Test authored, runtime/legacy/browser verification OPEN.
