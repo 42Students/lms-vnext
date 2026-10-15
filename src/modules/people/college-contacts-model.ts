@@ -85,11 +85,13 @@ export function clearedCollegeContactsHref(tab:CollegeContactsQuery["tab"]):stri
  return collegeContactsHref(collegeContactsQuerySchema.parse({tab}));
 }
 export function parseCollegeContactsSearchParams(raw:Record<string,string|string[]|undefined>){
- const normalized:Record<string,string>={};
+ const entries:[string,string][]=[];
  for(const [key,value] of Object.entries(raw)){
   if(Array.isArray(value))throw new Error("INVALID_CONTACT_FILTERS");
-  if(value!==undefined&&value!=="")normalized[key]=value;
+  if(value!==undefined&&value!=="")entries.push([key,value]);
  }
+ // Object.fromEntries retains "__proto__" as an own key for strict Zod rejection.
+ const normalized=Object.fromEntries(entries);
  const filter=collegeContactsQuerySchema.parse(normalized);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
