@@ -9,3 +9,8 @@ export function facultyProfileSaveFailure(code:string|undefined,status:number):s
  if(status===403)return "Your permission to edit this profile is unavailable. No changes were saved.";
  return "The profile change was not saved. Review the fields and try again.";
 }
+
+/** Uncertain 2xx response: the server may have committed despite an unusable receipt. */
+export function facultyProfileUnconfirmedSaveMessage():string{
+ return "The save response could not be verified. Your change may have been saved. Review the latest profile before submitting it again.";
+}
