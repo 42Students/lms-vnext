@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyContentPatch, facultyContentDraftChanged, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
+import { facultyContentPatch, facultyContentDraftChanged, facultyContentMayChangeOpen, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
 
 type Item = {
   id: string;
@@ -94,7 +94,11 @@ export function FacultyContentEditor({ item }: { item: Item }) {
       </Button>
       <Drawer
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(nextOpen) => {
+          if (facultyContentMayChangeOpen(nextOpen,dirty,saving,
+            () => window.confirm("Discard unsaved changes to this lesson content?")))
+            setOpen(nextOpen);
+        }}
         title={"Edit " + item.contentType.replaceAll("_", " ")}
         description="Changes to this item stay scoped to your assigned teaching Section."
         footer={<Button type="submit" form={"faculty-content-edit-" + item.id} disabled={saving || !dirty}>
