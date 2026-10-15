@@ -197,7 +197,9 @@ function SubmissionGradeCard({
         return;
       }
 
-      const saved = facultyManualGradeReceipt(await response.json(),submission,"PUBLISH",maxPoints);
+      const saved = facultyManualGradeReceipt(await response.json(),submission,"PUBLISH",maxPoints,{
+        points:submission.pointsAwarded ?? -1,feedback:submission.feedback,
+      });
       setSuccess("Grade state saved. Refresh the report to verify visibility.");
       onUpdated({
         ...submission,
