@@ -82,7 +82,18 @@ export default async function TpoShortlistSharePreviewPage({
       className="rounded-xl border border-border bg-surface p-6 text-sm text-body">
       No recruiter-visible shortlisted applications are recorded on this page.
       Screening state may have changed; absence here is not proof of no applicants.
-    </p> : <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+    </p> : <>
+      <ul aria-label="Shortlisted applicant cards" className="space-y-3 sm:hidden">
+        {data.rows.map(item=><li key={item.applicationId}
+          className="min-w-0 rounded-xl border border-border bg-surface p-4">
+          <h3 className="break-words text-sm font-semibold text-foreground">{item.displayName}</h3>
+          <dl className="mt-2 space-y-2 text-xs text-body">
+            <div><dt className="font-semibold">Application</dt><dd className="break-all font-mono">{item.applicationId}</dd></div>
+            <div><dt className="font-semibold">Email</dt><dd className="break-all">{item.email ?? "Not recorded"}</dd></div>
+          </dl>
+        </li>)}
+      </ul>
+      <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface sm:block">
       <table className="w-full min-w-[36rem] text-left text-sm">
         <thead className="bg-surface-secondary text-muted-foreground">
           <tr>{["Application ID", "Learner", "Email"].map((name) =>
@@ -97,7 +108,7 @@ export default async function TpoShortlistSharePreviewPage({
           </tr>)}
         </tbody>
       </table>
-    </div>}
+    </div></>}
     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
      View company-share access history
