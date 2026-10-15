@@ -68,4 +68,22 @@ export async function enableSeedLearnerPlacementAccess(pool: Pool) {
        decided_at=now(),updated_at=now()`,
     [SEED_IDS.collegeA,SEED_IDS.learnerCollegeAMembership,SEED_IDS.collegeAdminUser],
   );
+
+  // P-S1-04: applying requires an explicit PLACEMENTS registration for the
+  // learner's active cohort (never inferred from the enrollment).
+  const own = await pool.query<{ cohort_id: string }>(
+    `SELECT cohort_id FROM learner_program_enrollments
+      WHERE membership_id = $1 AND status = 'ACTIVE' LIMIT 1`,
+    [SEED_IDS.learnerCollegeAMembership],
+  );
+  await pool.query(
+    `INSERT INTO placement_batch_registrations
+       (college_id,cohort_id,membership_id,choice,consent_version,consent_at,source,recorded_by_user_id)
+     VALUES ($1,$2,$3,'PLACEMENTS','fixture',now(),'BACKFILL',$4)
+     ON CONFLICT (membership_id,cohort_id)
+     DO UPDATE SET choice='PLACEMENTS',consent_version='fixture',
+       consent_at=now(),source='BACKFILL',recorded_by_user_id=$4`,
+    [SEED_IDS.collegeA, own.rows[0]!.cohort_id,
+      SEED_IDS.learnerCollegeAMembership, SEED_IDS.collegeAdminUser],
+  );
 }

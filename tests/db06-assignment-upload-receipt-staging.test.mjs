@@ -57,12 +57,12 @@ test("DB053 private assignment upload schema remains source-only and fail-closed
     ),
     false,
   );
+  // Storage redesign (migration 0080): the old DB06 receipt flag is obsolete;
+  // runtime enablement now requires the private R2 bucket configuration.
+  assert.doesNotMatch(readiness, /DB06_ASSIGNMENT_FILES_READY/);
+  assert.match(readiness, /R2_PRIVATE_BUCKET/);
   assert.match(
-    readiness,
-    /DB06_ASSIGNMENT_FILES_READY === "DB06_VERIFIED"/,
-  );
-  assert.match(
-    fileService,
+    fs.readFileSync("src/app/api/courses/assignments/[assignmentId]/file-upload/route.ts", "utf8"),
     /DB06_ASSIGNMENT_FILES_MIGRATIONS_PENDING/,
   );
 });
@@ -429,10 +429,8 @@ test("DB053 read revocation remains an explicit runtime activation blocker", () 
     sql,
     /createAssignmentFileReadGrant must join the receipt and refuse signed reads/,
   );
-  assert.match(
-    readiness,
-    /DB06_ASSIGNMENT_FILES_READY === "DB06_VERIFIED"/,
-  );
+  assert.doesNotMatch(readiness, /DB06_ASSIGNMENT_FILES_READY/);
+  assert.match(readiness, /R2_PRIVATE_BUCKET/);
 
   const readGrantStart = fileService.indexOf(
     "export async function createAssignmentFileReadGrant",
