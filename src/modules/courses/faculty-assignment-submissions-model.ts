@@ -95,3 +95,37 @@ export function facultyFilterSubmissionPublication<T extends {gradePublished:boo
 ):T[]{
  return rows.filter(row=>mode==="ALL"||(mode==="PUBLISHED"?row.gradePublished:!row.gradePublished));
 }
+
+export function facultySubmissionReportEmptyState(query:{
+ filter:FacultySubmissionFilter;q:string;publication:"ALL"|"PUBLISHED"|"PRIVATE";
+},sourceCount:number){
+ if(sourceCount===0)return {
+  title:"No submissions received",
+  description:"Learners have not submitted work for this assignment in your authorized Section.",
+ };
+ if(query.q)return {
+  title:"No learner names match",
+  description:"Clear the name search or change the selected submission filters.",
+ };
+ if(query.publication==="PUBLISHED")return {
+  title:"No published grades match",
+  description:"Learner-visible grades may not have been released for these submissions.",
+ };
+ if(query.publication==="PRIVATE")return {
+  title:"No private grades match",
+  description:"No matching submission currently has an unpublished grade.",
+ };
+ if(query.filter==="LATE")return {
+  title:"No late submissions match",
+  description:"No recorded submission was after the persisted assignment due time.",
+ };
+ if(query.filter==="UNGRADED")return {
+  title:"No submissions need grading",
+  description:"All matching persisted work has a recorded grade, or there are no matching rows.",
+ };
+ if(query.filter==="GRADED")return {
+  title:"No graded submissions match",
+  description:"No matching persisted submissions have a recorded grade.",
+ };
+ return {title:"No matching submissions",description:"No persisted submissions match the selected filters."};
+}

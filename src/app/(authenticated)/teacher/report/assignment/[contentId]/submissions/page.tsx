@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
-  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,facultySearchSubmissionReportRows,facultyFilterSubmissionPublication,
+  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,facultySearchSubmissionReportRows,facultyFilterSubmissionPublication,facultySubmissionReportEmptyState,
   facultySubmissionReportPageQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
 } from "@/modules/courses/faculty-assignment-submissions-model";
 
@@ -32,6 +32,7 @@ export default async function FacultyAssignmentSubmissionsPage({
     report.submissions,query.filter,report.assignment.dueAt,
   );
   const data=facultySubmissionListPage(facultySortSubmissionReportRows(facultySearchSubmissionReportRows(facultyFilterSubmissionPublication(filtered,query.publication),query.q),query.order),query.page);
+  const empty=facultySubmissionReportEmptyState(query,report.submissions.length);
   const csvHref=facultyReportCsvHref({
     kind:"assignment",assessmentId:report.assignment.id,
     deliveryId:report.assignment.deliveryId,filter:query.filter,
@@ -93,8 +94,8 @@ export default async function FacultyAssignmentSubmissionsPage({
         Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
       </Link>
     </div>
-    {data.items.length===0?<EmptyState title="No matching submissions"
-      description="No persisted submissions match this grading/timing filter. Missing responses have no grade and appear only in the full Section report." />
+    {data.items.length===0?<EmptyState title={empty.title}
+      description={empty.description} />
       :<ol className="grid gap-3">
         {data.items.map(row=>{
           const late=report.assignment.dueAt!==null&&
