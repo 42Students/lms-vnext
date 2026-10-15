@@ -101,6 +101,10 @@ export default async function RecruiterRequestDrivePage({
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
       View previously sent discussion proposals
     </Link>
+    <Link href={"/hr/drives/recorded-outside?collegeId="+encodeURIComponent(collegeId)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Record an outside-platform drive
+    </Link>
     <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
       storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
       collegeId={collegeId} sourceJobId={fromJob?.job.id??null} />
