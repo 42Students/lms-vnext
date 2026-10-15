@@ -5,6 +5,7 @@ export const facultyResponseFollowUpQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   deliveryId:z.string().uuid().optional(),
+  sort:z.enum(["RECENT_DUE","OLDEST_DUE","TITLE"]).default("RECENT_DUE"),
 }).strict();
 export type FacultyResponseFollowUpQuery = z.infer<typeof facultyResponseFollowUpQuerySchema>;
 
@@ -21,7 +22,7 @@ export type FacultyResponseCandidate = {
 
 export function selectPastDueAssessments<T extends FacultyResponseCandidate>(
   candidates: readonly T[],
-  query: Pick<FacultyResponseFollowUpQuery, "kind" | "search"> & Partial<Pick<FacultyResponseFollowUpQuery,"deliveryId">>,
+  query: Pick<FacultyResponseFollowUpQuery, "kind" | "search"> & Partial<Pick<FacultyResponseFollowUpQuery,"deliveryId"|"sort">>,
   now: Date,
 ): T[] {
   const term = query.search.toLowerCase();
@@ -33,7 +34,9 @@ export function selectPastDueAssessments<T extends FacultyResponseCandidate>(
     (!term || [row.title, row.courseName, row.sectionName].some(value =>
       value.toLowerCase().includes(term))),
   ).sort((a,b) =>
-    b.dueAt!.getTime() - a.dueAt!.getTime() ||
+    (query.sort==="TITLE"?a.title.localeCompare(b.title):
+     query.sort==="OLDEST_DUE"?a.dueAt!.getTime()-b.dueAt!.getTime():
+     b.dueAt!.getTime()-a.dueAt!.getTime()) ||
     a.kind.localeCompare(b.kind) ||
     a.id.localeCompare(b.id) ||
     a.deliveryId.localeCompare(b.deliveryId),
@@ -58,6 +61,7 @@ export function facultyResponseFollowUpHref(query: FacultyResponseFollowUpQuery)
   if (query.kind !== "ALL") params.set("kind", query.kind);
   if (query.search) params.set("search", query.search);
   if(query.deliveryId)params.set("deliveryId",query.deliveryId);
+  if(query.sort&&query.sort!=="RECENT_DUE")params.set("sort",query.sort);
   if (query.page > 1) params.set("page", String(query.page));
   const suffix = params.toString();
   return "/teacher/response-followups" + (suffix ? "?" + suffix : "");
@@ -71,11 +75,11 @@ export function limitedMissingLearners<T>(
 }
 
 export function parseFacultyFollowUpSearchParams(raw:Record<string,string|string[]|undefined>){
- const allowed=new Set(["kind","search","page","deliveryId"]);
+ const allowed=new Set(["kind","search","page","deliveryId","sort"]);
  if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
   return facultyResponseFollowUpQuerySchema.safeParse({kind:"INVALID"});
  return facultyResponseFollowUpQuerySchema.safeParse({
   kind:raw.kind||undefined,search:raw.search??undefined,page:raw.page||undefined,
-  deliveryId:raw.deliveryId||undefined,
+  deliveryId:raw.deliveryId||undefined,sort:raw.sort||undefined,
  });
 }
