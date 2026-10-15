@@ -43,9 +43,28 @@ export function facultyMetadataDraftIssue(
 /** Validate Faculty-owned text sections against the same Zod document accepted by PATCH. */
 export function facultyProfileTextDraftIssue(
  section:FacultySelfSection,draft:Readonly<Record<string,string>>,
+ previous:Readonly<Record<string,string>>={},
 ):string|null{
  if(!["about","personalDetails","address","socialProfiles"].includes(section))
   return "This profile section cannot be edited as text.";
  const parsed=facultyProfileDocumentSchema.safeParse({[section]:draft});
- return parsed.success?null:(parsed.error.issues[0]?.message??"Review this section.");
+ if(!parsed.success)return parsed.error.issues[0]?.message??"Review this section.";
+ if(section==="socialProfiles")return facultyProfilePublicLinkIssue(previous,draft);
+ return null;
+}
+
+/** New or changed public social links follow the same HTTPS policy as the write service. */
+export function facultyProfilePublicLinkIssue(
+ previous:Readonly<Record<string,string>>,next:Readonly<Record<string,string>>,
+):string|null{
+ for(const [name,value] of Object.entries(next)){
+  if(!value||value===previous[name])continue;
+  try{
+   const url=new URL(value);
+   if(url.protocol!=="https:"||!url.hostname||url.username||url.password||
+    url.hostname==="localhost"||url.hostname.endsWith(".localhost"))
+    return name+" requires an HTTPS URL without credentials or localhost.";
+  }catch{return name+" requires a valid HTTPS URL.";}
+ }
+ return null;
 }

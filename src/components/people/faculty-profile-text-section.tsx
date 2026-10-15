@@ -19,7 +19,7 @@ export function FacultyProfileTextSection({
 }){
  const [draft,setDraft]=useState<Record<string,string>>(initial);
  const changed=fields.some(field=>(draft[field.name]??"")!==(initial[field.name]??""));
- const issue=facultyProfileTextDraftIssue(section,draft);
+ const issue=facultyProfileTextDraftIssue(section,draft,initial);
  useFacultyProfileUnsavedWarning(changed);
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
