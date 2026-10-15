@@ -9,26 +9,25 @@ import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placeme
 import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
 import {getOwnLearnerPlacementAlerts} from "@/modules/placements/learner-placement-alerts-service";
 import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-alerts";
-import {learnerNoticeQuerySchema} from "@/modules/placements/learner-notices-query-model";
+import {readLearnerNoticeFilters} from "@/modules/placements/learner-notices-query-model";
 import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-model";
 import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-recent-model";
 import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerNoticeFilterHref} from "@/modules/placements/learner-notices-navigation-model";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
-import {sortLearnerNotices,learnerNoticeSortSchema} from "@/modules/placements/learner-notices-sort-model";
+import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[] }>;
 }) {
   const query = await searchParams;
-  const filters=learnerNoticeQuerySchema.safeParse(query);
-  const pinnedOnly = filters.success ? filters.data.pinned==="1" : false;
-  const unreadOnly = filters.success ? filters.data.unread==="1" : false;
-  const queryText = filters.success ? filters.data.q ?? "" : "";
-  const recentOnly = filters.success ? filters.data.recent === "1" : false;
-  const sorting=learnerNoticeSortSchema.safeParse(query.sort ?? "pinned");
-  const sortKey=sorting.success?sorting.data:"pinned";
-  const hadInvalidNoticeFilters = !filters.success || !sorting.success;
+  const filters=readLearnerNoticeFilters(query);
+  const pinnedOnly=filters.pinned;
+  const unreadOnly=filters.unread;
+  const queryText=filters.q;
+  const recentOnly=filters.recent;
+  const sortKey=filters.sort;
+  const hadInvalidNoticeFilters=filters.invalid;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) throw new AuthorizationError("placements.read");
   const own = await requireLearnerPlacementAccess(context);
@@ -45,7 +44,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     : [];
   const searchedNotices=searchLearnerNotices(learnerPlacementNoticeView(allNotices,pinnedOnly),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
-  const noticePage = filters.success ? filters.data.page ?? 1 : 1;
+  const noticePage = filters.page;
   const pages = paginateOwnOffers(sortLearnerNotices(notices,sortKey),noticePage,15);
   const noticePageUrl=(page:number)=>"/learn/my-placements/announcements?"+new URLSearchParams({
     ...(pinnedOnly?{pinned:"1"}:{}),...(unreadOnly?{unread:"1"}:{}),
