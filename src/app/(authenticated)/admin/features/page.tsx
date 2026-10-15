@@ -79,6 +79,7 @@ export default async function SuperAdminFeaturesPage({
       module: one(params.module) || undefined,
       storedState: one(params.storedState) || undefined,
       locks: one(params.locks) || undefined,
+      presence: one(params.presence) || undefined,
     });
 
   if (!parsed.success) {
@@ -166,6 +167,11 @@ export default async function SuperAdminFeaturesPage({
           <label className="grid gap-2 text-sm font-semibold text-body">College rule lock
             <select name="locks" defaultValue={result.lockFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-body">College rule presence
+            <select name="presence" defaultValue={result.presenceFilter} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
             </select>
           </label>
           <button
@@ -325,6 +331,7 @@ export default async function SuperAdminFeaturesPage({
                   module: result.moduleFilter ?? undefined,
                   storedState: result.stateFilter,
                   locks: result.lockFilter,
+                  presence: result.presenceFilter,
                   page: result.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -340,6 +347,7 @@ export default async function SuperAdminFeaturesPage({
                   module: result.moduleFilter ?? undefined,
                   storedState: result.stateFilter,
                   locks: result.lockFilter,
+                  presence: result.presenceFilter,
                   page: result.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
