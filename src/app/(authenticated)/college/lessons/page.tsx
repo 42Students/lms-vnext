@@ -35,6 +35,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       contentLifecycle: first(params.contentLifecycle),
       sequenceFrom: first(params.sequenceFrom) || undefined,
       sequenceThrough: first(params.sequenceThrough) || undefined,
+      lessonName: first(params.lessonName) || undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
