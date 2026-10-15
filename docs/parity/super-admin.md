@@ -956,3 +956,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 auditable no-op suppression — PARTIAL:** After college/member authorization and strict expected-state check, identical SET requests or INHERIT of an already-inherited rule return an `unchanged` result without rewriting timestamps or inserting misleading activity events. Actual edits retain the same transactional audit. Pure regression authored; persistence/runtime proof still open.
+
+
+**2026-10-15 chat-6 ancestor-lock transactional recheck — PARTIAL:** SET writes now additionally read the persisted Projects/Electives ancestor scopes under PostgreSQL shared row locks *inside* the membership write transaction and reject a stored ancestor lock before updating. This narrows stale trace decisions and prevents concurrent edits of existing ancestor rows while the transaction commits. Insert-phantom and academic-enrollment races remain open for independent PG certification; tests authored/unexecuted.

@@ -11,3 +11,7 @@ export function isStudentRuleNoop(current:PreviousStudentRule,action:
  return action.action==="INHERIT"?current===null:
   current!==null&&current.enabled===action.enabled&&current.locked===action.locked;
 }
+
+export function hasPersistedAncestorLock(rows:readonly {locked:boolean}[]):boolean{
+ return rows.some(row=>row.locked);
+}
