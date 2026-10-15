@@ -9,6 +9,7 @@ import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import { MembershipSwitcher } from "./membership-switcher";
 import { AdminScopeSwitcher } from "./admin-scope-switcher";
 import { AccountActions } from "./account-actions";
+import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
@@ -59,6 +60,7 @@ export async function AppShell({
 
   return (
     <ToastProvider>
+      <PageTitle superAdmin={superAdmin} />
       <div className="min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--lms-sidebar-border)] bg-surface md:flex">
         <div className="flex min-h-20 items-center border-b border-[var(--lms-sidebar-border)] px-5">
