@@ -309,4 +309,264 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("Academic period status uses persisted college class parents before pagination",async()=>{
+    const persistedPeriod=await pool!.query<{status:string}>("SELECT status FROM academic_periods WHERE id=$1",[ids.period]);
+    const actual=persistedPeriod.rows[0]!.status;const other=actual==="CLOSED"?"ACTIVE":"CLOSED";
+    const [found,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,periodLifecycle:actual}),
+      listCollegeClasses(adminA,{q:key,periodLifecycle:other}),
+      listCollegeClasses(adminB,{q:key,periodLifecycle:actual}),
+    ]);
+    expect(found.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Exact program code is scoped before class pagination",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,programCode:key}),
+      listCollegeClasses(adminA,{q:key,programCode:"NOT-MATCHED"}),
+      listCollegeClasses(adminB,{q:key,programCode:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Exact class name is scoped before class pagination",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,className:key}),
+      listCollegeClasses(adminA,{q:key,className:"NOT-MATCHED"}),
+      listCollegeClasses(adminB,{q:key,className:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Exact cohort name is scoped before class pagination",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,cohortName:key}),
+      listCollegeClasses(adminA,{q:key,cohortName:"NOT-MATCHED"}),
+      listCollegeClasses(adminB,{q:key,cohortName:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Saved section schedule is observed only on persisted own-college classes",async()=>{
+    const [absent,present,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,schedulePresence:"NO_EVENTS"}),
+      listCollegeClasses(adminA,{q:key,schedulePresence:"HAS_EVENTS"}),
+      listCollegeClasses(adminB,{q:key,schedulePresence:"NO_EVENTS"}),
+    ]);
+    expect(absent.items.map(row=>row.id)).toContain(ids.section);
+    expect(present.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Current section Faculty assignments is observed only on persisted own-college classes",async()=>{
+    const [absent,present,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,facultyCoverage:"NO_FACULTY"}),
+      listCollegeClasses(adminA,{q:key,facultyCoverage:"HAS_FACULTY"}),
+      listCollegeClasses(adminB,{q:key,facultyCoverage:"NO_FACULTY"}),
+    ]);
+    expect(absent.items.map(row=>row.id)).toContain(ids.section);
+    expect(present.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Authored section course deliveries is observed only on persisted own-college classes",async()=>{
+    const [absent,present,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,deliveryPresence:"NO_DELIVERIES"}),
+      listCollegeClasses(adminA,{q:key,deliveryPresence:"HAS_DELIVERIES"}),
+      listCollegeClasses(adminB,{q:key,deliveryPresence:"NO_DELIVERIES"}),
+    ]);
+    expect(absent.items.map(row=>row.id)).toContain(ids.section);
+    expect(present.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Period start date on or after filters persisted own-college academic date",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,periodStartsOnOrAfter:"2026-07-01"}),
+      listCollegeClasses(adminA,{q:key,periodStartsOnOrAfter:"2026-07-02"}),
+      listCollegeClasses(adminB,{q:key,periodStartsOnOrAfter:"2026-07-01"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Period end date on or before filters persisted own-college academic date",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+      listCollegeClasses(adminA,{q:key,periodEndsOnOrBefore:"2026-12-30"}),
+      listCollegeClasses(adminB,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("filters classes by the persisted department belonging to their College Admin",async()=>{
+    const department=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const code=department.rows[0]!.code;
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,departmentCode:code}),
+      listCollegeClasses(adminA,{q:key,departmentCode:"NO-MATCHING-DEPARTMENT"}),
+      listCollegeClasses(adminB,{q:key,departmentCode:code}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+  it("Exact elective slot name filters persisted own-college slots and exports",async()=>{
+    
+    const [own,missing,foreign,csvOwn,csvForeign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,slotName:key}),
+      listCollegeElectives(adminA,{q:key,slotName:"NOT-A-SLOT"}),
+      listCollegeElectives(adminB,{q:key,slotName:key}),
+      exportCollegeElectives(adminA,{q:key,slotName:key}),
+      exportCollegeElectives(adminB,{q:key,slotName:key}),
+    ]);
+    expect(own.items.map(row=>row.id)).toContain(ids.elective);
+    expect(missing.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvOwn.csv).toContain(key);
+    expect(csvForeign.csv).not.toContain(key);
+  });
+  it("Exact elective program code filters persisted own-college slots and exports",async()=>{
+    
+    const [own,missing,foreign,csvOwn,csvForeign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,programCode:key}),
+      listCollegeElectives(adminA,{q:key,programCode:"NOT-A-PROGRAM"}),
+      listCollegeElectives(adminB,{q:key,programCode:key}),
+      exportCollegeElectives(adminA,{q:key,programCode:key}),
+      exportCollegeElectives(adminB,{q:key,programCode:key}),
+    ]);
+    expect(own.items.map(row=>row.id)).toContain(ids.elective);
+    expect(missing.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvOwn.csv).toContain(key);
+    expect(csvForeign.csv).not.toContain(key);
+  });
+  it("Elective owning department code filters persisted own-college slots and exports",async()=>{
+    const department=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);const departmentCode=department.rows[0]!.code;
+    const [own,missing,foreign,csvOwn,csvForeign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,departmentCode:departmentCode}),
+      listCollegeElectives(adminA,{q:key,departmentCode:"NOT-A-DEPARTMENT"}),
+      listCollegeElectives(adminB,{q:key,departmentCode:departmentCode}),
+      exportCollegeElectives(adminA,{q:key,departmentCode:departmentCode}),
+      exportCollegeElectives(adminB,{q:key,departmentCode:departmentCode}),
+    ]);
+    expect(own.items.map(row=>row.id)).toContain(ids.elective);
+    expect(missing.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvOwn.csv).toContain(key);
+    expect(csvForeign.csv).not.toContain(key);
+  });
+  it("Minimum required elective choices restricts persisted College elective lists and CSV",async()=>{
+    const [matching,excluded,foreign,csvMatched,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,minimumRequiredPicks:1}),
+      listCollegeElectives(adminA,{q:key,minimumRequiredPicks:2}),
+      listCollegeElectives(adminB,{q:key,minimumRequiredPicks:1}),
+      exportCollegeElectives(adminA,{q:key,minimumRequiredPicks:1}),
+      exportCollegeElectives(adminA,{q:key,minimumRequiredPicks:2}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatched.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
+  it("Maximum allowed elective choices restricts persisted College elective lists and CSV",async()=>{
+    const [matching,excluded,foreign,csvMatched,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,maximumAllowedPicks:2}),
+      listCollegeElectives(adminA,{q:key,maximumAllowedPicks:1}),
+      listCollegeElectives(adminB,{q:key,maximumAllowedPicks:2}),
+      exportCollegeElectives(adminA,{q:key,maximumAllowedPicks:2}),
+      exportCollegeElectives(adminA,{q:key,maximumAllowedPicks:1}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatched.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
+  it("Semester from restricts persisted College elective lists and CSV",async()=>{
+    const [matching,excluded,foreign,csvMatched,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,semesterFrom:1}),
+      listCollegeElectives(adminA,{q:key,semesterFrom:2}),
+      listCollegeElectives(adminB,{q:key,semesterFrom:1}),
+      exportCollegeElectives(adminA,{q:key,semesterFrom:1}),
+      exportCollegeElectives(adminA,{q:key,semesterFrom:2}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatched.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
+  it("Semester through follows persisted same-college slot evidence",async()=>{
+    
+    const [matching,foreign,csvMatch]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,semesterThrough:1}),
+      listCollegeElectives(adminB,{q:key,semesterThrough:1}),
+      exportCollegeElectives(adminA,{q:key,semesterThrough:1}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+  });
+  it("Linked academic-period lifecycle follows persisted same-college slot evidence",async()=>{
+    const found=await pool!.query<{status:"PLANNED"|"ACTIVE"|"CLOSED"}>("SELECT status FROM academic_periods WHERE id=$1",[ids.period]);const actual=found.rows[0]!.status;const other=actual==="CLOSED"?"ACTIVE":"CLOSED";
+    const [matching,excluded,foreign,csvMatch,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodLifecycle:actual}),
+      listCollegeElectives(adminA,{q:key,periodLifecycle:other}),
+      listCollegeElectives(adminB,{q:key,periodLifecycle:actual}),
+      exportCollegeElectives(adminA,{q:key,periodLifecycle:actual}),
+      exportCollegeElectives(adminA,{q:key,periodLifecycle:other}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
+  it("Elective description availability follows persisted same-college slot evidence",async()=>{
+    
+    const [matching,excluded,foreign,csvMatch,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,descriptionPresence:"MISSING"}),
+      listCollegeElectives(adminA,{q:key,descriptionPresence:"RECORDED"}),
+      listCollegeElectives(adminB,{q:key,descriptionPresence:"MISSING"}),
+      exportCollegeElectives(adminA,{q:key,descriptionPresence:"MISSING"}),
+      exportCollegeElectives(adminA,{q:key,descriptionPresence:"RECORDED"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
+  it("Elective linked period starts on or after excludes nonmatching own-college period dates",async()=>{
+    const [matching,excluded,foreign,csvMatch,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodStartsOnOrAfter:"2026-07-01"}),
+      listCollegeElectives(adminA,{q:key,periodStartsOnOrAfter:"2026-07-02"}),
+      listCollegeElectives(adminB,{q:key,periodStartsOnOrAfter:"2026-07-01"}),
+      exportCollegeElectives(adminA,{q:key,periodStartsOnOrAfter:"2026-07-01"}),
+      exportCollegeElectives(adminA,{q:key,periodStartsOnOrAfter:"2026-07-02"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
+  it("Elective linked period ends on or before excludes nonmatching own-college period dates",async()=>{
+    const [matching,excluded,foreign,csvMatch,csvExcluded]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+      listCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-30"}),
+      listCollegeElectives(adminB,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+      exportCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-31"}),
+      exportCollegeElectives(adminA,{q:key,periodEndsOnOrBefore:"2026-12-30"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+    expect(csvMatch.csv).toContain(key);
+    expect(csvExcluded.csv).not.toContain(key);
+  });
 });

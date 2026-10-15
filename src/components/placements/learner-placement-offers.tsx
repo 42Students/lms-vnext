@@ -14,7 +14,9 @@ import {learnerPendingOfferExtensions,type LearnerOfferRequestStatus}
 import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
   from "@/modules/placements/learner-offer-extension-model";
 import { StatusBadge } from "@/components/ui/status-badge";
-import {learnerOffersCsv} from "@/modules/placements/learner-offers-csv-model";
+import {learnerOffersCsv,LEARNER_OFFER_CSV_LIMIT} from "@/modules/placements/learner-offers-csv-model";
+import {learnerOfferCtc} from "@/modules/placements/learner-offer-ctc-model";
+import {learnerOfferDisplayDate} from "@/modules/placements/learner-offer-display-date-model";
 import { useToast } from "@/components/ui/toast";
 
 export type LearnerPlacementOfferItem = {
@@ -57,21 +59,17 @@ function humanize(value: string) {
 }
 
 function formatMoney(value: number | null) {
-  if (value == null) return null;
+  const amount=learnerOfferCtc(value);
+  if (amount===null) return null;
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
-  }).format(value);
+  }).format(amount);
 }
 
 function formatWhen(value: string | null) {
-  if (!value) return null;
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+  return learnerOfferDisplayDate(value);
 }
 
 export function LearnerPlacementOffers({
@@ -234,6 +232,11 @@ export function LearnerPlacementOffers({
         className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
         Export displayed offers CSV
       </button>
+      {sortedOffers.length>LEARNER_OFFER_CSV_LIMIT ? (
+        <p role="status" className="text-xs text-muted-foreground">
+          CSV includes the first {LEARNER_OFFER_CSV_LIMIT} of {sortedOffers.length} offers in this view. Narrow your offer filters to export others.
+        </p>
+      ) : null}
       <div className="grid gap-4">
         {sortedOffers.map((item) => (
           <article
@@ -315,7 +318,7 @@ export function LearnerPlacementOffers({
                 <span className="font-semibold text-foreground">
                   Issued:
                 </span>{" "}
-                {formatWhen(item.issuedAt)}
+                {formatWhen(item.issuedAt) ?? "Date unavailable"}
               </p>
               <p className="m-0">
                 <span className="font-semibold text-foreground">
@@ -342,7 +345,11 @@ export function LearnerPlacementOffers({
                   className="text-primary-text underline">Review pending request</Link>
               </p>
             ) : null}
-            {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
+            {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="INVALID" ? (
+              <p role="alert" className="mt-4 text-sm font-semibold text-error">
+                The saved offer dates cannot be verified. Responding is disabled until your placement cell corrects the record.
+              </p>
+            ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
               <p role="status" className="mt-4 text-sm font-semibold text-error">
                 The recorded response deadline has passed. You cannot respond to this offer.
                 Contact your placement cell for clarification.

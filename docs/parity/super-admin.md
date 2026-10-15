@@ -1027,7 +1027,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 ### 2026-10-15 chat-6 college Feature Controls write workflow — PARTIAL, not accepted
 Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly typed and optimistic SET/INHERIT mutation, a transactional high-importance Activity Log event, ancestor GLOBAL/ORGANIZATION lock checks, no-op suppression, and a human-confirmed editor in the college hierarchy. All three optional modules are supported at COLLEGE scope; student lower-level controls remain independent. Recheck and reviewed receipts do not infer downstream participation gates. Authorized, page-bounded audit history and formula-neutralized CSV are accessible from the hierarchy. Pure tests and an isolated-PostgreSQL success/negative fixture have been **authored but not executed** in this environment. Transactional global/organization insert races, cross-role/tenant DB execution, browser confirmation/responsiveness, export paging/privacy, exact legacy Oracle parity and operational acceptance remain open. Do not mark the matrix or DATABASE tracker DONE.
 
-
 ### 2026-10-15 chat-6: DB10 Super Admin announcements and audit findings — PARTIAL
 
 **Before:** migration 0076 registered `announcements`, `bug_reports`, `bug_report_activities` and related tables; the Super Admin announcements page had single-recipient create/edit/list but no enforced publication-consent step or all/selected-college broadcast. Audit Findings had a read-only DB10 listing and linked the generic tracker detail/status workflow.
