@@ -1,3 +1,5 @@
+import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
+import { matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
 import { compareMentorProjects } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
@@ -73,6 +75,7 @@ export default async function MentorProjectsPage({
       ),
     ]);
 
+  const workCounts = query.work ? await getMentorProjectWorkCounts(context) : null;
   const alerts = new Map<
     string,
     Set<string>
@@ -124,6 +127,7 @@ export default async function MentorProjectsPage({
         row.memberRole === "MENTOR",
     )
     .filter(row => matchesMentorProjectAssignment(query.assignment, row.isPrimaryMentor))
+    .filter(row => matchesMentorProjectWork(query.work, workCounts?.get(row.project.id)))
     .filter((row) => {
       if (!normalizedSearch) {
         return true;
@@ -288,7 +292,7 @@ export default async function MentorProjectsPage({
         emptyTitle={
           query.search ||
           query.status ||
-          query.attention || query.assignment
+          query.attention || query.assignment || query.work
             ? "No mentoring Projects match these filters"
             : "No mentoring Projects"
         }

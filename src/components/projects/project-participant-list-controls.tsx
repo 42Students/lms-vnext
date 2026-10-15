@@ -123,6 +123,16 @@ export function ProjectParticipantListControls({
         </select>
       </label>) : null}
 
+      {mentor ? (
+        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+          Recorded task coverage
+          <select name="work" defaultValue={query.work ?? ""}
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            <option value="">All task coverage</option>
+            <option value="NO_TASKS">No tracked tasks</option>
+          </select>
+        </label>
+      ) : null}
       {learner ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Work attention
