@@ -222,7 +222,7 @@ export const collegeAdminItems: ShellNavItem[] = [
   { label: "Profile verification", href: "/college/verification", shortLabel: "V" },
   { label: "Placements", href: "/college/placements", shortLabel: "P" },
   { label: "Placement cell", href: "/tpo/home", shortLabel: "P" },
-  { label: "Projects", href: "/college/projects/workspaces", shortLabel: "P" },
+  { label: "Projects", href: "/college/projects", shortLabel: "P" },
   { label: "Profile", href: "/college/profile", shortLabel: "P" },
 ];
 
