@@ -10,10 +10,11 @@ import {
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { can } from "@/modules/permissions/policy";
+import {canManageCollegeDirectoryRow} from "@/modules/colleges/admin-directory-access-model";
 import { listColleges } from "@/modules/colleges/service";
 import { listOrganizations } from "@/modules/organizations/service";
 
-type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number];
+type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number] & {canManage:boolean};
 
 const columns: DataTableColumn<CollegeRow>[] = [
   {
@@ -62,13 +63,10 @@ const columns: DataTableColumn<CollegeRow>[] = [
         >
           Branding
         </Link>
-        <CollegeEditDialog
-          college={college}
-        />
-        <CollegeArchiveButton
-          collegeId={college.id}
-          name={college.name}
-        />
+        {college.canManage ? <>
+          <CollegeEditDialog college={college} />
+          <CollegeArchiveButton collegeId={college.id} name={college.name} />
+        </> : null}
       </div>
     ),
   },
@@ -80,6 +78,9 @@ export default async function CollegesPage() {
     listColleges(context),
     listOrganizations(context),
   ]);
+  const rows:CollegeRow[] = colleges.map(college=>({
+    ...college,canManage:canManageCollegeDirectoryRow(context,college),
+  }));
   const creatableOrganizations = organizations.filter(
     (organization) =>
       can(context, "college.manage", {
@@ -113,7 +114,7 @@ export default async function CollegesPage() {
         Search tenant directory →
       </Link>
       <div className="grid min-w-0 gap-3 lg:hidden" aria-label="College onboarding cards">
-        {colleges.map(college=>(
+        {rows.map(college=>(
           <article key={college.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
             <h2 className="break-words text-base font-semibold text-foreground">{college.name}</h2>
             <p className="mt-1 break-words text-xs text-muted-foreground">{college.code}</p>
@@ -123,14 +124,16 @@ export default async function CollegesPage() {
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Tenant setup</Link>
               <Link href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Readiness</Link>
-              <CollegeEditDialog college={college}/>
-              <CollegeArchiveButton collegeId={college.id} name={college.name}/>
+              {college.canManage ? <>
+                <CollegeEditDialog college={college}/>
+                <CollegeArchiveButton collegeId={college.id} name={college.name}/>
+              </> : null}
             </div>
           </article>
         ))}
       </div>
       <div className="hidden min-w-0 lg:block">
-        <DataTable columns={columns} rows={colleges} getRowKey={(college)=>college.id}/>
+        <DataTable columns={columns} rows={rows} getRowKey={(college)=>college.id}/>
       </div>
     </div>
   );
