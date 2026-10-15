@@ -1,4 +1,5 @@
 "use client";
+import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ export default function LearnerAssessmentsError({
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Try again</Button>
         <Link href="/learn/courses" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
-          Back to courses
+          {LEARNER_BACK_TO_COURSES}
         </Link>
       </div>
     </div>

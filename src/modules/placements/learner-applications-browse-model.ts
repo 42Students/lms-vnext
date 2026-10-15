@@ -9,7 +9,8 @@ export type LearnerApplicationBrowseItem = {
     status: string;
     decidedAt: Date | null;
   };
-  results: readonly { appliedAt: Date | null }[];
+  offerStatus?: string | null;
+  results: readonly { appliedAt: Date | null; outcome?: string | null }[];
 };
 
 export type LearnerApplicationBrowseFilters = {
@@ -27,12 +28,20 @@ export const DEFAULT_LEARNER_APPLICATION_FILTERS: LearnerApplicationBrowseFilter
 
 export function learnerApplicationStage(item: LearnerApplicationBrowseItem): string {
   if (item.withdrawnAt || item.applicationStatus === "WITHDRAWN") return "WITHDRAWN";
+  if (item.offerStatus === "ACCEPTED") return "HIRED";
+  if (item.offerStatus === "ISSUED") return "OFFERED";
+  const applied = item.results.filter((row) => row.appliedAt && row.outcome)
+    .sort((a,b) => b.appliedAt!.getTime() - a.appliedAt!.getTime());
+  const latest = applied[0]?.outcome;
+  if (latest === "FAIL" || latest === "ABSENT") return "REJECTED";
+  if (latest === "HOLD") return "WAITLISTED";
   return item.screening.status;
 }
 
 export function learnerApplicationIsComplete(item: LearnerApplicationBrowseItem) {
   return learnerApplicationStage(item) === "WITHDRAWN" ||
-    learnerApplicationStage(item) === "REJECTED";
+    learnerApplicationStage(item) === "REJECTED" ||
+    learnerApplicationStage(item) === "HIRED";
 }
 
 /** Current saved application/screening statuses, not inferred employer hiring outcomes. */

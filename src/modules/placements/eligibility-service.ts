@@ -159,8 +159,21 @@ export type PlacementEligibilityResult = {
   } | null;
 };
 
-function scaleHundredths(value: number | null) {
-  return value === null ? null : Math.round(value * 100);
+/** D4: decimal half-up scaling without binary floating-point multiplication. */
+export function scaleHundredths(value: number | null): number | null {
+  if (value === null) return null;
+  if (!Number.isFinite(value) || value < 0) throw new RangeError("Invalid percentage");
+  const decimal = String(value);
+  const parts = /^(\d+)(?:\.(\d+))?$/.exec(decimal);
+  if (!parts) throw new RangeError("Unsupported percentage precision");
+  const whole = BigInt(parts[1]!);
+  const digits = (parts[2] ?? "").padEnd(3, "0");
+  const hundredths = whole * 100n + BigInt(digits.slice(0, 2)) +
+    (digits.charCodeAt(2) >= 53 ? 1n : 0n);
+  if (hundredths > BigInt(Number.MAX_SAFE_INTEGER)) {
+    throw new RangeError("Percentage out of range");
+  }
+  return Number(hundredths);
 }
 
 function unscaleHundredths(value: number | null) {
@@ -851,6 +864,13 @@ export function isPlacementJobTargetSection(
     activeSectionIds.some((id) => allowedSectionIds.includes(id));
 }
 
+/** D16: ambiguous active enrollments are never authorized by row order. */
+export function hasAmbiguousActivePlacementEnrollment(
+  enrollments: readonly { cohortId: string; programId: string }[],
+): boolean {
+  return enrollments.length > 1;
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
@@ -879,7 +899,7 @@ export async function evaluatePlacementEligibility(
     membershipId,
     db,
   );
-  const [[override], [policy], [evidence], [enrollment]] =
+  const [[override], [policy], [evidence], enrollments] =
     await Promise.all([
       db
         .select()
@@ -935,8 +955,23 @@ export async function evaluatePlacementEligibility(
             ),
           ),
         )
-        .limit(1),
+        .limit(2),
     ]);
+
+  // D16: two active enrollments are ambiguous. Never arbitrarily choose the
+  // first one or allow an INCLUDE override to authorize the wrong cohort.
+  if (hasAmbiguousActivePlacementEnrollment(enrollments)) {
+    return {
+      status: "INELIGIBLE",
+      checks: [{
+        criterion: "Cohort", status: "FAIL", actual: null,
+        required: "Eligible cohort",
+        detail: "Active academic cohort not found",
+      }],
+      override: null,
+    };
+  }
+  const [enrollment] = enrollments;
 
   if (policy && enrollment && !isPlacementJobTargetCohort(policy, enrollment)) {
     // Reuse the existing legacy-facing Program/Cohort check vocabulary.

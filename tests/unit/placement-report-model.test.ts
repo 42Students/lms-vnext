@@ -196,7 +196,7 @@ describe("placement report aggregations", () => {
       rejected: 1,
       offers: 1,
       acceptedOffers: 1,
-      placed: 1,
+      placed: 0,
     });
   });
 
@@ -272,5 +272,33 @@ describe("placement report aggregations", () => {
         [["=UNTRUSTED()", 2]],
       ),
     ).toBe('"Company","Offers"\r\n"\'=UNTRUSTED()","2"');
+  });
+});
+
+
+describe("P-S2-05 accepted internships are not full-time placements", () => {
+  it("keeps internship accepted in funnel without marking internship-only learners placed", () => {
+    const onlyIntern = summarizePlacementReports({
+      ...fixtures,
+      offers: fixtures.offers.filter((offer) => offer.jobId === "drive-b"),
+    });
+    expect(onlyIntern.metrics.acceptedOffers).toBe(1);
+    expect(onlyIntern.metrics.studentsPlaced).toBe(0);
+    expect(onlyIntern.byDrive.find((drive) => drive.jobId === "drive-b")?.placed).toBe(0);
+    expect(onlyIntern.byCompany.find((company) => company.companyId === "company-b")?.placed).toBe(0);
+  });
+});
+
+
+describe("P-S2-08 persisted college counts-as-placed rule", () => {
+  it("counts released full-time offers at OFFER_RELEASED but not in acceptance-only mode", () => {
+    const released = {...fixtures.offers[3]!,status:"ISSUED",kind:"OFFER"};
+    const facts = {...fixtures,offers:[released]};
+    expect(summarizePlacementReports({...facts,countsAsPlacedAt:"OFFER_RELEASED"}).metrics.studentsPlaced).toBe(1);
+    expect(summarizePlacementReports({...facts,countsAsPlacedAt:"OFFER_ACCEPTED"}).metrics.studentsPlaced).toBe(0);
+  });
+  it("never counts internships as placements even with a released offer", () => {
+    const facts = {...fixtures,offers:[{...fixtures.offers[2]!,status:"ISSUED"}],countsAsPlacedAt:"OFFER_RELEASED" as const};
+    expect(summarizePlacementReports(facts).metrics.studentsPlaced).toBe(0);
   });
 });

@@ -5,7 +5,7 @@
  * - applications: distinct currently submitted application IDs
  * - offers: distinct issued offer IDs, including subsequently withdrawn offers
  * - accepted offers: offers whose CURRENT status is ACCEPTED
- * - placed learners: distinct learners holding an accepted offer
+ * - placed learners: distinct learners with accepted FULL_TIME offers
  * - packages: best accepted FULL_TIME annual CTC per learner
  *
  * Historical status transitions are not inferred from current status.
@@ -36,6 +36,7 @@ export type PlacementReportOffer = {
   status: string;
   annualCtcInr: number | null;
   joiningStatus: string | null;
+  kind?: string;
 };
 
 export type PlacementReportRegistration = {
@@ -49,6 +50,8 @@ export type PlacementReportBranch = {
 };
 
 export type PlacementReportFacts = {
+  /** Source-of-truth college rule; absence preserves acceptance-only for pure callers. */
+  countsAsPlacedAt?: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
   jobs: readonly PlacementReportJob[];
   applications: readonly PlacementReportApplication[];
   offers: readonly PlacementReportOffer[];
@@ -198,6 +201,24 @@ function bestAcceptedFullTimePackages(
   return [...bestByLearner.values()];
 }
 
+/** P-S2-08: SELECTED requires separate selected-outcome evidence. Never
+ * infer selection from mere screening/shortlisting; missing signal fails closed. */
+export function countsAsPlacedByCollegeRule(input: {
+  employmentType: string;
+  offerStatus: string;
+  offerKind?: string;
+  countsAsPlacedAt: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
+  selectedOutcome?: boolean;
+}): boolean {
+  if (input.employmentType !== "FULL_TIME") return false;
+  if (input.countsAsPlacedAt === "SELECTED") return input.selectedOutcome === true;
+  if ((input.offerKind ?? "OFFER") !== "OFFER") return false;
+  if (input.countsAsPlacedAt === "OFFER_RELEASED") {
+    return input.offerStatus === "ISSUED" || input.offerStatus === "ACCEPTED";
+  }
+  return input.offerStatus === "ACCEPTED";
+}
+
 export function summarizePlacementReports(
   input: PlacementReportFacts,
 ): PlacementReportSummary {
@@ -252,9 +273,14 @@ export function summarizePlacementReports(
     jobsById,
   );
 
-  const studentsPlaced = distinct(
-    accepted.map((offer) => offer.membershipId),
-  );
+  const countsAt = input.countsAsPlacedAt ?? "OFFER_ACCEPTED";
+  const offerCounts = (offer: PlacementReportOffer) => countsAsPlacedByCollegeRule({
+    employmentType: jobsById.get(offer.jobId)?.employmentType ?? "",
+    offerStatus: offer.status,
+    offerKind: offer.kind,
+    countsAsPlacedAt: countsAt,
+  });
+  const studentsPlaced = distinct(offers.filter(offerCounts).map((offer) => offer.membershipId));
 
   const applicants = distinct(
     applications.map((application) => application.membershipId),
@@ -279,7 +305,9 @@ export function summarizePlacementReports(
     withdrawnOffers: offers.filter(
       (offer) => offer.status === "WITHDRAWN",
     ).length,
-    studentsAccepted: studentsPlaced.length,
+    studentsAccepted: distinct(accepted.filter((offer) =>
+      jobsById.get(offer.jobId)?.employmentType === "FULL_TIME",
+    ).map((offer) => offer.membershipId)).length,
     studentsPlaced: studentsPlaced.length,
     joined: accepted.filter(
       (offer) => offer.joiningStatus === "JOINED",
@@ -415,7 +443,7 @@ export function summarizePlacementReports(
       ).length,
       placed: distinct(
         jobOffers
-          .filter((offer) => offer.status === "ACCEPTED")
+          .filter(offerCounts)
           .map((offer) => offer.membershipId),
       ).length,
     };
@@ -463,7 +491,7 @@ export function summarizePlacementReports(
         offers: companyOffers.length,
         acceptedOffers: companyAccepted.length,
         placed: distinct(
-          companyAccepted.map((offer) => offer.membershipId),
+          companyOffers.filter(offerCounts).map((offer) => offer.membershipId),
         ).length,
         averagePackageInr: roundAverage(companyPackages),
         highestPackageInr:
@@ -525,6 +553,7 @@ export type PlacementReportDetailedOffer = {
   companyName: string;
   employmentType: string;
   status: string;
+  kind?: string;
   annualCtcInr: number | null;
   expiresAt: string | null;
   joiningStatus: string | null;
@@ -673,6 +702,7 @@ function countJoining(
 export function summarizePlacementReportDetails(input: {
   registeredLearners: readonly PlacementReportPoolLearner[];
   offers: readonly PlacementReportDetailedOffer[];
+  countsAsPlacedAt?: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
   asOf: string;
 }): PlacementReportDetails {
   const asOfMs = Date.parse(input.asOf);
@@ -698,7 +728,12 @@ export function summarizePlacementReportDetails(input: {
 
   const placedMemberships = new Set(
     offers
-      .filter((offer) => offer.status === "ACCEPTED")
+      .filter((offer) => countsAsPlacedByCollegeRule({
+        employmentType: offer.employmentType,
+        offerStatus: offer.status,
+        offerKind: offer.kind,
+        countsAsPlacedAt: input.countsAsPlacedAt ?? "OFFER_ACCEPTED",
+      }))
       .map((offer) => offer.membershipId),
   );
 

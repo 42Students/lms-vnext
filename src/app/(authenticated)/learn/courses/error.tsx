@@ -1,4 +1,5 @@
 "use client";
+import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -23,7 +24,7 @@ export default function LearnerCoursesError({
           href="/learn/courses"
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
         >
-          Back to courses
+          {LEARNER_BACK_TO_COURSES}
         </Link>
       </div>
     </div>

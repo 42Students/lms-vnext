@@ -1,6 +1,8 @@
 import {
+  and,
   desc,
   eq,
+  inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -10,6 +12,7 @@ import {
   placementCompanies,
   placementJobRoleOptions,
   placementJobs,
+  placementOffers,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -35,7 +38,7 @@ export async function getLearnerPlacementJourney(
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
 
-  const [applications, results] =
+  const [applications, results, offers] =
     await Promise.all([
       getDb()
         .select({
@@ -101,6 +104,20 @@ export async function getLearnerPlacementJourney(
           ),
         ),
       listOwnAppliedPlacementResults(context),
+      getDb().select({
+        applicationId: placementApplications.id,
+        status: placementOffers.status,
+      }).from(placementOffers)
+        .innerJoin(placementApplications,
+          eq(placementApplications.id, placementOffers.applicationId))
+        .innerJoin(placementJobs,
+          eq(placementJobs.id, placementApplications.jobId))
+        .where(and(
+          eq(placementApplications.membershipId, membership.id),
+          eq(placementJobs.collegeId, membership.collegeId),
+          eq(placementOffers.kind, "OFFER"),
+          inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
+        )),
     ]);
 
   const resultsByApplication = new Map<
@@ -119,6 +136,14 @@ export async function getLearnerPlacementJourney(
     );
   }
 
+  const offerStatusByApplication = new Map<string,string>();
+  for (const offer of offers) {
+    if (offer.status === "ACCEPTED" ||
+        !offerStatusByApplication.has(offer.applicationId)) {
+      offerStatusByApplication.set(offer.applicationId, offer.status);
+    }
+  }
+
   return applications.map((row) => {
     const terminal =
       row.screening.status ===
@@ -129,6 +154,7 @@ export async function getLearnerPlacementJourney(
       applicationId: row.application.id,
       applicationStatus:
         row.application.status,
+      offerStatus: offerStatusByApplication.get(row.application.id) ?? null,
       channel: row.application.channel,
       submittedAt:
         row.application.submittedAt,

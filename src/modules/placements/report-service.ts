@@ -17,6 +17,7 @@ import {
   placementCompanies,
   placementCompanyRelationships,
   placementJobs,
+  placementCollegeRules,
   placementJoiningOutcomes,
   placementOffers,
   placementSeasons,
@@ -84,6 +85,12 @@ export async function getPlacementReportWorkspace(
   );
 
   const db = getDb();
+  const [collegeRules] = await db.select({
+    countsAsPlacedAt: placementCollegeRules.countsAsPlacedAt,
+  }).from(placementCollegeRules)
+    .where(eq(placementCollegeRules.collegeId, college.id)).limit(1);
+  const countsAsPlacedAt = (collegeRules?.countsAsPlacedAt ?? "OFFER_RELEASED") as
+    "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
 
   const seasons = await db
     .select({
@@ -113,6 +120,7 @@ export async function getPlacementReportWorkspace(
   }
 
   const emptyFacts: PlacementReportFacts = {
+    countsAsPlacedAt,
     jobs: [],
     applications: [],
     offers: [],
@@ -263,6 +271,7 @@ export async function getPlacementReportWorkspace(
           jobId: placementApplications.jobId,
           membershipId: placementApplications.membershipId,
           status: placementOffers.status,
+          kind: placementOffers.kind,
           annualCtcInr: placementOffers.annualCtcInr,
           joiningStatus: placementJoiningOutcomes.status,
         })
@@ -372,6 +381,7 @@ export async function getPlacementReportWorkspace(
       jobId: row.jobId,
       membershipId: row.membershipId,
       status: row.status,
+      kind: row.kind,
       annualCtcInr: row.annualCtcInr,
       joiningStatus: row.joiningStatus,
     }));
@@ -418,6 +428,7 @@ export async function getPlacementReportWorkspace(
   }));
 
   const report = summarizePlacementReports({
+    countsAsPlacedAt,
     jobs,
     applications,
     offers,
@@ -482,6 +493,12 @@ export async function getPlacementReportDetails(
     throw new AuthorizationError("placements.manage");
   }
   await requirePlacementManageScope(context, query.collegeId);
+  const [collegeRules] = await getDb().select({
+    countsAsPlacedAt: placementCollegeRules.countsAsPlacedAt,
+  }).from(placementCollegeRules)
+    .where(eq(placementCollegeRules.collegeId, query.collegeId)).limit(1);
+  const countsAsPlacedAt = (collegeRules?.countsAsPlacedAt ?? "OFFER_RELEASED") as
+    "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
 
   if (!workspace.selectedSeasonId) {
     return {
@@ -489,6 +506,7 @@ export async function getPlacementReportDetails(
       details: summarizePlacementReportDetails({
         registeredLearners: [],
         offers: [],
+        countsAsPlacedAt,
         asOf: new Date().toISOString(),
       }),
       detailScopeNote:
@@ -576,6 +594,7 @@ export async function getPlacementReportDetails(
         companyName: placementCompanies.name,
         employmentType: placementJobs.employmentType,
         status: placementOffers.status,
+        kind: placementOffers.kind,
         annualCtcInr: placementOffers.annualCtcInr,
         expiresAt: placementOffers.expiresAt,
         joiningStatus: placementJoiningOutcomes.status,
@@ -684,6 +703,7 @@ export async function getPlacementReportDetails(
       companyName: row.companyName,
       employmentType: row.employmentType,
       status: row.status,
+      kind: row.kind,
       annualCtcInr: row.annualCtcInr,
       expiresAt: row.expiresAt?.toISOString() ?? null,
       joiningStatus: row.joiningStatus,
@@ -695,13 +715,14 @@ export async function getPlacementReportDetails(
     details: summarizePlacementReportDetails({
       registeredLearners,
       offers,
+      countsAsPlacedAt,
       asOf: new Date().toISOString(),
     }),
     detailScopeNote:
       "The unplaced pool uses current batch registration choices, not a " +
       "historical season snapshot. A learner is unplaced here when no " +
-      "currently ACCEPTED offer exists in the selected season and drive " +
-      "scope; an accepted offer in another season or drive may still exist. " +
+      "qualifying full-time offer reaches the college's placed-count stage " +
+      "in the selected season and drive scope; other offers may exist. " +
       "Branches use current program enrollment. Expired outstanding offers " +
       "are calculated from the stored expiry timestamp as of report load. " +
       "Joining counts use current accepted offers and recorded joining " +

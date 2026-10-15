@@ -1,3 +1,4 @@
+import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { learnerCourseTabPath } from "@/modules/courses/learner-course-tab-route-model";
@@ -156,7 +157,7 @@ export default async function LearnerCourseTabPage({
               href="/learn/courses"
               className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
             >
-              Back to courses
+              {LEARNER_BACK_TO_COURSES}
             </Link>
             <Link
               href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
