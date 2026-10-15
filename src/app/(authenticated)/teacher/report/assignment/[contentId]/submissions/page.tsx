@@ -5,11 +5,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import {
-  facultySubmissionListHref,facultySubmissionListPage,
+  facultySubmissionListHref,facultySubmissionListPage,facultySortSubmissionReportRows,
   facultySubmissionReportPageQuerySchema,facultySubmissionReportSearchSchema,selectFacultyAssignmentSubmissions,
 } from "@/modules/courses/faculty-assignment-submissions-model";
 
-type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[]};
+type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[];order?:string|string[]};
 
 export default async function FacultyAssignmentSubmissionsPage({
   params,searchParams,
@@ -31,7 +31,7 @@ export default async function FacultyAssignmentSubmissionsPage({
   const filtered=selectFacultyAssignmentSubmissions(
     report.submissions,query.filter,report.assignment.dueAt,
   );
-  const data=facultySubmissionListPage(filtered,query.page);
+  const data=facultySubmissionListPage(facultySortSubmissionReportRows(filtered,query.order),query.page);
   const csvHref=facultyReportCsvHref({
     kind:"assignment",assessmentId:report.assignment.id,
     deliveryId:report.assignment.deliveryId,filter:query.filter,
@@ -54,6 +54,14 @@ export default async function FacultyAssignmentSubmissionsPage({
             : "rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-body"}>
           {filter==="ALL"?"All":filter==="GRADED"?"Graded":filter==="UNGRADED"?"Ungraded":"Late"}
         </Link>)}
+    </nav>
+    <nav aria-label="Submission date order" className="flex flex-wrap gap-2">
+      <Link href={facultySubmissionListHref({...query,order:"NEWEST",page:1})}
+        aria-current={query.order==="NEWEST"?"page":undefined}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Newest first</Link>
+      <Link href={facultySubmissionListHref({...query,order:"OLDEST",page:1})}
+        aria-current={query.order==="OLDEST"?"page":undefined}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Oldest first</Link>
     </nav>
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">

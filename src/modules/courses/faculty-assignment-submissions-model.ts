@@ -11,6 +11,7 @@ export const facultySubmissionListQuerySchema=z.object({
 }).strict();
 /** Standalone report selectors are strict; the review drawer keeps its API contract. */
 export const facultySubmissionReportPageQuerySchema=facultySubmissionListQuerySchema.extend({
+ order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
  page:z.union([z.number().int(),z.string().regex(/^[1-9]\d{0,3}$|^10000$/).transform(Number)])
    .pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
@@ -35,10 +36,11 @@ export function facultySubmissionListPage<T>(rows:readonly T[],requested:number)
   return {total,pageSize,totalPages,page,items:rows.slice((page-1)*pageSize,page*pageSize)};
 }
 
-export function facultySubmissionListHref(query:FacultySubmissionListQuery) {
+export function facultySubmissionListHref(query:FacultySubmissionListQuery & {order?:"NEWEST"|"OLDEST"}) {
   const params=new URLSearchParams({deliveryId:query.deliveryId});
   if(query.filter!=="ALL")params.set("filter",query.filter);
   if(query.page>1)params.set("page",String(query.page));
+  if(query.order==="OLDEST")params.set("order","OLDEST");
   return "/teacher/report/assignment/"+encodeURIComponent(query.assignmentId)+
     "/submissions?"+params.toString();
 }
@@ -62,4 +64,15 @@ export function facultySubmissionReviewApiHref(raw: unknown) {
   if (query.filter !== "ALL") params.set("filter",query.filter);
   if (query.page > 1) params.set("page",String(query.page));
   return "/api/courses/faculty/assignments/"+encodeURIComponent(query.deliveryId)+"/submissions?"+params.toString();
+}
+
+/** Presentation ordering applies after the authorized review filter. */
+export function facultySortSubmissionReportRows<T extends {id:string;submittedAt:Date}>(
+ rows:readonly T[],order:"NEWEST"|"OLDEST",
+):T[]{
+ return [...rows].sort((a,b)=>{
+   const x=a.submittedAt.getTime(),y=b.submittedAt.getTime();
+   const diff=Number.isFinite(x)&&Number.isFinite(y)?(order==="NEWEST"?y-x:x-y):0;
+   return diff||a.id.localeCompare(b.id);
+ });
 }
