@@ -3,6 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
 import {facultyLiveEditorCommand} from "@/modules/courses/faculty-live-editor-command";
+import {facultyLiveSaveFeedback} from "@/modules/courses/faculty-live-save-feedback";
 import {facultyLiveEditorDraft} from "@/modules/courses/faculty-live-editor-model";
 
 type Choice={id:string;title:string;deliveryId:string};
@@ -59,7 +60,10 @@ export function FacultyLiveClassEditor({
         "/api/courses/faculty/live-classes/"+encodeURIComponent(deliveryId)+"/command",
         {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)},
       );
-      if(!result.ok)throw new Error("The live-class change was not saved. Verify Section ownership, times and current version.");
+      if(!result.ok){
+        const body=await result.json().catch(()=>({error:"UNKNOWN"})) as {error?:string};
+        throw new Error(facultyLiveSaveFeedback(body.error));
+      }
       router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Unable to save live class.");}
     finally{setPending(false);}
