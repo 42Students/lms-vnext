@@ -14,8 +14,8 @@ export default async function SuperAdminProgramsPage() {
       <div className="space-y-6">
         <PageHeader eyebrow="Super Admin" title="Programs"
           description="Choose a college scope before managing programs." />
-        <EmptyState title="Select a college scope"
-          description="Use the Super Admin scope selector to choose a college." />
+        <EmptyState title="Select a college to continue"
+          description="Choose a college in the header above to see its programs." />
       </div>
     );
   }
