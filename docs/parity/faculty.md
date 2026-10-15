@@ -1511,3 +1511,35 @@ This chat-4 batch starts from current `main` and implements the next Faculty Sel
 The current main/lane comparison and safe integration targets are recorded in the final reconciliation section of `docs/planning/account-surface-parity.md`; it is a source snapshot, not another tracker or runtime acceptance. Existing checkbox evidence is preserved. No required page/family becomes closed from this review.
 
 Earlier follow-up notes saying the visibility migration/admin writer are absent are historical: main now contains registered migration 0061 and `college-content-visibility-service.ts`, its route, confirmed College Admin control and exports. Do not duplicate them. Executed acceptance of the complete producer-to-learner workflow remains required. Main now merged the first staged self-profile editors/API/tests and storage proposal via af54f5b. Chat-4's sampled head `1ecc15ef41f963003383eb47494c78cde199f3c1` still has later repeatable editors/row factories and follow-up section tests. Reconcile the integrated storage proposal with DB-007 before promotion; do not rebuild the integrated first sections. Full profile acceptance remains open.
+
+## 2026-10-15 Faculty profile repeatable sections — PARTIAL, orchestrator gate outstanding
+
+The next Faculty backlog round added independent section-authoring workflows to the migration-aware `/teacher/profile/details` editor. Every item has an individual pushed commit. No master parity row or legacy-delta section was edited.
+
+- **Shared responsive repeatable editor:** explicit add/edit/remove draft controls, maximum record limits, required-field checks, per-record stable UUIDs and Save confirmation. Deletions are only persisted after Save; complete document Zod revalidation and optimistic versioning remain server authoritative.
+- **Languages:** language name and proficiency, up to 30 entries, including duplicate-ID denial.
+- **Education:** institution, education/degree/program/specialization, year range, in-progress status, grade, qualifying exam, rank and score. Switching to currently pursuing clears and disables the completion year. Preserves existing approved certificate receipt IDs without uploading a file.
+- **Certifications:** name, authority, issue/validity dates, public verification URL and notes. Date chronology checked by the existing Zod section.
+- **Experience:** organization, designation, dates, category, location, paid flag, salary and notes, with date chronology validation. Existing receipt identifiers are preserved unchanged.
+- **Publications:** title, journal, year, DOI, public URL, authors and description; capped at 100.
+- **Awards:** title, issuer, year and description; capped at 100.
+- **Metadata:** editable text attributes only; existing number, boolean and null fields are retained. Secret/identity-name restrictions apply at the UI and server PATCH boundary (cannot be bypassed by hand-written request JSON).
+- **Draft independence:** saving one section updates its revision without remounting forms for other dirty sections. Error and conflict handling retain unsaved edits until the user retries or reloads.
+- **Test coverage authored:** unit tests for all new sections, collection uniqueness, private metadata protection, chronology, cross-section preservation, and a disposable PostgreSQL scenario that updates Languages, Education, Certifications, Experience, Publications and Awards with optimistic versions. Its revoked-role denial uses the latest token, rather than receiving a false pass from a stale token.
+
+**Still PARTIAL / not production-ready:** proposed Faculty private-document columns are not registered through the canonical migration journal; the editor displays an explicit storage unavailable state until deployment. No GitHub CI, real PostgreSQL or authenticated mobile/browser gate was run by this chat. Faculty contact changes, sensitive identification, photo/document uploads and exact legacy Profile completeness remain blocked. Blueprint scheduling/visibility and persisted Quiz shuffle (DB06) are independent PARTIAL surfaces and are not claimed finished.
+
+**Release rule:** no DONE promotion until migration registration, success and negative database tests, and mobile browser acceptance for this exact SHA.
+
+## 2026-10-15 Faculty Blueprint live-class follow-up — PARTIAL (chat-4)
+
+This round used the current Faculty PARTIAL Blueprint row as the next unbuilt work; the existing MISSING rows in section 8 belong to other account lanes. No master matrix status was changed.
+
+- The live-class editor interprets all `datetime-local` fields as **IST**, regardless of browser timezone. Opening a published session preloads its title, sanitized HTTPS meeting link, and start/end instants; switching back to CREATE clears previous-session values.
+- The client validates a complete strict create/edit/cancel command **before** asking for confirmation. Dropdown options identify course + Section, and destructive cancellation explicitly names the selected live class and its course/Section. A successful mutation resets the draft, refreshes the page and shows an accessible success message.
+- Server writes now verify persisted active Faculty status, actual teaching assignment and non-ended delivery **inside the write transaction**, in addition to existing read-time checks. Revocation denies are non-leaking; the PostgreSQL integration test restores the exact seeded role ID after mutation.
+- Transaction advisory locks serialize co-teachers scheduling on the same delivery. The conflict preflight now rejects occupied registered Section schedule events and conflicting instructor events, as well as existing published LIVE_CLASS overlaps. Concurrency across independent scheduling write systems still needs an executed acceptance gate.
+- Edit/cancel actions are restricted to published live content. Stale version tokens return the existing typed `LESSON_CONTENT_STALE_VERSION` error, distinguished in UI from schedule conflict and permission revocation. Audit metadata continues to exclude meeting URLs.
+- Authored tests: fixed-IST conversion, persisted revocation, timetable conflict, published-only mutation policy, edit hydration, strict pre-confirm validation, Section disambiguation, exact cancellation, typed recovery messages, create-form resets and success feedback.
+
+**PARTIAL, not DONE:** no local TypeScript, unit, database, CI or authenticated 375px browser gates were executed in this chat. Exact legacy Blueprint content authoring, recorded multi-instructor/room scheduling edge cases and registered student-visibility end-to-end acceptance are still outstanding. The independently blocked Quiz shuffle and private profile-document migrations were not altered.
