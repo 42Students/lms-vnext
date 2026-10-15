@@ -7,7 +7,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
-import {tpoApplicationUrlError} from "@/modules/placements/tpo-applications-url-guard";
+import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
@@ -15,7 +15,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
  const {jobId}=await params;const query=await searchParams;
- const urlError=tpoApplicationUrlError(query);
+ const urlError=tpoApplicationFilterError(query,jobId);
  if(urlError)return <div className="space-y-4">
   <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
    description="No private application records were loaded."/>
