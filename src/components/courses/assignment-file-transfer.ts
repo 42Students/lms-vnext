@@ -22,7 +22,7 @@ export async function transferLearnerAssignmentFile(
     throw new Error("The upload permission is invalid or expired. Try uploading again.");
   }
   const uploaded = await fetcher(grant.uploadUrl, {
-    method: "PUT", credentials: "omit", signal, headers: grant.requiredHeaders, body: file,
+    method: "PUT", credentials: "omit", redirect: "error", signal, headers: grant.requiredHeaders, body: file,
   });
   if (!uploaded.ok) throw new Error("The file could not be uploaded. Your assignment has not been submitted.");
   return { receiptId: grant.receiptId, originalName: grant.originalName, expiresAt: grant.expiresAt };
