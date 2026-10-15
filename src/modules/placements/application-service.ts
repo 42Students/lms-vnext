@@ -46,6 +46,7 @@ import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
+import { isPlacementLearnerDebarred } from "./debarment-service";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
@@ -558,7 +559,8 @@ export async function applyToPlacementJob(
   // Legacy V188: do not let per-job INCLUDE override the college switch or
   // student/class/batch placement participation decision.
   await requireLearnerPlacementAccess(context);
-  if (!(await getOwnPlacementParticipationAccess(context)).canSelfApply) {
+  if (!(await getOwnPlacementParticipationAccess(context)).canSelfApply ||
+      await isPlacementLearnerDebarred(job.collegeId, membership.id)) {
     throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
   }
 
@@ -686,6 +688,11 @@ export async function applyToPlacementJob(
         eq(placementBatchLifecycles.cohortId, enrollment.cohortId),
       )).for("share").limit(1);
       if (batch?.finishedAt) {
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      }
+      // Debarment creation/lift also locks the college parent FOR UPDATE;
+      // after our share lock it cannot change until this apply commits.
+      if (await isPlacementLearnerDebarred(job.collegeId, membership.id)) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
       // Re-run both the paid/inherited placement gate and the job-specific
