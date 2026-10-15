@@ -76,6 +76,7 @@ export default async function LearnerOffersPage({
   const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
   const focused = resolveLearnerOfferFocus(sorted,requestedPage,query.focus);
   const paginated = paginateOwnOffers(sorted,focused.page,15);
+  const pageClamped=!focused.found && sorted.length>0 && requestedPage>paginated.page;
   const hasActiveFacets = learnerOfferHasActiveFacets({searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry});
   const emptyState = learnerOffersEmptyState(offers.counts.all, Boolean(searchTerm) || dueOnly || kind !== "all" || joiningFilter !== "all" || expiry !== "all");
   const pageUrl=(page:number)=>"/learn/my-placements/offers?"+new URLSearchParams({
@@ -189,6 +190,12 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      {pageClamped ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          The requested offer page no longer exists in your filtered results. Showing page {paginated.page} of {paginated.pages}.
+          <Link href={pageUrl(paginated.page)} className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Use this page link</Link>
+        </p>
+      ) : null}
       {learnerOfferFocusMissing(query.focus,focused.found) ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           The linked offer is not displayed in these results. It may be outside the selected filters or no longer accessible.
