@@ -9,10 +9,11 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {AnnouncementError} from "./errors";
+import {canAccessAnnouncements} from "./actor-status-model";
 import {superAdminCollegeBroadcastSchema,requestedBroadcastCollegeIds} from "./super-admin-college-broadcast-model";
 /** Scoped active-college directory independent of the single-college announcement composer. */
 export async function listSuperAdminBroadcastColleges(context:RequestContext){
- if(!isSuperAdmin(context))throw new AuthorizationError("college.read");
+ if(!isSuperAdmin(context)||!canAccessAnnouncements(context.user.platformStatus))throw new AuthorizationError("college.read");
  requirePermission(context,"admin-scope.select");
  const conditions=[
   eq(colleges.status,"ACTIVE"),
@@ -30,7 +31,7 @@ export async function listSuperAdminBroadcastColleges(context:RequestContext){
 }
 /** Creates one persisted DB10 recipient-scoped notice per college; no external delivery. */
 export async function publishSuperAdminCollegeBroadcast(context:RequestContext,raw:unknown){
- if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
+ if(!isSuperAdmin(context)||!canAccessAnnouncements(context.user.platformStatus))throw new AuthorizationError("college.manage");
  requirePermission(context,"admin-scope.select");
  const input=superAdminCollegeBroadcastSchema.parse(raw);
  const requested=requestedBroadcastCollegeIds(input.collegeIds);
