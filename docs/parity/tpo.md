@@ -2055,3 +2055,37 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / TPO student preparation support (PARTIAL):** A TPO-only 25-row readiness-evidence page takes registered placement-pool learners from the existing college-scoped Students source, offers individual manually copyable neutral follow-ups, separates missing evidence from ineligibility, and links to learner history. No actual assignment, delivery, contact-list access or job-readiness certification is implied.
 
 **Chat-2 / Academic-details import preview (PARTIAL):** Batch Students now validates a bounded, strict CGPA/backlogs CSV locally against the currently scoped 25-learner page without persisting anything. Unmatched IDs are explicitly unverified outside the page, not definitively invalid; full-batch matching, approved academic evidence update writer, file handling and real importer remain missing.
+
+**Chat-2 / Assign preparation planning preview (PARTIAL):** A TPO-only preparation-plan page resolves actual configured readiness-course IDs against the bounded, active same-college course catalog and shows missing/unregistered source states. It is an explicit planning view only; learner assignment/enrollment writes, completion checks and notifications are still absent.
+
+**Chat-2 / batch eligibility import scaffold (PARTIAL):** A college/TPO-scoped GET now exports the currently authorized 25-row membership UUID list in the exact existing import CSV shape with intentionally blank decisions, no learner PII beyond IDs, no mutation, and private/no-store response headers. Operators must review/edit and use the existing confirmed preview/commit API; large-list and legacy wizard parity remain open.
+
+**Chat-2 / eligibility import review export (PARTIAL):** The existing server-confirmed preview can now be copied locally as formula-neutralized CSV outcomes, omitting optimistic version tokens and contact PII; copying never commits an import. Full legacy import undo UX and browser/PG acceptance remain open.
+
+**Chat-2 academic CSV validation hardening:** The preview parser now rejects blank/scientific notation numeric cells rather than coercing blank grades/backlogs to zero, and its typed match function retains the parsed fields used by the client preview. Unit cases authored; executed TypeScript/Vitest/browser results remain open.
+
+**Chat-2 academic CSV parser correction:** Repaired regex-literal escapes so numeric validation recognizes actual decimal digits and decimal separators (not literal backslash sequences); blank/scientific values still reject. This is a source correction, not executed-test certification.
+
+**Chat-2 academic preview typing correction:** The client state now carries complete parsed academic preview rows (CGPA/backlogs + match flag) instead of the erased generic return type. Runtime build and browser acceptance still unexecuted.
+
+**Chat-2 2026-10-15 / Live Drive Day search — PARTIAL:** TPO-only live, already-scoped and capped rounds can be filtered by company/job/round name with a validated 100-character URL term. This does not expand the 20-round sample or expose coordinator-only learner rosters. Runtime/browser verification pending.
+
+**Chat-2 live unrecorded attendance — PARTIAL:** Added separate UNKNOWN focus on actual records, never classifying unknown as a no-show; filters operate on authorized, capped rounds. Integration/browser verification remains open.
+
+**Chat-2 live unresolved attention — PARTIAL:** Added pending-or-unrecorded focus from persisted counts. Explicit absent-only rounds are excluded and unrecorded is not inferred absent; TPO live sample cap persists.
+
+**Chat-2 live unresolved ranking — PARTIAL:** TPO can prioritize scoped live rounds by sum of recorded WAITING and UNKNOWN counts with deterministic ties, without mixing explicit ABSENT/no-show into unresolved; runtime verification pending.
+
+**Chat-2 / Drive Day all-attendance-unrecorded — PARTIAL:** Added a filter for live rounds with at least one roster member and no persisted attendance decisions; empty rounds are excluded. Kept unresolved sort backward-compatible with earlier tests omitting unknown; no fictional ABSENT statuses.
+
+**Chat-2 / Drive Day live attendance KPI strip — PARTIAL:** Aggregates only fetched, college-authorized, max-20 live rounds before search/issue filters; separately shows explicit absent, WAITING and UNKNOWN without implying an all-college denominator.
+
+**Chat-2 / Drive Day scheduled-time awareness — PARTIAL:** Live cards now show calculated elapsed and scheduled remaining minutes using the single server snapshot timestamp, with unknowns left blank and explicit notice that schedule end is not actual completion.
+
+**Chat-2 / Live Drive Day filtered CSV — PARTIAL:** New read-only scoped GET uses the exact authorized TPO live-round reader and validated focus/search/sort query, capped at 20; includes no learner-level PII, neutralizes spreadsheet formulas and labels truncation via response header. Preserves compatibility for older filter tests with unspecified roster totals; PG/browser execution pending.
+
+**Chat-2 / Live round drive navigation — PARTIAL:** Each TPO live round now links to its persisted parent drive via authorized job ID, independently guarded by the existing drive workspace; no mutable job state is inferred.
+
+**Chat-2 / Live round venue — PARTIAL:** TPO live cards now include persisted round venue or an explicit unrecorded label; location and attendance are never inferred. Existing job-scoped permissions remain unchanged.
+
+**Chat-2 / Drive Day evidence-based follow-up label — PARTIAL:** Live cards now prioritize purely observed unrecorded, pending and explicitly absent attendance, distinguish empty rosters, and avoid fabricated contact/delivery states. Manual operator review remains required.
