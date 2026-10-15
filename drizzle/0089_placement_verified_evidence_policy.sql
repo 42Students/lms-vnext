@@ -1,0 +1,1 @@
+ALTER TABLE "placement_job_eligibility_policies" ADD COLUMN "require_verified_evidence" boolean DEFAULT false NOT NULL;
