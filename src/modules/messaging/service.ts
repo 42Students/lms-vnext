@@ -32,9 +32,14 @@ export async function deliverBatch(args: {
   if (args.requests.length > 500) throw new Error("OUTBOUND_BATCH_CAP_EXCEEDED");
   // Validate the entire batch before the first persistence or external send.
   const requests = args.requests.map(raw => outboundSendSchema.parse(raw));
+  const keyedRequests = await Promise.all(requests.map(async request => ({
+    request,recipientKey:await args.recipientKeyFor(request),
+  })));
+  if(keyedRequests.some(item=>!/^[0-9a-f]{64}$/.test(item.recipientKey)))
+    throw new Error("INVALID_RECIPIENT_KEY");
   const records: DeliveryRecord[] = [];
   const seenRecipientPurpose = new Set<string>();
-  for (const request of requests) {
+  for (const {request,recipientKey} of keyedRequests) {
     const policy = await args.policyFor(request);
     const initial = decideDelivery(request, policy);
     // Enforce the independently configured AUTH test allowlist even if a caller
@@ -42,8 +47,6 @@ export async function deliverBatch(args: {
     const decision = canContactRecipientAtRuntime(
       request.channel, request.recipient, args.runtimeEnv ?? process.env,
     ) ? initial : {status:"SUPPRESSED" as const, reason:"nonprod-not-allowlisted" as const};
-    const recipientKey = await args.recipientKeyFor(request);
-    if (!/^[0-9a-f]{64}$/.test(recipientKey)) throw new Error("INVALID_RECIPIENT_KEY");
     // Never dispatch the same keyed recipient twice for the same purpose in one batch.
     // Use only the opaque key, never contact details, in the deduplication set.
     const dedupeKey = opaqueBatchAttemptKey(request.channel,recipientKey,request.purpose,request.templateKey);
