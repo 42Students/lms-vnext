@@ -1,7 +1,7 @@
-import { collegeElectiveQuerySchema } from "./college-structure-directory-model";
+import { collegeElectiveBaseQuerySchema,withCollegeElectiveCreditsCheck } from "./college-structure-directory-model";
 import { buildCollegeDirectoryCsv,exportParams } from "./college-directory-export-model";
 export const ELECTIVES_EXPORT_CAP=1000;
-export const electiveCsvSchema=collegeElectiveQuerySchema.omit({page:true});
+export const electiveCsvSchema=withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema.omit({page:true}));
 export {exportParams};
 export function electiveCsvHref(q:{
  q:string;programId?:string;status:"ALL"|"ACTIVE"|"ARCHIVED";semesterNumber?:number;minimumCredits?:number;maximumCredits?:number;
