@@ -164,7 +164,9 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                       <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
                     </td>
                     <td className="px-4 py-4 text-body">Path: {item.pathStatus}; Lesson: {item.status}</td>
-                    <td className="px-4 py-4 text-body">{item.publishedContentCount} published / {item.contentCount} authored</td>
+                    <td className="px-4 py-4 text-body">{item.publishedContentCount} published / {item.contentCount} authored
+                      <p className="mt-1 text-xs text-muted-foreground">{item.publishedAndVisibleFlagCount} published and flagged visible to students</p>
+                    </td>
                   </tr>
                 ))
                 : data.items.map((item) => (

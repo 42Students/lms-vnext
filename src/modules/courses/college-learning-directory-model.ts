@@ -61,6 +61,7 @@ export type CollegeLessonRecord = {
   periodName: string;
   contentCount: number;
   publishedContentCount: number;
+  publishedAndVisibleFlagCount: number;
 };
 
 export type CollegeCourseProgressRecord = {
