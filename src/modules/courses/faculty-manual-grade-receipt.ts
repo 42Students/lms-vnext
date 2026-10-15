@@ -55,3 +55,10 @@ export function facultyManualGradePublishPrompt(points:number|null,max:number,fe
 export function facultyManualGradeNeedsRefresh(status:number):boolean{
  return status===409;
 }
+
+/** Only verified successful persistence yields a section-specific confirmation. */
+export function facultyManualGradeSuccessMessage(action:"GRADE"|"PUBLISH",version:number):string{
+ return action==="GRADE"
+  ?"Grade saved privately (revision "+version+"). Publication still requires confirmation."
+  :"Grade published to the learner (revision "+version+").";
+}
