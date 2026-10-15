@@ -418,6 +418,10 @@ export default async function HrPlacementJobPage({
             className="mt-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Add, change or remove rounds
           </Link>
+          <Link href={"/recruiter/drives/"+workspace.job.id+"/interview-slots"}
+            className="ml-2 mt-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Interview slots
+          </Link>
           <p className="mt-1 text-sm text-body">
             Stage employer outcomes here. The college placement team retains final apply authority.
           </p>
