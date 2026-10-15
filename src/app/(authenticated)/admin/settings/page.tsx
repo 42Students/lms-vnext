@@ -1,5 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {adminInventoryFilterSchema,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
+import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
 import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
@@ -18,11 +18,11 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     await getCurrentRequestContext();
 
   const raw=await searchParams;
-  const parsed=adminInventoryFilterSchema.safeParse({q:raw.q,section:raw.section});
+  const parsed=parseAdminInventoryQuery(raw);
   const { selectedCollegeName, sections: allSections } =
     await getSuperAdminPlatformSettings(context);
-  if(!parsed.success || Array.isArray(raw.q) || Array.isArray(raw.section)) return <ErrorState title="Invalid setting filter" description="Use a valid section or search query." action={<Link href="/admin/settings">Clear filters</Link>}/>;
-  const sections=filterPlatformInventory(allSections,parsed.data);
+  if(!parsed) return <ErrorState title="Invalid setting filter" description="Use a valid section or search query." action={<Link href="/admin/settings">Clear filters</Link>}/>;
+  const sections=filterPlatformInventory(allSections,parsed);
 
   return (
     <div className="space-y-6">
@@ -56,10 +56,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
       <form className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
-          <input name="q" defaultValue={parsed.data.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+          <input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
         </label>
         <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
-          <select name="section" defaultValue={parsed.data.section} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+          <select name="section" defaultValue={parsed.section} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </select>
         </label>
