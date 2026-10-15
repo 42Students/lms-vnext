@@ -17,6 +17,7 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
  return <main className="min-w-0 space-y-5">
   <h1 className="text-xl font-semibold">Learners needing preparation support</h1>
   <Link href="/tpo/students" className="text-primary-text underline">All students</Link>
+  <Link href="/tpo/students/preparation-plan" className="ml-3 text-primary-text underline">View the college preparation course plan</Link>
   <p className="text-sm text-body">{rows.length} evidence-based candidates on the current 25-row page, from {view.roster.total} matching learner journeys. This is not a verified employability, course-assignment or contact/consent list.</p>
   {!view.definitions.registrationsAvailable?<p role="status" className="rounded border border-border p-4 text-sm">Placement registration records are unavailable; participation evidence may be incomplete.</p>:null}
   {rows.length===0?<p role="status">No preparation-support candidates on this page.</p>:<ul className="space-y-3">{rows.map(row=><li key={row.membershipId} className="rounded-lg border border-border bg-surface p-4">
