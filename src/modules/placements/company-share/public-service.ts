@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,eq,gt,inArray,isNull} from "drizzle-orm";
+import {and,asc,count,eq,gt,ilike,inArray,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {
@@ -10,12 +10,13 @@ import {projectRecruiterVisibleShortlist} from "../tpo-shareable-shortlist-model
 import {companyShareTablesReady} from "./readiness";
 import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "./staged-schema";
 import {companyShareTokenSchema,hashCompanyShareToken} from "./token-model";
+import {publicApplicantSearchSchema,escapeLiteralApplicantSearch} from "./public-filter-model";
 
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 export type PublicCompanyApplicantShare =
  | {kind:"UNAVAILABLE"}
  | {kind:"READY";title:string;rows:ReturnType<typeof projectRecruiterVisibleShortlist>;
-    total:number;page:number;totalPages:number;truncated:boolean};
+    total:number;page:number;totalPages:number;truncated:boolean;search:string};
 
 /**
  * No authenticated user context: the 256-bit opaque token is the sole capability.
@@ -24,11 +25,12 @@ export type PublicCompanyApplicantShare =
  * this response's audited read finishes. Audit failures deny the response.
  */
 export async function getPublicCompanyApplicantShare(
- token:unknown,rawPage:unknown=1,eventKind:"VIEW"|"CSV"="VIEW",
+ token:unknown,rawPage:unknown=1,eventKind:"VIEW"|"CSV"="VIEW",rawSearch:unknown="",
 ):Promise<PublicCompanyApplicantShare>{
  const valid=companyShareTokenSchema.safeParse(token);
  const page=pageSchema.safeParse(rawPage);
- if(!valid.success||!page.success||!await companyShareTablesReady())
+ const search=publicApplicantSearchSchema.safeParse(rawSearch);
+ if(!valid.success||!page.success||!search.success||!await companyShareTablesReady())
   return {kind:"UNAVAILABLE"};
  const now=new Date();
  return getDb().transaction(async tx=>{
@@ -51,6 +53,7 @@ export async function getPublicCompanyApplicantShare(
    eq(collegeMemberships.collegeId,grant.collegeId),
    eq(collegeMemberships.status,"ACTIVE"),
    eq(users.platformStatus,"ACTIVE"),
+   search.data?ilike(users.displayName,"%"+escapeLiteralApplicantSearch(search.data)+"%"):undefined,
   );
   const source=()=>tx.select({
    applicationId:placementApplications.id,displayName:users.displayName,email:users.email,
@@ -77,7 +80,7 @@ export async function getPublicCompanyApplicantShare(
    kind:"READY" as const,title:grant.title,
    rows:projectRecruiterVisibleShortlist(records),
    total,page:isCsv?1:page.data,totalPages:Math.max(1,Math.ceil(total/25)),
-   truncated:isCsv&&total>500,
+   truncated:isCsv&&total>500,search:search.data,
   };
  });
 }
