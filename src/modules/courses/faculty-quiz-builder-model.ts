@@ -264,3 +264,9 @@ export function facultyQuizCopyTitle(original:string):string{
  const prefix="Copy of ";
  return prefix+original.trim().slice(0,255-prefix.length);
 }
+
+/** Persist the visible drag/button ordering, regardless of cloned draft indexes. */
+export function facultyQuizNormalizeQuestions<T extends {sequence:number;options:{sequence:number}[]}>(items:readonly T[]):T[]{
+ return items.map((question,i)=>({...question,sequence:i,
+  options:question.options.map((option,j)=>({...option,sequence:j}))}));
+}
