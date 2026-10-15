@@ -14,6 +14,7 @@ import {
   collegeDirectorySearchHint,
   parseCollegeRoleDirectorySearchParams,
   canonicalCollegeRoleDirectoryHref,
+  selectedDirectoryValueNotListed,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
@@ -141,6 +142,8 @@ export async function CollegeRoleDirectoryWorkspace({
             <select name="cohortId" defaultValue={result.filter.cohortId ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All batches</option>
+              {selectedDirectoryValueNotListed(result.filter.cohortId,result.cohortOptions.map(c=>c.id)) ?
+                <option value={result.filter.cohortId}>Selected batch (outside first 200)</option> : null}
               {result.cohortOptions.map(cohort=><option key={cohort.id} value={cohort.id}>
                 {cohort.programName} · {cohort.name}
               </option>)}

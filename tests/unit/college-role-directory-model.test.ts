@@ -5,6 +5,7 @@ import {
   describeCollegeDirectoryContext,
   parseCollegeRoleDirectorySearchParams,
   canonicalCollegeRoleDirectoryHref,
+  selectedDirectoryValueNotListed,
   collegeDirectorySearchHint,
 } from "@/modules/people/college-role-directory-model";
 
@@ -139,4 +140,13 @@ describe("Reverse name sort in both role directories",()=>{
     expect(collegeRoleDirectoryHref("FACULTY",filter)).toBe("/college/faculty?sort=NAME_DESC&page=2");
     expect(collegeRoleDirectoryQuerySchema.safeParse({sort:"RANDOM"}).success).toBe(false);
   });
+});
+
+describe("Selected batch beyond directory option cap",()=>{
+ it("keeps an unknown bookmarked ID but never resolves or exposes another college's label",()=>{
+  const other="20000000-0000-4000-8000-000000000002";
+  expect(selectedDirectoryValueNotListed(other,["10000000-0000-4000-8000-000000000001"])).toBe(true);
+  expect(selectedDirectoryValueNotListed(other,[other])).toBe(false);
+  expect(selectedDirectoryValueNotListed(undefined,[])).toBe(false);
+ });
 });

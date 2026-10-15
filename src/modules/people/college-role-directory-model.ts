@@ -107,3 +107,8 @@ export function canonicalCollegeRoleDirectoryHref(kind: CollegeDirectoryKind, fi
   const lastPage = Math.max(1, Math.floor(totalPages));
   return filter.page > lastPage ? collegeRoleDirectoryHref(kind, {...filter, page:lastPage}) : null;
 }
+
+/** Preserve a bookmarked filter omitted by a bounded selector without resolving foreign IDs. */
+export function selectedDirectoryValueNotListed(value: string | undefined, visibleOptions: readonly string[]): boolean {
+  return Boolean(value && !visibleOptions.includes(value));
+}
