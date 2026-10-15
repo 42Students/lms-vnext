@@ -5,6 +5,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { listTpoStudentRequests } from "@/modules/placements/tpo-students-service";
+import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 
 
 
@@ -15,6 +16,7 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
     throw new AuthorizationError("placements.manage");
   }
   const query = globalTpoRequestsQuerySchema.parse(rawQuery);
+  await requirePersistedTpoMembership(context,member.collegeId);
   await requirePlacementManageScope(context, member.collegeId);
   const result = await listTpoStudentRequests(context, {
     collegeId: member.collegeId,
