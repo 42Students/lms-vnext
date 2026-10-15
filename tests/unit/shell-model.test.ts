@@ -311,41 +311,11 @@ describe("authenticated shell model", () => {
       },
     };
 
-    expect(getShellNavigation(shellContext)).toEqual([
-      {
-        label: "Dashboard",
-        href: "/dashboard",
-        shortLabel: "D",
-      },
-      {
-        label: "Today",
-        href: "/hr/home",
-        shortLabel: "T",
-      },
-      {
-        label: "Hiring Workspace",
-        href: "/hr/placements",
-        shortLabel: "H",
-      },
-      {
-        label: "Calendar",
-        href: "/hr/calendar",
-        shortLabel: "C",
-        icon: "/assets/images/common/calender.svg",
-        group: "tracking",
-      },
-      {
-        label: "Company & Team",
-        href: "/hr/company",
-        shortLabel: "C",
-        group: "account",
-      },
-      {
-        label: "Profile",
-        href: "/hr/profile",
-        shortLabel: "P",
-        group: "account",
-      },
+    expect(getShellNavigation(shellContext).map(item => item.label)).toEqual([
+      "Today", "Drives", "Calendar", "Messages", "Company & Team",
+    ]);
+    expect(getShellNavigation(shellContext).map(item => item.href)).toEqual([
+      "/hr/home", "/hr/drives", "/hr/calendar", "/hr/messages", "/hr/company",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Employer Recruiter",
@@ -358,20 +328,20 @@ describe("authenticated shell model", () => {
     expectInOrder(labels(shellContext), [
       "Dashboard",
       "Courses",
-      "Recruiter Leads",
-      "Companies",
-      "Placement Operations",
+      "Placement eligibility",
+      "Engage",
+      "Drives",
       "Students",
       "Calendar",
     ]);
     expect(hrefs(shellContext)).toContain("/teacher/courses");
     expect(hrefs(shellContext)).toContain("/tpo/calendar");
     expect(hrefs(shellContext)).toContain("/tpo/students");
-    expect(hrefs(shellContext)).toContain("/tpo/companies");
+    expect(hrefs(shellContext)).toContain("/tpo/team");
     expect(hrefs(shellContext)).toContain("/tpo/audit");
     expect(hrefs(shellContext)).toContain("/tpo/messages");
     expect(hrefs(shellContext)).toContain("/tpo/settings");
-    expect(hrefs(shellContext)).toContain("/tpo/more");
+    expect(hrefs(shellContext)).toContain("/tpo/notifications");
     expect(hasAdminLinks(shellContext)).toBe(false);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Faculty · TPO",
@@ -403,7 +373,7 @@ describe("authenticated shell model", () => {
         label: "Reports",
         href: "/tpo/reports",
         shortLabel: "R",
-        group: "tracking",
+        group: "insights",
       },
     ]);
 

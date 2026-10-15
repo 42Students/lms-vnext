@@ -8,7 +8,7 @@ import {
   collegeMemberships, membershipRoles, placementApplications,
   placementApplicationScreenings, placementApplicationStatusHistory,
   placementDriveDayCoordinatorAssignments, placementJobRoleOptions,
-  placementJobs, placementSeasons, users,
+  placementJobs, placementSeasons, placementDebarments, users,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -22,6 +22,7 @@ import {
 import { placementJobIdSchema } from "./validation";
 import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
+import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
@@ -230,6 +231,17 @@ async function addOne(
     if (existing) return bulkDriveOutcome(membershipId, {
       existingStatus: existing.status, eligible: false,
     });
+
+    // P-S1-02: management bulk add is not exempt from an active ban.
+    const debarments = await tx.select().from(placementDebarments).where(and(
+      eq(placementDebarments.collegeId, job.collegeId),
+      eq(placementDebarments.membershipId, membershipId),
+    )).for("share");
+    if (hasActivePlacementDebarment(debarments, new Date())) {
+      return bulkDriveOutcome(membershipId, {
+        eligible: false, reason: "Drive eligibility requirements not met",
+      });
+    }
 
     const [coordinator] = await tx.select({ id: placementDriveDayCoordinatorAssignments.id })
       .from(placementDriveDayCoordinatorAssignments).where(and(

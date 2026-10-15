@@ -16,3 +16,18 @@ describe("P-S1-02 application debarment", () => {
     expect(hasActivePlacementDebarment([], now)).toBe(false);
   });
 });
+
+// All write paths consume the same date/count precedence; one mode must not
+// re-interpret a lifted or exhausted ban as active for a different writer.
+describe("P-S1-02 shared self-apply, bulk add and Drive Day policy", () => {
+  const today = new Date("2026-10-16T10:00:00.000Z");
+  it("rejects a mixed set while any unlifted ban remains", () => {
+    const base = { liftedAt: null, untilDate: null, untilDrives: 3, drivesCounted: 2 };
+    expect(hasActivePlacementDebarment([
+      { ...base, liftedAt: new Date("2026-10-15T00:00:00Z") }, base,
+    ], today)).toBe(true);
+    expect(hasActivePlacementDebarment([
+      { ...base, drivesCounted: 3 }, { ...base, liftedAt: today },
+    ], today)).toBe(false);
+  });
+});
