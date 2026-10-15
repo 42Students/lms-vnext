@@ -5,6 +5,7 @@ import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
+import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
@@ -284,6 +285,7 @@ export function LearnerCourseList({
         </div>
       </section>
 
+      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length)}</p>
       {visibleRows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
           <h2 className="m-0 text-base font-semibold text-foreground">
