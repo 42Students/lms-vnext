@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {learnerPlacementNoticeFeed} from "@/modules/placements/learner-placement-announcement-model";it("preserves notice IDs for exact authorized notice lists",()=>{expect(learnerPlacementNoticeFeed([{id:"notice-1",title:"Placement",message:"Read",isPinned:false,createdAt:new Date("2026-10-15T00:00:00Z")}])[0].id).toBe("notice-1");});
