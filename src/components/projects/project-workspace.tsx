@@ -9,6 +9,7 @@ import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
+import {ProjectTaskComments} from "./project-task-comments";
 import { learnerTaskCriteriaPreview } from "@/modules/projects/learner-task-criteria-model";
 import { MentorTaskCreate } from "./mentor-task-create";
 import { MentorTaskStatusTransition } from "./mentor-task-status-transition";
@@ -365,9 +366,7 @@ export function ProjectWorkspace({
               <h2 className="m-0 text-base font-semibold text-foreground">
                 Your final delivery
               </h2>
-              <p className="mt-1 text-sm text-body">
-                Prepare the final draft early; submit it after all execution work is complete.
-              </p>
+
             </div>
             {!readOnly ? <LearnerFinalDeliveryControl
               projectId={workspace.project.id}
@@ -682,6 +681,9 @@ export function ProjectWorkspace({
                                 />
                               </div>
                             ) : null}
+                            <ProjectTaskComments projectId={workspace.project.id}
+                              taskId={task.id} updatedAt={task.updatedAt.toISOString()}
+                              canPost={!readOnly}/>
                             {mode !== "LEARNER" && !readOnly ? (
                               <div className="mt-3 flex flex-wrap items-end gap-2">
                                 {["PLANNED","ACTIVE"].includes(sprint.status) &&
@@ -695,6 +697,10 @@ export function ProjectWorkspace({
                                       description={task.description}
                                       acceptanceCriteria={task.acceptanceCriteria}
                                       priority={task.priority}
+                                      taskType={task.taskType}
+                                      estimatePoints={task.estimatePoints}
+                                      dueDate={task.dueDate}
+                                      blockerReason={task.blockerReason}
                                       updatedAt={task.updatedAt.toISOString()}
                                     />
                                   ) : null}
@@ -758,10 +764,7 @@ export function ProjectWorkspace({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Final delivery
           </h2>
-          <p className="mt-1 text-sm text-body">
-            Versioned submissions, immutable review history
-            and rubric evaluation.
-          </p>
+
         </div>
         {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
           <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">

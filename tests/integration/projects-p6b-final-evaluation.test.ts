@@ -530,6 +530,7 @@ describe("Projects P6B final delivery and evaluation", () => {
       decision:"APPROVED",
     });
     expect(outcome.submission.status).toBe("APPROVED");
+    expect(outcome.submission.lockedAt).not.toBeNull();
     await expect(createProjectSubmissionDraft(learner,project.id,{
       summary:"Cannot draft without mentor reopen",
     })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_INVALID_STATE"});
@@ -540,11 +541,21 @@ describe("Projects P6B final delivery and evaluation", () => {
     expect(reopened.reopened).toBe(true);
     await expect(reopenApprovedProjectDelivery(mentor,project.id,submitted.id,{
       expectedUpdatedAt:outcome.submission.updatedAt.toISOString(),reason:"Replay",
-    })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_CONFLICT"});
+    })).rejects.toMatchObject({code:"PROJECT_SUBMISSION_INVALID_STATE"});
     const later=await createProjectSubmissionDraft(learner,project.id,{
       summary:"Resubmission after approved review",sourceUrl:"https://example.com/revised",
     });
     expect(later.version).toBe(2);
+    const stored=await pool.query<{locked_at:Date;reopened_at:Date}>(`
+      select locked_at,reopened_at from project_submissions where id=$1
+    `,[submitted.id]);
+    expect(stored.rows[0]?.locked_at).toBeTruthy();
+    expect(stored.rows[0]?.reopened_at).toBeTruthy();
+    const deliveryEvents=await pool.query<{event_type:string}>(`
+      select event_type from project_delivery_events
+      where project_id=$1 and submission_id=$2 order by occurred_at
+    `,[project.id,submitted.id]);
+    expect(deliveryEvents.rows.map(row=>row.event_type).sort()).toEqual(["LOCKED","REOPENED"]);
     const events=await pool.query<{event_type:string}>(`
       select event_type from activity_events where subject_id=$1 and
       event_type in ('projects.delivery.locked','projects.delivery.reopened')
@@ -553,6 +564,27 @@ describe("Projects P6B final delivery and evaluation", () => {
     expect(events.rows.map(row=>row.event_type).sort()).toEqual([
       "projects.delivery.locked","projects.delivery.reopened",
     ]);
+  });
+
+  it("round-trips registered 0091 LINK attachment metadata and append-only events",async()=>{
+    const project=await createProject();
+    const link={kind:"LINK" as const,name:"Demo",fileId:null,url:"https://example.com/safe"};
+    const draft=await createProjectSubmissionDraft(learner,project.id,{
+      summary:"Link roundtrip",attachments:[link],
+    });
+    expect(draft.attachments).toEqual([link]);
+    const updated=await updateProjectSubmissionDraft(learner,project.id,draft.id,{
+      summary:"Updated links",attachments:[{...link,url:"https://example.com/revised"}],
+    });
+    expect(updated.attachments).toHaveLength(1);
+    const rows=await pool.query<{event_type:string}>(`
+      select event_type from project_delivery_events
+      where project_id=$1 and submission_id=$2 order by occurred_at
+    `,[project.id,draft.id]);
+    expect(rows.rows.map(row=>row.event_type)).toEqual(["ATTACHMENTS_CHANGED","ATTACHMENTS_CHANGED"]);
+    await expect(createProjectSubmissionDraft(learner,project.id,{
+      summary:"Unsafe",attachments:[{...link,url:"javascript:alert(1)"}],
+    })).rejects.toMatchObject({name:"ZodError"});
   });
 
   it("creates one rubric evaluation only for an approved submission and exposes it to participants", async () => {

@@ -5,11 +5,9 @@ import {
   and,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { readProjectReadinessOverride } from "./readiness-override-service";
 import { effectiveProjectSubmissionReady } from "./readiness-override-model";
 import {
-  activityEvents,
   projectEvaluations,
   projectReleases,
   projectSprints,
@@ -63,6 +61,7 @@ export async function getProjectReadiness(
         id: projectSubmissions.id,
         version: projectSubmissions.version,
         status: projectSubmissions.status,
+        reopenedAt: projectSubmissions.reopenedAt,
       })
       .from(projectSubmissions)
       .where(
@@ -112,13 +111,7 @@ export async function getProjectReadiness(
     latestSubmission?.status === "SUBMITTED";
   const finalApproved =
     latestSubmission?.status === "APPROVED";
-  const deliveryReopened=latestSubmission?.status==="APPROVED" ?
-    Boolean((await db.select({id:activityEvents.id}).from(activityEvents).where(
-      and(eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REOPENED),
-        eq(activityEvents.collegeId,scope.collegeId),
-        eq(activityEvents.subjectType,"project_submission"),
-        eq(activityEvents.subjectId,latestSubmission.id),
-      )).limit(1))[0]) : false;
+  const deliveryReopened=latestSubmission?.status==="APPROVED" && Boolean(latestSubmission.reopenedAt);
   const readinessOverride=await readProjectReadinessOverride(db,projectId,scope.collegeId);
 
   return {
