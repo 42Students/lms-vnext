@@ -80,3 +80,15 @@ export function facultyVideoReplacePrompt(video:FacultyLessonVideo):string {
  const title=video.title.slice(0,120);
  return "Replace the video for \""+title+"\"? The current recording may become unavailable while its replacement is processed. Existing lesson placement is kept.";
 }
+
+/** Future signed-upload adapter input; no storage key, URL or credentials accepted. */
+export const facultyVideoReplaceIntentSchema=z.object({
+ action:z.literal("REPLACE"),
+ contentId:z.string().uuid(),
+ lessonId:z.string().uuid(),
+ deliveryId:z.string().uuid().nullable(),
+ expectedUpdatedAt:z.iso.datetime({offset:true}),
+ replacementUploadId:z.string().uuid(),
+ confirmed:z.literal(true),
+}).strict();
+export type FacultyVideoReplaceIntent=z.infer<typeof facultyVideoReplaceIntentSchema>;
