@@ -88,9 +88,9 @@ export async function listCollegeRoleDirectory(
   return getDb().transaction(async db => {
   const checked = await assertPersistedPlatformPermission(db, context, "people.manage", {
     collegeId,
-    organizationId: context.membership!.organizationId,
+    organizationId: context.membership.organizationId,
   });
-  if (!checked.membership || checked.membership.id !== context.membership!.id ||
+  if (!checked.membership || checked.membership.id !== context.membership.id ||
       checked.membership.collegeId !== collegeId ||
       !checked.membership.roles.includes("COLLEGE_ADMIN")) {
     throw new AuthorizationError("people.manage");
@@ -375,5 +375,6 @@ export async function listCollegeRoleDirectory(
     departmentOptionsTruncated:departmentRows.length>200,
     pageSize: filter.pageSize,
     totalPages: Math.max(1, Math.ceil(total / filter.pageSize)),
-  }  });
+  };
+  });
 }
