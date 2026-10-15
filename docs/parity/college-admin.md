@@ -459,6 +459,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Detail / Offering
+**In this course PARTIAL (2026-10-15):** Offering workspace now shows counts of existing shared lessons, videos (VIDEO/YOUTUBE), resources, live classes, assignments and quizzes. These are persisted authored-record counts, not published or student-visible totals, with a responsive small-screen grid and pure-model tests. Section-specific content/legacy acceptance and browser checks remain open.
+
 **Offering metadata PARTIAL (2026-10-14):** College Admin `/college/courses` offers confirmation-gated edit of persisted offering CORE/ELECTIVE type, optional credits and display order. Dedicated same-origin PATCH uses College Admin college scope, row and parent guards, millisecond-truncated optimistic updatedAt comparison, an active-delivery dependency fence for credit/type changes, monotonic write token, and immutable same-transaction audit. Pure-model and isolated PostgreSQL success/foreign/wrong-role/stale/dependency tests authored; executed CI/browser acceptance and exact legacy action parity remain open.
 
 **Legacy:** `/college-admin/courses/[id]`
