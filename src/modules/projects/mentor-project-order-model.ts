@@ -26,3 +26,11 @@ export function compareMentorProjectsByMostProgress(a:OrderableProject,b:Orderab
  if(bPercent===undefined)return -1;
  return bPercent-aPercent||compareMentorProjects(a,b,"RECENT");
 }
+
+/** Count only registered non-DONE tasks, with stable ordering for ties. */
+export function compareMentorProjectsByOpenTasks(a:OrderableProject,b:OrderableProject,
+ aOpen:number,bOpen:number){
+ const archived=Number(a.status==="ARCHIVED")-Number(b.status==="ARCHIVED");
+ if(archived)return archived;
+ return bOpen-aOpen||compareMentorProjects(a,b,"RECENT");
+}
