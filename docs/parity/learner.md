@@ -1350,3 +1350,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 progress display correction (2026-10-15):** a non-finite upstream completion percentage is now shown as unavailable instead of `NaN%`; valid values are bounded to 0–100. Unit tests authored; runtime acceptance pending.
 
 **Chat-7 assignment attention (2026-10-15):** active Course cards now call out the count of published overdue but still-unsubmitted assignments, keeping overdue items out of the future-only Next due slot. Past-semester cards remain read-only. No invented attempt or grade state. Unit tests authored; browser proof pending.
+
+**Chat-7 Course time display (2026-10-15):** Overview activity and Learning Path class/assessment timestamps use one fixed Asia/Kolkata formatter; invalid timestamps are hidden rather than printed as authoritative schedules. Pure tests authored; mobile/timezone browser acceptance pending.
