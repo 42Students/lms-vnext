@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const outboundChannelSchema = z.enum(["EMAIL", "SMS"]);
 export const outboundStatusSchema = z.enum(["QUEUED", "SENT", "FAILED", "SUPPRESSED"]);
-export const outboundSendSchema = z.object({
+export const outboundSendSchema = z.strictObject({
   channel: outboundChannelSchema,
   recipient: z.string().trim().min(1).max(320),
   templateKey: z.string().trim().min(1).max(160),
