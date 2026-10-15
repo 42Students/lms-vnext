@@ -1,10 +1,11 @@
 import {learnerSafeCsvCell} from "./learner-csv-safe-cell-model";
 import {learnerOfferCtc} from "./learner-offer-ctc-model";
 import type {LearnerPlacementOfferItem} from "@/components/placements/learner-placement-offers";
+export const LEARNER_OFFER_CSV_LIMIT=1000;
 /** Displayed, own-membership offer metadata only. No employer credentials or file links. */
 export function learnerOffersCsv(rows:readonly LearnerPlacementOfferItem[]){
  const columns=["Employer","Role","Document kind","Response","Annual CTC (INR)","Issued (UTC)","Expires (UTC)","Joining result"];
- const values=rows.map(r=>[
+ const values=rows.slice(0,LEARNER_OFFER_CSV_LIMIT).map(r=>[
   r.companyName,r.roleTitle,r.kind==="LOI"?"LOI":"OFFER",r.status,
   learnerOfferCtc(r.annualCtcInr)===null?"":String(learnerOfferCtc(r.annualCtcInr)),r.issuedAt,r.expiresAt??"",r.joining?.status??"",
  ]);

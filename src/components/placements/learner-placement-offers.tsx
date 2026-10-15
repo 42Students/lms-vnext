@@ -14,7 +14,7 @@ import {learnerPendingOfferExtensions,type LearnerOfferRequestStatus}
 import {learnerOfferExtensionRequest,learnerOfferExtensionLocalDefault}
   from "@/modules/placements/learner-offer-extension-model";
 import { StatusBadge } from "@/components/ui/status-badge";
-import {learnerOffersCsv} from "@/modules/placements/learner-offers-csv-model";
+import {learnerOffersCsv,LEARNER_OFFER_CSV_LIMIT} from "@/modules/placements/learner-offers-csv-model";
 import {learnerOfferCtc} from "@/modules/placements/learner-offer-ctc-model";
 import {learnerOfferDisplayDate} from "@/modules/placements/learner-offer-display-date-model";
 import { useToast } from "@/components/ui/toast";
@@ -232,6 +232,11 @@ export function LearnerPlacementOffers({
         className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
         Export displayed offers CSV
       </button>
+      {sortedOffers.length>LEARNER_OFFER_CSV_LIMIT ? (
+        <p role="status" className="text-xs text-muted-foreground">
+          CSV includes the first {LEARNER_OFFER_CSV_LIMIT} of {sortedOffers.length} offers in this view. Narrow your offer filters to export others.
+        </p>
+      ) : null}
       <div className="grid gap-4">
         {sortedOffers.map((item) => (
           <article
