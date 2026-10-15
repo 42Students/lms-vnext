@@ -9,6 +9,7 @@ import { CollegeFacultyLifecycleAction } from "@/components/college/college-facu
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
   collegeRoleDirectoryHref,
+  collegeRoleDirectoryFilterMessage,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
@@ -48,13 +49,13 @@ export async function CollegeRoleDirectoryWorkspace({
   try {
     filter = parseCollegeRoleDirectorySearchParams(await searchParams);
     assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
-  } catch {
+  } catch (error) {
     return (
       <div className="space-y-5">
         <PageHeader eyebrow="College Admin · People" title={title} />
         <ErrorState
           title="Invalid directory filters"
-          description="A search, status or page value is invalid. No people were loaded."
+          description={collegeRoleDirectoryFilterMessage(error)}
           action={<Link href={path} className="font-semibold text-primary-text hover:underline">Clear directory filters</Link>}
         />
       </div>

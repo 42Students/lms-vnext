@@ -164,3 +164,17 @@ export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirecto
 export function collegeRoleContactHref(membershipId:string):string {
   return "/college/contacts/"+z.string().uuid().parse(membershipId);
 }
+
+/** Public message categories; raw user values and internal exception details are never displayed. */
+export function collegeRoleDirectoryFilterMessage(error:unknown):string{
+ const code=error instanceof Error?error.message:"";
+ if(code==="INVALID_ROLE_DIRECTORY_DATE_WINDOW")
+  return "Joined-from date must be on or before joined-through date. No roster was loaded.";
+ if(code==="LEARNER_CLASS_FILTER_CONFLICT"||code==="LEARNER_ENROLLMENT_FILTER_CONFLICT")
+  return "The class and enrollment filters cannot be combined. No roster was loaded.";
+ if(code==="FACULTY_TEACHING_FILTER_CONFLICT")
+  return "A specific teaching role cannot be combined with no active teaching. No roster was loaded.";
+ if(code.endsWith("_UNSUPPORTED"))
+  return "This filter belongs to the other directory. Clear filters and choose the appropriate tab.";
+ return "A directory filter is invalid. No people were loaded.";
+}
