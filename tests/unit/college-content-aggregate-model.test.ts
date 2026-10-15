@@ -36,6 +36,7 @@ describe("College Admin content aggregate model", () => {
       {cohortCode:"x".repeat(65)},
       {periodCode:"x".repeat(65)},
       {departmentCode:"x".repeat(65)},
+      {offeringType:"LAB"},
       {pathStatus:"ACTIVE"},
     ]) {
       expect(collegeContentQuerySchema.safeParse(invalid).success).toBe(false);
@@ -57,6 +58,7 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentHref("RESOURCE",{...collegeContentQuerySchema.parse({offeringStatus:"ARCHIVED"})}))
       .toContain("offeringStatus=ARCHIVED");
     expect(url.searchParams.has("collegeId")).toBe(false);
+    expect(collegeContentHref("RESOURCE",collegeContentQuerySchema.parse({offeringType:"ELECTIVE"}))).toContain("offeringType=ELECTIVE");
     expect(collegeContentHref("RESOURCE",collegeContentQuerySchema.parse({departmentCode:"CS&EE"}))).toContain("departmentCode=CS%26EE");
     expect(collegeContentHref("VIDEO",collegeContentQuerySchema.parse({pathStatus:"DRAFT"}))).toContain("pathStatus=DRAFT");
     expect(collegeContentHref("RESOURCE",collegeContentQuerySchema.parse({periodCode:"2026&FALL"}))).toContain("periodCode=2026%26FALL");

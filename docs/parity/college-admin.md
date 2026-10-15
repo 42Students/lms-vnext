@@ -545,6 +545,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**CORE and ELECTIVE course content PARTIAL (2026-10-15):** Video and Resource catalogues now distinguish actual persisted course offering CORE/ELECTIVE type, independently of content format, status and audience. Filter survives pagination and capped CSV. Isolated PG fixture authored, executed/browser parity open.
+
 **Academic-period-specific content search PARTIAL (2026-10-15):** Video and Resource views filter by exact persisted in-college academic-period code before pagination, retaining the filter in CSV. Typed URL and isolated positive/negative PostgreSQL fixtures authored; runtime and browser acceptance outstanding.
 
 **College Admin visibility control PARTIAL (2026-10-15):** Registered Video/Resource rows now offer a confirmed mobile/desktop Visible-to-students toggle calling the same-origin, version-checked College Admin mutation. Optimistic UI state updates only after confirmed response; stale/denied/network errors retain the prior state and request a refresh. Unit checks cover accessible labels; independently executed PG/browser/375px acceptance open.

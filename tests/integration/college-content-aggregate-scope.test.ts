@@ -198,6 +198,12 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     ]);
     expect(scopedResource.items.map((item) => item.id)).toContain(ids.resource);
     expect(absentCourse.items).toEqual([]);
+    const [coreContent,electiveContent]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringType:"CORE"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,offeringType:"ELECTIVE"}),
+    ]);
+    expect(coreContent.items.map(row=>row.id)).toContain(ids.resource);
+    expect(electiveContent.items).toEqual([]);
     const dep=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
     const [sameDepartment,wrongDepartment]=await Promise.all([
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,departmentCode:dep.rows[0]!.code}),
