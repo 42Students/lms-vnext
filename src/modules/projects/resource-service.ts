@@ -303,6 +303,9 @@ export async function archiveProjectResource(
       );
     }
 
+    await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("ARCHIVED",{
+      projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+    },archived));
     return archived;
   });
 }
