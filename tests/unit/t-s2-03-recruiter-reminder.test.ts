@@ -11,6 +11,7 @@ describe("T-S2-03 one-time recruiter reminder",()=>{
   expect(canRemindRecruiterInvite(base,true,day4)).toBe(false);
   expect(canRemindRecruiterInvite({...base,inviteClickedAt:at},false,day4)).toBe(false);
   expect(canRemindRecruiterInvite({...base,inviteReminderSentAt:day4},false,day4)).toBe(false);
+  expect(canRemindRecruiterInvite({...base,inviteTokenHash:null},false,day4)).toBe(false);
   expect(canRemindRecruiterInvite(base,false,new Date(at.getTime()+7*24*60*60*1000))).toBe(false);
  });
  it("rotation does not write inviteSentAt or reset first open",()=>{

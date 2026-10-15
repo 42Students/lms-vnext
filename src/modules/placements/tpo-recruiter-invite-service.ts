@@ -180,7 +180,7 @@ export async function remindTpoRecruiterInvite(
     const [lead] = await tx.select().from(placementTpoLeads)
       .where(and(eq(placementTpoLeads.collegeId, collegeId),
         eq(placementTpoLeads.id, leadId))).for("update").limit(1);
-    if (!lead || !lead.inviteSentAt || !lead.emailNorm) {
+    if (!lead || !lead.inviteSentAt || !lead.emailNorm || !lead.inviteTokenHash) {
       throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
     }
     const [contact] = await tx.select({ id: placementTpoLeadActivities.id })
@@ -208,7 +208,7 @@ export async function remindTpoRecruiterInvite(
       .where(and(
         eq(placementTpoLeads.id, lead.id),
         eq(placementTpoLeads.collegeId, collegeId),
-        eq(placementTpoLeads.inviteTokenHash, lead.inviteTokenHash!),
+        eq(placementTpoLeads.inviteTokenHash, lead.inviteTokenHash),
         isNull(placementTpoLeads.inviteReminderSentAt),
         isNull(placementTpoLeads.inviteClickedAt),
       )).returning({ id: placementTpoLeads.id });

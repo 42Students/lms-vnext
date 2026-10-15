@@ -144,6 +144,8 @@ export function canRemindRecruiterInvite(
   const age = now.getTime() - lead.inviteSentAt.getTime();
   return Boolean(
     lead.emailNorm &&
+    lead.inviteTokenHash &&
+    HASH_SHAPE.test(lead.inviteTokenHash) &&
     !lead.inviteClickedAt &&
     !lead.inviteReminderSentAt &&
     !hasHumanContactSinceSend &&
