@@ -68,7 +68,7 @@ export function CompanyShareControls({jobId,ready,initialLinks}:{
    {links.length>0?<ul className="space-y-2">{links.map(link=><li key={link.id}
     className="flex flex-wrap items-center justify-between gap-2 border-t border-border py-2 text-sm">
     <span>Link {link.id.slice(0,8)} · Expiry {link.expiresAt.slice(0,10)} ·
-     {link.revokedAt?" Revoked":new Date(link.expiresAt).getTime()<=Date.now()?" Expired":" Active"}</span>
+     {link.revokedAt?" Revoked":" Not revoked (validity checked when opened)"}</span>
     {!link.revokedAt?<button type="button" disabled={pending}
      onClick={()=>void revokeLink(link.id)}
      className="font-semibold text-primary-text underline">Revoke</button>:null}
