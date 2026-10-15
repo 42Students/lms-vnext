@@ -20,6 +20,10 @@ export interface DeliveryRepository {
   update(record: DeliveryRecord): Promise<void>;
   auditBatch(batchId: string, summary: { sent: number; failed: number; suppressed: number }): Promise<void>;
 }
+/** A safe opaque identifier must be supplied for every auditable delivery batch. */
+export function validOutboundBatchId(value:string):boolean {
+ return /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/.test(value);
+}
 export async function deliverBatch(args: {
   batchId: string;
   requests: readonly OutboundSendRequest[];
@@ -29,6 +33,7 @@ export async function deliverBatch(args: {
   recipientKeyFor: (request: OutboundSendRequest) => Promise<string>;
   runtimeEnv?: Record<string, string | undefined>;
 }): Promise<DeliveryRecord[]> {
+  if(!validOutboundBatchId(args.batchId))throw new Error("INVALID_OUTBOUND_BATCH_ID");
   if (args.requests.length > 500) throw new Error("OUTBOUND_BATCH_CAP_EXCEEDED");
   // Validate the entire batch before the first persistence or external send.
   const requests = args.requests.map(raw => outboundSendSchema.parse(raw));
@@ -84,10 +89,33 @@ export async function deliverBatch(args: {
     // Persist suppression or queue BEFORE contacting an external provider.
     await args.repository.insert(record);
     if (record.status === "QUEUED") {
+      // The queue decision can become stale while persisted: an unsubscribe,
+      // quota change or removed allowlist entry must stop dispatch.
+      let refreshedPolicy: DeliveryPolicy | null = null;
       try {
-        record.status = await args.provider.send({ ...request, recipient: normalizeRecipient(request.channel, request.recipient) }) ? "SENT" : "FAILED";
+        refreshedPolicy = await args.policyFor(request);
       } catch {
         record.status = "FAILED";
+        record.reason = "policy-recheck-failed";
+      }
+      if(refreshedPolicy){
+        const refreshed = decideDelivery(request,refreshedPolicy);
+        if(refreshed.status==="SUPPRESSED"){
+          record.status = "SUPPRESSED";
+          record.reason = refreshed.reason;
+        }else if(!canContactRecipientAtRuntime(
+          request.channel,request.recipient,args.runtimeEnv ?? process.env,
+        )){
+          record.status = "SUPPRESSED";
+          record.reason = "nonprod-not-allowlisted";
+        }
+      }
+      if(record.status==="QUEUED"){
+        try {
+          record.status = await args.provider.send({ ...request, recipient: normalizeRecipient(request.channel, request.recipient) }) ? "SENT" : "FAILED";
+        } catch {
+          record.status = "FAILED";
+        }
       }
       await args.repository.update(record);
       if(record.status==="SENT"){

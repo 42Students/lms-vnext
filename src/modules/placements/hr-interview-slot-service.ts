@@ -8,8 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
-import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed} from "./hr-interview-slot-model";
-import {placementTableExists} from "./staged-tables";
+import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
 import {PlacementsServiceError} from "./errors";
 
 type JobScope={id:string;collegeId:string;organizationId:string;companyRelationshipId:string};
@@ -42,23 +41,29 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
 }
 export async function listHrInterviewSlots(context:RequestContext,rawJobId:unknown){
  const jobId=z.string().uuid().parse(rawJobId);
- // Never interpret missing storage as zero slots, and never reveal foreign jobs.
+ // Always authorize before reading the registered slots table.
  return getDb().transaction(async tx=>{
   const job=await verifyRecruiterSlotJob(tx,context,jobId);
-  if(!await placementTableExists("placement_hr_interview_slots"))
-   return {status:"NOT_REGISTERED" as const,items:[]};
   const rows=await tx.select({
    id:hrInterviewSlots.id,roundId:hrInterviewSlots.roundId,
    startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt,
    mode:hrInterviewSlots.mode,panelLabel:hrInterviewSlots.panelLabel,
    capacity:hrInterviewSlots.capacity,bookedCount:hrInterviewSlots.bookedCount,
    status:hrInterviewSlots.status,version:hrInterviewSlots.version,
+   createdByUserId:hrInterviewSlots.createdByUserId,
   }).from(hrInterviewSlots).innerJoin(placementJobRounds,and(
    eq(placementJobRounds.id,hrInterviewSlots.roundId),
    eq(placementJobRounds.jobId,job.id)))
    .where(eq(hrInterviewSlots.collegeId,job.collegeId))
    .orderBy(hrInterviewSlots.startAt).limit(100);
-  return {status:"READY" as const,items:rows};
+  const now=new Date();
+  return {status:"READY" as const,items:rows.map(row=>({
+   id:row.id,roundId:row.roundId,startAt:row.startAt,endAt:row.endAt,
+   mode:row.mode,panelLabel:row.panelLabel,capacity:row.capacity,
+   bookedCount:row.bookedCount,status:row.status,version:row.version,
+   isOwn:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id),
+   canEdit:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id)&&row.startAt>now,
+  }))};
  });
 }
 export async function writeHrInterviewSlot(
@@ -68,8 +73,6 @@ export async function writeHrInterviewSlot(
  const actionType=z.enum(["CREATE","OFFER","BOOK","CANCEL"]).parse((raw as {action?:unknown}|null)?.action);
  const data=actionType==="CREATE"?hrInterviewSlotCreateSchema.parse(raw):
   hrInterviewSlotActionSchema.parse(raw);
- if(!await placementTableExists("placement_hr_interview_slots"))
-  throw new Error("INTERVIEW_SLOTS_NOT_REGISTERED");
  return getDb().transaction(async tx=>{
   const job=await verifyRecruiterSlotJob(tx,context,jobId);
   if(!can(context,"placements.recruiter.slot.manage",{
@@ -114,7 +117,8 @@ export async function writeHrInterviewSlot(
    eq(placementJobRounds.id,hrInterviewSlots.roundId),eq(placementJobRounds.jobId,job.id)))
    .where(and(eq(hrInterviewSlots.id,input.slotId),eq(hrInterviewSlots.collegeId,job.collegeId)))
    .for("update").limit(1);
-  if(!slot||slot.createdByUserId!==context.user.id)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
+  if(!slot||!canRecruiterMutateOwnSlot(slot.createdByUserId,context.user.id))
+   throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
   if(input.expectedVersion!==slot.version || slot.startAt<=new Date() ||
      !slotTransitionAllowed(slot.status,input.action,slot.bookedCount,slot.capacity))
    throw new Error("SLOT_STALE");

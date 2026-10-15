@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const outboundChannelSchema = z.enum(["EMAIL", "SMS"]);
 export const outboundStatusSchema = z.enum(["QUEUED", "SENT", "FAILED", "SUPPRESSED"]);
-export const outboundSendSchema = z.object({
+export const outboundSendSchema = z.strictObject({
   channel: outboundChannelSchema,
   recipient: z.string().trim().min(1).max(320),
-  templateKey: z.string().trim().min(1).max(160),
+  templateKey: z.string().trim().min(1).max(160).regex(/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/),
   variables: z.record(z.string(), z.string().max(4000)).superRefine((values, ctx) => {
     const entries = Object.entries(values);
     if (entries.length > 25 || entries.some(([key]) => !/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)) ||
@@ -13,7 +13,8 @@ export const outboundSendSchema = z.object({
       ctx.addIssue({ code: "custom", message: "INVALID_TEMPLATE_VARIABLES" });
     }
   }),
-  purpose: z.string().trim().min(1).max(160),
+  purpose: z.string().trim().min(1).max(160)
+    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid outbound purpose"}),
 });
 export type OutboundSendRequest = z.infer<typeof outboundSendSchema>;
 export type OutboundStatus = z.infer<typeof outboundStatusSchema>;
@@ -33,9 +34,16 @@ export function normalizeRecipient(channel: "EMAIL" | "SMS", recipient: string):
   return channel === "EMAIL" ? recipient.trim().toLowerCase() : recipient.trim();
 }
 export function isValidRecipient(channel: "EMAIL" | "SMS", recipient: string): boolean {
-  return channel === "EMAIL"
-    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)
-    : /^\+[1-9][0-9]{7,14}$/.test(recipient);
+  if(channel === "SMS")return /^\+[1-9][0-9]{7,14}$/.test(recipient);
+  if(recipient.length>254||/[\x00-\x1f\x7f]/.test(recipient))return false;
+  const match=/^([^\s@]+)@([^\s@]+)$/.exec(recipient);
+  if(!match)return false;
+  const [,local,domain]=match;
+  if(local.length>64||!local||local.startsWith(".")||local.endsWith(".")||
+     local.includes("..")||domain.length>253||!domain.includes("."))return false;
+  const labels=domain.split(".");
+  return labels.every(label=>label.length>0&&label.length<=63&&
+    !label.startsWith("-")&&!label.endsWith("-")&&/^[A-Za-z0-9-]+$/.test(label));
 }
 export function decideDelivery(request: OutboundSendRequest, policy: DeliveryPolicy): OutboundDecision {
   const recipient = normalizeRecipient(request.channel, request.recipient);
@@ -61,5 +69,15 @@ export function decideDelivery(request: OutboundSendRequest, policy: DeliveryPol
   return { status: "QUEUED" };
 }
 export function previewAudience(requests: readonly OutboundSendRequest[], policyFor: (request: OutboundSendRequest) => DeliveryPolicy) {
-  return requests.map(request => ({ channel: request.channel, recipient: normalizeRecipient(request.channel, request.recipient), ...decideDelivery(request, policyFor(request)) }));
+  // Validate every address and template before performing any policy lookups.
+  const prepared=requests.map(request=>outboundSendSchema.parse(request));
+  const seen=new Set<string>();
+  return prepared.map(request=>{
+    const recipient=normalizeRecipient(request.channel,request.recipient);
+    const key=JSON.stringify([request.channel,recipient,request.purpose,request.templateKey]);
+    const duplicate=seen.has(key);
+    seen.add(key);
+    const decision=duplicate?{status:"SUPPRESSED" as const,reason:"duplicate-in-batch" as const}:decideDelivery(request,policyFor(request));
+    return {channel:request.channel,recipient,...decision};
+  });
 }

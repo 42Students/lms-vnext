@@ -34,12 +34,15 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
    <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-11 items-center text-primary-text">Drive rounds</Link>
    <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-primary-text">Recruiter calendar</Link>
   </nav>
-  {slots.status==="NOT_REGISTERED"?<section role="status" className="rounded-xl border border-border bg-surface p-5">
-   <h2 className="font-semibold text-foreground">Slot storage pending registration</h2>
-   <p className="mt-2 text-sm text-body">The interview-slot migration is staged, not registered. No availability, offers, reservations, or candidate bookings have been recorded.</p>
-  </section>:<>
+  <>
    <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Propose an interviewer time block</h2>
+    {rounds.length===0?<p role="status" className="text-sm text-body">
+     No pending or scheduled interview round is available for this drive.{" "}
+     <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
+      className="font-semibold text-primary-text">Review hiring rounds</Link>
+     {" "}before proposing a slot.
+    </p>:null}
     <form method="post" action={action} className="grid gap-3 sm:grid-cols-2">
      <input type="hidden" name="action" value="CREATE"/>
      <label className="grid gap-1 text-sm text-body">Interview round
@@ -78,7 +81,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
      <p className="font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
      <p className="text-sm text-body">{slot.status} · {slot.mode} · Internal reservations: {slot.bookedCount}/{slot.capacity}</p>
      {slot.panelLabel?<p className="text-sm text-body">Panel: {slot.panelLabel}</p>:null}
-     <form action={action} method="post" className="flex flex-wrap gap-2">
+     {slot.canEdit?<form action={action} method="post" className="flex flex-wrap gap-2">
       <input type="hidden" name="slotId" value={slot.id}/>
       <input type="hidden" name="expectedVersion" value={slot.version}/>
       {slot.status==="PROPOSED"?<button type="submit" name="action" value="OFFER"
@@ -87,10 +90,13 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
         className="min-h-11 rounded-md border border-border px-4 text-primary-text">Reserve one internal slot</button>:null}
       {(slot.status==="PROPOSED"||slot.status==="OFFERED")?<button type="submit" name="action" value="CANCEL"
         className="min-h-11 rounded-md border border-border px-4 text-primary-text">Cancel time block</button>:null}
-     </form>
+     </form>:<p className="text-sm text-muted-foreground">
+      {slot.isOwn?"This time block has started or passed; further changes are disabled.":
+       "This time block was created by another recruiter and is read-only for your account."}
+     </p>}
     </article>)}
     {!slots.items.length?<p role="status" className="text-sm text-body">No persisted employer time blocks for this drive.</p>:null}
    </section>
-  </>}
+  </>
  </main>;
 }

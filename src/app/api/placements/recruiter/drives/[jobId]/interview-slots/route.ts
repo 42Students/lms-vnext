@@ -29,8 +29,6 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
  }catch(error){
   if(error instanceof PlacementsServiceError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_SLOT"},{status:400});
-  if(error instanceof Error && error.message==="INTERVIEW_SLOTS_NOT_REGISTERED")
-   return NextResponse.json({error:"SLOT_STORAGE_NOT_REGISTERED"},{status:503});
   if(error instanceof Error && ["SLOT_STALE","SLOT_FULL","SLOT_OVERLAP"].includes(error.message))
    return NextResponse.json({error:error.message},{status:409});
   if(error instanceof Error && ["INVALID_IST_DATE","INVALID_SLOT_DATE"].includes(error.message))

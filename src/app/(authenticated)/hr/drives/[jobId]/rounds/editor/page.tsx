@@ -7,8 +7,8 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
 const KINDS=[["TALK","Discussion"],["TEST","Test"],["VENDOR_TEST","Vendor test"],["GD","Group discussion"],["INTERVIEW","Interview"]] as const;
-export default async function HrRoundsEditorPage({params,searchParams}:{
- params:Promise<{jobId:string}>;searchParams:Promise<{changed?:string}>;
+export default async function HrRoundsEditorPage({params}:{
+ params:Promise<{jobId:string}>;
 }){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
@@ -20,13 +20,11 @@ export default async function HrRoundsEditorPage({params,searchParams}:{
   if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();
   throw error;
  }
- const changed=(await searchParams).changed;
  const endpoint="/api/placements/recruiter/drives/"+jobId+"/rounds";
  return <main className="space-y-6">
   <PageHeader eyebrow="Recruiter · Hiring drive" title="Edit hiring rounds"
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."/>
   <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-11 items-center text-primary-text">Back to drive rounds</Link>
-  {changed?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">Round change saved: {changed}</p>:null}
   <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
    <h2 className="font-semibold text-foreground">Add a round</h2>
    <form action={endpoint} method="post" className="grid gap-3 sm:grid-cols-2">
@@ -52,6 +50,9 @@ export default async function HrRoundsEditorPage({params,searchParams}:{
   </section>
   <section className="space-y-3">
    <h2 className="font-semibold text-foreground">Current rounds ({rounds.length})</h2>
+   {rounds.length===0?<p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+    This drive has no hiring rounds. Add a round using the form above.
+   </p>:null}
    {rounds.map(round=><article key={round.id} className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
      <span className="text-sm text-body">{round.kind} · {round.status}</span></div>
@@ -72,7 +73,7 @@ export default async function HrRoundsEditorPage({params,searchParams}:{
        </select>
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Save changes</button>
-     </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, already used, or no longer pending; editing is disabled.</p>}
+     </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
