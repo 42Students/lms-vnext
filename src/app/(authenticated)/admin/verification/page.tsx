@@ -22,14 +22,13 @@ export default async function AdminVerificationEntry() {
       <PageHeader
         eyebrow="Super Admin"
         title="Profile verification"
-        description="Review learner verification for one explicitly selected college."
+        description="Students' education and identity, checked against their documents."
       />
       <section role="status" className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">Choose a college first</h2>
         <p className="mt-2 text-sm text-body">
-          Verification decisions belong to a college. Select a college in the
-          administrator scope switcher to continue; an organization or global
-          scope is not sufficient.
+          Choose a college at the top to see its students waiting for verification.
+          A global or organization-only scope cannot authorize a college review.
         </p>
         <Link href="/admin/colleges" className="mt-4 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Browse colleges

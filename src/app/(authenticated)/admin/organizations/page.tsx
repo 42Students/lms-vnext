@@ -25,7 +25,7 @@ export default async function OrganizationsPage() {
   const columns: DataTableColumn<OrganizationRow>[] = [
     {
       key: "name",
-      header: "Organization",
+      header: "Name",
       cell: (organization) => (
         <span className="font-semibold text-foreground">
           {organization.name}
@@ -61,7 +61,11 @@ export default async function OrganizationsPage() {
         title="Organizations"
         description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
-      {canCreate ? <OrganizationCreateForm /> : null}
+      {canCreate ? <section aria-label="Create New Organization">
+        <h2 className="mb-3 text-lg font-semibold text-foreground">Create New Organization</h2>
+        <OrganizationCreateForm />
+      </section> : null}
+      <h2 className="text-lg font-semibold text-foreground">Existing Organizations</h2>
       {organizations.length===0 ? <EmptyState title="No organizations in this scope" description="There are no active organizations visible under the current Super Admin safety scope. Create one only when your role and scope permit it."/> : null}
       <div className="grid min-w-0 gap-3 lg:hidden" aria-label="Organization cards">
         {organizations.map((organization) => (
