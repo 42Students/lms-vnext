@@ -179,4 +179,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(new URL(lessonsCsvHref(query),"https://test.example").searchParams.get("contentType")).toBe("YOUTUBE");
   });
 
+  it("validates persisted contentLifecycle for lesson pages and CSV", () => {
+    expect(collegeLessonQuerySchema.safeParse({contentLifecycle:"UNKNOWN"}).success).toBe(false);
+    const query=collegeLessonQuerySchema.parse({contentLifecycle:"PUBLISHED"});
+    expect(new URL(collegeLearningHref("LESSONS",query),"https://t.example").searchParams.get("contentLifecycle")).toBe("PUBLISHED");
+    expect(new URL(lessonsCsvHref(query),"https://t.example").searchParams.get("contentLifecycle")).toBe("PUBLISHED");
+  });
+
 });

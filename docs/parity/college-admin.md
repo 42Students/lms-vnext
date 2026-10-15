@@ -532,6 +532,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Saved content lifecycle PARTIAL (2026-10-15, chat-3):** Filter saved DRAFT/PUBLISHED/ARCHIVED lesson-content metadata within tenant-owned lessons before paging and capped CSV. This does not imply visibility to a learner. Source tests authored; runtime/legacy/browser acceptance open.
+
 **Saved content kind PARTIAL (2026-10-15, chat-3):** Exact authored content-kind filter matches persisted lesson content before totals/pagination and follows filter-matched capped CSV. This is metadata only; no signed media is exposed. Unit and disposable-PG fixtures authored, not executed; browser and legacy parity acceptance open.
 
 **Lesson quiz-authoring triage PARTIAL (2026-10-15):** College Admin Lessons now filter independently by persisted course_quizzes authorship, using the canonical lesson ownership scope rather than quiz attempt totals. All lifecycle states count as authored; query/export/page state and disposable-PG empty/matching fixtures authored, executed CI/browser acceptance pending.
