@@ -19,4 +19,8 @@ describe("college feature policy model",()=>{
    {module:"placements",stored:null},{module:"electives",stored:null}
   ]);
  });
+ it("inherit is distinct from stored Off, including locked states",()=>{
+  expect(collegeRuleNoChange({enabled:false,locked:true},{action:"INHERIT",module:"projects",expected:{enabled:false,locked:true}})).toBe(false);
+  expect(collegeRuleWriteSchema.safeParse({action:"INHERIT",module:"placements",expected:{enabled:false,locked:true}}).success).toBe(true);
+ });
 });
