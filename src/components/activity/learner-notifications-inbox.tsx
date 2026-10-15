@@ -3,7 +3,9 @@
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
+import {learnerNotificationPreviewNotice} from "@/modules/activity/learner-notification-preview-notice-model";
 import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner-notification-mobile-model";
+import {learnerInboxEmptyLabel} from "@/modules/activity/learner-inbox-empty-label-model";
 import {learnerPinnedAnnouncementPreview} from "@/modules/activity/learner-pinned-announcements-model";
 import {learnerNotificationPendingCount,learnerNotificationReadAllSchema}
   from "@/modules/activity/learner-notification-read-all-model";
@@ -74,9 +76,9 @@ export function LearnerNotificationsInbox({
     () => learnerNotificationCategoryCounts(combined),
     [combined],
   );
-  const pinnedAnnouncements=useMemo(()=>learnerPinnedAnnouncementPreview(combined),[combined]);
   const visible = useMemo(() => filterLearnerInbox(combined,{category:active,unread,q:search}),
     [combined,active,unread,search]);
+  const pinnedAnnouncements=useMemo(()=>learnerPinnedAnnouncementPreview(visible),[visible]);
   const unreadPersonalCount=learnerNotificationPendingCount(personal);
   const mobileSummary=learnerNotificationMobileFilterSummary({category:active,unread,q:search},visible.length);
   async function markAllRead(){
@@ -158,7 +160,12 @@ export function LearnerNotificationsInbox({
         </div>
       ):null}
       <p role="status" className="text-xs text-muted-foreground">
-        Showing {visible.length} of {combined.length} notifications. College announcements have no personal read status.
+        Showing {visible.length} of {combined.length} loaded notifications in this filtered view.
+        College announcements have no personal read status.
+        {" "}{learnerNotificationPreviewNotice(personal.length,60)}
+        {" "}<Link href="/learn/notifications/history" className="font-semibold text-primary-text underline">
+          Browse personal history
+        </Link>
       </p>
 
       {sourceStatus.state==="PARTIAL" ? (
@@ -188,7 +195,7 @@ export function LearnerNotificationsInbox({
               </button>
             </li>)}
           </ul>
-          {combined.filter(item=>item.source==="ANNOUNCEMENT"&&item.pinned).length>pinnedAnnouncements.length
+          {visible.filter(item=>item.source==="ANNOUNCEMENT"&&item.pinned).length>pinnedAnnouncements.length
             ? <p className="mt-2 text-xs text-muted-foreground">Additional pinned announcements remain in the list below.</p>:null}
         </section>
       ):null}
@@ -196,7 +203,7 @@ export function LearnerNotificationsInbox({
       {visible.length === 0 ? (
         <div className="space-y-3">
           <NotificationList items={[]} emptyText={
-            active === "all" ? "No notifications yet" : `No ${learnerNotificationCategories.find((tab) => tab.key === active)?.label ?? "matching"} notifications yet`
+            learnerInboxEmptyLabel({total:combined.length,category:active,unread,search})
           } />
           {filtered ? (
             <button type="button" onClick={resetFilters}
