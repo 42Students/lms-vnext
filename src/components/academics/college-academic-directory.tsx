@@ -88,6 +88,17 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           ) : null}
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
+              Progression record
+              <select name="progression" defaultValue={data.query.progression}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All batches</option>
+                <option value="RECORDED">Progression recorded</option>
+                <option value="MISSING">No progression record</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">
               Recorded academic year (start)
               <input name="yearStart" type="number" min={1900} max={9998} step={1}
                 defaultValue={data.query.yearStart ?? ""} placeholder="All academic years"

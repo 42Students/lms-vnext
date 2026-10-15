@@ -207,6 +207,8 @@ Legacy contract:
 - [ ] Search/filter/loading/empty/error states match.
 
 ## Page: Batches
+**Progression record availability PARTIAL (2026-10-15):** The batch directory now distinguishes registered progression rows from absent records rather than inferring progression; the filter applies to pagination and CSV, with strict enum input and tenant-scoped PG assertions. Trigger-created progression is respected; execution/mobile acceptance open.
+
 **Recorded term progression filter PARTIAL (2026-10-15):** Batch view and capped CSV can isolate the exact migrated currentTermNumber from cohort_progression_state with 1–24 validation, same-college count/pagination and no inferred progression for missing rows. PostgreSQL fixture uses main\u0027s ON CONFLICT trigger-safe pattern; real execution/browser proof remains outstanding.
 
 **Capped batch CSV PARTIAL (2026-10-15):** Batch catalogue now exports current-college, filter-matched persisted program/progression and active counts in a spreadsheet-neutralized CSV (1,000 max, explicit truncation headers/footer). The in-test-fixture PostgreSQL suite includes own/foreign/wrong-role export assertions; executed CI, mobile and legacy export column parity remain outstanding.
