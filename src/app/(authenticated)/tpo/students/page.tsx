@@ -2,6 +2,7 @@ import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import { redirect } from "next/navigation";
+import {tpoStudentUrlError} from "@/modules/placements/tpo-students-url-guard";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -118,6 +119,7 @@ export default async function TpoStudentsPage({
   }
 
   const raw = await searchParams;
+  const urlError = tpoStudentUrlError(raw);
   const parsed = tpoStudentsQuerySchema.safeParse({
     collegeId: context.membership.collegeId,
     journeyState: first(raw.journeyState) || undefined,
@@ -127,7 +129,7 @@ export default async function TpoStudentsPage({
     pageSize: first(raw.pageSize) || undefined,
   });
 
-  if (!parsed.success) {
+  if (urlError || !parsed.success) {
     return (
       <div className="space-y-6">
         <PageHeader
@@ -143,7 +145,7 @@ export default async function TpoStudentsPage({
             Invalid Students filters
           </h2>
           <p className="mt-2 text-sm text-body">
-            One or more filters are invalid. No student data was loaded.
+            {urlError ?? "One or more filters are invalid. No student data was loaded."}
           </p>
           <Link
             href="/tpo/students"
