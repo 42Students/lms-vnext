@@ -1147,3 +1147,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Audit Findings persisted issue-type filter (PARTIAL):** Added explicit exact issue_type predicate from the real DB10 report table. Form/server validation bounds the search to 80 characters, carries it into both cursor and CSV, and never substitutes synthetic categories. Authored unit tests, PG/browser acceptance still open.
+
+
+**2026-10-15 chat-6 Audit Findings IST start-date filter (PARTIAL):** `created_at` now supports an inclusive IST calendar-day lower bound (start 00:00 +05:30) before service pagination. Exact date URL survives CSV and cursor links, validation rejects invalid dates, no timezone inference. Tests authored; PG/browser pending.
