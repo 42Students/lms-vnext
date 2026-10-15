@@ -1,3 +1,4 @@
+import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empty-state-model";
 import { resolveLearnerRoadmapFocusFilter } from "@/modules/courses/learner-roadmap-focus-filter-model";
 import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
 import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
@@ -570,6 +571,7 @@ export function LearnerCourseWorkspace({
   readOnly?: boolean;
 }) {
   const summary = workspace.summary;
+  const emptyState = learnerRoadmapEmptyState(Boolean(workspace.learningPath),workspace.lessons);
   const measuredProgress = learnerRoadmapMeasuredProgress(summary);
   const activeFilter = resolveLearnerRoadmapFocusFilter(
     filter, focusLessonId, focusContentId, workspace.lessons,
@@ -757,6 +759,9 @@ export function LearnerCourseWorkspace({
           No published items match this filter.
         </p>}
       </details>
+      {emptyState ? (
+        <EmptyState title={emptyState.title} description={emptyState.description} />
+      ) : null}
       <div className="space-y-4">
         {workspace.lessons.map((lesson, lessonIndex) => {
           const visibleItems = lesson.items.filter((item) => matchesFilter(lesson, item));
