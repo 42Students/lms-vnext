@@ -11,8 +11,9 @@ type Selected={
  id:string;version:number;submissionType:string;gradingStatus:string;
  gradePublished:boolean;textContent:string|null;learnerLabel:string;eligible:boolean;
 };
-export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
+export function FacultyAiGradingWorkbench({selection,maxPoints,submission,providerEnabled}:{
  selection:AiGradingSelection & {submissionId:string};maxPoints:number;submission:Selected;
+ providerEnabled:boolean;
 }){
  const [rubricText,setRubricText]=useState(()=>JSON.stringify({
   title:"Assignment review rubric",criteria:[{
@@ -41,7 +42,7 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
  }
  async function requestSuggestion(){
   const rubric=parseRubric();
-  if(!rubric||!permission||!submission.eligible||!submission.textContent)return;
+  if(!rubric||!permission||!submission.eligible||!submission.textContent||!providerEnabled)return;
   setSuggestion(null);setReviewed(false);setReviewedEvidence([]);setProviderStatus(null);setRequesting(true);
   try{
    const response=await fetch("/api/ai-grading/suggest",{
@@ -111,10 +112,10 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
    <input type="checkbox" checked={permission} onChange={event=>setPermission(event.target.checked)}/>
    <span>I understand an approved provider, when enabled, would process the selected text and rubric. No learner contact details or files are intentionally sent.</span>
   </label>
-  <button type="button" disabled={requesting||!submission.eligible||!permission}
+  <button type="button" disabled={requesting||!submission.eligible||!permission||!providerEnabled}
    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
    onClick={()=>{void requestSuggestion();}}>
-    Request suggestion (if provider enabled)
+    {providerEnabled?"Request AI suggestion":"AI suggestions unavailable — provider disabled"}
   </button>
   {providerStatus?<p role="status" className="text-sm text-body">{providerStatus}</p>:null}
   {requesting?<p role="status" className="text-sm text-body">Validating suggestion request…</p>:null}
