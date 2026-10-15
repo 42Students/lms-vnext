@@ -1,17 +1,17 @@
 "use client";
 import {useState} from "react";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-type Fields={waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;sectionId:string;batchId:string;branchId:string};
-const empty:Fields={waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",sectionId:"",batchId:"",branchId:""};
+type Fields={waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
+const empty:Fields={waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList}){
+export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices,programChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList;programChoices?:VerificationFilterChoiceList}){
  const selected=():Fields=>({waitingState:query.waitingState??"ALL",membershipId:query.membershipId??"",q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
-  sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
+  programId:query.programId??"",sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
  function apply(value:Fields){
   if(value.q.length>100){setError("Name search is too long");return;}
-  for(const key of ["sectionId","batchId","branchId","membershipId"] as const){
+  for(const key of ["programId","sectionId","batchId","branchId","membershipId"] as const){
    if(value[key]&&!uuid.test(value[key])){setError(key+" must be a valid UUID");return;}
   }
   if(value.submittedFrom&&value.waitingSince&&value.submittedFrom>value.waitingSince){setError("Start date must not follow the end date");return;}
@@ -52,6 +52,13 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     <label className="min-w-0 text-sm">Waiting since (submitted on/before)
      <input type="date" value={fields.waitingSince} onChange={e=>change("waitingSince",e.target.value)}
       className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/></label>
+    <label className="min-w-0 text-sm">Academic program
+     <select value={fields.programId} onChange={e=>change("programId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+      <option value="">All programs</option>
+      {missingSelectedChoice(programChoices?.items??[],fields.programId)&&<option value={fields.programId}>Selected program (outside first 200)</option>}
+      {(programChoices?.items??[]).map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
+     </select>{programChoices?.truncated&&<span className="block text-xs">First 200 programs shown.</span>}
+    </label>
     <label className="min-w-0 text-sm">Batch
      <select value={fields.batchId} onChange={e=>change("batchId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
       <option value="">All batches</option>

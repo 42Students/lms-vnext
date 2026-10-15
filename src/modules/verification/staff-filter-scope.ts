@@ -8,7 +8,7 @@ import type {VerificationQueueFilters} from "./queue-filters";
  * column aliases; every academic path is anchored in this college. */
 export function verificationEnrollmentPredicates(collegeId:string,filter:VerificationQueueFilters){
  const db=getDb();
- const cohortOrBranch=filter.batchId||filter.branchId?exists(
+ const cohortOrBranch=filter.batchId||filter.branchId||filter.programId?exists(
   db.select({enrollmentId:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
      eq(cohorts.programId,learnerProgramEnrollments.programId)))
@@ -17,7 +17,8 @@ export function verificationEnrollmentPredicates(collegeId:string,filter:Verific
    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
     eq(learnerProgramEnrollments.status,"ACTIVE"),
     filter.batchId?eq(cohorts.id,filter.batchId):undefined,
-    filter.branchId?eq(departments.id,filter.branchId):undefined))
+    filter.branchId?eq(departments.id,filter.branchId):undefined,
+    filter.programId?eq(programs.id,filter.programId):undefined))
  ):undefined;
  const section=filter.sectionId?exists(
   db.select({sectionEnrollmentId:sectionEnrollments.id}).from(sectionEnrollments)
