@@ -992,3 +992,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 feature matrix explicit locked-rule filter (PARTIAL):** Scoped college-rule EXISTS can require stored locked state, composed on the *same* Projects/Placements/Electives rule with stored On/Off. Count and page agree. Not a claim of learner-level lock evaluation; tests authored, not executed.
+
+
+**2026-10-15 chat-6 feature matrix no-rule inspection (PARTIAL):** Explicit stored COLLEGE-rule absence can now be found per selected module, with contradictory locked/value selectors rejected rather than interpreted as inherited Off. Exact scoped NOT EXISTS affects both count and page. Authored tests; DB/browser pending.

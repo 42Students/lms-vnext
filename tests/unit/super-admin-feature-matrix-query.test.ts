@@ -22,4 +22,10 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.safeParse({locks:"UNLOCKED"}).success).toBe(false);
   expect(adminFeaturesHref({locks:"LOCKED",page:2})).toContain("locks=LOCKED");
  });
+ it("distinguishes no persisted college rule from explicit On/Off, rejects contradictory filters",()=>{
+  expect(adminFeatureQuerySchema.parse({module:"electives",presence:"NO_RULE"}).presence).toBe("NO_RULE");
+  expect(adminFeatureQuerySchema.safeParse({presence:"NO_RULE",storedState:"OFF"}).success).toBe(false);
+  expect(adminFeatureQuerySchema.safeParse({presence:"NO_RULE",locks:"LOCKED"}).success).toBe(false);
+  expect(adminFeaturesHref({module:"projects",presence:"NO_RULE"})).toContain("presence=NO_RULE");
+ });
 });

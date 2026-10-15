@@ -194,13 +194,16 @@ export async function listSuperAdminFeatureControls(
     );
   }
 
-  if (query.module || query.storedState !== "ALL" || query.locks === "LOCKED") conditions.push(sql`exists (
-    select 1 from module_access_rules rule
-    where rule.scope_type = 'COLLEGE' and rule.scope_id = ${colleges.id}
-    ${query.module ? sql`and rule.module::text = ${query.module}::text` : sql``}
-    ${query.storedState !== "ALL" ? sql`and rule.enabled = ${query.storedState === "ON"}` : sql``}
-    ${query.locks === "LOCKED" ? sql`and rule.locked = true` : sql``}
-  )`);
+  if (query.module || query.storedState !== "ALL" || query.locks === "LOCKED" || query.presence !== "ANY") {
+    const matchRule=sql`exists (
+      select 1 from module_access_rules rule
+      where rule.scope_type = 'COLLEGE' and rule.scope_id = ${colleges.id}
+      ${query.module ? sql`and rule.module::text = ${query.module}::text` : sql``}
+      ${query.storedState !== "ALL" ? sql`and rule.enabled = ${query.storedState === "ON"}` : sql``}
+      ${query.locks === "LOCKED" ? sql`and rule.locked = true` : sql``}
+    )`;
+    conditions.push(query.presence === "NO_RULE" ? sql`not (${matchRule})` : matchRule);
+  }
   const where = and(...conditions);
   const db = getDb();
 
@@ -259,6 +262,7 @@ export async function listSuperAdminFeatureControls(
     moduleFilter: query.module ?? null,
     stateFilter: query.storedState,
     lockFilter: query.locks,
+    presenceFilter: query.presence,
     page: query.page,
     pageSize: COLLEGE_PAGE_SIZE,
     total,
