@@ -195,6 +195,7 @@ function SubmissionGradeCard({
       );
 
       if (!response.ok) {
+        setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
           await courseApiError(response),
         );
