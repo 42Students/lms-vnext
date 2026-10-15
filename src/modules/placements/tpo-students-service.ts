@@ -38,12 +38,8 @@ import {
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import { placementExternalOffers } from "@/db/schema/placement-external";
-import { placementTpoAfterCollege } from "@/db/schema/tpo-configuration";
-import { afterCollegeOutcomeSchema } from "./tpo-after-college-model";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
-import { learnerProfileDocumentSchema } from "@/modules/people/profile-validation";
-import { normalizeCodingProfile } from "./tpo-coding-profile-model";
 import type { RequestContext } from "@/modules/identity/context";
 
 import {
@@ -77,8 +73,6 @@ export const tpoStudentsQuerySchema = z
     journeyState: z
       .enum(TPO_STUDENT_JOURNEY_STATES)
       .optional(),
-    afterCollege: afterCollegeOutcomeSchema.optional(),
-    codingPlatform: z.literal("GITHUB").optional(),
     branchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
@@ -203,7 +197,6 @@ export async function getTpoStudentsIntelligence(
       displayName: users.displayName,
       email: users.email,
       rollNumber: learnerProfiles.rollNumber,
-      profileDocument: learnerProfiles.profileDocument,
       registrationNumber:
         learnerProfiles.registrationNumber,
       enrollmentId: learnerProgramEnrollments.id,
@@ -336,19 +329,6 @@ export async function getTpoStudentsIntelligence(
     "placement_external_offers",
   );
 
-  const afterCollegeAvailable = await placementTableExists("placement_tpo_after_college");
-  const afterCollegeRows = afterCollegeAvailable && learners.length
-    ? await db.select({membershipId:placementTpoAfterCollege.learnerMembershipId,
-        outcome:placementTpoAfterCollege.outcome,updatedAt:placementTpoAfterCollege.updatedAt})
-       .from(placementTpoAfterCollege)
-       .where(and(eq(placementTpoAfterCollege.collegeId,college.id),
-         inArray(placementTpoAfterCollege.learnerMembershipId,learners.map(row=>row.membershipId))))
-    : [];
-  const afterCollegeByMember = new Map(afterCollegeRows.flatMap(row=>{
-    const parsed=afterCollegeOutcomeSchema.safeParse(row.outcome);
-    return parsed.success?[[row.membershipId,{outcome:parsed.data,updatedAt:row.updatedAt.toISOString()}] as const]:[];
-  }));
-
   const emptySummary =
     summarizeTpoStudents([]);
 
@@ -372,7 +352,6 @@ export async function getTpoStudentsIntelligence(
         applicationScope: "ACTIVE_SEASON",
         readinessVerified: false,
         placedVerified: false,
-        afterCollegeAvailable,
       },
     };
   }
@@ -782,9 +761,6 @@ export async function getTpoStudentsIntelligence(
             ),
           });
 
-    const profile=learnerProfileDocumentSchema.safeParse(learner.profileDocument??{});
-    const codingGithubUrl=profile.success&&profile.data.socialProfiles.githubUrl
-      ? normalizeCodingProfile("GITHUB",profile.data.socialProfiles.githubUrl):null;
     const source: TpoStudentSource = {
       membershipId: learner.membershipId,
       displayName: learner.displayName,
@@ -826,9 +802,6 @@ export async function getTpoStudentsIntelligence(
           learner.membershipId,
         ) ?? 0,
       ambiguousSection,
-      codingGithubUrl,
-      afterCollegeOutcome: afterCollegeByMember.get(learner.membershipId)?.outcome??null,
-      afterCollegeUpdatedAt: afterCollegeByMember.get(learner.membershipId)?.updatedAt??null,
     };
 
     return deriveTpoStudent(source, now);
@@ -862,7 +835,6 @@ export async function getTpoStudentsIntelligence(
       applicationScope: "ACTIVE_SEASON",
       readinessVerified: false,
       placedVerified: false,
-      afterCollegeAvailable,
     },
   };
 }

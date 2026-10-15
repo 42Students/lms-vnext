@@ -10,7 +10,7 @@ export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true})
 });
 export {exportParams};
 export function collegeContentCsvHref(kind:CollegeContentKind,q:{
- q:string;courseCode?:string;programCode?:string;cohortCode?:string;status:string;format:string;scope:string;visibility?:string;
+ q:string;courseCode?:string;programCode?:string;cohortCode?:string;periodCode?:string;pathStatus?:string;departmentName?:string;offeringType?:string;lessonStatus?:string;status:string;format:string;scope:string;visibility?:string;
  view?: "ALL"|"UPCOMING"|"PAST";from?:string;to?:string;offeringStatus?:string;
 }){
  const p=new URLSearchParams();
@@ -18,6 +18,11 @@ export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  if(q.courseCode)p.set("courseCode",q.courseCode);
  if(kind!=="LIVE_CLASS"&&q.programCode)p.set("programCode",q.programCode);
  if(kind!=="LIVE_CLASS"&&q.cohortCode)p.set("cohortCode",q.cohortCode);
+ if(kind!=="LIVE_CLASS"&&q.periodCode)p.set("periodCode",q.periodCode);
+ if(kind!=="LIVE_CLASS"&&q.departmentName)p.set("departmentName",q.departmentName);
+ if(kind!=="LIVE_CLASS"&&q.offeringType&&q.offeringType!=="ALL")p.set("offeringType",q.offeringType);
+ if(kind!=="LIVE_CLASS"&&q.lessonStatus&&q.lessonStatus!=="ALL")p.set("lessonStatus",q.lessonStatus);
+ if(kind!=="LIVE_CLASS"&&q.pathStatus&&q.pathStatus!=="ALL")p.set("pathStatus",q.pathStatus);
  if(q.status!=="ALL")p.set("status",q.status);
  if(q.scope!=="ALL")p.set("scope",q.scope);
  if(kind!=="LIVE_CLASS"&&q.visibility&&q.visibility!=="ALL")p.set("visibility",q.visibility);

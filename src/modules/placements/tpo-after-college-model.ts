@@ -13,5 +13,3 @@ export const AFTER_COLLEGE_LABELS:Record<(typeof AFTER_COLLEGE_OUTCOMES)[number]
 export function afterCollegeOptions(){
  return AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}));
 }
-
-export type AfterCollegeOutcome=(typeof AFTER_COLLEGE_OUTCOMES)[number];

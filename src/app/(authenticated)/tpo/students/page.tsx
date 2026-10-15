@@ -5,8 +5,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
-import {TpoAfterCollegeEditor} from "@/components/tpo/tpo-after-college-editor";
-import {afterCollegeOptions,AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model";
 import { listPlacementJobs } from "@/modules/placements/job-service";
 import { can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
@@ -22,8 +20,6 @@ import {
 
 type SearchParams = {
   journeyState?: string | string[];
-  afterCollege?: string | string[];
-  codingPlatform?: string | string[];
   branchId?: string | string[];
   search?: string | string[];
   page?: string | string[];
@@ -45,8 +41,6 @@ function first(value: string | string[] | undefined) {
 function studentsHref(
   filters: {
     journeyState?: string;
-    afterCollege?: string;
-    codingPlatform?: string;
     branchId?: string;
     search?: string;
     page?: number;
@@ -59,9 +53,6 @@ function studentsHref(
   if (filters.journeyState) {
     params.set("journeyState", filters.journeyState);
   }
-
-  if (filters.afterCollege) params.set("afterCollege",filters.afterCollege);
-  if (filters.codingPlatform) params.set("codingPlatform",filters.codingPlatform);
 
   if (filters.branchId) {
     params.set("branchId", filters.branchId);
@@ -129,8 +120,6 @@ export default async function TpoStudentsPage({
   const parsed = tpoStudentsQuerySchema.safeParse({
     collegeId: context.membership.collegeId,
     journeyState: first(raw.journeyState) || undefined,
-    afterCollege: first(raw.afterCollege) || undefined,
-    codingPlatform: first(raw.codingPlatform) || undefined,
     branchId: first(raw.branchId) || undefined,
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
@@ -200,8 +189,6 @@ export default async function TpoStudentsPage({
   const exportHref = studentsHref(
     {
       journeyState: query.journeyState,
-      afterCollege: query.afterCollege,
-      codingPlatform: query.codingPlatform,
       branchId: query.branchId,
       search: query.search,
     },
@@ -210,8 +197,6 @@ export default async function TpoStudentsPage({
 
   const currentFilters = {
     journeyState: query.journeyState,
-    afterCollege: query.afterCollege,
-    codingPlatform: query.codingPlatform,
     branchId: query.branchId,
     search: query.search,
     pageSize: query.pageSize,
@@ -510,24 +495,6 @@ export default async function TpoStudentsPage({
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
-            After college
-            <select name="afterCollege" defaultValue={query.afterCollege??""} disabled={!data.definitions.afterCollegeAvailable}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
-              <option value="">All outcomes</option>
-              {afterCollegeOptions().map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
-            </select>
-          </label>
-
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
-            Coding profile
-            <select name="codingPlatform" defaultValue={query.codingPlatform??""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
-              <option value="">All coding profiles</option>
-              <option value="GITHUB">Linked GitHub profile</option>
-            </select>
-          </label>
-
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Branch
             <select
               name="branchId"
@@ -609,7 +576,6 @@ export default async function TpoStudentsPage({
                   <th scope="col" className="px-4 py-3">Applications</th>
                   <th scope="col" className="px-4 py-3">Offers</th>
                   <th scope="col" className="px-4 py-3">Journey</th>
-                  <th scope="col" className="px-4 py-3">After college</th>
                 </tr>
               </thead>
               <tbody>
@@ -638,10 +604,6 @@ export default async function TpoStudentsPage({
                       >
                         View placement history →
                       </Link>
-                      {student.codingGithubUrl?<a href={student.codingGithubUrl} target="_blank" rel="noopener noreferrer"
-                        className="mt-2 block break-all text-xs font-semibold text-primary-text underline">
-                        GitHub coding profile ↗
-                      </a>:null}
                     </td>
 
                     <td className="px-4 py-4">
@@ -725,14 +687,6 @@ export default async function TpoStudentsPage({
                       <StatusBadge tone={metricTone(student.journeyState)}>
                         {JOURNEY_LABELS[student.journeyState]}
                       </StatusBadge>
-                    </td>
-                    <td className="min-w-44 px-4 py-4">
-                      {data.definitions.afterCollegeAvailable?
-                        manageAllowed?<TpoAfterCollegeEditor key={student.membershipId+":"+(student.afterCollegeUpdatedAt??"none")}
-                          membershipId={student.membershipId} outcome={student.afterCollegeOutcome??null}
-                          expectedVersion={student.afterCollegeUpdatedAt??"none"}/>:
-                        <span className="text-sm">{AFTER_COLLEGE_LABELS[student.afterCollegeOutcome??"NOT_DECIDED"]}</span>:
-                        <span className="text-xs text-muted-foreground">Unavailable</span>}
                     </td>
                   </tr>
                 ))}
