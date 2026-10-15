@@ -217,6 +217,7 @@ export async function updateAnnouncement(
 ) {
   const id = announcementIdSchema.parse(idInput);
   const input = announcementUpdateSchema.parse(raw);
+  requirePlatformPublishConsent(isSuperAdmin(context),input.publishConsent===true);
   const current = await loadAnnouncement(id);
   requireManage(context, {
     organizationId: current.organizationId,
