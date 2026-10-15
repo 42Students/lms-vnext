@@ -15,3 +15,14 @@ export function selectMentorAttention(rows:readonly MentorProjectAttention[],
    return b.occurredAt.localeCompare(a.occurredAt)||a.key.localeCompare(b.key);
  });
 }
+
+/** Selector labels must come from the authenticated Mentor roster, never alert prose. */
+export function mentorAttentionProjectOptions(
+  alerts:readonly MentorProjectAttention[],
+  projects:readonly {id:string;title:string}[],
+){
+  const alerted=new Set(alerts.map(row=>row.projectId));
+  return projects.filter(project=>alerted.has(project.id))
+    .map(project=>({id:project.id,title:project.title}))
+    .sort((a,b)=>a.title.localeCompare(b.title)||a.id.localeCompare(b.id));
+}

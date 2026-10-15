@@ -1,3 +1,4 @@
+import {listMyProjectInstances} from "@/modules/projects/member-service";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -13,7 +14,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { mentorInboxQuerySchema, mentorInboxPageHref } from "@/modules/activity/mentor-notifications-model";
 import { getMentorPersonalInbox } from "@/modules/activity/mentor-notifications-service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
-import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention} from "@/modules/projects/mentor-attention-kind-model";
+import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention,mentorAttentionProjectOptions} from "@/modules/projects/mentor-attention-kind-model";
 
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
@@ -58,6 +59,10 @@ export default async function MentorNotificationsPage({
   ]);
   const alerts = projectAccess.projects.enabled
     ? await listMyMentorProjectAttention(context) : [];
+  const assigned=projectAccess.projects.enabled
+    ? (await listMyProjectInstances(context)).filter(row=>row.memberRole==="MENTOR") : [];
+  const projectOptions=mentorAttentionProjectOptions(alerts,
+    assigned.map(row=>({id:row.project.id,title:row.project.title})));
   const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data);
   const items:NotificationListItem[] = inbox.page.items.map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
@@ -87,9 +92,7 @@ export default async function MentorNotificationsPage({
           <select name="projectId" defaultValue={projectId.data??""}
             className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
             <option value="">All assigned Projects</option>
-            {[...new Map(alerts.map(alert=>[alert.projectId,alert.description.split(":")[0]])).entries()]
-              .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
-              .map(([id,title])=><option key={id} value={id}>{title}</option>)}
+            {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold">Attention order
