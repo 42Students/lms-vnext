@@ -1,17 +1,17 @@
 "use client";
 import {useState} from "react";
 import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-type Fields={q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;sectionId:string;batchId:string;branchId:string};
-const empty:Fields={q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",sectionId:"",batchId:"",branchId:""};
+type Fields={membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;sectionId:string;batchId:string;branchId:string};
+const empty:Fields={membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList}){
- const selected=():Fields=>({q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
+ const selected=():Fields=>({membershipId:query.membershipId??"",q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
   sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
  function apply(value:Fields){
   if(value.q.length>100){setError("Name search is too long");return;}
-  for(const key of ["sectionId","batchId","branchId"] as const){
+  for(const key of ["sectionId","batchId","branchId","membershipId"] as const){
    if(value[key]&&!uuid.test(value[key])){setError(key+" must be a valid UUID");return;}
   }
   if(value.submittedFrom&&value.waitingSince&&value.submittedFrom>value.waitingSince){setError("Start date must not follow the end date");return;}
@@ -21,6 +21,10 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   <summary className="cursor-pointer text-sm font-medium">More filters: learner name, marksheets, batch, branch, class, waiting since</summary>
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
    <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+    <label className="min-w-0 text-sm">Exact learner membership ID
+     <input type="text" maxLength={36} value={fields.membershipId} onChange={e=>change("membershipId",e.target.value)}
+      placeholder="Membership UUID" className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>
+    </label>
     <label className="min-w-0 text-sm">Learner name
      <input type="search" maxLength={100} value={fields.q} onChange={e=>change("q",e.target.value)}
       placeholder="Search by name" className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>

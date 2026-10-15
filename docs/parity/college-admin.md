@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Exact learner lookup PARTIAL (chat-9):** College Admin staff can deep-link from a Student roster membership to a filtered verification queue and matching capped export, using a strict membership UUID. The stored-college/learner-role predicates remain authoritative, and foreign or forged IDs reveal no matching details. Unit and route integration coverage authored; real PostgreSQL/browser acceptance open.
+
 **IST lower submission-date filter PARTIAL (chat-9):** Staff queue and capped CSV now support a matching inclusive Asia/Kolkata submitted-from date, with reversed date windows rejected before querying. Bounded URL contract, form feedback and pure date-boundary tests authored; real PostgreSQL/browser verification pending.
 
 **No hidden-row bulk selection PARTIAL (chat-9):** College verification now disables the shared page-local search input while keeping the authorized server-side learner-name filter and status/kind selectors. Consequently select-all and preview address exactly the displayed college-scoped server page; Super Admin and any other consumers retain their existing local-search behavior. Contract tests authored; browser/CI acceptance pending.

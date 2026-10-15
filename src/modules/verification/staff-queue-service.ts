@@ -41,6 +41,7 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
  .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
+   filter.membershipId?eq(collegeMemberships.id,filter.membershipId):undefined,
    eq(users.platformStatus,"ACTIVE"),filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
    inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
    inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]),
