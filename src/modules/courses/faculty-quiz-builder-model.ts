@@ -16,9 +16,9 @@ const detailSchema=z.object({quiz:z.object({questions:z.array(item)}).passthroug
 /** GET /api/courses/quizzes/[id] returns {quiz:{quiz,questions,...}}, not root questions. */
 export function facultyAuthoringQuestionsFromResponse(input:unknown){
  const parsed=detailSchema.parse(input);
- return parsed.quiz.questions.map((q,i)=>({
+ return [...parsed.quiz.questions].sort((a,b)=>a.sequence-b.sequence).map((q,i)=>({
   type:q.type,prompt:q.prompt,points:q.points,sequence:i,
-  options:q.options.map((option,j)=>({
+  options:[...q.options].sort((a,b)=>a.sequence-b.sequence).map((option,j)=>({
    text:option.text,correct:option.correct??false,sequence:j,
   })),
  }));
