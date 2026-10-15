@@ -1414,3 +1414,19 @@ address measured mobile/desktop overflow, but visual validation remains open. Pu
 authored alongside item commits; no successful TypeScript, Vitest, disposable PostgreSQL or
 browser execution has yet been observed on these commits. They do NOT change the active
 DATABASE tracker, certify Projects parity, or enable unsupported file uploads.
+
+## 2026-10-15 chat-11 final-delivery audit and Mentor timeline (PARTIAL)
+
+Final Project delivery draft creation, draft revision, submission and review now
+write fixed-label, same-transaction, college/organization-scoped activity events.
+Only project ID, version and (for review) decision are recorded in metadata;
+private URLs, free-text notes, feedback and member identities are omitted. The
+existing Projects Activity timeline permits a distinct Final Deliveries filter
+at exact-project and assigned-Mentor portfolio levels. Stalled-project activity
+lookup additionally restricts recorded events to the authenticated college and
+organization; exact-project history resolves direct Project subjects separately
+from metadata-linked subordinate events. A disposable PostgreSQL positive
+regression is authored against the existing P6B final-delivery fixture and
+asserts versions, reviewer decisions and private-data exclusion, but **has
+not executed** in this session. CI, tenant-negative, browser/legacy and all
+clone-family acceptance remain open; no tracker DONE change is implied.
