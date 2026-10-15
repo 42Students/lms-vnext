@@ -144,6 +144,7 @@ export async function listBugTrackerIssuesForAdmin(
   if (input.resolution === "UNRESOLVED") conditions.push(isNull(db10BugReports.resolution));
   else if (input.resolution) conditions.push(eq(db10BugReports.resolution, input.resolution));
   if (input.retestStatus) conditions.push(eq(db10BugReports.retestStatus, input.retestStatus));
+  if (input.productionVerified !== undefined) conditions.push(eq(db10BugReports.productionVerified, input.productionVerified));
   if (input.environment) {
     conditions.push(eq(db10BugReports.environment, input.environment));
   }

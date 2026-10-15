@@ -1108,3 +1108,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Audit Findings retest status (PARTIAL):** DB10 persisted retest PASS/FAIL/NOT_RETESTED can be independently filtered in the board and CSV, scoped and paginated by service SQL. Unit enum and query tests authored, integration/browser acceptance still open.
+
+
+**2026-10-15 chat-6 Audit Findings verified-state filter (PARTIAL):** The persisted `production_verified` boolean can now be filtered as Yes/No/All, including false without treating it as absent; status survives pagination/export without exposing private metadata. Validation tests authored, browser/DB evidence open.
