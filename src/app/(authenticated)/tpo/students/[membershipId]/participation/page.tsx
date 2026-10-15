@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoLearnerParticipation } from "@/modules/placements/tpo-participation-service";
+import {tpoStudentJourneyLinks} from "@/modules/placements/tpo-student-journey-links-model";
 
 export default async function TpoLearnerParticipationPage({
   params,
@@ -20,6 +21,7 @@ export default async function TpoLearnerParticipationPage({
   }
   const { membershipId } = await params;
   const learner = await getTpoLearnerParticipation(context, membershipId);
+  const journey=tpoStudentJourneyLinks(learner.membershipId);
 
   return (
     <div className="space-y-6">
@@ -73,6 +75,11 @@ export default async function TpoLearnerParticipationPage({
           DB08 debarment lifecycle.
         </p>
       </section>
+
+      <nav aria-label="Student placement journey" className="flex flex-wrap gap-3">
+        <Link href={journey.history} className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text">View placement history and round outcomes →</Link>
+        <Link href={journey.roster} className="inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-primary-text">Student roster</Link>
+      </nav>
 
       <TpoDebarControl
         membershipId={learner.membershipId}
