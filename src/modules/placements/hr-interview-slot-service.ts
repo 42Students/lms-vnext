@@ -56,11 +56,13 @@ export async function listHrInterviewSlots(context:RequestContext,rawJobId:unkno
    eq(placementJobRounds.jobId,job.id)))
    .where(eq(hrInterviewSlots.collegeId,job.collegeId))
    .orderBy(hrInterviewSlots.startAt).limit(100);
+  const now=new Date();
   return {status:"READY" as const,items:rows.map(row=>({
    id:row.id,roundId:row.roundId,startAt:row.startAt,endAt:row.endAt,
    mode:row.mode,panelLabel:row.panelLabel,capacity:row.capacity,
    bookedCount:row.bookedCount,status:row.status,version:row.version,
-   canEdit:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id),
+   isOwn:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id),
+   canEdit:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id)&&row.startAt>now,
   }))};
  });
 }

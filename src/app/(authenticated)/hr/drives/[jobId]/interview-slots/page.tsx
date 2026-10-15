@@ -91,7 +91,8 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
       {(slot.status==="PROPOSED"||slot.status==="OFFERED")?<button type="submit" name="action" value="CANCEL"
         className="min-h-11 rounded-md border border-border px-4 text-primary-text">Cancel time block</button>:null}
      </form>:<p className="text-sm text-muted-foreground">
-      This time block was created by another recruiter and is read-only for your account.
+      {slot.isOwn?"This time block has started or passed; further changes are disabled.":
+       "This time block was created by another recruiter and is read-only for your account."}
      </p>}
     </article>)}
     {!slots.items.length?<p role="status" className="text-sm text-body">No persisted employer time blocks for this drive.</p>:null}
