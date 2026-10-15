@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-attendance-month-navigation-model";
 
 import {
   useMemo,
@@ -72,27 +73,6 @@ type Summary = {
   percentage: number | null;
 };
 
-function monthKey(date: Date) {
-  return `${date.getFullYear()}-${String(
-    date.getMonth() + 1,
-  ).padStart(2, "0")}`;
-}
-
-function parseMonth(value: string) {
-  const [year, month] = value.split("-").map(Number);
-  return new Date(year, month - 1, 1);
-}
-
-function shiftMonth(
-  date: Date,
-  amount: number,
-) {
-  return new Date(
-    date.getFullYear(),
-    date.getMonth() + amount,
-    1,
-  );
-}
 
 
 function isPresent(
