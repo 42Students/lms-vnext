@@ -54,7 +54,7 @@ export function AssignmentSubmissionControl({
       !textContent.trim()
     ) {
       setError(
-        "Enter your assignment response before submitting.",
+        "Add at least one submission before submitting.",
       );
       flight.current.end();
       return;
@@ -140,11 +140,10 @@ export function AssignmentSubmissionControl({
     >
       <fieldset disabled={submitting && submissionType !== "FILE"}>
         <legend className="text-sm font-semibold text-foreground">
-          Submit assignment
+          Submit Your Work
         </legend>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
-          Submission is final. Choose a written
-          response, an HTTPS link, or a file when uploads are available.
+          Add your work using the method below. Submission is final once recorded.
         </p>
 
         <div
@@ -186,12 +185,12 @@ export function AssignmentSubmissionControl({
               setSubmissionType("LINK")
             }
           >
-            HTTPS link
+            External Link
           </Button>
           <Button type="button" size="sm" disabled={!fileUploadsEnabled || submitting}
             variant={submissionType === "FILE" ? "primary" : "secondary"}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
-            File upload
+            File Upload
           </Button>
         </div>
 
@@ -201,7 +200,7 @@ export function AssignmentSubmissionControl({
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <label className="mt-4 block">
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Your response
+              Written response
             </span>
             <Textarea
               value={textContent}
@@ -218,7 +217,7 @@ export function AssignmentSubmissionControl({
         ) : (
           <label className="mt-4 block">
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Submission link
+              Website / External Links
             </span>
             <Input
               type="url"
@@ -230,7 +229,7 @@ export function AssignmentSubmissionControl({
                   event.target.value,
                 )
               }
-              placeholder="https://…"
+              placeholder="Paste the link"
               required
             />
           </label>
@@ -249,7 +248,7 @@ export function AssignmentSubmissionControl({
           <Button type="submit">
             {submitting
               ? "Submitting…"
-              : "Submit assignment"}
+              : "Submit"}
           </Button>
           <span className="text-xs text-muted-foreground">
             You cannot replace the submission
