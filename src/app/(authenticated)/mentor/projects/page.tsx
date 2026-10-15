@@ -2,6 +2,7 @@ import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-tea
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
+import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 import { compareMentorProjects, compareMentorProjectsByMostProgress, compareMentorProjectsByOpenTasks, compareMentorProjectsByTeamSize, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
@@ -53,9 +54,7 @@ export default async function MentorProjectsPage({
 
   const params = await searchParams;
   const parsed = mentorProjectListQuerySchema.safeParse(
-    Object.fromEntries(Object.entries(params).map(([key, value]) => [
-      key, Array.isArray(value) ? value[0] : value,
-    ])),
+    singleValueMentorFilters(params),
   );
   if (!parsed.success) {
     return <section role="alert" className="space-y-3">
