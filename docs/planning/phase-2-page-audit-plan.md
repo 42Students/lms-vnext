@@ -92,7 +92,7 @@ A page is CLOSED only when all of these hold:
 ## 9. Start procedure (when phase 1 closes)
 
 1. Confirm phase 1 state: matrix counts, open BLOCKED decisions with the owner.
-2. Ask the owner for: permission to run the legacy stack on demand; answers on storage/video/Vertex blockers; priority order change if any.
+2. Ask the owner for: permission to run the legacy stack on demand; answers on storage/video blockers; priority order change if any.
 3. Run Round 0 for all accounts, commit `docs/audit/legacy-inventory.md`.
 4. Run Rounds A and R per page in account order; commit per account; keep PROGRESS.md current.
 5. Run Round G; create `docs/audit/gap-register.md`; create phase 2 lane briefs; assign lanes; resume the build/merge/verify loop from section 8.
@@ -106,5 +106,4 @@ Legacy pages: expected roughly 250 to 350 routes across accounts (matrix has abo
 
 - Run the legacy stack for confirmation screenshots? (default: code-only audit)
 - Are S4 "nice-to-have" gaps in scope, or only S1 to S3?
-- Vertex AI quality runs: still required? (AI grading was dropped.)
 - Storage buckets and video signing: who provides access, and when?
