@@ -435,6 +435,20 @@
       "when": 1792048777606,
       "tag": "0061_faculty_lesson_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1792050473231,
+      "tag": "0062_messaging_delivery_receipts",
+      "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792050888060,
+      "tag": "0063_profile_verification",
+      "breakpoints": true
     }
   ]
 }
