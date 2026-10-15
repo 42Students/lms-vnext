@@ -19,6 +19,7 @@ import {learnerApplicationSelectionMissing} from "@/modules/placements/learner-a
 import { learnerApplicationsCsv } from "@/modules/placements/learner-applications-csv-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
+import {learnerApplicationDateLabel} from "@/modules/placements/learner-application-date-label-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
 import {
   browseLearnerApplications,
@@ -40,12 +41,7 @@ function humanize(value: string) {
   return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function formatDate(date: Date | null) {
-  if (!date) return "Not available";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle:"medium", timeStyle:"short", timeZone:"Asia/Kolkata",
-  }).format(date);
-}
+const formatDate=learnerApplicationDateLabel;
 
 export function LearnerApplicationsBrowse({
   items,interviewLinks=[],assessmentLinks=[],
