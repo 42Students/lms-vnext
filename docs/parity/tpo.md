@@ -2089,3 +2089,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / Live round venue — PARTIAL:** TPO live cards now include persisted round venue or an explicit unrecorded label; location and attendance are never inferred. Existing job-scoped permissions remain unchanged.
 
 **Chat-2 / Drive Day evidence-based follow-up label — PARTIAL:** Live cards now prioritize purely observed unrecorded, pending and explicitly absent attendance, distinguish empty rosters, and avoid fabricated contact/delivery states. Manual operator review remains required.
+
+**Chat-2 / batch Students current-page name search — PARTIAL:** Strict URL-bound search now filters only the already-authorized 25-person roster slice, with honest no-match and preserved pagination context. Cohort-wide SQL search and mobile/browser acceptance remain open.
