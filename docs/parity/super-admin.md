@@ -1159,3 +1159,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 transactional notice audit fixture (AUTHORED, NOT EXECUTED):** Extended disposable DB10 lifecycle fixture to assert exactly one persisted Activity Log publication receipt without notice text, stale no-op delete/restore 409 semantics, and deterministic cleanup of activity and notice fixture rows. Do not interpret authored coverage as executed migration acceptance.
+
+
+**2026-10-15 chat-6 HR recruiter strict URL boundary — PARTIAL:** The /admin/hr and recruiter alias now reject duplicate/unknown query keys and malformed filters, normalize blank status/search/page selections without defaulting to the first duplicated value, and retain the existing non-leaking reset state. Pure tests authored; browser/PG acceptance pending.

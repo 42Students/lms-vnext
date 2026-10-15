@@ -13,21 +13,13 @@ import {
   listSuperAdminHrAccounts,
 } from "@/modules/placements/super-admin-hr-service";
 import {
-  superAdminHrListQuerySchema,
+  parseSuperAdminHrPageParams,
 } from "@/modules/placements/super-admin-hr-validation";
 
 type SearchParams = Record<
   string,
   string | string[] | undefined
 >;
-
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 export default async function SuperAdminHrPage({
   searchParams,
@@ -44,15 +36,9 @@ export default async function SuperAdminHrPage({
 
   const params = await searchParams;
 
-  const parsed =
-    superAdminHrListQuerySchema.safeParse({
-      q: one(params.q),
-      status: one(params.status),
-      page: one(params.page),
-      pageSize: one(params.pageSize),
-    });
+  const parsed = parseSuperAdminHrPageParams(params);
 
-  if (!parsed.success) {
+  if (!parsed) {
     return (
       <div className="space-y-6">
         <PageHeader
@@ -76,7 +62,7 @@ export default async function SuperAdminHrPage({
     );
   }
 
-  const query = parsed.data;
+  const query = parsed;
 
   let list: HrAccountsPageData | null = null;
   let loadError: string | null = null;
