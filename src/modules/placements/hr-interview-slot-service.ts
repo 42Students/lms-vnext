@@ -5,18 +5,20 @@ import {getDb} from "@/db/client";
 import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,activityEvents,colleges} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "./hr-interview-staged-schema";
 import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed} from "./hr-interview-slot-model";
 import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
 
-type JobScope={id:string;collegeId:string;organizationId:string};
+type JobScope={id:string;collegeId:string;organizationId:string;companyRelationshipId:string};
 async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:string):Promise<JobScope>{
  if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)
   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const [job]=await tx.select({
    id:placementJobs.id,collegeId:placementJobs.collegeId,organizationId:colleges.organizationId,
+   companyRelationshipId:placementJobs.companyRelationshipId,
   }).from(placementJobs)
   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
   .innerJoin(placementCompanyRelationships,and(
@@ -33,7 +35,9 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
    eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED")))
   .for("update").limit(1);
- if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ if(!job||!can(context,"placements.recruiter.read",{
+  collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
+ }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return job;
 }
 export async function listHrInterviewSlots(context:RequestContext,rawJobId:unknown){

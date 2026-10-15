@@ -5,6 +5,7 @@ import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
  placementRoundResults,activityEvents,colleges} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
+import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
 import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName} from "./hr-round-editor-model";
 import {z} from "zod";
@@ -36,7 +37,9 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
    ))
    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED")))
    .for("update").limit(1);
-  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+  if(!job||!can(context,"placements.recruiter.read",{
+   collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
+  }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const rounds=await tx.select({
    id:placementJobRounds.id,name:placementJobRounds.name,
    sequence:placementJobRounds.sequence,status:placementJobRounds.status,
