@@ -5,14 +5,15 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrConversationQuerySchema} from "@/modules/placements/hr-conversation-inbox-model";
 import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-service";
-type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[]};
+import {hrConversationsHref} from "@/modules/placements/hr-conversation-urls-model";
+type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[]};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
 function when(value:Date){return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
 export default async function RecruiterConversationsPage({searchParams}:{searchParams:Promise<Query>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
- const parsed=hrConversationQuerySchema.safeParse({collegeId:first(raw.collegeId),q:first(raw.q),page:first(raw.page)});
+ const parsed=hrConversationQuerySchema.safeParse({collegeId:first(raw.collegeId),q:first(raw.q),page:first(raw.page),unreadOnly:first(raw.unreadOnly)});
  if(!parsed.success)return <main role="alert" className="space-y-3 p-5">
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
@@ -42,11 +43,20 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    </section>
    <form method="get" action="/hr/conversations" className="flex flex-wrap gap-2">
     <input type="hidden" name="collegeId" value={result.collegeId}/>
+    <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <label className="flex-1 text-sm text-body">Search by conversation or drive ID
      <input name="q" maxLength={120} defaultValue={parsed.data.q}
       className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/></label>
     <button type="submit" className="self-end rounded-md border border-border px-4 py-3 text-primary-text">Search</button>
    </form>
+   <nav aria-label="Conversation status" className="flex flex-wrap gap-2">
+    <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"false",page:1})}
+     aria-current={parsed.data.unreadOnly==="false"?"page":undefined}
+     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">All</Link>
+    <Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:"true",page:1})}
+     aria-current={parsed.data.unreadOnly==="true"?"page":undefined}
+     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Unread</Link>
+   </nav>
    <p role="status" className="text-sm text-body">
     {result.unreadInView} unread placement cell messages in these conversations
    </p>
@@ -66,11 +76,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     </li>)}
    </ol>:<p role="status" className="rounded-xl border border-border p-5 text-body">No matching conversations with the placement cell for this college.</p>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
-    {result.page>1?<Link href={"/hr/conversations?collegeId="+result.collegeId+
-      "&q="+encodeURIComponent(parsed.data.q)+"&page="+(result.page-1)}
+    {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,page:result.page-1})}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link>:null}
-    {result.page<result.pages?<Link href={"/hr/conversations?collegeId="+result.collegeId+
-      "&q="+encodeURIComponent(parsed.data.q)+"&page="+(result.page+1)}
+    {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,page:result.page+1})}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link>:null}
    </nav>
   </>}
