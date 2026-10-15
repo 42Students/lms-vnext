@@ -42,12 +42,10 @@ export function learnerApplicationViewCounts(rows:readonly LearnerApplicationBro
 }
 
 export function learnerApplicationLatestActivity(item: LearnerApplicationBrowseItem) {
-  return Math.max(
-    item.submittedAt.getTime(),
-    item.withdrawnAt?.getTime() ?? 0,
-    item.screening.decidedAt?.getTime() ?? 0,
-    ...item.results.map((result) => result.appliedAt?.getTime() ?? 0),
-  );
+  const validTime=(date:Date|null)=>date&&Number.isFinite(date.getTime())?date.getTime():0;
+  let latest=Math.max(validTime(item.submittedAt),validTime(item.withdrawnAt),validTime(item.screening.decidedAt));
+  for(const result of item.results)latest=Math.max(latest,validTime(result.appliedAt));
+  return latest;
 }
 
 export function learnerApplicationStageOptions<T extends LearnerApplicationBrowseItem>(

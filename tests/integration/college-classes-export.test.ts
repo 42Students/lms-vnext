@@ -62,9 +62,9 @@ describe.skipIf(!enabled)("College classes export persisted PostgreSQL scope",()
     await expect(exportCollegeClasses(own,{collegeId:SEED_IDS.collegeB})).rejects.toBeDefined();
   });
   it("exports only matching own-college academic period status records",async()=>{
-    const found=await pool!.query<{status:string}>("SELECT status FROM academic_periods WHERE id=$1",[id.period]);const actual=found.rows[0]!.status;const other=actual==="CLOSED"?"ACTIVE":"CLOSED";
+    const found=await pool!.query<{status:string}>("SELECT status FROM academic_periods WHERE id=$1",[id.period]);const actual=found.rows[0]!.status;const otherStatus=actual==="CLOSED"?"ACTIVE":"CLOSED";
     const ownRows=await exportCollegeClasses(own,{q:label,periodLifecycle:actual});
-    const missingRows=await exportCollegeClasses(own,{q:label,periodLifecycle:other});
+    const missingRows=await exportCollegeClasses(own,{q:label,periodLifecycle:otherStatus});
     const foreignRows=await exportCollegeClasses(other,{q:label,periodLifecycle:actual});
     expect(ownRows.csv).toContain(label);
     expect(missingRows.exported).toBe(0);

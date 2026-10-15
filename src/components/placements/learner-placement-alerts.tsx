@@ -1,16 +1,9 @@
 import Link from "next/link";
 import type { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {learnerAlertsHistoryHref} from "@/modules/placements/learner-alerts-history-navigation-model";
+import {learnerAlertSafeDate} from "@/modules/placements/learner-alert-safe-date-model";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
-
-function dateIst(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value) + " IST";
-}
 
 export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false }: { alerts: Alerts; filtered?: boolean; unreadOnly?:boolean }) {
   return (
@@ -46,8 +39,8 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
                   </p>
                   <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{alert.body}</p>
                 </div>
-                <time dateTime={alert.createdAt.toISOString()}
-                  className="shrink-0 text-xs text-muted-foreground">{dateIst(alert.createdAt)}</time>
+                <time dateTime={learnerAlertSafeDate(alert.createdAt).iso??undefined}
+                  className="shrink-0 text-xs text-muted-foreground">{learnerAlertSafeDate(alert.createdAt).label}</time>
               </div>
               {alert.actionHref ? (
                 <Link href={alert.actionHref}

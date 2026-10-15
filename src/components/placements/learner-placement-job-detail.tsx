@@ -7,6 +7,7 @@ import {
 } from "@/modules/placements/learner-job-detail-model";
 import {learnerJobAvailabilityBanner} from "@/modules/placements/learner-job-availability-banner-model";
 import {learnerDriveEvidenceRequirements} from "@/modules/placements/learner-drive-evidence-requirements-model";
+import {learnerJobDeadlineLabel} from "@/modules/placements/learner-job-deadline-label-model";
 
 function humanize(value: string) {
   return value.toLowerCase().split("_").map((part) =>
@@ -19,11 +20,6 @@ function statusTone(status: "PASS" | "FAIL" | "MISSING") {
   if (status === "PASS") return "success" as const;
   if (status === "FAIL") return "error" as const;
   return "warning" as const;
-}
-function formatDeadline(value: string | null) {
-  return value ? new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "long", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(new Date(value)) : "Not specified";
 }
 
 export function LearnerPlacementJobDetail({
@@ -92,7 +88,7 @@ export function LearnerPlacementJobDetail({
           </div>
           <div>
             <dt className="text-xs font-semibold uppercase text-muted-foreground">Application deadline</dt>
-            <dd className="mt-1 font-semibold text-foreground">{formatDeadline(item.job.applicationDeadline)}</dd>
+            <dd className="mt-1 font-semibold text-foreground">{learnerJobDeadlineLabel(item.job.applicationDeadline)}</dd>
           </div>
         </dl>
         <div className="mt-5 flex flex-wrap gap-3">

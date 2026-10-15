@@ -34,7 +34,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
         eyebrow="College Admin · Academic Setup"
         title={title}
         description={classes
-          ? "College classes with program, batch, period, recorded active learner enrollments and guarded management actions."
+          ? "Read-only college classes with program, batch, term and recorded active learner enrollments."
           : "Registered elective slots with guarded creation, editing, choice constraints and active course offerings."}
         actions={<Link href="/college/academics"
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -454,7 +454,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
         {classes
           ? "Active enrollments count persisted section enrollments for active learner memberships. Class capacity is configured capacity, not occupancy or attendance; scheduling conflicts and recurring series creation are not available here."
           : "Offered-course counts represent nondeleted active elective offerings with college-owned courses. Slots do not prove that the elective feature is enabled or that learner selections are open. Selection finalization and capacity enforcement are not implemented here."}
-        Some legacy bulk actions and final browser parity remain open; available create/edit and archive controls use their own confirmation and permission guards.
+        Read-only. Legacy create/edit/delete, confirmation and browser parity remain open.
       </p>
     </div>
   );
