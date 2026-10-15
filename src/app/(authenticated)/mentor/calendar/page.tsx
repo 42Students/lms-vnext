@@ -5,25 +5,20 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-calendar";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
 export const dynamic="force-dynamic";
 type Search={sprint?:string|string[];join?:string|string[];projectId?:string|string[];attention?:string|string[];status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
   const raw=await searchParams;
-  const parsed=mentorCalendarFiltersSchema.safeParse({
-    sprint:first(raw.sprint)??undefined,
-    join:first(raw.join)??undefined,
-    projectId:first(raw.projectId)??undefined,
-    attention:first(raw.attention)??undefined,
-    status:first(raw.status)??undefined,type:first(raw.type)??undefined,
-    projectState:first(raw.projectState)??undefined,
-    search:first(raw.search)??undefined,
-    period:first(raw.period)??undefined,
-  });
+  const parsed=mentorCalendarFiltersSchema.safeParse(singleValueMentorFilters({
+    sprint:raw.sprint,join:raw.join,projectId:raw.projectId,
+    attention:raw.attention,status:raw.status,type:raw.type,
+    projectState:raw.projectState,search:raw.search,period:raw.period,
+  }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <h1>Invalid meeting filters</h1>
     <Link href="/mentor/calendar" className="text-primary-text underline">Clear filters</Link>
