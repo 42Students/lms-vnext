@@ -479,6 +479,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Saved content visibility flag triage PARTIAL (2026-10-15):** College Admin now isolates lessons having any PUBLISHED content with stored visibleToStudents=true, versus no such content, using EXISTS on the in-college lesson ancestry before pagination. This is a metadata flag, not an access-grant claim. URL/CSV propagation and disposable PostgreSQL branch assertions authored; execution pending.
+
 **Published content existence PARTIAL (2026-10-15):** College Admin can identify Lessons with/without at least one saved PUBLISHED lesson-content record through a tenant-owned EXISTS/NOT EXISTS predicate before pagination and capped CSV; this does not imply parent publication or actual learner access. Model and isolated PostgreSQL assertions authored; execution/browser gates pending.
 
 **Lessons with/without authored content PARTIAL (2026-10-15):** College Admin can isolate lessons that have any persisted content or have none using a correlated database existence check before pagination, without treating empty lessons as unpublished or without assignments/quizzes. Filter carries to CSV and unit/PG assertions; browser/runtime acceptance pending.

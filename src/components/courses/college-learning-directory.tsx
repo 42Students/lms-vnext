@@ -92,6 +92,14 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
           ) : null}
           {data.kind === "LESSONS" ? (
             <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+              Published and visibility-flagged content
+              <select name="flaggedVisibility" defaultValue={data.query.flaggedVisibility} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All lessons</option><option value="HAS_FLAGGED">Has flagged content</option><option value="NONE_FLAGGED">No flagged content</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
               Published lesson content
               <select name="publishedContent" defaultValue={data.query.publishedContent} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">Any publication</option><option value="HAS_PUBLISHED">Has published content</option><option value="NONE_PUBLISHED">No published content</option>

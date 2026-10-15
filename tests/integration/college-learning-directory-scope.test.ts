@@ -140,6 +140,13 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     const unknown=await listCollegeLessons(own,{courseCode:"MISSING-CODE"});
     expect(exact.items.map(row=>row.id)).toContain(ids.lesson);
     expect(unknown.items).toEqual([]);
+    const currentVisibility=await pool!.query<{visible:boolean}>("SELECT visible_to_students AS visible FROM lesson_contents WHERE id=$1",[ids.content]);
+    const [flagged,notFlagged]=await Promise.all([
+      listCollegeLessons(own,{q:name,flaggedVisibility:"HAS_FLAGGED"}),
+      listCollegeLessons(own,{q:name,flaggedVisibility:"NONE_FLAGGED"}),
+    ]);
+    expect(flagged.items.map(row=>row.id).includes(ids.lesson)).toBe(currentVisibility.rows[0]!.visible);
+    expect(notFlagged.items.map(row=>row.id).includes(ids.lesson)).toBe(!currentVisibility.rows[0]!.visible);
     const [publishedLessons,unpublishedLessons]=await Promise.all([
       listCollegeLessons(own,{q:name,publishedContent:"HAS_PUBLISHED"}),
       listCollegeLessons(own,{q:name,publishedContent:"NONE_PUBLISHED"}),

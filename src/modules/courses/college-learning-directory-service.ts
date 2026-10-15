@@ -107,6 +107,8 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.offeringType&&query.offeringType!=="ALL"?eq(courseOfferings.type,query.offeringType):undefined,
       query.departmentName?eq(departments.name,query.departmentName):undefined,
+      query.flaggedVisibility==="HAS_FLAGGED"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,true)))):
+        query.flaggedVisibility==="NONE_FLAGGED"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,true))))):undefined,
       query.publishedContent==="HAS_PUBLISHED"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.status,"PUBLISHED")))):
         query.publishedContent==="NONE_PUBLISHED"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.status,"PUBLISHED"))))):undefined,
       query.contentPresence&&query.contentPresence!=="ALL" ?
