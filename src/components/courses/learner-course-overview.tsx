@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerCourseHomeActionLabel } from "@/modules/courses/learner-course-home-action-label-model";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ExpandableCourseDescription } from "./expandable-course-description";
@@ -398,9 +399,11 @@ export function LearnerCourseOverview({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
-              {priorityActivity
-                ? priorityActivity.type === "Live Session" ? "Upcoming live session" : "Due soon"
-                : nextAction ? "Next up" : summary.itemsTotal > 0 ? "All clear" : "Start here"}
+              {learnerCourseHomeActionLabel({
+                readOnly,priorityType:priorityActivity?.type ?? null,
+                overdue:Boolean(priorityActivity && "overdue" in priorityActivity && priorityActivity.overdue),
+                hasNext:Boolean(nextAction),hasTrackable:summary.itemsTotal>0,
+              })}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
               {nextAction

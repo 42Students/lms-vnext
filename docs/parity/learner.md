@@ -1392,3 +1392,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 round 2 / Quiz empty-question resilience (PARTIAL; L8):** an authorized quiz with no available questions now shows an explicit non-attemptable explanation and route back to All Quizzes rather than misreporting an unattempted closing status. Real question submission and result visibility rules remain unchanged. Pure test authored; browser/DB verification pending.
 
 **Chat-7 follow-up / Learner external resource links (L3 PARTIAL):** published course resource and live-session links now allow only absolute HTTP(S) URLs without embedded credentials or oversized input; invalid legacy values show a warning rather than becoming executable links. No new reads, writes, or authorization bypass. Pure tests authored; browser and producer acceptance outstanding.
+
+**Chat-7 follow-up / Course Home actionable heading (L2-011 PARTIAL):** persisted overdue assignment actions are labeled `Overdue assignment` rather than `Due soon`, and historical Course Home announces past-semester read-only status. Pure unit assertions authored; browser verification outstanding.
