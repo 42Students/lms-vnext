@@ -132,6 +132,16 @@ export default async function TrackerIssueDetailPage({
             ))}
           </div>
         )}
+        {detail.nextAttachmentCursor ? (
+          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams({
+            ...detail.nextAttachmentCursor,
+            ...(cursor.activityBeforeCreatedAt && cursor.activityBeforeId ? {
+              activityBeforeCreatedAt:cursor.activityBeforeCreatedAt,activityBeforeId:cursor.activityBeforeId,
+            }:{}),
+          }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            Older screenshot metadata
+          </Link>
+        ) : null}
       </section>
 
       <section className="space-y-3">
@@ -155,7 +165,12 @@ export default async function TrackerIssueDetailPage({
           </ol>
         )}
         {detail.nextActivityCursor ? (
-          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams(detail.nextActivityCursor).toString()}
+          <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams({
+            ...detail.nextActivityCursor,
+            ...(cursor.attachmentBeforeCreatedAt && cursor.attachmentBeforeId ? {
+              attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
+            }:{}),
+          }).toString()}
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Older audit events
           </Link>

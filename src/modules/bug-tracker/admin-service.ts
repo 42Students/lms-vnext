@@ -227,7 +227,15 @@ export async function getBugTrackerIssueForAdmin(
       and(eq(db10BugReportActivities.createdAt,time),lt(db10BugReportActivities.id,id)),
     )!);
   }
-  const [activityRows, attachments] = await Promise.all([
+  const attachmentConditions: SQL[] = [eq(db10BugReportAttachments.bugReportId,row.report.id)];
+  if(activityCursor.attachmentBeforeCreatedAt && activityCursor.attachmentBeforeId){
+    const at=activityCursor.attachmentBeforeCreatedAt,id=activityCursor.attachmentBeforeId;
+    attachmentConditions.push(or(
+      lt(db10BugReportAttachments.createdAt,at),
+      and(eq(db10BugReportAttachments.createdAt,at),lt(db10BugReportAttachments.id,id)),
+    )!);
+  }
+  const [activityRows, attachmentRows] = await Promise.all([
     getDb()
       .select({
         id: db10BugReportActivities.id,
@@ -253,13 +261,19 @@ export async function getBugTrackerIssueForAdmin(
         createdAt: db10BugReportAttachments.createdAt,
       })
       .from(db10BugReportAttachments)
-      .where(eq(db10BugReportAttachments.bugReportId, row.report.id))
-      .orderBy(asc(db10BugReportAttachments.createdAt)),
+      .where(and(...attachmentConditions))
+      .orderBy(desc(db10BugReportAttachments.createdAt),desc(db10BugReportAttachments.id))
+      .limit(51),
   ]);
 
   const activities=activityRows.slice(0,50);
+  const attachments=attachmentRows.slice(0,50);
+  const lastAttachment=attachments.at(-1);
   const last=activities.at(-1);
   return { report:row.report,activities,attachments,
+    nextAttachmentCursor:attachmentRows.length>50 && lastAttachment ? {
+      attachmentBeforeCreatedAt:lastAttachment.createdAt.toISOString(),attachmentBeforeId:lastAttachment.id,
+    }:null,
     nextActivityCursor: activityRows.length>50 && last ? {
       activityBeforeCreatedAt:last.createdAt.toISOString(),activityBeforeId:last.id,
     }:null,

@@ -1114,3 +1114,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 bounded tracker activity history (PARTIAL):** DB10 issue/finding details now retrieve a deterministic newest-first 50-event page with timestamp/UUID keyset cursor and an Older audit events link. Both detail routes and the private API validate incomplete/duplicate cursors; scoped ownership is verified before activity data loads. Authored cursor tests; high-volume PG/browser acceptance remains open.
+
+
+**2026-10-15 chat-6 bounded screenshot metadata (PARTIAL):** DB10 finding detail now uses independent 50-row attachment keyset pages, preserving activity-history pagination when navigating screenshots (and vice versa); all attachment lookups remain behind scoped issue ownership, and no storage keys or public download URLs are returned. Authored cursor regression tests; PG/browser checks remain open.
