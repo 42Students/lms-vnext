@@ -53,6 +53,9 @@ export function filterFacultyResultCandidates<T extends FacultyResultCandidate>(
 export function paginateFacultyResults<T>(
   rows: readonly T[], page: number, pageSize = 5,
 ) {
+  if (!Number.isInteger(page) || page < 1 || !Number.isInteger(pageSize) || pageSize < 1 || pageSize > 10) {
+    throw new Error("INVALID_FACULTY_RESULTS_PAGE");
+  }
   const total = rows.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const current = Math.min(page, totalPages);
