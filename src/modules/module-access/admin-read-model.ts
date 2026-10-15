@@ -157,3 +157,9 @@ export function summarizeStoredModuleOverrides(items:readonly {enabled:boolean;l
 export function adminFeatureExportHref(filters:Parameters<typeof adminFeaturesHref>[0]):string {
  return adminFeaturesHref(filters).replace("/admin/features","/api/admin/features/export");
 }
+
+/** Preserve the chosen optional-module context when inspecting one college's rule hierarchy. */
+export function adminFeatureHierarchyHref(collegeId:string,module?:OptionalModuleKey|null):string {
+ const base="/admin/features/"+encodeURIComponent(collegeId);
+ return module?base+"?module="+encodeURIComponent(module):base;
+}
