@@ -56,6 +56,7 @@ export * from "./platform-broadcasts";
 
 export * from "./tpo-internal";
 export * from "./tpo-collaboration";
+export * from "./placement-external";
 
 export * from "./placement-registration";
 

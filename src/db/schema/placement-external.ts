@@ -16,7 +16,7 @@ import { placementJobs } from "./placements";
 import { users } from "./users";
 
 /**
- * DB08-C: a REAL off-campus placement, never a synthetic placement job,
+ * Registered in migration 0094. DB08-C: a REAL off-campus placement, never a synthetic placement job,
  * application or on-campus offer.
  *
  * The optional letter is a PRIVATE storage object reference, never a public
