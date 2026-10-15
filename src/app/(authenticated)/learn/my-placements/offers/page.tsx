@@ -17,6 +17,14 @@ import {
   type LearnerOfferView,
 } from "@/modules/placements/learner-offers-browse-model";
 
+const joiningTabs = [
+  {id:"all",label:"All joining outcomes"},
+  {id:"joined",label:"Confirmed joined"},
+  {id:"pending",label:"Joining pending"},
+  {id:"deferred",label:"Joining deferred"},
+  {id:"did-not-join",label:"Did not join"},
+  {id:"not-recorded",label:"No joining record"},
+] as const;
 const kindTabs = [{id:"all",label:"All documents"},{id:"offer",label:"Offer letters"},{id:"loi",label:"Letters of intent"}] as const;
 const tabs: readonly { id: LearnerOfferView; label: string }[] = [
   { id: "all", label: "All offers" },
@@ -122,12 +130,14 @@ export default async function LearnerOffersPage({
         <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
       </form>
       <nav aria-label="Recorded joining outcome" className="flex flex-wrap gap-3 text-sm">
-        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly,sort:order,kind,joining:"all"})}
-          aria-current={joiningFilter==="all"?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">All joining outcomes</Link>
-        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly,sort:order,kind,joining:"joined"})}
-          aria-current={joiningFilter==="joined"?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Confirmed joined</Link>
+        {joiningTabs.map(tab => (
+          <Link key={tab.id}
+            href={learnerOfferStatusHref(view,{searchTerm,dueOnly,sort:order,kind,joining:tab.id})}
+            aria-current={joiningFilter===tab.id?"page":undefined}
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">
+            {tab.label}
+          </Link>
+        ))}
       </nav>
       <nav aria-label="Offer document kind" className="flex flex-wrap gap-3 text-sm">
         {kindTabs.map(({id:value,label})=><Link key={value} href={kindHref(value)}
