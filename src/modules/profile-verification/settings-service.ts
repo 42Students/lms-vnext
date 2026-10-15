@@ -2,13 +2,13 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, collegeMemberships, colleges, placementCandidateAcademicEvidence,
+  activityEvents, collegeMemberships, colleges, membershipRoles, systemRoles, users, placementCandidateAcademicEvidence,
 } from "@/db/schema";
 import {
   profileVerificationAcademicMarks, profileVerificationSettings,
 } from "@/db/schema/profile-verification";
-import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {
   convertedPercentageBasisPoints, normaliseCgpaRule,
   type CgpaRule, type RawAcademicMark,
@@ -94,6 +94,28 @@ export async function setTpoProfileVerificationEnabled(
     const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
       .from(colleges).where(eq(colleges.id,collegeId)).for("update");
     if(!college) throw Error("COLLEGE_NOT_FOUND");
+    // Revalidate the authorizing role while the college lock is held.
+    // Request-context roles alone are insufficient after account revocation.
+    if(isSuperAdmin(context)){
+      const [superRole]=await tx.select({id:systemRoles.id}).from(systemRoles)
+       .where(and(eq(systemRoles.userId,context.user.id),eq(systemRoles.role,"SUPER_ADMIN"))).for("share");
+      if(!superRole)throw new AuthorizationError("college.manage");
+    }else{
+      const membership=context.membership;
+      if(!membership||membership.collegeId!==collegeId||membership.status!=="ACTIVE"||
+         context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("college.manage");
+      const [persisted]=await tx.select({id:collegeMemberships.id})
+       .from(collegeMemberships)
+       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"COLLEGE_ADMIN")))
+       .innerJoin(users,eq(users.id,collegeMemberships.userId))
+       .where(and(eq(collegeMemberships.id,membership.id),
+         eq(collegeMemberships.userId,context.user.id),
+         eq(collegeMemberships.collegeId,collegeId),
+         eq(collegeMemberships.status,"ACTIVE"),
+         eq(users.platformStatus,"ACTIVE"))).for("share");
+      if(!persisted)throw new AuthorizationError("college.manage");
+    }
     requirePermission(context,"college.manage",{collegeId,organizationId:college.organizationId});
     await tx.insert(profileVerificationSettings).values({
       collegeId,tpoCanVerifyProfiles:enabled,updatedByUserId:context.user.id,
