@@ -20,7 +20,7 @@ export function learnerCourseListSignals(
   const due=lessons.flatMap(lesson=>[
     ...lesson.assignments.filter(item=>!item.submittedAt && item.dueAt)
       .map(item=>({title:item.title,dueAt:item.dueAt!,kind:"Assignment" as const})),
-    ...lesson.quizzes.filter(item=>item.progress.status==="NOT_STARTED" && item.dueAt)
+    ...lesson.quizzes.filter(item=>(item.progress.status==="NOT_STARTED" || item.progress.status==="IN_PROGRESS") && item.dueAt)
       .map(item=>({title:item.title,dueAt:item.dueAt!,kind:"Quiz" as const})),
   ]).filter(item=>Number.isFinite(now.getTime()) && Number.isFinite(item.dueAt.getTime()) && item.dueAt.getTime()>=now.getTime())
     .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime());
