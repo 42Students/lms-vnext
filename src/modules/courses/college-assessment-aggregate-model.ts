@@ -9,6 +9,7 @@ export const collegeAssessmentListQuerySchema = z.object({
   courseCode: z.string().trim().min(1).max(64).optional(),
   periodCode:z.string().trim().min(1).max(64).optional(),
   cohortCode:z.string().trim().min(1).max(64).optional(),
+  programCode:z.string().trim().min(1).max(64).optional(),
   scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
   results:z.enum(["ALL","PUBLISHED","HIDDEN"]).default("ALL"),
   duePresence:z.enum(["ALL","SCHEDULED","UNSCHEDULED"]).default("ALL"),
@@ -54,6 +55,7 @@ export function collegeAssessmentHref(
   if (query.courseCode) params.set("courseCode",query.courseCode);
   if(query.periodCode)params.set("periodCode",query.periodCode);
   if(query.cohortCode)params.set("cohortCode",query.cohortCode);
+  if(query.programCode)params.set("programCode",query.programCode);
   if (query.scope!=="ALL") params.set("scope",query.scope);
   if(kind==="QUIZ"&&query.results!=="ALL")params.set("results",query.results);
   if(query.duePresence!=="ALL")params.set("duePresence",query.duePresence);
