@@ -44,7 +44,7 @@ export function quizOverviewActionState(
     return {
       label: "Missed",
       tone: "error" as const,
-      action: "View answers",
+      action: "View quiz",
       review: true,
     };
   }
@@ -52,7 +52,7 @@ export function quizOverviewActionState(
     return {
       label: "Closed",
       tone: "neutral" as const,
-      action: "Review quiz",
+      action: "View quiz",
       review: true,
     };
   }

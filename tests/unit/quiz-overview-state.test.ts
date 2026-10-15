@@ -18,8 +18,13 @@ describe("W02 legacy QuizzesContent expired row parity", () => {
       dueAt: "2026-10-09T09:00:00.000Z",
       progressStatus: "MISSED",
     }, now)).toMatchObject({
-      label: "Missed", action: "View answers", review: true,
+      label: "Missed", action: "View quiz", review: true,
     });
+  });
+  it("read-only missed quiz must not promise unpublished answers", () => {
+    const result=quizOverviewActionState({...base,status:"CLOSED",resultsPublished:false,attemptsUsed:0},now);
+    expect(result.action).toBe("View quiz");
+    expect(result.review).toBe(true);
   });
   it("previously submitted expired quiz is review, never retake", () => {
     expect(quizOverviewActionState({
