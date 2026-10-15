@@ -3,7 +3,7 @@ import {useState,type FormEvent} from "react";
 import Link from "next/link";
 import {aiGradingRubricForMaximum,type AiGradingSelection,type AiGradingRubric} from "@/modules/courses/faculty-ai-grading-model";
 import {facultyAiGradingReportHref} from "@/modules/courses/faculty-ai-grading-links";
-import type {AiGradingSuggestion} from "@/modules/courses/faculty-ai-grading-suggestion";
+import {verifyFacultyAiGradingResult} from "@/modules/courses/faculty-ai-grading-result";
 
 type Selected={
  id:string;version:number;submissionType:string;gradingStatus:string;
@@ -22,7 +22,7 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
  const [providerStatus,setProviderStatus]=useState<string|null>(null);
  const [requesting,setRequesting]=useState(false);
  const [permission,setPermission]=useState(false);
- const [suggestion,setSuggestion]=useState<AiGradingSuggestion|null>(null);
+ const [suggestion,setSuggestion]=useState<ReturnType<typeof verifyFacultyAiGradingResult>["suggestion"]|null>(null);
  const [reviewed,setReviewed]=useState(false);
  const [draftPoints,setDraftPoints]=useState("");
  const [draftFeedback,setDraftFeedback]=useState("");
@@ -34,6 +34,33 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
  }
  function onRubricChange(value:string){
   setRubricText(value);setSuggestion(null);setReviewed(false);setRubricError(null);setProviderStatus(null);
+ }
+ async function requestSuggestion(){
+  const rubric=parseRubric();
+  if(!rubric||!permission||!submission.eligible||!submission.textContent)return;
+  setSuggestion(null);setReviewed(false);setProviderStatus(null);setRequesting(true);
+  try{
+   const response=await fetch("/api/ai-grading/suggest",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({selection,expectedSubmissionVersion:submission.version,
+     consentToApprovedProcessing:true,rubric}),
+   });
+   if(!response.ok){
+    setProviderStatus(response.status===503?
+     "AI provider is not enabled. No suggestion was produced and no grade was saved.":
+     "No suggestion was generated. Check the selection, rubric and current submission revision.");
+    return;
+   }
+   const raw:unknown=await response.json();
+   const result=verifyFacultyAiGradingResult(raw,{
+    assignmentId:selection.assignmentId,deliveryId:selection.deliveryId,
+    submissionId:selection.submissionId,version:submission.version,
+   },rubric,submission.textContent);
+   setSuggestion(result.suggestion);
+   setProviderStatus("Suggestion loaded for human review only. No grade was changed.");
+  }catch{
+   setProviderStatus("Could not verify a suggestion response. No grade was changed.");
+  }finally{setRequesting(false);}
  }
  function validateRubric(event:FormEvent<HTMLFormElement>){
   event.preventDefault();parseRubric();
@@ -63,7 +90,7 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
   </label>
   <button type="button" disabled={requesting||!submission.eligible||!permission}
    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
-   onClick={()=>{setProviderStatus("Provider disabled. No model call was made.");}}>
+   onClick={()=>{void requestSuggestion();}}>
     Request suggestion (if provider enabled)
   </button>
   {providerStatus?<p role="status" className="text-sm text-body">{providerStatus}</p>:null}
@@ -72,6 +99,12 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
    <h3 className="font-semibold">Untrusted suggestion · Review required</h3>
    <p className="text-sm text-body">Provider: {suggestion.provider} · confidence {suggestion.confidence}</p>
    <p className="text-sm text-body">{suggestion.feedback}</p>
+   <p className="text-sm font-semibold text-body">Suggested {suggestion.proposedScore} / {maxPoints} points (not a grade)</p>
+   <ol className="space-y-2">{suggestion.evidence.map(item=><li key={item.criterionId} className="rounded-md border border-border p-3 text-sm">
+    <p className="font-semibold">{item.criterionId}: {item.earnedPoints} points suggested</p>
+    <blockquote className="mt-1 border-l-2 border-border pl-3">{item.excerpt}</blockquote>
+    <p className="mt-2 text-body">{item.reason}</p>
+   </li>)}</ol>
    <p className="text-xs text-muted-foreground">Review every rubric finding against the submitted text before accepting a draft.</p>
    <button type="button" onClick={()=>setReviewed(true)} className="min-h-10 rounded-md border border-border px-4 text-sm">Mark evidence reviewed</button>
   </div>:null}
