@@ -191,7 +191,7 @@ export function LearnerCourseOverview({
   const nextAction = priorityActivity
     ? {
         title: priorityActivity.title,
-        detail: `${priorityActivity.overdue ? "Overdue · late submission available" : priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
+        detail: `${("overdue" in priorityActivity && priorityActivity.overdue) ? "Overdue · late submission available" : priorityActivity.type}${priorityActivity.when ? ` · ${formatWhen(priorityActivity.when)}` : ""}`,
         href: `/learn/courses/${deliveryId}/roadmap?filter=${priorityActivity.filter}&lesson=${encodeURIComponent(priorityActivity.lessonId)}&content=${encodeURIComponent(priorityActivity.id)}`,
       }
     : nextContent
