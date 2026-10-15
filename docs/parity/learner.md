@@ -1384,3 +1384,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 round 2 / Course card overdue navigation (PARTIAL):** active Course cards now deep-link to the earliest real overdue unsubmitted assignment under the exact learner-authorized lesson; destination UUIDs are validated by the existing guarded link model. Submitted and historical work cannot present an action. Unit model cases authored; runtime/browser acceptance pending.
 
 **Chat-7 round 2 / Empty published Learning Paths (PARTIAL):** the learner workspace now distinguishes published paths without lessons, published lesson shells without available items and unpublished paths, without inventing progress. Pure tests authored; mobile/browser parity remains pending.
+
+**Chat-7 round 2 / Attendance month recovery (PARTIAL; L10):** while browsing another month, Learner Attendance now provides a one-tap This month action that preserves the currently authorized Course and history preferences, using the server-supplied IST month rather than browser-local guesses. Model tests authored; URL/Back-Forward and browser acceptance pending.
