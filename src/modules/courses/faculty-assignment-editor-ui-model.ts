@@ -18,3 +18,21 @@ export function facultyAssignmentDraftIssue(input:{title:string;description:stri
   return "Maximum points must be a whole number from 1 to 10000.";
  return null;
 }
+
+export type FacultyAssignmentAction = "CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE";
+/** A successful HTTP status does not prove a same-Section assignment mutation. */
+export function facultyAssignmentCommandReceipt(
+ raw:unknown, request:{action:FacultyAssignmentAction;deliveryId:string;assignmentId?:string;title?:string;maxPoints?:number},
+):boolean {
+ if(!raw||typeof raw!=="object"||!("assignment" in raw))return false;
+ const row=(raw as {assignment:unknown}).assignment;
+ if(!row||typeof row!=="object")return false;
+ const data=row as Record<string,unknown>;
+ if(typeof data.id!=="string"||!data.id||data.deliveryId!==request.deliveryId)return false;
+ if(request.action!=="CREATE"&&data.id!==request.assignmentId)return false;
+ const status=request.action==="CREATE"?"DRAFT":request.action==="EDIT"?"DRAFT":request.action==="PUBLISH"?"PUBLISHED":"ARCHIVED";
+ if(data.status!==status)return false;
+ if((request.action==="CREATE"||request.action==="EDIT")&&
+   (data.title!==request.title||data.maxPoints!==request.maxPoints))return false;
+ return typeof data.updatedAt==="string" && Number.isFinite(Date.parse(data.updatedAt));
+}
