@@ -1531,3 +1531,7 @@ A college-admin-authorized, same-origin POST restores an archived project only a
 ## Phase 2 PR-S2-11 — resource visibility (STAGED / NOT DONE)
 
 The old LMS says **“Mentor-only resources stay hidden from learners on this project.”** A proposed project_resources.visibility column supports TEAM (existing-resource default) and MENTOR_ONLY, with read policy returning false for LEARNER on mentor-only resources. The SQL, policy and test are staged but **not wired into the active read/write/export APIs**, which cannot safely filter a field that the registered schema does not yet contain. The orchestrator must register the column, enforce writes and tenant/role-scoped reads, then run leak-negative tests. No mentor-only resource capability is claimed before those gates.
+
+## Phase 2 legacy-copy-A Mentor/Projects wording audit (PARTIAL)
+
+The Mentor sidebar already carried the exact legacy visible labels **Projects**, **Meetings**, **Notifications** in the correct order. Its three legacy group assignments are now consistently `learning`. Mentor Projects page title/back-link and core empty states were corrected to the exact legacy strings (“Projects”, “No projects match these filters.”, “No projects assigned yet.”). The shared Mentor project tab strip already has the exact seven documented labels, verified by source regression assertions against legacy-copy-A.md. Broader button/form/modal/table wording, responsive/browser and full source-diff acceptance remain open; this is not a complete wording certificate.

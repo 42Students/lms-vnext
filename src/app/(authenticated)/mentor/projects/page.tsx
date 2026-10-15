@@ -209,8 +209,8 @@ export default async function MentorProjectsPage({
     <div className="space-y-6">
       <PageHeader
         eyebrow="Mentor"
-        title="Mentoring Projects"
-        description="Projects where you are responsible for execution guidance, review and final evaluation."
+        title="Projects"
+        description="Choose a project to open its workspace."
         actions={
           <div className="flex flex-wrap gap-2">
             <Link href="/mentor/reviews"
@@ -315,8 +315,8 @@ export default async function MentorProjectsPage({
           query.search ||
           query.status ||
           query.attention || query.assignment || query.work
-            ? "No mentoring Projects match these filters"
-            : "No mentoring Projects"
+            ? "No projects match these filters."
+            : "No projects assigned yet."
         }
         emptyDescription={
           query.search ||
