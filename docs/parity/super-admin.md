@@ -1075,3 +1075,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 private response caching (PARTIAL):** Authenticated announcement-admin and tracker list/detail JSON endpoints now send explicit private, no-store headers to prevent accidental intermediary persistence of tenant-scoped notice and issue data. Unit source regression authored; HTTP runtime headers still require verification.
+
+
+**2026-10-15 chat-6 DB10 announcement disposable PostgreSQL fixture (AUTHORED, NOT EXECUTED):** A test against registered `announcements` checks create → scoped list → optimistic edit/stale conflict → soft-delete/restore and inactive/wrong-role denial using seeded identities and cleaned-up rows. It is gated by TEST_DATABASE_URL and DB03_ISOLATED_TEST_DATABASE; full migration replay, runtime and browser acceptance still open.
