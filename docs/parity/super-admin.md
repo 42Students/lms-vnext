@@ -1081,3 +1081,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 tracker disposable PostgreSQL fixture (AUTHORED, NOT EXECUTED):** A registered-table integration scenario now creates an isolated tracker reporter/issue, reads list/detail, writes a version-checked workflow transition with activity, rejects stale mutations, and verifies scoped/role-negative access; teardown removes temporary rows. No task or phase closure is implied until executed evidence exists.
+
+
+**2026-10-15 chat-6 Super Admin broadcast actor-status fence (PARTIAL):** Both broadcast college enumeration and publication now explicitly deny inactive platform actors even if a stale Super Admin role appears in the request context; guards precede DB access. Unit source contract authored; live negative authorization and browser checks remain pending.
