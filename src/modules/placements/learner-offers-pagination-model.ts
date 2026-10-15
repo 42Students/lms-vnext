@@ -1,5 +1,5 @@
 import {z} from "zod";
-export const learnerOfferPageSchema=z.coerce.number().int().min(1).max(10000);
+export const learnerOfferPageSchema=z.string().regex(/^[1-9][0-9]{0,3}$/).transform(value=>Number(value));
 export function paginateOwnOffers<T>(rows:readonly T[],requestedPage:number,pageSize=15){
  if(!Number.isSafeInteger(pageSize)||pageSize<1||pageSize>50)throw new Error("INVALID_PAGE_SIZE");
  const total=rows.length;

@@ -192,4 +192,99 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(classes.items).toEqual([]);
     expect(electives.items).toEqual([]);
   });
+  it("cohortStatus uses the persisted same-college academic relation",async()=>{
+    const statusRow=await pool!.query<{status:string}>("SELECT status FROM cohorts WHERE id=$1",[ids.cohort]);
+    const expected=statusRow.rows[0]!.status;
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,cohortStatus:expected}),
+      listCollegeClasses(adminA,{q:key,cohortStatus:(expected==="ACTIVE"?"ARCHIVED":"ACTIVE")}),
+      listCollegeClasses(adminB,{q:key,cohortStatus:expected}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("programStatus uses the persisted same-college academic relation",async()=>{
+    const statusRow=await pool!.query<{status:string}>("SELECT status FROM programs WHERE id=$1",[ids.program]);
+    const expected=statusRow.rows[0]!.status;
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,programStatus:expected}),
+      listCollegeClasses(adminA,{q:key,programStatus:(expected==="ACTIVE"?"ARCHIVED":"ACTIVE")}),
+      listCollegeClasses(adminB,{q:key,programStatus:expected}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("periodState uses the persisted same-college academic relation",async()=>{
+    
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,periodState:"LINKED"}),
+      listCollegeElectives(adminA,{q:key,periodState:"UNLINKED"}),
+      listCollegeElectives(adminB,{q:key,periodState:"LINKED"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("elective program lifecycle filters only the owning college",async()=>{
+    const statusRow=await pool!.query<{status:string}>("SELECT status FROM programs WHERE id=$1",[ids.program]);
+    const status=statusRow.rows[0]!.status;
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,programStatus:status}),
+      listCollegeElectives(adminA,{q:key,programStatus:status==="ACTIVE"?"ARCHIVED":"ACTIVE"}),
+      listCollegeElectives(adminB,{q:key,programStatus:status}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("periodCode restricts registered classes within owning college",async()=>{
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,periodCode:key}),
+      listCollegeClasses(adminA,{q:key,periodCode:"NO-SUCH-CODE"}),
+      listCollegeClasses(adminB,{q:key,periodCode:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("classCode restricts registered classes within owning college",async()=>{
+    const [matching,other,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,classCode:key}),
+      listCollegeClasses(adminA,{q:key,classCode:"NO-SUCH-CODE"}),
+      listCollegeClasses(adminB,{q:key,classCode:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(other.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("choiceMode finds only registered own-college elective evidence",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,choiceMode:"FLEXIBLE"}),
+      listCollegeElectives(adminA,{q:key,choiceMode:"FIXED"}),
+      listCollegeElectives(adminB,{q:key,choiceMode:"FLEXIBLE"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
+  it("offeringState finds only registered own-college elective evidence",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,offeringState:"NONE_ACTIVE"}),
+      listCollegeElectives(adminA,{q:key,offeringState:"HAS_ACTIVE"}),
+      listCollegeElectives(adminB,{q:key,offeringState:"NONE_ACTIVE"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
