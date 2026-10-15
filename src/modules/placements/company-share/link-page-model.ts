@@ -26,3 +26,11 @@ export function clampCompanyShareLinksPage(page:number,total:number){
 export function prependCompanyShareLink<T extends {id:string}>(rows:readonly T[],created:T):T[]{
  return [created,...rows.filter(row=>row.id!==created.id)].slice(0,COMPANY_SHARE_PAGE_SIZE);
 }
+
+/** Applicant search resets only the applicant page, not independent link history. */
+export function companySharePreviewSearchState(status:"ALL"|"ACTIVE"|"EXPIRED"|"REVOKED",linkPage:number){
+ return {
+  ...(status==="ALL"?{}:{shareStatus:status}),
+  ...(linkPage>1?{sharePage:String(linkPage)}:{}),
+ };
+}
