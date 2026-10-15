@@ -24,14 +24,14 @@ export function TpoBellPanel({initialUnread,items}:{initialUnread:number;items:r
   {open?<section role="region" aria-label="Notification bell panel" className="absolute right-0 z-30 mt-2 w-[min(90vw,24rem)] max-w-full space-y-3 rounded-xl border border-border bg-surface p-4 shadow-lg">
    <header className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">Notifications</h2><button type="button" className="text-sm underline" onClick={()=>setOpen(false)}>Close</button></header>
    <p className="text-xs text-muted-foreground">Most recent notifications from your own college.</p>
-   {items.length===0?<p role="status" className="text-sm">No notifications yet.</p>:<ul className="max-h-80 space-y-2 overflow-y-auto">
+   {items.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="max-h-80 space-y-2 overflow-y-auto">
     {items.slice(0,10).map(item=><li key={item.id} className="rounded border border-border p-2 text-sm">
      <p className="font-medium">{item.title}{!item.readAt?" · Unread":""}</p>
      {item.body?<p className="break-words text-muted-foreground">{item.body}</p>:null}
      {item.actionHref?.startsWith("/")&&!item.actionHref.startsWith("//")?
       <Link className="mt-1 inline-block text-primary-text underline" href={item.actionHref}>Open record</Link>:null}
     </li>)}</ul>}
-   <div className="flex flex-wrap gap-3"><Link className="min-h-10 inline-flex items-center text-sm underline" href="/tpo/notifications">All notifications</Link>
+   <div className="flex flex-wrap gap-3"><Link className="min-h-10 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending||unread===0}>{pending?"Saving…":"Mark all read"}</button></div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </section>:null}
