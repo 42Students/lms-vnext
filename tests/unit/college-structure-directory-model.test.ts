@@ -211,4 +211,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeElectiveQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
     expect(readCollegeStructureParams({programCode:""})).toEqual({});
   });
+  it("Elective owning department code is bounded and persists in elective page links",()=>{
+    const query=collegeElectiveQuerySchema.parse({departmentCode:"A&26"});
+    expect(collegeStructureHref("ELECTIVES",query)).toContain("departmentCode=A%2626");
+    expect(collegeElectiveQuerySchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({departmentCode:""})).toEqual({});
+  });
 });
