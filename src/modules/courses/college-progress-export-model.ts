@@ -1,9 +1,9 @@
-import {collegeProgressQuerySchema} from "./college-learning-directory-model";
+import {collegeProgressQuerySchema,type CollegeProgressQuery} from "./college-learning-directory-model";
 import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college-directory-export-model";
 export const PROGRESS_EXPORT_CAP=1000;
 export const collegeProgressCsvSchema=collegeProgressQuerySchema.omit({page:true});
 export {exportParams};
-export function collegeProgressCsvHref(query:{q:string;departmentCode?:string;courseStatus?:"ALL"|"ACTIVE"|"ARCHIVED";periodStatus?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED";cohortStatus?:"ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";status:"ALL"|"ACTIVE"|"ARCHIVED";courseCode?:string;programCode?:string;periodCode?:string;cohortCode?:string;offeringType?:string;departmentName?:string;activityState?:"ALL"|"RECORDED"|"UNRECORDED";completionEvidence?:"ALL"|"COMPLETED_CONTENT"|"NO_COMPLETED_CONTENT";learningPathPresence?:"ALL"|"HAS_PATH"|"NO_PATH";publishedPathPresence?:"ALL"|"HAS_PUBLISHED_PATH"|"NO_PUBLISHED_PATH"}){
+export function collegeProgressCsvHref(query: CollegeProgressQuery) {
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.courseCode)p.set("courseCode",query.courseCode);
@@ -22,6 +22,7 @@ export function collegeProgressCsvHref(query:{q:string;departmentCode?:string;co
  if(query.periodStatus&&query.periodStatus!=="ALL")p.set("periodStatus",query.periodStatus);
  if(query.courseStatus&&query.courseStatus!=="ALL")p.set("courseStatus",query.courseStatus);
  if(query.departmentCode)p.set("departmentCode",query.departmentCode);
+ if(query.lessonPresence!=="ALL")p.set("lessonPresence",query.lessonPresence);
  return "/api/academics/college-progress-export"+(p.size?"?"+p.toString():"");
 }
 export function renderCollegeProgressCsv(rows:readonly {

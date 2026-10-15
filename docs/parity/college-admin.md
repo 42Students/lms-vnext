@@ -723,6 +723,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Offering authored lesson triage PARTIAL (2026-10-15, chat-3):** Filters on persisted lessons attached through learning paths, before college-scoped counts, paging and safe capped CSV. Source tests authored; independent PG/browser acceptance open.
+
 **Published learning path triage PARTIAL (2026-10-15):** The Course Progress offering list now distinguishes registered PUBLISHED learning paths from drafts, archived paths or absent paths. This is an authored structure state, not proof of learner visibility or course completion. Filtered totals, safe CSV, strict schema and disposable-PG fixture are authored; execution/browser acceptance open.
 
 **Missing shared learning path triage PARTIAL (2026-10-15):** College Admin now distinguishes offerings with/without a persisted course_learning_paths row before activity pagination and CSV. An offering without a path is not described as failed learning or absent enrollment. Strict Zod/URL and own-college PostgreSQL fixtures authored; execution and browser acceptance open.

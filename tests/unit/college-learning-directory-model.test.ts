@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import {collegeProgressCsvHref} from "@/modules/courses/college-progress-export-model";
 import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 import {
   collegeLearningHref,
@@ -209,6 +210,13 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(q.lessonName).toBe("Intro & Set-up");
     expect(new URL(collegeLearningHref("LESSONS",q),"https://t.example").searchParams.get("lessonName")).toBe("Intro & Set-up");
     expect(new URL(lessonsCsvHref(q),"https://t.example").searchParams.get("lessonName")).toBe("Intro & Set-up");
+  });
+
+  it("accepts only saved-lesson presence values and retains CSV selector",()=>{
+    expect(collegeProgressQuerySchema.safeParse({lessonPresence:"INFERRED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({lessonPresence:"HAS_LESSONS"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("lessonPresence=HAS_LESSONS");
+    expect(collegeProgressCsvHref(q)).toContain("lessonPresence=HAS_LESSONS");
   });
 
 });

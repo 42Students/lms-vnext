@@ -38,6 +38,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
+  lessonPresence:z.enum(["ALL","HAS_LESSONS","NO_LESSONS"]).default("ALL"),
   departmentCode:z.string().trim().min(1).max(64).optional(),
   courseStatus:z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
   periodStatus:z.enum(["ALL","PLANNED","ACTIVE","CLOSED"]).default("ALL"),
@@ -61,6 +62,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if(kind==="PROGRESS"&&"lessonPresence" in query&&query.lessonPresence!=="ALL")params.set("lessonPresence",query.lessonPresence);
   if (kind === "LESSONS" && "lessonName" in query && query.lessonName) params.set("lessonName", query.lessonName);
   if (kind === "LESSONS" && "sequenceThrough" in query && query.sequenceThrough !== undefined) params.set("sequenceThrough", String(query.sequenceThrough));
   if (kind === "LESSONS" && "sequenceFrom" in query && query.sequenceFrom !== undefined) params.set("sequenceFrom", String(query.sequenceFrom));

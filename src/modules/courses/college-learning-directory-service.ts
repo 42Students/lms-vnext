@@ -211,6 +211,13 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.lessonPresence !== "ALL" ? (query.lessonPresence === "HAS_LESSONS" ?
+        exists(db.select({id:courseLessons.id}).from(courseLessons)
+          .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+          .where(eq(courseLearningPaths.offeringId,courseOfferings.id))) :
+        not(exists(db.select({id:courseLessons.id}).from(courseLessons)
+          .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+          .where(eq(courseLearningPaths.offeringId,courseOfferings.id))))) : undefined,
       query.departmentCode ? eq(departments.code,query.departmentCode) : undefined,
       query.courseStatus !== "ALL" ? eq(courses.status,query.courseStatus) : undefined,
       query.periodStatus !== "ALL" ? eq(academicPeriods.status,query.periodStatus) : undefined,
