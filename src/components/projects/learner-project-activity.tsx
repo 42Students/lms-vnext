@@ -71,7 +71,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       ) : null}
     </div>
     {shown.length === 0 ? <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-      {!parsed.success ? "Apply a valid filter to view activity." : textQuery.trim() && pageRows.length ? "No events on this loaded page match your text. Clear the search or navigate to older events." : category === "ALL" && !parsed.data.from && !parsed.data.to ? "No persisted Project activity yet." : "No activity matches these filters. Clear them to see recent activity."
+      {!parsed.success ? "Apply a valid filter to view activity." : textQuery.trim() && pageRows.length ? "No events on this loaded page match your text. Clear the search or navigate to older events." : category === "ALL" && !parsed.data.from && !parsed.data.to ? "No persisted Project activity yet." : "No activity matches these filters. Clear them to see recent activity."}
     </div> : <ol className="space-y-3">{shown.map(event => <li key={event.id}
       className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <p className="break-words text-sm font-semibold text-foreground">{event.summary}</p>
