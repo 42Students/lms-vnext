@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { learnerAssignmentFileRequest, learnerAssignmentFilePayload, learnerAssignmentUploadGrantSchema, validateLearnerAssignmentReadGrant, validateLearnerAssignmentUploadGrant } from "@/modules/courses/learner-assignment-file-model";
+import { learnerAssignmentFileRequest, learnerAssignmentFilePayload, learnerAssignmentUploadGrantSchema, validateLearnerAssignmentReadGrant, validateLearnerAssignmentUploadGrant, learnerAssignmentUploadHeadersSafe } from "@/modules/courses/learner-assignment-file-model";
 import { transferLearnerAssignmentFile } from "@/components/courses/assignment-file-transfer";
 const delivery = "00000000-0000-4000-8000-000000000001";
 const receipt = "00000000-0000-4000-8000-000000000002";
@@ -21,6 +21,12 @@ describe("learner assignment private-file boundary", () => {
     expect(() => learnerAssignmentFilePayload(delivery, "forged", true)).toThrow();
     for (const url of ["http://storage.example.test", "https://user:secret@storage.example.test/file", "https://storage.example.test/file#fragment"]) {
       expect(learnerAssignmentUploadGrantSchema.safeParse({ grant: { ...grant, uploadUrl: url } }).success).toBe(false);
+    }
+  });
+  it("rejects unsafe signed PUT headers", () => {
+    expect(learnerAssignmentUploadHeadersSafe(grant.requiredHeaders)).toBe(true);
+    for (const bad of [{ authorization: "Bearer secret" }, { "content-type": "application/pdf\\r\\nX-Test: 1" }, { cookie: "session=secret" }]) {
+      expect(learnerAssignmentUploadHeadersSafe(bad)).toBe(false);
     }
   });
   it("bounds upload-grant validity to fifteen minutes", () => {
