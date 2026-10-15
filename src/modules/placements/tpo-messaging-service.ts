@@ -1,8 +1,11 @@
 import {
   and,
+  asc,
   desc,
   eq,
+  inArray,
   isNull,
+  like,
   ne,
   sql,
 } from "drizzle-orm";
@@ -26,6 +29,7 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import {hrConversationDetailPageWindow} from "./hr-conversation-detail-pagination-model";
+import {formatHrDriveProposal,hrDriveProposalSchema} from "./hr-drive-proposal-model";
 
 const collegeIdSchema = z.string().uuid();
 const userIdSchema = z.string().uuid();
@@ -378,34 +382,20 @@ export async function openRecruiterMessageThread(
   context: RequestContext,
   input: { collegeId: string; jobId?: string | null },
 ) {
-  const actor = await readActor(context, input.collegeId);
-  if (actor.type !== "RECRUITER" || !actor.recruiterUserId) {
+  const collegeId = collegeIdSchema.parse(input.collegeId);
+  const jobId = input.jobId ? jobIdSchema.parse(input.jobId) : null;
+  if (context.recruiter?.status !== "ACTIVE" ||
+      context.recruiter.userId !== context.user.id)
     throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
-  }
-  const job = await assertJobForThread(
-    getDb(),
-    actor.collegeId,
-    input.jobId,
-    actor.companyRelationshipId,
-  );
-  return getDb().transaction(async (tx) => {
-    const persisted = await mutationActor(tx, context, actor.collegeId);
-    if (persisted.type !== "RECRUITER" || !persisted.recruiterUserId) {
-      throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
-    }
-    const lockedJob = await assertJobForThread(
-      tx,
-      persisted.collegeId,
-      job?.id ?? null,
-      persisted.companyRelationshipId,
-      true,
+  // Never choose TPO permissions when a person holds both TPO and recruiter roles.
+  // The persisted employer/college grant is authoritative within this transaction.
+  return getDb().transaction(async tx => {
+    const grant = await loadActiveRecruiterGrant(tx, context.user.id, collegeId, true);
+    if (!grant) throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+    const job = await assertJobForThread(
+      tx, collegeId, jobId, grant.companyRelationshipId, true,
     );
-    return getOrCreateThread(
-      tx,
-      persisted.collegeId,
-      persisted.recruiterUserId,
-      lockedJob?.id ?? null,
-    );
+    return getOrCreateThread(tx, collegeId, context.user.id, job?.id ?? null);
   });
 }
 
@@ -562,13 +552,49 @@ export async function sendThreadMessage(
   });
 }
 
+/** Employer-only reply path: persisted exact recruiter ownership wins over any TPO role. */
+export async function sendRecruiterThreadMessage(
+ context: RequestContext, rawThreadId: unknown, rawBody: unknown,
+) {
+ const id = threadIdSchema.parse(rawThreadId);
+ const body = bodySchema.parse(rawBody);
+ if (context.recruiter?.status !== "ACTIVE" ||
+     context.recruiter.userId !== context.user.id)
+   throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx => {
+   const [thread] = await tx.select({
+     id:placementTpoMessageThreads.id,collegeId:placementTpoMessageThreads.collegeId,
+     recruiterUserId:placementTpoMessageThreads.recruiterUserId,
+     jobId:placementTpoMessageThreads.jobId,
+   }).from(placementTpoMessageThreads)
+    .where(eq(placementTpoMessageThreads.id,id)).for("update").limit(1);
+   if(!thread || thread.recruiterUserId !== context.user.id)
+     throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+   const grant = await loadActiveRecruiterGrant(tx,context.user.id,thread.collegeId,true);
+   if(!grant)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+   if(thread.jobId)await assertJobForThread(
+     tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
+   );
+   const now=new Date();
+   const [message]=await tx.insert(placementTpoMessages).values({
+     threadId:thread.id,senderType:"RECRUITER",senderUserId:context.user.id,
+     body,createdAt:now,
+   }).returning({id:placementTpoMessages.id});
+   if(!message)throw new Error("RECRUITER_MESSAGE_PERSISTENCE_FAILED");
+   await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
+    .where(eq(placementTpoMessageThreads.id,thread.id));
+   return {id:message.id,threadId:thread.id};
+ });
+}
+
 /** Recruiter-only, read-only message history; opening a GET never marks messages read. */
 export async function readRecruiterThreadMessages(
  context:RequestContext,threadIdInput:unknown,rawPage:unknown=1,
 ){
  const threadId=threadIdSchema.parse(threadIdInput);
  const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
- if(!context.recruiter||context.recruiter.status!=="ACTIVE")
+ if(!context.recruiter||context.recruiter.status!=="ACTIVE" ||
+    context.recruiter.userId!==context.user.id)
   throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
  return getDb().transaction(async tx=>{
   const [thread]=await tx.select({
@@ -579,11 +605,12 @@ export async function readRecruiterThreadMessages(
    .where(eq(placementTpoMessageThreads.id,threadId)).for("share").limit(1);
   if(!thread||thread.recruiterUserId!==context.user.id)
    throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
-  const actor=await mutationActor(tx,context,thread.collegeId);
-  if(actor.type!=="RECRUITER"||actor.userId!==thread.recruiterUserId)
-   throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  // The account may also be TPO: recruiter reads must check recruiter grants
+  // directly rather than routing through the TPO-first messaging actor resolver.
+  const grant=await loadActiveRecruiterGrant(tx,context.user.id,thread.collegeId,true);
+  if(!grant)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
   if(thread.jobId)await assertJobForThread(
-   tx,actor.collegeId,thread.jobId,actor.companyRelationshipId,true,
+   tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
   );
   const [count]=await tx.select({total:sql<number>`count(*)::integer`})
    .from(placementTpoMessages).where(eq(placementTpoMessages.threadId,thread.id));
@@ -617,6 +644,9 @@ export async function acknowledgeRecruiterThread(
   threadIdInput: unknown,
 ) {
   const threadId = threadIdSchema.parse(threadIdInput);
+  if (context.recruiter?.status !== "ACTIVE" ||
+      context.recruiter.userId !== context.user.id)
+    throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
   return getDb().transaction(async (tx) => {
     const [thread] = await tx.select({
       id: placementTpoMessageThreads.id,
@@ -628,11 +658,10 @@ export async function acknowledgeRecruiterThread(
       .for("update").limit(1);
     if (!thread || thread.recruiterUserId !== context.user.id)
       throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
-    const actor = await mutationActor(tx, context, thread.collegeId);
-    if (actor.type !== "RECRUITER" || actor.userId !== thread.recruiterUserId)
-      throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+    const grant = await loadActiveRecruiterGrant(tx, context.user.id, thread.collegeId, true);
+    if (!grant) throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
     if (thread.jobId)
-      await assertJobForThread(tx, actor.collegeId, thread.jobId, actor.companyRelationshipId, true);
+      await assertJobForThread(tx, thread.collegeId, thread.jobId, grant.companyRelationshipId, true);
     const rows = await tx.update(placementTpoMessages).set({readAt: new Date()})
       .where(and(
         eq(placementTpoMessages.threadId, thread.id),
@@ -641,4 +670,88 @@ export async function acknowledgeRecruiterThread(
       )).returning({id: placementTpoMessages.id});
     return {acknowledged: rows.length};
   });
+}
+
+/** Atomic recruiter-only acknowledgement of at most 20 visible private threads. */
+export const recruiterBulkAcknowledgeSchema = z.array(threadIdSchema).min(1).max(20)
+  .refine(ids => new Set(ids).size === ids.length, "DUPLICATE_THREAD_IDS");
+
+export async function acknowledgeRecruiterThreads(context:RequestContext,rawIds:unknown) {
+ const ids=recruiterBulkAcknowledgeSchema.parse(rawIds);
+ if(context.recruiter?.status!=="ACTIVE" || context.recruiter.userId!==context.user.id)
+  throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx=>{
+  const threads=await tx.select({
+   id:placementTpoMessageThreads.id,
+   collegeId:placementTpoMessageThreads.collegeId,
+   recruiterUserId:placementTpoMessageThreads.recruiterUserId,
+   jobId:placementTpoMessageThreads.jobId,
+  }).from(placementTpoMessageThreads)
+   .where(inArray(placementTpoMessageThreads.id,ids))
+   .orderBy(asc(placementTpoMessageThreads.id)).for("update");
+  if(threads.length!==ids.length || threads.some(t=>t.recruiterUserId!==context.user.id))
+   throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  for(const thread of threads) {
+   const grant=await loadActiveRecruiterGrant(tx,context.user.id,thread.collegeId,true);
+   if(!grant)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+   if(thread.jobId)await assertJobForThread(
+    tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
+   );
+  }
+  const changed=await tx.update(placementTpoMessages).set({readAt:new Date()})
+   .where(and(
+    inArray(placementTpoMessages.threadId,ids),
+    eq(placementTpoMessages.senderType,"TPO"),
+    isNull(placementTpoMessages.readAt),
+   )).returning({id:placementTpoMessages.id});
+  return {threads:threads.length,acknowledged:changed.length};
+ });
+}
+
+/**
+ * Persists a recruiter-authored proposal in a private placement-cell conversation.
+ * This does NOT create or approve a placement drive or a structured approval request.
+ * Repeated submissionId is replay-safe within the same recruiter/college thread.
+ */
+export async function sendRecruiterDriveProposal(context:RequestContext,raw:unknown){
+ const input=hrDriveProposalSchema.parse(raw);
+ const body=formatHrDriveProposal(input);
+ if(context.recruiter?.status!=="ACTIVE" || context.recruiter.userId!==context.user.id)
+  throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx=>{
+  const grant=await loadActiveRecruiterGrant(tx,context.user.id,input.collegeId,true);
+  if(!grant)throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+  if(input.sourceJobId)await assertJobForThread(
+   tx,input.collegeId,input.sourceJobId,grant.companyRelationshipId,true,
+  );
+  const thread=await getOrCreateThread(tx,input.collegeId,context.user.id,null);
+  // Serializes retries (including concurrent tabs) against this exact thread.
+  const [locked]=await tx.select({id:placementTpoMessageThreads.id})
+   .from(placementTpoMessageThreads)
+   .where(eq(placementTpoMessageThreads.id,thread.id)).for("update").limit(1);
+  if(!locked)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  const prefix="Drive proposal for placement cell discussion — NOT a submitted approval request\n"+
+   "Proposal reference: "+input.submissionId+"\n";
+  const [existing]=await tx.select({
+   id:placementTpoMessages.id,body:placementTpoMessages.body,
+  }).from(placementTpoMessages).where(and(
+   eq(placementTpoMessages.threadId,thread.id),
+   eq(placementTpoMessages.senderType,"RECRUITER"),
+   eq(placementTpoMessages.senderUserId,context.user.id),
+   like(placementTpoMessages.body,prefix+"%"),
+  )).limit(1);
+  if(existing){
+   if(existing.body!==body)throw new Error("DRIVE_PROPOSAL_STALE_SUBMISSION");
+   return {threadId:thread.id,messageId:existing.id,replayed:true};
+  }
+  const now=new Date();
+  const [message]=await tx.insert(placementTpoMessages).values({
+   threadId:thread.id,senderType:"RECRUITER",senderUserId:context.user.id,
+   body,createdAt:now,
+  }).returning({id:placementTpoMessages.id});
+  if(!message)throw new Error("DRIVE_PROPOSAL_PERSISTENCE_FAILED");
+  await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
+   .where(eq(placementTpoMessageThreads.id,thread.id));
+  return {threadId:thread.id,messageId:message.id,replayed:false};
+ });
 }
