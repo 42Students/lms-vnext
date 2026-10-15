@@ -47,6 +47,7 @@ const change = scope.extend({
   status,
   reason: z.string().trim().max(200).nullable().optional(),
   note: z.string().trim().max(300).nullable().optional(),
+  expectedVersion: z.string().min(1).max(80).optional(),
 }).strict().superRefine((value, ctx) => {
   if (value.status === "INELIGIBLE" && !value.reason?.trim()) {
     ctx.addIssue({
@@ -298,6 +299,10 @@ export async function decidePlacementParticipation(
         reason: current?.reason ?? null,
         note: current?.note ?? null,
       };
+      if (item.expectedVersion !== undefined &&
+          (current?.updatedAt.toISOString() ?? "none") !== item.expectedVersion) {
+        throw new PlacementBatchError("DB08_ACTION_STALE");
+      }
       const after = canonicalDecision(item);
       if (sameDecision(before, after)) continue;
 
