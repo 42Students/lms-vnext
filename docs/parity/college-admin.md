@@ -574,6 +574,24 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Live-content coverage PARTIAL (chat-3, 2026-10-15):** A true persisted LIVE_CLASS authoring-presence facet is now available for Lessons and its college-fenced CSV; it does not imply a meeting took place or expose links. Authored unit and isolated PG cases require execution and browser parity review.
+
+**Lesson-resource coverage PARTIAL (chat-3, 2026-10-15):** The registered RESOURCE kind can be filtered as present or absent before College Admin pagination and export; the operation never fetches private storage identifiers. Unit/gated-PG source tests authored, execution and browser parity open.
+
+**Video authoring coverage PARTIAL (chat-3, 2026-10-15):** College Admin lesson list can isolate absence/presence of VIDEO or YOUTUBE metadata using registered in-college records, including CSV. This is not playback or learner access; PG/browser acceptance open.
+
+**Hidden published content triage PARTIAL (chat-3, 2026-10-15):** Finds persisted PUBLISHED rows with visibleToStudents=false before tenant-scoped paging/CSV; not a learner authorization or playback test. Unit/PG fixtures authored; not executed, browser/legacy acceptance open.
+
+**Content audience facet PARTIAL (chat-3, 2026-10-15):** Lessons can filter registered shared content (NULL delivery) separately from section-bound records before pagination and safe CSV; no student permissions are inferred. Unit and gated PostgreSQL test source added, not executed; browser acceptance open.
+
+**Saved content lifecycle PARTIAL (2026-10-15, chat-3):** Filter saved DRAFT/PUBLISHED/ARCHIVED lesson-content metadata within tenant-owned lessons before paging and capped CSV. This does not imply visibility to a learner. Source tests authored; runtime/legacy/browser acceptance open.
+
+**Starting lesson order PARTIAL (2026-10-15, chat-3):** The 1-based persisted sequence lower bound filters in-college lesson ordering before paging and CSV. It is not a progress/completion rank. Typed and gated-PG tests authored; execution/browser/legacy acceptance outstanding.
+
+**Ending lesson order PARTIAL (2026-10-15, chat-3):** A 1-based persisted sequence upper bound narrows Lessons and CSV before pagination, combinable with the existing lower bound. Source tests authored; actual PG/browser and legacy matching open.
+
+**Exact lesson title PARTIAL (2026-10-15, chat-3):** Adds a bounded exact-title selector over registered lessons (distinct from fuzzy search) with same-college pagination and capped CSV parity. Unit/isolated PG source authored; browser/runtime and full legacy acceptance open.
+
 **Saved content kind PARTIAL (2026-10-15, chat-3):** Exact authored content-kind filter matches persisted lesson content before totals/pagination and follows filter-matched capped CSV. This is metadata only; no signed media is exposed. Unit and disposable-PG fixtures authored, not executed; browser and legacy parity acceptance open.
 
 **Lesson quiz-authoring triage PARTIAL (2026-10-15):** College Admin Lessons now filter independently by persisted course_quizzes authorship, using the canonical lesson ownership scope rather than quiz attempt totals. All lifecycle states count as authored; query/export/page state and disposable-PG empty/matching fixtures authored, executed CI/browser acceptance pending.
@@ -757,6 +775,26 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Course Progress
+**Offering section-bound content triage PARTIAL (chat-3, 2026-10-15):** Authored content with a non-NULL delivery relation is now filterable per current-college offering, including CSV; absence does not prove absence of section activity or enrolled learners. Source tests authored, execution and browser parity pending.
+
+**Offering shared-content authoring PARTIAL (chat-3, 2026-10-15):** Scoped offerings now distinguish lesson content without section delivery association using persisted NULL deliveryId. Filter applies before CSV and paging; student rollout is not inferred. Authored PG/browser gates open.
+
+**Hidden published metadata PARTIAL (chat-3, 2026-10-15):** Offering triage now detects PUBLISHED lesson content explicitly marked visibleToStudents=false; no student-access denial or release state is inferred. Read, URLs and safe CSV agree; authored PG/browser acceptance remains outstanding.
+
+**Saved content publication coverage PARTIAL (chat-3, 2026-10-15):** The course progress offering list distinguishes records with/without PUBLISHED lesson content in registered paths. It does not claim parent path or learner visibility. CSV/pagination scope retained; authored tests require PG/browser execution.
+
+**Video-content authoring coverage PARTIAL (chat-3, 2026-10-15):** Progress offering list can filter saved VIDEO/YOUTUBE content through scoped lesson paths, without interpreting watch or completion rates. Capped CSV uses the same predicate. Unit/PG tests authored, execution/browser acceptance open.
+
+**Offering authored lesson triage PARTIAL (2026-10-15, chat-3):** Filters on persisted lessons attached through learning paths, before college-scoped counts, paging and safe capped CSV. Source tests authored; independent PG/browser acceptance open.
+
+**Persisted authored assignment triage PARTIAL (2026-10-15, chat-3):** A college-scoped offering filter checks actual assignment records through paths and lessons before totals and CSV. It does not imply submissions, grading or delivery. Tests authored; PG/browser verification open.
+
+**Authored quiz triage PARTIAL (2026-10-15, chat-3):** The offering directory can isolate saved quizzes through course lessons without inferring quiz attempt/result evidence; server filters apply before CSV and pages. Unit/isolated-PG tests authored, not run. Browser/legacy acceptance open.
+
+**Resource-presence selector PARTIAL (2026-10-15, chat-3):** Filters actual saved RESOURCE records in same-college offerings, before pagination and CSV. No private links or publication inference. Tests authored; runtime and browser validation open.
+
+**Live-class metadata presence PARTIAL (2026-10-15, chat-3):** College Admin progress now finds offering paths containing saved LIVE_CLASS content and separately those without; no external meeting links or attendee states read. Tenant-scoped CSV matches the filter; authored tests need execution and browser acceptance.
+
 **Published learning path triage PARTIAL (2026-10-15):** The Course Progress offering list now distinguishes registered PUBLISHED learning paths from drafts, archived paths or absent paths. This is an authored structure state, not proof of learner visibility or course completion. Filtered totals, safe CSV, strict schema and disposable-PG fixture are authored; execution/browser acceptance open.
 
 **Missing shared learning path triage PARTIAL (2026-10-15):** College Admin now distinguishes offerings with/without a persisted course_learning_paths row before activity pagination and CSV. An offering without a path is not described as failed learning or absent enrollment. Strict Zod/URL and own-college PostgreSQL fixtures authored; execution and browser acceptance open.

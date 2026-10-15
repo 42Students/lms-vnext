@@ -25,3 +25,11 @@ export function resolveLearnerOfferFocus<T extends {offer:{id:string}}>(
 export function learnerOfferFocusMissing(focus:unknown,found:boolean):boolean{
  return typeof focus==="string"&&offerIdSchema.safeParse(focus).success&&!found;
 }
+
+/** When filters hide a deep-linked offer, keep the id through an own-only
+ * unfiltered lookup; never assert that the offer exists for this learner. */
+export function learnerOfferRecoveryHref(focus:unknown):string{
+ const parsed=typeof focus==="string"?offerIdSchema.safeParse(focus):null;
+ if(!parsed?.success)return "/learn/my-placements/offers";
+ return "/learn/my-placements/offers?focus="+encodeURIComponent(parsed.data);
+}
