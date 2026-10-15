@@ -14,6 +14,11 @@ export const hrRoundFormSchema=z.strictObject({
   ctx.addIssue({code:"custom",message:"Round identity and latest version required"});
  if(row.action==="UPDATE"&& !row.name&&!row.mode&&row.durationMinutes===undefined&&!row.kind)
   ctx.addIssue({code:"custom",message:"Nothing to update"});
+ if(row.action==="CREATE"&&(row.roundId||row.expectedUpdatedAt))
+  ctx.addIssue({code:"custom",message:"New round cannot carry an existing version"});
+ if(row.action==="REMOVE"&&
+  (row.kind!==undefined||row.name!==undefined||row.mode!==undefined||row.durationMinutes!==undefined))
+  ctx.addIssue({code:"custom",message:"Removal cannot change round fields"});
 });
 export function canRecruiterEditRound(input:{
  status:string;createdByUserId:string;recruiterUserId:string;hasResults:boolean;
