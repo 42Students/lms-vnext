@@ -18,4 +18,11 @@ describe("College Admin export cap disclosures",()=>{
   expect(source).toContain("CSV records when results are truncated");
   expect(source).toContain("flex flex-wrap items-center gap-3");
  });
+ it("Batches export UI discloses the same bounded cap as the exporter",()=>{
+  const source=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/batches/page.tsx"),"utf8");
+  expect(ACADEMIC_EXPORT_CAP).toBe(1000);
+  expect(source).toContain("Exports up to {ACADEMIC_EXPORT_CAP} matching");
+  expect(source).toContain("CSV records when results are truncated");
+  expect(source).toContain("flex flex-wrap items-center gap-3");
+ });
 });
