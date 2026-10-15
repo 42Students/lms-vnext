@@ -14,6 +14,9 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("Super Admin student rule write 
  it("does not permit locked writes to non-member modules",async()=>{
   await expect(writeSuperAdminStudentRule(context,SEED_IDS.collegeA,SEED_IDS.learnerCollegeAMembership,{action:"SET",module:"placements",enabled:false,locked:true,expected:null})).rejects.toBeDefined();
  });
+ it("denies an unauthorized cross-college membership before any edit",async()=>{
+  expect(await writeSuperAdminStudentRule(context,SEED_IDS.collegeB,SEED_IDS.learnerCollegeAMembership,{action:"SET",module:"projects",enabled:false,locked:false,expected:null})).toBeNull();
+ });
  it("does not mutate unknown or foreign student membership",async()=>{
   expect(await writeSuperAdminStudentRule(context,SEED_IDS.collegeA,randomUUID(),{action:"SET",module:"projects",enabled:false,locked:false,expected:null})).toBeNull();
  });

@@ -1,7 +1,11 @@
 import {describe,expect,it} from "vitest";
 import {studentRuleWriteInput} from "@/modules/module-access/admin-student-rule-write";
-import {studentRuleMatches,isStudentRuleNoop} from "@/modules/module-access/admin-student-rule-model";
+import {studentRuleMatches,isStudentRuleNoop,hasPersistedAncestorLock} from "@/modules/module-access/admin-student-rule-model";
 describe("Super Admin student rule writes",()=>{
+ it("rejects a persisted parent lock at update time",()=>{
+  expect(hasPersistedAncestorLock([{locked:false},{locked:true}])).toBe(true);
+  expect(hasPersistedAncestorLock([{locked:false}])).toBe(false);
+ });
  it("does not create new audit records for a genuinely unchanged rule",()=>{
   expect(isStudentRuleNoop(null,{action:"INHERIT"})).toBe(true);
   expect(isStudentRuleNoop({enabled:false,locked:true},{action:"SET",enabled:false,locked:true})).toBe(true);

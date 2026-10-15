@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,eq,isNull,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,membershipRoles,moduleAccessRules,users} from "@/db/schema";
@@ -8,7 +8,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {getSuperAdminLearnerAccessTrace} from "./admin-trace-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {previousStudentRuleSchema,studentRuleMatches,isStudentRuleNoop} from "./admin-student-rule-model";
+import {previousStudentRuleSchema,studentRuleMatches,isStudentRuleNoop,hasPersistedAncestorLock} from "./admin-student-rule-model";
 
 export const studentRuleWriteInput=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("SET"),module:z.enum(["projects","electives"]),enabled:z.boolean(),locked:z.boolean(),expected:previousStudentRuleSchema}),
@@ -43,6 +43,17 @@ export async function writeSuperAdminStudentRule(context:RequestContext,collegeI
   const [role]=await tx.select({id:membershipRoles.membershipId}).from(membershipRoles)
     .where(and(eq(membershipRoles.membershipId,member.id),eq(membershipRoles.role,"LEARNER"))).limit(1);
   if(!role)return null;
+  if(input.action==="SET"){
+   // Re-evaluate persisted ancestor locks under row locks as close to the write as possible.
+   // Existing ancestor rows cannot be concurrently updated while this transaction commits.
+   const ancestorScopes=traced.selected.chain.filter(scope=>scope.scopeType!=="MEMBERSHIP");
+   const parentRules=ancestorScopes.length===0?[]:await tx.select({locked:moduleAccessRules.locked})
+    .from(moduleAccessRules).where(and(eq(moduleAccessRules.module,input.module),
+     or(...ancestorScopes.map(scope=>and(eq(moduleAccessRules.scopeType,scope.scopeType),
+       scope.scopeId===null?isNull(moduleAccessRules.scopeId):eq(moduleAccessRules.scopeId,scope.scopeId)))))
+    ).for("share");
+   if(hasPersistedAncestorLock(parentRules))throw new StudentRuleConflict("ANCESTOR_LOCKED");
+  }
   const predicate=and(eq(moduleAccessRules.scopeType,"MEMBERSHIP"),
     eq(moduleAccessRules.scopeId,member.id),eq(moduleAccessRules.module,input.module));
   const [previous]=await tx.select({id:moduleAccessRules.id,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked}).from(moduleAccessRules).where(predicate).limit(1);
