@@ -864,6 +864,13 @@ export function isPlacementJobTargetSection(
     activeSectionIds.some((id) => allowedSectionIds.includes(id));
 }
 
+/** D16: ambiguous active enrollments are never authorized by row order. */
+export function hasAmbiguousActivePlacementEnrollment(
+  enrollments: readonly { cohortId: string; programId: string }[],
+): boolean {
+  return enrollments.length > 1;
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
@@ -892,7 +899,7 @@ export async function evaluatePlacementEligibility(
     membershipId,
     db,
   );
-  const [[override], [policy], [evidence], [enrollment]] =
+  const [[override], [policy], [evidence], enrollments] =
     await Promise.all([
       db
         .select()
@@ -948,8 +955,23 @@ export async function evaluatePlacementEligibility(
             ),
           ),
         )
-        .limit(1),
+        .limit(2),
     ]);
+
+  // D16: two active enrollments are ambiguous. Never arbitrarily choose the
+  // first one or allow an INCLUDE override to authorize the wrong cohort.
+  if (hasAmbiguousActivePlacementEnrollment(enrollments)) {
+    return {
+      status: "INELIGIBLE",
+      checks: [{
+        criterion: "Cohort", status: "FAIL", actual: null,
+        required: "Eligible cohort",
+        detail: "Active academic cohort not found",
+      }],
+      override: null,
+    };
+  }
+  const [enrollment] = enrollments;
 
   if (policy && enrollment && !isPlacementJobTargetCohort(policy, enrollment)) {
     // Reuse the existing legacy-facing Program/Cohort check vocabulary.
