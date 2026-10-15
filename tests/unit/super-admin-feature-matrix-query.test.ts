@@ -36,4 +36,9 @@ describe("Super Admin feature matrix query",()=>{
   expect(adminFeatureQuerySchema.safeParse({recent:"30D",presence:"NO_RULE"}).success).toBe(false);
   expect(adminFeaturesHref({recent:"30D"})).toContain("recent=30D");
  });
+ it("selects name-only or code-only literal substring search",()=>{
+  expect(adminFeatureQuerySchema.parse({searchField:"CODE",q:"COL"}).searchField).toBe("CODE");
+  expect(adminFeatureQuerySchema.safeParse({searchField:"EMAIL"}).success).toBe(false);
+  expect(adminFeaturesHref({q:"COL",searchField:"CODE",page:2})).toContain("searchField=CODE");
+ });
 });

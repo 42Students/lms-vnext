@@ -998,3 +998,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 recent persisted college-rule changes (PARTIAL):** Optional 7/30/90-day rule updated-at windows use one server clock and SQL predicate for both totals/page. A missing rule cannot also be recent, so that combination is rejected. No event-history or workflow-causation claim; tests authored, execution pending.
+
+
+**2026-10-15 chat-6 feature matrix name/code search selector (PARTIAL):** Safe literal case-insensitive substring query can target college name, code, or both, preserving filters through database-count/page and navigation; this avoids wildcard expansion and no private-contact searches. Authored unit tests, runtime PG/browser open.
