@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Serialized bulk-review service PARTIAL (chat-9):** A bounded College Admin bulk command runs each selected request through the existing DB04 locked writer and private-document receipt validation, checking persisted reviewer membership again before each write. Audits and in-app notifications remain transactional per successful decision; recognized stale/foreign/invalid transitions report per-item outcomes. Unexpected failures abort remaining work rather than silently claiming success. Real DB/CI/browser evidence still open.
+
+
 **Per-request bulk outcome model PARTIAL (chat-9):** Bulk review now has a typed per-learner result taxonomy and truthful attempted/succeeded/failed counts, with a distinct stale-version message. Pure-model tests authored; route/UI/independent acceptance remain open.
 
 
