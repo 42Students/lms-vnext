@@ -44,6 +44,14 @@ export default async function CollegeOverviewPage() {
         actions={
           <>
             <StatusBadge tone="success">Active</StatusBadge>
+            <Link href="/college/contacts"
+              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              Contacts
+            </Link>
+            <Link href="/college/verification"
+              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              Verification
+            </Link>
             <Link
               href="/college/branding"
               className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
