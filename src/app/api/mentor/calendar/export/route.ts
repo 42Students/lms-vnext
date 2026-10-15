@@ -6,21 +6,17 @@ import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-s
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
  from "@/modules/projects/mentor-calendar-filter-model";
 import {mentorCalendarCsv} from "@/modules/projects/mentor-calendar-export-model";
+import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const url=new URL(request.url);
-  const query=mentorCalendarFiltersSchema.parse({
-   sprint:url.searchParams.get("sprint")??undefined,
-   join:url.searchParams.get("join")??undefined,
-   projectId:url.searchParams.get("projectId")??undefined,
-   attention:url.searchParams.get("attention")??undefined,
-   status:url.searchParams.get("status")??undefined,
-   type:url.searchParams.get("type")??undefined,
-   projectState:url.searchParams.get("projectState")??undefined,
-   search:url.searchParams.get("search")??undefined,
-   period:url.searchParams.get("period")??undefined,
-  });
+  const filters=singleValueMentorExportFilters(url.searchParams,[
+   "sprint","join","projectId","attention","status",
+   "type","projectState","search","period",
+  ]);
+  if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
+  const query=mentorCalendarFiltersSchema.parse(filters);
   const context=await getCurrentRequestContext();
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
    return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
