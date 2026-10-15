@@ -11,7 +11,7 @@ import {verificationAttentionShortcuts,verificationAttentionShortcutPatch} from 
 import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules/verification/selection-model";
 import {verificationBulkPreviewRows} from "@/modules/verification/bulk-preview-display";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
-import {canStartVerificationBulkPreview} from "@/modules/verification/bulk-action-guard";
+import {canStartVerificationBulkPreview,canNavigateCollegeVerificationQueue} from "@/modules/verification/bulk-action-guard";
 import {emptyVerificationBulkFeedback} from "@/modules/verification/bulk-feedback-reset";
 import {safeCollegeBulkReviewFailure} from "@/modules/verification/bulk-safe-error";
 import {parseCollegeBulkReviewReceipt} from "@/modules/verification/bulk-response-validation";
@@ -63,6 +63,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   finally{setBulkBusy(false);}
  }
  function navigate(patch:Record<string,string>){
+  if(!canNavigateCollegeVerificationQueue(bulkBusy))return;
   setSelected(null);
   setSelection(new Set());resetBulkFeedback();
   const params=new URLSearchParams(query);
@@ -75,7 +76,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   <TpoVerificationSwitch key={String(tpoCanVerify)} initialEnabled={tpoCanVerify}/>
   <div className="flex flex-wrap items-center justify-end gap-2">
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
-   <button type="button" onClick={()=>router.refresh()} className="rounded-md border px-3 py-2 text-sm">Refresh</button>
+   <button type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Refresh</button>
   </div>
   <nav aria-label="Verification attention shortcuts" className="flex flex-wrap gap-2">
    {verificationAttentionShortcuts.map(item=><button type="button" key={item.attention} aria-pressed={query.attention===item.attention}
