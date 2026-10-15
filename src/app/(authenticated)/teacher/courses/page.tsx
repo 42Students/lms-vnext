@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { parseFacultyCourseListLocation } from "@/modules/courses/faculty-course-list-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
 import { facultyCourseWorkspaceRevokedError } from "@/modules/courses/faculty-course-list-model";
@@ -9,7 +11,19 @@ export default async function TeacherCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  const list = await getFacultyCourseList(context, await searchParams);
+  const query=parseFacultyCourseListLocation(await searchParams);
+  if(!query)return <div className="space-y-6">
+    <PageHeader eyebrow="Faculty" title="Courses"
+      description="Invalid search, teaching-role or page filters." />
+    <div role="alert" className="rounded-xl border border-border bg-surface p-5">
+      The Course filters could not be understood. No other Section has been loaded.
+      <Link href="/teacher/courses"
+        className="ml-2 font-semibold text-primary-text underline">
+        Reset filters
+      </Link>
+    </div>
+  </div>;
+  const list = await getFacultyCourseList(context,query);
   const cardResults=await Promise.all(list.items.map(async(course)=>{
     try {
       return {course,workspace:await getFacultyCourseWorkspace(context,course.deliveryId)};

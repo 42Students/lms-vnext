@@ -146,3 +146,54 @@ export function facultyQuizMetadataIssue(
  catch {return "Choose a valid due date in IST.";}
  return null;
 }
+
+/** Turn the API's typed Quiz errors into user-safe, actionable messages. */
+export function facultyQuizWriteMessage(raw:unknown):string {
+ const code=raw&&typeof raw==="object"&&"error" in raw&&typeof raw.error==="string"
+  ?raw.error:"";
+ switch(code){
+  case "FACULTY_QUIZ_NO_CHANGE":return "No Quiz metadata changed. Update a field before saving.";
+  case "FACULTY_QUIZ_STALE_VERSION":return "This Quiz changed elsewhere. Reload before retrying.";
+  case "QUIZ_HAS_ATTEMPTS":return "Existing learner attempts seal questions and attempt limits.";
+  case "INVALID_QUIZ_TRANSITION":return "This Quiz state no longer permits that action. Reload first.";
+  case "QUIZ_DEADLINE_PASSED":return "Extend the deadline before publishing.";
+  case "QUIZ_NAME_CONFLICT":return "Choose a different Quiz title for this Section.";
+  case "FACULTY_TEACHING_SCOPE_REQUIRED":
+  case "LEARNING_ACCESS_DENIED":
+  case "QUIZ_NOT_FOUND":return "This teaching Section is no longer available to your account.";
+  default:return "Quiz write was rejected. Review changes or retry.";
+ }
+}
+
+/** Failed Section question fetches need an explicit retry without changing scope. */
+export function facultyQuizCanRetryDetails(
+ failed:boolean,quizId:string|undefined,pending:boolean,
+):boolean {
+ return failed && Boolean(quizId) && !pending;
+}
+
+/** Publishing must reflect the persisted, reviewed question bank, not dirty UI state. */
+export function facultyQuizCanPublishSavedDraft(
+ status:string|undefined,unsaved:boolean,loadFailed:boolean,
+):boolean {
+ return status==="DRAFT" && !unsaved && !loadFailed;
+}
+
+/** POST returns an authoritative persisted Quiz revision. No optimistic guess
+ * of the next version is safe because Postgres timestamps have precision. */
+const savedQuizSchema=z.object({quiz:z.object({
+ id:z.string().uuid(),lessonId:z.string().uuid(),
+ title:z.string(),description:z.string().nullable(),dueAt:z.string().nullable(),
+ maxAttempts:z.number().int(),sequence:z.number().int(),
+ status:z.enum(["DRAFT","PUBLISHED","CLOSED","ARCHIVED"]),
+ updatedAt:z.iso.datetime({offset:true}),
+})}).passthrough();
+export function facultyQuizSavedFromCommand(raw:unknown){
+ const result=savedQuizSchema.safeParse(raw);
+ return result.success?result.data.quiz:null;
+}
+export function facultyQuizReconcileRows<T extends {id:string}>(
+ existing:readonly T[],saved:T,
+):T[]{
+ return [saved,...existing.filter(row=>row.id!==saved.id)];
+}

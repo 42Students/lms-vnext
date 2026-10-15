@@ -6,7 +6,11 @@ export const facultyCourseListQuerySchema = z.object({
   q: z.string().trim().max(120).default(""),
   period: z.union([z.string().uuid(), z.literal("")]).default(""),
   role: z.union([z.enum(COURSE_TEACHING_ROLES), z.literal("")]).default(""),
-  page: z.coerce.number().int().min(1).max(10000).default(1),
+  // URL values are decimal strings; do not coerce arrays, booleans or 1e3.
+  page: z.union([
+    z.number().int(),
+    z.string().regex(/^[1-9]\d{0,4}$/).transform(Number),
+  ]).pipe(z.number().int().min(1).max(10000)).default(1),
 }).strict();
 export type FacultyCourseListQuery = z.infer<typeof facultyCourseListQuerySchema>;
 export const FACULTY_COURSE_LIST_PAGE_SIZE = 48;
@@ -45,4 +49,10 @@ export function facultyCourseWorkspaceRevokedError(error:unknown){
   "FACULTY_TEACHING_SCOPE_REQUIRED","SECTION_DELIVERY_NOT_FOUND",
   "OFFERING_NOT_FOUND","LEARNING_ACCESS_DENIED",
  ].includes(error.code);
+}
+
+/** UI URL boundary: invalid selectors must not silently widen teaching scope. */
+export function parseFacultyCourseListLocation(raw:unknown):FacultyCourseListQuery|null {
+ const result=facultyCourseListQuerySchema.safeParse(raw);
+ return result.success?result.data:null;
 }
