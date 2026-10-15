@@ -10,3 +10,11 @@ it("filters upcoming scheduled meetings within 48 hours exactly",()=>{
  expect(filterMentorCalendar(records,query,now).map(r=>r.id)).toEqual(["soon"]);
  expect(mentorCalendarFilterHref(query)).toContain("attention=SOON_SCHEDULED");
 });
+
+it("isolates scheduled meetings missed by the IST calendar day",()=>{
+ const items=[{...base,id:"missed",status:"SCHEDULED" as const},
+  {...base,id:"complete",status:"COMPLETED" as const},
+  {...base,id:"request",status:"REQUESTED" as const}];
+ const query=mentorCalendarFiltersSchema.parse({attention:"MISSED_SCHEDULED"});
+ expect(filterMentorCalendar(items,query,now).map(row=>row.id)).toEqual(["missed"]);
+});
