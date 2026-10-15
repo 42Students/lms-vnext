@@ -101,3 +101,9 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
 export function collegeContactLiteralPattern(value:string):string {
  return "%"+value.replace(/[\\%_]/g,"\\$&")+"%";
 }
+
+/** Keep meaningful facets on tab changes, dropping only an impossible audience. */
+export function collegeContactsTabHref(filter:CollegeContactsQuery,tab:CollegeContactsQuery["tab"]):string{
+ const audience=contactRoleAudienceCompatible({tab,audience:filter.audience})?filter.audience:"ALL";
+ return collegeContactsHref({...filter,tab,audience,page:1});
+}
