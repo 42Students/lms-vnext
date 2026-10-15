@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Contacts platform-account filter PARTIAL (2026-10-15, chat-9):** College contacts can independently filter registered ACTIVE/DISABLED user accounts and ACTIVE/SUSPENDED/ENDED college memberships; server SQL applies both before count/paging/CSV. Tenant authorization and student masks remain unchanged. Isolated runtime and browser checks outstanding.
+
+
 **Contacts page-size selector PARTIAL (2026-10-15, chat-9):** Contact tabs support strict 10/25/50 server-side page sizes and URL-preserved pagination, while the CSV retains a fixed 25-row service batch and independent 1,000-row cap. Unit contract authored; real DB/browser acceptance remains open.
 
 
