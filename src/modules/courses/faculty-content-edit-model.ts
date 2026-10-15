@@ -68,3 +68,17 @@ export function facultyContentMayChangeOpen(
   if(saving) return false;
   return nextOpen || !changed || confirmDiscard();
 }
+
+/** Success is only certain when the API acknowledges the requested content ID and fields. */
+export function facultyContentSaveReceiptMatches(id:string, expected:ReturnType<typeof facultyContentPatch>, raw:unknown):boolean{
+ if(typeof raw!=="object" || raw===null || !("content" in raw)) return false;
+ const row=(raw as {content:unknown}).content;
+ if(typeof row!=="object" || row===null) return false;
+ const data=row as Record<string,unknown>;
+ if(data.id!==id || data.title!==expected.title ||
+    data.notes!==expected.notes || data.externalUrl!==expected.externalUrl) return false;
+ if("durationSeconds" in expected && data.durationSeconds!==expected.durationSeconds) return false;
+ if("startsAt" in expected && data.startsAt!==expected.startsAt) return false;
+ if("endsAt" in expected && data.endsAt!==expected.endsAt) return false;
+ return true;
+}

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyContentPatch, facultyContentDraftChanged, facultyContentMayChangeOpen, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
+import { facultyContentPatch, facultyContentDraftChanged, facultyContentMayChangeOpen, facultyContentSaveReceiptMatches, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
 
 type Item = {
   id: string;
@@ -76,6 +76,11 @@ export function FacultyContentEditor({ item }: { item: Item }) {
       });
       if (!response.ok) {
         setError(await courseApiError(response));
+        return;
+      }
+      const receipt:unknown = await response.json().catch(() => null);
+      if (!facultyContentSaveReceiptMatches(item.id,body,receipt)) {
+        setError("Save status could not be verified. Reload this Section before another edit.");
         return;
       }
       setOpen(false);
