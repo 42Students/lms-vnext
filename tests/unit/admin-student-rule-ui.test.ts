@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck} from "@/modules/module-access/admin-student-rule-ui-model";
+import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement} from "@/modules/module-access/admin-student-rule-ui-model";
 describe("Student override controls",()=>{
  it("distinguishes inheritance from storing Off",()=>{
   expect(studentRulePayload("projects","INHERIT",true,null)).toEqual({action:"INHERIT",module:"projects",expected:null});
@@ -15,4 +15,9 @@ describe("Student override controls",()=>{
   expect(parseStudentRuleRecheck({rules:[{module:"projects",enabled:false,locked:true}]},"projects")).toEqual({enabled:false,locked:true});
  });
 
+ it("requires exact verified module/value/lock receipt, not just HTTP 2xx",()=>{
+  expect(hasStudentRuleAcknowledgement({rule:{module:"electives",enabled:true,locked:false,unchanged:false}},"projects","ON",false)).toBe(false);
+  expect(hasStudentRuleAcknowledgement({rule:{module:"projects",enabled:null,locked:false}},"projects","INHERIT",false)).toBe(false);
+  expect(hasStudentRuleAcknowledgement({rule:{module:"projects",enabled:false,locked:true,unchanged:false}},"projects","OFF",true)).toBe(true);
+ });
 });
