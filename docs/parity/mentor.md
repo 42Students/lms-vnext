@@ -1600,3 +1600,7 @@ Learner/observer Project file lists exclude files linked to MENTOR_ONLY resource
 ### PR-S2-03 Mentor/Admin assignee picker (source delivered)
 
 The task board now has the legacy Assignee picker limited to the current project Learner roster and a version-checked assignment PATCH. Integration helper explicitly assigns before submission. Earlier isolated tests that submit without an assignee may need dedicated fixture updates. Real DB/role-negative/browser tests remain unrun.
+
+### PR-S2-04 task extras — PROPOSED / NOT DONE
+
+Prepared migration proposal for blocker_reason, due_date, estimate_points, task_type, scoped comment history and composite (project_id,id) FK; source-only validators and tests are ready. None of this is registered in 0082–0084; write endpoints, comment access filtering, UI and executed PG acceptance must follow migration review. Do not infer task fields or comments work from this staged proposal.
