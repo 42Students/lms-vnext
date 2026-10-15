@@ -1,3 +1,5 @@
+**2026-10-16 file and video backend (PARTIAL, UI pending):** instructor video management is available server side: `POST /api/courses/lessons/{lessonId}/videos` (grant), `POST /api/courses/videos/{id}/complete`, `PATCH`/`DELETE /api/courses/videos/{id}` (title, duration, order, publish, learner visibility, lesson content link), replace via `replaceVideoId`, optional thumbnail, and `GET .../videos?deliveryId=` (drafts and in-flight uploads). Faculty must teach the delivery (`deliveryId` required); college admins may also manage offering-wide videos. Teaching faculty and admins can open submitted assignment files through `GET /api/courses/assignment-submissions/{id}/files` and `POST /api/courses/assignment-submission-files/{id}/download-grant`. Legacy limits kept (5 GiB legacy video cap lowered to 4900 MiB for single-PUT upload; formats mp4, m4v, webm, mov, avi). See `docs/architecture/file-and-video-apis.md`. No UI page changed; the Signed VIDEO playback and Assignment file upload matrix rows stay MISSING.
+
 # Faculty — Detailed Page Parity Spec
 
 Legacy navigation: Courses, Contacts, Notifications, Class Schedule, All Quizzes, All Assignments, Profile.
