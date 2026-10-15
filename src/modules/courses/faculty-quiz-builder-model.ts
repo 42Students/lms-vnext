@@ -334,3 +334,22 @@ export function facultyQuizQuestionRemovalPrompt(index:number,prompt:string):str
  return "Remove question "+(index+1)+(name?' ("'+name+'")':"")+
   "? This removes its options from your unsaved draft.";
 }
+
+/** Bulk option entry may fill an empty draft or append to a valid existing key.
+ * It refuses silent truncation, duplicate labels and blank entries. */
+export function facultyQuizApplyPastedOptions(
+ current:readonly {text:string;correct:boolean;sequence:number}[],raw:string,
+):{ok:true;options:{text:string;correct:boolean;sequence:number}[]}|{ok:false;issue:string}{
+ const lines=raw.split(/\r?\n|\|/).map(line=>line.trim());
+ if(!lines.length||lines.some(line=>!line||line.length>2000))
+  return {ok:false,issue:"Paste nonblank options of at most 2000 characters each."};
+ const filled=current.filter(option=>option.text.trim().length>0);
+ if((filled.length===0&&lines.length<2)||filled.length+lines.length>20)
+  return {ok:false,issue:"A question needs at least two options and supports at most twenty."};
+ const labels=[...filled.map(option=>option.text.trim().toLocaleLowerCase()),
+  ...lines.map(line=>line.toLocaleLowerCase())];
+ if(new Set(labels).size!==labels.length)
+  return {ok:false,issue:"Each option needs unique text, including existing answers."};
+ const newOptions=lines.map((text,i)=>({text,correct:filled.length===0&&i===0,sequence:filled.length+i}));
+ return {ok:true,options:[...filled,...newOptions].map((option,i)=>({...option,sequence:i}))};
+}
