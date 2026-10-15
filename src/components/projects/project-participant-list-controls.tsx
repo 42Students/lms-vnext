@@ -14,6 +14,7 @@ export type ProjectParticipantListQuery = {
     | "MENTOR_STALLED"
     | "MENTOR_MEETING_SOON"
     | "MENTOR_ANY_ATTENTION"
+    | "MENTOR_NO_ATTENTION"
     | "LEARNER_ACTION";
   work?: "BLOCKED" | "NO_TASKS";
   sort?: "RECENT" | "TITLE" | "PROGRESS";
@@ -99,6 +100,7 @@ export function ProjectParticipantListControls({
               <option value="MENTOR_STALLED">Stalled projects</option>
               <option value="MENTOR_MEETING_SOON">Meeting soon</option>
               <option value="MENTOR_ANY_ATTENTION">Any attention</option>
+              <option value="MENTOR_NO_ATTENTION">No recorded attention</option>
             ) : null}
             {learner ? (
               <option value="LEARNER_ACTION">
