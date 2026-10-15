@@ -12,10 +12,13 @@ const PLATFORMS=[
 /** Only saved user-authored URL metadata is considered; never query external profiles. */
 export function learnerSavedCodingProfiles(document:LearnerProfileDocument){
   return PLATFORMS.flatMap(({platform,label,key})=>{
-    const raw=platform==="GITHUB" ? document.socialProfiles.githubUrl
-      : document.metadata.find(entry=>entry.type==="url" &&
-        entry.key.trim().toLowerCase()===key)?.value;
-    const href=learnerCodingProfileLink(platform,raw);
+    // An earlier malformed duplicate must not hide a later valid saved URL.
+    // Each candidate is independently checked against the exact platform host.
+    const candidates=platform==="GITHUB" ? [document.socialProfiles.githubUrl]
+      : document.metadata.filter(entry=>entry.type==="url" &&
+        entry.key.trim().toLowerCase()===key).map(entry=>entry.value);
+    const href=candidates.map(value=>learnerCodingProfileLink(platform,value))
+      .find((value):value is string=>value!==null)??null;
     return href?[{platform,label,href}]:[];
   });
 }
