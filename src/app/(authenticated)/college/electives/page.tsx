@@ -23,7 +23,9 @@ export default async function CollegeElectivesPage({
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Electives" />
     <ErrorState title="Invalid elective filters"
-      description="The search, program, status or page is invalid. No elective slots were loaded."
+      description={parsed.error.issues.find(issue =>
+        ["semesterThrough", "maximumAllowedPicks", "periodEndsOnOrBefore", "maximumCredits"].includes(String(issue.path[0])),
+      )?.message ?? "One or more elective filters are invalid. Adjust the values or clear filters."}
       action={<Link href="/college/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const [data, options] = await Promise.all([

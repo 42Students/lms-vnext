@@ -263,4 +263,15 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",q)).toContain("periodEndsOnOrBefore=2026-12-31");
     expect(collegeElectiveQuerySchema.safeParse({periodEndsOnOrBefore:"2026-13-39"}).success).toBe(false);
   });
+  it("rejects contradictory elective semester, pick and period bounds",()=>{
+    const invalid=[
+      {semesterFrom:5,semesterThrough:4},
+      {minimumRequiredPicks:3,maximumAllowedPicks:2},
+      {periodStartsOnOrAfter:"2026-12-01",periodEndsOnOrBefore:"2026-11-30"},
+    ];
+    for(const input of invalid)expect(collegeElectiveQuerySchema.safeParse(input).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({semesterFrom:4,semesterThrough:4}).success).toBe(true);
+    expect(collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:1,maximumAllowedPicks:2}).success).toBe(true);
+    expect(collegeElectiveQuerySchema.safeParse({periodStartsOnOrAfter:"2026-07-01",periodEndsOnOrBefore:"2026-12-31"}).success).toBe(true);
+  });
 });
