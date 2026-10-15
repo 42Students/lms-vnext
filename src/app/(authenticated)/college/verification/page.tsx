@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {CollegeVerificationPanel} from "@/components/verification/CollegeVerificationPanel";
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
-import {verificationQueueFilters} from "@/modules/verification/queue-filters";
+import {parseCollegeVerificationPageQuery} from "@/modules/verification/page-query";
 import {verificationLastPage,verificationPageUrl} from "@/modules/verification/page-range";
 import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions} from "@/modules/verification/filter-options-service";
 
@@ -13,8 +13,7 @@ export default async function CollegeVerificationPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const raw=await searchParams;
- const single=Object.fromEntries(Object.entries(raw).map(([k,v])=>[k,Array.isArray(v)?v[0]:v]).filter(([,v])=>v!==undefined&&v!==""));
- const parsed=verificationQueueFilters.safeParse(single);
+ const parsed=parseCollegeVerificationPageQuery(raw);
  if(!parsed.success)return <section className="space-y-3 p-4">
   <h1 className="text-xl font-semibold">Profile verification</h1>
   <p role="alert">Invalid verification filters. No records were loaded.</p>
