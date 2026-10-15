@@ -49,3 +49,5 @@ export * from "./tpo-configuration";
 export * from "./placement-batches";
 
 export * from "./college-signin";
+
+export * from "./inbound-mail";
