@@ -17,6 +17,7 @@ import { ProjectsServiceError } from "@/modules/projects/errors";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { ActivityServiceError } from "@/modules/activity/errors";
 import { logError } from "@/observability/logger";
+import {StudentRuleConflict} from "@/modules/module-access/admin-student-rule-write";
 
 export function apiErrorResponse(error: unknown) {
   if (error instanceof ZodError) {
@@ -45,6 +46,8 @@ export function apiErrorResponse(error: unknown) {
       },
     );
   }
+
+  if (error instanceof StudentRuleConflict) return NextResponse.json({error:error.code},{status:409});
 
   if (error instanceof AuthorizationError) {
     return NextResponse.json(
