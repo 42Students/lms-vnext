@@ -7,6 +7,7 @@ export function facultyProfileSaveFailure(code:string|undefined,status:number):s
  if(code==="PRIVATE_IDENTITY_STORAGE_NOT_READY")return "Private profile storage is not available. Nothing was saved.";
  if(code==="REQUEST_TOO_LARGE"||status===413)return "This profile change is too large. Shorten the text or remove extra records.";
  if(status===403)return "Your permission to edit this profile is unavailable. No changes were saved.";
+ if(status===401)return "Your sign-in has expired. Sign in again before editing your profile.";
  return "The profile change was not saved. Review the fields and try again.";
 }
 
