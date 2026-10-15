@@ -52,3 +52,11 @@ export function matchesCampaignRecipient(
     claim.campaignId===persisted.campaignId &&
     claim.recipientId===persisted.id;
 }
+
+export function campaignUnsubscribeDecision(
+  claim:TpoCampaignRecipientClaim,
+  persisted:{collegeId:string;campaignId:string;id:string;unsubscribedAt:Date|null},
+):"DENY"|"ALREADY"|"APPLY" {
+  if(!matchesCampaignRecipient(claim,persisted))return "DENY";
+  return persisted.unsubscribedAt ? "ALREADY" : "APPLY";
+}

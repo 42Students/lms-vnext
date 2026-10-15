@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {issueTpoCampaignRecipientToken,verifyTpoCampaignRecipientToken,matchesCampaignRecipient} from "@/modules/messaging/tpo-campaign-recipient-token";
+import {issueTpoCampaignRecipientToken,verifyTpoCampaignRecipientToken,matchesCampaignRecipient,campaignUnsubscribeDecision} from "@/modules/messaging/tpo-campaign-recipient-token";
 describe("T-S2-04 recipient-bound unsubscribe links",()=>{
  const secret="this is a campaign-only HMAC secret of adequate length";
  const t=Date.parse("2026-10-16T00:00:00Z");
@@ -11,6 +11,14 @@ describe("T-S2-04 recipient-bound unsubscribe links",()=>{
   expect(verifyTpoCampaignRecipientToken(token,secret,t)).toEqual(claim);
   expect(matchesCampaignRecipient(claim,{id:claim.recipientId,collegeId:claim.collegeId,campaignId:claim.campaignId,unsubscribedAt:null})).toBe(true);
   expect(matchesCampaignRecipient(claim,{id:claim.recipientId,collegeId:claim.collegeId,campaignId:"other",unsubscribedAt:null})).toBe(false);
+ });
+ it("does not unsubscribe another college/campaign/recipient",()=>{
+  const same={id:claim.recipientId,collegeId:claim.collegeId,campaignId:claim.campaignId,unsubscribedAt:null};
+  expect(campaignUnsubscribeDecision(claim,same)).toBe("APPLY");
+  expect(campaignUnsubscribeDecision(claim,{...same,unsubscribedAt:new Date(t)})).toBe("ALREADY");
+  expect(campaignUnsubscribeDecision(claim,{...same,collegeId:"other"})).toBe("DENY");
+  expect(campaignUnsubscribeDecision(claim,{...same,campaignId:"other"})).toBe("DENY");
+  expect(campaignUnsubscribeDecision(claim,{...same,id:"other"})).toBe("DENY");
  });
  it("rejects tampering, wrong key and exact expiry",()=>{
   const token=issueTpoCampaignRecipientToken(claim,secret);
