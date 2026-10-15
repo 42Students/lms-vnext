@@ -19,6 +19,7 @@ import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-pan
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
+import { hrDriveMessagesHref } from "@/modules/placements/hr-drive-messages-link-model";
 
 function formatCtc(
   value: number | null,
@@ -239,6 +240,10 @@ export default async function HrPlacementJobPage({
             {tab}
           </Link>
         ))}
+        <Link href={hrDriveMessagesHref(workspace.job.id)}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Messages
+        </Link>
       </nav>
       {filters.tab === "applicants" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
