@@ -15,6 +15,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
   offeringStatus: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   courseCode: z.string().trim().min(1).max(64).optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
+  cohortCode: z.string().trim().min(1).max(64).optional(),
   periodCode: z.string().trim().min(1).max(64).optional(),
   pathStatus: z.enum(["ALL",...LEARNING_PATH_STATUSES]).default("ALL"),
 });
