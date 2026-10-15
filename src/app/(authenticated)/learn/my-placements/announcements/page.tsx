@@ -14,7 +14,7 @@ import {readLearnerNoticeFilters} from "@/modules/placements/learner-notices-que
 import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-model";
 import {filterLearnerRecentNotices} from "@/modules/placements/learner-notices-recent-model";
 import {paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
-import {learnerNoticeFilterHref} from "@/modules/placements/learner-notices-navigation-model";
+import {learnerNoticeFilterHref,learnerNoticePageHref} from "@/modules/placements/learner-notices-navigation-model";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import {sortLearnerNotices} from "@/modules/placements/learner-notices-sort-model";
 
@@ -48,10 +48,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
   const noticePage = filters.page;
   const pages = paginateOwnOffers(sortLearnerNotices(notices,sortKey),noticePage,15);
-  const noticePageUrl=(page:number)=>"/learn/my-placements/announcements?"+new URLSearchParams({
-    ...(pinnedOnly?{pinned:"1"}:{}),...(unreadOnly?{unread:"1"}:{}),
-    ...(queryText?{q:queryText}:{}),...(alertQ?{alertQ}:{}),...(recentOnly?{recent:"1"}:{}),...(sortKey!=="pinned"?{sort:sortKey,alertQ}:{}),page:String(page),
-  }).toString();
+  const noticePageUrl=(page:number)=>learnerNoticePageHref({
+    pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ,sort:sortKey,page,
+  });
   const personalAlerts = await readOptionalLearnerAlertSource(
     ()=>getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20}));
   const searchedAlerts=searchLearnerAlertPreview(personalAlerts.items,alertQ);
@@ -64,6 +63,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {hadInvalidNoticeFilters ? <p role="status" className="mt-2 text-sm text-warning">Some notice filters were invalid and have been reset to safe defaults.</p> : null}
       </div>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
+        {alertQ?<input type="hidden" name="alertQ" value={alertQ}/>:null}
         {pinnedOnly ? <input type="hidden" name="pinned" value="1" /> : null}
         {recentOnly ? <input type="hidden" name="recent" value="1" /> : null}
         {unreadOnly ? <input type="hidden" name="unread" value="1" /> : null}
@@ -78,6 +78,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
+        {alertQ?<input type="hidden" name="alertQ" value={alertQ}/>:null}
         {pinnedOnly?<input type="hidden" name="pinned" value="1"/>:null}
         {unreadOnly?<input type="hidden" name="unread" value="1"/>:null}
         {recentOnly?<input type="hidden" name="recent" value="1"/>:null}
