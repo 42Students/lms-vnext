@@ -14,7 +14,8 @@ export const tpoBulkPreviewRequestSchema = z.object({
   ids,
 }).strict().superRefine((value,ctx)=>{
   if(value.target==="STUDENTS"){
-    if(value.jobId||!["ELIGIBLE","CLEAR_OVERRIDE"].includes(value.action))
+    if(value.jobId||value.note.length>0||
+       !["ELIGIBLE","CLEAR_OVERRIDE"].includes(value.action))
       ctx.addIssue({code:"custom",message:"Invalid student action"});
   } else {
     if(!value.jobId||!["SHORTLISTED","REJECTED"].includes(value.action))
@@ -26,7 +27,7 @@ export const tpoBulkPreviewRequestSchema = z.object({
 export type TpoBulkPreviewRequest=z.output<typeof tpoBulkPreviewRequestSchema>;
 export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExtend({
   selections:bulkActionCommandSchema.shape.selections,
-  previewToken:bulkActionCommandSchema.shape.previewToken,
+  previewToken:z.string().min(10).max(256),
   confirmed:z.literal(true),
 }).superRefine((value,ctx)=>{
   if(value.selections.length>25)

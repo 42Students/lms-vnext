@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireTpoJobCollege} from "@/modules/placements/tpo-job-write-base";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {confirmTpoBulkAction,TpoBulkPreviewError}
@@ -10,11 +11,13 @@ export async function POST(request:Request){
    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
    const body=await request.json();
+   const context=await getCurrentRequestContext();
+   await requireTpoJobCollege(context);
    if(body?.target==="APPLICATIONS"&&process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")
      return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
        headers:{"Cache-Control":"private, no-store"}});
    const result=await confirmTpoBulkAction(
-     await getCurrentRequestContext(),body);
+     context,body);
    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
    if(error instanceof TpoBulkPreviewError)
