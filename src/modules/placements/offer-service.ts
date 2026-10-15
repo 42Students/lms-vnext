@@ -41,6 +41,8 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
 import { parsePlacementCascadeId } from "./placement-cascade-policy";
+import { placementExternalOffers } from "@/db/schema/placement-external";
+import { verifiedExternalHeldOffers } from "./held-offer-policy";
 import {
   canReleaseAnotherHeldOffer,
   minimumOfferResponseDeadline,
@@ -429,10 +431,21 @@ export async function issuePlacementOffer(
           eq(placementOffers.kind, "OFFER"),
           inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
         ));
+      const outside = await tx.select({
+        status: placementExternalOffers.status,
+        reviewedByUserId: placementExternalOffers.reviewedByUserId,
+        reviewedAt: placementExternalOffers.reviewedAt,
+        revokedAt: placementExternalOffers.revokedAt,
+        ctcLpa: placementExternalOffers.ctcLpa,
+      }).from(placementExternalOffers).where(and(
+        eq(placementExternalOffers.collegeId, current.job.collegeId),
+        eq(placementExternalOffers.membershipId, current.application.membershipId),
+        eq(placementExternalOffers.status, "VERIFIED"),
+      )).for("share");
       if (!canReleaseAnotherHeldOffer({
         maxHeldOffers: rules?.maxHeldOffers ?? 1,
         upliftPct: rules?.upliftPct ?? 40,
-        heldOffers,
+        heldOffers: [...heldOffers, ...verifiedExternalHeldOffers(outside)],
         annualCtcInr: input.annualCtcInr ?? null,
         isDreamDrive: false,
       })) {
