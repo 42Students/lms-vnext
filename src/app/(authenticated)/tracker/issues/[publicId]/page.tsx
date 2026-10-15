@@ -29,7 +29,7 @@ export default async function TrackerIssueDetailPage({
   params: Promise<{ publicId: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!isSuperAdmin(context)) redirect("/dashboard");
+  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
   const { publicId } = await params;
   if (!trackerPublicIdSchema.safeParse(publicId).success) notFound();
 

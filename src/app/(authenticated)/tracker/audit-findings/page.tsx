@@ -16,7 +16,7 @@ type Params=Record<string,string|string[]|undefined>;
 
 export default async function AuditFindingsBoard({searchParams}:{searchParams:Promise<Params>}) {
  const ctx=await getCurrentRequestContext();
- if(!isSuperAdmin(ctx))redirect("/dashboard");
+ if(!isSuperAdmin(ctx) || ctx.user.platformStatus !== "ACTIVE")redirect("/dashboard");
  requirePermission(ctx,"admin-scope.select",{
   organizationId:ctx.adminScope?.organizationId,
   collegeId:ctx.adminScope?.collegeId,
