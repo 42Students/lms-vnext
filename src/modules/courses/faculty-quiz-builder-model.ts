@@ -320,3 +320,10 @@ export function facultyInsertQuizOptionAfter<T>(options:readonly T[],index:numbe
  if(options.length>=20||index<0||index>=options.length)return [...options];
  const next=[...options];next.splice(index+1,0,newOption);return next;
 }
+
+/** Removing a marked answer changes grading semantics; request explicit consent. */
+export function facultyQuizOptionRemovalNeedsConfirmation(
+ options:readonly {correct:boolean}[],index:number,
+):boolean {
+ return index>=0&&index<options.length&&Boolean(options[index]?.correct);
+}
