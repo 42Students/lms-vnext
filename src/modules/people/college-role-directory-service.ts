@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, not, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, gte, ilike, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -21,9 +21,13 @@ import {
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
-  COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,
   collegeRoleDirectoryQuerySchema,
+  assertCompatibleCollegeRoleDirectoryFilters,
+  roleDirectoryDateWindowValid,
+  roleDirectoryIstDayStart,
+  roleDirectoryNextIstDayStart,
   type CollegeDirectoryKind,
   type CollegeRoleDirectoryRow,
 } from "./college-role-directory-model";
@@ -39,6 +43,8 @@ export async function listCollegeRoleDirectory(
   rawFilter: unknown,
 ) {
   const filter = collegeRoleDirectoryQuerySchema.parse(rawFilter);
+  if (!roleDirectoryDateWindowValid(filter)) throw new RangeError("INVALID_ROLE_DIRECTORY_DATE_WINDOW");
+  assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
   if (
     !context.membership ||
     !hasMembershipRole(context, "COLLEGE_ADMIN") ||
@@ -46,9 +52,10 @@ export async function listCollegeRoleDirectory(
   ) {
     throw new AuthorizationError("people.manage");
   }
-  const collegeId = context.membership.collegeId;
+  const actorMembership = context.membership;
+  const collegeId = actorMembership.collegeId;
   requirePermission(context, "people.manage", {
-    organizationId: context.membership.organizationId,
+    organizationId: actorMembership.organizationId,
     collegeId,
   });
 
@@ -85,7 +92,16 @@ export async function listCollegeRoleDirectory(
   if (kind === "LEARNER" && filter.facultyDepartmentId) {
     throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
   }
-  const db = getDb();
+  return getDb().transaction(async db => {
+  const checked = await assertPersistedPlatformPermission(db, context, "people.manage", {
+    collegeId,
+    organizationId: actorMembership.organizationId,
+  });
+  if (!checked.membership || checked.membership.id !== actorMembership.id ||
+      checked.membership.collegeId !== collegeId ||
+      !checked.membership.roles.includes("COLLEGE_ADMIN")) {
+    throw new AuthorizationError("people.manage");
+  }
   const activeEnrollment = exists(db.select({ enrollmentId: learnerProgramEnrollments.id })
     .from(learnerProgramEnrollments)
     .innerJoin(programs, eq(programs.id, learnerProgramEnrollments.programId))
@@ -212,6 +228,8 @@ export async function listCollegeRoleDirectory(
         ? undefined
         : eq(collegeMemberships.status, filter.status),
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
+      filter.joinedFrom ? gte(collegeMemberships.createdAt,roleDirectoryIstDayStart(filter.joinedFrom)) : undefined,
+      filter.joinedThrough ? lt(collegeMemberships.createdAt,roleDirectoryNextIstDayStart(filter.joinedThrough)) : undefined,
       kind === "FACULTY" ? facultyInDepartment : undefined,
       kind === "FACULTY" && filter.titlePresence !== "ALL"
         ? (filter.titlePresence === "PRESENT" ? hasAcademicTitle : not(hasAcademicTitle)) : undefined,
@@ -244,11 +262,13 @@ export async function listCollegeRoleDirectory(
     db.select().from(query)
       .orderBy(
         filter.sort === "NEWEST" ? desc(query.joinedAt) :
-          filter.sort === "OLDEST" ? asc(query.joinedAt) : asc(query.name),
+          filter.sort === "OLDEST" ? asc(query.joinedAt) :
+          filter.sort === "NAME_DESC" ? desc(sql`lower(coalesce(${query.name}, ''))`) :
+          asc(sql`lower(coalesce(${query.name}, ''))`),
         asc(query.membershipId),
       )
-      .limit(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE)
-      .offset((filter.page - 1) * COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
+      .limit(filter.pageSize)
+      .offset((filter.page - 1) * filter.pageSize),
   ]);
   const ids = baseRows.map((item) => item.membershipId);
   const academic = kind === "LEARNER" && ids.length
@@ -362,7 +382,8 @@ export async function listCollegeRoleDirectory(
     cohortOptionsTruncated:cohortRows.length>200,
     departmentOptions:departmentRows.slice(0,200),
     departmentOptionsTruncated:departmentRows.length>200,
-    pageSize: COLLEGE_ROLE_DIRECTORY_PAGE_SIZE,
-    totalPages: Math.max(1, Math.ceil(total / COLLEGE_ROLE_DIRECTORY_PAGE_SIZE)),
+    pageSize: filter.pageSize,
+    totalPages: Math.max(1, Math.ceil(total / filter.pageSize)),
   };
+  });
 }

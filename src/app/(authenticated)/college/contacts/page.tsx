@@ -3,8 +3,9 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
-import {collegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
+import {collegeContactsHref,clearedCollegeContactsHref,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
+import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
@@ -16,7 +17,8 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  catch{return <div className="space-y-4"><PageHeader eyebrow="College Admin · People" title="Contacts"/>
   <ErrorState title="Invalid contact filters" description="A contact filter is invalid. No contacts were loaded."
    action={<Link href="/college/contacts" className="underline">Reset contact filters</Link>}/></div>;}
- const results=await listCollegeContacts(await getCurrentRequestContext(),filter);
+ const context=await getCurrentRequestContext();
+ const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
  const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));
  if(filter.page>pageCount)redirect(collegeContactsHref({...filter,page:pageCount}));
  return <div className="min-w-0 space-y-5">
@@ -53,6 +55,60 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      <option value="ALL">Any contact roles</option><option value="FACULTY_ONLY">Faculty only</option><option value="LEARNER_ONLY">Learner only</option><option value="DUAL">Faculty and learner</option>
     </select>
    </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Contact profile availability
+    <select name="profile" defaultValue={filter.profile} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="PROFILED">Has role profile</option><option value="UNPROFILED">Missing role profile</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Learner active enrollment
+    <select name="enrollment" defaultValue={filter.enrollment} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="ACTIVE">active</option><option value="NONE">none</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Faculty current teaching
+    <select name="teaching" defaultValue={filter.teaching} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="NONE">none</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Learner roll number availability
+    <select name="rollPresence" defaultValue={filter.rollPresence} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Learner registration availability
+    <select name="registrationPresence" defaultValue={filter.registrationPresence} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Faculty academic-title availability
+    <select name="titlePresence" defaultValue={filter.titlePresence} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Faculty primary-department coverage
+    <select name="departmentPresence" defaultValue={filter.departmentPresence} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="MISSING">missing</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Learner active-class placement
+    <select name="classPresence" defaultValue={filter.classPresence} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="NONE">none</option>
+    </select>
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Cohort / batch
+    <select name="cohortId" defaultValue={filter.cohortId??""} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="">Any cohort</option>
+     {filter.cohortId&&!choices.cohorts.some(x=>x.id===filter.cohortId)&&<option value={filter.cohortId}>Selected cohort (outside first 200)</option>}
+     {choices.cohorts.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
+    </select>{choices.cohortsTruncated&&<span className="mt-1 block text-xs">First 200 cohorts shown.</span>}
+   </label>
+   <label className="min-w-0 flex-1 basis-32 text-sm">Faculty primary department
+    <select name="facultyDepartmentId" defaultValue={filter.facultyDepartmentId??""} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
+     <option value="">Any department</option>
+     {filter.facultyDepartmentId&&!choices.departments.some(x=>x.id===filter.facultyDepartmentId)&&<option value={filter.facultyDepartmentId}>Selected department (outside first 200)</option>}
+     {choices.departments.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
+    </select>{choices.departmentsTruncated&&<span className="mt-1 block text-xs">First 200 departments shown.</span>}
+   </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Account status
     <select name="accountStatus" defaultValue={filter.accountStatus} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
      <option value="ALL">All accounts</option><option value="ACTIVE">Active account</option><option value="DISABLED">Disabled account</option>
@@ -75,13 +131,13 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     </select>
    </label>
    <button type="submit" className="min-h-10 rounded-md border px-4 text-sm font-semibold">Apply</button>
-   <Link href={collegeContactsHref({...filter,q:"",status:"ACTIVE",sort:"NAME",page:1})}
+   <Link href={clearedCollegeContactsHref(filter.tab)}
     className="inline-flex min-h-10 items-center rounded-md border px-3 text-sm">Clear filters</Link>
   </form>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
-    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,sort:filter.sort,
+    tab:filter.tab,q:filter.q,...(filter.initial?{initial:filter.initial}:{}),...(filter.joinedFrom?{joinedFrom:filter.joinedFrom}:{}),...(filter.joinedThrough?{joinedThrough:filter.joinedThrough}:{}),status:filter.status,accountStatus:filter.accountStatus,audience:filter.audience,profile:filter.profile,enrollment:filter.enrollment,teaching:filter.teaching,rollPresence:filter.rollPresence,registrationPresence:filter.registrationPresence,titlePresence:filter.titlePresence,departmentPresence:filter.departmentPresence,classPresence:filter.classPresence,...(filter.cohortId?{cohortId:filter.cohortId}:{}),...(filter.facultyDepartmentId?{facultyDepartmentId:filter.facultyDepartmentId}:{}),sort:filter.sort,
    }).toString()} className="inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold">
     Export filtered contacts CSV
    </Link>
