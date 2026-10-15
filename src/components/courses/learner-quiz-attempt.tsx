@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
+import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
 import { learnerQuizReviewRows } from "@/modules/courses/learner-quiz-review-model";
 import { clearLearnerQuizAnswer } from "@/modules/courses/learner-quiz-answer-edit-model";
 import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner-quiz-draft-scope-model";
@@ -96,6 +97,8 @@ export function LearnerQuizAttempt() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false);
+  const cancelPendingReturn = useRef<(() => void) | null>(null);
+  useEffect(() => () => { cancelPendingReturn.current?.(); }, []);
   const [error, setError] = useState<string | null>(null);
   const storageKey = quizId && deliveryId
     ? `learner-quiz:${deliveryId}:${quizId}`
@@ -284,9 +287,10 @@ export function LearnerQuizAttempt() {
       router.replace(
         `/quiz?quizId=${encodeURIComponent(quizId)}&deliveryId=${encodeURIComponent(deliveryId)}&review=true`,
       );
-      window.setTimeout(() => {
-        leaveQuiz();
-      }, 2000);
+      cancelPendingReturn.current?.();
+      cancelPendingReturn.current = scheduleLearnerQuizReturn(
+        leaveQuiz, 2000, window.setTimeout.bind(window), window.clearTimeout.bind(window),
+      );
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Quiz submission failed.");
     } finally {
