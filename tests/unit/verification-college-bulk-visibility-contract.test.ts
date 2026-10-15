@@ -5,7 +5,7 @@ describe("college bulk selection visibility",()=>{
  it("does not permit bulk selection of rows hidden by the shared workspace local-search input",()=>{
   const panel=readFileSync(resolve(process.cwd(),"src/components/verification/CollegeVerificationPanel.tsx"),"utf8");
   const workspace=readFileSync(resolve(process.cwd(),"src/components/verification/VerificationWorkspace.tsx"),"utf8");
-  expect(panel).toContain("onSelectionChange={choose} disableLocalSearch");
+  expect(panel).toContain("selectionDisabled={bulkBusy} disableLocalSearch");
   expect(workspace).toContain("{!disableLocalSearch&&<label");
  });
 });
