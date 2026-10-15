@@ -48,7 +48,11 @@ export function facultyProfileTextDraftIssue(
  if(!["about","personalDetails","address","socialProfiles"].includes(section))
   return "This profile section cannot be edited as text.";
  const parsed=facultyProfileDocumentSchema.safeParse({[section]:draft});
- if(!parsed.success)return parsed.error.issues[0]?.message??"Review this section.";
+ if(!parsed.success){
+  const issue=parsed.error.issues[0];
+  const field=issue?.path.slice(1).join(".");
+  return (field?field+": ":"")+(issue?.message??"Review this section.");
+ }
  if(section==="socialProfiles")return facultyProfilePublicLinkIssue(previous,draft);
  return null;
 }
