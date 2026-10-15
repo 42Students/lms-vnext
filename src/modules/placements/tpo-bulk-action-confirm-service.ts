@@ -6,7 +6,8 @@ import {PlacementsServiceError} from "./errors";
 import {TpoParticipationConflictError,decideTpoLearnerParticipation,
   getTpoLearnerParticipation} from "./tpo-participation-service";
 import {reviewTpoApplicant} from "./tpo-applicant-review-service";
-import {loadTpoBulkCurrent,tpoBulkStudentVersion} from "./tpo-bulk-action-preview-service";
+import {loadTpoBulkCurrent} from "./tpo-bulk-action-preview-service";
+import {tpoBulkStudentVersion} from "./tpo-bulk-decision-model";
 import {tpoBulkConfirmRequestSchema,tpoBulkPreviewRequestSchema,
   safeBulkActionFailure} from "./tpo-bulk-workflow-model";
 import {verifyTpoBulkPreview} from "./tpo-bulk-preview-token";

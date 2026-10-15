@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {tpoBulkStudentReady,tpoBulkApplicationReady,tpoBulkStudentVersion}
- from "@/modules/placements/tpo-bulk-action-preview-service";
+ from "@/modules/placements/tpo-bulk-decision-model";
 const snapshot={status:null,reason:null,note:null,updatedAt:null};
 describe("TPO bulk preview decisions",()=>{
  it("does not overwrite an existing identical eligibility override",()=>{
