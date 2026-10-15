@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**College Admin bulk mutation route PARTIAL (chat-9):** `/api/college/verification/bulk-review` POST checks same-origin before JSON parsing, delegates to persisted actor/scoped, row-versioned DB04 per-item service and returns no-store per-record outcomes. The endpoint does not accept caller-provided college scope. Route-contract tests authored, runtime/API and browser acceptance open.
+
+
 **Serialized bulk-review service PARTIAL (chat-9):** A bounded College Admin bulk command runs each selected request through the existing DB04 locked writer and private-document receipt validation, checking persisted reviewer membership again before each write. Audits and in-app notifications remain transactional per successful decision; recognized stale/foreign/invalid transitions report per-item outcomes. Unexpected failures abort remaining work rather than silently claiming success. Real DB/CI/browser evidence still open.
 
 
