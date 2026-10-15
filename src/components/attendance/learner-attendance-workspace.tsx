@@ -423,8 +423,7 @@ export function LearnerAttendanceWorkspace({
           >
             {summary.percentage === null
               ? "No marked sessions"
-              : summary.percentage >=
-                  threshold
+              : learnerAttendanceThresholdReached(summary.present,summary.markedSessions,threshold)
                 ? "At or above threshold"
                 : "Below threshold"}
           </StatusBadge>
