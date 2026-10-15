@@ -1585,3 +1585,17 @@ The latest `chatgpt/chat-4` round merged the current main before implementation 
 - Ten dedicated `tests/unit/faculty-quiz-round7-*.test.ts` files cover these models and negative boundaries.
 
 **Acceptance not claimed:** no repo-local TypeScript/ESLint/Vitest/PostgreSQL or authenticated browser checks have executed for these commits; repository GitHub Actions for the branch have not been observed. The existing command route remains the sole write boundary and its prior role/tenant checks were not changed. Full legacy choice Quiz parity still depends on orchestrator-owned DB06 persisted shuffle registration, learner-visible randomized rendering, and current browser/attempt recovery evidence. Do not mark Faculty All Quizzes DONE on this evidence alone.
+
+## 2026-10-15 Faculty Quiz read/review recovery and bounded write requests — PARTIAL (chat-4 round 8)
+
+After merging the current `main` into `chatgpt/chat-4`, this round pushed 12 individual Faculty Quiz parity improvements with source-authored regression tests, remaining within the Faculty lane:
+
+- Question and answer options are hydrated from persisted `sequence` ordering without mutating the server result. A DRAFT with an empty loaded bank is treated as a retryable failure, never a safe publishable empty Quiz.
+- Retrying an unsuccessful question fetch warns before discarding dirty metadata; arbitrary parsing/network exception strings are redacted, with a safe retry path retained.
+- The Quiz command preflights same-Section title collisions; the server remains authoritative for uniqueness, stale token and scope.
+- Shared question Zod validation now feeds a total-points/invalid-question review, with an invalid-only display filter that never reduces the full bank sent on save.
+- Pasted answer lists accept trailing clipboard newlines but reject blank interior choices and oversized inputs; correct-option deletion confirmations distinguish single versus multiple-answer behavior.
+- Publish remains disabled if the loaded DRAFT bank is empty/invalid, dirty, unavailable, or not in DRAFT status.
+- The existing same-origin authenticated Faculty POST endpoint now streams with an 8 MiB byte cap and rejects oversized/malformed bodies or unsupported media types with explicit 413/400/415 JSON errors *before* reaching the transaction service. The existing Zod command, exact teaching-scope checks and transactional audit remain authoritative.
+
+**Evidence limits:** dedicated `tests/unit/faculty-quiz-round8-1.test.ts` through `round8-12.test.ts` are authored, not run in this chat. No new database migration, repository-local TypeScript/ESLint/Vitest/PostgreSQL run, or desktop/mobile browser execution was available for this branch revision; do not promote the Quiz matrix from PARTIAL. Full legacy parity still depends on orchestrator-owned registered DB06 shuffle fields plus learner-side rendering and independent attempt-bearing/empty-error browser acceptance.
