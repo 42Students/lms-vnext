@@ -17,6 +17,7 @@ import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-lin
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
 import { listHrConversations } from "@/modules/placements/hr-conversation-inbox-service";
 import { hrTodayConversationSignals } from "@/modules/placements/hr-today-conversation-model";
+import { hrConversationsHref } from "@/modules/placements/hr-conversation-urls-model";
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
 import { buildRecruiterActionQueue } from "@/modules/placements/hr-today-action-queue-model";
 import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
@@ -84,7 +85,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
     ...(conversationSignals && conversationSignals.unreadInPage>0 ? [{
       label:"Unread conversations (first page)",value:conversationSignals.unreadInPage,
-      url:"/hr/conversations?collegeId="+encodeURIComponent(selectedId),
+      url:hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1}),
     }] : []),
     ...(unreadAction ? [unreadAction] : []),
   ];
@@ -166,8 +167,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       className="rounded-xl border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold text-foreground">Replies to read</h2>
-        <Link href={"/hr/conversations?collegeId="+encodeURIComponent(selectedId)}
-          className="text-sm text-primary-text">View conversations</Link>
+        <Link href={hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1})}
+          className="text-sm text-primary-text">View unread conversations</Link>
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
         Only employer-owned threads from your selected college. No message bodies appear on Today.
