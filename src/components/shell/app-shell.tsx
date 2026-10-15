@@ -9,6 +9,7 @@ import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import { MembershipSwitcher } from "./membership-switcher";
 import { AdminScopeSwitcher } from "./admin-scope-switcher";
 import { AccountActions } from "./account-actions";
+import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
@@ -33,7 +34,11 @@ export async function AppShell({
 }) {
   const superAdmin = isSuperAdmin(context);
   const learner = hasMembershipRole(context, "LEARNER");
-  const collegeAdmin = hasMembershipRole(context, "COLLEGE_ADMIN") && !superAdmin;
+  const accountVariant = accountMenuVariant({
+    superAdmin,
+    roles: context.membership?.roles ?? [],
+    recruiterOnly: !context.membership && Boolean(context.recruiter),
+  });
   const learnerAccess = learner
     ? await getLearnerShellAccess(context)
     : null;
@@ -134,7 +139,7 @@ export async function AppShell({
                   activeMembershipId={context.membership?.id ?? null}
                 />
               )}
-              <AccountActions showNotifications={!learner} legacyCollege={collegeAdmin} />
+              <AccountActions showNotifications={!learner} variant={accountVariant} />
             </div>
           </div>
         </header>

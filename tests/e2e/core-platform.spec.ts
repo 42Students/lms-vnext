@@ -455,12 +455,12 @@ test.describe("Core tenant browser acceptance", () => {
     await page.goto("/dashboard");
     await expect(
       page.getByRole("button", {
-        name: "Sign out",
+        name: "Logout",
       }),
     ).toBeVisible();
     await page
       .getByRole("button", {
-        name: "Sign out",
+        name: "Logout",
       })
       .click();
 
