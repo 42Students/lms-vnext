@@ -517,6 +517,7 @@ export async function getJobEligibilityPolicy(
       minDiplomaPercentage: null as number | null,
       minUndergraduatePercentage:
         null as number | null,
+      minPctThroughout: null as number | null,
       maxGapYears: null as number | null,
       allowedPassingYears: [] as number[],
       missingEvidencePolicy:
@@ -555,6 +556,7 @@ export async function getJobEligibilityPolicy(
       unscaleHundredths(
         policy.minUndergraduatePctBasisPoints,
       ),
+    minPctThroughout: unscaleHundredths(policy.minPctThroughoutBasisPoints),
     maxGapYears: policy.maxGapYears,
     allowedPassingYears:
       policy.allowedPassingYears,
@@ -607,6 +609,7 @@ export async function upsertJobEligibilityPolicy(
       scaleHundredths(
         input.minUndergraduatePercentage,
       ),
+    minPctThroughoutBasisPoints: scaleHundredths(input.minPctThroughout),
     maxGapYears: input.maxGapYears,
     allowedPassingYears: input.allowedPassingYears,
     missingEvidencePolicy:
@@ -1147,6 +1150,19 @@ export async function evaluatePlacementEligibility(
       policy.minUndergraduatePctBasisPoints,
       "MIN",
       100,
+    );
+  }
+  if (policy.minPctThroughoutBasisPoints !== null) {
+    numericCheck(
+      checks, "Percentage throughout",
+      placementPercentageThroughout({
+        tenthPctBasisPoints: evidence?.tenthPctBasisPoints ?? null,
+        twelfthPctBasisPoints: evidence?.twelfthPctBasisPoints ?? null,
+        diplomaPctBasisPoints: evidence?.diplomaPctBasisPoints ?? null,
+        undergraduatePctBasisPoints: evidence?.undergraduatePctBasisPoints ?? null,
+        isLateralEntry: evidence?.isLateralEntry ?? null,
+      }),
+      policy.minPctThroughoutBasisPoints, "MIN", 100,
     );
   }
   if (policy.maxGapYears !== null) {
