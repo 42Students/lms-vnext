@@ -9,10 +9,10 @@ import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-servic
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { BUG_SEVERITIES } from "@/modules/bug-tracker/admin-validation";
-import { auditFindingsQuerySchema, trackerAuditFindingsInput } from "@/modules/bug-tracker/audit-findings-board-model";
+import { parseAuditFindingsSearchParams, trackerAuditFindingsInput } from "@/modules/bug-tracker/audit-findings-board-model";
 
 type Params=Record<string,string|string[]|undefined>;
-const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+
 export default async function AuditFindingsBoard({searchParams}:{searchParams:Promise<Params>}) {
  const ctx=await getCurrentRequestContext();
  if(!isSuperAdmin(ctx))redirect("/dashboard");
@@ -21,18 +21,14 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
   collegeId:ctx.adminScope?.collegeId,
  });
  const params=await searchParams;
- const parsed=auditFindingsQuerySchema.safeParse({
-  q:one(params.q),status:one(params.status),severity:one(params.severity),
-  beforeCreatedAt:one(params.beforeCreatedAt),beforeId:one(params.beforeId),
- });
+ const query=parseAuditFindingsSearchParams(params);
  const header=<PageHeader eyebrow="42 Tracker · Super Admin" title="Audit Findings"
  description="Review recorded tracker findings in the selected administrative scope. This view is read-only and is not a replacement for independent security audit evidence."/>;
- if(!parsed.success) return <div className="space-y-5">{header}
+ if(!query) return <div className="space-y-5">{header}
   <div role="alert" className="rounded-xl border border-border p-5"><p>Invalid audit findings filters or pagination cursor.</p>
    <Link href="/tracker/audit-findings" className="font-semibold text-primary-text">Reset filters</Link></div></div>;
  if(!trackerAdminRuntimeEnabled())return <div className="space-y-5">{header}
   <div role="status" className="rounded-xl border border-border bg-surface p-5">Audit findings data is unavailable until the tracker database migration is verified. No zero-count or success state is inferred.</div></div>;
- const query=parsed.data;
  const data=await listBugTrackerIssuesForAdmin(ctx,trackerAuditFindingsInput(query));
  const next=data.nextCursor?new URLSearchParams({
   ...(query.q?{q:query.q}:{}),
