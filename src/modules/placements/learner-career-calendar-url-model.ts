@@ -14,9 +14,9 @@ export function readLearnerCalendarUrl(query:string,fallbackDay:string):LearnerC
   const validKind=learnerCalendarUrlStateSchema.shape.kind.safeParse(get("kind"));
   return {date:validDate.success?validDate.data:date.parse(fallbackDay),view:validView.success?validView.data:"agenda",kind:validKind.success?validKind.data:"ALL"};
 }
-export function learnerCalendarHref(raw:unknown){
+export function learnerCalendarHref(raw:unknown, surface: "calendar" | "schedule" = "calendar"){
   const state=learnerCalendarUrlStateSchema.parse(raw);
-  return "/learn/my-placements/calendar?"+new URLSearchParams({date:state.date,view:state.view,kind:state.kind}).toString();
+  return "/learn/my-placements/"+surface+"?"+new URLSearchParams({date:state.date,view:state.view,kind:state.kind}).toString();
 }
 export function learnerCalendarSelectedEvents(rounds:readonly CareerCalendarSourceRound[],raw:unknown){
   const state=learnerCalendarUrlStateSchema.parse(raw);

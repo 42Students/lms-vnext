@@ -49,7 +49,7 @@ export default async function LearnerPlacementSchedulePage() {
       <section aria-label="Calendar" className="space-y-2">
         <h2 className="text-lg font-semibold text-foreground">Calendar</h2>
         <Suspense fallback={<p role="status">Calendar</p>}>
-          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} />
+          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
         </Suspense>
       </section>
       <section className="space-y-3">
