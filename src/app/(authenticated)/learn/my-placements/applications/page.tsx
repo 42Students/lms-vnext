@@ -40,6 +40,7 @@ export default async function LearnerPlacementApplicationsPage() {
     jobTitle: row.job.title,
     companyName: row.company.name,
     applicationStatus: row.applicationStatus,
+    offerStatus: row.offerStatus,
     channel: row.channel,
     submittedAt: row.submittedAt,
     withdrawnAt: row.withdrawnAt,
