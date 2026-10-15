@@ -10,6 +10,7 @@ export async function GET(request:Request){
   try{
     const url=new URL(request.url);
     const query=mentorReportsQuerySchema.parse({
+      taskCoverage:url.searchParams.get("taskCoverage")??undefined,
       status:url.searchParams.get("status")??undefined,
       attention:url.searchParams.get("attention")??undefined,
       assignment:url.searchParams.get("assignment")??undefined,
