@@ -42,6 +42,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
   ...(query.environment!=="ALL"?{environment:query.environment}:{}),
   ...(query.issueType?{issueType:query.issueType}:{}),
   ...(query.fromDate?{fromDate:query.fromDate}:{}),
+  ...(query.toDate?{toDate:query.toDate}:{}),
   ...(query.sort!=="newest"?{sort:query.sort}:{}),
   beforeCreatedAt:data.nextCursor.beforeCreatedAt.toISOString(),
   beforeId:data.nextCursor.beforeId,
@@ -83,6 +84,9 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
    <label className="min-w-0 text-sm">Created from (IST)
     <input type="date" name="fromDate" defaultValue={query.fromDate ?? ""} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3"/>
    </label>
+   <label className="min-w-0 text-sm">Created through (IST)
+    <input type="date" name="toDate" defaultValue={query.toDate ?? ""} min={query.fromDate} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3"/>
+   </label>
    <label className="min-w-0 text-sm">Environment
     <select name="environment" defaultValue={query.environment} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3">
       <option value="ALL">All environments</option>{BUG_ENVIRONMENTS.map(value=><option key={value} value={value}>{value}</option>)}
@@ -109,6 +113,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
    ...(query.environment!=="ALL"?{environment:query.environment}:{}),
   ...(query.issueType?{issueType:query.issueType}:{}),
   ...(query.fromDate?{fromDate:query.fromDate}:{}),
+  ...(query.toDate?{toDate:query.toDate}:{}),
    ...(query.sort!=="newest"?{sort:query.sort}:{}),
    ...(query.beforeCreatedAt?{beforeCreatedAt:query.beforeCreatedAt}:{}),
    ...(query.beforeId?{beforeId:query.beforeId}:{}),
