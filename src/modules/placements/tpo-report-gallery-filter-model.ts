@@ -22,7 +22,7 @@ export function countVisibleTpoReportCards(groups:readonly {cards:readonly unkno
 /** Stable title sorting changes only presentation, never available report authorization. */
 export function alphabetizeTpoReportGallery<T extends {heading:string;cards:readonly {title:string;path:string}[]}>(
  groups:readonly T[],
-):T[]{
+){
  return groups.map(group=>({
   ...group,
   cards:[...group.cards].sort((a,b)=>a.title.localeCompare(b.title)||a.path.localeCompare(b.path)),
