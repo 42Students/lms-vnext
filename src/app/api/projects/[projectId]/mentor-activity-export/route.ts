@@ -18,12 +18,12 @@ export async function GET(request:Request,{params}:RouteContext){
     ]);
     if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
     const query=mentorProjectActivityQuerySchema.parse({
-      projectId,...filters,page:1,
+      projectId,...filters,page:1,pageSize:50,
     });
     const context=await getCurrentRequestContext();
     const first=await getMentorProjectActivityHistory(context,query);
     if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
-    const pages=Math.min(10,first.totalPages);
+    const pages=Math.min(4,first.totalPages);
     const rest=await Promise.all(Array.from({length:pages-1},(_,i)=>
       getMentorProjectActivityHistory(context,{...query,page:i+2})));
     if(rest.some(page=>!page.enabled))
