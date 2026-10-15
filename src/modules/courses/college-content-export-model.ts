@@ -10,12 +10,13 @@ export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true})
 });
 export {exportParams};
 export function collegeContentCsvHref(kind:CollegeContentKind,q:{
- q:string;courseCode?:string;status:string;format:string;scope:string;visibility?:string;
+ q:string;courseCode?:string;programCode?:string;status:string;format:string;scope:string;visibility?:string;
  view?: "ALL"|"UPCOMING"|"PAST";from?:string;to?:string;offeringStatus?:string;
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
  if(q.courseCode)p.set("courseCode",q.courseCode);
+ if(kind!=="LIVE_CLASS"&&q.programCode)p.set("programCode",q.programCode);
  if(q.status!=="ALL")p.set("status",q.status);
  if(q.scope!=="ALL")p.set("scope",q.scope);
  if(kind!=="LIVE_CLASS"&&q.visibility&&q.visibility!=="ALL")p.set("visibility",q.visibility);
