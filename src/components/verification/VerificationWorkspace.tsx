@@ -2,6 +2,7 @@
 import {useMemo,useState} from "react";
 import Link from "next/link";
 import {collegeVerificationStudentHref} from "@/modules/verification/staff-links";
+import {collegeRoleContactHref} from "@/modules/people/college-role-directory-model";
 import {verificationTab,verificationTabCounts,type VerificationTab} from "@/modules/verification/queue-tabs";
 import {orderVerificationQueue} from "@/modules/verification/queue-order";
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
@@ -13,11 +14,11 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  learnerName:string;batchName:string|null;branchName:string|null;
  missingMarksheet:boolean;attention:string[];
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,selectionDisabled=false}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
- disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;selectionDisabled?:boolean;
+ disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
@@ -60,6 +61,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      <h2 className="break-words font-medium">{row.learnerName}</h2>
      <p className="mt-1 text-xs font-semibold text-primary-text">{verificationQueueCardPresentation(row.status).state}</p>
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
+     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <label className="mt-2 flex items-center gap-2 text-sm">
        <input type="checkbox" disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}

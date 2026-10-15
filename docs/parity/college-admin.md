@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Verified roster-to-masked Contacts navigation PARTIAL (chat-9):** College Admin verification cards now link directly to the existing masked Contacts detail under persisted actor scope, rather than forcing staff to search for the learner twice. Shared Super Admin/TPO consumers do not receive College-specific links. Pure navigation contract authored; browser/role acceptance open.
+
 **In-flight bulk selection lock PARTIAL (chat-9):** Verification row checkboxes now disable while a bulk decision is in progress, in addition to the existing select/clear and confirmation guards, preventing changes to the submitted set during asynchronous processing. Pure selection state checks authored; browser interaction acceptance pending.
 
 **Stale single-decision recovery PARTIAL (chat-9):** After a row-version conflict the drawer now invalidates the stale snapshot and disables further decisions until the reviewer explicitly reloads the fresh private detail. No stale replay or blind success is presented. Source contracts authored; actual DB concurrency/browser acceptance outstanding.
