@@ -28,7 +28,10 @@ export function slotTransitionAllowed(status:string,action:"OFFER"|"BOOK"|"CANCE
         (status==="BOOKED"&&action==="BOOK"&&bookedCount<capacity);
 }
 export function slotsOverlap(a:{startAt:Date;endAt:Date},b:{startAt:Date;endAt:Date}){
- return a.startAt.getTime()<b.endAt.getTime()&&b.startAt.getTime()<a.endAt.getTime();
+ const [as,ae,bs,be]=[a.startAt.getTime(),a.endAt.getTime(),b.startAt.getTime(),b.endAt.getTime()];
+ // Corrupt persisted intervals must block scheduling, not masquerade as free time.
+ if(![as,ae,bs,be].every(Number.isFinite)||as>=ae||bs>=be)return true;
+ return as<be&&bs<ae;
 }
 
 export function parseIstLocalSlot(value:unknown):string{
