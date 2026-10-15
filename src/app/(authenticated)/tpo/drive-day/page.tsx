@@ -42,7 +42,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         <PageHeader eyebrow="TPO · Drive Day" title="Live rounds"
           description="Rounds happening now, using recorded schedule and duration plus persisted attendance." />
         <form action="/tpo/drive-day" method="get" className="flex flex-wrap gap-3">
-          <label className="text-sm">Attendance focus<select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option></select></label>
+          <label className="text-sm">Attendance focus<select name="issue" defaultValue={issue.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option></select></label>
           <button type="submit" className="self-end min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
         </form>
         {snapshot.truncated ? (
