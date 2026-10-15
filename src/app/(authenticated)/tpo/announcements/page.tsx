@@ -17,6 +17,20 @@ export default async function TpoAnnouncements({searchParams}:Props){
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description="Read-only placement notices explicitly addressed to this college. Draft, remind and undo actions require separately registered delivery controls."/>
+  {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
+   <h2 className="font-semibold text-foreground">Compose a college notice</h2>
+   <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
+   <form action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
+    <label className="grid gap-1 text-sm font-semibold">Title
+     <input name="title" required maxLength={255} className="min-h-11 rounded-md border border-border bg-surface px-3" />
+    </label>
+    <label className="grid gap-1 text-sm font-semibold">Message
+     <textarea name="message" required maxLength={10000} rows={5} className="rounded-md border border-border bg-surface p-3" />
+    </label>
+    <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
+    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Publish college notice</button>
+   </form>
+  </section>:null}
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
    {([["yours","Yours"],["from-42","From 42"]] as const).map(([value,label])=><Link
     key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
