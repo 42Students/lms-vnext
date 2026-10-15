@@ -80,7 +80,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
   <section className="grid min-w-0 gap-3" aria-label="Audit findings">
    {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <div className="flex flex-wrap gap-2"><StatusBadge>{item.status}</StatusBadge><StatusBadge>{item.severity}</StatusBadge></div>
-    <h2 className="mt-2 break-words font-semibold"><Link href={`/tracker/issues/${encodeURIComponent(item.publicId)}`} className="text-primary-text">{item.publicId} · {item.issueType}</Link></h2>
+    <h2 className="mt-2 break-words font-semibold"><Link href={`/tracker/audit-findings/${encodeURIComponent(item.publicId)}`} className="text-primary-text">{item.publicId} · {item.issueType}</Link></h2>
     <p className="mt-2 break-words text-sm text-body">{item.description}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.page} · {item.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
     <div className="mt-3"><AuditFindingStatusAction publicId={item.publicId} current={item.status} version={item.version}/></div>
