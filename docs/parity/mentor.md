@@ -1218,3 +1218,8 @@ The shared Project workspace now rejects credential-bearing, non-HTTP(S), malfor
 ## 2026-10-15 chat-11 new round — mentor-task-acceptance-criteria (PARTIAL)
 
 Mentors can now expand the same registered task acceptance criteria that Learners see, directly from the Board during review; blanks never display a false rubric. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — sprint-recorded-progress (PARTIAL)
+
+Each Mentor Sprint displays counted persisted Done/In review/Blocked tasks and a completion percentage only when tasks exist. Empty Sprint completion is explicitly unknown, never 100%. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
