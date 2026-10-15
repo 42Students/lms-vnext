@@ -18,7 +18,7 @@ export function parseTpoAcademicPreviewCsv(csv:string){
   seen.add(result.studentCode);return result;
  });
 }
-export function previewTpoAcademicPageMatches(rows:readonly {studentCode:string}[],scopedIds:readonly string[]){
+export function previewTpoAcademicPageMatches<T extends {studentCode:string}>(rows:readonly T[],scopedIds:readonly string[]){
  const ids=new Set(scopedIds);
  return rows.map(row=>({...row,matchedOnCurrentPage:ids.has(row.studentCode)}));
 }
