@@ -15,6 +15,8 @@ import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-se
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
+import { listHrConversations } from "@/modules/placements/hr-conversation-inbox-service";
+import { hrTodayConversationSignals } from "@/modules/placements/hr-today-conversation-model";
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
 import { buildRecruiterActionQueue } from "@/modules/placements/hr-today-action-queue-model";
 import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
@@ -60,22 +62,30 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayWeek(now);
-  const [jobs, calendar, inbox] = await Promise.all([
+  const [jobs, calendar, inbox, conversations] = await Promise.all([
     listOwnRecruiterPlacementJobs(context),
     listRecruiterCalendarEvents(context, week),
     listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),
+    listHrConversations(context,{collegeId:selectedId,page:1}),
   ]);
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
   const unreadAction=hrTodayUnreadAction({...inbox,collegeId:selectedId});
+  const conversationSignals = conversations.status==="READY"
+    ? hrTodayConversationSignals(conversations.items,conversations.total)
+    : null;
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,unread:unreadAction?.value??0});
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
     {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
+    ...(conversationSignals && conversationSignals.unreadInPage>0 ? [{
+      label:"Unread conversations (first page)",value:conversationSignals.unreadInPage,
+      url:"/hr/conversations?collegeId="+encodeURIComponent(selectedId),
+    }] : []),
     ...(unreadAction ? [unreadAction] : []),
   ];
   return <div className="space-y-6">
