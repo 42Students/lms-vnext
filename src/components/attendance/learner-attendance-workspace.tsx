@@ -15,6 +15,7 @@ import { learnerAttendanceCourseHistoryHref } from "@/modules/attendance/learner
 import { learnerAttendanceHistoryCsv } from "@/modules/attendance/learner-attendance-history-csv-model";
 import { learnerAttendanceRecoveryProjection } from "@/modules/attendance/learner-attendance-recovery-model";
 import { learnerAttendanceThresholdReached } from "@/modules/attendance/learner-attendance-threshold-model";
+import { learnerAttendanceCanReturnToMonth } from "@/modules/attendance/learner-attendance-today-month-model";
 import { learnerAttendanceHistoryResetHref } from "@/modules/attendance/learner-attendance-history-reset-model";
 import { learnerAttendanceStatusTone } from "@/modules/attendance/learner-attendance-status-tone-model";
 import { learnerAttendanceExactAbsences } from "@/modules/attendance/learner-attendance-exact-absence-model";
@@ -338,6 +339,12 @@ export function LearnerAttendanceWorkspace({
                 }
               />
             </label>
+            {learnerAttendanceCanReturnToMonth(filters.month,defaultMonth) ? (
+              <Button size="sm" variant="secondary"
+                onClick={() => changeMonth(parseMonth(defaultMonth))}>
+                This month
+              </Button>
+            ) : null}
             <Button
               size="sm"
               variant="secondary"

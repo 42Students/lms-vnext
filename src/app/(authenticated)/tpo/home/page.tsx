@@ -3,12 +3,15 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { buildTpoHomeAttention } from "@/modules/placements/tpo-home-attention-model";
+import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
+import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
  const batches=await listTpoBatches(ctx);
  const operations=await getPlacementTpoOperations(ctx,ctx.membership!.collegeId);
+ const pendingRequests=pendingTpoRequestsAction(await getPendingTpoRequestsCount(ctx));
  const rows=buildTpoHomeAttention([
   {key:"BATCHES",label:"Batches to start",href:"/tpo/batches",count:batches.ready?batches.batches.filter(b=>!b.invitedAt&&!b.finishedAt).length:0},
   {key:"DRIVES",label:"Drives needing attention",href:"/tpo/placements/lifecycle",count:operations.summary.jobsNeedingAttention},
@@ -25,10 +28,11 @@ export default async function TpoHome(){
   {next?<div className="mt-2 space-y-2"><p className="break-words text-sm">{next.jobTitle} · {next.companyName}</p>
    <p className="text-xs text-muted-foreground">{next.count} {next.code.toLowerCase().replaceAll("_"," ")}</p>
    <Link href={"/tpo/placements/jobs/"+next.jobId} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Open drive</Link>
-  </div>:rows.next?<div className="mt-2 space-y-2"><p className="text-sm">{rows.next.count} {rows.next.label.toLowerCase()}</p>
+  </div>:pendingRequests?<div className="mt-2 space-y-2"><p className="text-sm">{pendingRequests.label}</p><Link href={pendingRequests.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Review requests</Link></div>:rows.next?<div className="mt-2 space-y-2"><p className="text-sm">{rows.next.count} {rows.next.label.toLowerCase()}</p>
    <Link href={rows.next.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Go to next step</Link>
   </div>:<p className="mt-2 text-sm">Nothing is waiting on you in the currently supported queues.</p>}
  </section>
+ {pendingRequests?<section aria-label="Pending placement requests" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface p-4"><p className="text-sm font-semibold">{pendingRequests.label}</p><Link href={pendingRequests.href} className="inline-flex min-h-11 items-center text-primary-text underline">Open decision inbox</Link></section>:null}
  {!batches.ready?<p className="text-xs text-muted-foreground">Batch attention is unavailable until its lifecycle migration is registered.</p>:null}
  <section className="space-y-2"><h2 className="font-semibold">Your placement work</h2>
   <ul className="divide-y divide-border rounded-xl border border-border bg-surface">{rows.rows.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center justify-between gap-3 p-4">

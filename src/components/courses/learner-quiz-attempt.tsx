@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { selectLearnerLatestQuizAttempt } from "@/modules/courses/learner-latest-quiz-attempt-model";
 import { Button } from "@/components/ui/button";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
@@ -13,6 +14,9 @@ import { learnerQuizRefreshFailureMessage } from "@/modules/courses/learner-quiz
 import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
 import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
+import { learnerQuizClockInterval } from "@/modules/courses/learner-quiz-clock-interval-model";
+import { learnerQuizEmptyQuestionMessage } from "@/modules/courses/learner-quiz-empty-question-model";
+import { learnerQuizQuestionNavState } from "@/modules/courses/learner-quiz-question-nav-model";
 import { learnerQuizDeadlineDisplay } from "@/modules/courses/learner-quiz-deadline-display-model";
 import { learnerQuizDeadlineWarning } from "@/modules/courses/learner-quiz-deadline-warning-model";
 import { scheduleLearnerQuizReturn } from "@/modules/courses/learner-quiz-return-model";
@@ -133,9 +137,9 @@ export function LearnerQuizAttempt() {
       requireLearnerQuizResponseId(quizId, quizBody.quiz?.quiz?.id);
       if (!learnerQuizRequestCurrent(signal)) return;
       const loadedAtMs = Date.now();
-      const deadlinePassed = quizBody.quiz?.quiz?.dueAt
-        ? new Date(quizBody.quiz.quiz.dueAt).getTime() < loadedAtMs
-        : false;
+      const deadlinePassed = !learnerQuizSubmitDeadlineOpen(
+        quizBody.quiz?.quiz?.dueAt ?? null, loadedAtMs,
+      );
       const mustReview =
         reviewRequested ||
         quizBody.quiz?.quiz?.status === "CLOSED" ||
@@ -185,9 +189,10 @@ export function LearnerQuizAttempt() {
   }, [load]);
 
   useEffect(() => {
-    const handle = window.setInterval(() => setNowMs(Date.now()), 30_000);
-    return () => window.clearInterval(handle);
-  }, []);
+    const nextTick = learnerQuizClockInterval(quiz?.quiz.dueAt ?? null, nowMs);
+    const handle = window.setTimeout(() => setNowMs(Date.now()), nextTick);
+    return () => window.clearTimeout(handle);
+  }, [quiz?.quiz.dueAt, nowMs]);
 
   useEffect(() => {
     if (!learnerQuizDraftCanPersist({storageKey,loadedScopeKey,review,loading,hasQuiz:Boolean(quiz)}) || typeof window === "undefined") return;
@@ -202,13 +207,13 @@ export function LearnerQuizAttempt() {
   const current = questions[step] ?? null;
   const answerProgress=learnerQuizAnswerProgress(questions,answers);
   const reviewRows=learnerQuizReviewRows(questions,answers);
-  const latestAttempt = attempts.at(-1) ?? null;
+  const latestAttempt = selectLearnerLatestQuizAttempt(attempts);
   const answerMap = useMemo(
     () => new Map((latestAttempt?.answers ?? []).map((answer) => [answer.questionId, answer])),
     [latestAttempt],
   );
   const duePassed = quiz?.quiz.dueAt && nowMs > 0
-    ? new Date(quiz.quiz.dueAt).getTime() < nowMs
+    ? !learnerQuizSubmitDeadlineOpen(quiz.quiz.dueAt, nowMs)
     : false;
   const attemptable = Boolean(
     quiz &&
@@ -355,7 +360,9 @@ export function LearnerQuizAttempt() {
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Quiz review</p>
             <h1 className="mt-2 text-2xl font-semibold text-foreground">{quiz.quiz.title}</h1>
             <p className="mt-2 text-sm text-body">
-              {latestAttempt
+              {learnerQuizEmptyQuestionMessage(questions.length)
+                ? learnerQuizEmptyQuestionMessage(questions.length)
+                : latestAttempt
                 ? latestAttempt.resultsVisible
                   ? `Attempt ${latestAttempt.attemptNumber} · ${learnerAttemptResultLabel(latestAttempt)}`
                   : "Your attempt is submitted. Results will appear after Faculty publishes them."
@@ -370,6 +377,14 @@ export function LearnerQuizAttempt() {
           <p role="status" className="mt-4 rounded-lg border border-success p-3 text-sm font-semibold text-body">Your quiz submission was received. Results may remain hidden until published.</p>
         ) : null}
         {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
+        {learnerQuizEmptyQuestionMessage(questions.length) ? (
+          <div role="status" className="mt-6 rounded-xl border border-border bg-surface-subtle p-5">
+            <p className="text-sm text-body">{learnerQuizEmptyQuestionMessage(questions.length)}</p>
+            <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              Return to All Quizzes
+            </Link>
+          </div>
+        ) : null}
         <div className="mt-6 space-y-4">
           {questions.map((question, index) => {
             const submitted = answerMap.get(question.id);
@@ -441,8 +456,9 @@ export function LearnerQuizAttempt() {
                 key={question.id}
                 type="button"
                 onClick={() => setStep(index)}
-                aria-label={`Go to question ${index + 1}`}
-                className={`min-h-9 rounded-md border text-sm font-semibold ${index === step ? "border-primary bg-primary text-on-primary" : answers[question.id]?.length ? "border-success bg-success-subtle text-foreground" : "border-border bg-surface text-body"}`}
+                aria-label={learnerQuizQuestionNavState(index,step,answers[question.id] ?? []).label}
+                aria-current={index === step ? "step" : undefined}
+                className={`min-h-11 rounded-md border text-sm font-semibold ${index === step ? "border-primary bg-primary text-on-primary" : answers[question.id]?.length ? "border-success bg-success-subtle text-foreground" : "border-border bg-surface text-body"}`}
               >
                 {index + 1}
               </button>

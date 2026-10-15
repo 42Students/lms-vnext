@@ -14,6 +14,9 @@ import {learnerApplicationMobileSummary} from "@/modules/placements/learner-appl
 import {learnerApplicationStageCounts} from "@/modules/placements/learner-application-stage-chips-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
 import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
+import {learnerApplicationPage} from "@/modules/placements/learner-application-pagination-model";
+import {learnerApplicationSelectionMissing} from "@/modules/placements/learner-application-selection-model";
+import { learnerApplicationsCsv } from "@/modules/placements/learner-applications-csv-model";
 import type {OwnApplicationInterviewLink} from "@/modules/placements/learner-application-interview-links-model";
 import type {OwnApplicationAssessmentLink} from "@/modules/placements/learner-application-assessment-links-model";
 import { LearnerPlacementJourney, type LearnerPlacementJourneyItem } from "./learner-placement-journey";
@@ -144,11 +147,10 @@ export function LearnerApplicationsBrowse({
   const rows = browseLearnerApplications(items, filters);
   const viewCounts=learnerApplicationViewCounts(items);
   const emptyKind=learnerApplicationEmptyKind(items.length,rows.length);
-  const totalPages = Math.max(1,Math.ceil(rows.length / PAGE_SIZE));
-  const requested = url.page;
-  const page = Number.isInteger(requested) && requested > 0
-    ? Math.min(requested,totalPages) : 1;
-  const paged = rows.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
+  const pagination = learnerApplicationPage(rows.length,url.page,PAGE_SIZE);
+  const totalPages = pagination.pages;
+  const page = pagination.page;
+  const paged = rows.slice(pagination.start,pagination.end);
   const stages = learnerApplicationStageOptions(items);
   const stageCounts = learnerApplicationStageCounts(items);
   const attention=learnerApplicationAttention(items);
@@ -161,8 +163,27 @@ export function LearnerApplicationsBrowse({
     ? interviewLinks.find(link=>link.applicationId===selected.applicationId)??null
     : null;
 
+  function downloadOwnApplications(){
+    const csv=learnerApplicationsCsv(rows);
+    const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+    try{
+      const link=document.createElement("a");
+      link.href=url;
+      link.download="my-placement-applications.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } finally {URL.revokeObjectURL(url);}
+  }
   return (
     <div className="space-y-5">
+      {learnerApplicationSelectionMissing(items,url.applicationId) ? (
+        <div role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+          The linked application is not available in your current learner history.
+          <button type="button" onClick={()=>updateQuery({applicationId:null})}
+            className="ml-2 min-h-11 font-semibold text-primary-text underline">Return to application list</button>
+        </div>
+      ) : null}
       {withdrawNotice ? (
         <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-foreground">
           {withdrawNotice}
@@ -269,6 +290,12 @@ export function LearnerApplicationsBrowse({
       </section>
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
         <p role="status">{rows.length} of {items.length} applications</p>
+        {rows.length>0 ? (
+          <button type="button" onClick={downloadOwnApplications}
+            className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            Export matching applications CSV
+          </button>
+        ) : null}
         {(search || view!=="all" || filters.stage!=="all" || sort!=="activity") ? (
           <button type="button"
             onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
@@ -278,6 +305,11 @@ export function LearnerApplicationsBrowse({
         ):null}
       </div>
 
+      {pagination.corrected && rows.length>0 ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        The requested application page is outside the matching results; showing page {page} of {totalPages}.
+        <button type="button" className="ml-2 min-h-11 font-semibold text-primary-text underline"
+          onClick={()=>updateQuery({page:String(page)})}>Use this page in the link</button>
+      </p> : null}
       {emptyKind==="NO_APPLICATIONS" ? (
         <div className="space-y-3">
           <LearnerPlacementJourney items={[]} />
