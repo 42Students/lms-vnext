@@ -1,0 +1,25 @@
+import {NextResponse} from "next/server";
+import {z} from "zod";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {isSameOriginRequest} from "@/auth/origin";
+import {hasActiveRecruiter} from "@/modules/identity/context";
+import {acknowledgeRecruiterThread,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
+export const runtime="nodejs";
+export async function POST(request:Request,{params}:{params:Promise<{threadId:string}>}){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ const id=z.string().uuid().safeParse((await params).threadId);
+ if(!id.success)return NextResponse.json({error:"NOT_FOUND"},{status:404});
+ const context=await getCurrentRequestContext();
+ if(!hasActiveRecruiter(context))
+  return NextResponse.json({error:"FORBIDDEN"},{status:403});
+ try{
+  await acknowledgeRecruiterThread(context,id.data);
+  return NextResponse.redirect(new URL("/hr/conversations/"+id.data,request.url),303);
+ }catch(error){
+  if(error instanceof TpoMessagingError)
+   return NextResponse.json({error:error.code==="TPO_MESSAGE_FORBIDDEN"?"FORBIDDEN":"NOT_FOUND"},
+    {status:error.code==="TPO_MESSAGE_FORBIDDEN"?403:404});
+  throw error;
+ }
+}

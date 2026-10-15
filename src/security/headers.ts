@@ -4,11 +4,12 @@ const isDevelopmentBuild = process.env.NODE_ENV !== "production";
  * Content-Security-Policy. Next.js injects inline bootstrap scripts, so
  * script-src keeps 'unsafe-inline' until nonce-based CSP is adopted; every
  * other directive is locked down. 'unsafe-eval' is only added for the dev
- * server (React refresh needs it).
+ * server (React refresh needs it). www.youtube.com is allowed for script-src
+ * only because the lesson player loads https://www.youtube.com/iframe_api.
  */
 export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDevelopmentBuild ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' https://www.youtube.com${isDevelopmentBuild ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   // College logos and learner media are https URLs; no plain http.
   "img-src 'self' data: blob: https:",

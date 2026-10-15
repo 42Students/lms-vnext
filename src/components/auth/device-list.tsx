@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTimeIst } from "@/lib/format-date";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ export type DeviceRow = {
 };
 
 function when(value: string) {
-  return new Date(value).toLocaleString();
+  return formatDateTimeIst(value);
 }
 
 export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
