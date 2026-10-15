@@ -72,6 +72,13 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
     [share,SEED_IDS.collegeA],
    )).rejects.toMatchObject({code:"23514"});
    await client.query("ROLLBACK TO SAVEPOINT invalid_kind");
+   await client.query("SAVEPOINT foreign_actor");
+   await expect(client.query(
+    "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,$5,clock_timestamp()+interval '1 day')",
+    [randomUUID(),SEED_IDS.collegeA,job,SEED_IDS.facultyCollegeBMembership,
+      createHash("sha256").update(randomUUID()).digest("hex")],
+   )).rejects.toMatchObject({code:"23503"});
+   await client.query("ROLLBACK TO SAVEPOINT foreign_actor");
    await client.query("SAVEPOINT foreign_tenant");
    await expect(client.query(
     "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,$5,clock_timestamp()+interval '1 day')",
