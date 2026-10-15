@@ -42,7 +42,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     const byId=new Map(access.grants.map(item=>[item.id,item]));
     const visible=grants.filter(item=>byId.has(item.id));
     return <div className="space-y-6">
-    <PageHeader eyebrow="Employer Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
+    <PageHeader eyebrow="Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
     {visible.length === 0 ? <EmptyState title="No active college access" description="Ask the placement cell that invited you to restore access." /> :
     <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
@@ -90,11 +90,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     ...(unreadAction ? [unreadAction] : []),
   ];
   return <div className="space-y-6">
-    <PageHeader eyebrow="Employer Recruiter" title="Today"
+    <PageHeader eyebrow="Recruiter" title="Today"
       description={recruiter.companyName + " · " + grant.collegeName + ". Your live employer hiring activity."}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedId})}
         className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
-        Request a Drive · preview
+        Request a drive
       </Link>} />
     {grants.length > 1 ? <nav aria-label="Choose college" className="flex flex-wrap gap-2">{grants.map(item=>
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}

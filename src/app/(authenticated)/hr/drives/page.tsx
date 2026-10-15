@@ -51,11 +51,11 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   const attention=hrDriveAttention(jobs,selectedCollege,now);
   const pageResult = paginateRecruiterDrives(sortRecruiterDrives(filtered,query.data.sort),query.data.page);
   return <div className="space-y-6">
-    <PageHeader eyebrow="Employer Recruiter" title="Drives"
+    <PageHeader eyebrow="Recruiter" title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Published and closed drives only."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
         className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
-        Request a Drive · proposal
+        Request a drive
       </Link>} />
     <nav aria-label="Recruiter proposal history">
       <Link href={hrSentProposalsHref(selectedCollege)}
