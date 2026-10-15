@@ -12,6 +12,7 @@ import {
   TPO_NOTIFICATIONS_PATH,
   tpoInboxPageHref,
   tpoInboxQuerySchema,
+  tpoInboxEmptyNavigation,
 } from "@/modules/activity/tpo-notifications-model";
 import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-service";
 
@@ -61,6 +62,7 @@ export default async function TpoNotificationsPage({
     module: event.module,
     importance: event.importance,
   }));
+  const emptyNavigation=tpoInboxEmptyNavigation(inbox.query.view,items.length);
   const nextHref = inbox.page.nextCursor
     ? tpoInboxPageHref(inbox.query.view, inbox.page.nextCursor)
     : null;
@@ -93,6 +95,9 @@ export default async function TpoNotificationsPage({
             readEndpoint="/api/tpo/notifications"
             emptyText={inbox.query.view === "unread" ? "No unread notifications." : "No notifications yet."}
           />
+          {emptyNavigation?<p role="status" className="rounded-xl border border-border bg-surface p-4">
+            Your unread inbox is clear. <Link href={emptyNavigation.href} className="font-semibold text-primary-text underline">{emptyNavigation.label}</Link>
+          </p>:null}
           {nextHref ? (
             <div className="flex justify-center">
               <Link
