@@ -11,10 +11,12 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
+import {filterTpoReportGallery,tpoReportGallerySearchSchema} from "@/modules/placements/tpo-report-gallery-filter-model";
 
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
+  q?: string | string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -33,6 +35,15 @@ export default async function TpoReportsPage({
   }
 
   const query = await searchParams;
+  const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
+  if(!parsedSearch.success)return <section role="alert"
+    className="rounded-xl border border-border bg-surface p-6">
+    <h1 className="font-semibold text-foreground">Invalid report search</h1>
+    <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
+    <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 items-center text-primary-text underline">
+      Clear search
+    </Link>
+  </section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,
@@ -142,6 +153,7 @@ export default async function TpoReportsPage({
     },
   ];
 
+  const visibleGroups=filterTpoReportGallery(groups,parsedSearch.data);
   return (
     <div className="space-y-6">
       <PageHeader
@@ -169,7 +181,25 @@ export default async function TpoReportsPage({
         />
       ) : null}
 
-      {groups.map((group) => (
+      <form method="get" action="/tpo/reports"
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+        <label className="grid min-w-0 flex-1 gap-2 text-sm font-semibold text-body">
+          Find a report
+          <input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
+            placeholder="Report name or purpose"
+            className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
+        </label>
+        <button type="submit" className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary">Search</button>
+        <Link href={reportHref("/tpo/reports",workspace)}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+          Clear
+        </Link>
+      </form>
+      {visibleGroups.length===0?<EmptyState title="No matching reports"
+        description="No available report matches that search. Clear search to see the full gallery."/>:null}
+      {visibleGroups.map((group) => (
         <section key={group.heading} className="space-y-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
