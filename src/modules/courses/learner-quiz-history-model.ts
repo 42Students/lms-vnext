@@ -21,8 +21,7 @@ export function ownQuizHistorySelection<T extends {id:string;deliveryId:string}>
 export function learnerAttemptResultLabel(attempt:{
   resultsVisible:boolean;score:number|null;maxScore:number|null;
 }) {
-  if(!attempt.resultsVisible || attempt.score===null || attempt.maxScore===null) {
-    return "Result not published";
-  }
+  if(!attempt.resultsVisible) return "Result not published";
+  if(attempt.score===null || attempt.maxScore===null) return "Score unavailable";
   return String(attempt.score) + " / " + String(attempt.maxScore) + " points";
 }
