@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { learnerCourseCardMedia, learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
+import { learnerCourseCardMedia, learnerCourseFallbackMedia, learnerCourseCardMediaAfterError } from "@/modules/courses/learner-course-card-media-model";
 
 describe("learner course thumbnail with verified authored display data", () => {
   it("keeps a bundled local fallback when no image has been authored", () => {
