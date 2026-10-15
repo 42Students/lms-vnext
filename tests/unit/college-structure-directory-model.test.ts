@@ -258,4 +258,9 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeStructureHref("ELECTIVES",q)).toContain("periodStartsOnOrAfter=2026-07-01");
     expect(collegeElectiveQuerySchema.safeParse({periodStartsOnOrAfter:"2026-13-39"}).success).toBe(false);
   });
+  it("validates elective linked period ends on or before for the elective directory",()=>{
+    const q=collegeElectiveQuerySchema.parse({periodEndsOnOrBefore:"2026-12-31"});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("periodEndsOnOrBefore=2026-12-31");
+    expect(collegeElectiveQuerySchema.safeParse({periodEndsOnOrBefore:"2026-13-39"}).success).toBe(false);
+  });
 });

@@ -20,6 +20,7 @@ export function electiveCsvHref(q:{
  periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED";
  descriptionPresence?:"ALL"|"RECORDED"|"MISSING";
  periodStartsOnOrAfter?:string;
+ periodEndsOnOrBefore?:string;
  programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
 }){
  const p=new URLSearchParams();
@@ -45,6 +46,7 @@ export function electiveCsvHref(q:{
  if(q.periodLifecycle &&q.periodLifecycle!=="ALL")p.set("periodLifecycle",q.periodLifecycle);
  if(q.descriptionPresence &&q.descriptionPresence!=="ALL")p.set("descriptionPresence",q.descriptionPresence);
  if(q.periodStartsOnOrAfter)p.set("periodStartsOnOrAfter",q.periodStartsOnOrAfter);
+ if(q.periodEndsOnOrBefore)p.set("periodEndsOnOrBefore",q.periodEndsOnOrBefore);
  return "/api/academics/college-electives-export"+(p.size?"?"+p.toString():"");
 }
 export function renderElectivesCsv(rows:readonly {
