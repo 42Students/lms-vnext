@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { projectApiError, projectMutation } from "./project-api";
 import { previewClassTeams, type ProjectTeam } from "@/modules/projects/class-team-split-model";
 import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
+import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
@@ -142,6 +143,17 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
                 catch(e){setError(e instanceof Error?e.message:"Cannot move learner");}
               }}>
                 {groups.map((g,i)=><option key={i} value={i}>{g.name}</option>)}
+              </Select>
+            </label>:null}
+            {groups.length>1?<label className="min-w-24 text-xs">Swap with
+              <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} value="" onChange={event=>{
+                const other=groups[Number(event.target.value)]?.membershipIds[0];
+                if(!other)return;
+                try{setGroups(swapClassTeamMembers(groups,id,other));setError("");}
+                catch(e){setError(e instanceof Error?e.message:"Cannot swap learners");}
+              }}>
+                <option value="">Choose team</option>
+                {groups.map((g,i)=>i===index?null:<option key={i} value={i}>{g.name} (first learner)</option>)}
               </Select>
             </label>:null}
           </li>;
