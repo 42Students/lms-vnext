@@ -289,4 +289,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("videoContentState=NO_VIDEO");
   });
 
+  it("keeps authoring publication state on progress and CSV without visibility inference",()=>{
+    expect(collegeProgressQuerySchema.safeParse({publishedContentState:"ENROLLED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({publishedContentState:"HAS_PUBLISHED"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("publishedContentState=HAS_PUBLISHED");
+    expect(collegeProgressCsvHref(q)).toContain("publishedContentState=HAS_PUBLISHED");
+  });
+
 });
