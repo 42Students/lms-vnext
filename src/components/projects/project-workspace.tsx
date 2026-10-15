@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts } from "@/modules/projects/mentor-workspace-evidence-model";
+import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -585,6 +585,11 @@ export function ProjectWorkspace({
                     </div>
 
                     <div className="mt-3 grid gap-2">
+                      {mode==="MENTOR" && mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[]) ? (
+                        <p role="status" className="rounded-lg border border-border bg-surface p-3 text-xs text-body">
+                          {mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[])}
+                        </p>
+                      ) : null}
                       {(tasksBySprint.get(sprint.id) ??
                         []).map((task) => {
                         const attempts =

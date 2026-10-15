@@ -1223,3 +1223,8 @@ Mentors can now expand the same registered task acceptance criteria that Learner
 ## 2026-10-15 chat-11 new round — sprint-recorded-progress (PARTIAL)
 
 Each Mentor Sprint displays counted persisted Done/In review/Blocked tasks and a completion percentage only when tasks exist. Empty Sprint completion is explicitly unknown, never 100%. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
+
+
+## 2026-10-15 chat-11 new round — sprint-empty-work-evidence (PARTIAL)
+
+The Mentor Board now explicitly distinguishes Sprints without persisted task rows from completed Sprints with work, preventing blank boards from implying a successful delivery. Authenticated workspace service and existing Project role/tenant/module scopes remain unchanged. Source-authored unit regression accompanies the UI and pure model. Independent TypeScript, lint, unit, database, browser (desktop/375px) and exact legacy acceptance are still outstanding; no DONE claim.
