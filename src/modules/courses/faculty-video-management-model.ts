@@ -27,3 +27,15 @@ export function facultyVideosForLesson(
    (scope.deliveryId===null?row.deliveryId===null:
      row.deliveryId===null||row.deliveryId===scope.deliveryId));
 }
+
+export type FacultyVideoBadge={label:string;tone:"neutral"|"warning"|"success"|"danger"};
+export function facultyVideoStatusBadge(status:FacultyVideoProcessingStatus):FacultyVideoBadge{
+ switch(status){
+  case "QUEUED":return {label:"Queued",tone:"neutral"};
+  case "UPLOADING":return {label:"Uploading",tone:"warning"};
+  case "PROCESSING":return {label:"Processing",tone:"warning"};
+  case "READY":return {label:"Ready",tone:"success"};
+  case "FAILED":return {label:"Processing failed",tone:"danger"};
+  case "BLOCKED":return {label:"Unavailable",tone:"danger"};
+ }
+}
