@@ -116,6 +116,28 @@ describe.skipIf(!enabled)("T-S1-03 0092/0093 recruiter OTP PostgreSQL acceptance
   expect(ctx.recruiter?.grants.some(x=>x.collegeId===SEED_IDS.collegeA)).toBe(true);
   await expect(acceptTpoRecruiterInviteOtp(f.receiver,f.token,code)).rejects.toBeDefined();
  });
+ it("fails closed after grant expiry, unverification or capability removal without an env gate",async()=>{
+  if(!pool)throw new Error("DB required");
+  const f=await fixture(),code=await deliverOtp(f.token);
+  await expect(acceptTpoRecruiterInviteOtp(f.receiver,f.token,code))
+    .resolves.toEqual({accepted:true});
+  expect((await resolveRequestContext({identityUid:f.identity})).recruiter?.grants).toHaveLength(1);
+  const original=(await pool.query<{valid_until:Date;capabilities:string[]}>(
+    "select valid_until,capabilities from placement_recruiter_college_grants where recruiter_user_id=$1",
+    [f.user.id],
+  )).rows[0]!;
+  await pool.query("update placement_recruiter_college_grants set valid_until=now()-interval '1 second' where recruiter_user_id=$1",[f.user.id]);
+  expect((await resolveRequestContext({identityUid:f.identity})).recruiter).toBeNull();
+  await pool.query("update placement_recruiter_college_grants set valid_until=$2,verification_status='PENDING' where recruiter_user_id=$1",
+    [f.user.id,original.valid_until]);
+  expect((await resolveRequestContext({identityUid:f.identity})).recruiter).toBeNull();
+  await pool.query("update placement_recruiter_college_grants set verification_status='VERIFIED',capabilities=ARRAY['MESSAGES']::text[] where recruiter_user_id=$1",
+    [f.user.id]);
+  expect((await resolveRequestContext({identityUid:f.identity})).recruiter).toBeNull();
+  await pool.query("update placement_recruiter_college_grants set capabilities=$2::text[] where recruiter_user_id=$1",
+    [f.user.id,original.capabilities]);
+  expect((await resolveRequestContext({identityUid:f.identity})).recruiter?.grants).toHaveLength(1);
+ });
  it("persists five wrong guesses even on denied calls, then locks out the correct code",async()=>{
   if(!pool)throw new Error("DB required");
   const f=await fixture(),valid=await deliverOtp(f.token);
