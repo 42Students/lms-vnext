@@ -72,6 +72,9 @@ export async function writeHrInterviewSlot(
   throw new Error("INTERVIEW_SLOTS_NOT_REGISTERED");
  return getDb().transaction(async tx=>{
   const job=await verifyRecruiterSlotJob(tx,context,jobId);
+  if(!can(context,"placements.recruiter.slot.manage",{
+   collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
+  }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   if(actionType==="CREATE"){
    const input=hrInterviewSlotCreateSchema.parse(data);
    if(input.startAt<=new Date()||input.startAt.getTime()>Date.now()+180*86400000)
