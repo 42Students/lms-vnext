@@ -818,3 +818,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 New Template 4 (PARTIAL):** First release description now persists on the initial blueprint with bounds checking. Canonical create writer unchanged. Regression tests authored, not executed; multi-entry legacy editor/browser and PG acceptance remain OPEN.
+
+
+**2026-10-15 chat-6 New Template 5 (PARTIAL):** First sprint description now persists in the connected release-to-sprint blueprint. Canonical create writer unchanged. Regression tests authored, not executed; multi-entry legacy editor/browser and PG acceptance remain OPEN.
