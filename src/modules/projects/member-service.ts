@@ -711,20 +711,28 @@ export async function updateProjectMember(
   }
 
   try {
-    const [updated] = await getDb()
-      .update(projectMembers)
-      .set({
-        ...(input.isPrimary !== undefined
-          ? { isPrimary: input.isPrimary }
-          : {}),
-        ...(input.roleLabel !== undefined
-          ? { roleLabel: input.roleLabel }
-          : {}),
-        updatedAt: new Date(),
-      })
-      .where(eq(projectMembers.id, member.id))
-      .returning();
-
+    const [updated]=await getDb().transaction(async tx=>{
+      const [fresh]=await tx.select().from(projectMembers)
+        .where(and(
+          eq(projectMembers.id,member.id),eq(projectMembers.projectId,scope.project.id),
+          isNull(projectMembers.endedAt),
+        )).for("update").limit(1);
+      if(!fresh)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      if(input.isPrimary===true&&fresh.role!=="MENTOR")
+        throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
+      const [changed]=await tx.update(projectMembers).set({
+        ...(input.isPrimary!==undefined?{isPrimary:input.isPrimary}:{}),
+        ...(input.roleLabel!==undefined?{roleLabel:input.roleLabel}:{}),
+        updatedAt:new Date(),
+      }).where(and(eq(projectMembers.id,fresh.id),
+        eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
+        .returning();
+      if(!changed)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("UPDATED",{
+        projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+      },changed,randomUUID()));
+      return [changed];
+    });
     return updated;
   } catch (error) {
     throw mapMemberConstraint(error);

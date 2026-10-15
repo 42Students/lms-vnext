@@ -1363,3 +1363,8 @@ Added fixed-label, registered Team membership add/change/end activity event type
 ## 2026-10-15 chat-11 — transactional Team member add audit (PARTIAL)
 
 The admin-owned Project member add service now records registered Team membership event inside its same transaction, scoped to the Project college and organization with opaque member row ID and role only. Mentor remains read-only for membership. No private names, emails, role labels or contacts are copied into event metadata. Mutation and audit roll back together. Pure event test authored; PostgreSQL and desktop/375px browser acceptance remain open.
+
+
+## 2026-10-15 chat-11 — transactional Team member update audit (PARTIAL)
+
+The admin-owned Project member update service now records registered Team membership event inside its same transaction, scoped to the Project college and organization with opaque member row ID and role only. Mentor remains read-only for membership. No private names, emails, role labels or contacts are copied into event metadata. Mutation and audit roll back together. Pure event test authored; PostgreSQL and desktop/375px browser acceptance remain open.
