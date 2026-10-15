@@ -1,3 +1,4 @@
+import type {AfterCollegeOutcome} from "./tpo-after-college-model";
 import {
   getLearnerPlacementAccess,
   type ResolvedPlacementParticipation,
@@ -57,6 +58,7 @@ export type TpoStudentSource = {
   appliedResults: readonly TpoStudentRoundSignal[];
   verifiedExternalOfferCount: number;
   ambiguousSection: boolean;
+  afterCollegeOutcome?: AfterCollegeOutcome | null;
 };
 
 export type TpoStudentReadinessSignal =
@@ -90,6 +92,7 @@ export type TpoStudentRow = {
   verifiedExternalOfferCount: number;
   placed: boolean;
   journeyState: TpoStudentJourneyState;
+  afterCollegeOutcome?: AfterCollegeOutcome | null;
   bestSoFar: string;
   maximumAppliedRoundSequence: number | null;
   ambiguousSection: boolean;
@@ -116,6 +119,7 @@ export type TpoStudentBranchSummary = TpoStudentSummary & {
 
 export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
+  afterCollege?: AfterCollegeOutcome;
   branchId?: string;
   search?: string;
   page: number;
@@ -286,6 +290,7 @@ export function deriveTpoStudent(
       source.verifiedExternalOfferCount,
     placed,
     journeyState,
+    afterCollegeOutcome: source.afterCollegeOutcome ?? null,
     bestSoFar,
     maximumAppliedRoundSequence,
     ambiguousSection: source.ambiguousSection,
@@ -403,6 +408,8 @@ export function filterTpoStudentRoster(
         !filter.branchId ||
         row.branchId === filter.branchId,
     )
+    .filter(row=>!filter.afterCollege ||
+      (row.afterCollegeOutcome??"NOT_DECIDED")===filter.afterCollege)
     .filter((row) => {
       if (!search) return true;
 
