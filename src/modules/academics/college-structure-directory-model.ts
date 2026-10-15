@@ -17,11 +17,17 @@ export const collegeClassQuerySchema = collegeStructureQuerySchema.extend({
   maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
-export const collegeElectiveQuerySchema = collegeStructureQuerySchema.extend({
+export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
   minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
   maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
-}).refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits, {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"});
+});
+
+export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number }>>(schema:T) {
+  return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
+    {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"});
+}
+export const collegeElectiveQuerySchema = withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema);
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
 
 export function readCollegeStructureParams(

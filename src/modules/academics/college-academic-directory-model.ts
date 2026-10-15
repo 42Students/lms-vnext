@@ -8,13 +8,20 @@ const common = {
   page: z.coerce.number().int().min(1).max(1000).default(1),
 };
 
-export const collegeSemesterDirectorySchema = z.object({
+export const collegeSemesterDirectoryBaseSchema = z.object({
   ...common,
   termNumber: z.coerce.number().int().min(1).max(24).optional(),
   minimumCredits: z.coerce.number().int().min(0).max(500).optional(),
   maximumCredits: z.coerce.number().int().min(0).max(500).optional(),
   status: z.enum(["ALL", "ACTIVE", "INACTIVE"]).default("ALL"),
-}).strict().refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits, {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"});
+}).strict();
+
+export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number }>>(schema:T) {
+  return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
+    {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"});
+}
+
+export const collegeSemesterDirectorySchema = withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema);
 
 export const collegeBatchDirectorySchema = z.object({
   ...common,
