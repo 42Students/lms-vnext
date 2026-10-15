@@ -8,11 +8,11 @@ import {GLOBAL_TPO_REQUEST_TYPES} from "@/modules/placements/tpo-global-requests
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
-type Params = { requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
-function href(input: { status: string; requestType:string; search: string; page: number; pageSize: number }) {
+function href(input: { status: string; sort:string; requestType:string; search: string; page: number; pageSize: number }) {
   const p = new URLSearchParams();
-  p.set("status", input.status);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);
+  p.set("status", input.status);p.set("sort",input.sort);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);
   p.set("page", String(input.page)); p.set("pageSize", String(input.pageSize));
   return "/tpo/requests?" + p.toString();
 }
@@ -23,7 +23,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   }
   const raw = await searchParams;
   const data = await getTpoGlobalRequestsInbox(context, {
-    status:first(raw.status),requestType:first(raw.requestType), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
+    status:first(raw.status),sort:first(raw.sort),requestType:first(raw.requestType), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
   });
   return <main className="min-w-0 space-y-5">
     <PageHeader eyebrow="TPO · Operations" title="Requests" description="College-wide learner placement requests. Decisions update recorded applications, rounds or offers only through the existing verified action." />
@@ -43,6 +43,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <option value="25">25</option><option value="50">50</option><option value="100">100</option>
         </select>
       </label>
+      <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
     </form>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>

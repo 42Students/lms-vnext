@@ -20,6 +20,7 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
     collegeId: member.collegeId,
     status: query.status,
     requestType:query.requestType==="ALL"?undefined:query.requestType,
+    sort:query.sort,
     search: query.search,
     page: query.page,
     pageSize: query.pageSize,

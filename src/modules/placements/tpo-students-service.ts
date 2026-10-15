@@ -39,6 +39,7 @@ import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import { placementExternalOffers } from "@/db/schema/placement-external";
 
+import { sortTpoRequestRows } from "@/modules/placements/tpo-global-requests-model";
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
 
@@ -91,6 +92,7 @@ export const tpoStudentRequestsQuerySchema = z
       ])
       .optional(),
     requestType: z.enum(["APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"]).optional(),
+    sort: z.enum(["NEWEST_FIRST","OLDEST_FIRST"]).optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
@@ -1023,9 +1025,10 @@ export async function listTpoStudentRequests(
   });
 
   const start = (input.page - 1) * input.pageSize;
+  const ordered = sortTpoRequestRows(filtered,input.sort ?? "NEWEST_FIRST");
 
   const requests: TpoStudentRequestView[] =
-    filtered
+    ordered
       .slice(start, start + input.pageSize)
       .map((row) => ({
         id: row.id,
