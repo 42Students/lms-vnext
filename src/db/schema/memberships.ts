@@ -40,6 +40,7 @@ export const collegeMemberships = pgTable(
       table.userId,
       table.collegeId,
     ),
+    uniqueIndex("college_memberships_id_college_uq").on(table.id, table.collegeId),
     index("college_memberships_college_status_idx").on(
       table.collegeId,
       table.status,
