@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getCollegeContactById,listCollegeContacts} from "@/modules/people/college-contacts-service";
+import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {exportCollegeContactsCsv} from "@/modules/people/college-contacts-export-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -70,4 +71,5 @@ it("filters missing registration numbers with college role scope",async()=>{cons
 it("does not match learner-only contacts as faculty missing academic titles",async()=>{const rows=await listCollegeContacts(admin,{titlePresence:"MISSING",q:ids.u1.slice(0,8)});expect(rows.items.some(x=>x.membershipId===ids.m1)).toBe(false);await expect(listCollegeContacts(wrong,{titlePresence:"PRESENT"})).rejects.toBeInstanceOf(AuthorizationError);});
 it("never treats a learner-only contact as a faculty member missing a department",async()=>{const rows=await listCollegeContacts(admin,{departmentPresence:"MISSING",q:ids.u1.slice(0,8)});expect(rows.items.some(x=>x.membershipId===ids.m1)).toBe(false);await expect(listCollegeContacts(wrong,{departmentPresence:"ASSIGNED"})).rejects.toBeInstanceOf(AuthorizationError);});
 it("recognizes unplaced learner contacts and enforces scoped denials",async()=>{const no=await listCollegeContacts(admin,{classPresence:"NONE",tab:"STUDENT",q:ids.u1.slice(0,8)});expect(no.items.some(x=>x.membershipId===ids.m1)).toBe(true);const yes=await listCollegeContacts(admin,{classPresence:"ASSIGNED",tab:"STUDENT",q:ids.u1.slice(0,8)});expect(yes.items.some(x=>x.membershipId===ids.m1)).toBe(false);await expect(listCollegeContacts(wrong,{classPresence:"NONE"})).rejects.toBeInstanceOf(AuthorizationError);});
+ it("uses only scoped cohort selectors and excludes unrelated learner memberships",async()=>{const options=await listCollegeContactFilterOptions(admin);expect(options.cohorts.length).toBeLessThanOrEqual(200);const rows=await listCollegeContacts(admin,{cohortId:ids.m2,tab:"STUDENT",q:ids.u1.slice(0,8)});expect(rows.items.some(x=>x.membershipId===ids.m1)).toBe(false);await expect(listCollegeContactFilterOptions(wrong)).rejects.toBeInstanceOf(AuthorizationError);});
 });
