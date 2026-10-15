@@ -186,4 +186,12 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(new URL(lessonsCsvHref(query),"https://t.example").searchParams.get("contentLifecycle")).toBe("PUBLISHED");
   });
 
+  it("validates one-based lesson sequence lower bound on page and CSV", () => {
+    expect(collegeLessonQuerySchema.safeParse({sequenceFrom:0}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({sequenceFrom:10001}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({sequenceFrom:"2"});
+    expect(new URL(collegeLearningHref("LESSONS",q),"https://t.example").searchParams.get("sequenceFrom")).toBe("2");
+    expect(new URL(lessonsCsvHref(q),"https://t.example").searchParams.get("sequenceFrom")).toBe("2");
+  });
+
 });

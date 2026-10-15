@@ -33,6 +33,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       departmentCode:first(params.departmentCode)||undefined,
       contentType: first(params.contentType),
       contentLifecycle: first(params.contentLifecycle),
+      sequenceFrom: first(params.sequenceFrom) || undefined,
       page: first(params.page),
     }).filter(([, value]) => value !== undefined)),
   );
