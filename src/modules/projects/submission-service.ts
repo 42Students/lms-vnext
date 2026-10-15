@@ -6,7 +6,6 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import {activityEvents} from "@/db/schema";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
@@ -131,24 +130,14 @@ export async function createProjectSubmissionDraft(
       }
 
       const [latest] = await tx
-        .select({ id: projectSubmissions.id, version: projectSubmissions.version, status: projectSubmissions.status })
+        .select({ id: projectSubmissions.id, version: projectSubmissions.version, status: projectSubmissions.status, reopenedAt:projectSubmissions.reopenedAt })
         .from(projectSubmissions)
         .where(eq(projectSubmissions.projectId, scope.project.id))
         .orderBy(desc(projectSubmissions.version))
         .limit(1);
       // Approved deliveries are immutable. A newer version is possible only
       // after an explicit mentor/admin reopen event on that exact approved row.
-      let approvedReopened=false;
-      if(latest?.status==="APPROVED"){
-        const [reopened]=await tx.select({id:activityEvents.id}).from(activityEvents)
-          .where(and(
-            eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REOPENED),
-            eq(activityEvents.collegeId,scope.collegeId),
-            eq(activityEvents.subjectType,"project_submission"),
-            eq(activityEvents.subjectId,latest.id),
-          )).limit(1);
-        approvedReopened=Boolean(reopened);
-      }
+      const approvedReopened=latest?.status==="APPROVED" && Boolean(latest.reopenedAt);
       if(!projectSubmissionAllowsNewDraft(latest?.status) && !approvedReopened){
         throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
       }
