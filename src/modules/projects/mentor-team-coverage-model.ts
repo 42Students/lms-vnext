@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const mentorTeamCoverageQuerySchema = z.object({
-  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR","MULTIPLE_MENTORS","SINGLE_MENTOR","NO_LEARNERS_NO_PRIMARY"]).default("ALL"),
+  filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR","MULTIPLE_MENTORS","SINGLE_MENTOR","NO_LEARNERS_NO_PRIMARY","FIVE_PLUS_LEARNERS"]).default("ALL"),
   order: z.enum(["TITLE","FEWEST_LEARNERS","MOST_LEARNERS"]).default("TITLE"),
   assignment: z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   status: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
@@ -49,6 +49,7 @@ export function selectMentorTeamCoverage(
       (query.filter === "HAS_LEARNERS" && row.learners > 0) ||
       (query.filter === "HAS_PRIMARY_MENTOR" && row.hasPrimaryMentor) ||
       (query.filter === "MULTIPLE_MENTORS" && row.mentors > 1) ||
+      (query.filter === "FIVE_PLUS_LEARNERS" && row.learners >= 5) ||
       (query.filter === "NO_LEARNERS_NO_PRIMARY" && row.learners === 0 && !row.hasPrimaryMentor) ||
       (query.filter === "SINGLE_MENTOR" && row.mentors === 1)),
   ).sort((a,b) =>
