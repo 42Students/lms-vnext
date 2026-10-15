@@ -42,15 +42,18 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
   const query = mentorReviewQuerySchema.parse(rawQuery);
   const scope = await requireMentorPortfolio(context);
   if (!scope.enabled || !scope.projects.length) {
-    return { enabled: scope.enabled, query, ...pageMentorPortfolio([], query) };
+    return { enabled: scope.enabled, query, projects:scope.projects, ...pageMentorPortfolio([], query) };
   }
+  if (query.projectId && !scope.projects.some(p=>p.id===query.projectId))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const allowed = new Set(scope.projects
-    .filter(p=>query.projectStatus==="ALL"||p.status===query.projectStatus).map(p => p.id));
+    .filter(p=>(query.projectStatus==="ALL"||p.status===query.projectStatus)&&
+      (!query.projectId||p.id===query.projectId)).map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(
     alerts.filter(a => allowed.has(a.projectId)), query.search, query.order, query.age,
   );
-  return { enabled: true, query, ...pageMentorPortfolio(items, query) };
+  return { enabled: true, query, projects:scope.projects, ...pageMentorPortfolio(items, query) };
 }
 
 /** College-scoped, assigned-project timeline. No raw summaries, metadata or actor PII. */
