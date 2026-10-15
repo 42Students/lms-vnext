@@ -20,6 +20,10 @@ export interface DeliveryRepository {
   update(record: DeliveryRecord): Promise<void>;
   auditBatch(batchId: string, summary: { sent: number; failed: number; suppressed: number }): Promise<void>;
 }
+/** A safe opaque identifier must be supplied for every auditable delivery batch. */
+export function validOutboundBatchId(value:string):boolean {
+ return /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/.test(value);
+}
 export async function deliverBatch(args: {
   batchId: string;
   requests: readonly OutboundSendRequest[];
@@ -29,6 +33,7 @@ export async function deliverBatch(args: {
   recipientKeyFor: (request: OutboundSendRequest) => Promise<string>;
   runtimeEnv?: Record<string, string | undefined>;
 }): Promise<DeliveryRecord[]> {
+  if(!validOutboundBatchId(args.batchId))throw new Error("INVALID_OUTBOUND_BATCH_ID");
   if (args.requests.length > 500) throw new Error("OUTBOUND_BATCH_CAP_EXCEEDED");
   // Validate the entire batch before the first persistence or external send.
   const requests = args.requests.map(raw => outboundSendSchema.parse(raw));
