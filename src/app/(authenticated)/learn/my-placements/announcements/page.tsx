@@ -205,7 +205,15 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </label>
         <button className="min-h-11 rounded-md border border-border px-3 text-sm font-semibold text-primary-text" type="submit">Search alerts</button>
       </form>
-      {alertQ ? <p className="text-xs text-muted-foreground">This search covers the latest 20 loaded personal alerts, not your full notification history.</p> : null}
+      {alertQ ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-xs text-muted-foreground">This search covers the latest 20 loaded personal alerts, not your full notification history.</p>
+          <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ:"",sort:sortKey,source})}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Clear personal alert search
+          </Link>
+        </div>
+      ) : null}
       {personalAlerts.available ?
         <LearnerPlacementAlerts alerts={searchedAlerts} filtered={Boolean(alertQ)} unreadOnly={unreadOnly} /> :
         <div role="alert" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
