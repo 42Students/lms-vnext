@@ -2111,3 +2111,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch decision-history event-kind filter — PARTIAL:** TPO can review DECIDE versus UNDO within the last 100 scoped cohort events using strict URL values, with honest sample-sized counts and empty states. Full historical pagination still absent.
 
 **Chat-2 batch history after-state filter — PARTIAL:** A second bounded URL filter isolates transitions ending eligible, ineligible or undecided, composed after event-kind selection and without mutating the recorded event sample.
+
+**Chat-2 / decision-history filtered CSV — PARTIAL:** New TPO-scoped read-only GET reuses the authorized latest 100 cohort history events and validated kind/after-state filters, returns formula-safe metadata-only rows, no-store headers and explicit 503 if storage is missing; cannot certify full historical export or independent PG/browser acceptance.
