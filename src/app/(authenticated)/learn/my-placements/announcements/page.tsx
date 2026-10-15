@@ -10,14 +10,16 @@ import { learnerPlacementNoticeView } from "@/modules/placements/learner-placeme
 import {getOwnLearnerPlacementAlerts} from "@/modules/placements/learner-placement-alerts-service";
 import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-alerts";
 import {learnerNoticeQuerySchema} from "@/modules/placements/learner-notices-query-model";
+import {searchLearnerNotices} from "@/modules/placements/learner-notices-search-model";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
-  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[] }>;
+  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[] }>;
 }) {
   const query = await searchParams;
   const filters=learnerNoticeQuerySchema.safeParse(query);
   const pinnedOnly = filters.success ? filters.data.pinned==="1" : false;
   const unreadOnly = filters.success ? filters.data.unread==="1" : false;
+  const queryText = filters.success ? filters.data.q ?? "" : "";
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) throw new AuthorizationError("placements.read");
   const own = await requireLearnerPlacementAccess(context);
@@ -29,7 +31,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const allNotices = ready
     ? learnerPlacementNoticeFeed(await listVisibleAnnouncementsForMembership(context))
     : [];
-  const notices = learnerPlacementNoticeView(allNotices, pinnedOnly);
+  const notices = searchLearnerNotices(learnerPlacementNoticeView(allNotices, pinnedOnly),queryText);
   const personalAlerts = await getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20});
   return (
     <main className="min-w-0 space-y-6">
@@ -38,6 +40,18 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <h1 className="mt-3 text-2xl font-semibold text-foreground">Announcements</h1>
         <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership.</p>
       </div>
+      <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
+        {pinnedOnly ? <input type="hidden" name="pinned" value="1" /> : null}
+        {unreadOnly ? <input type="hidden" name="unread" value="1" /> : null}
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
+          Search college notices
+          <input type="search" name="q" maxLength={100} defaultValue={queryText}
+            placeholder="Title or message" className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3" />
+        </label>
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
+        {queryText ? <Link href="/learn/my-placements/announcements"
+          className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear filters</Link> : null}
+      </form>
       <nav aria-label="Notice filter" className="flex flex-wrap gap-3 text-sm">
         <Link href="/learn/my-placements/announcements" aria-current={!pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">All notices</Link>
         <Link href="/learn/my-placements/announcements?pinned=1" aria-current={pinnedOnly ? "page" : undefined} className="min-h-11 rounded-md border border-border px-4 py-3 text-primary-text">Pinned only</Link>
@@ -49,7 +63,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         </div>
       ) : notices.length === 0 ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-          {pinnedOnly && allNotices.length > 0 ? "No pinned notices match this filter." : "No current notices are visible to your membership."}
+          {pinnedOnly && allNotices.length > 0 ? "No pinned notices match this filter." : "No current notices match these filters or are visible to your membership."}
         </p>
       ) : (
         <ul className="min-w-0 space-y-3">
