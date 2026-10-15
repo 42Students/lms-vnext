@@ -1,12 +1,13 @@
 import "server-only";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, count, desc, eq, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, placementJobs, users } from "@/db/schema";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
-import { placementCompanyApplicantShares as shares } from "./staged-schema";
+import { placementCompanyApplicantShares as shares, placementCompanyApplicantShareViews as views } from "./staged-schema";
+import { companyShareAuditTotals } from "./audit-model";
 import { isShareableJob } from "./scope-model";
 import {
   companyShareExpiry, companyShareIssueSchema,
@@ -77,7 +78,16 @@ export async function listTpoCompanyApplicantShares(context: RequestContext, raw
     createdAt:shares.createdAt,
   }).from(shares).where(and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId)))
     .orderBy(desc(shares.createdAt),desc(shares.id)).limit(50);
-  return {ready:true,links};
+  const ids=links.map(link=>link.id);
+  const stats=ids.length?await getDb().select({
+    shareId:views.shareId,eventKind:views.eventKind,count:count(),
+  }).from(views).where(and(
+    eq(views.collegeId,college.id),inArray(views.shareId,ids),
+  )).groupBy(views.shareId,views.eventKind):[];
+  const byId=companyShareAuditTotals(stats);
+  return {ready:true,links:links.map(link=>({
+    ...link, audit:byId.get(link.id)??{views:0,exports:0},
+  }))};
 }
 export async function revokeTpoCompanyApplicantShare(context: RequestContext, raw: unknown) {
   const input = companyShareRevokeSchema.parse(raw);
