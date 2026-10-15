@@ -3,7 +3,7 @@ import {createHash} from "node:crypto";
 import {and,eq,isNull,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges,organizations} from "@/db/schema";
-import {publicJoinLinks} from "./staged-schema";
+import {placementPublicJoinLinks as publicJoinLinks} from "@/db/schema";
 import {publicJoinTablesReady} from "./readiness";
 import {publicJoinPreviewForDisplay,type PublicJoinPreview} from "./preview-model";
 import {publicCollegeJoinTokenSchema} from "../public-college-join-model";
