@@ -39,3 +39,16 @@ export function facultyVideoStatusBadge(status:FacultyVideoProcessingStatus):Fac
   case "BLOCKED":return {label:"Unavailable",tone:"danger"};
  }
 }
+
+export type FacultyVideoListFilter={
+ search:string;status:FacultyVideoProcessingStatus|"ALL";
+};
+/** Searching operates only on safe title metadata, never hidden keys/URLs. */
+export function facultyFilterLessonVideos(
+ rows:readonly FacultyLessonVideo[],query:FacultyVideoListFilter,
+):FacultyLessonVideo[]{
+ const term=query.search.trim().toLocaleLowerCase();
+ return rows.filter(row=>
+  (query.status==="ALL"||row.processingStatus===query.status)&&
+  (!term||row.title.toLocaleLowerCase().includes(term)));
+}
