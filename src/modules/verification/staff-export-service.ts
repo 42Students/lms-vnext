@@ -1,11 +1,12 @@
 import "server-only";
-import {and,asc,eq,ilike,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,ilike,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
 import {verificationQueueFilters} from "./queue-filters";
+import {verificationSortDirection} from "./sort-model";
 import {matchesVerificationAttention} from "./attention-filter";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
@@ -38,7 +39,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
   inArray(profileVerifications.status,["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
+ .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id)).limit(5001);
  if(rows.length>5000)throw new VerificationQueueLimitError();
  const evaluatedAt=new Date();
  const selected=rows.filter(row=>{
