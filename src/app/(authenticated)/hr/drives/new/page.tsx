@@ -16,6 +16,7 @@ import {
 } from "@/modules/placements/hr-drive-draft-model";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
 import { hrDriveSessionStorageKey } from "@/modules/placements/hr-unsent-draft-storage-model";
+import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 
 export default async function RecruiterRequestDrivePage({
   searchParams,
@@ -95,6 +96,10 @@ export default async function RecruiterRequestDrivePage({
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
       className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
       ← Back to drives
+    </Link>
+    <Link href={hrSentProposalsHref(collegeId)}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">
+      View previously sent discussion proposals
     </Link>
     <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
       storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
