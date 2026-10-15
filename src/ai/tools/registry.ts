@@ -5,9 +5,6 @@ import {
   learnerContentProgressTool,
 } from "./courses";
 import {
-  placementOperationsTool,
-} from "./placements";
-import {
   projectReadinessTool,
 } from "./projects";
 
@@ -23,7 +20,6 @@ export class AiToolError extends Error {
 }
 
 const tools = [
-  placementOperationsTool,
   projectReadinessTool,
   learnerContentProgressTool,
 ] as const;
