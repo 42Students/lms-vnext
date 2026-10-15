@@ -54,6 +54,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.classPresence==="ASSIGNED"?and(learner,academic.activeClass):filter.classPresence==="NONE"?and(learner,not(academic.activeClass)):undefined,
    filter.cohortId?and(learner,academic.inCohort(filter.cohortId)):undefined,
    filter.programId?and(learner,academic.inProgram(filter.programId)):undefined,
+   filter.sectionId?and(learner,academic.inSection(filter.sectionId)):undefined,
    filter.facultyDepartmentId?and(faculty,academic.inFacultyDepartment(filter.facultyDepartmentId)):undefined,
    search?or(
     ilike(users.displayName,search),

@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {cohorts,programs,departments} from "@/db/schema";
+import {cohorts,programs,departments,sections} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -21,13 +21,21 @@ export async function listCollegeContactFilterOptions(context:RequestContext){
    .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,actor.collegeId)))
    .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id)).limit(201);
+  const sectionRows=await tx.select({id:sections.id,name:sections.name,cohortName:cohorts.name})
+   .from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+   .innerJoin(programs,eq(programs.id,cohorts.programId))
+   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,actor.collegeId)))
+   .where(eq(sections.status,"ACTIVE"))
+   .orderBy(asc(cohorts.name),asc(sections.name),asc(sections.id)).limit(201);
   const programRows=await tx.select({id:programs.id,name:programs.name})
    .from(programs).innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,actor.collegeId)))
    .orderBy(asc(programs.name),asc(programs.id)).limit(201);
   const departmentRows=await tx.select({id:departments.id,name:departments.name})
    .from(departments).where(and(eq(departments.collegeId,actor.collegeId),isNull(departments.archivedAt)))
    .orderBy(asc(departments.name),asc(departments.id)).limit(201);
-  return {programs:programRows.slice(0,200).map(r=>({id:r.id,label:r.name})),
+  return {sections:sectionRows.slice(0,200).map(r=>({id:r.id,label:r.cohortName+" · "+r.name})),
+   sectionsTruncated:sectionRows.length>200,
+   programs:programRows.slice(0,200).map(r=>({id:r.id,label:r.name})),
    programsTruncated:programRows.length>200,
    departments:departmentRows.slice(0,200).map(r=>({id:r.id,label:r.name})),
    departmentsTruncated:departmentRows.length>200,
