@@ -21,6 +21,20 @@ const allowedMimeTypes = new Set([
   "application/zip",
 ]);
 
+
+/** Extension is only a consistency check; storage scanning remains authoritative. */
+const permittedExtensionsByMime: Readonly<Record<string, readonly string[]>> = {
+  "application/pdf":["pdf"], "application/msword":["doc"],
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":["docx"],
+  "application/vnd.ms-powerpoint":["ppt"],
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation":["pptx"],
+  "application/vnd.ms-excel":["xls"],
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":["xlsx"],
+  "text/plain":["txt"], "text/csv":["csv"], "application/rtf":["rtf"],
+  "image/jpeg":["jpg","jpeg"], "image/png":["png"], "image/webp":["webp"],
+  "application/zip":["zip"],
+};
+
 export const assignmentFileUploadRequestSchema =
   z.object({
     deliveryId:
@@ -53,6 +67,11 @@ export const assignmentFileUploadRequestSchema =
       .max(
         MAX_ASSIGNMENT_FILE_BYTES,
       ),
+  }).superRefine((value, ctx) => {
+    const ext = value.originalName.split(".").at(-1)?.toLowerCase() ?? "";
+    if (!permittedExtensionsByMime[value.contentType]?.includes(ext)) {
+      ctx.addIssue({ code: "custom", path: ["originalName"], message: "File extension does not match the declared file type" });
+    }
   });
 
 export const assignmentFileSubmissionSchema =
