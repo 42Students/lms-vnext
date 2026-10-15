@@ -1,13 +1,16 @@
 import Link from "next/link";
 import {TpoBatchLifecycleControl} from "@/components/tpo/tpo-batch-lifecycle-control";
+import {TpoBatchUndoControl} from "@/components/tpo/tpo-batch-undo-control";
+import {actionableBatchHistory} from "@/modules/placements/tpo-batch-history-undo-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
+import { getTpoBatch, listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { getTpoBatchEligibilitySummary } from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;const context=await getCurrentRequestContext();
- const [{batch,lifecycle,ready},eligibility]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId)]);
+ const [{batch,lifecycle,ready},eligibility,history]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId)]);
+ const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
  const tabs=[{label:"Students",href:"students"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department}/>
@@ -42,6 +45,11 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
   <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm">Open Students</Link>
  </section>
+ {undoable?<section className="rounded-lg border border-border bg-surface p-4">
+  <h2 className="font-semibold">Undo last batch decision</h2>
+  <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed cohort action is offered. If any later change occurred, the server will reject the undo.</p>
+  <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
+ </section>:null}
  <nav aria-label="Batch workspace" className="flex flex-wrap gap-2">{tabs.map(tab=><Link key={tab.href} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm" href={"/tpo/batches/"+batchId+"/"+tab.href}>{tab.label}</Link>)}</nav>
  <p className="rounded border border-border p-4 text-sm">Choose Students to review participation, Rules for batch policy, or History for decisions and exact undo.</p>
  </main>;
