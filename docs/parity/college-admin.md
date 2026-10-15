@@ -496,6 +496,8 @@ Legacy contract:
 - [ ] Loading/empty/error states match.
 
 ## Page: Electives
+**Semester from PARTIAL (chat-3, 2026-10-15):** College Admin can filter by persisted elective semesterNumber with inclusive numerical constraints, validated in URL and CSV export, scoped by the owning College. Authored unit and isolated-PG positive/negative fixtures; executed database/browser acceptance and full legacy parity outstanding.
+
 **Maximum allowed elective choices PARTIAL (chat-3, 2026-10-15):** College Admin can filter by persisted elective maxPick with inclusive numerical constraints, validated in URL and CSV export, scoped by the owning College. Authored unit and isolated-PG positive/negative fixtures; executed database/browser acceptance and full legacy parity outstanding.
 
 **Minimum required elective choices PARTIAL (chat-3, 2026-10-15):** College Admin can filter by persisted elective minPick with inclusive numerical constraints, validated in URL and CSV export, scoped by the owning College. Authored unit and isolated-PG positive/negative fixtures; executed database/browser acceptance and full legacy parity outstanding.

@@ -231,4 +231,11 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeElectiveQuerySchema.safeParse({maximumAllowedPicks:1001}).success).toBe(false);
     expect(readCollegeStructureParams({maximumAllowedPicks:""})).toEqual({});
   });
+  it("Semester from uses bounded saved values and URL persistence",()=>{
+    const q=collegeElectiveQuerySchema.parse({semesterFrom:1});
+    expect(collegeStructureHref("ELECTIVES",q)).toContain("semesterFrom=1");
+    expect(collegeElectiveQuerySchema.safeParse({semesterFrom:0}).success).toBe(false);
+    expect(collegeElectiveQuerySchema.safeParse({semesterFrom:25}).success).toBe(false);
+    expect(readCollegeStructureParams({semesterFrom:""})).toEqual({});
+  });
 });
