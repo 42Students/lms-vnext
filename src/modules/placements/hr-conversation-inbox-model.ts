@@ -3,6 +3,7 @@ export const hrConversationQuerySchema=z.object({
  collegeId:z.string().uuid().optional(),
  q:z.string().trim().max(120).default(""),
  page:z.coerce.number().int().min(1).max(10000).default(1),
+ unreadOnly:z.enum(["true","false"]).default("false"),
 }).strict();
 export function filterRecruiterConversations<T extends {jobId:string|null;id:string}>(
  threads:readonly T[], jobIds:ReadonlySet<string>, query:string,
@@ -22,3 +23,7 @@ export function hrConversationPageBounds(page:number,total:number){
   first:total?(currentPage-1)*HR_CONVERSATION_PAGE_SIZE+1:0,
   last:Math.min(total,currentPage*HR_CONVERSATION_PAGE_SIZE)};
 }
+
+export function onlyUnreadRecruiterThreads<T extends {id:string}>(
+ rows:readonly T[],unreadIds:ReadonlySet<string>,enabled:boolean,
+):T[]{return enabled?rows.filter(row=>unreadIds.has(row.id)):[...rows];}
