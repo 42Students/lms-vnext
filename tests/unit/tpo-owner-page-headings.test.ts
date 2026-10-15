@@ -12,5 +12,11 @@ describe("T-S1-02 owner-approved TPO headings",()=>{
    expect(labels).toContain(TPO_OWNER_PAGE_COPY.recruiterLeads);
    expect(labels).toContain(TPO_OWNER_PAGE_COPY.placementOperations);
    expect(labels).not.toContain("Engage");
+   for(const name of ["placementEligibility","team","students","calendar","settings"] as const){
+     expect(labels).toContain(TPO_OWNER_PAGE_COPY[name]);
+   }
+   expect([TPO_OWNER_PAGE_COPY.placementEligibility,TPO_OWNER_PAGE_COPY.team,
+    TPO_OWNER_PAGE_COPY.students,TPO_OWNER_PAGE_COPY.calendar,TPO_OWNER_PAGE_COPY.settings])
+    .toEqual(["Placement eligibility","Team","Students","Calendar","Settings"]);
  });
 });

@@ -1,3 +1,4 @@
+import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -35,7 +36,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const departments=listTpoBatchDepartments(data.batches);
  const summary=summarizeTpoBatchStates(data.batches);
  return <main className="min-w-0 space-y-5">
-  <PageHeader eyebrow="TPO · Batches" title="Placement batches" description="Make placement eligibility decisions cohort by cohort. This list does not guess inherited learner eligibility."/>
+  <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Make placement eligibility decisions cohort by cohort. This list does not guess inherited learner eligibility."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <label className="min-w-0 flex-1 text-sm">Search batches<input type="search" name="q" defaultValue={parsed.data.q??""} maxLength={100} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
    <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Planning</option><option value="INVITED">Invited</option><option value="FINISHED">Finished</option></select></label>
