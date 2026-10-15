@@ -40,6 +40,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
    onReview={row=>setSelected(row)}/>
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
+   <label>Sort by <select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
+    <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option>
+   </select></label>
    <label>Requests per page <select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
    </select></label>

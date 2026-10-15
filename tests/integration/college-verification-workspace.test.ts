@@ -116,6 +116,11 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   expect(fifty.rows.length).toBeLessThanOrEqual(50);
   await expect(listCollegeVerificationQueue(wrongRole,{pageSize:10})).rejects.toBeInstanceOf(AuthorizationError);
  });
+ it("supports oldest/newest read choices without cross-college access",async()=>{
+  const newest=await listCollegeVerificationQueue(admin,{sort:"NEWEST"});
+  expect(newest.rows.some(x=>x.learnerMembershipId===ids.foreignMember)).toBe(false);
+  await expect(listCollegeVerificationQueue(wrongRole,{sort:"NEWEST"})).rejects.toBeInstanceOf(AuthorizationError);
+ });
  it("does not accept a context-only wrong-role membership",async()=>{
   await expect(listCollegeVerificationQueue(wrongRole,{})).rejects.toBeInstanceOf(AuthorizationError);
  });

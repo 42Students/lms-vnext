@@ -10,6 +10,7 @@ export const verificationQueueFilters=z.strictObject({
   branchId:z.string().uuid().optional(),
   waitingSince:z.iso.date().optional(),
   page:z.coerce.number().int().min(1).max(10000).default(1),
+  sort:z.enum(["OLDEST","NEWEST"]).default("OLDEST"),
   pageSize:z.coerce.number().int().refine(value=>[10,25,50].includes(value)).default(25),
 });
 export type VerificationQueueFilters=z.infer<typeof verificationQueueFilters>;

@@ -38,3 +38,8 @@ describe("verification per-page policy",()=>{it("accepts bounded 10/25/50 and re
  expect(verificationQueueFilters.parse({pageSize:50}).pageSize).toBe(50);
  expect(verificationQueueFilters.safeParse({pageSize:51}).success).toBe(false);
 });});
+
+describe("verification sort input",()=>{it("accepts only newest or oldest timestamps",()=>{
+ expect(verificationQueueFilters.parse({sort:"NEWEST"}).sort).toBe("NEWEST");
+ expect(verificationQueueFilters.safeParse({sort:"MANUAL"}).success).toBe(false);
+});});
