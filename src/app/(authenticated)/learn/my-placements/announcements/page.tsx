@@ -135,7 +135,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <LearnerPlacementAlerts alerts={personalAlerts.items} /> :
         <div role="alert" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
-          <Link href="/learn/my-placements/announcements"
+          <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey})}
             className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry personal alerts</Link>
         </div>}
 
