@@ -13,7 +13,7 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
  const [{batch,lifecycle,ready},eligibility,history,registrations]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId)]);
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
- const tabs=[{label:"Students",href:"students"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
+ const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department}/>
  <Link href="/tpo/batches" className="text-sm text-primary-text underline">All batches</Link>
  <p className="text-sm">Status: {!ready?"Lifecycle unavailable":lifecycle?.finishedAt?"Finished":lifecycle?.invitedAt?"Invited":"Preparing"}</p>
@@ -66,9 +66,9 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
      <dt>{name}</dt><dd className="font-semibold tabular-nums">{value??"—"}</dd>
     </div>)}
    </dl>}
-  <p className="text-xs text-muted-foreground">Registration choices come from DB08 records; invitation, eligibility and consent are separate facts.</p>
+  <p className="text-xs text-muted-foreground">Registration choices come from DB08 records; invitation, eligibility and consent are separate facts. A learner choosing Placements must have recorded their own consent.</p>
  </section>
  <nav aria-label="Batch workspace" className="flex flex-wrap gap-2">{tabs.map(tab=><Link key={tab.href} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm" href={"/tpo/batches/"+batchId+"/"+tab.href}>{tab.label}</Link>)}</nav>
- <p className="rounded border border-border p-4 text-sm">Choose Students to review participation, Rules for batch policy, or History for decisions and exact undo.</p>
+ <p className="rounded border border-border p-4 text-sm">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </main>;
 }
