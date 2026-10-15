@@ -496,6 +496,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Registered student-visibility filter PARTIAL (2026-10-15):** Video and Resource aggregate now show and filter the actual `lesson_contents.visible_to_students` setting, using college-scoped query/pagination and matching capped metadata CSV. This flag is not proof the parent path/lesson is published or that a given student belongs to the delivery. UI/model tests authored, independent PostgreSQL/mobile/browser acceptance open.
+
 **Owning-offering lifecycle filter PARTIAL (2026-10-15):** VIDEO and YOUTUBE metadata catalogues now distinguish ACTiVE/ARCHIVED registered course offerings independently of content status; scoped list/CSV preserve the choice and disclose no storage credentials. PostgreSQL fixture authored, executed PG/browser acceptance outstanding.
 
 **Video metadata CSV PARTIAL (2026-10-15):** Admins can export a capped, formula-neutralized set of filtered VIDEO/YOUTUBE rows, including persisted course/lesson/audience metadata and publication state, without meeting URLs, storage keys or private notes. Current-college and wrong-role fixture assertions authored; executed PG/browser checks remain open.

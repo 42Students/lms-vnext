@@ -40,7 +40,7 @@ export async function listCollegeContentAggregate(
 ) {
   const live = kind === "LIVE_CLASS" ? collegeLiveClassQuerySchema.parse(rawQuery) : null;
   const query = collegeContentQuerySchema.parse(live ? {
-    q:live.q,courseCode:live.courseCode,status:live.status,scope:live.scope,page:live.page,format:"ALL",
+    q:live.q,courseCode:live.courseCode,status:live.status,scope:live.scope,page:live.page,format:"ALL",visibility:"ALL",
   } : rawQuery);
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
@@ -65,6 +65,7 @@ export async function listCollegeContentAggregate(
     sequence: aliasedColumn(lessonContents.sequence, "content_sequence"),
     durationSeconds: aliasedColumn(lessonContents.durationSeconds, "content_duration_seconds"),
     deliveryId: aliasedColumn(lessonContents.deliveryId, "content_delivery_id"),
+    visibleToStudents: aliasedColumn(lessonContents.visibleToStudents, "content_visible_to_students"),
     lessonName: aliasedColumn(courseLessons.name, "content_lesson_name"),
     learningPathTitle: aliasedColumn(courseLearningPaths.title, "content_learning_path_title"),
     learningPathStatus: aliasedColumn(courseLearningPaths.status, "content_learning_path_status"),
@@ -102,6 +103,7 @@ export async function listCollegeContentAggregate(
       kind !== "LIVE_CLASS" && query.offeringStatus && query.offeringStatus !== "ALL"
         ? eq(courseOfferings.status,query.offeringStatus) : undefined,
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
+      kind !== "LIVE_CLASS" && query.visibility !== "ALL" ? eq(lessonContents.visibleToStudents,query.visibility === "VISIBLE") : undefined,
       query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
       query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
       live?.view === "UPCOMING" ? gte(lessonContents.endsAt,new Date()) : undefined,
