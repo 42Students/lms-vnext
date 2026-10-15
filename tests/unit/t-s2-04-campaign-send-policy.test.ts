@@ -18,7 +18,12 @@ describe("T-S2-04 campaign send policy",()=>{
    recipientIds:["a"],suppressed:{NO_EMAIL:1,UNSUBSCRIBED:1,BOUNCED:0,NOT_NOW:0,DUPLICATE:1},
   });
   expect(JSON.stringify(planTpoCampaignRecipients(candidates))).not.toContain("example.org");
-  expect(()=>planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({...recipient,id:String(i)})))).toThrow();
+  expect(planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({
+    ...recipient,id:String(i),unsubscribedAt:i<500?new Date():null,
+   }))).recipientIds).toEqual(["500"]);
+   expect(()=>planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({
+    ...recipient,id:String(i),emailNorm:`user${i}@example.org`,
+   })))).toThrow("TPO_CAMPAIGN_RECIPIENT_LIMIT");
  });
  it("suppresses missing contact, unsubscribes, bounces and Not now",()=>{
   expect(campaignRecipientDisposition(recipient)).toBe("ELIGIBLE");
