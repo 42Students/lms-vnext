@@ -139,4 +139,11 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(classesExportHref(query)).toContain("periodLifecycle=");
     expect(collegeClassQuerySchema.safeParse({periodLifecycle:"INVALID"}).success).toBe(false);
   });
+  it("validates and carries exact program code in class pages and CSV",()=>{
+    const query=collegeClassQuerySchema.parse({programCode:"A&26"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("programCode=A%2626");
+    expect(classesExportHref(query)).toContain("programCode=A%2626");
+    expect(collegeClassQuerySchema.safeParse({programCode:"x".repeat(65)}).success).toBe(false);
+    expect(readCollegeStructureParams({programCode:""})).toEqual({});
+  });
 });

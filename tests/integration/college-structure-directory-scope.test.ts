@@ -320,4 +320,14 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(excluded.items).toEqual([]);
     expect(foreign.items).toEqual([]);
   });
+  it("Exact program code is scoped before class pagination",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeClasses(adminA,{q:key,programCode:key}),
+      listCollegeClasses(adminA,{q:key,programCode:"NOT-MATCHED"}),
+      listCollegeClasses(adminB,{q:key,programCode:key}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.section);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
 });

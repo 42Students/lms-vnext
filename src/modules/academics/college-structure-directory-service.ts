@@ -92,6 +92,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.programCode ? eq(programs.code,query.programCode) : undefined,
       query.periodLifecycle !== "ALL" ? eq(academicPeriods.status,query.periodLifecycle) : undefined,
       query.cohortCode ? eq(cohorts.code, query.cohortCode) : undefined,
       query.classCode ? eq(sections.code,query.classCode) : undefined,
