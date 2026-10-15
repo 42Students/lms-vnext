@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch,facultyProfileCanReorderVisible} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileCanReorderVisible,facultyProfileSearchAfterInsertion} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -111,7 +111,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             </div>
             <button type="button" disabled={pending || rows.length >= maxItems} onClick={() => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
-              setChanged(true);
+              setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);
             }} className="mt-3 mr-2 min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
               Duplicate draft
             </button>
@@ -128,7 +128,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       <div className="flex flex-wrap gap-3">
         <button type="button" disabled={pending || rows.length >= maxItems}
           className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
-          onClick={() => { setRows(current => [...current, create()]); setChanged(true); }}>
+          onClick={() => { setRows(current => [...current, create()]); setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true); }}>
           Add {title.toLowerCase()} record
         </button>
         <button type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
