@@ -118,7 +118,8 @@ export function TenantDomainManager({
               )
             : fetch(
                 `/api/tenant-domains/${domain.id}`,
-                { method: "DELETE" },
+                { method: "DELETE", headers: { "content-type": "application/json" },
+                  body: JSON.stringify({ ...(domain.isPrimary ? { confirmationHost: deleteHostConfirmation } : {}) }) },
               );
 
       const response = await request;
@@ -136,6 +137,8 @@ export function TenantDomainManager({
           description:
             payload?.error === "DOMAIN_NOT_VERIFIED"
               ? "Only a verified domain can become primary."
+              : payload?.error === "PRIMARY_HOST_CONFIRMATION_REQUIRED"
+                ? "The primary hostname confirmation is missing or stale. Reload and confirm the current primary address."
               : "The domain action could not be completed.",
         });
         return;

@@ -845,3 +845,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 primary domain deletion (PARTIAL):** UI now requires exact typed primary hostname and disables destructive confirmation until it matches. Ordinary non-primary deletion retains its existing dialog. The DELETE endpoint still requires server-side stale-primary/typed-confirmation enforcement and browser race tests, so this is NOT a security-certified endpoint. Pure checks authored, unexecuted.
+
+
+**2026-10-15 chat-6 primary host server enforcement (PARTIAL):** The DELETE API now strictly parses an optional hostname and the domain service checks exact confirmation *after scoped authorization* for persisted primary hosts. The UI passes it to the same-origin guarded route. Explicit denial/success PostgreSQL fixture authored; not executed. Concurrent primary changes between read and delete still require transactional row-lock certification.

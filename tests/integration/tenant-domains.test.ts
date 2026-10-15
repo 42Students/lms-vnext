@@ -134,6 +134,15 @@ describe("tenant domains against PostgreSQL", () => {
     });
   });
 
+  it("requires exact hostname confirmation for deletion of a persisted primary host",async()=>{
+    const created=await createTenantDomain(superAdmin,{collegeId:SEED_IDS.collegeA,host:"integration-tenant-delete-primary.example.com"},drizzleTenantDomainRepository,()=> "token-delete-primary");
+    await verifyTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,verifiedDns);
+    await setPrimaryTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository);
+    await expect(deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository)).rejects.toMatchObject({code:"PRIMARY_HOST_CONFIRMATION_REQUIRED"});
+    await expect(deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,"wrong.example.com")).rejects.toMatchObject({code:"PRIMARY_HOST_CONFIRMATION_REQUIRED"});
+    await expect(deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,"integration-tenant-delete-primary.example.com")).resolves.toBeUndefined();
+  });
+
   it("switches one verified primary domain transactionally", async () => {
     const first = await createTenantDomain(
       superAdmin,
