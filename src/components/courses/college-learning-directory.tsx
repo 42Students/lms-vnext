@@ -331,6 +331,16 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               </select>
             </label>
           ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved content lifecycle
+              <select name="contentLifecycle" defaultValue={data.query.contentLifecycle} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">Any content state</option>
+                <option value="DRAFT">Draft exists</option>
+                <option value="PUBLISHED">Published exists</option>
+                <option value="ARCHIVED">Archived exists</option>
+              </select>
+            </label>
+          ) : null}
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">

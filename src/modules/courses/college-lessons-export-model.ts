@@ -26,6 +26,7 @@ export function lessonsCsvHref(q: CollegeLessonQuery) {
  if(q.courseStatus&&q.courseStatus!=="ALL")p.set("courseStatus",q.courseStatus);
  if(q.departmentCode)p.set("departmentCode",q.departmentCode);
  if(q.contentType !== "ALL")p.set("contentType",q.contentType);
+ if(q.contentLifecycle !== "ALL")p.set("contentLifecycle",q.contentLifecycle);
  return "/api/academics/college-lessons-export"+(p.size?"?"+p.toString():"");
 }
 export function renderLessonsCsv(rows:readonly {
