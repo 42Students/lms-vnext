@@ -8,10 +8,16 @@ export type ProjectParticipantListQuery = {
     | "ACTIVE"
     | "COMPLETED"
     | "ARCHIVED";
+  assignment?: "PRIMARY" | "SUPPORTING";
   attention?:
     | "MENTOR_REVIEW"
+    | "MENTOR_REQUESTED"
+    | "MENTOR_STALLED"
+    | "MENTOR_MEETING_SOON"
+    | "MENTOR_ANY_ATTENTION"
+    | "MENTOR_NO_ATTENTION"
     | "LEARNER_ACTION";
-  work?: "BLOCKED" | "NO_TASKS";
+  work?: "BLOCKED" | "NO_TASKS" | "HAS_OPEN_TASKS";
   sort?: "RECENT" | "TITLE" | "PROGRESS";
   page?: number;
   pageSize?: number;
@@ -88,9 +94,14 @@ export function ProjectParticipantListControls({
               All projects
             </option>
             {mentor ? (
-              <option value="MENTOR_REVIEW">
-                Needs my review
-              </option>
+              <>
+                <option value="MENTOR_REVIEW">Needs my review</option>
+                <option value="MENTOR_REQUESTED">Meeting requests</option>
+                <option value="MENTOR_STALLED">Stalled projects</option>
+                <option value="MENTOR_MEETING_SOON">Meeting soon</option>
+                <option value="MENTOR_ANY_ATTENTION">Any attention</option>
+                <option value="MENTOR_NO_ATTENTION">No recorded attention</option>
+              </>
             ) : null}
             {learner ? (
               <option value="LEARNER_ACTION">
@@ -101,6 +112,28 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
 
+      {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Sort
+        <select name="sort" defaultValue={query.sort ?? "RECENT"} className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+          <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
+        </select></label>) : null}
+      {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
+        <select name="assignment" defaultValue={query.assignment ?? ""}
+          className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+          <option value="">All Mentor assignments</option><option value="PRIMARY">Primary mentor</option><option value="SUPPORTING">Supporting mentor</option>
+        </select>
+      </label>) : null}
+
+      {mentor ? (
+        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+          Recorded task coverage
+          <select name="work" defaultValue={query.work ?? ""}
+            className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            <option value="">All task coverage</option>
+            <option value="NO_TASKS">No tracked tasks</option>
+            <option value="HAS_OPEN_TASKS">Open tasks recorded</option>
+          </select>
+        </label>
+      ) : null}
       {learner ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Work attention
@@ -180,6 +213,7 @@ export function ProjectParticipantPagination({
     if (query.status) {
       params.set("status", query.status);
     }
+    if (query.assignment) params.set("assignment", query.assignment);
     if (query.attention) {
       params.set(
         "attention",

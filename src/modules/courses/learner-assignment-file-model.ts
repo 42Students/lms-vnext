@@ -27,7 +27,16 @@ export const learnerAssignmentUploadGrantSchema = z.object({ grant: z.object({
 }).strict() }).strict();
 
 /** Reject response-header injection and credentials-like headers before the cross-origin signed PUT. */
+const requiredUploadHeaders = [
+  "content-type", "x-amz-meta-upload-token", "x-amz-meta-owner-membership-id",
+  "x-amz-meta-college-id", "x-amz-meta-expected-size",
+  "x-amz-meta-malware-scan-status",
+] as const;
 export function learnerAssignmentUploadHeadersSafe(headers: Record<string, string>): boolean {
+  if (!requiredUploadHeaders.every(name => Object.hasOwn(headers, name))) return false;
+  if (headers["x-amz-meta-malware-scan-status"] !== "PENDING") return false;
+  const size = headers["x-amz-meta-expected-size"];
+  if (!/^[1-9][0-9]{0,7}$/.test(size) || Number(size) > 50 * 1024 * 1024) return false;
   return Object.entries(headers).every(([name, value]) =>
     (name === "content-type" || name.startsWith("x-amz-meta-")) &&
     /^[a-z0-9-]+$/.test(name) && value.length > 0 && value.length <= 1024 &&
@@ -53,7 +62,7 @@ export function learnerAssignmentFilePayload(deliveryId: string, receiptId: stri
 export const learnerAssignmentReadGrantSchema = z.object({ grant: z.object({
   readUrl: z.string().url().refine(value => {
     const url = new URL(value);
-    return url.protocol === "https:" && !url.username && !url.password;
+    return url.protocol === "https:" && !url.username && !url.password && !url.hash;
   }, "A secure file URL is required"),
   expiresAt: z.iso.datetime({ offset: true }), originalName: z.string().min(1).max(255),
   mimeType: z.string().min(1).max(128), sizeBytes: z.number().int().min(1).max(50 * 1024 * 1024),

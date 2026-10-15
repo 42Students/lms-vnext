@@ -1,0 +1,3 @@
+import{it,expect}from"vitest";import{mentorActivityQuerySchema as schema,mentorPortfolioHref}from"@/modules/projects/mentor-portfolio-model";
+it("validates registered lifecycle states only",()=>{expect(schema.parse({projectStatus:"ACTIVE"}).projectStatus).toBe("ACTIVE");expect(schema.safeParse({projectStatus:"BLOCKED"}).success).toBe(false)});
+it("retains the lifecycle filter through pagination",()=>expect(mentorPortfolioHref("activity",{projectStatus:"ACTIVE",page:2})).toContain("projectStatus=ACTIVE"));

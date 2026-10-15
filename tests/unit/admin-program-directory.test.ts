@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   adminProgramsCsv,
+  programDurationYearsLabel, legacyDurationYearsToTerms,
   filterAdminPrograms,
   paginateAdminPrograms,
   type AdminProgramRow,
@@ -16,6 +17,14 @@ const program = (
 });
 
 describe("W06 admin Programs directory", () => {
+  it("matches legacy years while preserving exactly two terms per year",()=>{
+    expect(programDurationYearsLabel(8)).toBe("4 years (8 terms)");
+    expect(programDurationYearsLabel(1)).toBe("0.5 years (1 term)");
+    expect(legacyDurationYearsToTerms(4)).toBe(8);
+    expect(legacyDurationYearsToTerms(1.5)).toBe(3);
+    expect(legacyDurationYearsToTerms(0.25)).toBeNull();
+    expect(legacyDurationYearsToTerms(13)).toBeNull();
+  });
   it("searches name/code/department, sorts, and does not mutate input", () => {
     const rows = [
       program("Mechanical Eng", "MECH", "Mechanical"),
