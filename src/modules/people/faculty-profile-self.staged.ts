@@ -79,7 +79,7 @@ export async function loadOwnFacultyProfileDocumentStaged(
       );
     const membership = assertPersistedFaculty(persisted);
     // Do not access unregistered optional columns on a fresh database.
-    if (!(await facultyProfileDocumentStorageReady())) {
+    if (!(await facultyProfileDocumentStorageReady(tx))) {
       throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
     }
 
@@ -128,7 +128,7 @@ export async function saveOwnFacultyProfileDocumentStaged(
       );
     const membership = assertPersistedFaculty(persisted);
     // Do not access unregistered optional columns on a fresh database.
-    if (!(await facultyProfileDocumentStorageReady())) {
+    if (!(await facultyProfileDocumentStorageReady(tx))) {
       throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
     }
 
