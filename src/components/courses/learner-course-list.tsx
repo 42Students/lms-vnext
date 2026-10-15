@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
+import { resolveLearnerCoursePeriod } from "@/modules/courses/learner-course-current-period-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
@@ -98,6 +99,7 @@ export function LearnerCourseList({
   }, [rows]);
 
   const [periodId, setPeriodId] = useState(periods[0]?.id ?? "");
+  const selectedPeriodId = resolveLearnerCoursePeriod(periodId, periods);
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
   const [continueOnly, setContinueOnly] = useState(false);
@@ -109,9 +111,9 @@ export function LearnerCourseList({
   const periodRows = useMemo(
     () =>
       rows.filter(
-        (row) => !periodId || row.course.academicPeriodId === periodId,
+        (row) => !selectedPeriodId || row.course.academicPeriodId === selectedPeriodId,
       ),
-    [rows, periodId],
+    [rows, selectedPeriodId],
   );
 
   const coreCount = periodRows.filter(
@@ -145,7 +147,7 @@ export function LearnerCourseList({
   }
 
   const selectedPeriod =
-    periods.find((period) => period.id === periodId) ?? periods[0];
+    periods.find((period) => period.id === selectedPeriodId) ?? periods[0];
   const totalCredits = periodRows.reduce(
     (sum, row) => sum + (row.course.credits ?? 0),
     0,
@@ -159,7 +161,7 @@ export function LearnerCourseList({
             <label className="text-xs font-semibold text-body">
               Semester
               <select
-                value={periodId}
+                value={selectedPeriodId}
                 onChange={(event) => {
                   const reset = learnerCourseSemesterFilterReset();
                   setPeriodId(event.target.value);
