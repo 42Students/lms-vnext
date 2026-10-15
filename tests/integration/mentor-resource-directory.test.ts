@@ -9,6 +9,8 @@ import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToColl
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
+import {createProjectResource,updateProjectResource,archiveProjectResource} from "@/modules/projects/resource-service";
+import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-service";
 import {mentorResourceDirectoryCsv} from "@/modules/projects/mentor-resource-directory-model";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Requires disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
@@ -73,6 +75,37 @@ async function fixture(){
   return {project,sprint:view.sprints[0]!};
 }
 describe("Mentor scoped resource metadata and links — PostgreSQL",()=>{
+ it("writes all three Resource event types atomically and exposes only redacted Mentor labels",async()=>{
+  const {project}=await fixture();
+  const created=await createProjectResource(admin,project.id,{
+    title:"Resource with sensitive URL",description:"Internal body",
+    url:"https://example.org/private?token=secret",required:true,
+  });
+  const updated=await updateProjectResource(admin,project.id,created.id,{
+    title:"Renamed resource",required:false,
+  });
+  expect(updated.id).toBe(created.id);
+  await archiveProjectResource(admin,project.id,created.id);
+  const events=await pool.query<{event_type:string;metadata:Record<string,string>;
+    summary:string;college_id:string;organization_id:string}>(
+    "select event_type,metadata,summary,college_id,organization_id from activity_events where subject_type='project_resource' and subject_id=$1 order by occurred_at,id",
+    [created.id],
+  );
+  expect(events.rows.map(row=>row.event_type).sort()).toEqual([
+    "projects.resource.archived","projects.resource.created","projects.resource.updated",
+  ]);
+  for(const row of events.rows){
+    expect(row.college_id).toBe(SEED_IDS.collegeA);
+    expect(row.organization_id).toBe(SEED_IDS.organization);
+    expect(row.metadata).toEqual({projectId:project.id,resourceId:created.id});
+    expect(JSON.stringify(row)).not.toContain("token=secret");
+    expect(JSON.stringify(row)).not.toContain("Internal body");
+  }
+  const timeline=await getMentorPortfolioActivity(mentor,{projectId:project.id,view:"RESOURCES"});
+  expect(timeline.items.filter(item=>item.projectId===project.id)).toHaveLength(3);
+  expect(timeline.items.every(item=>!item.label.includes("sensitive"))).toBe(true);
+ });
+
  it("reads only assigned project resource metadata and denies forged/foreign scope",async()=>{
   const {project}=await fixture();
   const firstId=randomUUID(),secondId=randomUUID();
