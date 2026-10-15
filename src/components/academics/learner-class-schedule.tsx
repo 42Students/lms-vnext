@@ -10,6 +10,7 @@ import { learnerScheduleResetFilters } from "@/modules/academics/learner-schedul
 import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock-model";
 import { learnerScheduleDayAfterShift } from "@/modules/academics/learner-schedule-shift-day-model";
 import { learnerScheduleAnchorForView } from "@/modules/academics/learner-schedule-view-anchor-model";
+import { learnerScheduleTodayDay } from "@/modules/academics/learner-schedule-today-day-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -395,7 +396,7 @@ export function LearnerClassSchedule({
               size="sm"
               variant="secondary"
               onClick={() =>
-                { const instant=new Date(); const next=calendarMode === "IST" ? learnerIstScheduleToday(instant) : instant; setAnchor(next); setChosenDay(calendarMode === "IST" ? localDayKey(next) : istCalendarDay(instant)); }
+                { const instant=new Date(); const next=calendarMode === "IST" ? learnerIstScheduleToday(instant) : instant; setAnchor(next); setChosenDay(learnerScheduleTodayDay(instant,calendarMode)); }
               }
             >
               Today
