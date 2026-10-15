@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch,facultyProfileCanReorderVisible} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileCanReorderVisible,facultyProfileSearchAfterInsertion} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultySkills,removeFacultySkillDraft,facultyProfileSkillsIssue,facultyProfileSkillMatches,facultyMoveSkillRecord} from "@/modules/people/faculty-profile-draft-actions";
 type Skill = FacultyProfileDocument["skills"][number];
@@ -63,7 +63,8 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={pending||rows.length>=100}
     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground"
-    onClick={()=>{setRows(current=>[...current,{id:crypto.randomUUID(),skill:"",proficiency:""}]);setChanged(true);}}>
+    onClick={()=>{setRows(current=>[...current,{id:crypto.randomUUID(),skill:"",proficiency:""}]);
+     setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);}}>
     Add skill
    </button>
    {changed?<button type="button" disabled={pending} onClick={()=>{
