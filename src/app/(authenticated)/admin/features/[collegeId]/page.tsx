@@ -115,7 +115,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       <PageHeader
         eyebrow="Super Admin · Module Access"
         title={`${college.name} · Access hierarchy`}
-        description={`Read-only persisted module rules for college ${college.code}. Stored overrides may be inherited or masked by higher-priority locked rules.`}
+        description={`Inspect and update college rules for ${college.code}. Higher-priority locks and learner participation gates still apply.`}
       />
 
       <section className="rounded-xl border border-border bg-surface p-4">
