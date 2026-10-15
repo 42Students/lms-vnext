@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
+import {learnerAlertsHistoryHref} from "@/modules/placements/learner-alerts-history-navigation-model";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
 
@@ -11,7 +12,7 @@ function dateIst(value: Date) {
   }).format(value) + " IST";
 }
 
-export function LearnerPlacementAlerts({ alerts, filtered=false }: { alerts: Alerts; filtered?: boolean }) {
+export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false }: { alerts: Alerts; filtered?: boolean; unreadOnly?:boolean }) {
   return (
     <section aria-labelledby="learner-placement-alerts"
       className="rounded-xl border border-border bg-surface p-4 sm:p-6">
@@ -19,7 +20,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false }: { alerts: Ale
         <h2 id="learner-placement-alerts" className="text-base font-semibold text-foreground">
           Your placement alerts
         </h2>
-        <Link href="/learn/notifications/history"
+        <Link href={learnerAlertsHistoryHref(unreadOnly)}
           className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
           Personal notification history →
         </Link>

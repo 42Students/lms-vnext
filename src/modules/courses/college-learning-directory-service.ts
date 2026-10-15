@@ -105,6 +105,16 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.liveEvidence==="HAS_LIVE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS")))):query.liveEvidence==="NO_LIVE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS"))))):undefined,
+      query.resourceEvidence==="HAS_RESOURCE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE")))):query.resourceEvidence==="NO_RESOURCE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE"))))):undefined,
+      query.videoEvidence==="HAS_VIDEO"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"])))):query.videoEvidence==="NO_VIDEO"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]))))):undefined,
+      query.hiddenPublished==="HAS_HIDDEN"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,false)))):query.hiddenPublished==="NO_HIDDEN"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,false))))):undefined,
+      query.contentAudience==="SHARED"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),sql`${lessonContents.deliveryId} IS  NULL`))):
+        query.contentAudience==="SECTION"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),sql`${lessonContents.deliveryId} IS NOT NULL`))):undefined,
+      query.lessonName ? eq(courseLessons.name, query.lessonName) : undefined,
+      query.sequenceThrough !== undefined ? sql`${courseLessons.sequence} <= ${query.sequenceThrough - 1}` : undefined,
+      query.sequenceFrom !== undefined ? sql`${courseLessons.sequence} >= ${query.sequenceFrom - 1}` : undefined,
+      query.contentLifecycle !== "ALL" ? exists(db.select({id: lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId, courseLessons.id),eq(lessonContents.status, query.contentLifecycle)))) : undefined,
       query.maxContentCount!==undefined?sql`(SELECT count(*) FROM ${lessonContents} WHERE ${lessonContents.lessonId}=${courseLessons.id}) <= ${query.maxContentCount}`:undefined,
       query.minContentCount!==undefined?sql`(SELECT count(*) FROM ${lessonContents} WHERE ${lessonContents.lessonId}=${courseLessons.id}) >= ${query.minContentCount}`:undefined,
       query.pathId?eq(courseLearningPaths.id,query.pathId):undefined,
@@ -222,6 +232,76 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.sectionContentState==="HAS_SECTION"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),sql`${lessonContents.deliveryId} IS NOT NULL`))):query.sectionContentState==="NO_SECTION"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),sql`${lessonContents.deliveryId} IS NOT NULL`)))):undefined,
+      query.sharedContentState==="HAS_SHARED"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),sql`${lessonContents.deliveryId} IS NULL`))):query.sharedContentState==="NO_SHARED"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),sql`${lessonContents.deliveryId} IS NULL`)))):undefined,
+      query.hiddenContentState==="HAS_HIDDEN"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,false)))):query.hiddenContentState==="NO_HIDDEN"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,false))))):undefined,
+      query.publishedContentState==="HAS_PUBLISHED"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.status,"PUBLISHED")))):query.publishedContentState==="NO_PUBLISHED"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.status,"PUBLISHED"))))):undefined,
+      query.videoContentState==="HAS_VIDEO"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"])))):query.videoContentState==="NO_VIDEO"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]))))):undefined,
+      query.liveClassPresence !== "ALL" ? (query.liveClassPresence === "HAS_LIVE" ? exists(db.select({id:lessonContents.id}).from(lessonContents)
+ .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+ .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+ .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.contentType,"LIVE_CLASS")))) : not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+ .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+ .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+ .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.contentType,"LIVE_CLASS")))))) : undefined,
+      query.resourcePresence !== "ALL" ? (query.resourcePresence === "HAS_RESOURCES" ? exists(db.select({id:lessonContents.id}).from(lessonContents)
+ .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+ .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+ .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.contentType,"RESOURCE")))) : not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+ .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+ .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+ .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),eq(lessonContents.contentType,"RESOURCE")))))) : undefined,
+      query.quizPresence !== "ALL" ? (query.quizPresence === "HAS_QUIZZES" ? exists(db.select({id:courseQuizzes.id}).from(courseQuizzes)
+        .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
+        .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+        .where(eq(courseLearningPaths.offeringId,courseOfferings.id))) : not(exists(db.select({id:courseQuizzes.id}).from(courseQuizzes)
+        .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
+        .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+        .where(eq(courseLearningPaths.offeringId,courseOfferings.id))))) : undefined,
+      query.assignmentPresence !== "ALL" ? (query.assignmentPresence === "HAS_ASSIGNMENTS" ? exists(db.select({id:courseAssignments.id}).from(courseAssignments)
+        .innerJoin(courseLessons,eq(courseLessons.id,courseAssignments.lessonId))
+        .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+        .where(eq(courseLearningPaths.offeringId,courseOfferings.id))) : not(exists(db.select({id:courseAssignments.id}).from(courseAssignments)
+        .innerJoin(courseLessons,eq(courseLessons.id,courseAssignments.lessonId))
+        .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+        .where(eq(courseLearningPaths.offeringId,courseOfferings.id))))) : undefined,
+      query.lessonPresence !== "ALL" ? (query.lessonPresence === "HAS_LESSONS" ?
+        exists(db.select({id:courseLessons.id}).from(courseLessons)
+          .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+          .where(eq(courseLearningPaths.offeringId,courseOfferings.id))) :
+        not(exists(db.select({id:courseLessons.id}).from(courseLessons)
+          .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+          .where(eq(courseLearningPaths.offeringId,courseOfferings.id))))) : undefined,
       query.archivedContentState==="HAS_ARCHIVED"?exists(db.select({id:lessonContents.id}).from(lessonContents)
   .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
