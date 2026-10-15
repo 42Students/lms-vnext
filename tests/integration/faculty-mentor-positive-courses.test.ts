@@ -1084,3 +1084,13 @@ describe("Faculty grade mutation scope checks", () => {
     })).rejects.toBeDefined();
   });
 });
+
+
+describe("Faculty attendance bounded by persisted active delivery", () => {
+  it("rejects a delivered course that has ended after its teaching context was issued", async () => {
+    const {delivery}=await fixture();
+    expect((await getFacultyCourseList(facultyOnly,{q:"",period:"",role:"",page:1})).items.length).toBeGreaterThanOrEqual(1);
+    await pool.query("update course_section_deliveries set ended_at=now() where id=$1::uuid",[delivery.id]);
+    await expect(getFacultySessionCoverage(facultyOnly,{deliveryId:delivery.id})).rejects.toBeDefined();
+  });
+});
