@@ -630,6 +630,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Faculty Assignment
+**Exact course code filter PARTIAL (2026-10-15):** College Admin teaching assignments now filter by the saved course code before pagination, with the same filter carried to spreadsheet-safe capped CSV. Validation, URL round-trip and in-test PostgreSQL own/empty assertions authored; browser/mobile checks open.
+
 **Teaching roster CSV PARTIAL (2026-10-15):** Matching persisted assignments can be exported as a 1,000-row formula-neutralized CSV with role/lifecycle, offering/class and IST-labeled timestamps (UTC ISO evidence is preserved), explicit truncation and no Faculty/learner contacts. Uses the signed-in College Admin roster query with existing tenant/role tests extended to export. Runtime/legacy/browser checks remain outstanding.
 
 **Teaching-role filter PARTIAL (2026-10-15):** Faculty assignments can be narrowed to PRIMARY, CO_TEACHER or TA using the authoritative teaching-role enum and current-college persisted assignments. Model and isolated PG fixtures cover valid/invalid roles and role-specific matches. Executed PG/browser proof and remaining mutation/legacy behavior are not closed.

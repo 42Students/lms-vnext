@@ -4,11 +4,12 @@ export const FACULTY_ASSIGNMENT_EXPORT_CAP=1000;
 export const facultyAssignmentCsvSchema=facultyAssignmentQuerySchema.omit({page:true});
 export {exportParams};
 export function facultyAssignmentCsvHref(q:{
- q:string;role:"ALL"|"PRIMARY"|"CO_TEACHER"|"TA";status:"ALL"|"ACTIVE"|"ENDED";
+ q:string;role:"ALL"|"PRIMARY"|"CO_TEACHER"|"TA";status:"ALL"|"ACTIVE"|"ENDED";courseCode?:string;
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
  if(q.role!=="ALL")p.set("role",q.role);
+ if(q.courseCode)p.set("courseCode",q.courseCode);
  if(q.status!=="ACTIVE")p.set("status",q.status);
  return "/api/academics/college-faculty-assignment-export"+(p.size?"?"+p.toString():"");
 }

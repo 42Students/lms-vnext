@@ -155,6 +155,12 @@ describe.skipIf(!enabled)("College Admin mapping read-first DB isolation", () =>
     ]);
     expect(primary.items.map(item => item.id)).toContain(ids.teaching);
     expect(assistant.items).toEqual([]);
+    const [exactCourse, unrelatedCourse] = await Promise.all([
+      listCollegeFacultyAssignments(admin,{q:code,courseCode:code}),
+      listCollegeFacultyAssignments(admin,{q:code,courseCode:"no-such-course"}),
+    ]);
+    expect(exactCourse.items.map(row=>row.id)).toContain(ids.teaching);
+    expect(unrelatedCourse.items).toEqual([]);
     expect(ownTeaching.items.find(item => item.id === ids.teaching)?.state).toBe("ACTIVE");
     expect(ownTeaching.items.find(item => item.id === ids.teaching)).toMatchObject({
       deliveryId: ids.delivery, offeringId: ids.offering,

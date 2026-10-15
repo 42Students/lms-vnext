@@ -33,6 +33,8 @@ describe("College Admin semester offering and faculty assignment models", () => 
       .toEqual({ q: "", status: "ENDED", role: "ALL", page: 3 });
     expect(facultyAssignmentQuerySchema.safeParse({ status: "INACTIVE" }).success).toBe(false);
     expect(facultyAssignmentQuerySchema.safeParse({ role: "LEAD" }).success).toBe(false);
+    expect(facultyAssignmentQuerySchema.safeParse({courseCode:"x".repeat(65)}).success).toBe(false);
+    expect(facultyAssignmentQuerySchema.parse({courseCode:"  CS101  "}).courseCode).toBe("CS101");
     expect(facultyAssignmentQuerySchema.parse({ role: "TA" }).role).toBe("TA");
     expect(facultyAssignmentQuerySchema.safeParse({ collegeId: "other" }).success).toBe(false);
   });
@@ -63,6 +65,7 @@ describe("College Admin semester offering and faculty assignment models", () => 
       q: "", status: "ENDED", role: "ALL", page: 1,
     });
     expect(faculty).toBe("/college/faculty-assignment?status=ENDED");
+    expect(collegeMappingHref("FACULTY_ASSIGNMENTS",facultyAssignmentQuerySchema.parse({courseCode:"CS&101"}))).toContain("courseCode=CS%26101");
     expect(collegeMappingHref("FACULTY_ASSIGNMENTS", {
       q: "", status: "ALL", role: "CO_TEACHER", page: 2,
     })).toContain("role=CO_TEACHER");
