@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {learnerAttendanceDateLabel as dateLabel, learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/learner-attendance-display-date-model";
 import {learnerAttendanceUrlRecoveryNotice} from "@/modules/attendance/learner-attendance-url-recovery-model";
 import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-attendance-month-navigation-model";
 
@@ -113,22 +114,6 @@ function summarize(
   };
 }
 
-function dateLabel(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    weekday: "long",
-    day: "numeric",
-    month: "short",
-  }).format(new Date(value));
-}
-
-function timeLabel(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(value));
-}
 
 function statusLabel(
   status: RecordRow["status"],
