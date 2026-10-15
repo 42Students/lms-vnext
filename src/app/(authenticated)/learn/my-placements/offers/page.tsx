@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
+import {learnerOfferStatusHref} from "@/modules/placements/learner-offers-navigation-model";
 import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
 import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
@@ -71,8 +72,7 @@ export default async function LearnerOffersPage({
         {tabs.map((tab) => (
           <Link
             key={tab.id}
-            href={tab.id === "all" ? "/learn/my-placements/offers" :
-              "/learn/my-placements/offers?status=" + tab.id}
+            href={learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order})}
             aria-current={view === tab.id ? "page" : undefined}
             className={view === tab.id
               ? "inline-flex min-h-11 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary"
@@ -91,7 +91,7 @@ export default async function LearnerOffersPage({
             placeholder="Employer or role" className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
-        {searchTerm ? <Link href={view === "all" ? "/learn/my-placements/offers" : "/learn/my-placements/offers?status="+view}
+        {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order})}
           className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/offers" className="flex flex-wrap items-end gap-3">
