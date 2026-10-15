@@ -1240,3 +1240,19 @@ Legacy FE `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`: `college-admin/das
 The current main/lane comparison and safe integration targets are recorded in the final reconciliation section of `docs/planning/account-surface-parity.md`; it is a source snapshot, not another tracker or runtime acceptance. Existing checkbox evidence is preserved. No required page/family becomes closed from this review.
 
 Thirty of chat-3's 43 comparison paths already match main byte-for-byte, including visibility producer/API/control/export, content directories/overview and profile work. Its residual includes program-directory/academic actions, assessment aggregate routes/component/model/service/tests and parity prose. Do not rebuild the 30 integrated paths or repeat the migration. College verification and class-to-team workspace creation also exist on main; their section-8 inventory is now PARTIAL, with full PG/concurrency/browser/cross-role gates still open. Chat-9's remaining Contacts export/privacy/navigation batch is different from main but 29 commits behind at the refreshed snapshot; preserve main's verification and ESLint fixes during reconciliation. No academic/people parent contract is certified by file identity alone.
+
+**2026-10-15 College Admin Batches PARTIAL:** Added batch start on or after over registered, same-college start-period dates, with strict date validation and matching CSV. Unit and isolated PG fixtures authored; browser/executed DB and exact legacy parity open.
+
+**2026-10-15 College Admin Batches PARTIAL:** Added batch start on/before registered start-period date with Zod/CSV and own-college tests. PG execution/browser/oracle validation remain open.
+
+**2026-10-15 Batches PARTIAL:** Batch active class evidence now filters only persisted own-college classes, with URL/CSV and unit/isolated-PG assertions. Exact legacy UI and executed PG/browser acceptance still open.
+
+**2026-10-15 Batches PARTIAL:** Batch active learner evidence now filters only persisted own-college learner enrollments, with URL/CSV and unit/isolated-PG assertions. Exact legacy UI and executed PG/browser acceptance still open.
+
+**2026-10-15 Classes PARTIAL:** Class academic period code uses a bounded exact code match on a registered same-college academic relation, with matching CSV, navigation and isolated-PG tests authored; execution/browser/legacy comparison remains open.
+
+**2026-10-15 Classes PARTIAL:** Class exact section code uses a bounded exact code match on a registered same-college academic relation, with matching CSV, navigation and isolated-PG tests authored; execution/browser/legacy comparison remains open.
+
+**2026-10-15 Electives PARTIAL:** Elective selection choice constraints reflects persisted, tenant-scoped min/max choice constraints, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
+
+**2026-10-15 Electives PARTIAL:** Elective active offering presence reflects persisted, tenant-scoped active linked course offerings, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
