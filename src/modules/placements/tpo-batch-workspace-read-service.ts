@@ -9,6 +9,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { placementTableExists } from "./staged-tables";
 import { requirePlacementManageScope } from "./scope";
+import { buildBatchHistoryScope } from "./tpo-batch-history-scope-model";
 const uuid=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export async function requireTpoBatchActor(ctx:RequestContext) {
@@ -88,12 +89,32 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
 export async function listTpoBatchHistory(ctx:RequestContext,rawId:unknown){
  const {batch,collegeId}=await getTpoBatch(ctx,rawId);
  const ready=await placementTableExists("placement_eligibility_events");
- const events=ready?await getDb().select({id:placementEligibilityEvents.id,actionId:placementEligibilityEvents.actionId,
+ if(!ready)return {batch,ready:false,events:[],limited:false,currentRosterOnly:true};
+ const members=await getDb().select({id:learnerProgramEnrollments.membershipId})
+  .from(learnerProgramEnrollments)
+  .innerJoin(collegeMemberships,and(
+   eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
+   eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")))
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
+  .where(and(eq(learnerProgramEnrollments.cohortId,batch.id),
+   eq(learnerProgramEnrollments.status,"ACTIVE")))
+  .orderBy(asc(learnerProgramEnrollments.membershipId)).limit(501);
+ const classes=await getDb().select({id:sections.id}).from(sections)
+  .where(and(eq(sections.cohortId,batch.id),eq(sections.status,"ACTIVE"))).limit(501);
+ const scope=buildBatchHistoryScope(batch.id,members.map(m=>m.id),classes.map(c=>c.id));
+ const found=await getDb().select({
+  id:placementEligibilityEvents.id,actionId:placementEligibilityEvents.actionId,
   reversesActionId:placementEligibilityEvents.reversesActionId,kind:placementEligibilityEvents.eventKind,
   before:placementEligibilityEvents.beforeStatus,after:placementEligibilityEvents.afterStatus,
-  occurredAt:placementEligibilityEvents.occurredAt,scopeType:placementEligibilityEvents.scopeType})
- .from(placementEligibilityEvents).where(and(eq(placementEligibilityEvents.collegeId,collegeId),
-  eq(placementEligibilityEvents.scopeType,"COHORT"),eq(placementEligibilityEvents.scopeId,batch.id)))
- .orderBy(desc(placementEligibilityEvents.sequence)).limit(100):[];
- return {batch,ready,events};
+  occurredAt:placementEligibilityEvents.occurredAt,scopeType:placementEligibilityEvents.scopeType,
+  scopeId:placementEligibilityEvents.scopeId,
+ }).from(placementEligibilityEvents)
+  .where(and(eq(placementEligibilityEvents.collegeId,collegeId),
+   inArray(placementEligibilityEvents.scopeId,scope.ids)))
+  .orderBy(desc(placementEligibilityEvents.sequence)).limit(101);
+ return {batch,ready:true,events:found.slice(0,100),
+  limited:scope.limited||classes.length>500||found.length>100,
+  currentRosterOnly:true};
 }
