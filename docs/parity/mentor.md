@@ -1293,3 +1293,8 @@ Mentor Activity can isolate genuinely older persisted events with a SQL strict-b
 ## 2026-10-15 chat-11 — past-90-days-portfolio-events (PARTIAL)
 
 Added rolling 90-day selection for registered Mentor events, applied by timestamp before bounded SQL count, ordering and pagination. Unit source cases authored; runtime, database, 375px/desktop browser and complete legacy producers remain unverified.
+
+
+## 2026-10-15 chat-11 — evaluation-events-mentor-activity (PARTIAL)
+
+Both assigned-project portfolio and exact-project activity screens can isolate actual registered evaluation events via fixed event-type SQL allowlists; raw rubrics, student data and metadata stay private. Unit source cases authored; runtime, database, 375px/desktop browser and complete legacy producers remain unverified.
