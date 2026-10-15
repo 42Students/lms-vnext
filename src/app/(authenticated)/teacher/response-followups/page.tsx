@@ -44,6 +44,15 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="QUIZ">Quizzes</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
+        <select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          <option value="">All current Sections</option>
+          {data.sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
+            {section.courseCode} · {section.courseName} · {section.sectionName}
+          </option>)}
+        </select>
+      </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
       </button>
