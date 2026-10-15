@@ -152,3 +152,8 @@ export function collegeModuleCardSummary(
 export function summarizeStoredModuleOverrides(items:readonly {enabled:boolean;locked:boolean}[]) {
  return {rules:items.length,enabled:items.filter(x=>x.enabled).length,locked:items.filter(x=>x.locked).length};
 }
+
+/** A downloadable view of the exact filtered and permissioned matrix page. */
+export function adminFeatureExportHref(filters:Parameters<typeof adminFeaturesHref>[0]):string {
+ return adminFeaturesHref(filters).replace("/admin/features","/api/admin/features/export");
+}
