@@ -1557,3 +1557,7 @@ College and Super Admin per-workspace readiness deep links now resolve to a scop
 - Mentor/Projects copy audit: b488ab04 (sidebar grouping, headings and empty states; full copy audit OPEN)
 
 No entry here is a certified DONE tracker task without executed PostgreSQL, tenant-negative, regression and browser acceptance. PR-S2-03 task assignment remains staged and unenforced.
+
+## 2026-10-16 PR-S2-02 test migration (P5 lifecycle)
+
+P5 integration cases no longer cast forbidden DONE/IN_REVIEW writes. They assert the typed validation contract and progress through persisted Learner task submissions and Mentor approval. Last-release shipping keeps the project ACTIVE pending explicit approved closeout. DB fixture is authored but **not executed**. Commit: see branch history.
