@@ -1,5 +1,8 @@
+import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
+import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
+import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentFileOpenControl } from "./assignment-file-open-control";
@@ -18,6 +21,7 @@ import {
 import {
   getLearnerCourseWorkspace,
 } from "@/modules/courses/learner-course-service";
+import { learnerRoadmapMeasuredProgress } from "@/modules/courses/learner-roadmap-progress-availability-model";
 import {learnerRoadmapMobileOutline} from "@/modules/courses/learner-roadmap-mobile-model";
 
 type Workspace = Awaited<
@@ -30,9 +34,14 @@ function ProgressBar({
   value,
   label,
 }: {
-  value: number;
+  value: number | null;
   label: string;
 }) {
+  if (value === null) {
+    return <p role="status" className="text-sm text-muted-foreground">
+      Progress is not measured until this Learning Path has trackable items.
+    </p>;
+  }
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-3">
@@ -92,22 +101,8 @@ function progressLabel(
   }
 }
 
-function formatDateTime(
-  value: Date | string | null,
-) {
-  if (!value) return null;
-  const date =
-    value instanceof Date
-      ? value
-      : new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
-
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
+function formatDateTime(value: Date | string | null) {
+  return formatLearnerCourseMoment(value);
 }
 
 function kindLabel(
@@ -574,6 +569,7 @@ export function LearnerCourseWorkspace({
   readOnly?: boolean;
 }) {
   const summary = workspace.summary;
+  const measuredProgress = learnerRoadmapMeasuredProgress(summary);
   const activeFilter = ["all", "lectures", "resources", "assessments", "live-sessions"].includes(filter)
     ? filter
     : "all";
@@ -684,14 +680,14 @@ export function LearnerCourseWorkspace({
               </div>
             ) : null}
           </div>
-          <ProgressBar value={summary.overallPercent} label="Overall Course progress" />
+          <ProgressBar value={measuredProgress} label="Overall Course progress" />
         </div>
       </section>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Overall"
-          value={`${summary.overallPercent}%`}
+          value={measuredProgress === null ? "Not measured" : `${measuredProgress}%`}
           detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
         <Metric
@@ -868,16 +864,16 @@ export function LearnerCourseWorkspace({
                           (candidate) => candidate.id === item.id,
                         );
                         return content ? (
-                          <div
+                          <LearnerRoadmapItemDialog
                             key={item.id}
-                            className={
-                              focusContentId === item.id
-                                ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
-                                : ""
-                            }
+                            title={content.title}
+                            kind="Content"
+                            progress={item.progress.status}
+                            initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
+                            highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
                             <ContentCard content={content} deliveryId={deliveryId} readOnly={readOnly} />
-                          </div>
+                          </LearnerRoadmapItemDialog>
                         ) : null;
                       }
 
@@ -886,16 +882,16 @@ export function LearnerCourseWorkspace({
                           (candidate) => candidate.id === item.id,
                         );
                         return assignment ? (
-                          <div
+                          <LearnerRoadmapItemDialog
                             key={item.id}
-                            className={
-                              focusContentId === item.id
-                                ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
-                                : ""
-                            }
+                            title={assignment.title}
+                            kind="Assignment"
+                            progress={item.progress.status}
+                            initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
+                            highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
                             <AssignmentCard assignment={assignment} deliveryId={deliveryId} readOnly={readOnly} />
-                          </div>
+                          </LearnerRoadmapItemDialog>
                         ) : null;
                       }
 
@@ -903,16 +899,16 @@ export function LearnerCourseWorkspace({
                         (candidate) => candidate.id === item.id,
                       );
                       return quiz ? (
-                        <div
+                        <LearnerRoadmapItemDialog
                           key={item.id}
-                          className={
-                            focusContentId === item.id
-                              ? "rounded-xl ring-4 ring-[var(--lms-focus-ring)]"
-                              : ""
-                          }
+                          title={quiz.title}
+                          kind="Quiz"
+                          progress={item.progress.status}
+                          initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
+                          highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                         >
                           <QuizCard quiz={quiz} deliveryId={deliveryId} readOnly={readOnly} />
-                        </div>
+                        </LearnerRoadmapItemDialog>
                       ) : null;
                     })}
                   </div>
