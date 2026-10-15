@@ -220,7 +220,7 @@ export function LearnerCourseList({
                     setVisibleLimit(PAGE_SIZE);
                   }}
                   className={
-                    typeFilter === value
+                    effectiveTypeFilter === value
                       ? "min-w-0 rounded-md bg-surface px-2 py-2 text-sm font-semibold text-primary-text shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
                       : "min-w-0 rounded-md px-2 py-2 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] sm:px-3"
                   }
@@ -318,7 +318,7 @@ export function LearnerCourseList({
                 index > 0 &&
                 String(renderedRows[index - 1]?.course.offeringType).toUpperCase() === "ELECTIVE";
               const startsElectiveGroup =
-                typeFilter === "all" &&
+                effectiveTypeFilter === "all" &&
                 elective &&
                 !previousElective &&
                 coreCount > 0;
