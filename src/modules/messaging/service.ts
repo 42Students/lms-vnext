@@ -30,10 +30,11 @@ export async function deliverBatch(args: {
   runtimeEnv?: Record<string, string | undefined>;
 }): Promise<DeliveryRecord[]> {
   if (args.requests.length > 500) throw new Error("OUTBOUND_BATCH_CAP_EXCEEDED");
+  // Validate the entire batch before the first persistence or external send.
+  const requests = args.requests.map(raw => outboundSendSchema.parse(raw));
   const records: DeliveryRecord[] = [];
   const seenRecipientPurpose = new Set<string>();
-  for (const raw of args.requests) {
-    const request = outboundSendSchema.parse(raw);
+  for (const request of requests) {
     const policy = await args.policyFor(request);
     const initial = decideDelivery(request, policy);
     // Enforce the independently configured AUTH test allowlist even if a caller
