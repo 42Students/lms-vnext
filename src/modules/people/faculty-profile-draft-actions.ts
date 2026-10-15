@@ -89,3 +89,13 @@ export function facultyProfileSkillMatches(
  return !term||item.skill.toLocaleLowerCase().includes(term)||
   item.proficiency.toLocaleLowerCase().includes(term);
 }
+
+/** Move exactly one Skill without regenerating receipt-independent record IDs. */
+export function facultyMoveSkillRecord<T extends {id:string}>(
+ rows:readonly T[],id:string,toIndex:number,
+):T[]{
+ const index=rows.findIndex(row=>row.id===id);
+ if(index<0||toIndex<0||toIndex>=rows.length||index===toIndex)return [...rows];
+ const next=[...rows];const [item]=next.splice(index,1);next.splice(toIndex,0,item!);
+ return next;
+}
