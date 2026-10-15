@@ -23,6 +23,8 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      className="rounded-md border px-3 py-2 text-sm">All contacts</Link>
    <Link href={collegeContactsHref({...filter,tab:"FACULTY",page:1})} aria-current={filter.tab==="FACULTY"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">Faculty contacts</Link>
+   <Link href={collegeContactsHref({...filter,tab:"STUDENT",page:1})} aria-current={filter.tab==="STUDENT"?"page":undefined}
+     className="rounded-md border px-3 py-2 text-sm">Student contacts</Link>
   </nav>
   <section aria-label="Contacts" className="space-y-3">
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
