@@ -53,7 +53,8 @@ import { getOwnPlacementParticipationAccess } from "./batch-participation-servic
 import { isPlacementLearnerDebarred } from "./debarment-service";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
-import { canAddPlacementHeldOffer } from "./held-offer-policy";
+import { canAddPlacementHeldOffer, verifiedExternalHeldOffers } from "./held-offer-policy";
+import { placementExternalOffers } from "@/db/schema/placement-external";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 import {
@@ -788,6 +789,17 @@ export async function applyToPlacementJob(
           eq(placementApplications.membershipId, membership.id),
           eq(placementJobs.collegeId, job.collegeId),
         )).for("share");
+      const outside = await tx.select({
+        status: placementExternalOffers.status,
+        reviewedByUserId: placementExternalOffers.reviewedByUserId,
+        reviewedAt: placementExternalOffers.reviewedAt,
+        revokedAt: placementExternalOffers.revokedAt,
+        ctcLpa: placementExternalOffers.ctcLpa,
+      }).from(placementExternalOffers).where(and(
+        eq(placementExternalOffers.membershipId, membership.id),
+        eq(placementExternalOffers.collegeId, job.collegeId),
+        eq(placementExternalOffers.status, "VERIFIED"),
+      )).for("share");
       if (!canAddPlacementHeldOffer({
         maxHeldOffers: rules?.maxHeldOffers ?? 1,
         upliftPct: rules?.upliftPct ?? 40,
@@ -796,7 +808,7 @@ export async function applyToPlacementJob(
         // No registered isDream job column yet; never guess that a job
         // qualifies for an exemption.
         isDream: false,
-        heldOffers,
+        heldOffers: [...heldOffers, ...verifiedExternalHeldOffers(outside)],
       })) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       }
