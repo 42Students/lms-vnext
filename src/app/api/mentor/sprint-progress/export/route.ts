@@ -9,6 +9,7 @@ export async function GET(request:Request){
   try{
     const url=new URL(request.url);
     const query=mentorSprintProgressQuerySchema.parse({
+      projectId:url.searchParams.get("projectId")??undefined,
       state:url.searchParams.get("state")??undefined,
       release:url.searchParams.get("release")??undefined,
       search:url.searchParams.get("search")??undefined,page:1,

@@ -32,7 +32,7 @@ export async function getMentorSprintProgress(
   }
   const modules = await resolveOptionalModuleAccess(context);
   const empty = (enabled: boolean) => ({
-    enabled, query, ...mentorSprintProgressPage(0, 1),
+    enabled, query, projects:[] as {id:string;title:string}[], ...mentorSprintProgressPage(0, 1),
     items: [] as {
       id: string; title: string; status: string;
       projectId: string; projectTitle: string;
@@ -45,12 +45,15 @@ export async function getMentorSprintProgress(
   const projects = (await listMyProjectInstances(context))
     .filter(row => row.memberRole === "MENTOR" && row.project.status !== "ARCHIVED");
   const ids = projects.map(row => row.project.id);
+  const choices=projects.map(row=>({id:row.project.id,title:row.project.title}));
+  if(query.projectId&&!ids.includes(query.projectId))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if (ids.length === 0) return empty(true);
 
   // Escape pattern metacharacters so the search is literal user text.
   const escaped = query.search.replace(/[\\%_]/g, "\\$&");
   const filters = and(
     inArray(projectSprints.projectId, ids),
+    query.projectId?eq(projectSprints.projectId,query.projectId):undefined,
     eq(projectInstances.collegeId, membership.collegeId),
     ne(projectInstances.status, "ARCHIVED"),
     eq(projectReleases.projectId, projectInstances.id),
@@ -107,7 +110,7 @@ export async function getMentorSprintProgress(
   }
   return {
     enabled: true,
-    query, ...pagination,
+    query, projects:choices,...pagination,
     items: sprints.map(sprint => ({
       ...sprint,
       tasks: summarizeSprintTasks(bySprint.get(sprint.id) ?? []),
