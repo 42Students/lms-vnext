@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerUpcomingQuizEligible } from "@/modules/courses/learner-course-upcoming-quiz-model";
 import { learnerCourseHomeCompletion } from "@/modules/courses/learner-course-home-completion-model";
 import { learnerCourseHomeActionLabel } from "@/modules/courses/learner-course-home-action-label-model";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
@@ -136,11 +137,9 @@ export function LearnerCourseOverview({
         })),
       ...lesson.quizzes
         .filter(
-          (item) =>
-            item.progress.status !== "COMPLETED" &&
-            Boolean(item.dueAt) &&
-            item.dueAt!.getTime() >= now &&
-            item.dueAt!.getTime() <= activityCutoff,
+          (item) => learnerUpcomingQuizEligible({
+            status:item.progress.status,dueAt:item.dueAt,
+          },now,activityCutoff),
         )
         .map((item) => ({
           id: item.id,
@@ -249,7 +248,8 @@ export function LearnerCourseOverview({
     .slice(0, 6);
 
   const homeCompletion = learnerCourseHomeCompletion({
-    itemsTotal:summary.itemsTotal,itemsMissed:summary.itemsMissed,readOnly,
+    itemsTotal:summary.itemsTotal,itemsCompleted:summary.itemsCompleted,itemsMissed:summary.itemsMissed,readOnly,
+    hasNextAction:Boolean(nextAction),
   });
   const jumpLinks=learnerCourseOverviewJumps({
     hasPublishedPath:pathPreview.totalLessons>0,
@@ -407,6 +407,8 @@ export function LearnerCourseOverview({
                 readOnly,priorityType:priorityActivity?.type ?? null,
                 overdue:Boolean(priorityActivity && "overdue" in priorityActivity && priorityActivity.overdue),
                 hasNext:Boolean(nextAction),hasTrackable:summary.itemsTotal>0,
+                hasIncomplete:summary.itemsCompleted<summary.itemsTotal,
+                hasMissed:summary.itemsMissed>0,
               })}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
