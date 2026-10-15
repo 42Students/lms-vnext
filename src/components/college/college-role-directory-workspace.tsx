@@ -12,16 +12,13 @@ import {
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
+  parseCollegeRoleDirectorySearchParams,
   type CollegeDirectoryKind,
 } from "@/modules/people/college-role-directory-model";
 import { listCollegeRoleDirectory } from "@/modules/people/college-role-directory-service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 
 type RawSearch = Record<string, string | string[] | undefined>;
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 function joinedLabel(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -42,49 +39,26 @@ export async function CollegeRoleDirectoryWorkspace({
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
 
-  const params = await searchParams;
-  const input = {
-    q: first(params.q),
-    status: first(params.status),
-    accountStatus: first(params.accountStatus),
-    enrollment: first(params.enrollment),
-    rollPresence: first(params.rollPresence),
-    registrationPresence: first(params.registrationPresence),
-    cohortId: first(params.cohortId),
-    classPresence: first(params.classPresence),
-    teaching: first(params.teaching),
-    teachingRole: first(params.teachingRole),
-    facultyDepartmentId: first(params.facultyDepartmentId),
-    titlePresence: first(params.titlePresence),
-    departmentPresence: first(params.departmentPresence),
-    employmentType: first(params.employmentType),
-    sort: first(params.sort),
-    page: first(params.page),
-  };
-  const parsed = collegeRoleDirectoryQuerySchema.safeParse(
-    Object.fromEntries(
-      Object.entries(input).filter(([, value]) => value !== undefined && value !== ""),
-    ),
-  );
+  let filter: ReturnType<typeof parseCollegeRoleDirectorySearchParams>;
+  try {
+    filter = parseCollegeRoleDirectorySearchParams(await searchParams);
+  } catch {
+        <div className="space-y-5">
+          <PageHeader eyebrow="College Admin · People" title={title} />
+          <ErrorState
+            title="Invalid directory filters"
+            description="A search, status or page value is invalid. No people were loaded."
+            action={
+              <Link href={path} className="font-semibold text-primary-text hover:underline">
+                Clear directory filters
+              </Link>
+            }
+          />
+        </div>
+      );
+    }
 
-  if (!parsed.success) {
-    return (
-      <div className="space-y-5">
-        <PageHeader eyebrow="College Admin · People" title={title} />
-        <ErrorState
-          title="Invalid directory filters"
-          description="A search, status or page value is invalid. No people were loaded."
-          action={
-            <Link href={path} className="font-semibold text-primary-text hover:underline">
-              Clear directory filters
-            </Link>
-          }
-        />
-      </div>
-    );
-  }
-
-  const result = await listCollegeRoleDirectory(context, kind, parsed.data);
+  const result = await listCollegeRoleDirectory(context, kind, filter);
   return (
     <div className="space-y-6">
       <PageHeader

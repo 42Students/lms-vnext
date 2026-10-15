@@ -3,6 +3,7 @@ import {
   collegeRoleDirectoryHref,
   collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
+  parseCollegeRoleDirectorySearchParams,
   collegeDirectorySearchHint,
 } from "@/modules/people/college-role-directory-model";
 
@@ -99,5 +100,15 @@ describe("College Admin Faculty/Students directory helpers", () => {
     expect(describeCollegeDirectoryContext("LEARNER", {
       ...row, program: null,
     })).toBe("No active program/batch enrollment recorded");
+  });
+});
+
+describe("College role directory URL trust boundary", () => {
+  it("rejects duplicate filters and caller-supplied college IDs", () => {
+    expect(() => parseCollegeRoleDirectorySearchParams({q:["An","Bob"]})).toThrow("INVALID_ROLE_DIRECTORY_FILTERS");
+    expect(() => parseCollegeRoleDirectorySearchParams({collegeId:"foreign"})).toThrow("INVALID_ROLE_DIRECTORY_FILTERS");
+  });
+  it("accepts a single bounded query without rewriting its search text", () => {
+    expect(parseCollegeRoleDirectorySearchParams({q:" An ",page:"2"})).toMatchObject({q:"An",page:2});
   });
 });
