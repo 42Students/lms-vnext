@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,isNull,isNotNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {db10Announcements} from "@/db/schema/db10-announcements.draft";
+import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
