@@ -1543,3 +1543,16 @@ This round used the current Faculty PARTIAL Blueprint row as the next unbuilt wo
 - Authored tests: fixed-IST conversion, persisted revocation, timetable conflict, published-only mutation policy, edit hydration, strict pre-confirm validation, Section disambiguation, exact cancellation, typed recovery messages, create-form resets and success feedback.
 
 **PARTIAL, not DONE:** no local TypeScript, unit, database, CI or authenticated 375px browser gates were executed in this chat. Exact legacy Blueprint content authoring, recorded multi-instructor/room scheduling edge cases and registered student-visibility end-to-end acceptance are still outstanding. The independently blocked Quiz shuffle and private profile-document migrations were not altered.
+
+## 2026-10-15 Faculty Self Profile security and recovery — PARTIAL (chat-4 next lane batch)
+
+This batch targets the remaining PARTIAL Faculty Self Profile row rather than reopening already accepted Faculty reports/attendance/contacts. It begins after merging latest `main`; the registered DB08 migration was preserved without changes. Section 8 contains no Faculty-specific MISSING row.
+
+- **Metadata:** protected legacy string metadata keys are retained unchanged when public keys are edited, rather than silently erased. Keys that could mutate object prototypes or use whitespace aliases are rejected before saving. Protected metadata cannot be overwritten through hand-written PATCH requests.
+- **Receipt boundaries:** a Faculty self-profile section PATCH cannot insert, replace or reassign education certificates, certification receipts, experience certificates or offer-letter document IDs; receipt-bearing entries cannot be deleted until a college-managed document revocation workflow exists. The editor explains why its Remove control is disabled for those records.
+- **Professional links:** any new/changed link must be HTTPS without embedded credentials or localhost targeting; unchanged historical values are not silently destroyed.
+- **Request safety:** PATCH bodies are streamed and capped at 1 MiB before JSON parsing, including requests without a Content-Length header; excessive requests receive HTTP 413. Existing same-origin requirements remain.
+- **Optimistic-save recovery:** a ref-based in-flight guard prevents rapid duplicate submits using the same version; typed failure messages distinguish storage unavailability, stale profile (with explicit user-triggered reload), oversized requests and access loss. Unrelated unsaved section drafts remain untouched by a successful save.
+- **Testing:** focused unit tests authored for protected legacy metadata preservation, prototype-key rejection, private receipt injection, managed-file deletion protection, HTTPS updates, oversize/malformed request bodies, duplicate-save fencing and conflict recovery.
+
+**Acceptance outstanding:** no independent TypeScript, lint, disposable PostgreSQL or authenticated browser/mobile gates were executed. Self Profile stays PARTIAL while its private-document migration, signed upload receipts and contact privacy policy are unresolved. Quiz shuffle and remaining Blueprint browser acceptance are independent blockers and unchanged. No matrix row was promoted to DONE.
