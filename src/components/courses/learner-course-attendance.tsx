@@ -1,5 +1,6 @@
 "use client";
 
+import { learnerCourseAttendanceMonthShortcutVisible } from "@/modules/attendance/learner-course-attendance-month-shortcut-model";
 import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { useMemo, useState } from "react";
 import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached } from "@/modules/attendance/learner-course-attendance-summary-model";
@@ -331,6 +332,15 @@ export function LearnerCourseAttendance({
                 className="mt-1.5 min-h-9 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
               />
             </label>
+            {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),defaultMonth) ? (
+              <Button size="sm" variant="secondary"
+                onClick={() => {
+                  const [year,nextMonth]=defaultMonth.split("-").map(Number);
+                  setMonth(new Date(year,nextMonth-1,1));
+                }}>
+                This month
+              </Button>
+            ) : null}
             <Button
               size="sm"
               variant="secondary"
