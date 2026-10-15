@@ -2,9 +2,10 @@ import "server-only";
 import {and,asc,eq,ilike,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
-import {profileVerifications} from "@/db/schema/profile-verification";
+import {profileVerificationSettings,profileVerifications} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import {verificationQueueFilters} from "./queue-filters";
+import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
 import {submittedMarksheets} from "./queue-mark-sheets";
@@ -22,6 +23,9 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  const filter=verificationQueueFilters.parse(raw);
  const scope=await requireCollegeVerificationActor(context);
  await requireVerificationTables();
+ const [tpoSettings]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+  .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
+ const tpoCanVerify=effectiveTpoVerifierSetting(tpoSettings);
  // Cap the working set and FAIL LOUDLY rather than silently reporting
  // truncated counts. Indexed DB-side paging is a later optimization.
  const rows=await getDb().select({
@@ -75,5 +79,5 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    section,status,version:row.version,submittedAt:row.submittedAt,batchName:byMember.get(row.membershipId)?.batchName??null,branchName:byMember.get(row.membershipId)?.branchName??null,
    missingMarksheet,attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
  });
- return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+25<pageRows.length,filter};
+ return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+25<pageRows.length,filter,tpoCanVerify};
 }

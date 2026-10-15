@@ -7,10 +7,10 @@ import {TpoVerificationSwitch} from "./TpoVerificationSwitch";
 import {VerificationExportControl} from "./VerificationExportControl";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
-export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,query}:{
+export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,query,tpoCanVerify}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
  activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;
- query:Record<string,string>;
+ query:Record<string,string>;tpoCanVerify:boolean;
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
  function navigate(patch:Record<string,string>){
@@ -21,7 +21,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const exportQuery=new URLSearchParams(query);
  exportQuery.set("tab",activeTab);
  return <div className="min-w-0 space-y-4">
-  <TpoVerificationSwitch/>
+  <TpoVerificationSwitch key={String(tpoCanVerify)} initialEnabled={tpoCanVerify}/>
   <div className="flex flex-wrap items-center justify-end gap-2">
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <button type="button" onClick={()=>router.refresh()} className="rounded-md border px-3 py-2 text-sm">Refresh</button>
