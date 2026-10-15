@@ -7,6 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {listCollegeVerificationQueue} from "@/modules/verification/staff-queue-service";
 import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions} from "@/modules/verification/filter-options-service";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
+import {reviewCollegeVerificationBulk} from "@/modules/verification/staff-bulk-review-service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
@@ -127,6 +128,14 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
  it("does not leak foreign-college verification details or permit cross-college review",async()=>{
   await expect(reviewProfileVerification(admin,{...ownBody,learnerMembershipId:ids.foreignMember},
    createProfileVerificationRepository())).rejects.toBeInstanceOf(AuthorizationError);
+ });
+ it("bulk command rejects forged roles and reports foreign rows without leaking data",async()=>{
+  const foreignInput={confirm:true,action:"SEND_BACK",reason:"Please provide legible evidence",
+   items:[{learnerMembershipId:ids.foreignMember,section:"IDENTITY",expectedVersion:1}]};
+  await expect(reviewCollegeVerificationBulk(wrongRole,foreignInput)).rejects.toBeInstanceOf(AuthorizationError);
+  const response=await reviewCollegeVerificationBulk(admin,foreignInput);
+  expect(response.summary).toEqual({attempted:1,succeeded:0,failed:1});
+  expect(response.outcomes[0].result).toBe("NOT_AVAILABLE");
  });
  it("commits a send-back event and learner in-app notification, rejecting replay",async()=>{
   const saved=await reviewProfileVerification(admin,ownBody,createProfileVerificationRepository());
