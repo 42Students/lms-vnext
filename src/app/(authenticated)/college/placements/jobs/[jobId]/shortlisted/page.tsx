@@ -25,6 +25,9 @@ export default async function CollegeDriveShortlistedPage({
     description="The requested search or page is invalid." />;
   const query={...parsed.data,status:"SUBMITTED" as const,screening:"SHORTLISTED" as const};
   const data=await listCollegeDriveApplications(context,jobId,query);
+  if(query.page>data.totalPages) {
+    redirect(collegeShortlistedHref(jobId,{q:query.q,page:data.totalPages}));
+  }
   return <div className="space-y-6">
     <PageHeader eyebrow="Drives" title="Shortlisted"
       description={data.drive.title}
@@ -38,6 +41,8 @@ export default async function CollegeDriveShortlistedPage({
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <p role="status" className="text-sm">{data.total} shortlisted</p>
+    {query.q&&data.total===0?<Link href={collegeShortlistedHref(jobId,{q:"",page:1})}
+      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Clear filters</Link>:null}
     <a className="text-sm font-semibold text-primary-text underline" href={
       "/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
       (driveApplicationsHref(jobId,query,true).split("/export")[1]??"")
