@@ -35,6 +35,8 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
   { id: "pending", label: "Awaiting response" },
   { id: "accepted", label: "Accepted" },
   { id: "closed", label: "Declined / withdrawn" },
+  { id: "declined", label: "Declined" },
+  { id: "withdrawn", label: "Withdrawn by placement team" },
 ];
 
 export default async function LearnerOffersPage({

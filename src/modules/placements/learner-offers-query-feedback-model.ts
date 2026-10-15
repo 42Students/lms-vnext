@@ -1,7 +1,7 @@
 import { z } from "zod";
 const uuid=z.string().uuid();
 const schema=z.strictObject({
- status:z.enum(["all","pending","accepted","closed"]).optional(),
+ status:z.enum(["all","pending","accepted","closed","declined","withdrawn"]).optional(),
  q:z.string().trim().max(80).optional(),
  due:z.enum(["0","1"]).optional(),
  page:z.string().regex(/^[1-9][0-9]{0,3}$/).optional(),
