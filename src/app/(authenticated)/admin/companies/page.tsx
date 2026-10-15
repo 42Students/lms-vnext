@@ -13,7 +13,7 @@ export default async function SuperAdminCompaniesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, status: params.status,
+    q: params.q, status: params.status, trust: params.trust,
   });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
@@ -27,7 +27,7 @@ export default async function SuperAdminCompaniesPage({
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies"
       description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
-    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto_auto]">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
         <input name="q" defaultValue={data.query.q} placeholder="Search companies"
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -36,6 +36,11 @@ export default async function SuperAdminCompaniesPage({
         <select name="status" defaultValue={data.query.status}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Trust state
+        <select name="trust" defaultValue={data.query.trust} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="ALL">All</option><option value="TRUSTED">Trusted</option><option value="UNTRUSTED">Not trusted</option>
         </select>
       </label>
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>

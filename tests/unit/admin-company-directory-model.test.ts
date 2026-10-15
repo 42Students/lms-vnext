@@ -15,5 +15,7 @@ describe("Super Admin company directory projection", () => {
   it("strictly validates filters", () => {
     expect(adminCompaniesQuerySchema.safeParse({ status: "HIDDEN" }).success).toBe(false);
     expect(adminCompaniesQuerySchema.safeParse({ q: "x".repeat(101) }).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({trust:"TRUSTED"}).trust).toBe("TRUSTED");
+    expect(adminCompaniesQuerySchema.safeParse({trust:"PENDING"}).success).toBe(false);
   });
 });

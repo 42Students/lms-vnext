@@ -860,3 +860,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 module hierarchy descendant scope filter (PARTIAL):** Existing selected-college rules can now be filtered by Department, Program, Cohort, Section or Membership, combined with optional module filter. SQL applies exact enum-checked filters to count and rows, and page links retain both. A disposable-PG fixture and schema regression authored; no runtime browser/PG execution. Edit, audit/history, learner count and lock workflows remain open.
+
+
+**2026-10-15 chat-6 Companies trust filter (PARTIAL):** Super Admin company relationships now filter by Trusted/Not trusted/All through a strict Zod enum and scoped SQL predicate, keeping status and name filters. Counts and curation candidates derive only from the selected subset, and the 200-row completeness caveat remains. Pure model and disposable-Postgres scope tests authored, not run; legacy curation verification/merge and browser tests still open.

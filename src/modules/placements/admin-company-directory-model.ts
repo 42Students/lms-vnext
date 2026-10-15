@@ -3,6 +3,7 @@ import { z } from "zod";
 export const adminCompaniesQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
+  trust: z.enum(["ALL", "TRUSTED", "UNTRUSTED"]).default("ALL"),
 });
 export type AdminCompanyRow = {
   relationshipId: string; companyId: string; name: string; collegeId: string;
