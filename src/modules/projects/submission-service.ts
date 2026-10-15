@@ -6,6 +6,8 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {readProjectReadinessOverride} from "./readiness-override-service";
+import {effectiveProjectSubmissionReady} from "./readiness-override-model";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { projectDeliveryActivity } from "./delivery-activity-model";
 import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
@@ -268,10 +270,12 @@ export async function submitProjectSubmission(
       .for("update")
       .limit(1);
 
-    if (!project || project.status !== "COMPLETED") {
-      throw new ProjectsServiceError(
-        "PROJECT_SUBMISSION_INVALID_STATE",
-      );
+    if (!project || project.status === "ARCHIVED") {
+      throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+    }
+    const override=await readProjectReadinessOverride(tx,scope.project.id,scope.collegeId);
+    if (!effectiveProjectSubmissionReady(project.status === "COMPLETED",override.state)) {
+      throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
     }
 
     const [submission] = await tx
