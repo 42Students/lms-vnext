@@ -8,12 +8,13 @@ import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-histo
 
 export default async function RecruiterDriveProposalHistory({
  searchParams,
-}:{searchParams:Promise<{collegeId?:string|string[]}>}){
+}:{searchParams:Promise<{collegeId?:string|string[];page?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
  const raw=await searchParams;
  const id=Array.isArray(raw.collegeId)?raw.collegeId[0]:raw.collegeId;
- const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id});
+ const rawPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
+ const input=hrDriveProposalHistoryQuerySchema.safeParse({collegeId:id,page:rawPage});
  if(!input.success)notFound();
  const data=await listHrDriveProposals(context,input.data);
  return <main className="space-y-5">
@@ -29,9 +30,10 @@ export default async function RecruiterDriveProposalHistory({
     className="block rounded-md border border-border p-3 text-primary-text"
     href={"/hr/drives/proposals?collegeId="+grant.collegeId}>{grant.collegeName}</Link>)}
   </section>:data.status==="NO_ACCESS"?<p role="status">No active recruiter college access.</p>:<>
-   {data.limited?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">
-    Showing the 50 most recent proposal messages. Open the conversation for older history.
-   </p>:null}
+   <p role="status" className="text-sm text-body">
+    {data.total} recorded discussion proposals · Page {data.page} of {data.pages}.
+    These are not submitted approval requests.
+   </p>
    {data.items.length?<ol className="space-y-3">
     {data.items.map(row=><li key={row.id}
      className="rounded-xl border border-border bg-surface p-4">
@@ -50,6 +52,12 @@ export default async function RecruiterDriveProposalHistory({
    </ol>:<p role="status" className="rounded-xl border border-border p-5 text-sm text-body">
     No persisted drive proposals for this college. Draft a proposal to start a discussion.
    </p>}
+   <nav aria-label="Sent proposal pages" className="flex flex-wrap gap-3">
+    {data.page>1?<Link href={"/hr/drives/proposals?collegeId="+encodeURIComponent(data.collegeId!)+"&page="+(data.page-1)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newer proposals</Link>:null}
+    {data.page<data.pages?<Link href={"/hr/drives/proposals?collegeId="+encodeURIComponent(data.collegeId!)+"&page="+(data.page+1)}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older proposals</Link>:null}
+   </nav>
   </>}
  </main>;
 }
