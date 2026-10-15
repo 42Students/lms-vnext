@@ -26,6 +26,7 @@ import {getOwnLearnerPlacementGreeting} from "@/modules/placements/learner-dashb
 import {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
+import { LEARNER_PLACEMENTS_HOME_SUBTITLE } from "@/modules/placements/learner-placement-copy-model";
 import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-verification-status-service";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import {learnerPlacementVerificationCue} from "@/modules/placements/learner-verification-cue-model";
@@ -219,7 +220,7 @@ export default async function LearnerPlacementsPage({
       <PageHeader
         eyebrow="Learner"
         title="My Placements"
-        description="Your placement dashboard, applications, assessments, interviews and career activity."
+        description={LEARNER_PLACEMENTS_HOME_SUBTITLE}
       />
 
       <div className="flex flex-wrap gap-3">
