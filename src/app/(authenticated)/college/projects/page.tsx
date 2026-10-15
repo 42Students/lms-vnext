@@ -68,9 +68,7 @@ export default async function CollegeProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        eyebrow="College Admin"
-        title="Projects"
-        description="College Project workspaces, execution state, teams, delivery and review."
+        title="Workspaces"
         actions={
           <CreateProjectControl
             collegeId={membership.collegeId}
