@@ -34,9 +34,16 @@ export function normalizeRecipient(channel: "EMAIL" | "SMS", recipient: string):
   return channel === "EMAIL" ? recipient.trim().toLowerCase() : recipient.trim();
 }
 export function isValidRecipient(channel: "EMAIL" | "SMS", recipient: string): boolean {
-  return channel === "EMAIL"
-    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)
-    : /^\+[1-9][0-9]{7,14}$/.test(recipient);
+  if(channel === "SMS")return /^\+[1-9][0-9]{7,14}$/.test(recipient);
+  if(recipient.length>254||/[\x00-\x1f\x7f]/.test(recipient))return false;
+  const match=/^([^\s@]+)@([^\s@]+)$/.exec(recipient);
+  if(!match)return false;
+  const [,local,domain]=match;
+  if(local.length>64||!local||local.startsWith(".")||local.endsWith(".")||
+     local.includes("..")||domain.length>253||!domain.includes("."))return false;
+  const labels=domain.split(".");
+  return labels.every(label=>label.length>0&&label.length<=63&&
+    !label.startsWith("-")&&!label.endsWith("-")&&/^[A-Za-z0-9-]+$/.test(label));
 }
 export function decideDelivery(request: OutboundSendRequest, policy: DeliveryPolicy): OutboundDecision {
   const recipient = normalizeRecipient(request.channel, request.recipient);
