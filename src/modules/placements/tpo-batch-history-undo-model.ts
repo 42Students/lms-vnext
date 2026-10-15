@@ -3,7 +3,7 @@ type HistoryEvent = {
   reversesActionId: string | null; scopeType: string;
 };
 /** Hint only: authoritative reversal still runs inside the DB08 transaction. */
-export function actionableBatchHistory(events: readonly HistoryEvent[]) {
+export function actionableBatchHistory<T extends HistoryEvent>(events: readonly T[]) {
   const reversed = new Set(events.flatMap(event =>
     event.kind === "UNDO" && event.reversesActionId ? [event.reversesActionId] : []));
   const newest = events.find(event => event.scopeType === "COHORT");
