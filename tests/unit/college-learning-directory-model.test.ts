@@ -275,4 +275,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(lessonsCsvHref(q)).toContain("resourceEvidence=NO_RESOURCE");
   });
 
+  it("retains saved live-class lesson existence in page and CSV",()=>{
+    expect(collegeLessonQuerySchema.safeParse({liveEvidence:"ATTENDED"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({liveEvidence:"NO_LIVE"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("liveEvidence=NO_LIVE");
+    expect(lessonsCsvHref(q)).toContain("liveEvidence=NO_LIVE");
+  });
+
 });

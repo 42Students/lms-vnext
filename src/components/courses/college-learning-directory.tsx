@@ -419,6 +419,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               </select>
             </label>
           ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved live-class items
+              <select name="liveEvidence" defaultValue={data.query.liveEvidence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All lessons</option><option value="HAS_LIVE">Has live-class items</option><option value="NO_LIVE">No live-class items</option>
+              </select>
+            </label>
+          ) : null}
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">

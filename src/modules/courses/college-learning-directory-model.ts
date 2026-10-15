@@ -12,6 +12,7 @@ export const collegeLearningQuerySchema = z.object({
 }).strict();
 export type CollegeLearningQuery = z.infer<typeof collegeLearningQuerySchema>;
 export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
+  liveEvidence:z.enum(["ALL","HAS_LIVE","NO_LIVE"]).default("ALL"),
   resourceEvidence:z.enum(["ALL","HAS_RESOURCE","NO_RESOURCE"]).default("ALL"),
   videoEvidence:z.enum(["ALL","HAS_VIDEO","NO_VIDEO"]).default("ALL"),
   hiddenPublished:z.enum(["ALL","HAS_HIDDEN","NO_HIDDEN"]).default("ALL"),
@@ -70,6 +71,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if(kind==="LESSONS"&&"liveEvidence" in query&&query.liveEvidence!=="ALL")params.set("liveEvidence",query.liveEvidence);
   if(kind==="LESSONS"&&"resourceEvidence" in query&&query.resourceEvidence!=="ALL")params.set("resourceEvidence",query.resourceEvidence);
   if(kind==="LESSONS"&&"videoEvidence" in query&&query.videoEvidence!=="ALL")params.set("videoEvidence",query.videoEvidence);
   if(kind==="LESSONS"&&"hiddenPublished" in query&&query.hiddenPublished!=="ALL")params.set("hiddenPublished",query.hiddenPublished);
