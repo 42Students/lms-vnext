@@ -11,3 +11,7 @@ Taken by Claude under the owner's delegated ownership. Reversible; the owner may
 
 ## Owner confirmations (2026-10-14 ~21:45)
 Owner confirmed items 1 (contact visibility default), 2 (IST), 3 (mentor membership writes) as written, and approved creating the private R2 bucket `lms-vnext-private` (item 4 becomes: file features may be built once the bucket exists and the storage module (owned by the orchestrator, not chats) exposes signed upload/download helpers).
+
+## Owner decisions 2026-10-15 (supersede earlier items 4 and 5 where they conflict)
+7. **Legacy dev-only features are in scope.** Everything on the legacy `lms-dev-2026` branch (see docs/planning/legacy-delta-audit-2026-10-15.md, matrix section 8) is part of the target alongside prod-2026.
+8. **Messaging works like the old LMS.** Email, SMS and other outbound messages (announcement reminders, batch invites and reminders, email campaigns, recruiter invites, verification notifications, WhatsApp prepared messages as in legacy) are real flows, not stubs. Implement them through a single outbound-delivery module with provider adapters over the existing integrations (ZeptoMail email, Exotel SMS; keep legacy semantics: preview audience, sent history, per-recipient status, unsubscribe link and suppression list, rate limits, audit). Safety rule for non-production: when APP_ENV is not production, deliver ONLY to recipients on the configured test allowlist (AUTH test email/phone lists); everything else is recorded as 'suppressed-nonprod' with the reason. Never send to a real address from dev/test data.
