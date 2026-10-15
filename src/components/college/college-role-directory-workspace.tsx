@@ -43,20 +43,17 @@ export async function CollegeRoleDirectoryWorkspace({
   try {
     filter = parseCollegeRoleDirectorySearchParams(await searchParams);
   } catch {
-        <div className="space-y-5">
-          <PageHeader eyebrow="College Admin · People" title={title} />
-          <ErrorState
-            title="Invalid directory filters"
-            description="A search, status or page value is invalid. No people were loaded."
-            action={
-              <Link href={path} className="font-semibold text-primary-text hover:underline">
-                Clear directory filters
-              </Link>
-            }
-          />
-        </div>
-      );
-    }
+    return (
+      <div className="space-y-5">
+        <PageHeader eyebrow="College Admin · People" title={title} />
+        <ErrorState
+          title="Invalid directory filters"
+          description="A search, status or page value is invalid. No people were loaded."
+          action={<Link href={path} className="font-semibold text-primary-text hover:underline">Clear directory filters</Link>}
+        />
+      </div>
+    );
+  }
 
   const result = await listCollegeRoleDirectory(context, kind, filter);
   return (
