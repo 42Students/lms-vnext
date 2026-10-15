@@ -17,6 +17,7 @@ import {
   listSuperAdminFeatureControls,
 } from "@/modules/module-access/admin-read-service";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
+import { placementFeatureEffects } from "@/modules/platform-settings/placement-feature-controls-model";
 
 type SearchParams = Record<
   string,
@@ -52,6 +53,11 @@ function ModuleState({
       <p className="m-0 text-xs leading-5 text-muted-foreground">
         {describeModuleDecision(decision)}
       </p>
+      {decision.module === "placements" && !decision.enabled ? (
+        <p className="m-0 text-xs leading-5 text-muted-foreground">
+          Placement policy: {placementFeatureEffects(false).impact} This is a policy explanation, not confirmation that every downstream screen is enforced.
+        </p>
+      ) : null}
     </div>
   );
 }

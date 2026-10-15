@@ -1,0 +1,2 @@
+import {it,expect} from "vitest";import {previewEligibilityImport} from "@/modules/placements/tpo-eligibility-import-model";
+it("rejects duplicate and unknown students before import",()=>{const rows=[{studentCode:"1",decision:"ELIGIBLE" as const},{studentCode:"1",decision:"ELIGIBLE" as const},{studentCode:"9",decision:"ELIGIBLE" as const}];expect(previewEligibilityImport(rows,[{studentCode:"1",membershipId:"m"}]).map(r=>r.status)).toEqual(["matched","unusable","unusable"]);});

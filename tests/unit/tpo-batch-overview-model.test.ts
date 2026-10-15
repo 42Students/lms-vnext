@@ -1,0 +1,2 @@
+import {it,expect} from "vitest";import {batchDecisionBar,batchNextStep} from "@/modules/placements/tpo-batch-overview-model";
+it("counts and chooses a single next step",()=>{const c={eligible:7,ineligible:2,undecided:1,invited:0,applied:0,placed:0,finished:false};expect(batchDecisionBar(c).total).toBe(10);expect(batchNextStep(c)).toBe("DECIDE");expect(batchNextStep({...c,undecided:0})).toBe("INVITE");});

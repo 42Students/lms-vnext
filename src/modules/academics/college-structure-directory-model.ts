@@ -11,24 +11,33 @@ export const collegeStructureQuerySchema = z.object({
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassQuerySchema = collegeStructureQuerySchema.extend({
+  cohortCode: z.string().trim().min(1).max(64).optional(),
+  capacityState: z.enum(["ALL","CONFIGURED","UNSET"]).default("ALL"),
   minimumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
   maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
 });
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
-export const collegeElectiveQuerySchema = collegeStructureQuerySchema.extend({
+export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
   minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
+  maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
 });
+
+export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{ minimumCredits?: number; maximumCredits?: number }>>(schema:T) {
+  return schema.refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
+    {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"});
+}
+export const collegeElectiveQuerySchema = withCollegeElectiveCreditsCheck(collegeElectiveBaseQuerySchema);
 export type CollegeElectiveQuery = z.infer<typeof collegeElectiveQuerySchema>;
 
 export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((key === "programId" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits") && !value)) {
+    if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
       result[key] = value;
     }
   }
@@ -41,6 +50,10 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (query.q) params.set("q", query.q);
   if (query.programId) params.set("programId", query.programId);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if (kind === "CLASSES" && "cohortCode" in query && query.cohortCode)
+    params.set("cohortCode",query.cohortCode);
+  if (kind === "CLASSES" && "capacityState" in query && query.capacityState !== "ALL")
+    params.set("capacityState",query.capacityState);
   if (kind === "CLASSES" && "minimumCapacity" in query && query.minimumCapacity !== undefined)
     params.set("minimumCapacity", String(query.minimumCapacity));
   if (kind === "CLASSES" && "maximumCapacity" in query && query.maximumCapacity !== undefined)
@@ -49,6 +62,8 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
     params.set("semesterNumber", String(query.semesterNumber));
   if (kind === "ELECTIVES" && "minimumCredits" in query && query.minimumCredits !== undefined)
     params.set("minimumCredits",String(query.minimumCredits));
+  if (kind === "ELECTIVES" && "maximumCredits" in query && query.maximumCredits !== undefined)
+    params.set("maximumCredits",String(query.maximumCredits));
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }
