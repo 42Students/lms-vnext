@@ -132,6 +132,8 @@ Legacy contract:
 **W06 College Admin directory implementation (2026-10-10):** the existing College Admin `/college/departments` page now reuses `DepartmentDirectory`, matching the Super Admin search, CSV export, refresh, ten-row pagination and Programs/Courses/Faculty dependency counts. The `/college` layout enforces an active COLLEGE_ADMIN membership; server list uses only the active membership collegeId and the `department.read` service permission check. Each usage lookup is made only on IDs returned by that authorized query. Failed usage lookups show unknown (—), not 0. Legacy `/college-admin/departments` URL/bookmark is not yet aliased; browser behavior is not yet verified. Authored code does not advance this page to DONE.
 
 ## Page: Programs
+**Legacy duration-years editing PARTIAL (2026-10-15):** The College Admin edit dialog now accepts half-year increments, converts back to persisted terms for the unchanged validated endpoint, and compares normalized values for the unsaved-change prompt. Other admin roles retain terms-first editing. UI/browser acceptance open.
+
 **Legacy duration-years form PARTIAL (2026-10-15):** College Admin create and list now use explicit years with half-year increments, converted exactly to registered integer terms for the existing scoped write service. Validation rejects fractions not representable as terms; no schema changes. Existing edit dialog still terms-first; browser acceptance open.
 
 **Legacy:** `/college-admin/programs`
