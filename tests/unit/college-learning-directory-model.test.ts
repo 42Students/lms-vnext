@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import {collegeProgressCsvHref} from "@/modules/courses/college-progress-export-model";
 import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 import {
   collegeLearningHref,
@@ -177,6 +178,143 @@ describe("College Admin lessons and course progress pure models", () => {
     const query=collegeLessonQuerySchema.parse({contentType:"YOUTUBE"});
     expect(new URL(collegeLearningHref("LESSONS",query),"https://test.example").searchParams.get("contentType")).toBe("YOUTUBE");
     expect(new URL(lessonsCsvHref(query),"https://test.example").searchParams.get("contentType")).toBe("YOUTUBE");
+  });
+
+  it("validates persisted contentLifecycle for lesson pages and CSV", () => {
+    expect(collegeLessonQuerySchema.safeParse({contentLifecycle:"UNKNOWN"}).success).toBe(false);
+    const query=collegeLessonQuerySchema.parse({contentLifecycle:"PUBLISHED"});
+    expect(new URL(collegeLearningHref("LESSONS",query),"https://t.example").searchParams.get("contentLifecycle")).toBe("PUBLISHED");
+    expect(new URL(lessonsCsvHref(query),"https://t.example").searchParams.get("contentLifecycle")).toBe("PUBLISHED");
+  });
+
+  it("validates one-based lesson sequence lower bound on page and CSV", () => {
+    expect(collegeLessonQuerySchema.safeParse({sequenceFrom:0}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({sequenceFrom:10001}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({sequenceFrom:"2"});
+    expect(new URL(collegeLearningHref("LESSONS",q),"https://t.example").searchParams.get("sequenceFrom")).toBe("2");
+    expect(new URL(lessonsCsvHref(q),"https://t.example").searchParams.get("sequenceFrom")).toBe("2");
+  });
+
+  it("validates one-based lesson order upper bound on page and CSV", () => {
+    expect(collegeLessonQuerySchema.safeParse({sequenceThrough:0}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({sequenceThrough:10001}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({sequenceThrough:"1"});
+    expect(new URL(collegeLearningHref("LESSONS",q),"https://t.example").searchParams.get("sequenceThrough")).toBe("1");
+    expect(new URL(lessonsCsvHref(q),"https://t.example").searchParams.get("sequenceThrough")).toBe("1");
+  });
+
+  it("round-trips bounded exact lesson title through page and CSV", () => {
+    expect(collegeLessonQuerySchema.safeParse({lessonName:"x".repeat(256)}).success).toBe(false);
+    expect(collegeLessonQuerySchema.safeParse({lessonName:" "}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({lessonName:"  Intro & Set-up "});
+    expect(q.lessonName).toBe("Intro & Set-up");
+    expect(new URL(collegeLearningHref("LESSONS",q),"https://t.example").searchParams.get("lessonName")).toBe("Intro & Set-up");
+    expect(new URL(lessonsCsvHref(q),"https://t.example").searchParams.get("lessonName")).toBe("Intro & Set-up");
+  });
+
+  it("accepts only saved-lesson presence values and retains CSV selector",()=>{
+    expect(collegeProgressQuerySchema.safeParse({lessonPresence:"INFERRED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({lessonPresence:"HAS_LESSONS"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("lessonPresence=HAS_LESSONS");
+    expect(collegeProgressCsvHref(q)).toContain("lessonPresence=HAS_LESSONS");
+  });
+
+  it("retains scoped authored-assignment selector in progress and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({assignmentPresence:"SUBMITTED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({assignmentPresence:"NO_ASSIGNMENTS"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("assignmentPresence=NO_ASSIGNMENTS");
+    expect(collegeProgressCsvHref(q)).toContain("assignmentPresence=NO_ASSIGNMENTS");
+  });
+
+  it("persists authored quiz triage across progress navigation and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({quizPresence:"ATTEMPTED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({quizPresence:"NO_QUIZZES"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("quizPresence=NO_QUIZZES");
+    expect(collegeProgressCsvHref(q)).toContain("quizPresence=NO_QUIZZES");
+  });
+
+  it("keeps persisted resource triage in progress page and export",()=>{
+    expect(collegeProgressQuerySchema.safeParse({resourcePresence:"DOWNLOADED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({resourcePresence:"NO_RESOURCES"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("resourcePresence=NO_RESOURCES");
+    expect(collegeProgressCsvHref(q)).toContain("resourcePresence=NO_RESOURCES");
+  });
+
+  it("validates saved live class selector on progress and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({liveClassPresence:"ATTENDED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({liveClassPresence:"NO_LIVE"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("liveClassPresence=NO_LIVE");
+    expect(collegeProgressCsvHref(q)).toContain("liveClassPresence=NO_LIVE");
+  });
+
+  it("preserves actual shared versus section lesson-content audience in CSV",()=>{
+    expect(collegeLessonQuerySchema.safeParse({contentAudience:"LEARNER"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({contentAudience:"SECTION"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("contentAudience=SECTION");
+    expect(lessonsCsvHref(q)).toContain("contentAudience=SECTION");
+  });
+
+  it("preserves hidden published flags without inferring learner access",()=>{
+    expect(collegeLessonQuerySchema.safeParse({hiddenPublished:"PRIVATE_FILE"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({hiddenPublished:"HAS_HIDDEN"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("hiddenPublished=HAS_HIDDEN");
+    expect(lessonsCsvHref(q)).toContain("hiddenPublished=HAS_HIDDEN");
+  });
+
+  it("retains actual video-resource triage on lesson pages and export",()=>{
+    expect(collegeLessonQuerySchema.safeParse({videoEvidence:"WATCHED"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({videoEvidence:"NO_VIDEO"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("videoEvidence=NO_VIDEO");
+    expect(lessonsCsvHref(q)).toContain("videoEvidence=NO_VIDEO");
+  });
+
+  it("keeps resource existence filter in lesson and CSV links",()=>{
+    expect(collegeLessonQuerySchema.safeParse({resourceEvidence:"DOWNLOADED"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({resourceEvidence:"NO_RESOURCE"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("resourceEvidence=NO_RESOURCE");
+    expect(lessonsCsvHref(q)).toContain("resourceEvidence=NO_RESOURCE");
+  });
+
+  it("retains saved live-class lesson existence in page and CSV",()=>{
+    expect(collegeLessonQuerySchema.safeParse({liveEvidence:"ATTENDED"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({liveEvidence:"NO_LIVE"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("liveEvidence=NO_LIVE");
+    expect(lessonsCsvHref(q)).toContain("liveEvidence=NO_LIVE");
+  });
+
+  it("retains persisted video presence on progress and capped CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({videoContentState:"WATCHED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({videoContentState:"NO_VIDEO"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("videoContentState=NO_VIDEO");
+    expect(collegeProgressCsvHref(q)).toContain("videoContentState=NO_VIDEO");
+  });
+
+  it("keeps authoring publication state on progress and CSV without visibility inference",()=>{
+    expect(collegeProgressQuerySchema.safeParse({publishedContentState:"ENROLLED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({publishedContentState:"HAS_PUBLISHED"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("publishedContentState=HAS_PUBLISHED");
+    expect(collegeProgressCsvHref(q)).toContain("publishedContentState=HAS_PUBLISHED");
+  });
+
+  it("roundtrips hidden publication metadata in progress and CSV safely",()=>{
+    expect(collegeProgressQuerySchema.safeParse({hiddenContentState:"AUTHORIZED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({hiddenContentState:"NO_HIDDEN"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("hiddenContentState=NO_HIDDEN");
+    expect(collegeProgressCsvHref(q)).toContain("hiddenContentState=NO_HIDDEN");
+  });
+
+  it("roundtrips actual shared offering content state into progress CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({sharedContentState:"USER_SHARED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({sharedContentState:"HAS_SHARED"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("sharedContentState=HAS_SHARED");
+    expect(collegeProgressCsvHref(q)).toContain("sharedContentState=HAS_SHARED");
+  });
+
+  it("retains saved section association filter across progress and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({sectionContentState:"SECTION_COUNT"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({sectionContentState:"NO_SECTION"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("sectionContentState=NO_SECTION");
+    expect(collegeProgressCsvHref(q)).toContain("sectionContentState=NO_SECTION");
   });
 
 });
