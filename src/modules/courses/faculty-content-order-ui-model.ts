@@ -24,3 +24,12 @@ export function facultyContentOrderValid(visible:readonly string[],draft:readonl
  return allowed.size===visible.length && draft.length===visible.length &&
    new Set(draft).size===draft.length && draft.every(id=>allowed.has(id));
 }
+
+/** A 2xx HTTP result is not sufficient if the ordered rows do not match the requested Section. */
+export function facultyContentOrderReceiptMatches(deliveryId:string,ids:readonly string[],raw:unknown):boolean{
+ if(typeof raw!=="object"||raw===null||!("order" in raw))return false;
+ const receipt=(raw as {order:unknown}).order;
+ if(!Array.isArray(receipt)||receipt.length!==ids.length)return false;
+ return receipt.every((row,index)=>typeof row==="object"&&row!==null &&
+  row.lessonContentId===ids[index] && row.deliveryId===deliveryId && row.sequence===index);
+}

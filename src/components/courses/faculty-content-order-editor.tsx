@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
-import { facultyMoveContentId, facultyContentOrderDirty, facultyResetContentOrder, facultyContentOrderValid } from "@/modules/courses/faculty-content-order-ui-model";
+import { facultyMoveContentId, facultyContentOrderDirty, facultyResetContentOrder, facultyContentOrderValid, facultyContentOrderReceiptMatches } from "@/modules/courses/faculty-content-order-ui-model";
 
 type Item = {
   id: string;
@@ -24,6 +25,7 @@ function FacultyContentOrderEditorInner({
   enabled: boolean;
 }) {
   const { showToast } = useToast();
+  const router = useRouter();
   const [order, setOrder] = useState(
     () => items.map((item) => item.id),
   );
@@ -71,6 +73,11 @@ function FacultyContentOrderEditorInner({
             await courseApiError(response),
           );
         }
+        const receipt:unknown = await response.json().catch(() => null);
+        if (!facultyContentOrderReceiptMatches(deliveryId,order,receipt)) {
+          throw new Error("Order save status could not be verified. Reload the Section before trying again.");
+        }
+        router.refresh();
         showToast({
           tone: "success",
           title: "Section order saved",
