@@ -5,26 +5,29 @@ import {listOrganizations} from "@/modules/organizations/service";
 import {OrganizationCreateForm} from "@/components/admin/organization-create-form";
 import {CollegeCreateForm} from "@/components/admin/college-create-form";
 import {PageHeader} from "@/components/ui/page-header";
+import {preferredNewTenantOrganization} from "@/modules/colleges/admin-tenant-organization-step";
 export const dynamic="force-dynamic";
-export default async function SuperAdminTenantCreateStage(){
+export default async function SuperAdminTenantCreateStage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const organizations=await listOrganizations(context);
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=can(context,"organization.manage");
+ const params=await searchParams;
+ const preferredId=preferredNewTenantOrganization(params.organizationId,creatable);
  return <div className="min-w-0 space-y-6">
   <Link href="/admin/tenants" className="text-sm font-semibold text-primary-text">← Tenant directory</Link>
   <PageHeader eyebrow="Super Admin · Tenant Setup" title="Create tenant"
    description="Create the organization first, then its college. The existing APIs enforce selected-scope authorization."/>
   <section className="space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Create organization">
    <h2 className="text-lg font-semibold">1. Organization</h2>
-   {orgCreate?<OrganizationCreateForm/>:
+   {orgCreate?<OrganizationCreateForm advanceToCollege/>:
     <p role="status" className="text-sm text-body">Organization creation is unavailable in your selected administrative scope.</p>}
    <Link href="/admin/organizations" className="text-sm font-semibold text-primary-text underline">Review organizations</Link>
   </section>
   <section className="space-y-3 rounded-xl border border-border bg-surface p-4" aria-label="Create college">
    <h2 className="text-lg font-semibold">2. College</h2>
-   {creatable.length?<CollegeCreateForm advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>:
+   {creatable.length?<CollegeCreateForm key={preferredId ?? "default"} preferredOrganizationId={preferredId ?? undefined} advanceToSetup organizations={creatable.map(item=>({id:item.id,name:item.name}))}/>:
     <p role="status" className="text-sm text-body">No organization in the current safety scope can receive a college. Create or select an authorized organization first.</p>}
    <Link href="/admin/colleges" className="text-sm font-semibold text-primary-text underline">Review colleges</Link>
   </section>
