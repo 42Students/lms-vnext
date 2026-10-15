@@ -43,7 +43,7 @@ describe("legacy College Admin full sidebar + group href contract",()=>{
     const project=COLLEGE_LEGACY_GROUPS.find(g=>g.title==="Projects")!;
     expect(project.tabs[0]).toEqual({label:"Workspaces",href:"/college/projects"});
     const nav=readFileSync(join(process.cwd(),"src/components/projects/project-admin-nav.tsx"),"utf8");
-    expect(nav).toContain('if (basePath === "/college/projects") return null;');
+    expect(nav).toContain('if (basePath === "/college/projects" || basePath === "/admin/projects") return null;');
     const collegeNav=readFileSync(join(process.cwd(),"src/components/college/college-legacy-group-tabs.tsx"),"utf8");
     expect(collegeNav).toContain('>{group.title}</h2>');
   });

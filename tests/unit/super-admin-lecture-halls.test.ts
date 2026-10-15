@@ -1,3 +1,4 @@
+import { SUPER_ADMIN_LEGACY_GROUPS } from "@/modules/people/super-admin-legacy-tabs-model";
 import { describe, expect, it } from "vitest";
 import { getShellNavigation } from "@/components/shell/shell-model";
 import { can } from "@/modules/permissions/policy";
@@ -24,11 +25,10 @@ function superAdmin(collegeId: string | null): RequestContext {
 describe("Super Admin lecture halls surface", () => {
   it("has one platform sidebar route, while College Admin keeps its own route", () => {
     const platform = getShellNavigation(superAdmin("college-a"));
-    expect(
-      platform.filter((item) => item.href === "/admin/lecture-halls"),
-    ).toEqual([
-      { label: "Lecture Halls", href: "/admin/lecture-halls", shortLabel: "L" },
-    ]);
+    // 13-row legacy sidebar: Lecture Halls is the Academic Setup tab, not a sidebar row.
+    expect(platform.some((item) => item.href === "/admin/lecture-halls")).toBe(false);
+    expect(SUPER_ADMIN_LEGACY_GROUPS.find(g => g.title === "Academic Setup")?.tabs
+      .some(t => t.href === "/admin/lecture-halls")).toBe(true);
     expect(platform.some((item) => item.href === "/college/lecture-halls")).toBe(false);
 
     const collegeContext: RequestContext = {

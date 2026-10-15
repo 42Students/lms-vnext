@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { SUPER_ADMIN_LEGACY_GROUPS } from "@/modules/people/super-admin-legacy-tabs-model";
 import { getShellNavigation } from "@/components/shell/shell-model";
 import type { RequestContext } from "@/modules/identity/context";
 
@@ -14,9 +15,8 @@ const context: RequestContext = {
 
 describe("Super Admin Recruiter Accounts navigation", () => {
   it("links the renamed recruiter directory once", () => {
-    const accounts = getShellNavigation(context).filter((item) =>
-      item.label === "Recruiter accounts",
-    );
+    const accounts = SUPER_ADMIN_LEGACY_GROUPS.flatMap((group) => group.tabs)
+      .filter((tab) => tab.label === "Recruiter accounts");
     expect(accounts).toHaveLength(1);
     expect(accounts[0]?.href).toBe("/admin/recruiters");
     expect(getShellNavigation(context).some((item) => item.href === "/admin/hr"))

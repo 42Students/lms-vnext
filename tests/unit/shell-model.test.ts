@@ -1,3 +1,4 @@
+import { SUPER_ADMIN_LEGACY_GROUPS } from "@/modules/people/super-admin-legacy-tabs-model";
 import { describe, expect, it } from "vitest";
 import type { MembershipRole } from "@/modules/identity/constants";
 import type { RequestContext } from "@/modules/identity/context";
@@ -69,20 +70,11 @@ describe("authenticated shell model", () => {
   it("gives SUPER_ADMIN the platform administration navigation", () => {
     const shellContext = context(null, ["SUPER_ADMIN"]);
 
-    expectInOrder(labels(shellContext), [
-      "Overview",
-      "Organizations",
-      "Colleges",
-      "Profile verification",
-      "Feature Controls",
-      "Departments",
-      "Academics",
-      "Courses & Content",
-      "Projects",
-      "Placements",
-      "People",
-      "Domains",
-      "Activity Log",
+    // chat-9 13-row legacy sidebar; Organizations/Colleges/Domains etc. live in group tabs.
+    expect(labels(shellContext)).toEqual([
+      "Overview", "Tenant Setup", "Feature Controls", "Module Access",
+      "Tenant Settings", "Activity Log", "Inbound mail", "Academic Setup",
+      "Courses & Content", "People", "Profile verification", "Placements", "Projects",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe("Super Admin");
   });
@@ -94,38 +86,25 @@ describe("authenticated shell model", () => {
 
     expectInOrder(superAdminHrefs, [
       "/admin/placements",
-      "/admin/placements/calendar",
-      "/admin/recruiters",
-      "/admin/announcements",
-      "/admin/inbound-mail",
+      "/admin/projects/templates",
     ]);
 
-    expect(
-      superAdminNavigation.find(
-        (item) => item.href === "/admin/placements/calendar",
-      ),
-    ).toMatchObject({
-      label: "Placement Interview Calendar",
-      href: "/admin/placements/calendar",
-      icon: "/assets/images/common/calender.svg",
+    // The interview calendar is now the Placements group's "Interviews" tab.
+    const placementsGroup = SUPER_ADMIN_LEGACY_GROUPS.find(g => g.title === "Placements");
+    expect(placementsGroup?.tabs).toContainEqual({
+      label: "Interviews", href: "/admin/placements/calendar",
+    });
+    expect(placementsGroup?.tabs).toContainEqual({
+      label: "Recruiter accounts", href: "/admin/recruiters",
+    });
+    expect(placementsGroup?.tabs).toContainEqual({
+      label: "Announcements", href: "/admin/announcements",
     });
 
     expect(superAdminHrefs).toContain("/admin/verification");
-    expect(superAdminHrefs).toContain("/tracker/audit-findings");
+    expect(superAdminHrefs).toContain("/admin/inbound-mail");
     expect(superAdminHrefs).not.toContain("/tpo/calendar");
     expect(superAdminHrefs).not.toContain("/college/placements/calendar");
-
-    const scopedSuperAdmin: RequestContext = {
-      ...superAdminContext,
-      adminScope: {
-        organizationId: "organization-1",
-        collegeId: "college-1",
-      },
-    };
-
-    expect(hrefs(scopedSuperAdmin)).toContain(
-      "/admin/placements/calendar",
-    );
 
     const tpoHrefs = hrefs(context(["TPO"]));
     expect(tpoHrefs).toContain("/tpo/calendar");
