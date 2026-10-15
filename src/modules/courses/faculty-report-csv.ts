@@ -14,7 +14,7 @@ export const facultyReportCsvSchema = z.object({
   kind: z.enum(["assignment", "quiz"]),
   title: z.string().max(500),
   sectionName: z.string().max(500),
-  rows: z.array(csvRowSchema),
+  rows: z.array(csvRowSchema).max(500),
 }).strict();
 
 export type FacultyReportCsvInput = z.infer<typeof facultyReportCsvSchema>;
