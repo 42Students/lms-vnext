@@ -6,7 +6,7 @@ import { join } from "node:path";
 describe("legacy College Admin Companies route and scope",()=>{
   it("restores the Companies tab next to Drives in legacy order",()=>{
     const tabs=COLLEGE_LEGACY_GROUPS.find(group=>group.title==="Placements")?.tabs;
-    expect(tabs?.map(tab=>tab.label)).toEqual(["Drives","Companies","Interviews"]);
+    expect(tabs?.map(tab=>tab.label)).toEqual(["Drives","Companies","Interviews","Analytics"]);
     expect(collegeLegacyGroupForPath("/college/companies")?.title).toBe("Placements");
   });
   it("keeps the page on the college-scoped service with a college-role guard",()=>{
