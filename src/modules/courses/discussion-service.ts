@@ -4,6 +4,7 @@ import {
   and,
   desc,
   eq,
+  isNull,
   not,
   sql,
 } from "drizzle-orm";
@@ -13,6 +14,8 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
+  courseTeachingAssignments,
+  membershipRoles,
   courseDiscussionMessages,
   users,
 } from "@/db/schema";
@@ -245,6 +248,38 @@ export async function createCourseDiscussionMessage(
   });
 }
 
+/** A prior read grant must not survive revocation before a moderation write. */
+async function assertLiveFacultyDiscussionModerator(
+  tx: Pick<ReturnType<typeof getDb>, "select">,
+  context: RequestContext,
+  deliveryId: string,
+) {
+  const membership = context.membership;
+  if (!membership) throw new CoursesServiceError("DISCUSSION_MODERATION_ACCESS_DENIED");
+  const [row] = await tx.select({id:courseTeachingAssignments.id})
+    .from(courseTeachingAssignments)
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.collegeId,membership.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+    ))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"FACULTY"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
+    .where(and(
+      eq(courseTeachingAssignments.membershipId,membership.id),
+      eq(courseTeachingAssignments.deliveryId,deliveryId),
+      isNull(courseTeachingAssignments.endedAt),
+    )).for("share").limit(1);
+  if (!row) throw new CoursesServiceError("DISCUSSION_MODERATION_ACCESS_DENIED");
+}
+
 export async function toggleCourseDiscussionPin(
   context: RequestContext,
   messageIdInput: string,
@@ -276,6 +311,7 @@ export async function toggleCourseDiscussionPin(
     throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
   // Atomic toggle with millisecond-normalized CAS for route writes.
   return getDb().transaction(async (tx) => {
+    if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
     const [updated] = await tx.update(courseDiscussionMessages).set({
       pinned: not(courseDiscussionMessages.pinned),
       pinnedByUserId: sql`case when ${courseDiscussionMessages.pinned}
@@ -335,6 +371,7 @@ export async function deleteCourseDiscussionMessage(
   if(concurrency&&!facultyDiscussionTokenMatches(message.updatedAt,concurrency.expectedUpdatedAt))
     throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
   return getDb().transaction(async (tx) => {
+    if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
     const [deleted] = await tx.delete(courseDiscussionMessages).where(and(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),

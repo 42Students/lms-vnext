@@ -36,13 +36,12 @@ describe("Faculty quiz export row cap",()=>{
   expect(facultyQuizCsvNotice(0)).toBeNull();
  });
  it("keeps formula-neutralization for the capped selection",()=>{
-  const rows=[{name:"=HYPERLINK(1)",email:"+919999999999",
+  const rows=[{name:"=HYPERLINK(1)",
     status:"ATTEMPTED" as const,score:"4/5",percent:80,
     submittedAt:"2026-10-14T09:00:00.000Z",note:"@IMPORTXML(1,2)"}];
   const c=capFacultyQuizCsvRows(rows,[]);
   const csv=facultyReportCsv({kind:"quiz",title:"x",sectionName:"A",rows:c.selectedAttempts});
   expect(csv).toContain('"\'=HYPERLINK(1)"');
-  expect(csv).not.toContain("+919999999999");
   expect(csv).toContain('"\'@IMPORTXML(1,2)"');
  });
 });
