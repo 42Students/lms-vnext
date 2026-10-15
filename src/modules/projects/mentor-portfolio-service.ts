@@ -83,7 +83,7 @@ export async function getMentorPortfolioActivity(
   const metadataProjectId = sql<string>`${activityEvents.metadata} ->> 'projectId'`;
   const types=mentorProjectActivityEventTypes(query.view);
   const cutoff = query.window==="ALL" ? null :
-    new Date(new Date().getTime() - (query.window==="PAST_7_DAYS"?7:30)*86400000);
+    new Date(new Date().getTime() - (query.window==="PAST_7_DAYS"?7:query.window==="PAST_90_DAYS"?90:30)*86400000);
   const filters = and(
     eq(activityEvents.module, "PROJECTS"),
     eq(activityEvents.collegeId, membership.collegeId),

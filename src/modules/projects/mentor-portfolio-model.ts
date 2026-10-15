@@ -20,7 +20,7 @@ export const mentorActivityQuerySchema = z.object({
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
   search:z.string().trim().max(120).default(""),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
-  window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
+  window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS","PAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
   view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS"]).default("ALL"),
   ...paging,
