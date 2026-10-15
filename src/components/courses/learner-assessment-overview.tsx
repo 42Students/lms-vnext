@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { learnerAssessmentCourseScopeCount } from "@/modules/courses/learner-assessment-course-scope-count-model";
+import { learnerAssessmentPageSummary } from "@/modules/courses/learner-assessment-page-summary-model";
 import { learnerAssessmentDateLabel } from "@/modules/courses/learner-assessment-date-label-model";
 import {
   useEffect,
@@ -311,8 +312,10 @@ export function LearnerAssessmentOverview({
         </button>
       ) : null}
       <p role="status" className="text-sm text-muted-foreground">
-        Showing {filtered.length} of {items.length} published {kind==="ASSIGNMENT"?"assignments":"quizzes"} after your filters.
-        {filtered.length>PAGE_SIZE?" Page "+currentPage+" of "+totalPages+".":""}
+        {learnerAssessmentPageSummary({
+          filteredCount:filtered.length,totalCount:items.length,
+          currentPage,pageSize:PAGE_SIZE,label:kind==="ASSIGNMENT"?"assignments":"quizzes",
+        })}
       </p>
       {filtered.length === 0 ? (
         <EmptyState
