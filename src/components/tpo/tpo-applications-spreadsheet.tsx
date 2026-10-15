@@ -22,9 +22,9 @@ const columns:readonly TpoGridColumn<Row>[]=[
  {key:"screeningUpdated",label:"Screening updated",read:r=>r.screeningUpdatedAt,exportOnly:true},
 ];
 const filters:TpoFilterField[]=[
- {key:"stage",urlKey:"stage",label:"Applicant stage",options:["SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"].map(value=>({value,label:value}))},
- {key:"channel",urlKey:"channel",label:"Application channel",options:[{value:"INTERNAL",label:"Internal"},{value:"EXTERNAL",label:"External"}]},
- {key:"eligibility",urlKey:"eligibility",label:"Eligibility evidence",options:[{value:"ELIGIBLE",label:"Eligible"},{value:"ELIGIBLE_WITH_MISSING_EVIDENCE",label:"Missing evidence"}]},
+ {key:"stage",urlKey:"stage",allValue:"ALL",label:"Applicant stage",options:["SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"].map(value=>({value,label:value}))},
+ {key:"channel",urlKey:"channel",allValue:"ALL",label:"Application channel",options:[{value:"INTERNAL",label:"Internal"},{value:"EXTERNAL",label:"External"}]},
+ {key:"eligibility",urlKey:"eligibility",allValue:"ALL",label:"Eligibility evidence",options:[{value:"ELIGIBLE",label:"Eligible"},{value:"ELIGIBLE_WITH_MISSING_EVIDENCE",label:"Missing evidence"}]},
 ];
 export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly Row[];jobId:string;jobStatus:string}){
  return <div className="space-y-3"><TpoGridFilterPanel fields={filters}/>
