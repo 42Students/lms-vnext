@@ -9,6 +9,7 @@ import {
   videoForContent,
 } from "@/modules/courses/learner-storage-ui-model";
 import { formatDuration } from "@/modules/storage/ui-models";
+import { playbackGrantRefreshDelay, resumePositionForGrant } from "@/modules/courses/learner-video-grant-model";
 
 /**
  * The private media URL is never saved in component state or storage.
@@ -30,6 +31,7 @@ export function LearnerVideoPlayer({
   const seekRef = useRef(initialPositionSeconds);
   const shouldPlayRef = useRef(false);
   const failureRefreshRef = useRef(0);
+  const hasPlaybackGrantRef = useRef(false);
   const lastSavedRef = useRef(initialPositionSeconds);
   const savingRef = useRef(false);
   const completedRef = useRef(completed);
@@ -76,7 +78,7 @@ export function LearnerVideoPlayer({
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
   }, []);
 
-  const loadGrant = useCallback(async (videoId: string, controller: AbortController) => {
+  const loadGrant = useCallback(async function requestPlaybackGrant(videoId: string, controller: AbortController): Promise<void> {
     const video = videoRef.current;
     if (!video) return;
     const previousPosition = Number.isFinite(video.currentTime) && video.currentTime > 0
@@ -91,7 +93,8 @@ export function LearnerVideoPlayer({
     const grant = parseLearnerPlaybackGrant(await response.json(), videoId, Date.now());
     if (controller.signal.aborted) return;
     clearTimer();
-    seekRef.current = Math.max(previousPosition, grant.resumePositionSeconds);
+    seekRef.current = resumePositionForGrant(previousPosition, grant.resumePositionSeconds, initialPositionSeconds, hasPlaybackGrantRef.current);
+    hasPlaybackGrantRef.current = true;
     video.src = grant.url;
     if (grant.thumbnailUrl) video.poster = grant.thumbnailUrl;
     else video.removeAttribute("poster");
@@ -102,10 +105,10 @@ export function LearnerVideoPlayer({
       if (controller.signal.aborted) return;
       const renewal = new AbortController();
       activeRef.current = renewal;
-      void loadGrant(videoId, renewal).catch(error => {
+      void requestPlaybackGrant(videoId, renewal).catch(error => {
         if (!renewal.signal.aborted) setMediaError(error instanceof Error ? error.message : "Video could not be loaded");
       });
-    }, Math.max(1000, Date.parse(grant.expiresAt) - Date.now() - 30_000));
+    }, playbackGrantRefreshDelay(grant.expiresAt, Date.now()));
   }, [deliveryId, initialPositionSeconds, clearTimer]);
 
   const start = useCallback(async () => {
