@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, gte, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
 import {
@@ -84,6 +84,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.termNumber !== undefined ? eq(programTerms.termNumber, query.termNumber) : undefined,
       query.minimumCredits !== undefined ? gte(programTerms.totalCredits,query.minimumCredits) : undefined,
+      query.maximumCredits !== undefined ? lte(programTerms.totalCredits,query.maximumCredits) : undefined,
       query.status === "ALL" ? undefined
         : eq(programTerms.isActive, query.status === "ACTIVE"),
       query.q ? or(
@@ -166,6 +167,8 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.yearStart !== undefined ? eq(cohortProgressionState.currentAcademicYearStart, query.yearStart) : undefined,
       query.currentTerm !== undefined ? eq(cohortProgressionState.currentTermNumber, query.currentTerm) : undefined,
+      query.progression === "RECORDED" ? isNotNull(cohortProgressionState.cohortId) :
+        query.progression === "MISSING" ? isNull(cohortProgressionState.cohortId) : undefined,
       query.status === "ALL" ? undefined : eq(cohorts.status, query.status),
       query.q ? or(
         ilike(cohorts.name, likePattern(query.q)),

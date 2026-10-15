@@ -1,4 +1,4 @@
-import { learnerAssignmentFileRequest, learnerAssignmentUploadGrantSchema } from "@/modules/courses/learner-assignment-file-model";
+import { learnerAssignmentFileRequest, validateLearnerAssignmentUploadGrant } from "@/modules/courses/learner-assignment-file-model";
 import { courseApiError } from "./learner-course-api";
 
 /** The app authorizes the receipt; only a signed PUT URL receives bytes, without app cookies. */
@@ -13,11 +13,11 @@ export async function transferLearnerAssignmentFile(
     headers: { "Content-Type": "application/json" }, body: JSON.stringify(request.data),
   });
   if (!response.ok) throw new Error(await courseApiError(response));
-  const parsed = learnerAssignmentUploadGrantSchema.safeParse(await response.json());
-  if (!parsed.success) throw new Error("The upload response was invalid. Try uploading again.");
-  const grant = parsed.data.grant;
+  const grant = validateLearnerAssignmentUploadGrant(await response.json(), Date.now());
   if (grant.originalName !== request.data.originalName ||
       grant.requiredHeaders["content-type"] !== request.data.contentType ||
+      (grant.requiredHeaders["x-amz-meta-expected-size"] !== undefined &&
+        grant.requiredHeaders["x-amz-meta-expected-size"] !== String(file.size)) ||
       Date.parse(grant.expiresAt) <= Date.now()) {
     throw new Error("The upload permission is invalid or expired. Try uploading again.");
   }

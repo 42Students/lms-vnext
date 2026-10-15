@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { facultyReportStudentPage, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
+import { facultyReportStudentPage, facultyReportLearnerName, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
 
 const row = (id: number, name: string, percent: number | null): FacultyReportStudentRow => ({
   id: String(id),
   name,
-  email: name.toLowerCase().replaceAll(" ", ".") + "@college.test",
   score: percent === null ? "Not graded" : percent + "/100",
   percent,
   submittedAt: "2026-10-13T00:00:00.000Z",
@@ -17,8 +16,8 @@ describe("Faculty report student table model", () => {
     expect(result.rows.map((item) => item.id)).toEqual(["3", "2", "1"]);
   });
 
-  it("searches names and emails without leaking unmatched learners into a page", () => {
-    const result = facultyReportStudentPage([row(1, "Asha Rao", 70), row(2, "Ravi Kumar", 40)], "  ASHA.RAO@  ", 1);
+  it("searches names without using private learner email", () => {
+    const result = facultyReportStudentPage([row(1, "Asha Rao", 70), row(2, "Ravi Kumar", 40)], "  asha rao  ", 1);
     expect(result.rows.map((item) => item.name)).toEqual(["Asha Rao"]);
     expect(result.count).toBe(1);
   });
@@ -35,5 +34,33 @@ describe("Faculty report student table model", () => {
   it("does not crash on empty or invalid pagination", () => {
     const result = facultyReportStudentPage([], "nobody", Number.NaN, 0);
     expect(result).toEqual({ count: 0, pages: 1, page: 1, rows: [] });
+  });
+});
+
+
+describe("Faculty report bounded learner pages", () => {
+  it("caps requested size and clamps a stale page after filters", () => {
+    const rows = Array.from({length: 125}, (_,i) => ({id: String(i),name:"Learner "+i,score:"",percent:null,submittedAt:null,note:""}));
+    expect(facultyReportStudentPage(rows,"",1,100000).rows).toHaveLength(100);
+    const filtered=facultyReportStudentPage(rows,"Learner 124",999,100000);
+    expect(filtered.page).toBe(1);
+    expect(filtered.rows).toHaveLength(1);
+  });
+});
+
+
+describe("Faculty report contact minimization", () => {
+  it("never requires or searches a learner email in the report roster", () => {
+    const result = facultyReportStudentPage([row(1,"Ravi",60)],"ravi@example.edu",1);
+    expect(result.rows).toEqual([]);
+  });
+});
+
+
+describe("Faculty PDF report name privacy", () => {
+  it("uses only a public display name and a neutral missing-name label", () => {
+    expect(facultyReportLearnerName(null)).toBe("Learner (name unavailable)");
+    expect(facultyReportLearnerName("  Asha  ")).toBe("Asha");
+    expect(facultyReportLearnerName("   ")).not.toContain("@");
   });
 });

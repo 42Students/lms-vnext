@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  isNull,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -13,6 +14,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   assignmentSubmissions,
   courseAssignments,
+  courseTeachingAssignments,
   collegeMemberships,
   membershipRoles,
   users,
@@ -645,6 +647,43 @@ export async function listAssignmentSubmissions(
     );
 }
 
+/** Confirm Faculty teaching scope inside the grading transaction, not merely
+ * from a stale request context. Admin scoping remains centrally permissioned. */
+async function assertPersistedFacultyGrader(
+  tx: Pick<ReturnType<typeof getDb>, "select">,
+  context: RequestContext,
+  deliveryId: string,
+  collegeId: string,
+  organizationId: string,
+) {
+  if (can(context, "courses.manage", {collegeId, organizationId})) return;
+  const membership = context.membership;
+  if (!membership || membership.collegeId !== collegeId)
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  const [found] = await tx.select({id:courseTeachingAssignments.id})
+    .from(courseTeachingAssignments)
+    .innerJoin(collegeMemberships, and(
+      eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.collegeId,collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+    ))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"FACULTY"),
+    ))
+    .innerJoin(users,and(
+      eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE"),
+    ))
+    .where(and(
+      eq(courseTeachingAssignments.membershipId,membership.id),
+      eq(courseTeachingAssignments.deliveryId,deliveryId),
+      isNull(courseTeachingAssignments.endedAt),
+    )).for("share").limit(1);
+  if (!found) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+}
+
 export async function gradeAssignmentSubmission(
   context: RequestContext,
   submissionIdInput: string,
@@ -685,6 +724,7 @@ export async function gradeAssignmentSubmission(
 
   const now = new Date();
   return getDb().transaction(async (tx) => {
+    await assertPersistedFacultyGrader(tx,context,current.deliveryId,current.collegeId,current.organizationId);
     // Shared row lock serializes against ARCHIVE, preserving the published
     // assessment boundary throughout the grade and immutable audit write.
     const [locked]=await tx.select({status:courseAssignments.status,maxPoints:courseAssignments.maxPoints})
@@ -778,6 +818,7 @@ export async function publishAssignmentGrade(
   }
 
   return getDb().transaction(async (tx) => {
+    await assertPersistedFacultyGrader(tx,context,current.deliveryId,current.collegeId,current.organizationId);
     const [locked]=await tx.select({status:courseAssignments.status})
       .from(courseAssignments).where(eq(courseAssignments.id,current.assignmentId))
       .for("share").limit(1);

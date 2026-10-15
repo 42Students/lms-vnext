@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   index,
   integer,
@@ -386,6 +387,7 @@ export const lessonContents = pgTable(
     status: lessonContentStatusEnum("status")
       .notNull()
       .default("DRAFT"),
+    visibleToStudents: boolean("visible_to_students").notNull().default(true),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -411,6 +413,9 @@ export const lessonContents = pgTable(
       ),
     index("lesson_contents_delivery_status_idx")
       .on(table.deliveryId, table.status),
+    index("lesson_contents_visible_for_students_idx")
+      .on(table.lessonId, table.deliveryId, table.status)
+      .where(sql`${table.visibleToStudents} = true`),
     check(
       "lesson_contents_sequence_ck",
       sql`${table.sequence} >= 0`,
