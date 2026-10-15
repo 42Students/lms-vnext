@@ -10,6 +10,7 @@ import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
 import { TpoBulkActionPanel } from "@/components/tpo/tpo-bulk-action-panel";
 import { listPlacementJobs } from "@/modules/placements/job-service";
 import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
+import {tpoStudentRosterClearHref} from "@/modules/placements/tpo-student-roster-clear-model";
 import { can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -475,7 +476,7 @@ export default async function TpoStudentsPage({
             </p>
           </div>
           <Link
-            href="/tpo/students"
+            href={tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
             className="text-sm font-semibold text-primary-text hover:underline"
           >
             Clear filters
@@ -562,13 +563,13 @@ export default async function TpoStudentsPage({
               : "No students match these filters. Try another journey, branch or search term."}
             <div className="mt-3">
               <Link
-                href={studentsHref({
+                href={roster.total>0?studentsHref({
                   ...currentFilters,
                   page: 1,
-                })}
+                }):tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
                 className="font-semibold text-primary-text hover:underline"
               >
-                First page
+                {roster.total>0?"First matching page":"Clear roster filters"}
               </Link>
             </div>
           </div>
