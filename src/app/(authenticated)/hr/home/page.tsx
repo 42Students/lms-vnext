@@ -162,6 +162,27 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           </span>
         </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
+    <section aria-label="Unread placement-cell conversations"
+      className="rounded-xl border border-border bg-surface p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-semibold text-foreground">Replies to read</h2>
+        <Link href={"/hr/conversations?collegeId="+encodeURIComponent(selectedId)}
+          className="text-sm text-primary-text">View conversations</Link>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Only employer-owned threads from your selected college. No message bodies appear on Today.
+      </p>
+      {conversationSignals?.unread.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {conversationSignals.unread.map(row=><li key={row.id}>
+          <Link href={row.href} className="block rounded-md border border-border p-4">
+            <span className="block break-words font-semibold text-primary-text">{row.label}</span>
+            <span className="mt-1 block text-sm text-body">{row.unread} unread placement-cell messages</span>
+          </Link>
+        </li>)}
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+        No unread placement-cell conversations on this inbox page.
+      </p>}
+    </section>
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Waiting</h2>
       <p className="mt-2 text-sm text-body">These conversations were last updated by you. A reply might still be needed; no pending approval or reply is inferred.</p>
