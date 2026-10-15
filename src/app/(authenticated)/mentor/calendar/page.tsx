@@ -8,13 +8,14 @@ import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-s
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
 export const dynamic="force-dynamic";
-type Search={status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
+type Search={attention?:string|string[];status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
   const raw=await searchParams;
   const parsed=mentorCalendarFiltersSchema.safeParse({
+    attention:first(raw.attention)??undefined,
     status:first(raw.status)??undefined,type:first(raw.type)??undefined,
     projectState:first(raw.projectState)??undefined,
     search:first(raw.search)??undefined,
@@ -40,6 +41,11 @@ export default async function MentorCalendarPage({searchParams}:{
         <input type="search" name="search" maxLength={100}
           defaultValue={parsed.data.search}
           placeholder="Meeting or project" className="min-h-10 rounded-md border border-border bg-background px-3"/>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Action needed
+        <select name="attention" defaultValue={parsed.data.attention} className="min-h-10 rounded-md border border-border bg-background px-3">
+          <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
+        </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <select name="status" defaultValue={parsed.data.status}
@@ -78,7 +84,7 @@ export default async function MentorCalendarPage({searchParams}:{
     </form>
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <Link href={"/api/mentor/calendar/export?"+new URLSearchParams({
-        status:parsed.data.status,type:parsed.data.type,
+        attention:parsed.data.attention,status:parsed.data.status,type:parsed.data.type,
         projectState:parsed.data.projectState,
         search:parsed.data.search,period:parsed.data.period,
       }).toString()} download className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
