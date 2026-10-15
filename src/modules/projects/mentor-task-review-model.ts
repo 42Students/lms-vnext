@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const mentorTaskReviewQuerySchema = z.object({
+  assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
   projectId: z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   priority: z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
@@ -23,11 +24,12 @@ export function mentorTaskReviewTargetHref(projectId:string,taskId:string){
 }
 export function mentorTaskReviewHref(query: {
   search?: string; page?: number; pageSize?: number;
-  priority?: string; order?: string; version?: number; age?: string; projectId?: string;
+  priority?: string; order?: string; version?: number; age?: string; projectId?: string; assignment?:string;
 }) {
   const params = new URLSearchParams();
   if (query.search) params.set("search", query.search);
   if (query.projectId)params.set("projectId",query.projectId);
+  if (query.assignment && query.assignment!=="ALL")params.set("assignment",query.assignment);
   if (query.priority&&query.priority!=="ALL")params.set("priority",query.priority);
   if (query.version!==undefined)params.set("version",String(query.version));
   if (query.order&&query.order!=="NEWEST")params.set("order",query.order);
