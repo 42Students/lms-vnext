@@ -139,3 +139,14 @@ export function activeCollegeContactFilterCount(filter:CollegeContactsQuery):num
  for(const key of ["tab","page","pageSize","sort"])params.delete(key);
  return [...params.keys()].length;
 }
+
+/** Page-local only: these counts never pretend to summarize the full college. */
+export function collegeContactPageRoleCounts(rows:readonly {roles:readonly ("FACULTY"|"LEARNER")[]}[]){
+ let facultyOnly=0,learnerOnly=0,dual=0;
+ for(const row of rows){
+  if(row.roles.includes("FACULTY")&&row.roles.includes("LEARNER"))dual++;
+  else if(row.roles.includes("FACULTY"))facultyOnly++;
+  else if(row.roles.includes("LEARNER"))learnerOnly++;
+ }
+ return {facultyOnly,learnerOnly,dual};
+}
