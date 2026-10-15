@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 import {
   collegeLearningHref,
   collegeLearningPageCount,
@@ -108,4 +109,74 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLearningPageCount(0)).toBe(1);
     expect(collegeLearningPageCount(26)).toBe(2);
   });
+  it("lessons programStatus persists across validated page links",()=>{
+    expect(collegeLessonQuerySchema.safeParse({programStatus:"INVALID"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({programStatus:"ACTIVE",page:2}))).toContain("programStatus=ACTIVE");
+  });
+
+  it("lessons cohortStatus persists across validated page links",()=>{
+    expect(collegeLessonQuerySchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({cohortStatus:"PLANNED",page:2}))).toContain("cohortStatus=PLANNED");
+  });
+
+  it("lessons periodStatus respects database lifecycle enums and URL state",()=>{
+    expect(collegeLessonQuerySchema.safeParse({periodStatus:"INVALID"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({periodStatus:"PLANNED"}))).toContain("periodStatus=PLANNED");
+  });
+
+  it("lessons courseStatus respects database lifecycle enums and URL state",()=>{
+    expect(collegeLessonQuerySchema.safeParse({courseStatus:"INVALID"}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
+  });
+
+  it("lessons departmentCode is exact, bounded and escaped",()=>{
+    expect(collegeLessonQuerySchema.safeParse({departmentCode:"a".repeat(65)}).success).toBe(false);
+    expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({departmentCode:"CS & EE"}))).toContain("departmentCode=CS+%26+EE");
+  });
+
+  it("course progress programStatus maintains valid scoped query state",()=>{
+    expect(collegeProgressQuerySchema.safeParse({programStatus:"BAD"}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({programStatus:"ACTIVE"}))).toContain("programStatus=ACTIVE");
+  });
+
+  it("course progress cohortStatus maintains valid scoped query state",()=>{
+    expect(collegeProgressQuerySchema.safeParse({cohortStatus:"BAD"}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({cohortStatus:"PLANNED"}))).toContain("cohortStatus=PLANNED");
+  });
+
+  it("course progress periodStatus validates parent lifecycle and URL filtering",()=>{
+    expect(collegeProgressQuerySchema.safeParse({periodStatus:"BAD"}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({periodStatus:"PLANNED"}))).toContain("periodStatus=PLANNED");
+  });
+
+  it("course progress courseStatus validates parent lifecycle and URL filtering",()=>{
+    expect(collegeProgressQuerySchema.safeParse({courseStatus:"BAD"}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({courseStatus:"ACTIVE"}))).toContain("courseStatus=ACTIVE");
+  });
+
+  it("progress departmentCode is bounded and escapes exact-code links",()=>{
+    expect(collegeProgressQuerySchema.safeParse({departmentCode:"x".repeat(65)}).success).toBe(false);
+    expect(collegeLearningHref("PROGRESS",collegeProgressQuerySchema.parse({departmentCode:"C & S"}))).toContain("departmentCode=C+%26+S");
+  });
+
+  it("shared parent filters serialize exactly once for lessons and progress", () => {
+    for (const kind of ["LESSONS","PROGRESS"] as const) {
+      const schema = kind === "LESSONS" ? collegeLessonQuerySchema : collegeProgressQuerySchema;
+      const href = collegeLearningHref(kind, schema.parse({
+        programStatus:"ACTIVE",cohortStatus:"PLANNED",periodStatus:"ACTIVE",
+        courseStatus:"ARCHIVED",departmentCode:"CS & EE",
+      }));
+      const params = new URL(href,"https://college.test").searchParams;
+      for (const key of ["programStatus","cohortStatus","periodStatus","courseStatus","departmentCode"])
+        expect(params.getAll(key)).toHaveLength(1);
+    }
+  });
+
+  it("filters college lessons by contentType without silently accepting an unknown value", () => {
+    expect(collegeLessonQuerySchema.safeParse({contentType:"AUDIO"}).success).toBe(false);
+    const query=collegeLessonQuerySchema.parse({contentType:"YOUTUBE"});
+    expect(new URL(collegeLearningHref("LESSONS",query),"https://test.example").searchParams.get("contentType")).toBe("YOUTUBE");
+    expect(new URL(lessonsCsvHref(query),"https://test.example").searchParams.get("contentType")).toBe("YOUTUBE");
+  });
+
 });
