@@ -7,6 +7,8 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
+import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { loadPlacementHeldOfferFacts } from "@/modules/placements/held-offer-facts-service";
 import { isPlacementLearnerDebarred } from "@/modules/placements/debarment-service";
@@ -234,6 +236,57 @@ describe("Section A: placement write/read integration boundaries", () => {
     });
     expect((await listLearnerPlacementJobs(learner))
       .some(row => row.job.id === matching.id)).toBe(true);
+  });
+
+
+  it("P-S1-07 persists exactly-once expiry and rejects acceptance at the deadline", async () => {
+    // This is a real registered-DDL acceptance test, not a staged-schema mock.
+    // An absent migration is an explicit failing prerequisite.
+    const constraint = await pool.query<{definition:string}>(`
+      SELECT pg_get_constraintdef(oid) AS definition FROM pg_constraint
+      WHERE conname='placement_offers_status_ck'
+    `);
+    if (!constraint.rows.some(row => row.definition.includes("EXPIRED"))) {
+      throw new Error("P-S1-07 requires registered EXPIRED status and migration replay");
+    }
+
+    const job = await makeJob("Expiry sweep");
+    const application = await applyToPlacementJob(learner, job.id, {});
+    const now = new Date();
+    const issuedAt = new Date(now.getTime() - 72 * 3_600_000);
+    const deadline = new Date(now.getTime() - 48 * 3_600_000);
+    const issued = await pool.query<{id:string}>(`
+      INSERT INTO placement_offers
+        (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,issued_at,expires_at)
+      VALUES($1,1,'OFFER','ISSUED','Expiry Engineer',1000000,$2,$3,$4)
+      RETURNING id
+    `, [application.id, SEED_IDS.facultyUser, issuedAt, deadline]);
+    const offerId = issued.rows[0]!.id;
+
+    await expect(actOnPlacementOffer(
+      learner, offerId, {action:"ACCEPT"}, deadline,
+    )).rejects.toMatchObject({code:"PLACEMENT_OFFER_EXPIRED"});
+
+    expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser, now)).toBe(1);
+    expect(await sweepExpiredPlacementOffers(SEED_IDS.facultyUser, now)).toBe(0);
+    const stored = await pool.query<{status:string}>(
+      "SELECT status FROM placement_offers WHERE id=$1", [offerId],
+    );
+    expect(stored.rows[0]?.status).toBe("EXPIRED");
+    const history = await pool.query<{from_status:string;to_status:string}>(`
+      SELECT from_status,to_status FROM placement_offer_status_history
+      WHERE offer_id=$1 ORDER BY created_at,id
+    `, [offerId]);
+    expect(history.rows).toEqual([{from_status:"ISSUED",to_status:"EXPIRED"}]);
+
+    // Old EXPIRED version must not occupy the unique active-offer slot.
+    const next = await pool.query<{id:string}>(`
+      INSERT INTO placement_offers
+        (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
+      VALUES($1,2,'OFFER','ISSUED','Next version',1100000,$2,$3)
+      RETURNING id
+    `, [application.id, SEED_IDS.facultyUser, new Date(now.getTime()+72*3_600_000)]);
+    expect(next.rows[0]?.id).toBeTruthy();
   });
 
 
