@@ -158,7 +158,6 @@ export function ProjectWorkspace({
   workspace,
   backHref,
   backLabel,
-  eyebrow,
   mode,
   currentMembershipId,
   activeSection,
@@ -167,7 +166,6 @@ export function ProjectWorkspace({
   workspace: Workspace;
   backHref: string;
   backLabel: string;
-  eyebrow: string;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
   currentMembershipId: string | null;
   activeSection?: ProjectWorkspaceSection;
@@ -270,12 +268,8 @@ export function ProjectWorkspace({
       ) : null}
 
       <PageHeader
-        eyebrow={eyebrow}
         title={workspace.project.title}
-        description={
-          workspace.project.summary ??
-          "Project workspace for execution, review and final delivery."
-        }
+        description={workspace.project.summary ?? undefined}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge
