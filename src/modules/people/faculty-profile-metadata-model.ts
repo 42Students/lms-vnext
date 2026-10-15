@@ -1,10 +1,15 @@
 import { z } from "zod";
 import type { FacultyProfileDocument } from "./faculty-profile-document";
 
+export function facultyMetadataEditableKey(key:string):boolean {
+ return key.length>0 && key.length<=120 &&
+  !/(?:password|secret|token|aadhaar|aadhar|pan.?number|identity|otp)/i.test(key);
+}
+
 const entrySchema=z.object({
  id:z.string().uuid(),
  key:z.string().trim().min(1).max(120)
-   .refine(value=>!/(?:password|secret|token|aadhaar|aadhar|pan.?number|identity|otp)/i.test(value),
+   .refine(facultyMetadataEditableKey,
      "Identity and secret fields are not profile metadata"),
  value:z.string().max(5000),
 }).strict();
