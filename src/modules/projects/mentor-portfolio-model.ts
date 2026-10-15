@@ -18,6 +18,7 @@ export const mentorActivityQuerySchema = z.object({
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
+  search:z.string().trim().max(120).default(""),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
@@ -89,6 +90,7 @@ export function mentorPortfolioHref(
   if (area === "reviews" && query.age && query.age !== "ALL") params.set("age",query.age);
   if (area === "reviews" && query.projectStatus && query.projectStatus !== "ALL")params.set("projectStatus",query.projectStatus);
   if (area === "reviews" && query.projectId)params.set("projectId",query.projectId);
+  if (area === "activity" && query.search)params.set("search",query.search);
   if (area === "activity" && query.importance && query.importance !== "ALL") params.set("importance",query.importance);
   if (area === "activity" && query.view && query.view !== "ALL") params.set("view",query.view);
   if (area === "activity" && query.window && query.window !== "ALL")params.set("window",query.window);
@@ -108,4 +110,9 @@ export function mentorActivityPagination(total:number, requested:number, pageSiz
  const totalPages=Math.max(1,Math.ceil(total/pageSize));
  const page=Math.max(1,Math.min(requested,totalPages));
  return {page,pageSize,total,totalPages};
+}
+
+/** Search only project titles from the live, persisted assigned-Mentor roster. */
+export function mentorActivityProjectTitleMatch(title:string,search:string){
+ return title.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"));
 }
