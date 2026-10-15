@@ -54,6 +54,7 @@ export default async function AnnouncementsPage({
   const [page, targetGroups, broadcastColleges] = await Promise.all([
     listAnnouncementsForAdmin(context, {
       includeDeleted,
+      q: params.q,
       beforeCreatedAt: params.beforeCreatedAt,
       beforeId: params.beforeId,
       limit: 50,
@@ -99,6 +100,7 @@ export default async function AnnouncementsPage({
   const next = page.nextCursor
     ? "/admin/announcements?" + new URLSearchParams({
         ...(includeDeleted ? { deleted: "1" } : {}),
+        ...(params.q ? { q: params.q } : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -112,13 +114,21 @@ export default async function AnnouncementsPage({
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={
           <Link
-            href={includeDeleted ? "/admin/announcements" : "/admin/announcements?deleted=1"}
+            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}) }).toString()}
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-foreground"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
         }
       />
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        {includeDeleted ? <input type="hidden" name="deleted" value="1"/> : null}
+        <label className="min-w-[14rem] flex-1 text-sm font-semibold text-body">Search announcement title or message
+          <input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Literal phrase" className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Search</button>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm">Clear</Link>
+      </form>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent/>
       {next ? (

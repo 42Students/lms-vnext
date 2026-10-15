@@ -1087,3 +1087,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 tracker page actor-status route fence (PARTIAL):** Both issue list/detail and the Audit Findings board require an active platform Super Admin before returning migration-flag status or fetching data. Routes use the standard dashboard redirect; unit source assertions authored, browser permission negatives pending.
+
+
+**2026-10-15 chat-6 DB10 announcements literal search (PARTIAL):** Super Admin notices now support bounded title/message substring search, protected from SQL wildcard expansion by `position(...)`; server-side filtering occurs before cursor paging, search is carried into Older/Include deleted links, and malformed query states fail closed. Authored pure validation tests; runtime/PG/browser evidence remains open.

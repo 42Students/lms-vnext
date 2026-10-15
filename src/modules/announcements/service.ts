@@ -1,5 +1,5 @@
 import {
-  and, desc, eq, gt, isNull, lt, or, type SQL,
+  and, desc, eq, gt, isNull, lt, or, sql, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10Announcements } from "@/db/schema/db10-announcements";
@@ -177,6 +177,13 @@ export async function listAnnouncementsForAdmin(context: RequestContext, raw: un
   if (scope.collegeId) conditions.push(eq(db10Announcements.collegeId, scope.collegeId));
   if (scope.organizationId) conditions.push(eq(db10Announcements.organizationId, scope.organizationId));
   if (!input.includeDeleted) conditions.push(isNull(db10Announcements.deletedAt));
+  if (input.q) {
+    const term = input.q.toLowerCase();
+    conditions.push(or(
+      sql`position(${term}::text in lower(${db10Announcements.title})) > 0`,
+      sql`position(${term}::text in lower(${db10Announcements.message})) > 0`,
+    )!);
+  }
   if (input.beforeCreatedAt && input.beforeId) {
     conditions.push(or(
       lt(db10Announcements.createdAt, input.beforeCreatedAt),
