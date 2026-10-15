@@ -54,6 +54,7 @@ import { isPlacementLearnerDebarred } from "./debarment-service";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { canAddPlacementHeldOffer } from "./held-offer-policy";
+import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 import {
@@ -773,21 +774,9 @@ export async function applyToPlacementJob(
       }).from(placementCollegeRules)
         .where(eq(placementCollegeRules.collegeId, job.collegeId))
         .for("share").limit(1);
-      const heldOffers = await tx.select({
-        kind: placementOffers.kind,
-        status: placementOffers.status,
-        annualCtcInr: placementOffers.annualCtcInr,
-      }).from(placementOffers)
-        .innerJoin(placementApplications, eq(
-          placementApplications.id, placementOffers.applicationId,
-        ))
-        .innerJoin(placementJobs, eq(
-          placementJobs.id, placementApplications.jobId,
-        ))
-        .where(and(
-          eq(placementApplications.membershipId, membership.id),
-          eq(placementJobs.collegeId, job.collegeId),
-        )).for("share");
+      const heldOffers = await loadPlacementHeldOfferFacts(
+        job.collegeId, membership.id, tx,
+      );
       if (!canAddPlacementHeldOffer({
         maxHeldOffers: rules?.maxHeldOffers ?? 1,
         upliftPct: rules?.upliftPct ?? 40,
