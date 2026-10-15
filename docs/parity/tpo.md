@@ -2119,3 +2119,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 batch Students pager compatibility:** Optional filter parameters retain the pre-existing q-only URL builder contract, while explicit newer filters remain serializable. Regression test added to prevent TypeScript mismatch on pre-existing callers. CI execution pending.
 
 **Chat-2 / batch Registration source filter — PARTIAL:** Strict SELF/TPO/BACKFILL/UNRECORDED filtering now applies to the authorized 500-learner capped batch sample before 25-row pagination and is preserved in scoped CSV export. This is an observed source label, not consent proof; runtime/browser acceptance open.
+
+**Chat-2 batch registration update recency — PARTIAL:** College-scoped 500-person sampled roster can focus choices updated in 7 days, older than 30 days, or no recorded choice; timestamp comparisons use one server clock and do not infer consent or actual delivery.

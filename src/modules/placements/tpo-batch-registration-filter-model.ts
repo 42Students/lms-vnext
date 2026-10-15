@@ -4,6 +4,7 @@ export const tpoBatchRegistrationFilters=z.object({
  q:z.string().trim().max(100).default(""),
  choice:z.union([tpoRegistrationChoiceSchema,z.literal("UNRECORDED"),z.literal("ALL")]).default("ALL"),
  source:z.enum(["ALL","SELF","TPO","BACKFILL","UNRECORDED"]).default("ALL"),
+ recency:z.enum(["ALL","UPDATED_7_DAYS","OLDER_30_DAYS","NO_RECORD"]).default("ALL"),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type BatchRegistrationListRow={membershipId:string;name:string;choice:string|null};
