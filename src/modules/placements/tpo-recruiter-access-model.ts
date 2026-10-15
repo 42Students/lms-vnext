@@ -137,3 +137,8 @@ export function tpoRecruiterAccessHref(
     ? `/tpo/settings/recruiters?${query}`
     : "/tpo/settings/recruiters";
 }
+
+/** Keep the officer's filtered view while moving between grant pages. */
+export function nextTpoRecruiterGrantPage(query:TpoRecruiterAccessQuery,page:number){
+ return tpoRecruiterAccessHref({status:query.status,q:query.q,page:page+1});
+}
