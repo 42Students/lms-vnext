@@ -968,3 +968,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 disposable PG positive regression (source-authored):** Added isolated temporary learner fixture verifying audited SET → locked SET → INHERIT, stale expected-state denial, no-op suppression and cleanup. This integration test is not yet executed and no successful migration/runtime/browser gate is claimed.
+
+
+**2026-10-15 chat-6 validate learner rule recheck snapshot (PARTIAL):** The student editor no longer converts malformed, duplicated or inconsistent server snapshots into an editable inherited state; isolated unit checks authored, not executed. Full browser/PG acceptance remains open.
