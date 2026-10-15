@@ -1373,3 +1373,8 @@ The admin-owned Project member update service now records registered Team member
 ## 2026-10-15 chat-11 — transactional Team member end audit (PARTIAL)
 
 The admin-owned Project member end service now records registered Team membership event inside its same transaction, scoped to the Project college and organization with opaque member row ID and role only. Mentor remains read-only for membership. No private names, emails, role labels or contacts are copied into event metadata. Mutation and audit roll back together. Pure event test authored; PostgreSQL and desktop/375px browser acceptance remain open.
+
+
+## 2026-10-15 chat-11 — persistent Team lifecycle audit regression (PARTIAL)
+
+A seeded, disposable PostgreSQL integration case now drives actual College Admin Project member update/end services against an existing persisted Learner assignment, verifies the earlier create event, validates three role/tenant-scoped events and lack of membership identifiers, and checks rejected Learner mutation plus the Mentor read-only timeline. Runtime execution and mobile/desktop acceptance remain OPEN.
