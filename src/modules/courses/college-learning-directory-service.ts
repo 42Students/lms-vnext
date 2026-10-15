@@ -217,6 +217,13 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseOfferings.status, query.status),
+      query.videoContentState==="HAS_VIDEO"?exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"])))):query.videoContentState==="NO_VIDEO"?not(exists(db.select({id:lessonContents.id}).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(courseLearningPaths.offeringId,courseOfferings.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]))))):undefined,
       query.liveClassPresence !== "ALL" ? (query.liveClassPresence === "HAS_LIVE" ? exists(db.select({id:lessonContents.id}).from(lessonContents)
  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
