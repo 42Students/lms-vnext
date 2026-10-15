@@ -8,3 +8,8 @@ export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>)
     return "Saved Students columns are invalid. No student data was loaded.";
   return null;
 }
+
+/** Only stale nonempty pages should keep filters when recovering; zero matches need a real reset. */
+export function tpoStudentEmptyRecoveryHref(total:number,firstPageHref:string):string {
+ return total>0?firstPageHref:"/tpo/students";
+}
