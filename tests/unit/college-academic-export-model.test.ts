@@ -82,4 +82,8 @@ describe("college semester CSV",()=>{
   expect(batchCsvSchema.safeParse({progression:"MISSING",currentTerm:2}).success).toBe(false);
   expect(batchCsvSchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
  });
+ it("rejects unrecorded academic year versus year filter in matching batch CSV",()=>{
+  expect(batchCsvSchema.safeParse({academicYearState:"UNRECORDED",yearStart:2026}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({academicYearState:"RECORDED",yearStart:2026}).success).toBe(true);
+ });
 });

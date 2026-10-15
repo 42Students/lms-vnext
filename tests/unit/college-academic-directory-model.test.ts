@@ -166,4 +166,10 @@ describe("College Admin semester and batch read models", () => {
   if(!bad.success)expect(bad.error.issues[0]?.message).toContain("A missing progression record cannot have a recorded current term");
   expect(collegeBatchDirectorySchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
  });
+ it("rejects unrecorded academic year versus year filter but accepts noncontradictory choices",()=>{
+  const bad=collegeBatchDirectorySchema.safeParse({academicYearState:"UNRECORDED",yearStart:2026});
+  expect(bad.success).toBe(false);
+  if(!bad.success)expect(bad.error.issues[0]?.message).toContain("An unrecorded academic year cannot match a year-start filter");
+  expect(collegeBatchDirectorySchema.safeParse({academicYearState:"RECORDED",yearStart:2026}).success).toBe(true);
+ });
 });
