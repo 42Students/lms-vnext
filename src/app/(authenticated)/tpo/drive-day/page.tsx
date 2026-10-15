@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
+import {tpoLiveRoundJobHref} from "@/modules/placements/tpo-live-round-job-link-model";
 import {tpoLiveCsvHref} from "@/modules/placements/tpo-live-drive-day-csv-model";
 import {tpoLiveRoundTiming} from "@/modules/placements/tpo-live-round-timing-model";
 import {summarizeTpoLiveTriage} from "@/modules/placements/tpo-live-triage-summary-model";
@@ -90,10 +91,11 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     } IST</p>
                     {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground">Elapsed {tpoLiveRoundTiming(round,snapshot.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
                   </div>
+                  <div className="flex flex-wrap gap-2"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm text-primary-text">Open drive</Link>
                   <Link href={"/tpo/drive-day/" + round.id}
                     className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
                     Open round
-                  </Link>
+                  </Link></div>
                 </div>
                 <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
                   {([
