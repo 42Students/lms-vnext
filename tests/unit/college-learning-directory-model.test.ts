@@ -3,6 +3,8 @@ import {collegeProgressCsvHref} from "@/modules/courses/college-progress-export-
 import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
 import {
   collegeLearningHref,
+  collegeOfferingProgressHref,
+  collegeOfferingLessonsHref,
   collegeLearningPageCount,
   collegeLearningQuerySchema,
   collegeLessonQuerySchema,
@@ -11,6 +13,23 @@ import {
 } from "@/modules/courses/college-learning-directory-model";
 
 describe("College Admin lessons and course progress pure models", () => {
+
+  it("serializes merged College Admin progress facets without duplicate URL parameters", () => {
+    const query = collegeProgressQuerySchema.parse({
+      draftContentState: "NO_DRAFT",
+      archivedContentState: "HAS_ARCHIVED",
+      sectionContentState: "NO_SECTION",
+      sharedContentState: "HAS_SHARED",
+    });
+    const href = collegeProgressCsvHref(query);
+    const params = new URL(href, "https://example.test").searchParams;
+    expect(params.get("draftContentState")).toBe("NO_DRAFT");
+    expect(params.get("archivedContentState")).toBe("HAS_ARCHIVED");
+    expect(params.get("sectionContentState")).toBe("NO_SECTION");
+    expect(params.get("sharedContentState")).toBe("HAS_SHARED");
+    expect([...params.keys()].length).toBe(new Set(params.keys()).size);
+  });
+
   it("defaults to active rows and strict college-independent query boundaries", () => {
     expect(collegeLearningQuerySchema.parse({}))
       .toEqual({ q: "", status: "ACTIVE", page: 1 });
@@ -315,6 +334,78 @@ describe("College Admin lessons and course progress pure models", () => {
     const q=collegeProgressQuerySchema.parse({sectionContentState:"NO_SECTION"});
     expect(collegeLearningHref("PROGRESS",q)).toContain("sectionContentState=NO_SECTION");
     expect(collegeProgressCsvHref(q)).toContain("sectionContentState=NO_SECTION");
+  });
+
+  it("rejects malformed exact lesson identifiers and retains scoped links",()=>{
+    expect(collegeLessonQuerySchema.safeParse({lessonId:"not-a-uuid"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({lessonId:"123e4567-e89b-42d3-a456-426614174000"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("lessonId=");
+    expect(lessonsCsvHref(q)).toContain("lessonId=");
+  });
+
+  it("retains offering-constrained lesson search in URL and capped CSV",()=>{
+    expect(collegeLessonQuerySchema.safeParse({offeringId:"not-an-offering"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({offeringId:"123e4567-e89b-42d3-a456-426614174000"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("offeringId=");
+    expect(lessonsCsvHref(q)).toContain("offeringId=");
+  });
+
+  it("retains persisted offering ID search across progress and CSV",()=>{
+    expect(collegeProgressQuerySchema.safeParse({offeringId:"forged"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({offeringId:"123e4567-e89b-42d3-a456-426614174000"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("offeringId=");
+    expect(collegeProgressCsvHref(q)).toContain("offeringId=");
+  });
+
+  it("validates and retains exact authored path drill-down",()=>{
+    expect(collegeLessonQuerySchema.safeParse({pathId:"not-path"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({pathId:"123e4567-e89b-42d3-a456-426614174000"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("pathId=");
+    expect(lessonsCsvHref(q)).toContain("pathId=");
+  });
+
+  it("restricts minimum content count to persisted non-negative bounded counts",()=>{
+    for(const n of ["0","-1","1001","1.5"])expect(collegeLessonQuerySchema.safeParse({minContentCount:n}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({minContentCount:2});
+    expect(collegeLearningHref("LESSONS",q)).toContain("minContentCount=2");
+    expect(lessonsCsvHref(q)).toContain("minContentCount=2");
+  });
+
+  it("allows zero authored items while bounding the upper authoring-count filter",()=>{
+    for(const n of ["-1","1001","1.5"])expect(collegeLessonQuerySchema.safeParse({maxContentCount:n}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({maxContentCount:0});
+    expect(collegeLearningHref("LESSONS",q)).toContain("maxContentCount=0");
+    expect(lessonsCsvHref(q)).toContain("maxContentCount=0");
+  });
+
+  it("distinguishes authored draft metadata without claiming learner visibility",()=>{
+    expect(collegeProgressQuerySchema.safeParse({draftContentState:"UNRELEASED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({draftContentState:"HAS_DRAFT"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("draftContentState=HAS_DRAFT");
+    expect(collegeProgressCsvHref(q)).toContain("draftContentState=HAS_DRAFT");
+  });
+
+  it("roundtrips archived lesson content state without counting it as completion",()=>{
+    expect(collegeProgressQuerySchema.safeParse({archivedContentState:"DELETED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({archivedContentState:"NO_ARCHIVED"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("archivedContentState=NO_ARCHIVED");
+    expect(collegeProgressCsvHref(q)).toContain("archivedContentState=NO_ARCHIVED");
+  });
+
+  it("links lessons to their exact persisted offering activity, including archived",()=>{
+    expect(()=>collegeOfferingProgressHref("bad")).toThrow();
+    const url=new URL(collegeOfferingProgressHref("123e4567-e89b-42d3-a456-426614174000"),"https://example.test");
+    expect(url.pathname).toBe("/college/course-progress");
+    expect(url.searchParams.get("offeringId")).toBe("123e4567-e89b-42d3-a456-426614174000");
+    expect(url.searchParams.get("status")).toBe("ALL");
+  });
+
+  it("links progress rows to exact persisted authored lessons without excluding archived lessons",()=>{
+    expect(()=>collegeOfferingLessonsHref("bad")).toThrow();
+    const url=new URL(collegeOfferingLessonsHref("123e4567-e89b-42d3-a456-426614174000"),"https://example.test");
+    expect(url.pathname).toBe("/college/lessons");
+    expect(url.searchParams.get("offeringId")).toBe("123e4567-e89b-42d3-a456-426614174000");
+    expect(url.searchParams.get("status")).toBe("ALL");
   });
 
 });
