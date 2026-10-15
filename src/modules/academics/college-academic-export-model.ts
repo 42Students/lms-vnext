@@ -9,6 +9,7 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
  programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
  mappingState?:"ALL"|"MAPPED"|"UNMAPPED";
  expectedEndState?:"ALL"|"SET"|"UNSET";
+ academicYearState?:"ALL"|"RECORDED"|"UNRECORDED";
 }){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
@@ -24,6 +25,7 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
  if(kind==="SEMESTERS"&&query.programStatus&&query.programStatus!=="ALL")p.set("programStatus",query.programStatus);
  if(kind==="SEMESTERS"&&query.mappingState&&query.mappingState!=="ALL")p.set("mappingState",query.mappingState);
  if(kind==="BATCHES"&&query.expectedEndState&&query.expectedEndState!=="ALL")p.set("expectedEndState",query.expectedEndState);
+ if(kind==="BATCHES"&&query.academicYearState&&query.academicYearState!=="ALL")p.set("academicYearState",query.academicYearState);
  return "/api/academics/college-academic-export/"+(kind==="SEMESTERS"?"semesters":"batches")+
   (p.size?"?"+p.toString():"");
 }

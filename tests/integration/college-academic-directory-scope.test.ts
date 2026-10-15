@@ -258,4 +258,15 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
     expect(foreign.items).toEqual([]);
   });
 
+  it("academicYearState: matches persisted own-college evidence only",async()=>{
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeBatches(adminA,{q:label,academicYearState:"RECORDED"}),
+      listCollegeBatches(adminA,{q:label,academicYearState:"UNRECORDED"}),
+      listCollegeBatches(adminB,{q:label,academicYearState:"RECORDED"}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.cohort);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

@@ -32,6 +32,7 @@ export const collegeBatchDirectorySchema = z.object({
   currentTerm: z.coerce.number().int().min(1).max(24).optional(),
   progression: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
   expectedEndState: z.enum(["ALL","SET","UNSET"]).optional(),
+  academicYearState: z.enum(["ALL","RECORDED","UNRECORDED"]).optional(),
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
@@ -58,6 +59,7 @@ export function academicDirectoryHref(
   if ("programStatus" in query && query.programStatus && query.programStatus !== "ALL") params.set("programStatus", query.programStatus);
   if ("mappingState" in query && query.mappingState && query.mappingState !== "ALL") params.set("mappingState",query.mappingState);
   if ("expectedEndState" in query && query.expectedEndState && query.expectedEndState !== "ALL") params.set("expectedEndState",query.expectedEndState);
+  if ("academicYearState" in query && query.academicYearState && query.academicYearState !== "ALL") params.set("academicYearState",query.academicYearState);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
@@ -70,7 +72,7 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {

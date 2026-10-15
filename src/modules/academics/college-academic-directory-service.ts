@@ -183,6 +183,7 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
         query.progression === "MISSING" ? isNull(cohortProgressionState.cohortId) : undefined,
       query.status === "ALL" ? undefined : eq(cohorts.status, query.status),
       query.expectedEndState === "SET" ? isNotNull(cohorts.expectedEndPeriodId) : query.expectedEndState === "UNSET" ? isNull(cohorts.expectedEndPeriodId) : undefined,
+      query.academicYearState === "RECORDED" ? isNotNull(cohortProgressionState.currentAcademicYearStart) : query.academicYearState === "UNRECORDED" ? isNull(cohortProgressionState.currentAcademicYearStart) : undefined,
       query.q ? or(
         ilike(cohorts.name, likePattern(query.q)),
         ilike(cohorts.code, likePattern(query.q)),
