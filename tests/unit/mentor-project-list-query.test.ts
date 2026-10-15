@@ -13,3 +13,14 @@ describe("Mentor Project list URL",()=>{
     expect(schema.safeParse({pageSize:250}).success).toBe(false);
   });
 });
+
+it("accepts normal empty optional select fields from GET forms",()=>{
+  const value=mentorProjectListQuerySchema.parse({
+    search:"",status:"",attention:"",assignment:"",work:"",sort:"RECENT",pageSize:"25",
+  });
+  expect(value).toMatchObject({sort:"RECENT",pageSize:25});
+  expect(value.status).toBeUndefined();
+  expect(value.attention).toBeUndefined();
+  expect(value.assignment).toBeUndefined();
+  expect(value.work).toBeUndefined();
+});
