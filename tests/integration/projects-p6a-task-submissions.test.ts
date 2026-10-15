@@ -428,6 +428,8 @@ describe("Projects P6A task submissions", () => {
         {
           decision: "CHANGES_REQUESTED",
           feedback: "Please tighten the tests.",
+          confirmed: true,
+          expectedUpdatedAt: first.updatedAt.toISOString(),
         },
       );
     expect(changes).toMatchObject({
