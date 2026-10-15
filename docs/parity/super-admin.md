@@ -1051,3 +1051,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 broadcast duplicate-recipient safety (PARTIAL):** Strict server-side selected-college input now rejects duplicate college IDs rather than silently deduplicating before publishing. Authored schema tests, database/browser verification open.
+
+
+**2026-10-15 chat-6 broadcast local-time preflight (PARTIAL):** Publication review now remains disabled for invalid local datetimes or expiry preceding schedule; no silent invalid-date fallback or thrown ISO conversion. Tests authored; mobile/browser evidence open.
