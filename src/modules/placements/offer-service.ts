@@ -292,6 +292,16 @@ export async function issuePlacementOffer(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // A cancellation locks this job first, then revokes pending offers.
+    // Issuance must take the same lock order and only target open drives.
+    const [liveJob] = await tx.select({
+      status: placementJobs.status, archivedAt: placementJobs.archivedAt,
+    }).from(placementJobs).where(eq(placementJobs.id, current.job.id))
+      .for("share").limit(1);
+    if (!liveJob || liveJob.status !== "PUBLISHED" ||
+        liveJob.archivedAt !== null) {
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+    }
     const [lockedApplication] =
       await tx
         .select({
