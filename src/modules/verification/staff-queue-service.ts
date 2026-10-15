@@ -57,8 +57,8 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  });
  const counts=verificationTabCounts(filtered.map(r=>({status:r.status as VerificationStatus})));
  const pageRows=filtered.filter(r=>verificationTab({status:r.status as VerificationStatus})===filter.tab);
- const start=(filter.page-1)*25;
- const sliced=pageRows.slice(start,start+25);
+ const start=(filter.page-1)*filter.pageSize;
+ const sliced=pageRows.slice(start,start+filter.pageSize);
  const enrollmentIds=sliced.map(row=>row.membershipId);
  const enrollments=enrollmentIds.length?await getDb().select({
   membershipId:learnerProgramEnrollments.membershipId,
@@ -81,5 +81,5 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    section,status,version:row.version,submittedAt:row.submittedAt,batchName:byMember.get(row.membershipId)?.batchName??null,branchName:byMember.get(row.membershipId)?.branchName??null,
    missingMarksheet,attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
  });
- return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+25<pageRows.length,filter,tpoCanVerify};
+ return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+filter.pageSize<pageRows.length,filter,tpoCanVerify};
 }

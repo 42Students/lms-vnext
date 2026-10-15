@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Selectable 10/25/50-row verification pages PARTIAL (chat-9):** College verification queue supports strict bounded server slicing with stable URL navigation, independent full-view tab counts, and same-college authorization. CSV still exports the filtered view independently of page length. Unit and gated PostgreSQL scope fixtures authored; large-roster and browser/real-DB acceptance open.
+
 **One-click triage shortcuts PARTIAL (chat-9):** The College queue presents three accessible needs-a-closer-look quick actions that switch to Waiting, preserve other filters and reset to first page, plus a reset to all states. These navigate the server-authorized filters, not current-page-only cards. Unit URL-patch acceptance authored; keyboard/mobile browser verification open.
 
 **Seven-day overdue attention triage PARTIAL (chat-9):** Queue and CSV now filter only SUBMITTED/UPDATE_PENDING entries older than seven complete days using a single per-request server clock and pure shared domain attention rules. Sent-back/verified records never appear as overdue. Unit and gated tenant-denial coverage authored, pending execution/browser proof.

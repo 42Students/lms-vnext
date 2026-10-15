@@ -9,9 +9,9 @@ import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {verificationAttentionShortcuts,verificationAttentionShortcutPatch} from "@/modules/verification/attention-shortcuts";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
+export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
- activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;
+ activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;pageSize:number;
  query:Record<string,string>;tpoCanVerify:boolean;batchChoices:VerificationFilterChoiceList;branchChoices:VerificationFilterChoiceList;classChoices:VerificationFilterChoiceList;
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
@@ -40,6 +40,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
    onReview={row=>setSelected(row)}/>
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
+   <label>Requests per page <select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
+    <option value="10">10</option><option value="25">25</option><option value="50">50</option>
+   </select></label>
    <span>Showing {rows.length} of {total} requests in the selected view</span>
    {page>1&&<button type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous page</button>}
    {hasMore&&<button type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next page</button>}
