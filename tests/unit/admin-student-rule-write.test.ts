@@ -12,7 +12,7 @@ describe("Super Admin student rule writes",()=>{
   expect(studentRuleWriteInput.safeParse({action:"SET",module:"placements",enabled:true,locked:false,expected:null}).success).toBe(false);
  });
  it("supports inherit without a fabricated Off rule",()=>{
-  expect(studentRuleWriteInput.parse({action:"INHERIT",module:"projects",expected:null})).toEqual({action:"INHERIT",module:"projects"});
+  expect(studentRuleWriteInput.parse({action:"INHERIT",module:"projects",expected:null})).toEqual({action:"INHERIT",module:"projects",expected:null});
   expect(studentRuleWriteInput.safeParse({action:"INHERIT",module:"projects",expected:null,enabled:false}).success).toBe(false);
  });
  it("accepts explicit member locks independently of enabled state",()=>{

@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
+import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
 export const dynamic="force-dynamic";
 export default async function SuperAdminStudentRules({params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  const {collegeId,membershipId}=await params;
@@ -25,8 +26,10 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
     <h2 className="font-semibold text-foreground">{rule.label}</h2>
     <p className="mt-2 text-sm text-body">Stored: {rule.state}{rule.locked?" · Locked":""}</p>
     <p className="mt-2 text-xs text-muted-foreground">{rule.consequence}</p>
+    {rule.module!=="placements"?<StudentRuleEditor collegeId={collegeId} membershipId={membershipId} module={rule.module}
+      stored={rule.stored} locked={rule.locked} blocked={student.modules.some(m=>m.module===rule.module&&m.winnerLocked&&m.winnerLevel!=="MEMBERSHIP")}/> : null}
    </article>)}
   </div>
-  <p className="text-xs text-muted-foreground">Inspection only. No setting is changed here; updates require a separately authorized, auditable action.</p>
+  <p className="text-xs text-muted-foreground">Changes are scoped to this verified learner membership. Placements membership rules remain read-only because they do not affect the production resolver.</p>
  </div>;
 }
