@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectSubmissionReviews, projectSubmissions } from "@/db/schema";
 import { can } from "@/modules/permissions/policy";
@@ -45,11 +45,14 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
     return {enabled:true as const,query,projects,
       ...mentorReviewHistoryPagination(0,1),items:[]};
   }
+  const cutoff=query.window==="ALL"?null:
+    new Date(new Date().getTime()-(query.window==="LAST_7_DAYS"?7:30)*86400000);
   const filter=and(
     inArray(projectSubmissionReviews.projectId,ids),
     query.projectId?eq(projectSubmissionReviews.projectId,query.projectId):undefined,
     query.version!==undefined?eq(projectSubmissions.version,query.version):undefined,
     eq(projectInstances.collegeId,membership.collegeId),
+    cutoff?gte(projectSubmissionReviews.reviewedAt,cutoff):undefined,
     query.search?ilike(projectInstances.title,"%"+mentorReviewHistoryLiteralSearch(query.search)+"%"):undefined,
     query.decision==="ALL" ? undefined :
       eq(projectSubmissionReviews.decision,query.decision),

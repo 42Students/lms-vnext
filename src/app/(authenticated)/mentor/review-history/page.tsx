@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-review-history-model";
 import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
 
-type Search = { order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
+type Search = { window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -23,6 +23,7 @@ export default async function MentorReviewHistoryPage({
     projectId:first(raw.projectId) ?? undefined,
     version:first(raw.version) ?? undefined,
     order:first(raw.order) ?? undefined,
+    window:first(raw.window) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
@@ -63,6 +64,11 @@ export default async function MentorReviewHistoryPage({
         <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
           <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
             <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Recorded decision within
+          <select name="window" defaultValue={data.query.window} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
