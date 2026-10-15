@@ -54,6 +54,7 @@ import {
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
+import {restoreProjectInstance} from "@/modules/projects/instance-restore-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -496,6 +497,25 @@ describe("Projects adversarial isolation", () => {
     ).rejects.toMatchObject({
       code: "PROJECT_SPRINT_INVALID_STATE",
     });
+  });
+
+  it("restores a row archived with PostgreSQL microseconds using the client millisecond token",async()=>{
+    const templateId=await createTemplate();
+    const project=await createProject(templateId,"microsecond-restore");
+    await archiveProjectInstance(collegeAdmin,project.id);
+    await pool.query(`update project_instances
+      set updated_at=date_trunc('milliseconds',now())+interval '427 microseconds'
+      where id=$1`,[project.id]);
+    const row=await pool.query<{updated_at:Date}>(
+      "select updated_at from project_instances where id=$1",[project.id]);
+    const token=row.rows[0]!.updated_at.toISOString();
+    const restored=await restoreProjectInstance(collegeAdmin,project.id,{
+      expectedUpdatedAt:token,
+    });
+    expect(restored.status).toBe("PLANNED");
+    await expect(restoreProjectInstance(collegeAdmin,project.id,{
+      expectedUpdatedAt:token,
+    })).rejects.toMatchObject({code:"PROJECT_INVALID_STATE"});
   });
 
   it("reassigns the primary mentor atomically and rechecks the target role", async () => {
