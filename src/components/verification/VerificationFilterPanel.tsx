@@ -1,9 +1,10 @@
 "use client";
 import {useState} from "react";
+import {missingSelectedChoice,type VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 type Fields={q:string;marksheets:string;waitingSince:string;sectionId:string;batchId:string;branchId:string};
 const empty:Fields={q:"",marksheets:"ANY",waitingSince:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export function VerificationFilterPanel({query,onApply}:{query:Record<string,string>;onApply:(filters:Fields)=>void}){
+export function VerificationFilterPanel({query,onApply,batchChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList}){
  const selected=():Fields=>({q:query.q??"",marksheets:query.marksheets??"ANY",waitingSince:query.waitingSince??"",
   sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
@@ -31,7 +32,14 @@ export function VerificationFilterPanel({query,onApply}:{query:Record<string,str
     <label className="min-w-0 text-sm">Waiting since (submitted on/before)
      <input type="date" value={fields.waitingSince} onChange={e=>change("waitingSince",e.target.value)}
       className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/></label>
-    {(["sectionId","batchId","branchId"] as const).map(key=>
+    <label className="min-w-0 text-sm">Batch
+     <select value={fields.batchId} onChange={e=>change("batchId",e.target.value)} className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2">
+      <option value="">All batches</option>
+      {missingSelectedChoice(batchChoices?.items??[],fields.batchId)&&<option value={fields.batchId}>Selected batch (not among first 200)</option>}
+      {(batchChoices?.items??[]).map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
+     </select>{batchChoices?.truncated&&<span className="block text-xs">First 200 batches shown.</span>}
+    </label>
+    {(["sectionId","branchId"] as const).map(key=>
      <label className="min-w-0 text-sm" key={key}>{key==="sectionId"?"Class/section":key==="batchId"?"Batch":"Branch"} ID
       <input type="text" value={fields[key]} onChange={e=>change(key,e.target.value.trim())}
        placeholder="UUID" className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/></label>)}

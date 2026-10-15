@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listCollegeVerificationQueue} from "@/modules/verification/staff-queue-service";
+import {listVerificationBatchOptions} from "@/modules/verification/filter-options-service";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -77,6 +78,11 @@ describe.skipIf(!enabled)("verification PG tenant, wrong-role, stale token and a
   expect(foreign.rows).toHaveLength(0);
   const escaped=await listCollegeVerificationQueue(admin,{q:"%_"});
   expect(escaped.rows).toHaveLength(0);
+ });
+ it("loads only current-college batch choices and denies a revoked role claim",async()=>{
+  const result=await listVerificationBatchOptions(admin);
+  expect(result.items).toHaveLength(new Set(result.items.map(x=>x.id)).size);
+  await expect(listVerificationBatchOptions(wrongRole)).rejects.toBeInstanceOf(AuthorizationError);
  });
  it("does not accept a context-only wrong-role membership",async()=>{
   await expect(listCollegeVerificationQueue(wrongRole,{})).rejects.toBeInstanceOf(AuthorizationError);

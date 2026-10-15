@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Native batch picker PARTIAL (chat-9):** The verification queue now fetches up to 200 persisted batches through a fresh, active, same-college College Admin role check, with truncation disclosure and deep-linked selected UUID retained. Existing queue/export batch predicate remains canonical. Authored unit and gated PostgreSQL role fixtures; browser/real DB acceptance remains open.
+
 **Server-initialized TPO switch PARTIAL (2026-10-15, chat-9):** The College verification header now receives the same-college persisted TPO verifier switch directly from its authorized queue read, including the legacy default when no setting exists. Eliminated first-load client GET and effect-driven setState while keeping same-origin audited PATCH, optimistic success-only state, error/refresh and disabled-busy UI. Independent PG/browser acceptance and TPO route enforcement remain open.
 
 **Learner-name verification search PARTIAL (2026-10-15, chat-9):** The College Admin queue and matching capped CSV now apply escaped, bounded display-name substring search before the 5,001-row safety cap, scoped to active same-college learner verification requests. Private emails/phones/identity fields are never searched or revealed; query form resets safely without effect-driven state writes. Dedicated unit and gated disposable-PG tenant/foreign/name tests authored, not executed. Browser and full legacy search parity remain open.
