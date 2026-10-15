@@ -1,0 +1,3 @@
+import{it,expect}from"vitest";import{mentorTaskReviewQuerySchema as schema,mentorTaskReviewHref as href}from"@/modules/projects/mentor-task-review-model";
+it("supports filtering review workload by persisted assignment role",()=>{expect(schema.parse({assignment:"PRIMARY"}).assignment).toBe("PRIMARY");expect(schema.safeParse({assignment:"OWNER"}).success).toBe(false)});
+it("retains assigned-role triage through pagers",()=>expect(href({assignment:"SUPPORTING",page:3})).toContain("assignment=SUPPORTING"));

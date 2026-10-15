@@ -1,0 +1,3 @@
+import{it,expect}from"vitest";import{readFileSync}from"node:fs";import{join}from"node:path";
+const code=readFileSync(join(process.cwd(),"src/modules/projects/mentor-project-team-size-service.ts"),"utf8");
+it("Mentor cards count only current scoped membership",()=>{expect(code).toContain("isNull(projectMembers.endedAt)");expect(code).toContain('eq(collegeMemberships.status,"ACTIVE")');expect(code).toContain("listMyProjectInstances(context)");});

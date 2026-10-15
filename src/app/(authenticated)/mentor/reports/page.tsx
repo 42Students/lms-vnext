@@ -5,7 +5,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsHref}
   from "@/modules/projects/mentor-reports-model";
-type Search={status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
+type Search={taskCoverage?:string|string[];status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
   search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function MentorReportsPage({searchParams}:{
@@ -13,6 +13,7 @@ export default async function MentorReportsPage({searchParams}:{
 }){
   const params=await searchParams;
   const parsed=mentorReportsQuerySchema.safeParse({
+    taskCoverage:first(params.taskCoverage)??undefined,
     status:first(params.status)??undefined,attention:first(params.attention)??undefined,
     assignment:first(params.assignment)??undefined,
     order:first(params.order)??undefined,
@@ -94,6 +95,12 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="NONE">No currently recorded attention</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Recorded tasks
+          <select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ALL">All tasks</option><option value="NO_TASKS">No tracked tasks</option>
+            <option value="OPEN_TASKS">Unfinished tasks</option><option value="ALL_DONE">All registered tasks done</option>
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Mentor assignment
           <select name="assignment" defaultValue={data.query.assignment}
             className="min-h-10 rounded-md border border-border bg-background px-3">
@@ -108,6 +115,7 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="UPDATED">Recently updated</option>
             <option value="TITLE_AZ">Project title A–Z</option>
             <option value="TITLE_ZA">Project title Z–A</option>
+            <option value="TASK_PROGRESS">Least registered task progress first</option>
           </select>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
@@ -118,6 +126,7 @@ export default async function MentorReportsPage({searchParams}:{
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={"/api/mentor/reports/export?"+
           new URLSearchParams({
+            taskCoverage:data.query.taskCoverage,
             status:data.query.status,attention:data.query.attention,
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,

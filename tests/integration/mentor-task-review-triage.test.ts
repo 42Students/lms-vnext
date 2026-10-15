@@ -94,6 +94,11 @@ describe("Mentor pending task review triage PostgreSQL",()=>{
     expect(high.enabled).toBe(true);
     expect(high.total).toBe(1);
     expect(high.items[0]?.priority).toBe("HIGH");
+    const exact=await getMentorTaskReviews(mentor,{...query,projectId:project.id,assignment:"PRIMARY"});
+    expect(exact.total).toBe(1);
+    const supporting=await getMentorTaskReviews(mentor,{...query,assignment:"SUPPORTING"});
+    expect(supporting.total).toBe(0);
+    await expect(getMentorTaskReviews(mentor,{...query,projectId:randomUUID()})).rejects.toBeDefined();
     const csv=mentorPendingTaskReviewCsv(high.items,0);
     expect(csv).toContain("IST");
     expect(csv).not.toContain("submission_url");

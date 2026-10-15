@@ -1,3 +1,4 @@
+import {listMyProjectInstances} from "@/modules/projects/member-service";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -13,13 +14,15 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { mentorInboxQuerySchema, mentorInboxPageHref } from "@/modules/activity/mentor-notifications-model";
 import { getMentorPersonalInbox } from "@/modules/activity/mentor-notifications-service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
-import {mentorAttentionKindSchema,selectMentorAttention} from "@/modules/projects/mentor-attention-kind-model";
+import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention,mentorAttentionProjectOptions} from "@/modules/projects/mentor-attention-kind-model";
 
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
 type Params = {
   view?: string | string[];
   kind?: string | string[];
+  projectId?: string | string[];
+  attentionOrder?: string | string[];
   beforeCreatedAt?: string | string[];
   beforeId?: string | string[];
 };
@@ -37,7 +40,9 @@ export default async function MentorNotificationsPage({
     beforeId:first(raw.beforeId) ?? undefined,
   });
   const kind=mentorAttentionKindSchema.safeParse(first(raw.kind)??"ALL");
-  if (!parsed.success||!kind.success) return <section role="alert" className="space-y-3">
+  const projectId=mentorAttentionProjectSchema.safeParse(first(raw.projectId)??undefined);
+  const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
+  if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="space-y-3">
     <h1 className="text-xl font-semibold">Invalid notification filters</h1>
     <Link href={MENTOR_INBOX} className="text-primary-text underline">Return to newest notifications</Link>
   </section>;
@@ -54,7 +59,11 @@ export default async function MentorNotificationsPage({
   ]);
   const alerts = projectAccess.projects.enabled
     ? await listMyMentorProjectAttention(context) : [];
-  const visibleAlerts=selectMentorAttention(alerts,kind.data);
+  const assigned=projectAccess.projects.enabled
+    ? (await listMyProjectInstances(context)).filter(row=>row.memberRole==="MENTOR") : [];
+  const projectOptions=mentorAttentionProjectOptions(alerts,
+    assigned.map(row=>({id:row.project.id,title:row.project.title})));
+  const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data);
   const items:NotificationListItem[] = inbox.page.items.map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
     actionHref:notification.actionHref,
@@ -79,6 +88,20 @@ export default async function MentorNotificationsPage({
       </h2>
       <form method="get" action={MENTOR_INBOX}
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border p-3">
+        <label className="grid gap-1 text-sm font-semibold">Project with recorded attention
+          <select name="projectId" defaultValue={projectId.data??""}
+            className="min-h-10 max-w-full rounded-md border border-border bg-background px-3">
+            <option value="">All assigned Projects</option>
+            {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold">Attention order
+          <select name="attentionOrder" defaultValue={attentionOrder.data}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="RECENT">Most recent recorded first</option>
+            <option value="REVIEW_FIRST">Reviews and requests first</option>
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold">Attention type
           <select name="kind" defaultValue={kind.data}
             className="min-h-10 rounded-md border border-border bg-background px-3">

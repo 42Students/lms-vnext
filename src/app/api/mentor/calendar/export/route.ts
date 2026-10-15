@@ -11,6 +11,10 @@ export async function GET(request:Request){
  try{
   const url=new URL(request.url);
   const query=mentorCalendarFiltersSchema.parse({
+   sprint:url.searchParams.get("sprint")??undefined,
+   join:url.searchParams.get("join")??undefined,
+   projectId:url.searchParams.get("projectId")??undefined,
+   attention:url.searchParams.get("attention")??undefined,
    status:url.searchParams.get("status")??undefined,
    type:url.searchParams.get("type")??undefined,
    projectState:url.searchParams.get("projectState")??undefined,
