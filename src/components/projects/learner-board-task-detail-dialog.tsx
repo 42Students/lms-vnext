@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
+import { learnerBoardTaskStatusLabel, learnerBoardTaskPriorityLabel } from "@/modules/projects/learner-board-task-status-label-model";
 import { useRouter } from "next/navigation";
 import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
@@ -41,8 +42,8 @@ export function LearnerBoardTaskDetailDialog({
         </form>
       </div>
       <dl className="mt-5 grid grid-cols-2 gap-3 text-sm">
-        <div><dt className="text-muted-foreground">Status</dt><dd className="mt-1 font-semibold">{task.status}</dd></div>
-        <div><dt className="text-muted-foreground">Priority</dt><dd className="mt-1 font-semibold">{task.priority}</dd></div>
+        <div><dt className="text-muted-foreground">Status</dt><dd className="mt-1 font-semibold">{learnerBoardTaskStatusLabel(task.status)}</dd></div>
+        <div><dt className="text-muted-foreground">Priority</dt><dd className="mt-1 font-semibold">{learnerBoardTaskPriorityLabel(task.priority)}</dd></div>
         <div className="col-span-2"><dt className="text-muted-foreground">Sprint</dt><dd className="mt-1 font-semibold">{sprintTitle??"Not assigned"}</dd></div>
       </dl>
       <section className="mt-5">
