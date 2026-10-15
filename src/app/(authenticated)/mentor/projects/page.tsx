@@ -1,3 +1,4 @@
+import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-team-size-service";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
@@ -74,7 +75,9 @@ export default async function MentorProjectsPage({
       ),
     ]);
 
-  const workCounts = await getMentorProjectWorkCounts(context);
+  const [workCounts, teamSizes] = await Promise.all([
+    getMentorProjectWorkCounts(context), getMentorProjectTeamSizes(context),
+  ]);
   const alerts = new Map<
     string,
     Set<string>
@@ -272,6 +275,7 @@ export default async function MentorProjectsPage({
               row.project.status,
             updatedAt:
               row.project.updatedAt,
+            memberCount: teamSizes.get(row.project.id) ?? 0,
             progressPercent: mentorTaskProgress(workCounts.get(row.project.id))?.percent,
             progressDetail: mentorTaskProgress(workCounts.get(row.project.id))?.label,
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
