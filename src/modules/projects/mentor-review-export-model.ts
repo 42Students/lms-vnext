@@ -18,7 +18,8 @@ export function mentorReviewExportCsv(rows:readonly MentorReviewExportRow[],omit
  });
  const lines=["Project ID,Assigned project,Review needed,Submitted (IST)"];
  const limited=rows.slice(0,200);
- const totalOmitted=Math.max(0,omitted)+Math.max(0,rows.length-limited.length);
+ const knownOmitted=Number.isSafeInteger(omitted)&&omitted>0?omitted:0;
+ const totalOmitted=knownOmitted+Math.max(0,rows.length-limited.length);
  for(const row of limited){
   const submitted=Number.isFinite(row.occurredAt.getTime())?fmt.format(row.occurredAt)+" IST":"Unknown";
   lines.push([row.projectId,row.projectTitle,"Final delivery awaiting review",submitted].map(csvSafeCell).join(","));
