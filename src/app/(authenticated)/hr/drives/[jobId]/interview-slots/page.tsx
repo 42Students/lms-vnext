@@ -34,10 +34,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
    <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-11 items-center text-primary-text">Drive rounds</Link>
    <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-primary-text">Recruiter calendar</Link>
   </nav>
-  {slots.status==="NOT_REGISTERED"?<section role="status" className="rounded-xl border border-border bg-surface p-5">
-   <h2 className="font-semibold text-foreground">Slot storage pending registration</h2>
-   <p className="mt-2 text-sm text-body">The interview-slot migration is staged, not registered. No availability, offers, reservations, or candidate bookings have been recorded.</p>
-  </section>:<>
+  <>
    <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Propose an interviewer time block</h2>
     {rounds.length===0?<p role="status" className="text-sm text-body">
@@ -99,6 +96,6 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     </article>)}
     {!slots.items.length?<p role="status" className="text-sm text-body">No persisted employer time blocks for this drive.</p>:null}
    </section>
-  </>}
+  </>
  </main>;
 }
