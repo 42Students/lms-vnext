@@ -3,6 +3,7 @@ import { useRef,useState } from "react";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {facultyProfileNeedsReload,facultyProfileSaveFailure} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileSaveReceipt} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { advanceFacultySectionRevision } from "@/modules/people/faculty-section-revision-model";
@@ -50,7 +51,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
     setNeedsReload(facultyProfileNeedsReload(problem.error));
     setError(facultyProfileSaveFailure(problem.error,response.status));return;
    }
-   const result=await response.json() as {document:FacultyProfileDocument;version:number};
+   const result=facultyProfileSaveReceipt(await response.json(),version);
    setDocument(result.document);setVersion(result.version);
    setSectionRevisions(current=>advanceFacultySectionRevision(current,section));
    setSuccess("Profile saved.");
