@@ -206,6 +206,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       isNull(electiveSlots.deletedAt),
       or(isNull(electiveSlots.academicPeriodId), sql`${academicPeriods.id} is not null`),
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.semesterThrough !== undefined ? lte(electiveSlots.semesterNumber,query.semesterThrough) : undefined,
       query.semesterFrom !== undefined ? gte(electiveSlots.semesterNumber,query.semesterFrom) : undefined,
       query.maximumAllowedPicks !== undefined ? lte(electiveSlots.maxPick,query.maximumAllowedPicks) : undefined,
       query.minimumRequiredPicks !== undefined ? gte(electiveSlots.minPick,query.minimumRequiredPicks) : undefined,

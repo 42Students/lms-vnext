@@ -83,4 +83,9 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("semesterFrom=1");
    expect(electiveCsvSchema.safeParse({semesterFrom:25}).success).toBe(false);
  });
+ it("exports the validated semester through selector",()=>{
+   const q=electiveCsvSchema.parse({semesterThrough:1});
+   expect(electiveCsvHref(q)).toContain("semesterThrough=");
+   expect(electiveCsvSchema.safeParse({semesterThrough:0}).success).toBe(false);
+ });
 });

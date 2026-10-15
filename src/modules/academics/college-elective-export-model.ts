@@ -16,6 +16,7 @@ export function electiveCsvHref(q:{
  minimumRequiredPicks?:number;
  maximumAllowedPicks?:number;
  semesterFrom?:number;
+ semesterThrough?:number;
  programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
 }){
  const p=new URLSearchParams();
@@ -37,6 +38,7 @@ export function electiveCsvHref(q:{
  if(q.minimumRequiredPicks!==undefined)p.set("minimumRequiredPicks",String(q.minimumRequiredPicks));
  if(q.maximumAllowedPicks!==undefined)p.set("maximumAllowedPicks",String(q.maximumAllowedPicks));
  if(q.semesterFrom!==undefined)p.set("semesterFrom",String(q.semesterFrom));
+ if(q.semesterThrough !==undefined)p.set("semesterThrough",String(q.semesterThrough));
  return "/api/academics/college-electives-export"+(p.size?"?"+p.toString():"");
 }
 export function renderElectivesCsv(rows:readonly {
