@@ -571,6 +571,7 @@ export async function getProjectInstanceWorkspace(
               projectId,
             ),
             eq(projectResources.status, "ACTIVE"),
+            scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.visibility, "TEAM"),
           ),
         )
         .orderBy(asc(projectResources.sequence)),
