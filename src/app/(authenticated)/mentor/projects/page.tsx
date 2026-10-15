@@ -2,7 +2,7 @@ import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-tea
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
 import { mentorProjectListQuerySchema } from "@/modules/projects/mentor-project-list-query";
-import { compareMentorProjects } from "@/modules/projects/mentor-project-order-model";
+import { compareMentorProjects, compareMentorProjectsByProgress } from "@/modules/projects/mentor-project-order-model";
 import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
@@ -166,7 +166,11 @@ export default async function MentorProjectsPage({
       );
     })
     .filter((row) => matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
-    .sort((a,b) => compareMentorProjects(a.project,b.project,query.sort === "TITLE" ? "TITLE" : "RECENT"));
+    .sort((a,b) => query.sort === "PROGRESS"
+      ? compareMentorProjectsByProgress(a.project,b.project,
+          mentorTaskProgress(workCounts.get(a.project.id))?.percent,
+          mentorTaskProgress(workCounts.get(b.project.id))?.percent)
+      : compareMentorProjects(a.project,b.project,query.sort));
 
   const total = filtered.length;
   const totalPages = Math.max(
