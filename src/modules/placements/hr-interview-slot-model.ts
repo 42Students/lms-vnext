@@ -1,5 +1,6 @@
 import {z} from "zod";
 export const hrInterviewSlotCreateSchema=z.strictObject({
+ action:z.literal("CREATE").optional(),
  roundId:z.string().uuid(),
  startAt:z.coerce.date(),
  endAt:z.coerce.date(),
