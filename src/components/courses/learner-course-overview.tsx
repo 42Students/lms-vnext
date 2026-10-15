@@ -406,6 +406,8 @@ export function LearnerCourseOverview({
                 readOnly,priorityType:priorityActivity?.type ?? null,
                 overdue:Boolean(priorityActivity && "overdue" in priorityActivity && priorityActivity.overdue),
                 hasNext:Boolean(nextAction),hasTrackable:summary.itemsTotal>0,
+                hasIncomplete:summary.itemsCompleted<summary.itemsTotal,
+                hasMissed:summary.itemsMissed>0,
               })}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
