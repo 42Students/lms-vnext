@@ -19,7 +19,9 @@ export async function POST(request:Request){
    notes:form.get("notes")||undefined,
   };
   const saved=await recordOutsideDrive(await getCurrentRequestContext(),payload);
-  return NextResponse.redirect(new URL((saved.role==="TPO"?"/tpo/placements/recorded-outside":"/hr/drives/recorded-outside")+"?saved="+saved.id,request.url),303);
+  return NextResponse.redirect(new URL(saved.role==="TPO"
+   ? "/tpo/placements/recorded-outside?saved="+saved.id
+   : "/hr/drives/recorded-outside?collegeId="+saved.collegeId+"&saved="+saved.id,request.url),303);
  }catch(error){
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_RECORD"},{status:400});
   if(error instanceof PlacementsServiceError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
