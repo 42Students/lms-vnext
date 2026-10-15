@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   collegeContentDuration,
@@ -131,6 +132,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                   <p className="break-words text-sm text-body">
                     Lesson: {item.lessonName} · Path: {item.learningPathTitle} ({item.learningPathStatus})
                   </p>
+                  {item.status !== "ARCHIVED" ? <CollegeStudentVisibilityControl contentId={item.id} initialVisible={item.visibleToStudents} initialUpdatedAt={item.updatedAt.toISOString()} /> : null}
                   <p className="text-xs text-muted-foreground">
                     {collegeContentScopeLabel(item.deliveryId)} · {item.visibleToStudents ? "Visible to students" : "Hidden from students"}
                     {videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
@@ -173,7 +175,9 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     {collegeContentScopeLabel(item.deliveryId)}
                     <p className="mt-1 text-xs">{item.visibleToStudents ? "Visible to students" : "Hidden from students"}</p>
                   </td>
-                  <td className="px-4 py-4 text-body">{item.status}</td>
+                  <td className="px-4 py-4 text-body">{item.status}
+                    {item.status !== "ARCHIVED" ? <CollegeStudentVisibilityControl contentId={item.id} initialVisible={item.visibleToStudents} initialUpdatedAt={item.updatedAt.toISOString()} /> : null}
+                  </td>
                 </tr>
               ))}
             </tbody>
