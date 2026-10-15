@@ -37,8 +37,11 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   });
   // DB10 is an optional registered migration. Never query staged tables when disabled.
   const ready = announcementsRuntimeEnabled();
-  const allNotices = ready
-    ? learnerPlacementNoticeFeed(await listVisibleAnnouncementsForMembership(context))
+  const collegeNoticesRead = ready
+    ? await readOptionalLearnerAlertSource(() => listVisibleAnnouncementsForMembership(context))
+    : { available: false as const, items: [] };
+  const allNotices = collegeNoticesRead.available
+    ? learnerPlacementNoticeFeed(collegeNoticesRead.items)
     : [];
   const searchedNotices=searchLearnerNotices(learnerPlacementNoticeView(allNotices,pinnedOnly),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
@@ -100,6 +103,14 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       {!ready ? (
         <div role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
           College announcements are not available until the announcements database is enabled.
+        </div>
+      ) : !collegeNoticesRead.available ? (
+        <div role="alert" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+          College notices are temporarily unavailable. Your personal placement alerts are still accessible below.
+          <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey})}
+            className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+            Retry college notices
+          </Link>
         </div>
       ) : notices.length === 0 ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
