@@ -421,6 +421,13 @@ export async function reviewProjectSubmission(
         );
       }
 
+      if (!review) throw new Error("Project delivery review insert returned no row");
+      await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+        action: "REVIEWED", collegeId: scope.collegeId,
+        organizationId: scope.organizationId, projectId: scope.project.id,
+        submissionId: updated.id, version: updated.version,
+        decision: input.decision,
+      }));
       return { submission: updated, review };
     });
   } catch (error) {
