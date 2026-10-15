@@ -8,11 +8,15 @@ const grant = { receiptId: receipt, method: "PUT", uploadUrl: "https://storage.e
 describe("learner assignment private-file boundary", () => {
   it("validates file size, filename and allowed MIME without trusting extension over provided MIME", () => {
     expect(learnerAssignmentFileRequest(delivery, { name: "paper.docx", size: 10, type: "" }).success).toBe(true);
+    expect(learnerAssignmentFileRequest(delivery, { name: "photo.jpeg", size: 10, type: "image/jpeg" }).success).toBe(true);
     for (const file of [
       { name: "../proof.pdf", size: 10, type: "application/pdf" },
       { name: "proof.pdf", size: 0, type: "application/pdf" },
       { name: "proof.pdf", size: 52_428_801, type: "application/pdf" },
       { name: "proof.pdf", size: 10, type: "text/html" },
+      { name: "installer.exe", size: 10, type: "application/pdf" },
+      { name: "document.pdf", size: 10, type: "application/msword" },
+      { name: "photo.png", size: 10, type: "image/jpeg" },
     ]) expect(learnerAssignmentFileRequest(delivery, file).success).toBe(false);
   });
   it("requires an exact own-delivery receipt and explicit final confirmation", () => {
