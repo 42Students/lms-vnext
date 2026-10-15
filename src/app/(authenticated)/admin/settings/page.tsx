@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   formatPlatformSettingValue,
@@ -41,6 +42,11 @@ export default async function SuperAdminSettingsPage() {
             : "Fixed platform values are shown. Per-college rows show fallback defaults only; select a college using the Super Admin scope selector to see its effective policy overrides."}
         </p>
       </section>
+
+      <Link href="/admin/settings/auth"
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        Authentication and privileged access checklist →
+      </Link>
 
       <nav
         aria-label="Settings sections"

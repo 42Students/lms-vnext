@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   collegeAssessmentHref,
   collegeAssessmentSummary,
+  collegeAssessmentScopeLabel,
   type CollegeAssessmentAggregateItem,
   type CollegeAssessmentKind,
   type CollegeAssessmentListQuery,
@@ -69,6 +70,48 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Exact course code
+            <input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Audience scope
+            <select name="scope" defaultValue={data.query.scope}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
+              <option value="SECTION">Section-specific</option>
+            </select>
+          </label>
+          {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Quiz results
+            <select name="results" defaultValue={data.query.results}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
+              <option value="HIDDEN">Results hidden</option>
+            </select>
+          </label>:null}
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Due-date configuration
+            <select name="duePresence" defaultValue={data.query.duePresence}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All deadlines</option><option value="SCHEDULED">Deadline configured</option>
+              <option value="UNSCHEDULED">No deadline</option>
+            </select>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Deadline window
+            <select name="dueWindow" defaultValue={data.query.dueWindow}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
+              <option value="FUTURE">Deadline upcoming</option>
+            </select>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Academic period code
+            <input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -83,7 +126,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
             Filter
           </button>
-          <Link href={collegeAssessmentHref(data.kind, { q: "", status: "ALL", page: 1 })}
+          <Link href={collegeAssessmentHref(data.kind, { q: "", scope: "ALL", results: "ALL", duePresence: "ALL", dueWindow: "ALL", status: "ALL", page: 1 })}
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Clear
           </Link>
@@ -103,7 +146,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         ))}
       </section>
 
-      <section aria-label={name + " records"} className="overflow-x-auto rounded-xl border border-border bg-surface">
+      <section aria-label={name + " records"} className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface">
         {data.items.length === 0 ? (
           <p className="p-6 text-sm text-body">
             {data.total === 0
@@ -111,7 +154,29 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
               : "There are no results on this page. Return to an earlier page."}
           </p>
         ) : (
-          <table className="w-full min-w-[48rem] text-left text-sm">
+          <>
+            <div className="divide-y divide-border sm:hidden">
+              {data.items.map(item=><article key={item.id} className="min-w-0 space-y-3 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
+                  <StatusBadge tone={item.status==="PUBLISHED"?"success":"neutral"}>{item.status}</StatusBadge>
+                </div>
+                <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
+                  className="inline-block min-h-11 break-words py-2 text-sm font-semibold text-primary-text">
+                  {item.courseName} ({item.courseCode})
+                </Link>
+                <p className="break-words text-sm text-body">{item.lessonName}</p>
+                <dl className="grid grid-cols-2 gap-3 text-xs">
+                  <div><dt className="font-semibold text-muted-foreground">Audience</dt><dd>{collegeAssessmentScopeLabel(item.deliverySpecific)}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">Maximum points</dt><dd>{item.points}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">Due</dt><dd>{formatDue(item.dueAt)}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">{isAssignment?"Submissions":"Attempts"}</dt><dd>{item.activityCount}</dd></div>
+                  {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
+                </dl>
+              </article>)}
+            </div>
+            <div className="hidden overflow-x-auto sm:block">
+              <table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th scope="col" className="px-4 py-3">{isAssignment ? "Assignment" : "Quiz"}</th>
@@ -137,19 +202,22 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     <p className="mt-1 text-xs text-body">{item.lessonName}</p>
                   </td>
                   <td className="px-4 py-4 text-body">
-                    {item.deliverySpecific ? "Section-specific" : "Shared offering"}
+                    {collegeAssessmentScopeLabel(item.deliverySpecific)}
                   </td>
                   <td className="px-4 py-4">
                     <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>
                       {item.status}
                     </StatusBadge>
+                    {!isAssignment?<p className="mt-1 text-xs text-muted-foreground">{item.resultsPublished?"Results published":"Results hidden"}</p>:null}
                   </td>
                   <td className="px-4 py-4 text-body">{formatDue(item.dueAt)}</td>
                   <td className="px-4 py-4 tabular-nums text-body">{item.activityCount}</td>
                 </tr>
               ))}
             </tbody>
-          </table>
+              </table>
+            </div>
+          </>
         )}
       </section>
 

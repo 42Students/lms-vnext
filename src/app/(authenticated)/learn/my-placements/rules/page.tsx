@@ -72,6 +72,10 @@ export default async function LearnerPlacementRulesPage({
             className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
             Check published drive eligibility →
           </Link>
+          <Link href="/learn/profile/verification"
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+            View my college verification status →
+          </Link>
         </div>
       </section>
       <section className="rounded-xl border border-border bg-surface p-5">

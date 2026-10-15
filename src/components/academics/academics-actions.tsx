@@ -81,6 +81,7 @@ function useAcademicMutation() {
 
 export function ProgramActions({
   program,
+  displayDurationYears = false,
 }: {
   program: {
     id: string;
@@ -88,6 +89,7 @@ export function ProgramActions({
     code: string;
     durationTerms: number;
   };
+  displayDurationYears?: boolean;
 }) {
   const [editOpen, setEditOpen] =
     useState(false);
@@ -100,7 +102,7 @@ export function ProgramActions({
   const [code, setCode] =
     useState(program.code);
   const [durationTerms, setDurationTerms] =
-    useState(String(program.durationTerms));
+    useState(String(displayDurationYears?program.durationTerms/2:program.durationTerms));
   const { pending, run } =
     useAcademicMutation();
 
@@ -108,7 +110,7 @@ export function ProgramActions({
     setName(program.name);
     setCode(program.code);
     setDurationTerms(
-      String(program.durationTerms),
+      String(displayDurationYears?program.durationTerms/2:program.durationTerms),
     );
     setDiscardOpen(false);
     setEditOpen(true);
@@ -120,7 +122,7 @@ export function ProgramActions({
       return;
     }
     if (pending) return;
-    if (hasUnsavedCollegeProgramEdit(program, { name, code, durationTerms })) {
+    if (hasUnsavedCollegeProgramEdit(program, { name, code, durationTerms: displayDurationYears ? String(Number(durationTerms)*2) : durationTerms })) {
       setDiscardOpen(true);
     } else {
       setEditOpen(false);
@@ -176,7 +178,7 @@ export function ProgramActions({
                       updateCollegeProgramSchema.parse({
                         name,
                         code,
-                        durationTerms: Number(durationTerms),
+                        durationTerms: displayDurationYears ? Number(durationTerms)*2 : Number(durationTerms),
                       }),
                     ),
                   "Program updated",
@@ -216,12 +218,13 @@ export function ProgramActions({
           </div>
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-body">
-              Duration terms
+              {displayDurationYears?"Duration (years)":"Duration terms"}
             </label>
             <Input
               type="number"
-              min={1}
-              max={24}
+              min={displayDurationYears?0.5:1}
+              max={displayDurationYears?12:24}
+              step={displayDurationYears?0.5:1}
               value={durationTerms}
               onChange={(event) =>
                 setDurationTerms(
