@@ -27,3 +27,8 @@ describe("contact name initial",()=>{it("only accepts a single normalized A–Z 
  expect(collegeContactsQuerySchema.safeParse({initial:"AA"}).success).toBe(false);
  expect(collegeContactsQuerySchema.safeParse({initial:"%"}).success).toBe(false);
 });});
+
+describe("contacts minimum join date",()=>{it("rejects forged dates and accepts an exact calendar date",()=>{
+ expect(collegeContactsQuerySchema.parse({joinedFrom:"2026-10-15"}).joinedFrom).toBe("2026-10-15");
+ expect(collegeContactsQuerySchema.safeParse({joinedFrom:"2026-13-40"}).success).toBe(false);
+});});

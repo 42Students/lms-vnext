@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Contacts joined-from IST filter PARTIAL (2026-10-15, chat-9):** Contacts can limit memberships to a validated inclusive local calendar day lower bound, converted to Asia/Kolkata midnight and applied in college-scoped SQL before count/paging/CSV. Browser and real-DB acceptance remain open.
+
+
 **Contact name-initial selector PARTIAL (2026-10-15, chat-9):** Native A–Z initials select filters persisted display names before total/paging/export, scoped to the current college and combined with role/status/search. Prefix is a single validated alphabetic character, not a user-supplied SQL pattern. PG/browser checks outstanding.
 
 
