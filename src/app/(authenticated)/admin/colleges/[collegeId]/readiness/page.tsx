@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {superAdminReadinessQuerySchema,visibleReadinessChecks} from "@/modules/colleges/admin-readiness-filter";
+import {ErrorState} from "@/components/ui/error-state";
 import { notFound } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -59,8 +61,10 @@ export const dynamic = "force-dynamic";
 
 export default async function CollegeReadinessPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ collegeId: string }>;
+  searchParams: Promise<Record<string,string|string[]|undefined>>;
 }) {
   const { collegeId } = await params;
 
@@ -70,6 +74,8 @@ export default async function CollegeReadinessPage({
     notFound();
   }
 
+  const raw=await searchParams;
+  const parsed=superAdminReadinessQuerySchema.safeParse({status:raw.status,area:raw.area});
   const context =
     await getCurrentRequestContext();
 
@@ -88,6 +94,8 @@ export default async function CollegeReadinessPage({
     evaluation,
     supplemental,
   } = result;
+  if(!parsed.success || Array.isArray(raw.status) || Array.isArray(raw.area))return <ErrorState title="Invalid readiness filter" description="Choose a supported check status." action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>}/>;
+  const shownChecks=visibleReadinessChecks(evaluation.checks,parsed.data.status,parsed.data.area);
 
   return (
     <div className="space-y-6">
@@ -115,6 +123,8 @@ export default async function CollegeReadinessPage({
         }
       />
 
+      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
+      <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
@@ -178,6 +188,20 @@ export default async function CollegeReadinessPage({
           </StatusBadge>
         </div>
 
+        <form className="mt-4 flex flex-wrap items-end gap-3">
+          <label className="grid gap-1 text-sm font-semibold text-body">Show checks
+            <select name="status" defaultValue={parsed.data.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Setup area
+            <select name="area" defaultValue={parsed.data.area} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
+            </select>
+          </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+          <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"}>Clear</Link>
+        </form>
+        <p className="mt-2 text-xs text-muted-foreground">Showing {shownChecks.length} of {evaluation.checks.length} required checks; the overall verdict always uses all ten.</p>
         <p className="mt-2 text-sm leading-6 text-body">
           PASS means that the required record or state
           was found. FAIL means a known requirement was
@@ -187,7 +211,7 @@ export default async function CollegeReadinessPage({
         </p>
 
         <ol className="mt-5 space-y-3">
-          {evaluation.checks.map(
+          {shownChecks.map(
             (check, index) => (
               <li
                 key={check.id}

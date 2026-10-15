@@ -37,6 +37,104 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               placeholder="Search registered records"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent program lifecycle
+              <select name="programStatus" defaultValue={data.query.programStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="ACTIVE">Active</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent batch lifecycle
+              <select name="cohortStatus" defaultValue={data.query.cohortStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="PLANNED">Planned</option>
+                <option value="ACTIVE">Active</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period lifecycle
+              <select name="periodStatus" defaultValue={data.query.periodStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="PLANNED">PLANNED</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="CLOSED">CLOSED</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent course lifecycle
+              <select name="courseStatus" defaultValue={data.query.courseStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="ARCHIVED">ARCHIVED</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Department code (exact)
+              <input type="search" name="departmentCode" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent program lifecycle
+              <select name="programStatus" defaultValue={data.query.programStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="ARCHIVED">ARCHIVED</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent batch lifecycle
+              <select name="cohortStatus" defaultValue={data.query.cohortStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="PLANNED">PLANNED</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="COMPLETED">COMPLETED</option>
+                <option value="ARCHIVED">ARCHIVED</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Academic period lifecycle
+              <select name="periodStatus" defaultValue={data.query.periodStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="PLANNED">PLANNED</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="CLOSED">CLOSED</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Parent course lifecycle
+              <select name="courseStatus" defaultValue={data.query.courseStatus}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="ARCHIVED">ARCHIVED</option>
+              </select>
+            </label>
+          ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Department code (exact)
+              <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             {lessons ? "Lesson status" : "Offering status"}
             <select name="status" defaultValue={data.query.status}
@@ -220,6 +318,17 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               <input name="courseCode" type="search" maxLength={64}
                 defaultValue={data.query.courseCode??""}
                 className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            </label>
+          ) : null}
+          {data.kind === "LESSONS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved content kind
+              <select name="contentType" defaultValue={data.query.contentType} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All kinds</option>
+                <option value="RESOURCE">Resource</option>
+                <option value="VIDEO">Uploaded video</option>
+                <option value="YOUTUBE">YouTube</option>
+                <option value="LIVE_CLASS">Live class</option>
+              </select>
             </label>
           ) : null}
           <button type="submit"

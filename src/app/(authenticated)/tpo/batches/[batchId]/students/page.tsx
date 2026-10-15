@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoAcademicImportPreview} from "@/components/tpo/tpo-academic-import-preview";
 import {TpoBatchEligibilityImport} from "@/components/tpo/tpo-batch-eligibility-import";
 import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,6 +21,8 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">Export current page CSV</a>
  </div>
  <TpoBatchEligibilityImport batchId={batchId}/>
+ <TpoAcademicImportPreview activeIds={result.students.map(s=>s.membershipId)}/>
+ <Link href={"/tpo/batches/"+batchId+"/nudge-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Prepare follow-up for unrecorded choices</Link>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>

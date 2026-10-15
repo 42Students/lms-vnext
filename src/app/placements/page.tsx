@@ -4,6 +4,7 @@ import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import { publicPlacementDisclosure } from "@/modules/placements/public-placement-disclosure-model";
 import { getPublicPlacementStatistics } from "@/modules/placements/public-page/read-service";
+import { readOptionalPublicPlacementData } from "@/modules/placements/public-page/optional-read-model";
 
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
@@ -14,9 +15,10 @@ export default async function PublicPlacementsPage() {
   const college = tenant.kind === "college"
     ? await getPublicCollegeBranding(tenant.collegeId)
     : null;
-  const published = tenant.kind === "college" && college
-    ? await getPublicPlacementStatistics(tenant.collegeId)
+  const publicRead = tenant.kind === "college" && college
+    ? await readOptionalPublicPlacementData(()=>getPublicPlacementStatistics(tenant.collegeId))
     : null;
+  const published = publicRead?.available ? publicRead.value : null;
   const metrics = publicPlacementDisclosure([
     { label: "Students placed", count: published?.placed ?? null },
     { label: "Offers received", count: published?.offers ?? null },
@@ -39,6 +41,11 @@ export default async function PublicPlacementsPage() {
           College-published figures last updated{" "}
           <time dateTime={published.publishedAt}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(published.publishedAt))}</time>.
           Individual records are never displayed here.
+        </p>
+      ) : null}
+      {publicRead && !publicRead.available ? (
+        <p role="status" className="mt-6 rounded-lg border border-border bg-surface p-4 text-sm text-body">
+          Public placement statistics are temporarily unavailable. No individual student information is shown.
         </p>
       ) : null}
       <section aria-label="Placement results" className="mt-8 grid min-w-0 gap-3 sm:grid-cols-3">
