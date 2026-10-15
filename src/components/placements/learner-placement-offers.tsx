@@ -73,12 +73,13 @@ function formatWhen(value: string | null) {
 }
 
 export function LearnerPlacementOffers({
-  offers,snapshotNowIso,extensionRequests=[],preserveOrder=false,
+  offers,snapshotNowIso,extensionRequests=[],preserveOrder=false,extensionsAvailable=true,
 }: {
   offers: readonly LearnerPlacementOfferItem[];
   snapshotNowIso:string;
   extensionRequests?:readonly LearnerOfferRequestStatus[];
   preserveOrder?:boolean;
+  extensionsAvailable?:boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -174,7 +175,7 @@ export function LearnerPlacementOffers({
   }
 
   async function requestExtension(){
-    if(!extensionOffer || pendingId!==null || !extensionOffer.expiresAt)return;
+    if(!extensionsAvailable || !extensionOffer || pendingId!==null || !extensionOffer.expiresAt)return;
     let input:ReturnType<typeof learnerOfferExtensionRequest>;
     try{
       input=learnerOfferExtensionRequest({
@@ -352,7 +353,7 @@ export function LearnerPlacementOffers({
                 >
                   Decline offer
                 </Button>
-                {item.expiresAt && !pendingExtensions.has(item.offerId) ? (
+                {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
                   <Button size="sm" variant="secondary" disabled={pendingId!==null}
                     onClick={()=>{
                       setExtensionOffer(item);
