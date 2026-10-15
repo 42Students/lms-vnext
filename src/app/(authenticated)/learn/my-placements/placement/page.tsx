@@ -6,14 +6,15 @@ import { LearnerPlacementRequests } from "@/components/placements/learner-placem
 import { PageHeader } from "@/components/ui/page-header";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
+import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 
 export default async function LearnerPlacementCellPage() {
   const context = await getCurrentRequestContext();
-  const [offerRows, requestWorkspace, alerts] = await Promise.all([
+  const [offerRows, requestWorkspace, alertRead] = await Promise.all([
     listOwnPlacementOffers(context),
     getLearnerPlacementRequestWorkspace(context),
-    getOwnLearnerPlacementAlerts(context),
+    readOptionalLearnerAlertSource(()=>getOwnLearnerPlacementAlerts(context)),
   ]);
   return (
     <div className="space-y-7">
@@ -28,7 +29,14 @@ export default async function LearnerPlacementCellPage() {
         <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read college notices →</Link>
         <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
       </nav>
-      <LearnerPlacementAlerts alerts={alerts} />
+      {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
+        <section role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          Personal placement alerts are temporarily unavailable. Your official offers and requests remain accessible.
+          <Link href="/learn/my-placements/placement" className="ml-2 font-semibold text-primary-text underline">
+            Retry personal alerts
+          </Link>
+        </section>
+      )}
       <LearnerPlacementOffers
         extensionRequests={requestWorkspace.requests.map(row=>({
           offerId:row.request.offerId,status:row.request.status,
