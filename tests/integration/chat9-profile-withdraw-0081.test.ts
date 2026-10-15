@@ -5,7 +5,6 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {withdrawOwnPendingVerification} from "@/modules/profile-verification/service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
-import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 
@@ -48,6 +47,22 @@ describe.skipIf(!enabled)("DB04 migration 0081 withdrawn event and optimistic re
    }
   }finally{await pool?.end();await closeDatabaseConnection();}
  });
+ it("denies a stale or another-user identity before any event is written",async()=>{
+  const wrongUser:RequestContext={
+   ...context,user:{...context.user,id:randomUUID()},
+  };
+  await expect(withdrawOwnPendingVerification(wrongUser,"IDENTITY",2,
+   createProfileVerificationRepository())).rejects.toMatchObject({code:"NOT_ALLOWED"});
+  const wrongRole:RequestContext={
+   ...context,membership:{...context.membership!,roles:["COLLEGE_ADMIN"]},
+  };
+  await expect(withdrawOwnPendingVerification(wrongRole,"IDENTITY",2,
+   createProfileVerificationRepository())).rejects.toMatchObject({code:"NOT_ALLOWED"});
+  const events=await pool!.query(
+   "select count(*)::integer as total from profile_verification_events where verification_id=$1::uuid",
+   [ids.record]);
+  expect(events.rows[0].total).toBe(0);
+ });
  it("withdraws only own pending revision, preserves approved content and commits one event",async()=>{
   const result=await withdrawOwnPendingVerification(context,"IDENTITY",2,
    createProfileVerificationRepository());
@@ -75,7 +90,7 @@ describe.skipIf(!enabled)("DB04 migration 0081 withdrawn event and optimistic re
   await expect(withdrawOwnPendingVerification(context,"IDENTITY",2,
    createProfileVerificationRepository())).rejects.toMatchObject({
     code:"STALE_VERSION",
-  } satisfies Partial<VerificationStateError>);
+  });
   const result=await pool!.query(
    "select count(*)::integer as total from profile_verification_events where verification_id=$1::uuid",
    [ids.record]);
