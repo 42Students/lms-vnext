@@ -5,6 +5,7 @@ export const hrConversationQuerySchema=z.object({
  page:z.coerce.number().int().min(1).max(10000).default(1),
  unreadOnly:z.enum(["true","false"]).default("false"),
  sort:z.enum(["LATEST","OLDEST"]).default("LATEST"),
+ scope:z.enum(["ALL","GENERAL","DRIVE"]).default("ALL"),
 }).strict();
 export function filterRecruiterConversations<T extends {jobId:string|null;id:string}>(
  threads:readonly T[], jobIds:ReadonlySet<string>, query:string,
@@ -38,4 +39,11 @@ export function orderRecruiterConversations<T extends {
   const delta=order==="LATEST"?right-left:left-right;
   return delta||a.id.localeCompare(b.id);
  });
+}
+
+export function scopeRecruiterConversations<T extends {jobId:string|null}>(
+ rows:readonly T[],scope:"ALL"|"GENERAL"|"DRIVE",
+):T[] {
+ return rows.filter(row=>scope==="ALL"||
+  (scope==="GENERAL"?row.jobId===null:row.jobId!==null));
 }
