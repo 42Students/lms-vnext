@@ -1,16 +1,18 @@
 import {notFound} from "next/navigation";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
+import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
+import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
 
 export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
 export default async function CompanySharePage({
  params,searchParams,
-}:{params:Promise<{token:string}>;searchParams:Promise<{page?:string}>}){
+}:{params:Promise<{token:string}>;searchParams:Promise<{page?:string;q?:string}>}){
  const {token}=await params;
- const {page}=await searchParams;
- const result=await getPublicCompanyApplicantShare(token,page??1);
+ const {page,q}=await searchParams;
+ const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"");
  if(result.kind!=="READY")notFound();
- const href=(p:number)=>"/company-share/"+encodeURIComponent(token)+"?page="+p;
+ const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
  return <main className="mx-auto max-w-5xl space-y-5 px-4 py-8">
   <header>
    <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
@@ -18,11 +20,34 @@ export default async function CompanySharePage({
    <p className="mt-2 text-sm text-body">Current shortlisted applicants only. Access expires
     or can be revoked. Private notes, resumes, telephone numbers and scores are not shared.</p>
   </header>
+  <form action={"/company-share/"+encodeURIComponent(token)} method="get"
+    className="flex flex-wrap items-end gap-3">
+    <label className="grid gap-2 text-sm font-semibold text-body">Search learner name
+     <input name="q" defaultValue={result.search} maxLength={80}
+      className="min-h-10 rounded border border-border bg-surface px-3"
+      placeholder="Name contains..." />
+    </label>
+    <button type="submit" className="min-h-10 rounded bg-primary px-4 text-on-primary">
+     Apply search
+    </button>
+    <a href={companyShareApplicantHref(token,1,"")} className="text-sm text-primary-text underline">Clear</a>
+  </form>
   <p role="status" className="text-sm text-body">
    {result.total} shortlisted applicants · Page {result.page} of {result.totalPages}
   </p>
   {result.rows.length===0?<p>No current shortlist records on this page.</p>:
-   <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+   <>
+    <ul aria-label="Shared applicants" className="space-y-3 sm:hidden">
+     {result.rows.map(row=><li key={row.applicationId}
+      className="min-w-0 rounded-xl border border-border bg-surface p-4">
+      <p className="break-words text-sm font-semibold text-foreground">{row.displayName}</p>
+      <dl className="mt-3 space-y-2 text-xs text-body">
+       <div><dt className="font-semibold">Application</dt><dd className="break-all font-mono">{row.applicationId}</dd></div>
+       <div><dt className="font-semibold">Email</dt><dd className="break-all">{row.email??"Not recorded"}</dd></div>
+      </dl>
+     </li>)}
+    </ul>
+    <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface sm:block">
     <table className="w-full min-w-[30rem] text-left text-sm">
      <thead><tr>{["Application ID","Learner","Email"].map(x=><th key={x}
       className="px-4 py-3" scope="col">{x}</th>)}</tr></thead>
@@ -32,13 +57,14 @@ export default async function CompanySharePage({
       <td className="break-all px-4 py-3">{row.email??"Not recorded"}</td>
      </tr>)}</tbody>
     </table>
-   </div>}
-  <nav className="flex gap-5 text-sm" aria-label="Share pages">
+    </div>
+   </>}
+  <nav className="flex flex-wrap gap-5 text-sm" aria-label="Share pages">
    {result.page>1?<a href={href(result.page-1)}>Previous</a>:null}
    {result.page<result.totalPages?<a href={href(result.page+1)}>Next</a>:null}
   </nav>
   <a className="font-semibold text-primary-text underline"
-   href={"/api/placements/company-share/"+encodeURIComponent(token)+"/export"}>
+   href={publicApplicantExportHref(token,result.search)}>
    Download capped CSV
   </a>
  </main>;
