@@ -123,6 +123,8 @@ export default async function CollegeReadinessPage({
         }
       />
 
+      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
+      <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
