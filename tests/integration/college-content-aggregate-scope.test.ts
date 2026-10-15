@@ -198,6 +198,12 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
     ]);
     expect(scopedResource.items.map((item) => item.id)).toContain(ids.resource);
     expect(absentCourse.items).toEqual([]);
+    const [draftPath, publishedPath]=await Promise.all([
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,pathStatus:"DRAFT"}),
+      listCollegeContentAggregate(adminA,"RESOURCE",{q:label,pathStatus:"PUBLISHED"}),
+    ]);
+    expect(draftPath.items.map(row=>row.id)).toContain(ids.resource);
+    expect(publishedPath.items).toEqual([]);
     const [matchingPeriod,absentPeriod]=await Promise.all([
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,periodCode:label}),
       listCollegeContentAggregate(adminA,"RESOURCE",{q:label,periodCode:"NO-SUCH-PERIOD"}),
