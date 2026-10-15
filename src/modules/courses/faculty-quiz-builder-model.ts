@@ -353,3 +353,10 @@ export function facultyQuizApplyPastedOptions(
  const newOptions=lines.map((text,i)=>({text,correct:filled.length===0&&i===0,sequence:filled.length+i}));
  return {ok:true,options:[...filled,...newOptions].map((option,i)=>({...option,sequence:i}))};
 }
+
+/** Empty persisted draft banks cannot be safely published or overwritten. */
+export function facultyQuizLoadedBankIssue(status:string|undefined,questionCount:number):string|null {
+ if(status==="DRAFT"&&questionCount===0)
+  return "This Quiz has no loaded questions. Retry before editing or publishing.";
+ return null;
+}
