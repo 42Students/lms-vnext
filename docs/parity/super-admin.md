@@ -866,3 +866,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Companies server pagination (PARTIAL):** The previously hard-capped 200-row Company directory now uses exact scoped PostgreSQL count and 50-row page/offset queries with strict page validation, filter-retaining Previous/Next links, and explicit page-local duplicate analysis. No cross-tenant scan or false all-tenant company totals are introduced. Unit and PG fixtures authored, unexecuted; large-dataset performance, race and browser checks still open.
+
+
+**2026-10-15 chat-6 Companies exact-college filter (PARTIAL):** Company relationship table has a validated college UUID filter intersected with the selected Super Admin safety scope; selected-college mismatch is denied before querying. The dropdown lists only authorized active colleges from the shared service; pagination keeps the college selection. Does not reveal recruiter PII or cross-tenant CRM notes. Unit and disposable-PostgreSQL success/foreign-scope tests authored but unexecuted, browser/privacy acceptance still open.
