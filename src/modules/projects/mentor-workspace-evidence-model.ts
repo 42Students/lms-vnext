@@ -7,3 +7,7 @@ export function safeProjectExternalHref(raw:string|null):string|null {
     return url.toString();
   } catch { return null; }
 }
+
+export function showMentorTaskCriteria(mode:"LEARNER"|"MENTOR"|"ADMIN",criteria:string|null){
+  return (mode==="LEARNER"||mode==="MENTOR")&&Boolean(criteria?.trim());
+}
