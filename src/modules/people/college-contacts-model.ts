@@ -4,6 +4,7 @@ export const collegeContactsQuerySchema=z.strictObject({
   tab:z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
   q:z.string().trim().max(100).default(""),
   initial:z.string().regex(/^[A-Z]$/).optional(),
+  membershipId:z.string().uuid().optional(),
   joinedFrom:z.iso.date().optional(),
   joinedThrough:z.iso.date().optional(),
   status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
