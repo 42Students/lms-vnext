@@ -3,6 +3,7 @@ const querySchema = z.strictObject({
  deleted: z.literal("1").optional(),
  q: z.string().trim().min(1).max(120).optional(),
  receiverType: z.enum(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"]).optional(),
+ visibility: z.enum(["LIVE","SCHEDULED","EXPIRED","DELETED"]).optional(),
  beforeCreatedAt: z.iso.datetime({offset:true}).optional(),
  beforeId: z.uuid().optional(),
 }).superRefine((value,ctx)=>{
@@ -12,6 +13,6 @@ const querySchema = z.strictObject({
 });
 export function parseSuperAdminAnnouncementParams(raw:Record<string,string|string[]|undefined>){
  if(Object.values(raw).some(Array.isArray))return null;
- const parsed=querySchema.safeParse({...raw,q:raw.q === "" ? undefined : raw.q,receiverType:raw.receiverType === "" ? undefined : raw.receiverType});
+ const parsed=querySchema.safeParse({...raw,q:raw.q === "" ? undefined : raw.q,receiverType:raw.receiverType === "" ? undefined : raw.receiverType,visibility:raw.visibility === "" ? undefined : raw.visibility});
  return parsed.success?parsed.data:null;
 }

@@ -1,5 +1,5 @@
 import {
-  and, desc, eq, gt, isNull, lt, or, sql, type SQL,
+  and, desc, eq, gt, isNotNull, isNull, lt, lte, or, sql, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10Announcements } from "@/db/schema/db10-announcements";
@@ -176,7 +176,22 @@ export async function listAnnouncementsForAdmin(context: RequestContext, raw: un
   const conditions: SQL[] = [];
   if (scope.collegeId) conditions.push(eq(db10Announcements.collegeId, scope.collegeId));
   if (scope.organizationId) conditions.push(eq(db10Announcements.organizationId, scope.organizationId));
-  if (!input.includeDeleted) conditions.push(isNull(db10Announcements.deletedAt));
+  const currentTime = new Date();
+  if (input.visibility === "DELETED") {
+    conditions.push(isNotNull(db10Announcements.deletedAt));
+  } else if (input.visibility) {
+    conditions.push(isNull(db10Announcements.deletedAt));
+    if (input.visibility === "SCHEDULED") {
+      conditions.push(gt(db10Announcements.scheduledAt, currentTime));
+    } else if (input.visibility === "EXPIRED") {
+      conditions.push(lte(db10Announcements.expiresAt, currentTime));
+    } else {
+      conditions.push(or(isNull(db10Announcements.scheduledAt), lte(db10Announcements.scheduledAt, currentTime))!);
+      conditions.push(or(isNull(db10Announcements.expiresAt), gt(db10Announcements.expiresAt, currentTime))!);
+    }
+  } else if (!input.includeDeleted) {
+    conditions.push(isNull(db10Announcements.deletedAt));
+  }
   if (input.receiverType) conditions.push(eq(db10Announcements.receiverType, input.receiverType));
   if (input.q) {
     const term = input.q.toLowerCase();

@@ -1093,3 +1093,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 announcement audience filter (PARTIAL):** Super Admin history now filters persisted `receiver_type` before page limit and retains the exact filter across deleted/search/cursor links. Invalid audience enum values are rejected at UI/API boundaries. Unit tests authored, browser/PG still pending.
+
+
+**2026-10-15 chat-6 persisted DB10 visibility filtering (PARTIAL):** The announcement history can now filter LIVE/SCHEDULED/EXPIRED/DELETED before cursor paging using one database clock per request, with a boundary-tested status model; `DELETED` explicitly selects soft-deleted rows regardless of the Include deleted convenience toggle. Browser/PG evidence still open.
