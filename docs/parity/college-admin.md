@@ -1486,3 +1486,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** batch start-date order rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.
 
 **College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** missing progression versus recorded term rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.
+
+**College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** unrecorded academic year versus year filter rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.

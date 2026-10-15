@@ -44,7 +44,8 @@ export const collegeBatchDirectoryBaseSchema = z.object({
 export function withCollegeBatchFilterCheck<T extends z.ZodType<{startOnOrAfter?:string;startOnOrBefore?:string;progression?:"ALL"|"RECORDED"|"MISSING";currentTerm?:number;yearStart?:number;academicYearState?:"ALL"|"RECORDED"|"UNRECORDED"}>>(schema:T){
  return schema.refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||q.startOnOrAfter<=q.startOnOrBefore,
   {path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit"}).refine(q=>q.progression!=="MISSING"||q.currentTerm===undefined,
-  {path:["currentTerm"],message:"A missing progression record cannot have a recorded current term"});
+  {path:["currentTerm"],message:"A missing progression record cannot have a recorded current term"}).refine(q=>q.academicYearState!=="UNRECORDED"||q.yearStart===undefined,
+  {path:["yearStart"],message:"An unrecorded academic year cannot match a year-start filter"});
 }
 export const collegeBatchDirectorySchema=withCollegeBatchFilterCheck(collegeBatchDirectoryBaseSchema);
 
