@@ -32,6 +32,8 @@ describe("College Admin assignment and quiz aggregate model", () => {
       { q: "x".repeat(101) },
       {courseCode:"x".repeat(65)},
       {periodCode:"x".repeat(65)},
+      {cohortCode:"x".repeat(65)},
+      {programCode:"x".repeat(65)},
       {scope:"FOREIGN"},
       {results:"OPEN"},
       {duePresence:"UNKNOWN"},
@@ -51,6 +53,8 @@ describe("College Admin assignment and quiz aggregate model", () => {
     expect(url.searchParams.get("status")).toBe("PUBLISHED");
     expect(url.searchParams.get("page")).toBe("2");
     expect(url.searchParams.has("collegeId")).toBe(false);
+    expect(collegeAssessmentHref("ASSIGNMENT",collegeAssessmentListQuerySchema.parse({programCode:"CS&EE"}))).toContain("programCode=CS%26EE");
+    expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({cohortCode:"B&26"}))).toContain("cohortCode=B%2626");
     expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({periodCode:"FALL&26"}))).toContain("periodCode=FALL%2626");
     expect(collegeAssessmentHref("ASSIGNMENT",collegeAssessmentListQuerySchema.parse({dueWindow:"PAST"}))).toContain("dueWindow=PAST");
     expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({duePresence:"UNSCHEDULED"}))).toContain("duePresence=UNSCHEDULED");
