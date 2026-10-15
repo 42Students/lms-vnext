@@ -986,3 +986,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 feature matrix stored college-rule module filter (PARTIAL):** Strict Projects/Placements/Electives URL selector now applies an exact persisted COLLEGE rule EXISTS predicate before totals and pagination. It is not an effective per-learner access filter. Authored unit regression, runtime/browser not executed.
+
+
+**2026-10-15 chat-6 feature matrix stored value (PARTIAL):** Server-side persisted COLLEGE-rule On/Off filter applies to the same exact module row and to both count and page; inherited/effective values are not silently relabelled. Pure tests authored, PG/browser pending.
