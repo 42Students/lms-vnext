@@ -3,21 +3,35 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manage-service";
+import {tpoCompanyAuditKindSchema,tpoCompanyAuditHref,tpoCompanyAuditExportHref} from "@/modules/placements/company-share/audit-kind-model";
 export const dynamic="force-dynamic";
-export default async function TpoCompanyShareAuditPage({params}:{
+export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  params:Promise<{jobId:string}>;
+ searchParams:Promise<{kind?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {jobId}=await params;
- const result=await listTpoCompanyShareAudit(context,jobId);
+ const search=await searchParams;
+ const rawKind=Array.isArray(search.kind)?search.kind[0]:search.kind;
+ const parsed=tpoCompanyAuditKindSchema.safeParse(rawKind??"ALL");
+ const kind=parsed.success?parsed.data:"ALL";
+ const result=await listTpoCompanyShareAudit(context,jobId,kind);
  const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
  return <div className="space-y-5">
   <Link href={back} className="text-sm font-semibold text-primary-text underline">
    Back to company-share preview
   </Link>
   <h1 className="text-2xl font-semibold text-foreground">Company-share access history</h1>
-  {result.ready?<a href={"/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares/audit/export"}
+  <nav aria-label="Company-share event filters" className="flex flex-wrap gap-3">
+   {tpoCompanyAuditKindSchema.options.map(option=><Link key={option}
+    href={tpoCompanyAuditHref(jobId,option)}
+    aria-current={kind===option?"page":undefined}
+    className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+    {option==="ALL"?"All events":option==="VIEW"?"Page views":"CSV downloads"}
+   </Link>)}
+  </nav>
+  {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
     className="inline-flex min-h-10 items-center rounded bg-primary px-4 text-sm font-semibold text-on-primary">
     Export access history CSV
   </a>:null}

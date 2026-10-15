@@ -4,10 +4,10 @@ import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manag
 import {tpoCompanyShareAuditCsv} from "@/modules/placements/company-share/audit-csv-model";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(_request:Request,{params}:{params:Promise<{jobId:string}>}){
+export async function GET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
   const {jobId}=await params;
-  const result=await listTpoCompanyShareAudit(await getCurrentRequestContext(),jobId);
+  const result=await listTpoCompanyShareAudit(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("kind")??"ALL");
   if(!result.ready)return new Response("Audit migration pending",{
    status:503,headers:{"Cache-Control":"private, no-store"},
   });
