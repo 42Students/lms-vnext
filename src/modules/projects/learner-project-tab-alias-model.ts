@@ -10,5 +10,4 @@ export const LEARNER_PROJECT_DETAIL_TABS = [
   {key:"board",label:"Board"},
   {key:"resources",label:"Resources"},
   {key:"activity",label:"Activity"},
-  {key:"delivery",label:"Final Delivery"},
 ] as const;
