@@ -53,6 +53,14 @@ export default async function FacultyResponseFollowUpsPage({
           </option>)}
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Sort
+        <select name="sort" defaultValue={data.query.sort}
+          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          <option value="RECENT_DUE">Most recently due</option>
+          <option value="OLDEST_DUE">Oldest overdue first</option>
+          <option value="TITLE">Assessment title</option>
+        </select>
+      </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
       </button>
