@@ -8,7 +8,7 @@ import {readRecruiterThreadMessages} from "./tpo-messaging-service";
 import {hrDriveProposalHistoryQuerySchema,hrProposalHistoryWindow,HR_PROPOSAL_PAGE_SIZE,previewHrDriveProposalMessage} from "./hr-drive-proposal-history-model";
 
 /**
- * Read-only preview of up to 50 persisted employer proposal messages.
+ * Read-only paginated preview of persisted employer proposal messages.
  * Uses the same recruiter grant + exact thread ownership path as the inbox.
  */
 export async function listHrDriveProposals(context:RequestContext,raw:unknown={}){
@@ -26,7 +26,7 @@ export async function listHrDriveProposals(context:RequestContext,raw:unknown={}
   )).limit(1);
  if(!thread)
   return {status:"READY" as const,collegeId:inbox.collegeId,choices:inbox.choices,
-   items:[],limited:false};
+   items:[],total:0,page:1,pages:1,limited:false};
  // Recheck persisted ownership and grant with the canonical message reader.
  await readRecruiterThreadMessages(context,thread.id,1);
  const where=and(
