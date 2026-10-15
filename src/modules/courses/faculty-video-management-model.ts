@@ -137,3 +137,17 @@ export function facultyVideoCanEnableVisibility(
  return context.canManage&&context.lessonPublished&&
    video.contentStatus==="PUBLISHED"&&video.processingStatus==="READY";
 }
+
+/** Narrow cards expose only safe enabled actions, without changing permissions. */
+export type FacultyVideoAction="REPLACE"|"ARCHIVE"|"SHOW"|"HIDE";
+export function facultyVideoCardActions(
+ video:FacultyLessonVideo,context:{canManage:boolean;lessonPublished:boolean},
+):FacultyVideoAction[]{
+ if(!context.canManage||video.contentStatus==="ARCHIVED")return [];
+ const actions:FacultyVideoAction[]=[];
+ if(facultyVideoCanReplace(video,true))actions.push("REPLACE");
+ actions.push("ARCHIVE");
+ if(video.visibleToStudents) actions.push("HIDE");
+ else if(facultyVideoCanEnableVisibility(video,context)) actions.push("SHOW");
+ return actions;
+}
