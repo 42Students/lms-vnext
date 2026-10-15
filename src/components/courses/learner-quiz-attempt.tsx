@@ -8,6 +8,7 @@ import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
 import { learnerQuizRouteScopeCurrent } from "@/modules/courses/learner-quiz-route-scope-model";
+import { learnerQuizDraftCanPersist } from "@/modules/courses/learner-quiz-autosave-scope-model";
 import { requireLearnerQuizResponseId } from "@/modules/courses/learner-quiz-response-id-model";
 import { canReviewLearnerQuizCorrectAnswers } from "@/modules/courses/learner-quiz-correctness-visibility-model";
 import { learnerAttemptResultLabel } from "@/modules/courses/learner-quiz-history-model";
@@ -194,13 +195,13 @@ export function LearnerQuizAttempt() {
   }, []);
 
   useEffect(() => {
-    if (!storageKey || review || loading || typeof window === "undefined") return;
+    if (!learnerQuizDraftCanPersist({storageKey,loadedScopeKey,review,loading,hasQuiz:Boolean(quiz)}) || typeof window === "undefined") return;
     try {
       window.sessionStorage.setItem(storageKey, JSON.stringify({ answers, step }));
     } catch {
       // Private browsing/quota should not block the attempt.
     }
-  }, [answers, step, storageKey, review, loading]);
+  }, [answers, step, storageKey, loadedScopeKey, review, loading, quiz]);
 
   const questions = quiz?.questions ?? [];
   const current = questions[step] ?? null;
