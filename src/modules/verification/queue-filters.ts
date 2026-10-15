@@ -9,6 +9,7 @@ export const verificationQueueFilters=z.strictObject({
   marksheets:z.enum(["ANY","MISSING","PRESENT"]).default("ANY"),
   attention:z.enum(["ALL","MISSING_MARKSHEET","VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"]).default("ALL"),
   batchId:z.string().uuid().optional(),
+  programId:z.string().uuid().optional(),
   branchId:z.string().uuid().optional(),
   waitingSince:z.iso.date().optional(),
   submittedFrom:z.iso.date().optional(),

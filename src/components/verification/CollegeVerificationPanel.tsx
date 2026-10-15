@@ -14,10 +14,10 @@ import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-paylo
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
+export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices,programChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
  activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;pageSize:number;
- query:Record<string,string>;tpoCanVerify:boolean;batchChoices:VerificationFilterChoiceList;branchChoices:VerificationFilterChoiceList;classChoices:VerificationFilterChoiceList;
+ query:Record<string,string>;tpoCanVerify:boolean;batchChoices:VerificationFilterChoiceList;branchChoices:VerificationFilterChoiceList;classChoices:VerificationFilterChoiceList;programChoices:VerificationFilterChoiceList;
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
  const [selection,setSelection]=useState<Set<string>>(()=>new Set());
@@ -73,7 +73,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     onClick={()=>navigate(verificationAttentionShortcutPatch(item.attention))} className="rounded-md border px-3 py-2 text-sm">{item.label}</button>)}
    {query.attention&&query.attention!=="ALL"&&<button type="button" onClick={()=>navigate({attention:"ALL",page:"1"})} className="rounded-md border px-3 py-2 text-sm">All attention states</button>}
   </nav>
-  <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
+  <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} disableLocalSearch
    initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NEWEST"?"NEWEST":"OLDEST"}

@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Academic-program verification selector PARTIAL (chat-9):** The queue and capped CSV now share exact current-college active program-enrollment filtering. A persisted college-only program picker is bounded to 200 and retains unknown bookmark IDs without showing another tenant's labels. Pure URL/CSV contract tests authored; PostgreSQL/browser acceptance open.
+
 **Unified verification CSV filter validation PARTIAL (chat-9):** The same strict date-window and pending-state compatibility checks now apply at the CSV URL boundary; invalid/ambiguous filters receive an explicit 400 without triggering protected reads. Disposable DB04-gated fixtures cover exact learner, lower-day and first-submission filters plus wrong-role/foreign tenant denials. These fixtures are authored but have not executed in this session.
 
 **Named bulk review preview PARTIAL (chat-9):** Before a bulk Verify/Send back, the College Admin now sees the actual selected learner names, sections, versions and any locally skipped entries rather than only aggregate counts. Changing selection cancels the old preview; in-flight decisions lock select/clear. No preview claims receipt validation or server commit. Unit coverage authored, browser/DB acceptance remains open.
