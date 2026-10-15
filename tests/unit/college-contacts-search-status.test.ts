@@ -4,3 +4,8 @@ describe("contacts account state",()=>{it("validates account lifecycle independe
  expect(filter.accountStatus).toBe("DISABLED");
  expect(collegeContactsQuerySchema.safeParse({accountStatus:"SUSPENDED"}).success).toBe(false);
 });});
+
+describe("contacts oldest-first sort",()=>{it("supports a deterministic oldest join sequence",()=>{
+ expect(collegeContactsQuerySchema.parse({sort:"OLDEST"}).sort).toBe("OLDEST");
+ expect(collegeContactsQuerySchema.safeParse({sort:"LAST"}).success).toBe(false);
+});});
