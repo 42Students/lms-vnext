@@ -13,7 +13,8 @@ export function learnerNoticeFocusPage<T extends {id:string}>(
  authorized:readonly T[],requestedPage:number,focus:string|null,pageSize=15
 ):{page:number;found:boolean}{
  if(!focus||!idSchema.safeParse(focus).success)return {page:requestedPage,found:false};
- const index=authorized.findIndex(row=>row.id===focus);
+ if(!Number.isSafeInteger(pageSize)||pageSize<1)throw new Error("INVALID_NOTICE_PAGE_SIZE");
+ const index=authorized.findIndex(row=>row.id.toLowerCase()===focus.toLowerCase());
  return index>=0?{page:Math.floor(index/pageSize)+1,found:true}:{page:requestedPage,found:false};
 }
 
