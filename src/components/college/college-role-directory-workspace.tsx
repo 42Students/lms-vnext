@@ -184,6 +184,8 @@ export async function CollegeRoleDirectoryWorkspace({
             <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All departments</option>
+              {selectedDirectoryValueNotListed(result.filter.facultyDepartmentId,result.departmentOptions.map(d=>d.id)) ?
+                <option value={result.filter.facultyDepartmentId}>Selected department (outside first 200)</option> : null}
               {result.departmentOptions.map(dept=><option key={dept.id} value={dept.id}>{dept.name}</option>)}
             </select>
             {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">

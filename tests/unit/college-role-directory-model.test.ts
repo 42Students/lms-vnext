@@ -150,3 +150,11 @@ describe("Selected batch beyond directory option cap",()=>{
   expect(selectedDirectoryValueNotListed(undefined,[])).toBe(false);
  });
 });
+
+describe("Selected Faculty department beyond directory option cap",()=>{
+ it("distinguishes an outside-choice bookmark from a displayed own-college option",()=>{
+  const id="30000000-0000-4000-8000-000000000003";
+  expect(selectedDirectoryValueNotListed(id,[])).toBe(true);
+  expect(selectedDirectoryValueNotListed(id,[id])).toBe(false);
+ });
+});
