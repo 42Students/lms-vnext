@@ -10,3 +10,8 @@ export function companyShareLinksHref(
  if(applicantPage>1)p.set("page",String(applicantPage));
  return "/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview?"+p;
 }
+
+export function recoverCompanyShareLinkPage(raw:unknown){
+ const parsed=companyShareLinkPageSchema.safeParse(raw);
+ return parsed.success?{page:parsed.data,wasInvalid:false}:{page:1,wasInvalid:true};
+}

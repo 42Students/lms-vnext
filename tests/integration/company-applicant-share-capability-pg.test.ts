@@ -71,7 +71,7 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
     [share],
    );
    expect(revoked.rows[0]?.count).toBe("0");
-   await client.query("update placement_company_applicant_shares set revoked_at=null,expires_at=clock_timestamp()-interval '1 second' where id=$1",[share]);
+   await client.query("update placement_company_applicant_shares set revoked_at=null,created_at=clock_timestamp()-interval '2 days',expires_at=clock_timestamp()-interval '1 second' where id=$1",[share]);
    const expired=await client.query<{count:string}>(
     "select count(*)::text as count from placement_company_applicant_shares where id=$1 and revoked_at is null and expires_at>clock_timestamp()",
     [share],
