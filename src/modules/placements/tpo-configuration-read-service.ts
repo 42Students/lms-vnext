@@ -19,7 +19,7 @@ export async function getTpoBlockedDates(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
  const ready=await placementTableExists("placement_tpo_blocked_dates");
  const rows=ready?await getDb().select({
-  id:tpoBlockedDates.id,day:tpoBlockedDates.day,reason:tpoBlockedDates.reason,
+  id:tpoBlockedDates.id,day:tpoBlockedDates.day,reason:tpoBlockedDates.reason,updatedAt:tpoBlockedDates.updatedAt,
  }).from(tpoBlockedDates).where(eq(tpoBlockedDates.collegeId,collegeId))
  .orderBy(asc(tpoBlockedDates.day)):[];
  return {ready,rows};
