@@ -25,33 +25,23 @@ Every page below also requires:
 
 **Per-item bulk results PARTIAL (chat-9):** Bulk decisions display server-returned succeeded/failed counts and each public-safe outcome, including stale-version, unavailable target and missing-document failures. Successful HTTP transport never implies every learner was verified. An explicit refresh button rechecks the server queue; integration/browser acceptance remains open.
 
-
 **Confirmed bulk Send back PARTIAL (chat-9):** College reviewer preview now accepts a required 3–500 character correction explanation and an explicit Send back confirmation, passing only the chosen waiting requests to the existing version-locked writer with individual audit/notification. The reason is saved only after server success, not inferred from local preview. Unit coverage authored; PG/browser acceptance remains open.
-
 
 **Confirmed bulk Verify action PARTIAL (chat-9):** College reviewer preview offers a second explicit Verify confirmation, submitting only the first 20 waiting membership/section/version tuples through the same-origin guarded, DB04 receipt-attested bulk POST. The UI clears selection only on HTTP success, surfaces errors, and requests server refresh; per-item result details and independent execution remain open.
 
-
 **Select-all and bulk preview PARTIAL (chat-9):** College Admin can select up to 20 currently visible waiting requests, clear the working selection and preview Verify/Send back eligibility using the existing status/version planner. Preview performs no mutation; Super Admin retains its existing single-review UI. Pure selection regression and browser acceptance open.
-
 
 **Scoped verification card selection PARTIAL (chat-9):** Only submitted/updated waiting rows offer accessible selection checkboxes in the reusable workspace when mounted by College Admin; selection uses membership+section composite identity, is capped at 20 and is intersected with the current server-authorized page, with no bulk writes yet. Pure-model and browser acceptance open.
 
-
 **Disposable PostgreSQL bulk isolation fixture PARTIAL (chat-9):** Gated integration exercise rejects LEARNER-role batch execution and maps foreign-college identity-review IDs to generic NOT_AVAILABLE without target metadata. Existing single-review fixture still covers version CAS, audit and in-app notification. Requires DB04_VERIFICATION_READY=1 and disposable DB target; not yet executed.
-
 
 **College Admin bulk mutation route PARTIAL (chat-9):** `/api/college/verification/bulk-review` POST checks same-origin before JSON parsing, delegates to persisted actor/scoped, row-versioned DB04 per-item service and returns no-store per-record outcomes. The endpoint does not accept caller-provided college scope. Route-contract tests authored, runtime/API and browser acceptance open.
 
-
 **Serialized bulk-review service PARTIAL (chat-9):** A bounded College Admin bulk command runs each selected request through the existing DB04 locked writer and private-document receipt validation, checking persisted reviewer membership again before each write. Audits and in-app notifications remain transactional per successful decision; recognized stale/foreign/invalid transitions report per-item outcomes. Unexpected failures abort remaining work rather than silently claiming success. Real DB/CI/browser evidence still open.
-
 
 **Per-request bulk outcome model PARTIAL (chat-9):** Bulk review now has a typed per-learner result taxonomy and truthful attempted/succeeded/failed counts, with a distinct stale-version message. Pure-model tests authored; route/UI/independent acceptance remain open.
 
-
 **Bounded confirmed bulk-review contract PARTIAL (chat-9):** Registered schema validates explicit user confirmation, at most 20 unique membership+section keys, positive expected versions, and reasoned send-back; caller-supplied tenant IDs and duplicate entries are rejected. Pure regression tests authored; service/UI and independent PG/browser acceptance remain open.
-
 
 **Unambiguous verification URL parsing PARTIAL (chat-9):** College Admin queue now fails closed on repeated query parameters instead of silently using the first value, while rejecting caller-supplied college scope and preserving strict typed filters. Invalid input is shown without querying protected data. Unit tests authored, browser/running-service acceptance outstanding.
 
@@ -80,6 +70,7 @@ Every page below also requires:
 **Server-initialized TPO switch PARTIAL (2026-10-15, chat-9):** The College verification header now receives the same-college persisted TPO verifier switch directly from its authorized queue read, including the legacy default when no setting exists. Eliminated first-load client GET and effect-driven setState while keeping same-origin audited PATCH, optimistic success-only state, error/refresh and disabled-busy UI. Independent PG/browser acceptance and TPO route enforcement remain open.
 
 **Learner-name verification search PARTIAL (2026-10-15, chat-9):** The College Admin queue and matching capped CSV now apply escaped, bounded display-name substring search before the 5,001-row safety cap, scoped to active same-college learner verification requests. Private emails/phones/identity fields are never searched or revealed; query form resets safely without effect-driven state writes. Dedicated unit and gated disposable-PG tenant/foreign/name tests authored, not executed. Browser and full legacy search parity remain open.
+
 
 **Staff verification workspace PARTIAL (2026-10-15, chat-9):** Added /college/verification and shared src/components/verification + src/modules/verification. The route loads College Admin-owned learner Education/Identity requests from DB04 profile_verifications, checked against a persisted active actor membership/role and active learner roles. The reusable queue has Waiting/Sent back/Verified counts, submitted-update attention cues, safe mobile cards, same-college cohort/branch display, section/kind/marksheet/batch/branch/IST waiting-date filters, bounded paging, explicit unavailable/retry states and 5,000-request fail-closed working-set limit. Batch/branch/class selectors currently accept UUIDs rather than native college-owned pickers; search is local to the displayed page, not full-roster search.
 
@@ -541,6 +532,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Access/not-found/error states match.
 
 ## Page: Lessons
+**Lessons with/without authored content PARTIAL (2026-10-15):** College Admin can isolate lessons that have any persisted content or have none using a correlated database existence check before pagination, without treating empty lessons as unpublished or without assignments/quizzes. Filter carries to CSV and unit/PG assertions; browser/runtime acceptance pending.
+
+**Course department name filter PARTIAL (2026-10-15):** College Admin lessons now support exact course-owning department name filtering within the authenticated college; URL pagination and CSV preserve this state. Typed URL and same-college PG fixture authored. Execution/browser acceptance pending.
+
+**CORE/ELECTIVE lesson type PARTIAL (2026-10-15):** College Admin lessons can now be filtered by the registered offering CORE/ELECTIVE type before pagination, with stable URL and formula-neutralized CSV. Own-college positive/negative disposable-PG fixture authored; execution and responsive browser acceptance open.
+
 **Batch-code scoping PARTIAL (2026-10-15):** College Admin Lessons aggregate now supports exact persisted batch code filtering, including page state and the formula-safe CSV. Query is confined to same-college course and cohort ancestry; strict validation and a disposable-PG matching/nonmatching fixture authored. Runtime and browser acceptance open.
 
 **Publication versus visibility counts PARTIAL (2026-10-15):** Lessons aggregate now distinguishes all authored content, published content, and published content with the persisted student-visibility flag enabled. These are actual per-lesson counts, not guaranteed learner access when parent path/lesson or section gating blocks it. CSV parity and existing database fixtures updated; runtime/browser acceptance open.
@@ -570,6 +567,10 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Video Content
+**Department-specific content search PARTIAL (2026-10-15):** Video/Resource directories can filter by the owning course department name using in-college ancestry. URL/page and bounded CSV preserve this filter; strict inputs plus PostgreSQL own/unknown department fixtures authored. Real execution and browser acceptance open.
+
+**Learning-path lifecycle filter PARTIAL (2026-10-15):** Video and Resource catalogues filter by the actual DRAFT/PUBLISHED/ARCHIVED learning path state independently of content publication, including pagination and capped metadata CSV. A disposable PostgreSQL fixture and strict query tests are authored; executed gates and browser parity open.
+
 **Visibility mutation PostgreSQL fixture PARTIAL (2026-10-15):** In-test real resource verifies College Admin success, foreign-college non-leaking not-found, wrong-role rejection, stale-version denial, persisted visibility filtering and audited restore. Fixture authored for disposable PG execution; not yet executed or browser-accepted.
 
 **Administrator-only visibility writer PARTIAL (2026-10-15):** A same-origin PATCH endpoint and serializable college-scoped service now guard the real registered content visibility switch with Zod, millisecond version CAS, persisted current College Admin membership/permission recheck, ancestor ownership joins, and same-transaction activity audit. No Faculty or learner writes; UI integration, runtime DB/browser acceptance open.
@@ -603,6 +604,12 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**Parent lesson archival triage PARTIAL (2026-10-15):** Video and Resource catalogues isolate content belonging to ACTIVE versus ARCHIVED lessons, separately from content publication and learning-path lifecycle; same-college filtering precedes count/pagination and matches safe CSV. Tests authored; runtime/browser gates pending.
+
+**CORE and ELECTIVE course content PARTIAL (2026-10-15):** Video and Resource catalogues now distinguish actual persisted course offering CORE/ELECTIVE type, independently of content format, status and audience. Filter survives pagination and capped CSV. Isolated PG fixture authored, executed/browser parity open.
+
+**Academic-period-specific content search PARTIAL (2026-10-15):** Video and Resource views filter by exact persisted in-college academic-period code before pagination, retaining the filter in CSV. Typed URL and isolated positive/negative PostgreSQL fixtures authored; runtime and browser acceptance outstanding.
+
 **College Admin visibility control PARTIAL (2026-10-15):** Registered Video/Resource rows now offer a confirmed mobile/desktop Visible-to-students toggle calling the same-origin, version-checked College Admin mutation. Optimistic UI state updates only after confirmed response; stale/denied/network errors retain the prior state and request a refresh. Unit checks cover accessible labels; independently executed PG/browser/375px acceptance open.
 
 **Student visibility CSV column PARTIAL (2026-10-15):** Capped Video and Resource metadata export now explicitly labels the persisted Visible-to-students boolean as Yes/No instead of inferring visibility from publication. Metadata never includes private media keys or URLs. Formula-safe export unit assertions authored; runtime/browser verification open.
@@ -655,6 +662,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Assignments
+**Authenticated batch scope for assessments PARTIAL (2026-10-15):** Assignment and Quiz aggregates now join persisted cohort/program ownership and a separate department alias, requiring the course and cohort program to belong to the selected college. Exact cohort code filtering runs before counts/pagination; strict model and PG own/other batch assertions authored. Runtime/browser gates pending.
+
 **College-owned academic-period assessment filter PARTIAL (2026-10-15):** Both Assignment and Quiz aggregates now join a registered academic period in the signed-in college and optionally filter by exact period code, before pagination and activity counts. URL/model plus positive/negative disposable-PostgreSQL evidence authored; browser/runtime verification pending.
 
 **375px assessment cards PARTIAL (2026-10-15):** Both College Admin assessment catalogues now render stacked min-width-safe cards for narrow viewports, preserving lesson/offering link, scope, due timestamp, points and recorded submissions/attempts, while the desktop table remains. No global horizontal table overflow is required on mobile; browser/accessibility acceptance pending.
@@ -676,6 +685,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Quizzes
+**Program-specific assessment catalogue PARTIAL (2026-10-15):** Assessment totals and pages now filter by exact registered program code through the already college-validated cohort program ancestry. Query/URL round-trip and positive/negative disposable-PG fixture authored. No inferred learner eligibility or completion totals; executed/browser acceptance pending.
+
 **Past/upcoming due windows PARTIAL (2026-10-15):** Both assessment directories apply database timestamps before pagination (strictly before versus at/after now), excluding missing due timestamps. Typed query tests authored; independent PostgreSQL and browser execution pending.
 
 **Persisted quiz result-publication triage PARTIAL (2026-10-15):** College Admin quiz listing now filters by actual `results_published`, shows the state separately from quiz publication, and preserves the result selector in pagination. The Assignment endpoint rejects quiz-only result filters. Isolated PostgreSQL and strict-model fixtures authored; browser acceptance pending.
@@ -736,6 +747,7 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 **Contacts platform-account filter PARTIAL (2026-10-15, chat-9):** College contacts can independently filter registered ACTIVE/DISABLED user accounts and ACTIVE/SUSPENDED/ENDED college memberships; server SQL applies both before count/paging/CSV. Tenant authorization and student masks remain unchanged. Isolated runtime and browser checks outstanding.
 
 **Contacts page-size selector PARTIAL (2026-10-15, chat-9):** Contact tabs support strict 10/25/50 server-side page sizes and URL-preserved pagination, while the CSV retains a fixed 25-row service batch and independent 1,000-row cap. Unit contract authored; real DB/browser acceptance remains open.
+
 
 ## Page: Faculty
 **Faculty history teaching-role drilldown PARTIAL (2026-10-15):** The Faculty detail history can filter registered PRIMARY, CO_TEACHER or TA assignments in conjunction with active/ended lifecycle before its 100-row cap, while separately retaining all-time totals. Strict no-forged-college model and own-college PG fixture tests authored; runtime/browser acceptance pending.
