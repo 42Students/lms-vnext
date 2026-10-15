@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, ilike, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, isNotNull, isNull, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, placementCompanies, placementCompanyRelationships } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -19,6 +19,8 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   const filters: SQL[] = [];
   if(query.collegeId) filters.push(eq(colleges.id,query.collegeId));
   if(query.companyId) filters.push(eq(placementCompanies.id,query.companyId));
+  if(query.owner==="ASSIGNED") filters.push(isNotNull(placementCompanyRelationships.ownerMembershipId));
+  if(query.owner==="UNASSIGNED") filters.push(isNull(placementCompanyRelationships.ownerMembershipId));
   if (selected?.collegeId) {
     if (query.collegeId && query.collegeId !== selected.collegeId) throw new AuthorizationError("placements.read");
     filters.push(eq(colleges.id, selected.collegeId));

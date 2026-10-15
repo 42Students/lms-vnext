@@ -920,3 +920,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: readiness area filters — PARTIAL.** Ten persisted checks can be organized into tenant lifecycle, academics, people, placements and domains, composed with status, without altering totals, evidence or readiness decision. Typed area model and unit tests authored but not run. Legacy/browser readiness workflow remains open.
+
+
+**2026-10-15 chat-6: relationship owner assignment filter — PARTIAL.** Super Admin company relationships can be filtered by persisted owner membership presence, not inferred user names. Count/rows/CSV-page/pagination share the same college/organization permissioned SQL filters, without querying contact data. Strict unit and disposable PG tests authored, not executed.
