@@ -16,7 +16,7 @@ export default function FacultyClassScheduleError({ reset }: {
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Retry</Button>
         <Link href="/teacher/courses" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          Back to Courses
+          Back to courses
         </Link>
       </div>
     </section>
