@@ -308,3 +308,9 @@ export function facultyInsertQuizQuestionAfter<T>(questions:readonly T[],index:n
  if(index<0||index>=questions.length||questions.length>=100)return [...questions];
  const next=[...questions];next.splice(index+1,0,question);return next;
 }
+
+/** Dedicated first/last controls avoid dozens of moves in a large question bank. */
+export function facultyMoveQuizQuestionToEdge<T>(items:readonly T[],index:number,edge:"FIRST"|"LAST"):T[]{
+ if(index<0||index>=items.length)return [...items];
+ return facultyMoveQuizQuestion(items,index,edge==="FIRST"?0:items.length-1);
+}
