@@ -4,6 +4,7 @@ import { can } from "@/modules/permissions/policy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "./errors";
 import { getFacultyAssessmentOverview } from "./faculty-assessment-service";
+import {facultyTeachingSelectionAllowed} from "./faculty-teaching-selector";
 import {
   getFacultyAssignmentReport, getFacultyQuizReport,
 } from "./faculty-assessment-report-service";
@@ -28,20 +29,24 @@ export async function getFacultyAssessmentResults(
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   }
   const overview = await getFacultyAssessmentOverview(context);
+  if(!facultyTeachingSelectionAllowed(overview.courses,query.deliveryId))
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const candidates: FacultyResultCandidate[] = [
     ...overview.assignments.map(row => ({
       id:row.id, kind:"ASSIGNMENT" as const, status:row.status,
       title:row.title, courseName:row.courseName, sectionName:row.sectionName,
+      courseCode:row.courseCode,sectionCode:row.sectionCode,
       deliveryId:row.deliveryId, dueAt:row.dueAt,
     })),
     ...overview.quizzes.map(row => ({
       id:row.id, kind:"QUIZ" as const, status:row.status,
       title:row.title, courseName:row.courseName, sectionName:row.sectionName,
+      courseCode:row.courseCode,sectionCode:row.sectionCode,
       deliveryId:row.deliveryId, dueAt:row.dueAt,
     })),
   ];
   const chosen = paginateFacultyResults(
-    filterFacultyResultCandidates(candidates,query),query.page,
+    filterFacultyResultCandidates(candidates,query),query.page,query.pageSize,
   );
   const items = await Promise.all(chosen.items.map(async row => {
     if (row.kind === "ASSIGNMENT") {

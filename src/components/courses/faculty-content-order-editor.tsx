@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
+import { facultyMoveContentId, facultyContentOrderDirty, facultyResetContentOrder, facultyContentOrderValid, facultyContentOrderReceiptMatches } from "@/modules/courses/faculty-content-order-ui-model";
 
 type Item = {
   id: string;
@@ -23,6 +25,7 @@ function FacultyContentOrderEditorInner({
   enabled: boolean;
 }) {
   const { showToast } = useToast();
+  const router = useRouter();
   const [order, setOrder] = useState(
     () => items.map((item) => item.id),
   );
@@ -32,6 +35,7 @@ function FacultyContentOrderEditorInner({
   // The parent keys this editor by the persisted source order. A new
   // lesson/delivery/content list remounts it, resetting unsaved local order.
 
+  const dirty = facultyContentOrderDirty(items.map(item=>item.id),order);
   if (items.length <= 1) return null;
 
   const byId = new Map(
@@ -39,24 +43,14 @@ function FacultyContentOrderEditorInner({
   );
 
   function move(index: number, delta: number) {
-    setOrder((current) => {
-      const nextIndex = index + delta;
-      if (
-        nextIndex < 0 ||
-        nextIndex >= current.length
-      ) {
-        return current;
-      }
-      const next = [...current];
-      [next[index], next[nextIndex]] = [
-        next[nextIndex]!,
-        next[index]!,
-      ];
-      return next;
-    });
+    setOrder(current => facultyMoveContentId(current,index,delta));
   }
 
   function save() {
+    if (!facultyContentOrderValid(items.map(item=>item.id),order)) {
+      showToast({tone:"error",title:"Section content changed",description:"Reload this Section before saving its new order."});
+      return;
+    }
     startTransition(async () => {
       try {
         const response = await fetch(
@@ -79,6 +73,11 @@ function FacultyContentOrderEditorInner({
             await courseApiError(response),
           );
         }
+        const receipt:unknown = await response.json().catch(() => null);
+        if (!facultyContentOrderReceiptMatches(deliveryId,order,receipt)) {
+          throw new Error("Order save status could not be verified. Reload the Section before trying again.");
+        }
+        router.refresh();
         showToast({
           tone: "success",
           title: "Section order saved",
@@ -118,13 +117,17 @@ function FacultyContentOrderEditorInner({
             Section only. Assessments keep their own sequence.
           </p>
         </div>
+        {dirty ? <Button type="button" size="sm" variant="secondary"
+          disabled={pending} onClick={()=>setOrder(facultyResetContentOrder(items))}>
+          Reset order
+        </Button> : null}
         <Button
           type="button"
           size="sm"
-          disabled={!enabled || pending}
+          disabled={!enabled || pending || !dirty}
           onClick={save}
         >
-          {pending ? "Saving…" : "Save order"}
+          {pending ? "Saving…" : dirty ? "Save order" : "Order saved"}
         </Button>
       </div>
 

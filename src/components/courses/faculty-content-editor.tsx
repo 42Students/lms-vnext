@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyContentPatch, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
+import { facultyContentPatch, facultyContentDraftChanged, facultyContentMayChangeOpen, facultyContentSaveReceiptMatches, facultyContentMaySave, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
 
 type Item = {
   id: string;
@@ -24,6 +24,7 @@ type Item = {
 
 export function FacultyContentEditor({ item }: { item: Item }) {
   const router = useRouter();
+  const mutationLock=useRef(false);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(item.title);
   const [notes, setNotes] = useState(item.notes ?? "");
@@ -33,6 +34,12 @@ export function FacultyContentEditor({ item }: { item: Item }) {
   const [ends, setEnds] = useState(authoringLocalDateTime(item.endsAt));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const dirty = facultyContentDraftChanged({
+    title:item.title, notes:item.notes??"", url:item.externalUrl??"",
+    duration:String(item.durationSeconds??300),
+    starts:authoringLocalDateTime(item.startsAt), ends:authoringLocalDateTime(item.endsAt),
+  }, {title,notes,url,duration,starts,ends});
 
   function openEditor() {
     // Each RSC refresh can change the persisted item while this Client
@@ -49,7 +56,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (saving) return;
+    if (!facultyContentMaySave(saving,mutationLock.current,dirty)) return;
     setError(null);
     let body: ReturnType<typeof facultyContentPatch>;
     try {
@@ -61,6 +68,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
       setError(caught instanceof Error ? caught.message : "Invalid content.");
       return;
     }
+    mutationLock.current=true;
     setSaving(true);
     try {
       const response = await fetch("/api/courses/lesson-contents/" + encodeURIComponent(item.id), {
@@ -72,11 +80,17 @@ export function FacultyContentEditor({ item }: { item: Item }) {
         setError(await courseApiError(response));
         return;
       }
+      const receipt:unknown = await response.json().catch(() => null);
+      if (!facultyContentSaveReceiptMatches(item.id,body,receipt)) {
+        setError("Save status could not be verified. Reload this Section before another edit.");
+        return;
+      }
       setOpen(false);
       router.refresh();
     } catch {
       setError("Could not save this content. Retry after checking your connection.");
     } finally {
+      mutationLock.current=false;
       setSaving(false);
     }
   }
@@ -88,11 +102,15 @@ export function FacultyContentEditor({ item }: { item: Item }) {
       </Button>
       <Drawer
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(nextOpen) => {
+          if (facultyContentMayChangeOpen(nextOpen,dirty,saving,
+            () => window.confirm("Discard unsaved changes to this lesson content?")))
+            setOpen(nextOpen);
+        }}
         title={"Edit " + item.contentType.replaceAll("_", " ")}
         description="Changes to this item stay scoped to your assigned teaching Section."
-        footer={<Button type="submit" form={"faculty-content-edit-" + item.id} disabled={saving}>
-          {saving ? "Saving…" : "Save content"}
+        footer={<Button type="submit" form={"faculty-content-edit-" + item.id} disabled={saving || !dirty}>
+          {saving ? "Saving…" : dirty ? "Save content" : "No changes"}
         </Button>}
       >
         <form id={"faculty-content-edit-" + item.id} onSubmit={save} className="space-y-4">

@@ -1,8 +1,9 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue,facultyAssignmentCommandError,facultyAssignmentCanSaveDraft} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -12,6 +13,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
  assignments:readonly Existing[];
 }){
  const router=useRouter();
+ const mutationLock=useRef(false);
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  const [pending,setPending]=useState(false);
@@ -24,6 +26,9 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
  const [confirmed,setConfirmed]=useState(false);
  const existing=assignments.find(x=>x.id===selected);
  function choose(id:string){
+  if(pending||mutationLock.current)return;
+  if(facultyAssignmentSwitchNeedsConfirmation(selected,id,existing??null,{title,description,dueAt,maxPoints}) &&
+     !window.confirm("Discard unsaved assignment changes and switch drafts?"))return;
   setSelected(id);const row=assignments.find(x=>x.id===id);
   setTitle(row?.title??"");setDescription(row?.description??"");
   setDueAt(authoringLocalDateTime(row?.dueAt??null));
@@ -31,10 +36,27 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   setConfirmed(false);setError(null);setSuccess(null);
  }
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE"){
+  if(!facultyAssignmentMaySubmit(pending,mutationLock.current))return;
   if(!confirmed){setError("Confirm the selected action first.");return;}
   if(!assignmentActionAvailable(existing?.status??null,action)){
    setError("This assignment cannot perform the selected action. Reload the Section.");return;
   }
+  if(action==="CREATE" || action==="EDIT"){
+    const issue=facultyAssignmentDraftIssue({title,description,maxPoints});
+    if(issue){setError(issue);return;}
+  }
+  if(action==="PUBLISH" && existing){
+    const publishIssue=facultyAssignmentPublishIssue(existing.dueAt,new Date());
+    if(publishIssue){setError(publishIssue);return;}
+  }
+  if(action==="PUBLISH" && existing && facultyAssignmentDraftDirty(existing,
+    {title,description,dueAt,maxPoints})){
+    setError("Save the draft changes first. Publish uses only the last saved revision.");
+    return;
+  }
+  if(action==="ARCHIVE" && existing &&
+    !window.confirm(facultyAssignmentArchiveWarning(existing.title)))return;
+  mutationLock.current=true;
   setPending(true);setError(null);setSuccess(null);
   try{
    const base={action,confirmed:true};
@@ -48,15 +70,21 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
    const response=await fetch("/api/courses/faculty/assignments/"+encodeURIComponent(deliveryId)+"/command",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
-   if(!response.ok)throw new Error("Unable to save. The item may have changed; refresh and retry.");
+   if(!response.ok){
+     const body:unknown=await response.json().catch(()=>null);
+     throw new Error(facultyAssignmentCommandError(response.status,body));
+   }
+   const receipt:unknown=await response.json().catch(()=>null);
+   if(!facultyAssignmentCommandReceipt(receipt,{action,deliveryId,
+      assignmentId:existing?.id,title,maxPoints}))throw new Error("Assignment save status is uncertain. Reload the Section before retrying.");
    setConfirmed(false);setSuccess("Assignment "+action.toLowerCase()+" completed. Refresh if another author changed this Section.");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save changes.");}
-  finally{setPending(false);}
+  finally{mutationLock.current=false;setPending(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Assignment authoring</h2>
   <label className="grid gap-1 text-sm">Choose draft or create new
-   <select value={selected} onChange={e=>choose(e.target.value)}
+   <select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
     className="min-h-10 rounded border border-border p-2">
     <option value="">New assignment</option>
     {assignments.map(x=><option key={x.id} value={x.id}>{x.title} ({x.status})</option>)}
@@ -64,22 +92,22 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   </label>
   {existing?<p className="text-xs text-body">Current state: {existing.status}. Published assignments cannot be edited; archived assignments are read-only. A submitted assignment cannot be archived.</p>:null}
   {!existing?<label className="grid gap-1 text-sm">Lesson
-   <select value={lessonId} onChange={e=>setLessonId(e.target.value)}
+   <select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}
     className="min-h-10 rounded border border-border p-2">
     {lessons.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
    </select></label>:null}
   <label className="grid gap-1 text-sm">Title
-   <input value={title} onChange={e=>setTitle(e.target.value)} maxLength={255}
+   <input value={title} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,title,next));setTitle(next);}} maxLength={255}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Text instructions
-   <textarea value={description} onChange={e=>setDescription(e.target.value)}
+   <textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}
     maxLength={10000} rows={4} className="rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Due date (IST, optional)
-   <input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)}
+   <input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Maximum points
    <input type="number" min={1} max={10000} value={maxPoints}
-    onChange={e=>setMaxPoints(Number(e.target.value))}
+    onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="flex gap-2 text-sm">
    <input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)} />
@@ -91,7 +119,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
    {!existing?<button type="button" disabled={pending||!lessonId||!confirmed}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>
    : <>
-    <button type="button" disabled={pending||!confirmed||existing.status!=="DRAFT"}
+    <button type="button" disabled={existing.status!=="DRAFT"||!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,confirmed)}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
     <button type="button" disabled={pending||!confirmed||existing.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>

@@ -16,8 +16,8 @@ describe("Faculty report drill-in search boundaries", () => {
   expect(facultyQuizAttemptSearchSchema.safeParse({deliveryId:id,quizId:id}).success).toBe(false);
  });
  it("retains valid Section filters, integer pages and defaults", () => {
-  expect(facultySubmissionReportSearchSchema.parse({deliveryId:id,filter:"LATE",page:"2"})).toEqual({deliveryId:id,filter:"LATE",page:2});
-  expect(facultyQuizAttemptSearchSchema.parse({deliveryId:id})).toEqual({deliveryId:id,page:1});
+  expect(facultySubmissionReportSearchSchema.parse({deliveryId:id,filter:"LATE",page:"2"})).toEqual({deliveryId:id,filter:"LATE",page:2,order:"NEWEST",publication:"ALL",q:""});
+  expect(facultyQuizAttemptSearchSchema.parse({deliveryId:id})).toEqual({deliveryId:id,page:1,order:"NEWEST",q:"",view:"ALL"});
   expect(facultyQuizAttemptSearchSchema.safeParse({deliveryId:id,page:"1.5"}).success).toBe(false);
  });
 });
