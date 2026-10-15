@@ -1,3 +1,4 @@
+import {z} from "zod";
 type RuleState={enabled:boolean;locked:boolean}|null;
 function parseState(value:unknown):RuleState|undefined{
  if(value===null)return null;
@@ -22,4 +23,18 @@ export function safeStudentRuleHistory(rows:readonly {
   return {id:row.id,occurredAt:row.occurredAt,actorName:row.actorName||"Unknown actor",
    module:moduleName,change:stateLabel(before)+" → "+stateLabel(after)};
  });
+}
+
+export const studentRuleHistoryCursorSchema=z.strictObject({
+ beforeOccurredAt:z.iso.datetime({offset:true}).optional(),
+ beforeId:z.uuid().optional(),
+}).refine(value=>Boolean(value.beforeOccurredAt)===Boolean(value.beforeId),{
+ message:"Both pagination cursor fields are required",
+});
+export function studentRuleHistoryHref(collegeId:string,membershipId:string,
+ next:{beforeOccurredAt:Date;beforeId:string}|null){
+ const base="/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history";
+ if(!next)return base;
+ const query=new URLSearchParams({beforeOccurredAt:next.beforeOccurredAt.toISOString(),beforeId:next.beforeId});
+ return base+"?"+query.toString();
 }
