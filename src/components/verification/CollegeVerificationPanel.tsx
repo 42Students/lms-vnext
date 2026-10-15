@@ -7,10 +7,11 @@ import {TpoVerificationSwitch} from "./TpoVerificationSwitch";
 import {VerificationExportControl} from "./VerificationExportControl";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
-export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,query,tpoCanVerify}:{
+import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
+export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,query,tpoCanVerify,batchChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
  activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;
- query:Record<string,string>;tpoCanVerify:boolean;
+ query:Record<string,string>;tpoCanVerify:boolean;batchChoices:VerificationFilterChoiceList;
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
  function navigate(patch:Record<string,string>){
@@ -26,7 +27,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <button type="button" onClick={()=>router.refresh()} className="rounded-md border px-3 py-2 text-sm">Refresh</button>
   </div>
-  <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={changes=>navigate({...changes,page:"1"})}/>
+  <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    initialTab={activeTab} initialKind={initialKind}
    onTabChange={tab=>navigate({tab,page:"1"})}

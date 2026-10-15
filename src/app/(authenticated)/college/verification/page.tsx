@@ -4,6 +4,7 @@ import {CollegeVerificationPanel} from "@/components/verification/CollegeVerific
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {verificationQueueFilters} from "@/modules/verification/queue-filters";
+import {listVerificationBatchOptions} from "@/modules/verification/filter-options-service";
 
 export const dynamic="force-dynamic";
 export default async function CollegeVerificationPage({searchParams}:{
@@ -28,12 +29,13 @@ export default async function CollegeVerificationPage({searchParams}:{
    <Link href="/college/verification" className="underline">Retry</Link>
   </section>;
  }
+ const batchChoices=await listVerificationBatchOptions(await getCurrentRequestContext());
  const query:Record<string,string>={};
  for(const [key,value] of Object.entries(data.filter)){
   if(value!==undefined&&value!==null)query[key]=String(value);
  }
  return <CollegeVerificationPanel rows={data.rows} counts={data.counts}
-  tpoCanVerify={data.tpoCanVerify}
+  tpoCanVerify={data.tpoCanVerify} batchChoices={batchChoices}
   activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
   page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>;
 }
