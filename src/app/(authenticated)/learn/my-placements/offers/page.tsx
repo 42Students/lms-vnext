@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { learnerOffersSearchSchema, searchOwnOffers } from "@/modules/placements/learner-offers-search-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
@@ -20,16 +21,19 @@ const tabs: readonly { id: LearnerOfferView; label: string }[] = [
 export default async function LearnerOffersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string | string[] }>;
+  searchParams: Promise<{ status?: string | string[]; q?: string | string[] }>;
 }) {
   const query = await searchParams;
   const requested = typeof query.status === "string" ? query.status : "all";
   const validView = learnerOfferViewSchema.safeParse(requested);
   const view = validView.success ? validView.data : "all";
+  const parsedSearch = learnerOffersSearchSchema.safeParse(query.q ?? "");
+  const searchTerm = parsedSearch.success ? parsedSearch.data : "";
   const context = await getCurrentRequestContext();
   const [offers,requests] = await Promise.all([
     getOwnLearnerOfferBrowse(context,view),listOwnPlacementRequests(context),
   ]);
+  const visibleOffers = searchOwnOffers(offers.items, searchTerm);
   const snapshotNowIso = new Date().toISOString();
   const expiringSoon = learnerOffersExpiringSoon(offers.items.map(row => ({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
@@ -63,6 +67,17 @@ export default async function LearnerOffersPage({
           </Link>
         ))}
       </nav>
+      <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
+        {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
+          Search my offers
+          <input name="q" type="search" maxLength={80} defaultValue={searchTerm}
+            placeholder="Employer or role" className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
+        {searchTerm ? <Link href={view === "all" ? "/learn/my-placements/offers" : "/learn/my-placements/offers?status="+view}
+          className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
+      </form>
       {expiringSoon > 0 && view !== "pending" ? (
         <Link href="/learn/my-placements/offers?status=pending"
           className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -74,14 +89,15 @@ export default async function LearnerOffersPage({
           <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
         </div>
       ) : null}
-      {offers.items.length === 0 ? (
+      {visibleOffers.length === 0 ? (
         <section role="status" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
           <h2 className="text-base font-semibold text-foreground">
-            {offers.counts.all === 0 ? "No offers recorded" : "No offers in this view"}
+            {offers.counts.all === 0 ? "No offers recorded" : searchTerm ? "No matching offers" : "No offers in this view"}
           </h2>
           <p className="mt-2 text-sm text-body">
             {offers.counts.all === 0
               ? "Official offers will appear after the placement team issues them. A round result is not an offer."
+              : searchTerm ? "No own persisted offer matches this search. Clear it to restore the full selected status."
               : "No persisted offer currently matches this status. Choose another status to see other offers."}
           </p>
           {offers.counts.all > 0 ? (
@@ -98,7 +114,7 @@ export default async function LearnerOffersPage({
             requestType:row.request.requestType,
           }))}
           snapshotNowIso={snapshotNowIso}
-          offers={offers.items.map((row) => ({
+          offers={visibleOffers.map((row) => ({
             offerId: row.offer.id,
             applicationId: row.offer.applicationId,
             companyName: row.company.name,
