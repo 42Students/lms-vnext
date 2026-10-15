@@ -40,3 +40,20 @@ export function canAddPlacementHeldOffer(input: {
       input.upliftPct < 0) return false;
   return next * 100 >= best * (100 + input.upliftPct);
 }
+
+/** P-S1-04: same list affordance predicates as the self-apply write gate. */
+export function canShowLearnerSelfApply(input: {
+  registrationState: "CAN_APPLY" | "REGISTER_FIRST" | "CHOSE_OTHER";
+  debarred: boolean;
+  canSelfApply: boolean;
+  hasApplication: boolean;
+  deadlinePassed: boolean;
+  eligibilityStatus: string;
+  heldOfferEligible: boolean;
+}): boolean {
+  return input.registrationState === "CAN_APPLY" &&
+    !input.debarred && input.canSelfApply && !input.hasApplication &&
+    !input.deadlinePassed && input.heldOfferEligible &&
+    (input.eligibilityStatus === "ELIGIBLE" ||
+     input.eligibilityStatus === "ELIGIBLE_WITH_MISSING_EVIDENCE");
+}
