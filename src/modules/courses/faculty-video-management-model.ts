@@ -58,3 +58,13 @@ export function facultyOrderLessonVideos(rows:readonly FacultyLessonVideo[]):Fac
  return [...rows].sort((a,b)=>
   a.sequence-b.sequence||a.title.localeCompare(b.title)||a.contentId.localeCompare(b.contentId));
 }
+
+/** Empty states distinguish a new lesson from a no-match or pending asset. */
+export function facultyVideoListEmptyState(
+ allCount:number,visibleCount:number,processingCount:number,
+):string|null{
+ if(visibleCount>0)return null;
+ if(allCount===0)return "No videos have been added to this lesson.";
+ if(processingCount>0)return "Videos are uploading or processing. Check the status again before publishing.";
+ return "No videos match the current search or status filter.";
+}
