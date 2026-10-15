@@ -1383,3 +1383,20 @@ A seeded, disposable PostgreSQL integration case now drives actual College Admin
 ## 2026-10-15 chat-11 — active membership-scoped Project roster (PARTIAL)
 
 The shared Project Team roster reader now joins registered Project roles to persisted ACTIVE same-college memberships and active platform users, mirroring the centralized Project access predicate. A revoked/disabled membership is no longer projected as a current Learner/Mentor or counted in derived workspace team staffing. The existing isolated PostgreSQL Team lifecycle fixture checks ended roster removal, while revoked-role/disabled-user database and browser acceptance remain OPEN. Duplicate integration-test import corrected.
+
+## 2026-10-15 chat-11 Mentor project-directory and triage improvements (PARTIAL)
+
+The assigned-Mentor Projects directory now offers persisted task-coverage filters for all
+recorded tasks completed or at least one task completed, plus most-complete, most-open-work,
+and smallest/largest active-team ordering. It uses existing authorized project task/team
+readers, retains archived-last ordering, and never interprets zero tasks as 0% measured
+progress. Pending final-delivery and task reviews now have distinct over-30-day waiting
+filters; the task age predicate uses persisted submission timestamps. Class-team workspace
+planning refuses duplicate learner allocations and case-insensitive duplicate names even
+when called outside preview validation. Mentor Projects, delivery reviews, task reviews and
+exact-project meeting history reject repeated contradictory query keys instead of silently
+accepting the first value. Corresponding pure regression suites are authored on the feature
+branch, not yet executed. These are incremental source parity improvements, **not** family
+closure: legacy UI comparison, real PostgreSQL paths, tenant/role negatives, keyboard,
+mobile-browser and cutover-oracle acceptance remain open. No migration or task completion
+is claimed.
