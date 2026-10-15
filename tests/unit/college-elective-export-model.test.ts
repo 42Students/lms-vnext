@@ -98,4 +98,9 @@ describe("college electives CSV",()=>{
    expect(electiveCsvHref(q)).toContain("descriptionPresence=");
    expect(electiveCsvSchema.safeParse({descriptionPresence:"INFERRED"}).success).toBe(false);
  });
+ it("preserves validated elective linked period starts on or after in elective CSV",()=>{
+   const q=electiveCsvSchema.parse({periodStartsOnOrAfter:"2026-07-01"});
+   expect(electiveCsvHref(q)).toContain("periodStartsOnOrAfter=2026-07-01");
+   expect(electiveCsvSchema.safeParse({periodStartsOnOrAfter:"2026-13-39"}).success).toBe(false);
+ });
 });
