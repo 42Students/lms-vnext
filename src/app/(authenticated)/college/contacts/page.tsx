@@ -194,8 +194,10 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <nav aria-label="Contact directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <p>Page {filter.page} of {pageCount} · {results.total} matching contacts</p>
    <div className="flex flex-wrap gap-2">
+    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="rounded-md border px-4 py-2">First</Link>:null}
     {filter.page>1?<Link href={collegeContactsHref({...filter,page:filter.page-1})} className="rounded-md border px-4 py-2">Previous</Link>:null}
     {filter.page<pageCount?<Link href={collegeContactsHref({...filter,page:filter.page+1})} className="rounded-md border px-4 py-2">Next</Link>:null}
+    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="rounded-md border px-4 py-2">Last</Link>:null}
    </div>
   </nav>
  </div>;
