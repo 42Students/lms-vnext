@@ -51,7 +51,7 @@ export default async function LearnerOffersPage({
     ...(view!=="all"?{status:view}:{}),...(searchTerm?{q:searchTerm}:{}),
     ...(dueOnly?{due:"1"}:{}),...(order!=="priority"?{sort:order}:{}),page:String(page),
   }).toString();
-  const expiringSoon = learnerOffersExpiringSoon(offers.items.map(row => ({
+  const expiringSoon = learnerOffersExpiringSoon(visibleOffers.map(row => ({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
   })), Date.parse(snapshotNowIso));
 
@@ -85,6 +85,7 @@ export default async function LearnerOffersPage({
       <form method="GET" action="/learn/my-placements/offers" className="flex min-w-0 flex-wrap items-end gap-3">
         {view !== "all" ? <input type="hidden" name="status" value={view} /> : null}
         {dueOnly ? <input type="hidden" name="due" value="1" /> : null}
+        {order !== "priority" ? <input type="hidden" name="sort" value={order} /> : null}
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
           Search my offers
           <input name="q" type="search" maxLength={80} defaultValue={searchTerm}
@@ -109,15 +110,15 @@ export default async function LearnerOffersPage({
         <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Apply sort</button>
       </form>
       <nav aria-label="Offer deadline filter" className="flex flex-wrap gap-3 text-sm">
-        <Link href={"/learn/my-placements/offers" + (view==="all"?"":"?status="+view)}
+        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:false,sort:order})}
           aria-current={!dueOnly?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">All deadlines</Link>
-        <Link href={"/learn/my-placements/offers?"+(view==="all"?"":"status="+view+"&")+"due=1"}
+        <Link href={learnerOfferStatusHref(view,{searchTerm,dueOnly:true,sort:order})}
           aria-current={dueOnly?"page":undefined}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">Awaiting response · next 7 days</Link>
       </nav>
       {expiringSoon > 0 && view !== "pending" ? (
-        <Link href="/learn/my-placements/offers?status=pending"
+        <Link href={learnerOfferStatusHref("pending",{searchTerm,dueOnly,sort:order})}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Review {expiringSoon} awaiting-response {expiringSoon===1?"offer":"offers"} with a deadline in 24 hours →
         </Link>
