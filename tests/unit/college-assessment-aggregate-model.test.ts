@@ -9,17 +9,17 @@ import {
 describe("College Admin assignment and quiz aggregate model", () => {
   it("defaults to a paginated all-status view", () => {
     expect(parseCollegeAssessmentQuery("ASSIGNMENT", {})).toEqual({
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", scope:"ALL", page: 1,
     });
     expect(parseCollegeAssessmentQuery("QUIZ", {})).toEqual({
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", scope:"ALL", page: 1,
     });
   });
 
   it("accepts valid filters but rejects tenant selectors, huge pages and quiz-only assignment status", () => {
     expect(parseCollegeAssessmentQuery("QUIZ", {
       q: "  unit test  ", status: "CLOSED", page: "3",
-    })).toEqual({ q: "unit test", status: "CLOSED", page: 3 });
+    })).toEqual({ q: "unit test", status: "CLOSED", scope:"ALL", page: 3 });
     expect(() => parseCollegeAssessmentQuery("ASSIGNMENT", {
       status: "CLOSED",
     })).toThrow();
@@ -30,6 +30,7 @@ describe("College Admin assignment and quiz aggregate model", () => {
       { status: "NOT_VALID" },
       { q: "x".repeat(101) },
       {courseCode:"x".repeat(65)},
+      {scope:"FOREIGN"},
     ]) {
       expect(collegeAssessmentListQuerySchema.safeParse(bad).success).toBe(false);
     }
@@ -37,7 +38,7 @@ describe("College Admin assignment and quiz aggregate model", () => {
 
   it("constructs only known college routes and keeps filter values encoded", () => {
     const href = collegeAssessmentHref("QUIZ", {
-      q: "one & two", status: "PUBLISHED", page: 2,
+      q: "one & two", status: "PUBLISHED", scope:"ALL", page: 2,
     });
     const url = new URL(href, "https://example.test");
     expect(url.pathname).toBe("/college/quizzes");
@@ -45,9 +46,10 @@ describe("College Admin assignment and quiz aggregate model", () => {
     expect(url.searchParams.get("status")).toBe("PUBLISHED");
     expect(url.searchParams.get("page")).toBe("2");
     expect(url.searchParams.has("collegeId")).toBe(false);
+    expect(collegeAssessmentHref("ASSIGNMENT",collegeAssessmentListQuerySchema.parse({scope:"SECTION"}))).toContain("scope=SECTION");
     expect(collegeAssessmentHref("QUIZ",collegeAssessmentListQuerySchema.parse({courseCode:"CS&42"}))).toContain("courseCode=CS%2642");
     expect(collegeAssessmentHref("ASSIGNMENT", {
-      q: "", status: "ALL", page: 1,
+      q: "", status: "ALL", scope:"ALL", page: 1,
     })).toBe("/college/assignments");
   });
 
