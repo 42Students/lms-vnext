@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Confirmed bulk Verify action PARTIAL (chat-9):** College reviewer preview offers a second explicit Verify confirmation, submitting only the first 20 waiting membership/section/version tuples through the same-origin guarded, DB04 receipt-attested bulk POST. The UI clears selection only on HTTP success, surfaces errors, and requests server refresh; per-item result details and independent execution remain open.
+
+
 **Select-all and bulk preview PARTIAL (chat-9):** College Admin can select up to 20 currently visible waiting requests, clear the working selection and preview Verify/Send back eligibility using the existing status/version planner. Preview performs no mutation; Super Admin retains its existing single-review UI. Pure selection regression and browser acceptance open.
 
 
