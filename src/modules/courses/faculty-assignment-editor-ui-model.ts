@@ -72,7 +72,7 @@ export function facultyAssignmentPublishIssue(dueAt:string|null,now:Date):string
 
 /** Errors must describe safe recovery, never reflect untrusted HTTP bodies. */
 export function facultyAssignmentCommandError(status:number,body:unknown):string {
- const envelope=typeof body==="object"&&body!==null?body as Record<string,unknown>:{};
+ const envelope:Record<string,unknown>=typeof body==="object"&&body!==null?body as Record<string,unknown>:{};
  const code=typeof envelope.error==="string" && /^[A-Z][A-Z0-9_]{0,79}$/.test(envelope.error)?envelope.error:"";
  if(status===401||status===403||code==="FACULTY_TEACHING_SCOPE_REQUIRED")
   return "Teaching access has changed. Reload or sign in with the correct Faculty account.";
