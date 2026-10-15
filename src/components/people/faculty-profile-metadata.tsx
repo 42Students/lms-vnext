@@ -4,7 +4,7 @@ import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-do
 import { facultyMetadataFromDraft,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileActiveSearch,facultyProfileSearchAfterInsertion} from "@/modules/people/faculty-profile-search-controls";
+import {facultyProfileActiveSearch,facultyProfileSearchAfterInsertion,facultyProfileSearchSummary} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
 import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue,facultyProfileMetadataMatches,removeFacultyMetadataDraftEntry} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
@@ -33,6 +33,10 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      className="mt-1 w-full rounded-md border border-border bg-background p-3"/>
    </label>:null}
+  {rows.length>5&&search.trim()?<div className="flex items-center gap-2 text-xs text-muted-foreground">
+    <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
+    <button type="button" className="rounded border border-border px-2 py-1" onClick={()=>setSearch("")}>Clear Metadata search</button>
+   </div>:null}
   {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No metadata fields match. Clear the search to view all.</p>:null}
   {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_2fr_auto] sm:items-end">
    <label className="min-w-0 text-sm font-semibold text-body">Field {index+1}
