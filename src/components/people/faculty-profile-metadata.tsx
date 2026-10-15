@@ -3,13 +3,12 @@ import { useState, type FormEvent } from "react";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import { facultyMetadataFromDraft,facultyMetadataEditableKey,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
+import {restoreFacultyMetadataDraft} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
  initial:FacultyProfileDocument["metadata"];pending:boolean;
  onSave:(section:FacultySelfSection,value:FacultyProfileDocument["metadata"])=>Promise<void>;
 }){
- const [rows,setRows]=useState<FacultyMetadataDraftEntry[]>(()=>Object.entries(initial)
-  .filter((entry):entry is [string,string]=>typeof entry[1]==="string" && facultyMetadataEditableKey(entry[0]))
-  .map(([key,value])=>({id:crypto.randomUUID(),key,value})));
+ const [rows,setRows]=useState<FacultyMetadataDraftEntry[]>(()=>restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));
  const [dirty,setDirty]=useState(false),[error,setError]=useState<string|null>(null);
  function edit(id:string,key:"key"|"value",value:string){
   setRows(current=>current.map(row=>row.id===id?{...row,[key]:value}:row));setDirty(true);
@@ -43,6 +42,10 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     className="min-h-11 rounded-md border border-border px-4 text-sm" onClick={()=>{
      setRows(current=>[...current,{id:crypto.randomUUID(),key:"",value:""}]);setDirty(true);
     }}>Add field</button>
+   {dirty?<button type="button" disabled={pending} onClick={()=>{
+    if(!window.confirm("Discard unsaved metadata edits?"))return;
+    setRows(restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));setDirty(false);setError(null);
+   }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard unsaved metadata</button>:null}
    <button type="submit" disabled={pending||!dirty} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
     {pending?"Saving…":"Save metadata"}
    </button>
