@@ -230,4 +230,17 @@ describe.skipIf(!enabled)("College Admin Classes/Electives disposable PostgreSQL
     expect(foreign.items).toEqual([]);
   });
 
+  it("elective program lifecycle filters only the owning college",async()=>{
+    const statusRow=await pool!.query<{status:string}>("SELECT status FROM programs WHERE id=$1",[ids.program]);
+    const status=statusRow.rows[0]!.status;
+    const [matching,excluded,foreign]=await Promise.all([
+      listCollegeElectives(adminA,{q:key,programStatus:status}),
+      listCollegeElectives(adminA,{q:key,programStatus:status==="ACTIVE"?"ARCHIVED":"ACTIVE"}),
+      listCollegeElectives(adminB,{q:key,programStatus:status}),
+    ]);
+    expect(matching.items.map(row=>row.id)).toContain(ids.elective);
+    expect(excluded.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });

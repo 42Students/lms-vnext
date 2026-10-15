@@ -28,4 +28,9 @@ describe("college electives CSV",()=>{
   expect(electiveCsvHref({q:"",status:"ACTIVE",periodState:"LINKED"})).toContain("periodState=LINKED");
  });
 
+ it("elective CSV filters actual parent program lifecycle",()=>{
+    expect(electiveCsvSchema.safeParse({programStatus:"INACTIVE"}).success).toBe(false);
+    expect(electiveCsvHref({q:"",status:"ACTIVE",programStatus:"ACTIVE"})).toContain("programStatus=ACTIVE");
+ });
+
 });
