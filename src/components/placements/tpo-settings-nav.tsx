@@ -1,5 +1,5 @@
 import Link from "next/link";
-type SettingsKey="season"|"rules"|"job-types"|"after-college"|"prep-readiness"|"blocked-dates"|"see"|"team"|"trusted"|"branding"|"notifications"|"recruiters";
+type SettingsKey="season"|"rules"|"job-types"|"after-college"|"prep-readiness"|"blocked-dates"|"see"|"team"|"trusted"|"branding"|"notifications"|"recruiters"|"templates"|"notices";
 const GROUPS=[
  {title:"Placement policy",items:[
   {id:"rules",label:"Placement rules",href:"/tpo/settings/rules"},
@@ -13,7 +13,9 @@ const GROUPS=[
   {id:"recruiters",label:"Recruiter access",href:"/tpo/settings/recruiters"},
  ]},
  {title:"Students and companies",items:[
-  {id:"notifications",label:"Notices",href:"/tpo/settings/notifications"},
+  {id:"notifications",label:"My notifications",href:"/tpo/settings/notifications"},
+  {id:"templates",label:"Communication templates",href:"/tpo/settings/templates"},
+  {id:"notices",label:"Student notices",href:"/tpo/settings/notices"},
   {id:"see",label:"What companies see",href:"/tpo/settings/see"},
   {id:"branding",label:"Branding",href:"/tpo/settings/branding"},
  ]},
