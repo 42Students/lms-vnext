@@ -582,6 +582,13 @@
       "when": 1792093743287,
       "tag": "0082_project_task_assignee",
       "breakpoints": true
+    },
+    {
+      "idx": 83,
+      "version": "7",
+      "when": 1792093761776,
+      "tag": "0083_project_member_kinds",
+      "breakpoints": true
     }
   ]
 }
