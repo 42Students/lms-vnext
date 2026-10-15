@@ -1,6 +1,6 @@
 import "server-only";
 import {and,eq,exists,inArray,sql} from "drizzle-orm";
-import {z} from "zod";
+import { tpoPlacementAudienceSchema } from "./tpo-placement-audience-model";
 import {getDb} from "@/db/client";
 import {collegeMemberships,users,learnerProgramEnrollments,placementBatchRegistrations,placementApplications,placementJobs,programs,departments} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -30,14 +30,6 @@ export async function previewTpoCollegeAnnouncementVisibility(context:RequestCon
 }
 
 /** T-S2-07: exact preview kinds, no contact export and no implied delivery. */
-export const tpoPlacementAudienceSchema=z.discriminatedUnion("kind",[
- z.object({kind:z.literal("PLACEMENTS")}).strict(),
- z.object({kind:z.literal("BATCHES"),cohortIds:z.array(z.string().uuid()).min(1).max(50)}).strict(),
- z.object({kind:z.literal("BRANCHES"),departmentIds:z.array(z.string().uuid()).min(1).max(50)}).strict(),
- z.object({kind:z.literal("DRIVE"),jobId:z.string().uuid()}).strict(),
-]);
-export type TpoPlacementAudience=z.infer<typeof tpoPlacementAudienceSchema>;
-
 /** A count of ACTIVE matching memberships, not a recipient list or consent. */
 export async function previewTpoPlacementAudience(context:RequestContext,raw:unknown){
  const audience=tpoPlacementAudienceSchema.parse(raw);
