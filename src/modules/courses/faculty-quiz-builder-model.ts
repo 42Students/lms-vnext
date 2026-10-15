@@ -396,3 +396,12 @@ export function facultyQuizShouldDisplayQuestion(
  return facultyQuizQuestionMatches(question,index,search)&&
   (!invalidOnly||facultyQuizQuestionIssue(question)!==null);
 }
+
+/** Never surface arbitrary fetch/JSON exception text to a Faculty user. */
+export function facultyQuizReadErrorMessage(error:unknown):string {
+ if(error instanceof Error &&
+  (error.message==="Cannot load quiz questions for this Section."||
+   error.message==="This Quiz has no loaded questions. Retry before editing or publishing."))
+  return error.message;
+ return "Could not load the current Section Quiz. Retry or return to the Quiz list.";
+}
