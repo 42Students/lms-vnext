@@ -142,6 +142,9 @@ export function validateSubmittedEvidence(
     const item = e as Record<string,unknown>;
     if (typeof item.id !== "string" || typeof item.educationType !== "string" ||
         typeof item.grade !== "string") return false;
+    // A linked optional marksheet must also be a CLEAN, correct-owner receipt.
+    if (item.marksheetDocumentId !== undefined &&
+        !ref("MARKSHEET",item.marksheetDocumentId,item.id)) return false;
     items.push({id:item.id,educationType:item.educationType,gradeObtained:item.grade});
     evidenceByEntry.set(item.id,ref("MARKSHEET",item.marksheetDocumentId,item.id));
   }
