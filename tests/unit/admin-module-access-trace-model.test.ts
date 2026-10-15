@@ -404,6 +404,8 @@ describe("students with stored module overrides links",()=>{
   const href=adminModuleTraceHref("57b65bbc-7255-4d0d-a8de-6c85d3aa8df2",{overridesOnly:"only",q:"Asha",page:2});
   expect(href).toContain("overridesOnly=only");
   expect(href).toContain("page=2");
+  expect(adminModuleTraceHref("57b65bbc-7255-4d0d-a8de-6c85d3aa8df2",{overridesOnly:"only",storedValue:"off"})).toContain("storedValue=off");
+  expect(adminModuleTraceHref("57b65bbc-7255-4d0d-a8de-6c85d3aa8df2",{overridesOnly:"only",overridesModule:"projects"})).toContain("overridesModule=projects");
   expect(adminModuleTraceHref("57b65bbc-7255-4d0d-a8de-6c85d3aa8df2",{overridesOnly:"locked"})).toContain("overridesOnly=locked");
  });
 });

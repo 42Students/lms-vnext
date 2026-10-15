@@ -8,6 +8,7 @@ import { LearnerCourseOverview } from "@/components/courses/learner-course-overv
 import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learner-course-tabs";
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { learnerCourseAttendanceIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { listCourseDiscussionMessages } from "@/modules/courses/discussion-service";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
@@ -133,6 +134,7 @@ export default async function LearnerCourseTabPage({
     );
     content = (
       <LearnerCourseAttendance
+        defaultMonth={learnerCourseAttendanceIstMonth(new Date())}
         deliveryId={deliveryId}
         workspace={attendance}
       />

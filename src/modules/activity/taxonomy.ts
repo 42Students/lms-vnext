@@ -23,6 +23,7 @@ export type ActivityImportance =
 export const ACTIVITY_EVENT_TYPES = {
   PLATFORM_COLLEGE_CREATED:
     "platform.college.created",
+  PLATFORM_STUDENT_MODULE_RULE_CHANGED:"platform.module_access.student_rule_changed",
   PLATFORM_COLLEGE_CONTACT_UPDATED:
     "platform.college.contact_updated",
   IDENTITY_PERSON_ONBOARDED:
@@ -135,6 +136,12 @@ export const ACTIVITY_EVENT_TYPES = {
   PROJECTS_MEETING_NOTES_UPDATED: "projects.meeting.notes_updated",
   PROJECTS_MEETING_RESCHEDULED: "projects.meeting.rescheduled",
   PROJECTS_DELIVERY_REVIEWED: "projects.delivery.reviewed",
+  PROJECTS_TEAM_MEMBER_ADDED: "projects.team_member.added",
+  PROJECTS_TEAM_MEMBER_UPDATED: "projects.team_member.updated",
+  PROJECTS_TEAM_MEMBER_ENDED: "projects.team_member.ended",
+  PROJECTS_RESOURCE_CREATED: "projects.resource.created",
+  PROJECTS_RESOURCE_UPDATED: "projects.resource.updated",
+  PROJECTS_RESOURCE_ARCHIVED: "projects.resource.archived",
   PROJECTS_TASK_CREATED:
     "projects.task.created",
   PROJECTS_TASK_DETAILS_UPDATED:

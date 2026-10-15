@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
+import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -49,6 +51,7 @@ export type LearnerCourseListRow = {
   };
   lastActivity: string | null;
   overdueAssignments?: number;
+  firstOverdue?: {lessonId:string;itemId:string;title:string}|null;
   nextDue: {title:string;kind:"Assignment"|"Quiz";dueAt:string} | null;
   readOnly: boolean;
   learningPathReady: boolean;
@@ -153,6 +156,9 @@ export function LearnerCourseList({
       />
     );
   }
+
+  const safeCardProgress = (row: LearnerCourseListRow) =>
+    learnerCourseCardProgress(row.summary.overallPercent,row.summary.itemsTotal);
 
   const selectedPeriod =
     periods.find((period) => period.id === selectedPeriodId) ?? periods[0];
@@ -407,20 +413,20 @@ export function LearnerCourseList({
                             Progress
                           </span>
                           <span className="text-xs font-bold text-foreground">
-                            {row.summary.overallPercent === null ? "Not available" : row.summary.overallPercent+"%"}
+                            {safeCardProgress(row) === null ? "Not available" : safeCardProgress(row)+"%"}
                           </span>
                         </div>
-                        {row.summary.overallPercent !== null ? <div
+                        {safeCardProgress(row) !== null ? <div
                           className="h-2 overflow-hidden rounded-full bg-muted"
                           role="progressbar"
                           aria-label="Course progress"
                           aria-valuemin={0}
                           aria-valuemax={100}
-                          aria-valuenow={row.summary.overallPercent}
+                          aria-valuenow={safeCardProgress(row)!}
                         >
                           <div
                             className="h-full rounded-full bg-primary"
-                            style={{ width: `${row.summary.overallPercent}%` }}
+                            style={{ width: `${safeCardProgress(row)}%` }}
                           />
                         </div> : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
                         {!row.readOnly && row.overdueAssignments ? (
@@ -431,13 +437,13 @@ export function LearnerCourseList({
                         <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
                           <p className="m-0">
                             Last recorded activity: {row.lastActivity
-                              ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.lastActivity))
+                              ? learnerCourseCardDate(row.lastActivity) ?? "Unavailable"
                               : "Not recorded"}
                           </p>
                           <p className="m-0">
                             Next due: {row.nextDue
                               ? row.nextDue.kind+" · "+row.nextDue.title+" · "+
-                                new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.nextDue.dueAt))
+                                (learnerCourseCardDate(row.nextDue.dueAt) ?? "Date unavailable")
                               : "No upcoming due dates"}
                           </p>
                         </div>
@@ -455,6 +461,19 @@ export function LearnerCourseList({
                       </div>
                     </div>
                     </Link>
+                    {!row.readOnly && row.firstOverdue && learnerCourseNextItemHref({
+                      readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
+                      nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
+                    }) ? (
+                      <Link
+                        href={learnerCourseNextItemHref({
+                          readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
+                          nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
+                        })!}
+                        className="mt-2 flex min-h-11 items-center justify-center rounded-lg border border-warning px-3 text-sm font-semibold text-foreground">
+                        Open overdue assignment: {row.firstOverdue.title}
+                      </Link>
+                    ) : null}
                     {learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
                         className="mt-2 flex min-h-11 items-center justify-center rounded-lg border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text hover:bg-muted">
