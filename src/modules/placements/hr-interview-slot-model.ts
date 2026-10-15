@@ -16,7 +16,8 @@ export const hrInterviewSlotCreateSchema=z.strictObject({
 });
 export const hrInterviewSlotActionSchema=z.strictObject({
  slotId:z.string().uuid(),
- expectedVersion:z.coerce.number().int().positive(),
+ expectedVersion:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
+  .pipe(z.number().int().positive()),
  action:z.enum(["OFFER","BOOK","CANCEL"]),
 });
 export function slotTransitionAllowed(status:string,action:"OFFER"|"BOOK"|"CANCEL",bookedCount=0,capacity=1){
