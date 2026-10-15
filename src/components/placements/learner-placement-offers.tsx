@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { learnerOfferAnchor, learnerOfferHref } from "@/modules/placements/learner-offer-deep-link-model";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerOfferAcceptancePreview } from "@/modules/placements/learner-offer-acceptance-preview";
@@ -72,12 +73,13 @@ function formatWhen(value: string | null) {
 }
 
 export function LearnerPlacementOffers({
-  offers,snapshotNowIso,extensionRequests=[],preserveOrder=false,
+  offers,snapshotNowIso,extensionRequests=[],preserveOrder=false,extensionsAvailable=true,
 }: {
   offers: readonly LearnerPlacementOfferItem[];
   snapshotNowIso:string;
   extensionRequests?:readonly LearnerOfferRequestStatus[];
   preserveOrder?:boolean;
+  extensionsAvailable?:boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -173,7 +175,7 @@ export function LearnerPlacementOffers({
   }
 
   async function requestExtension(){
-    if(!extensionOffer || pendingId!==null || !extensionOffer.expiresAt)return;
+    if(!extensionsAvailable || !extensionOffer || pendingId!==null || !extensionOffer.expiresAt)return;
     let input:ReturnType<typeof learnerOfferExtensionRequest>;
     try{
       input=learnerOfferExtensionRequest({
@@ -218,7 +220,8 @@ export function LearnerPlacementOffers({
         {sortedOffers.map((item) => (
           <article
             key={item.offerId}
-            className="rounded-xl border border-border bg-surface p-5"
+            id={learnerOfferAnchor(item.offerId) ?? undefined}
+            className="scroll-mt-24 rounded-xl border border-border bg-surface p-5"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -277,6 +280,12 @@ export function LearnerPlacementOffers({
               </div>
             </div>
 
+            {learnerOfferHref(item.offerId) ? (
+              <Link href={learnerOfferHref(item.offerId)!}
+                className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                Link to this offer
+              </Link>
+            ) : null}
             <div className="mt-4 grid gap-2 text-sm text-body sm:grid-cols-3">
               <p className="m-0">
                 <span className="font-semibold text-foreground">
@@ -344,7 +353,7 @@ export function LearnerPlacementOffers({
                 >
                   Decline offer
                 </Button>
-                {item.expiresAt && !pendingExtensions.has(item.offerId) ? (
+                {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
                   <Button size="sm" variant="secondary" disabled={pendingId!==null}
                     onClick={()=>{
                       setExtensionOffer(item);

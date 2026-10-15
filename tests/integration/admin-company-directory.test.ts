@@ -43,6 +43,14 @@ describe.skipIf(!enabled)("Super Admin company directory PostgreSQL", () => {
     expect(byDomain.rows.some(row=>row.relationshipId===created.relationship.id)).toBe(true);
     const sameCompany=await listSuperAdminCompanyDirectory(chosen,{companyId:created.company.id,status:"ALL",companyStatus:"ALL"});
     expect(sameCompany.rows.every(row=>row.companyId===created.company.id)).toBe(true);
+    const assigned=await listSuperAdminCompanyDirectory(chosen,{q:"SA Company "+unique,owner:"ASSIGNED"});
+    const unassigned=await listSuperAdminCompanyDirectory(chosen,{q:"SA Company "+unique,owner:"UNASSIGNED"});
+    expect(assigned.total+unassigned.total).toBe(1);
+    const hasWebsite=await listSuperAdminCompanyDirectory(chosen,{q:"SA Company "+unique,website:"HAS_WEBSITE"});
+    const noWebsite=await listSuperAdminCompanyDirectory(chosen,{q:"SA Company "+unique,website:"MISSING_WEBSITE"});
+    expect(hasWebsite.total+noWebsite.total).toBe(1);
+    const recentlyChanged=await listSuperAdminCompanyDirectory(chosen,{q:"SA Company "+unique,changedWithin:"90"});
+    expect(recentlyChanged.rows.some(row=>row.relationshipId===created.relationship.id)).toBe(true);
     const trusted = await listSuperAdminCompanyDirectory(chosen, {q: "SA Company " + unique, trust:"TRUSTED"});
     const untrusted = await listSuperAdminCompanyDirectory(chosen, {q: "SA Company " + unique, trust:"UNTRUSTED"});
     expect([...trusted.rows,...untrusted.rows].some(row=>row.relationshipId===created.relationship.id)).toBe(true);
