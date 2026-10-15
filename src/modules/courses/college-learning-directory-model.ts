@@ -38,6 +38,7 @@ export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
 });
 export type CollegeLessonQuery = z.infer<typeof collegeLessonQuerySchema>;
 export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
+  resourcePresence:z.enum(["ALL","HAS_RESOURCES","NO_RESOURCES"]).default("ALL"),
   quizPresence:z.enum(["ALL","HAS_QUIZZES","NO_QUIZZES"]).default("ALL"),
   assignmentPresence:z.enum(["ALL","HAS_ASSIGNMENTS","NO_ASSIGNMENTS"]).default("ALL"),
   lessonPresence:z.enum(["ALL","HAS_LESSONS","NO_LESSONS"]).default("ALL"),
@@ -64,6 +65,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if(kind==="PROGRESS"&&"resourcePresence" in query&&query.resourcePresence!=="ALL")params.set("resourcePresence",query.resourcePresence);
   if(kind==="PROGRESS"&&"quizPresence" in query&&query.quizPresence!=="ALL")params.set("quizPresence",query.quizPresence);
   if(kind==="PROGRESS"&&"assignmentPresence" in query&&query.assignmentPresence!=="ALL")params.set("assignmentPresence",query.assignmentPresence);
   if(kind==="PROGRESS"&&"lessonPresence" in query&&query.lessonPresence!=="ALL")params.set("lessonPresence",query.lessonPresence);

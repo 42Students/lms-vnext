@@ -377,6 +377,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
               </select>
             </label>
           ) : null}
+          {data.kind === "PROGRESS" ? (
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Saved resources
+              <select name="resourcePresence" defaultValue={data.query.resourcePresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="ALL">All offerings</option><option value="HAS_RESOURCES">Has resources</option><option value="NO_RESOURCES">No resources</option>
+              </select>
+            </label>
+          ) : null}
           <button type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">

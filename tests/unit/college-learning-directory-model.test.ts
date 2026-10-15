@@ -233,4 +233,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("quizPresence=NO_QUIZZES");
   });
 
+  it("keeps persisted resource triage in progress page and export",()=>{
+    expect(collegeProgressQuerySchema.safeParse({resourcePresence:"DOWNLOADED"}).success).toBe(false);
+    const q=collegeProgressQuerySchema.parse({resourcePresence:"NO_RESOURCES"});
+    expect(collegeLearningHref("PROGRESS",q)).toContain("resourcePresence=NO_RESOURCES");
+    expect(collegeProgressCsvHref(q)).toContain("resourcePresence=NO_RESOURCES");
+  });
+
 });
