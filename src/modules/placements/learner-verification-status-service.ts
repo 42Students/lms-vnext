@@ -17,15 +17,22 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
     status: profileVerifications.status,
     note: profileVerifications.note,
     version: profileVerifications.rowVersion,
+    submittedAt: profileVerifications.submittedAt,
+    decidedAt: profileVerifications.decidedAt,
   }).from(profileVerifications)
     .where(eq(profileVerifications.learnerMembershipId, member.id));
   const select = (section: "EDUCATION" | "IDENTITY") => {
     const row = rows.find(r => r.section === section);
-    return learnerVerificationStatus(section,
+    const view = learnerVerificationStatus(section,
       row && (row.status === "SUBMITTED" || row.status === "SENT_BACK" ||
         row.status === "VERIFIED" || row.status === "UPDATE_PENDING")
         ? { section, status: row.status, note: row.note, version: row.version }
         : null);
+    return {
+      ...view,
+      submittedAt:row?.submittedAt?.toISOString()??null,
+      decidedAt:row?.decidedAt?.toISOString()??null,
+    };
   };
   return { education: select("EDUCATION"), identity: select("IDENTITY") };
 }
