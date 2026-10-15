@@ -836,3 +836,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Inbound Mail recipient filter (PARTIAL):** The global-only staged inbox now supports exact recipient mailbox filtering using normalized validated email and SQL lower-case equality (not wildcard lookup). The status/search/pagination links retain the recipient; duplicate recipient params are rejected. Authorization and missing-table unavailable state remain unchanged, with no outbound delivery or tenant mapping guessed. Pure and mocked-repository tests authored but not executed. Registered migration, real PG integration, mailbox webhook, retention and browser acceptance remain OPEN.
+
+
+**2026-10-15 chat-6 hierarchy filter PG fixture follow-up (PARTIAL):** Added disposable-PostgreSQL regression covering per-module count-vs-row filtering, invalid module rejection, and non-admin denial. Multiple `module` query params are rejected before service invocation. Test is committed but NOT executed; real PG and browser acceptance remain open.

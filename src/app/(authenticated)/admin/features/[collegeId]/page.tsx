@@ -46,6 +46,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
   }
 
   const query = await searchParams;
+  if (Array.isArray(query.module)) notFound();
   const context = await getCurrentRequestContext();
 
   const result = await getSuperAdminCollegeModuleAccess(

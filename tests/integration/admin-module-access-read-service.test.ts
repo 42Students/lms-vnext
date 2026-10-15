@@ -40,6 +40,18 @@ describe("module access admin read against PostgreSQL", () => {
     expect(detail!.total).toBeGreaterThanOrEqual(0);
   });
 
+  it("filters descendant override totals and rows by module in PostgreSQL",async()=>{
+    const all=await getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{});
+    const filtered=await getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{module:"projects"});
+    expect(all).not.toBeNull();
+    expect(filtered).not.toBeNull();
+    expect(filtered!.moduleFilter).toBe("projects");
+    expect(filtered!.total).toBeLessThanOrEqual(all!.total);
+    expect(filtered!.descendants.every(rule=>rule.module==="projects")).toBe(true);
+    await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{module:"administration"})).rejects.toBeDefined();
+    await expect(getSuperAdminCollegeModuleAccess({...superAdmin,user:{...superAdmin.user,systemRoles:[]}},SEED_IDS.collegeA,{module:"projects"})).rejects.toBeDefined();
+  });
+
   it("returns null for an unknown college and rejects non-super-admins", async () => {
     expect(await getSuperAdminCollegeModuleAccess(superAdmin, randomUUID(), {})).toBeNull();
     await expect(
