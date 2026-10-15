@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {learnerAssessmentDrawerSelectionAllowed} from "@/modules/courses/learner-assessment-drawer-scope-model";
 import {learnerAssessmentEmptyMessage} from "@/modules/courses/learner-assessment-empty-model";
 import { learnerAssessmentCourseScopeCount } from "@/modules/courses/learner-assessment-course-scope-count-model";
 import { learnerAssessmentPageSummary } from "@/modules/courses/learner-assessment-page-summary-model";
@@ -183,14 +184,14 @@ export function LearnerAssessmentOverview({
   ).length;
 
   const selectedAssignment = useMemo(
-    () =>
-      items.find(
-        (item): item is LearnerAssignmentOverviewItem =>
-          item.kind === "ASSIGNMENT" &&
-          `${item.deliveryId}:${item.id}` ===
-            selectedAssignmentKey,
-      ),
-    [items, selectedAssignmentKey],
+    () => learnerAssessmentDrawerSelectionAllowed(selectedAssignmentKey,filtered)
+      ? items.find(
+          (item):item is LearnerAssignmentOverviewItem =>
+            item.kind==="ASSIGNMENT" &&
+            `${item.deliveryId}:${item.id}`===selectedAssignmentKey,
+        )
+      : undefined,
+    [items,filtered,selectedAssignmentKey],
   );
 
   if (items.length === 0) {
