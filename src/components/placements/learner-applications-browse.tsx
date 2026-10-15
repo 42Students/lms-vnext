@@ -12,6 +12,7 @@ import {ownApplicationJobHref} from "@/modules/placements/learner-application-jo
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
 import {learnerApplicationMobileSummary} from "@/modules/placements/learner-applications-mobile-model";
 import {learnerApplicationStageCounts} from "@/modules/placements/learner-application-stage-chips-model";
+import {learnerApplicationStageSelection} from "@/modules/placements/learner-application-stage-selection-model";
 import {learnerApplicationAttention} from "@/modules/placements/learner-application-attention-model";
 import {learnerApplicationEmptyKind} from "@/modules/placements/learner-application-empty-model";
 import {learnerApplicationPage} from "@/modules/placements/learner-application-pagination-model";
@@ -137,8 +138,10 @@ export function LearnerApplicationsBrowse({
 
   const view:LearnerApplicationBrowseFilters["view"]=url.view;
   const sort:LearnerApplicationBrowseFilters["sort"]=url.sort;
+  const stages = learnerApplicationStageOptions(items);
+  const selectedStage=learnerApplicationStageSelection(stages,url.stage);
   const filters:LearnerApplicationBrowseFilters={
-    ...DEFAULT_LEARNER_APPLICATION_FILTERS,search,view,stage:url.stage,sort,
+    ...DEFAULT_LEARNER_APPLICATION_FILTERS,search,view,stage:selectedStage.stage,sort,
   };
   const rows = browseLearnerApplications(items, filters);
   const viewCounts=learnerApplicationViewCounts(items);
@@ -147,7 +150,6 @@ export function LearnerApplicationsBrowse({
   const totalPages = pagination.pages;
   const page = pagination.page;
   const paged = rows.slice(pagination.start,pagination.end);
-  const stages = learnerApplicationStageOptions(items);
   const stageCounts = learnerApplicationStageCounts(items);
   const attention=learnerApplicationAttention(items);
   const selected = items.find((item) =>
@@ -179,6 +181,15 @@ export function LearnerApplicationsBrowse({
           <button type="button" onClick={()=>updateQuery({applicationId:null})}
             className="ml-2 min-h-11 font-semibold text-primary-text underline">Return to application list</button>
         </div>
+      ) : null}
+      {selectedStage.stale ? (
+        <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+          That screening stage is no longer present in your applications. Showing all stages while keeping your other filters.
+          <button type="button" onClick={()=>updateQuery({stage:null})}
+            className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+            Update stage link
+          </button>
+        </p>
       ) : null}
       {withdrawNotice ? (
         <p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-foreground">
