@@ -42,12 +42,12 @@ export function renderCollegeLiveClassCsv(rows:readonly {
 export function renderCollegeContentMetadataCsv(rows:readonly {
  title:string;contentType:string;status:string;courseName:string;courseCode:string;
  cohortName:string;periodName:string;lessonName:string;learningPathTitle:string;
- deliveryId:string|null;durationSeconds:number|null;
+ deliveryId:string|null;durationSeconds:number|null;visibleToStudents:boolean;
 }[],truncated:boolean){
  return buildCollegeDirectoryCsv(["Title","Type","Publication","Course","Course code",
-  "Batch","Period","Lesson","Path","Audience","Duration (seconds)"],
+  "Batch","Period","Lesson","Path","Audience","Visible to students","Duration (seconds)"],
   rows.map(r=>[r.title,r.contentType,r.status,r.courseName,r.courseCode,
    r.cohortName,r.periodName,r.lessonName,r.learningPathTitle,
    r.deliveryId?"Section-specific":"Shared offering",
-   r.durationSeconds===null?"":String(r.durationSeconds)]),truncated,CONTENT_METADATA_EXPORT_CAP);
+   r.visibleToStudents?"Yes":"No",r.durationSeconds===null?"":String(r.durationSeconds)]),truncated,CONTENT_METADATA_EXPORT_CAP);
 }

@@ -42,7 +42,7 @@ describe("College Admin content aggregate model", () => {
     expect(collegeContentQuerySchema.safeParse(
       collegeContentSearchParams({ status: ["DRAFT"] }),
     ).success).toBe(false);
-    const href = collegeContentHref("VIDEO", { q: "a & b", courseCode: "CS-101", status: "ARCHIVED", format: "YOUTUBE", scope: "SECTION", page: 2 });
+    const href = collegeContentHref("VIDEO", { q: "a & b", courseCode: "CS-101", status: "ARCHIVED", format: "YOUTUBE", scope: "SECTION", visibility: "ALL", page: 2 });
     const url = new URL(href, "https://example.test");
     expect(url.pathname).toBe("/college/videos");
     expect(url.searchParams.get("q")).toBe("a & b");
