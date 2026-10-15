@@ -107,6 +107,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
       query.pathStatus === "ALL" ? undefined : eq(courseLearningPaths.status,query.pathStatus),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
+      query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.q ? sql`(${courseLessons.name} ilike ${searchLike(query.q)} or
         ${courses.name} ilike ${searchLike(query.q)} or
