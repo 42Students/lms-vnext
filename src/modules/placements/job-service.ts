@@ -626,6 +626,30 @@ export async function closePlacementJob(
   });
 }
 
+/** P-S2-12: cancelled drives cease accepting applications and pending offers. */
+export function canCancelPublishedPlacementJob(status: string): boolean {
+  return status === "PUBLISHED";
+}
+
+export async function cancelPlacementJob(context: RequestContext, jobIdInput: string) {
+  const jobId = placementJobIdSchema.parse(jobIdInput);
+  const current = await loadJob(jobId);
+  await requirePlacementManageScope(context, current.collegeId);
+  if (!canCancelPublishedPlacementJob(current.status)) {
+    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
+  }
+  return getDb().transaction(async tx => {
+    const now = new Date();
+    const [cancelled] = await tx.update(placementJobs).set({
+      status:"CANCELLED",closedAt:now,updatedAt:now,
+    }).where(and(eq(placementJobs.id,jobId),
+      eq(placementJobs.status,"PUBLISHED"))).returning();
+    if (!cancelled) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
+    await withdrawJobIssuedOffers(tx,jobId,context.user.id,now);
+    return cancelled;
+  });
+}
+
 export async function archivePlacementJob(
   context: RequestContext,
   jobIdInput: string,
@@ -641,11 +665,19 @@ export async function archivePlacementJob(
   }
   if (current.status === "ARCHIVED") return current;
 
-  const now = new Date();
-  const [archived] = await getDb()
-    .update(placementJobs)
-    .set({ status: "ARCHIVED", archivedAt: now, updatedAt: now })
-    .where(eq(placementJobs.id, jobId))
-    .returning();
-  return archived;
+  return getDb().transaction(async tx => {
+    const [locked] = await tx.select({status:placementJobs.status})
+      .from(placementJobs).where(eq(placementJobs.id,jobId)).for("update").limit(1);
+    if (!locked || locked.status === "PUBLISHED") {
+      throw new PlacementsServiceError("PLACEMENT_JOB_CLOSE_BEFORE_ARCHIVE");
+    }
+    if (locked.status === "ARCHIVED") return current;
+    const now = new Date();
+    await withdrawJobIssuedOffers(tx,jobId,context.user.id,now);
+    const [archived] = await tx.update(placementJobs)
+      .set({status:"ARCHIVED",archivedAt:now,updatedAt:now})
+      .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,locked.status)))
+      .returning();
+    return archived;
+  });
 }
