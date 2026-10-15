@@ -184,7 +184,7 @@ export function LearnerFinalDeliveryControl({
         >
           {pending
             ? "Submitting…"
-            : "Submit final delivery"}
+            : "Submit final work"}
         </Button>
       ) : null}
 
