@@ -15,3 +15,16 @@ export function facultyAssessmentCanArchive(kind:"QUIZ"|"ASSIGNMENT",status:stri
  if(kind==="QUIZ")return ["DRAFT","PUBLISHED","CLOSED"].includes(status);
  return status==="DRAFT"||status==="PUBLISHED";
 }
+
+/** An edit response must identify the exact assessment and its persisted state. */
+export function facultyAssessmentEditReceiptMatches(
+ kind:"QUIZ"|"ASSIGNMENT",id:string,status:string,expectedTitle:string,raw:unknown,
+):boolean {
+ if(!raw||typeof raw!=="object")return false;
+ const payload=raw as Record<string,unknown>;
+ const entity=payload[kind==="QUIZ"?"quiz":"assignment"];
+ if(!entity||typeof entity!=="object")return false;
+ const row=entity as Record<string,unknown>;
+ return row.id===id&&row.status===status&&row.title===expectedTitle &&
+   typeof row.updatedAt==="string"&&Number.isFinite(Date.parse(row.updatedAt));
+}
