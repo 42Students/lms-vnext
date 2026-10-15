@@ -2,7 +2,7 @@ import {z} from "zod";
 import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible} from "./college-contacts-model";
 import type {CollegeContactRow} from "./college-contacts-service";
 export const CONTACT_EXPORT_LIMIT=1000;
-export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true,membershipId:true});
+export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true});
 export function parseCollegeContactsExportParams(params:URLSearchParams){
  const input:Record<string,string>={};
  for(const key of params.keys()){
