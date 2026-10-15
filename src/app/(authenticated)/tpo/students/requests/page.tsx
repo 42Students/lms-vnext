@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
+import {tpoStudentRequestShortcutFilters} from "@/modules/placements/tpo-student-request-shortcut-model";
 import {
   listTpoStudentRequests,
   tpoStudentRequestsQuerySchema,
@@ -200,7 +201,7 @@ export default async function TpoStudentRequestsPage({
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Link
-          href={requestsHref({ pageSize: query.pageSize })}
+          href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize))}
           aria-current={!query.status ? "page" : undefined}
           className={
             "rounded-xl border p-4 hover:border-primary " +
@@ -218,10 +219,7 @@ export default async function TpoStudentRequestsPage({
         {STATUSES.map((status) => (
           <Link
             key={status}
-            href={requestsHref({
-              status,
-              pageSize: query.pageSize,
-            })}
+            href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize,status))}
             aria-current={
               query.status === status ? "page" : undefined
             }
