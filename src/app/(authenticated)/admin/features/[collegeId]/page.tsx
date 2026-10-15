@@ -17,6 +17,7 @@ import {
   getSuperAdminCollegeModuleAccess,
 } from "@/modules/module-access/admin-read-service";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
+import {placementFeatureEffects} from "@/modules/platform-settings/placement-feature-controls-model";
 
 type SearchParams = {
   page?: string | string[];
@@ -147,6 +148,18 @@ export default async function SuperAdminCollegeModuleAccessPage({
               {describeModuleDecision(decision)}
             </p>
           </article>
+        ))}
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5" aria-label="Placements college access impact">
+        <h2 className="text-base font-semibold text-foreground">Placements: college-level access impact</h2>
+        {modules.filter(decision=>decision.module==="placements").map(decision=>(
+          <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
+            <p>Effective policy in {college.name}: <strong>{decision.enabled?"On":"Off"}</strong></p>
+            <p>{placementFeatureEffects(decision.enabled).impact}</p>
+            <p className="text-xs text-muted-foreground">Placements ignores Department, Program, Cohort, Section and Membership overrides. This preview describes the policy result, not runtime proof of every downstream route.</p>
+            <p className="text-xs text-muted-foreground">Turning access off does not delete historical jobs, applications or learner placement records.</p>
+          </div>
         ))}
       </section>
 
