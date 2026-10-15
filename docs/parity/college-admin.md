@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Per-request bulk outcome model PARTIAL (chat-9):** Bulk review now has a typed per-learner result taxonomy and truthful attempted/succeeded/failed counts, with a distinct stale-version message. Pure-model tests authored; route/UI/independent acceptance remain open.
+
+
 **Bounded confirmed bulk-review contract PARTIAL (chat-9):** Registered schema validates explicit user confirmation, at most 20 unique membership+section keys, positive expected versions, and reasoned send-back; caller-supplied tenant IDs and duplicate entries are rejected. Pure regression tests authored; service/UI and independent PG/browser acceptance remain open.
 
 
