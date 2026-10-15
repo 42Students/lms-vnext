@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
-import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive } from "@/modules/courses/faculty-assessment-editor-model";
+import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive, facultyAssessmentEditReceiptMatches } from "@/modules/courses/faculty-assessment-editor-model";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -116,6 +116,11 @@ export function FacultyAssessmentEditor({
         setError(
           await courseApiError(response),
         );
+        return;
+      }
+      const receipt:unknown=await response.json().catch(()=>null);
+      if(!facultyAssessmentEditReceiptMatches(assessment.kind,assessment.id,assessment.status,cleanTitle,receipt)){
+        setError("The save result could not be verified. Reload this Section before retrying.");
         return;
       }
       setOpen(false);
