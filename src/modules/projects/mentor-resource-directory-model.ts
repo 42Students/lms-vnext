@@ -68,9 +68,12 @@ export function mentorResourceDirectoryCsv(rows:readonly {
  id:string;title:string;description:string|null;required:boolean;safeUrl:string|null;
 }[],omitted:number){
  const lines=["Resource ID,Title,Description,Required,HTTPS link available"];
- for(const row of rows)lines.push([row.id,row.title,row.description??"",
+ const bounded=rows.slice(0,200);
+ for(const row of bounded)lines.push([row.id,row.title,row.description??"",
   row.required?"Yes":"No",row.safeUrl?"Yes":"No"].map(csvSafeCell).join(","));
- if(omitted>0)lines.push(["","Truncated",omitted+" additional matching resources","",""]
+ const hidden=Math.max(0,rows.length-bounded.length)+
+  (Number.isSafeInteger(omitted)&&omitted>0?omitted:0);
+ if(hidden>0)lines.push(["","Truncated",hidden+" additional matching resources","",""]
    .map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
