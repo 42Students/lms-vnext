@@ -138,7 +138,7 @@ export function AssignmentSubmissionControl({
       onSubmit={submit}
       className="mt-4 rounded-lg border border-border bg-[var(--lms-neutral-50)] p-4"
     >
-      <fieldset disabled={submitting}>
+      <fieldset disabled={submitting && submissionType !== "FILE"}>
         <legend className="text-sm font-semibold text-foreground">
           Submit assignment
         </legend>
@@ -155,6 +155,7 @@ export function AssignmentSubmissionControl({
           <Button
             type="button"
             size="sm"
+            disabled={submitting}
             variant={
               submissionType === "TEXT"
                 ? "primary"
@@ -172,6 +173,7 @@ export function AssignmentSubmissionControl({
           <Button
             type="button"
             size="sm"
+            disabled={submitting}
             variant={
               submissionType === "LINK"
                 ? "primary"
@@ -186,7 +188,7 @@ export function AssignmentSubmissionControl({
           >
             HTTPS link
           </Button>
-          <Button type="button" size="sm" disabled={!fileUploadsEnabled}
+          <Button type="button" size="sm" disabled={!fileUploadsEnabled || submitting}
             variant={submissionType === "FILE" ? "primary" : "secondary"}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
             File upload
