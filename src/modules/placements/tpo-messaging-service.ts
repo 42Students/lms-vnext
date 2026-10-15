@@ -598,3 +598,38 @@ export async function readRecruiterThreadMessages(
   return {thread,messages:descending.reverse(),page,pages:Math.max(1,Math.ceil(total/40)),total};
  });
 }
+
+/**
+ * Explicit recruiter acknowledgement. This operation never runs from a GET.
+ * Revalidates the persisted employer grant before updating only incoming TPO messages.
+ */
+export async function acknowledgeRecruiterThread(
+  context: RequestContext,
+  threadIdInput: unknown,
+) {
+  const threadId = threadIdSchema.parse(threadIdInput);
+  return getDb().transaction(async (tx) => {
+    const [thread] = await tx.select({
+      id: placementTpoMessageThreads.id,
+      collegeId: placementTpoMessageThreads.collegeId,
+      recruiterUserId: placementTpoMessageThreads.recruiterUserId,
+      jobId: placementTpoMessageThreads.jobId,
+    }).from(placementTpoMessageThreads)
+      .where(eq(placementTpoMessageThreads.id, threadId))
+      .for("update").limit(1);
+    if (!thread || thread.recruiterUserId !== context.user.id)
+      throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+    const actor = await mutationActor(tx, context, thread.collegeId);
+    if (actor.type !== "RECRUITER" || actor.userId !== thread.recruiterUserId)
+      throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+    if (thread.jobId)
+      await assertJobForThread(tx, actor.collegeId, thread.jobId, actor.companyRelationshipId, true);
+    const rows = await tx.update(placementTpoMessages).set({readAt: new Date()})
+      .where(and(
+        eq(placementTpoMessages.threadId, thread.id),
+        eq(placementTpoMessages.senderType, "TPO"),
+        isNull(placementTpoMessages.readAt),
+      )).returning({id: placementTpoMessages.id});
+    return {acknowledged: rows.length};
+  });
+}
