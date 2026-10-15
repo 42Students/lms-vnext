@@ -33,6 +33,7 @@ async function requireMentorPortfolio(context: RequestContext) {
     enabled: true as const,
     projects: assigned.map(row => ({
       id: row.project.id, title: row.project.title, status: row.project.status,
+      isPrimaryMentor:row.isPrimaryMentor,
     })),
   };
 }
@@ -48,6 +49,7 @@ export async function getMentorReviewQueue(context: RequestContext, rawQuery: un
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const allowed = new Set(scope.projects
     .filter(p=>(query.projectStatus==="ALL"||p.status===query.projectStatus)&&
+      (query.assignment==="ALL"||(query.assignment==="PRIMARY")===p.isPrimaryMentor)&&
       (!query.projectId||p.id===query.projectId)).map(p => p.id));
   const alerts = await listMyMentorProjectAttention(context);
   const items = selectMentorReviewQueue(

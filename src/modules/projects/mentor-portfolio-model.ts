@@ -6,6 +6,7 @@ const paging = {
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
 };
 export const mentorReviewQuerySchema = z.object({
+  assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED"]).default("ALL"),
   search: z.string().trim().max(120).default(""),
@@ -78,10 +79,11 @@ export function safeMentorProjectEventLabel(eventType: string): string {
 }
 export function mentorPortfolioHref(
   area: "reviews" | "activity",
-  query: { search?: string; page?: number; pageSize?: number; order?: string; projectStatus?: string; age?: string; projectId?: string; importance?: string; view?: string; window?: string },
+  query: { search?: string; page?: number; pageSize?: number; order?: string; assignment?: string; projectStatus?: string; age?: string; projectId?: string; importance?: string; view?: string; window?: string },
 ) {
   const params = new URLSearchParams();
   if (area === "reviews" && query.search) params.set("search", query.search);
+  if (area === "reviews" && query.assignment && query.assignment !== "ALL") params.set("assignment",query.assignment);
   if (area === "reviews" && query.order && query.order !== "NEWEST") params.set("order", query.order);
   if (area === "reviews" && query.age && query.age !== "ALL") params.set("age",query.age);
   if (area === "reviews" && query.projectStatus && query.projectStatus !== "ALL")params.set("projectStatus",query.projectStatus);
