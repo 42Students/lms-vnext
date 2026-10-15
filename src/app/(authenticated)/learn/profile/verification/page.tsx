@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getOwnLearnerVerificationStatus } from "@/modules/placements/learner-verification-status-service";
 import {LearnerVerificationSubmit} from "@/components/profile/learner-verification-submit";
-import {learnerVerificationDateLabel} from "@/modules/placements/learner-verification-date-model";
+import {learnerVerificationDateLabel,learnerVerificationSubmissionDateFallback} from "@/modules/placements/learner-verification-date-model";
 
 const details = [
   { key: "education", section:"EDUCATION", heading: "Education", edit: "/learn/profile?section=education" },
@@ -39,7 +39,7 @@ export default async function LearnerVerificationPage() {
         <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
           <div className="flex flex-wrap gap-x-2">
             <dt>Last submitted:</dt>
-            <dd>{learnerVerificationDateLabel(row.submittedAt) ? <time dateTime={row.submittedAt??undefined}>{learnerVerificationDateLabel(row.submittedAt)}</time> : "Not yet submitted"}</dd>
+            <dd>{learnerVerificationDateLabel(row.submittedAt) ? <time dateTime={row.submittedAt??undefined}>{learnerVerificationDateLabel(row.submittedAt)}</time> : learnerVerificationSubmissionDateFallback(row.submittedAt)}</dd>
           </div>
           {learnerVerificationDateLabel(row.decidedAt) ? <div className="flex flex-wrap gap-x-2">
             <dt>Last reviewed:</dt>
