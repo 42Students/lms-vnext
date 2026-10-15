@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Review drawer recovery PARTIAL (chat-9):** Authorized staff can explicitly retry an unsuccessful private verification-detail read without closing the drawer, clearing stale error/detail state before the new GET. No automatic repeated private reads or false success. Unit regression authored; browser/network acceptance remains open.
+
 **Newest-first verification ordering repair PARTIAL (chat-9):** The shared card grid now respects the server-selected OLDEST/NEWEST mode instead of always reversing newest pages back into ascending order. The queue and CSV also tie-break same-timestamp, same-learner Education/Identity rows by section; attention flags use one captured read clock. Pure ordering tests authored, PostgreSQL/browser acceptance open.
 
 **Waiting request-state triage PARTIAL (chat-9):** College verification now distinguishes first SUBMITTED requests from UPDATE_PENDING updates through the same status-scoped PostgreSQL query used by its capped CSV; incompatible decided tabs fail closed rather than show a false empty queue. A native dropdown, safe tab reset and pure filter tests authored; executed PG/browser acceptance outstanding.

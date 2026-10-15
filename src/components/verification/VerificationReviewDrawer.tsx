@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
 import {VERIFICATION_SEND_BACK_REASONS} from "@/modules/verification/review-reasons";
+import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
@@ -13,6 +14,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
+ const [retryKey,setRetryKey]=useState(0);
  const [saving,setSaving]=useState(false);
  const [reason,setReason]=useState<string>(VERIFICATION_SEND_BACK_REASONS[0]);
  const [additional,setAdditional]=useState("");
@@ -25,7 +27,11 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   }).then(data=>{if(active)setDetail(data);}).catch(e=>{if(active)setError(e instanceof Error?e.message:"Unable to load review");})
     .finally(()=>{if(active)setLoading(false);});
   return ()=>{active=false;};
- },[url]);
+ },[url,retryKey]);
+ function retryReview(){
+  setError("");setDetail(null);setLoading(true);
+  setRetryKey(key=>key+1);
+ }
  async function decide(action:"VERIFY"|"SEND_BACK"){
   if(!detail||saving)return;
   setSaving(true);setError("");
@@ -52,7 +58,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     <button type="button" onClick={onClose} className="rounded-md border px-3 py-2">Close</button>
    </header>
    {loading?<p role="status" className="py-4">Loading submitted details…</p>:null}
-   {error?<p role="alert" className="my-3 rounded-md border p-3">{error}</p>:null}
+   {error?<div role="alert" className="my-3 space-y-2 rounded-md border p-3"><p>{error}</p>
+    {canRetryVerificationReview(error,loading)&&<button type="button" onClick={retryReview}
+     className="rounded-md border px-3 py-2 text-sm">Retry loading review</button>}</div>:null}
    {detail?<div className="space-y-5 py-4">
     <section><h3 className="font-semibold">Submitted versus previously verified</h3>
      <dl className="mt-3 space-y-3">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
