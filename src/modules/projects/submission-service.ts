@@ -8,6 +8,7 @@ import {
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { projectDeliveryActivity } from "./delivery-activity-model";
+import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
 import {
   projectInstances,
   projectSubmissionReviews,
@@ -122,11 +123,14 @@ export async function createProjectSubmissionDraft(
       }
 
       const [latest] = await tx
-        .select({ version: projectSubmissions.version })
+        .select({ version: projectSubmissions.version, status: projectSubmissions.status })
         .from(projectSubmissions)
         .where(eq(projectSubmissions.projectId, scope.project.id))
         .orderBy(desc(projectSubmissions.version))
         .limit(1);
+      if (!projectSubmissionAllowsNewDraft(latest?.status)) {
+        throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+      }
       const version = (latest?.version ?? 0) + 1;
 
       const [draft] = await tx
