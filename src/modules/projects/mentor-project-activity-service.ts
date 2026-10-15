@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, desc, eq, gte, inArray, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, lt, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -41,7 +41,8 @@ export async function getMentorProjectActivityHistory(
     allowedTypes?inArray(activityEvents.eventType,allowedTypes):undefined,
     eq(activityEvents.collegeId,scope.collegeId),
     eq(activityEvents.organizationId,scope.organizationId),
-    since?gte(activityEvents.occurredAt,since):undefined,
+    since?(query.window==="OLDER_THAN_30_DAYS"
+      ?lt(activityEvents.occurredAt,since):gte(activityEvents.occurredAt,since)):undefined,
     or(
       and(eq(activityEvents.subjectType,"project"),
         eq(activityEvents.subjectId,scope.project.id)),
