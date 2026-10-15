@@ -41,6 +41,7 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
 import { parsePlacementCascadeId } from "./placement-cascade-policy";
+import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import {
   canReleaseAnotherHeldOffer,
   minimumOfferResponseDeadline,
@@ -416,19 +417,9 @@ export async function issuePlacementOffer(
     }
     const effectiveExpiresAt = input.expiresAt ?? earliestResponse;
     if ((input.kind ?? "OFFER") === "OFFER") {
-      const heldOffers = await tx
-        .select({ annualCtcInr: placementOffers.annualCtcInr })
-        .from(placementOffers)
-        .innerJoin(placementApplications,
-          eq(placementApplications.id, placementOffers.applicationId))
-        .innerJoin(placementJobs,
-          eq(placementJobs.id, placementApplications.jobId))
-        .where(and(
-          eq(placementApplications.membershipId, current.application.membershipId),
-          eq(placementJobs.collegeId, current.job.collegeId),
-          eq(placementOffers.kind, "OFFER"),
-          inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
-        ));
+      const heldOffers = await loadPlacementHeldOfferFacts(
+        current.job.collegeId, current.application.membershipId, tx,
+      );
       if (!canReleaseAnotherHeldOffer({
         maxHeldOffers: rules?.maxHeldOffers ?? 1,
         upliftPct: rules?.upliftPct ?? 40,
