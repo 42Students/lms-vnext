@@ -765,6 +765,13 @@ export const projectSubmissions = pgTable(
     submittedAt: timestamp("submitted_at", {
       withTimezone: true,
     }),
+    /** PR-S2-07: final-delivery lock/reopen markers; review history stays immutable. */
+    lockedAt: timestamp("locked_at", { withTimezone: true }),
+    reopenedAt: timestamp("reopened_at", { withTimezone: true }),
+    attachments: jsonb("attachments")
+      .$type<unknown[]>()
+      .notNull()
+      .default(sql`'[]'::jsonb`),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -777,6 +784,10 @@ export const projectSubmissions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_submissions_project_id_id_uq").on(
+      table.projectId,
+      table.id,
+    ),
     uniqueIndex(
       "project_submissions_project_version_uq",
     ).on(table.projectId, table.version),
@@ -796,6 +807,10 @@ export const projectSubmissions = pgTable(
       sql`${table.version} >= 1`,
     ),
     check(
+      "project_submissions_attachments_array_ck",
+      sql`jsonb_typeof(${table.attachments}) = 'array'`,
+    ),
+    check(
       "project_submissions_status_ck",
       sql`${table.status} in ('DRAFT', 'SUBMITTED', 'CHANGES_REQUESTED', 'APPROVED')`,
     ),
@@ -810,6 +825,54 @@ export const projectSubmissions = pgTable(
           and ${table.submittedByMembershipId} is not null
           and ${table.submittedAt} is not null)
       )`,
+    ),
+  ],
+);
+
+/** PR-S2-07: append-only lock/reopen/attachment event log for final delivery. */
+export const projectDeliveryEvents = pgTable(
+  "project_delivery_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projectInstances.id, {
+        onDelete: "restrict",
+      }),
+    submissionId: uuid("submission_id").notNull(),
+    eventType: varchar("event_type", { length: 24 }).notNull(),
+    actorMembershipId: uuid("actor_membership_id")
+      .notNull()
+      .references(() => collegeMemberships.id, {
+        onDelete: "restrict",
+      }),
+    reason: text("reason").notNull(),
+    occurredAt: timestamp("occurred_at", {
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      name: "project_delivery_events_submission_fk",
+      columns: [table.projectId, table.submissionId],
+      foreignColumns: [
+        projectSubmissions.projectId,
+        projectSubmissions.id,
+      ],
+    }).onDelete("restrict"),
+    index("project_delivery_events_project_time_idx").on(
+      table.projectId,
+      table.occurredAt,
+    ),
+    check(
+      "project_delivery_events_event_type_ck",
+      sql`${table.eventType} in ('LOCKED', 'REOPENED', 'ATTACHMENTS_CHANGED')`,
+    ),
+    check(
+      "project_delivery_events_reason_ck",
+      sql`length(trim(${table.reason})) between 1 and 4000`,
     ),
   ],
 );
