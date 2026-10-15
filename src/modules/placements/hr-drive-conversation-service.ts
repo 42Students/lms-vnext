@@ -9,6 +9,6 @@ export async function getRecruiterDriveConversations(context:RequestContext,rawJ
  const jobId=z.string().uuid().parse(rawJobId);
  const workspace=await getRecruiterPlacementWorkspace(context,jobId);
  const all=await listMessageThreads(context,workspace.college.id);
- const threads=recruiterDriveThreads(all,workspace.job.id);
+ const threads=recruiterDriveThreads(all,workspace.job.id,context.user.id);
  return {workspace,threads};
 }
