@@ -1,0 +1,1 @@
+"use client";export default function Error({reset}:{reset:()=>void}){return <section role="alert" className="space-y-3 p-4"><p>Unable to load placement batches.</p><button className="rounded border px-3 py-2" onClick={reset}>Retry</button></section>;}

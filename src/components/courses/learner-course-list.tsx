@@ -5,6 +5,8 @@ import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
+import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
+import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
@@ -262,6 +264,12 @@ export function LearnerCourseList({
             Continue learning only
           </button>
         </div>
+        {learnerCourseHasActiveFilters({query,typeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
+          <button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
+            className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">
+            Clear Course filters
+          </button>
+        ) : null}
         <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
           {periodRows[0]?.course.programName ? (
             <span className="rounded-full bg-muted px-3 py-1.5">
@@ -284,6 +292,7 @@ export function LearnerCourseList({
         </div>
       </section>
 
+      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length)}</p>
       {visibleRows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
           <h2 className="m-0 text-base font-semibold text-foreground">

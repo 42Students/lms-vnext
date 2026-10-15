@@ -3,6 +3,8 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import {parseFacultyAssessmentReportRoute,facultyAssignmentReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
+import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
+import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
@@ -72,18 +74,18 @@ export default async function FacultyAssignmentReportPage({
           "Graded: " + metrics.graded + "/" + metrics.submitted,
           "On time: " + metrics.onTime + "; Late: " + metrics.late + "; Not submitted: " + metrics.missing,
           "Total possible points: " + assignment.maxPoints,
-          "Due: " + (assignment.dueAt ? assignment.dueAt.toISOString() : "No due date"),
+          "Due: " + (assignment.dueAt ? facultyReportIstTimestamp(assignment.dueAt) : "No due date"),
         ]}
         sections={[
           { title: "Score distribution", rows: distribution.map((bucket) => bucket.label + ": " + bucket.count) },
           { title: "Student scores and submission timing", rows: submissions.map((submission) =>
-            (submission.learnerDisplayName || submission.learnerEmail || "Learner") +
+            (facultyReportLearnerName(submission.learnerDisplayName)) +
             " | " + (submission.gradingStatus === "GRADED" ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded") +
             (submission.gradePublished ? " (published)" : " (private)") +
-            " | " + submission.submittedAt.toISOString() +
+            " | " + facultyReportIstTimestamp(submission.submittedAt) +
             (assignment.dueAt && submission.submittedAt > assignment.dueAt ? " (late)" : " (on time)")
           ) },
-          { title: "Not submitted", rows: missingLearners.map((learner) => learner.displayName || learner.email || "Learner") },
+          { title: "Not submitted", rows: missingLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -91,7 +93,7 @@ export default async function FacultyAssignmentReportPage({
           ["Submitted", `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
-          ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(assignment.dueAt) : "—"],
+          ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>
@@ -163,8 +165,7 @@ export default async function FacultyAssignmentReportPage({
           assignment.maxPoints > 0;
         return {
           id: submission.id,
-          name: submission.learnerDisplayName || submission.learnerEmail || "Learner",
-          email: submission.learnerEmail,
+          name: facultyReportLearnerName(submission.learnerDisplayName),
           score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded",
           percent: scored ? Math.round((submission.pointsAwarded! / assignment.maxPoints) * 100) : null,
           submittedAt: submission.submittedAt.toISOString(),
@@ -189,12 +190,9 @@ export default async function FacultyAssignmentReportPage({
                 className="rounded-lg bg-surface-subtle p-3"
               >
                 <p className="m-0 text-sm font-semibold text-foreground">
-                  {learner.displayName || learner.email}
+                  {facultyReportLearnerName(learner.displayName)}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {learner.email}
-                </p>
-              </li>
+                              </li>
             ))}
           </ul>
         )}

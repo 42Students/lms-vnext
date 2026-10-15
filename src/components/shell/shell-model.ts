@@ -30,6 +30,7 @@ const superAdminItems: ShellNavItem[] = [
   dashboard,
   { label: "Organizations", href: "/admin/organizations", shortLabel: "O" },
   { label: "Colleges", href: "/admin/colleges", shortLabel: "C" },
+  { label: "Profile Verification", href: "/admin/verification", shortLabel: "V" },
   { label: "Feature Controls", href: "/admin/features", shortLabel: "F" },
   { label: "Departments", href: "/admin/departments", shortLabel: "D" },
   { label: "Academics", href: "/admin/academics", shortLabel: "A" },
@@ -46,10 +47,12 @@ const superAdminItems: ShellNavItem[] = [
   },
   { label: "Recruiter Accounts", href: "/admin/recruiters", shortLabel: "R" },
   { label: "Announcements", href: "/admin/announcements", shortLabel: "A" },
+  { label: "Inbound Mail", href: "/admin/inbound-mail", shortLabel: "I" },
   { label: "People", href: "/admin/people", shortLabel: "P" },
   { label: "Domains", href: "/admin/domains", shortLabel: "D" },
   { label: "Settings", href: "/admin/settings", shortLabel: "S" },
   { label: "Activity", href: "/activity", shortLabel: "A" },
+  { label: "Audit Findings", href: "/tracker/audit-findings", shortLabel: "A" },
 ];
 
 const learnerItems: ShellNavItem[] = [

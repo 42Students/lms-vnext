@@ -1,0 +1,3 @@
+import { describe, expect, it } from "vitest";import {classRosterRevision} from "@/modules/projects/class-team-roster-service";
+const a="00000000-0000-4000-8000-000000000001",b="00000000-0000-4000-8000-000000000002";
+describe("class roster optimistic revision",()=>{it("is deterministic",()=>expect(classRosterRevision(a,[{membershipId:b,rollNumber:"8"}])).toBe(classRosterRevision(a,[{membershipId:b,rollNumber:"8"}])));it("changes after learner roll edit",()=>expect(classRosterRevision(a,[{membershipId:b,rollNumber:"8"}])).not.toBe(classRosterRevision(a,[{membershipId:b,rollNumber:"9"}])));it("changes for another class",()=>expect(classRosterRevision(a,[{membershipId:b,rollNumber:"8"}])).not.toBe(classRosterRevision(b,[{membershipId:b,rollNumber:"8"}])));});

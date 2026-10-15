@@ -1,8 +1,4 @@
-/**
- * DB04 Drizzle schema: STAGED ONLY. Do not export via db/schema/index.ts or
- * generate a migration until the concurrent DB03 journal is reconciled.
- * No runtime verification is implied by this file.
- */
+/** DB04 Drizzle schema: profile verification (migration 0063). */
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { collegeMemberships } from "./memberships";

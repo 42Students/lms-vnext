@@ -577,6 +577,9 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect((await getFacultyCourseList(facultyOnly,{})).items).toEqual([]);
     await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
       [facultyOnlyRoleId,facultyOnlyMembershipId]);
+    // Role removal ends the teaching assignment by trigger; re-granting the role does not revive it.
+    expect((await getFacultyCourseList(facultyOnly,{q:codePrefix})).items).toEqual([]);
+    await pool.query("update course_teaching_assignments set ended_at=null where delivery_id=$1 and membership_id=$2",[delivery.id,facultyOnlyMembershipId]);
     expect((await getFacultyCourseList(facultyOnly,{q:codePrefix})).items.map(row=>row.deliveryId))
       .toEqual([delivery.id]);
   });
@@ -1038,12 +1041,12 @@ describe("Faculty active teaching membership cannot be forged by stale context",
     expect(await requireDeliveryContentMutation(facultyOnly, delivery.id)).toBe("FACULTY");
     await expect(requireLearningReadAccess(learner, offeringId, delivery.id)).rejects.toBeDefined();
     await expect(requireLearningReadAccess({ ...facultyOnly, membership: { ...facultyOnly.membership!, collegeId: SEED_IDS.collegeB } }, offeringId, delivery.id)).rejects.toBeDefined();
-    await pool.query("delete from membership_roles where membership_id = $1::uuid and role = $2::text", [facultyOnlyMembershipId, "FACULTY"]);
+    await pool.query("delete from membership_roles where membership_id = $1::uuid and role = $2::membership_role", [facultyOnlyMembershipId, "FACULTY"]);
     try {
       await expect(requireLearningReadAccess(facultyOnly, offeringId, delivery.id)).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
       await expect(requireDeliveryContentMutation(facultyOnly, delivery.id)).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
     } finally {
-      await pool.query("insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,$3::text) on conflict (id) do nothing", [facultyOnlyRoleId, facultyOnlyMembershipId, "FACULTY"]);
+      await pool.query("insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,$3::membership_role) on conflict (id) do nothing", [facultyOnlyRoleId, facultyOnlyMembershipId, "FACULTY"]);
     }
     await pool.query("update college_memberships set status = 'SUSPENDED' where id = $1::uuid", [facultyOnlyMembershipId]);
     try {
@@ -1051,6 +1054,62 @@ describe("Faculty active teaching membership cannot be forged by stale context",
       await expect(requireDeliveryContentMutation(facultyOnly, delivery.id)).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
     } finally {
       await pool.query("update college_memberships set status = 'ACTIVE' where id = $1::uuid", [facultyOnlyMembershipId]);
+    }
+  });
+});
+
+
+describe("Faculty assignment command rejects stale membership state", () => {
+  it("denies an optimistic Faculty context after its persisted role is revoked", async () => {
+    const {delivery}=await fixture();
+    await pool.query("delete from membership_roles where membership_id=$1::uuid and role=$2::membership_role", [facultyOnlyMembershipId,"FACULTY"]);
+    try {
+      await expect(commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
+        action:"CREATE",lessonId:randomUUID(),sequence:1,title:"Denied",description:null,
+        dueAt:null,maxPoints:10,confirmed:true,
+      })).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
+    } finally {
+      await pool.query("insert into membership_roles (id,membership_id,role) values ($1::uuid,$2::uuid,$3::membership_role) on conflict (id) do nothing",
+        [facultyOnlyRoleId,facultyOnlyMembershipId,"FACULTY"]);
+    }
+  });
+});
+
+
+describe("Faculty grade mutation scope checks", () => {
+  it("rejects a forged Faculty context on a foreign membership", async () => {
+    const {delivery,assignment}=await fixture();
+    const rows=await listAssignmentSubmissions(facultyOnly,assignment.id,delivery.id);
+    expect(rows.length).toBe(0);
+    await expect(publishAssignmentGrade(learner,randomUUID(),{expectedVersion:0})).rejects.toBeDefined();
+    await expect(gradeAssignmentSubmission({...facultyOnly,membership:{...facultyOnly.membership!,collegeId:SEED_IDS.collegeB}},randomUUID(),{
+      pointsAwarded:2,feedback:"Revised",expectedVersion:0,
+    })).rejects.toBeDefined();
+  });
+});
+
+
+describe("Faculty attendance bounded by persisted active delivery", () => {
+  it("rejects a delivered course that has ended after its teaching context was issued", async () => {
+    const {delivery}=await fixture();
+    expect((await getFacultyCourseList(facultyOnly,{q:"",period:"",role:"",page:1})).items.length).toBeGreaterThanOrEqual(1);
+    await pool.query("update course_section_deliveries set ended_at=now() where id=$1::uuid",[delivery.id]);
+    await expect(getFacultySessionCoverage(facultyOnly,{deliveryId:delivery.id})).rejects.toBeDefined();
+  });
+});
+
+
+describe("Faculty discussion moderation revoked role", () => {
+  it("does not allow stale Faculty membership to pin or delete an earlier message", async () => {
+    const {delivery}=await fixture();
+    const posted=await createCourseDiscussionMessage(facultyOnly,delivery.id,{messageText:"Scoped note"});
+    await pool.query("delete from membership_roles where membership_id=$1::uuid and role=$2::membership_role",[facultyOnlyMembershipId,"FACULTY"]);
+    try {
+      const token={expectedUpdatedAt:posted.updatedAt.toISOString(),confirmed:true};
+      await expect(toggleCourseDiscussionPin(facultyOnly,posted.id,delivery.id,token)).rejects.toBeDefined();
+      await expect(deleteCourseDiscussionMessage(facultyOnly,posted.id,delivery.id,token)).rejects.toBeDefined();
+    } finally {
+      await pool.query("insert into membership_roles(id,membership_id,role) values ($1::uuid,$2::uuid,$3::membership_role) on conflict(id) do nothing",[facultyOnlyRoleId,facultyOnlyMembershipId,"FACULTY"]);
     }
   });
 });

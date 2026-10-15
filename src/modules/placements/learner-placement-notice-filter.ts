@@ -1,0 +1,1 @@
+export type LearnerNotice={id:string;audience:"PLACEMENTS"|"GENERAL";published:boolean;expiresAt:number|null};export function learnerPlacementNotices(rows:readonly LearnerNotice[],now:number){return rows.filter(r=>r.audience==="PLACEMENTS"&&r.published&&(r.expiresAt===null||r.expiresAt>now));}
