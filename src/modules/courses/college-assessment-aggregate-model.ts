@@ -8,6 +8,7 @@ export const collegeAssessmentListQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   courseCode: z.string().trim().min(1).max(64).optional(),
   scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
+  results:z.enum(["ALL","PUBLISHED","HIDDEN"]).default("ALL"),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "CLOSED", "ARCHIVED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
@@ -19,6 +20,7 @@ export function parseCollegeAssessmentQuery(
   raw: unknown,
 ): CollegeAssessmentListQuery {
   const result = collegeAssessmentListQuerySchema.parse(raw);
+  if (kind === "ASSIGNMENT" && result.results !== "ALL") throw new Error("Assignment results visibility unsupported");
   if (kind === "ASSIGNMENT" && result.status === "CLOSED") {
     throw new Error("Assignments do not have a CLOSED status");
   }
@@ -43,6 +45,7 @@ export function collegeAssessmentHref(
   if (query.q) params.set("q", query.q);
   if (query.courseCode) params.set("courseCode",query.courseCode);
   if (query.scope!=="ALL") params.set("scope",query.scope);
+  if(kind==="QUIZ"&&query.results!=="ALL")params.set("results",query.results);
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.page > 1) params.set("page", String(query.page));
   const base = kind === "ASSIGNMENT" ? "/college/assignments" : "/college/quizzes";

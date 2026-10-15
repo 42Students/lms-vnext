@@ -81,6 +81,14 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
               <option value="SECTION">Section-specific</option>
             </select>
           </label>
+          {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Quiz results
+            <select name="results" defaultValue={data.query.results}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
+              <option value="HIDDEN">Results hidden</option>
+            </select>
+          </label>:null}
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Status
             <select name="status" defaultValue={data.query.status}
@@ -156,6 +164,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>
                       {item.status}
                     </StatusBadge>
+                    {!isAssignment?<p className="mt-1 text-xs text-muted-foreground">{item.resultsPublished?"Results published":"Results hidden"}</p>:null}
                   </td>
                   <td className="px-4 py-4 text-body">{formatDue(item.dueAt)}</td>
                   <td className="px-4 py-4 tabular-nums text-body">{item.activityCount}</td>

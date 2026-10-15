@@ -163,6 +163,13 @@ describe.skipIf(!enabled)("College Admin assessment aggregates — disposable Po
     }
     expect(foreignAssignments.items).toEqual([]);
     expect(foreignQuizzes.items).toEqual([]);
+    const [unreleased,released]=await Promise.all([
+      listCollegeAssessmentAggregate(adminA,"QUIZ",{q:code,results:"HIDDEN"}),
+      listCollegeAssessmentAggregate(adminA,"QUIZ",{q:code,results:"PUBLISHED"}),
+    ]);
+    expect(unreleased.items.map(r=>r.id)).toContain(ids.quiz);
+    expect(unreleased.items.find(r=>r.id===ids.quiz)?.resultsPublished).toBe(false);
+    expect(released.items).toEqual([]);
     for(const kind of ["ASSIGNMENT","QUIZ"] as const){
       const shared=await listCollegeAssessmentAggregate(adminA,kind,{q:code,scope:"SHARED"});
       const section=await listCollegeAssessmentAggregate(adminA,kind,{q:code,scope:"SECTION"});
