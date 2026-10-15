@@ -3,7 +3,7 @@ import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
- placementRoundResults,activityEvents} from "@/db/schema";
+ placementRoundResults,activityEvents,colleges} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName} from "./hr-round-editor-model";
@@ -15,9 +15,10 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return getDb().transaction(async tx=>{
   const [job]=await tx.select({
-   id:placementJobs.id,collegeId:placementJobs.collegeId,status:placementJobs.status,
+   id:placementJobs.id,collegeId:placementJobs.collegeId,organizationId:colleges.organizationId,status:placementJobs.status,
    companyRelationshipId:placementJobs.companyRelationshipId,
   }).from(placementJobs)
+   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
    .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
     eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
@@ -58,7 +59,7 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     metadata:{source:"RECRUITER",kind:input.kind,name:input.name},
    });
    await tx.insert(activityEvents).values({
-    organizationId:context.recruiter.grants.find(g=>g.collegeId===job.collegeId)?.organizationId ?? null!,
+    organizationId:job.organizationId,
     collegeId:job.collegeId,actorUserId:context.user.id,module:"PLACEMENTS",
     eventType:"placements.hr_round.created",subjectType:"placement_round",subjectId:created.id,
     summary:"Recruiter added hiring round",metadata:{jobId:job.id},
@@ -88,6 +89,14 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
    actorUserId:context.user.id,metadata:{source:"RECRUITER",action:input.action,
     ...(input.action==="UPDATE"?{kind:input.kind,name:input.name,mode:input.mode}:{}),
    },
+  });
+  await tx.insert(activityEvents).values({
+   organizationId:job.organizationId,collegeId:job.collegeId,
+   actorUserId:context.user.id,module:"PLACEMENTS",
+   eventType:input.action==="REMOVE"?"placements.hr_round.removed":"placements.hr_round.updated",
+   subjectType:"placement_round",subjectId:target.id,
+   summary:input.action==="REMOVE"?"Recruiter removed unused hiring round":"Recruiter edited unused hiring round",
+   metadata:{jobId:job.id},
   });
   return {id:updated.id,action:input.action==="REMOVE"?"REMOVED" as const:"UPDATED" as const};
  });
