@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Database-side verification kind filtering PARTIAL (chat-9):** Education/Identity kind now narrows the current-college PostgreSQL queue and CSV before the 5,001-row safety cap; tab counts remain within the chosen kind. Unit and disposable PostgreSQL wrong-role/foreign negative cases authored. Runtime/index/browser acceptance still open.
+
 **SQL date window before queue safety cap PARTIAL (chat-9):** The inclusive IST from/through submission-date window is now transformed to UTC half-open bounds in both verification queue and capped CSV SQL before the 5,001-row safeguard and in-memory marksheet/attention filters. Pure exact-midnight tests authored; runtime PG index-plan and browser acceptance pending.
 
 **Active enrollment availability PARTIAL (chat-9):** Verification queue and masked CSV now distinguish students with/without registered active program enrollment, using correlated current-college ownership. Contradictory no-enrollment with exact program/batch/branch/class filters reject at page, service and export boundaries. Unit tests authored; disposable DB and browser verification pending.

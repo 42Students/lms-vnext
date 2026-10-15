@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import type {VerificationStatus} from "@/modules/profile-verification/domain";
 import {verificationQueueFilters,verificationWaitingStateValid,verificationEnrollmentFiltersValid} from "./queue-filters";
 import {verificationSortDirection} from "./sort-model";
+import {verificationSqlSections} from "./queue-kind";
 import {matchesVerificationAttention} from "./attention-filter";
 import type {VerificationSection} from "@/modules/profile-verification/domain";
 import {verificationLearnerNamePattern} from "./queue-name-pattern";
@@ -43,7 +44,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   filter.q?ilike(users.displayName,verificationLearnerNamePattern(filter.q)):undefined,
   dateBounds.from?gte(profileVerifications.submittedAt,dateBounds.from):undefined,
   dateBounds.before?lt(profileVerifications.submittedAt,dateBounds.before):undefined,
-  inArray(profileVerifications.section,["EDUCATION","IDENTITY"]),
+  inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
   inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","SENT_BACK","VERIFIED"]:[filter.waitingState]),
   ...verificationEnrollmentPredicates(scope.collegeId,filter)))
  .orderBy(verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
