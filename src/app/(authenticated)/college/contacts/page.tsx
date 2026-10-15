@@ -31,6 +31,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <Link href={collegeContactsHref({...filter,tab:"STUDENT",page:1})} aria-current={filter.tab==="STUDENT"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">Student contacts</Link>
   </nav>
+  <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
   <form action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-lg border bg-surface p-4">
    <input type="hidden" name="tab" value={filter.tab}/>
    <label className="min-w-0 flex-1 basis-52 text-sm">Name or email

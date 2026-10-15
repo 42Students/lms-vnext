@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {collegeContactsQuerySchema} from "./college-contacts-model";
+import {collegeContactsQuerySchema,contactDateWindowValid} from "./college-contacts-model";
 import type {CollegeContactRow} from "./college-contacts-service";
 export const CONTACT_EXPORT_LIMIT=1000;
 export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true});
@@ -9,7 +9,9 @@ export function parseCollegeContactsExportParams(params:URLSearchParams){
   if(params.getAll(key).length!==1)throw new Error("INVALID_CONTACT_EXPORT");
   input[key]=params.get(key)??"";
  }
- return collegeContactsExportSchema.parse(input);
+ const parsed=collegeContactsExportSchema.parse(input);
+ if(!contactDateWindowValid(parsed))throw new Error("INVALID_CONTACT_EXPORT");
+ return parsed;
 }
 export function neutralizeContactCell(value:string){
  const safe=/^[\s\u0000-\u001f]*[=+@-]/u.test(value)?"'"+value:value;

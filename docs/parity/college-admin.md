@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Invalid Contacts date-window rejection PARTIAL (2026-10-15, chat-9):** Reverse IST joined-from/through intervals now fail closed in both page and export parsing and cannot silently return empty results. Service rechecks even for programmatic callers. Unit scenarios authored; browser/PG execution pending.
+
+
 **Contact joined-through filter PARTIAL (2026-10-15, chat-9):** The read-only contact tabs support inclusive IST end-day filtering, persisted in URLs and exports with a next-midnight exclusive DB bound. Cross-college isolation and privacy masks are unchanged; runtime/browser acceptance pending.
 
 

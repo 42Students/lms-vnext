@@ -1,4 +1,4 @@
-import {describe,it,expect} from "vitest";import {collegeContactsQuerySchema,contactsIstDayStart,contactsNextIstDayStart} from "@/modules/people/college-contacts-model";describe("contact server filters",()=>{it("accepts typed status and sorting",()=>{expect(collegeContactsQuerySchema.parse({status:"ENDED",sort:"NEWEST"})).toMatchObject({status:"ENDED",sort:"NEWEST"});});});
+import {describe,it,expect} from "vitest";import {collegeContactsQuerySchema,contactsIstDayStart,contactsNextIstDayStart,contactDateWindowValid} from "@/modules/people/college-contacts-model";describe("contact server filters",()=>{it("accepts typed status and sorting",()=>{expect(collegeContactsQuerySchema.parse({status:"ENDED",sort:"NEWEST"})).toMatchObject({status:"ENDED",sort:"NEWEST"});});});
 describe("contacts account state",()=>{it("validates account lifecycle independently of college membership",()=>{
  const filter=collegeContactsQuerySchema.parse({status:"ACTIVE",accountStatus:"DISABLED"});
  expect(filter.accountStatus).toBe("DISABLED");
@@ -37,4 +37,10 @@ describe("contact inclusive IST end date",()=>{it("uses next midnight as an excl
  expect(contactsIstDayStart("2026-10-15").toISOString()).toBe("2026-10-14T18:30:00.000Z");
  expect(contactsNextIstDayStart("2026-10-31").toISOString()).toBe("2026-10-31T18:30:00.000Z");
  expect(collegeContactsQuerySchema.safeParse({joinedThrough:"invalid"}).success).toBe(false);
+});});
+
+describe("contacts join-date window",()=>{it("rejects reversed bounds without accepting misleading no-match pages",()=>{
+ expect(contactDateWindowValid({joinedFrom:"2026-10-20",joinedThrough:"2026-10-15"})).toBe(false);
+ expect(contactDateWindowValid({joinedFrom:"2026-10-15",joinedThrough:"2026-10-15"})).toBe(true);
+ expect(contactDateWindowValid({joinedThrough:"2026-10-15"})).toBe(true);
 });});
