@@ -5,22 +5,21 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-directory-service";
 import {mentorResourceDirectoryHref,mentorResourceDirectoryQuerySchema}
  from "@/modules/projects/mentor-resource-directory-model";
+import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
-const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
 }){
  const [{projectId},raw]=await Promise.all([params,searchParams]);
- const parsed=mentorResourceDirectoryQuerySchema.safeParse({
-  projectId,required:first(raw.required)??undefined,
-  link:first(raw.link)??undefined,
-  description:first(raw.description)??undefined,
-  order:first(raw.order)??undefined,
-  search:first(raw.search)??undefined,page:first(raw.page)??undefined,
- });
- if(!parsed.success)return <section role="alert" className="space-y-3">
+ const values=singleValueMentorFilters(raw);
+ const parsed=values?mentorResourceDirectoryQuerySchema.safeParse({
+  projectId,required:values.required,link:values.link,description:values.description,
+  order:values.order,search:values.search,page:values.page,
+ }):null;
+ if(!parsed?.success)return <section role="alert" className="space-y-3">
   <h1>Invalid resource filters</h1>
-  <Link href="/mentor/projects" className="text-primary-text underline">Projects</Link>
+  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
+   className="text-primary-text underline">Clear invalid filters</Link>
  </section>;
  const data=await getMentorResourceDirectory(await getCurrentRequestContext(),parsed.data);
  const base="/mentor/projects/"+encodeURIComponent(projectId);
