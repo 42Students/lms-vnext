@@ -11,6 +11,7 @@ import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock
 import { learnerScheduleDayAfterShift } from "@/modules/academics/learner-schedule-shift-day-model";
 import { learnerScheduleAnchorForView } from "@/modules/academics/learner-schedule-view-anchor-model";
 import { learnerScheduleTodayDay } from "@/modules/academics/learner-schedule-today-day-model";
+import { learnerScheduleWeekdayExportAvailable } from "@/modules/academics/learner-schedule-weekday-export-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
@@ -594,6 +595,17 @@ export function LearnerClassSchedule({
                     {agenda.map(event=><EventCard key={event.id} event={event} courseBasePath={courseBasePath}/>)}
                   </div> : <p className="mt-2 text-sm text-muted-foreground">No classes on this day.</p>}
                 </section>
+              </div>
+            ) : null}
+            {courseBasePath === "/learn/courses" && learnerScheduleWeekdayExportAvailable(view,calendarMode,agenda.length) ? (
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-subtle p-3" aria-label="Selected day class export">
+                <p className="min-w-0 text-sm font-semibold text-body">{chosenDay} · {agenda.length} authorized sessions</p>
+                <a download={"classes-"+chosenDay+".ics"}
+                  href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
+                  className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+                  Download selected day (.ics)
+                </a>
+                {dayIcs.truncated ? <p className="w-full text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}
               </div>
             ) : null}
             <div className={view==="month" ? "hidden" : "mt-5 hidden md:block"}>
