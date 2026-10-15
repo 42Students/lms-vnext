@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Disposable PostgreSQL bulk isolation fixture PARTIAL (chat-9):** Gated integration exercise rejects LEARNER-role batch execution and maps foreign-college identity-review IDs to generic NOT_AVAILABLE without target metadata. Existing single-review fixture still covers version CAS, audit and in-app notification. Requires DB04_VERIFICATION_READY=1 and disposable DB target; not yet executed.
+
+
 **College Admin bulk mutation route PARTIAL (chat-9):** `/api/college/verification/bulk-review` POST checks same-origin before JSON parsing, delegates to persisted actor/scoped, row-versioned DB04 per-item service and returns no-store per-record outcomes. The endpoint does not accept caller-provided college scope. Route-contract tests authored, runtime/API and browser acceptance open.
 
 
