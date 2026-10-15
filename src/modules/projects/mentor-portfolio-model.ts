@@ -18,10 +18,11 @@ export const mentorActivityQuerySchema = z.object({
   assignment:z.enum(["ALL","PRIMARY","SUPPORTING"]).default("ALL"),
   projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   projectStatus:z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).default("ALL"),
+  search:z.string().trim().max(120).default(""),
   order:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
-  window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS"]).default("ALL"),
+  window: z.enum(["ALL","PAST_7_DAYS","PAST_30_DAYS","PAST_90_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   importance: z.enum(["ALL","LOW","NORMAL","HIGH","CRITICAL"]).default("ALL"),
-  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS"]).default("ALL"),
+  view: z.enum(["ALL","PROJECT","REVIEWS","MEETINGS","TASKS","EVALUATIONS","SPRINTS","ASSIGNMENTS","RESOURCES","TEAM"]).default("ALL"),
   ...paging,
 }).strict();
 
@@ -65,6 +66,12 @@ export function safeMentorProjectEventLabel(eventType: string): string {
     case "projects.mentor.reassigned": return "Mentor reassigned";
     case "projects.readiness.overridden": return "Readiness decision updated";
     case "projects.sprint.updated": return "Sprint details updated";
+    case "projects.team_member.added": return "Project team member added";
+    case "projects.team_member.updated": return "Project team member updated";
+    case "projects.team_member.ended": return "Project team membership ended";
+    case "projects.resource.created": return "Project resource added";
+    case "projects.resource.updated": return "Project resource updated";
+    case "projects.resource.archived": return "Project resource archived";
     case "projects.task.created": return "Project task created";
     case "projects.task.details_updated": return "Task details updated";
     case "projects.task.submitted": return "Task submission";
@@ -89,6 +96,7 @@ export function mentorPortfolioHref(
   if (area === "reviews" && query.age && query.age !== "ALL") params.set("age",query.age);
   if (area === "reviews" && query.projectStatus && query.projectStatus !== "ALL")params.set("projectStatus",query.projectStatus);
   if (area === "reviews" && query.projectId)params.set("projectId",query.projectId);
+  if (area === "activity" && query.search)params.set("search",query.search);
   if (area === "activity" && query.importance && query.importance !== "ALL") params.set("importance",query.importance);
   if (area === "activity" && query.view && query.view !== "ALL") params.set("view",query.view);
   if (area === "activity" && query.window && query.window !== "ALL")params.set("window",query.window);
@@ -100,3 +108,30 @@ export function mentorPortfolioHref(
   if (query.pageSize && query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
   return "/mentor/" + area + (params.size ? "?" + params.toString() : "");
 }
+
+/** Zero-min-width grid protects long assigned-project names on mobile. */
+export const mentorActivityFormLayout = "grid min-w-0 w-full grid-cols-1 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4 [&_label]:w-full [&_label]:min-w-0 [&_select]:w-full [&_select]:min-w-0 [&_select]:max-w-full";
+
+export function mentorActivityPagination(total:number, requested:number, pageSize:number){
+ const totalPages=Math.max(1,Math.ceil(total/pageSize));
+ const page=Math.max(1,Math.min(requested,totalPages));
+ return {page,pageSize,total,totalPages};
+}
+
+/** Search only project titles from the live, persisted assigned-Mentor roster. */
+export function mentorActivityProjectTitleMatch(title:string,search:string){
+ return title.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"));
+}
+
+/** Registered event severity, never private audit metadata. */
+export function mentorActivityImportanceLabel(importance:string){
+ switch(importance){
+  case "LOW":return "Low importance";
+  case "NORMAL":return "Normal importance";
+  case "HIGH":return "High importance";
+  case "CRITICAL":return "Critical importance";
+  default:return "Importance not classified";
+ }
+}
+
+export type MentorActivityQuery = z.infer<typeof mentorActivityQuerySchema>;
