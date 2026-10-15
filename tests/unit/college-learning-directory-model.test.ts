@@ -338,4 +338,11 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeProgressCsvHref(q)).toContain("offeringId=");
   });
 
+  it("validates and retains exact authored path drill-down",()=>{
+    expect(collegeLessonQuerySchema.safeParse({pathId:"not-path"}).success).toBe(false);
+    const q=collegeLessonQuerySchema.parse({pathId:"123e4567-e89b-42d3-a456-426614174000"});
+    expect(collegeLearningHref("LESSONS",q)).toContain("pathId=");
+    expect(lessonsCsvHref(q)).toContain("pathId=");
+  });
+
 });
