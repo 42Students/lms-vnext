@@ -11,6 +11,7 @@ export const collegeStructureQuerySchema = z.object({
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
+  schedulePresence: z.enum(["ALL","HAS_EVENTS","NO_EVENTS"]).default("ALL"),
   cohortName: z.string().trim().min(1).max(255).optional(),
   className: z.string().trim().min(1).max(255).optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
@@ -57,7 +58,7 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
@@ -100,6 +101,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (kind === "CLASSES" && "programCode" in query && query.programCode) params.set("programCode",query.programCode);
   if (kind === "CLASSES" && "className" in query && query.className) params.set("className",query.className);
   if (kind === "CLASSES" && "cohortName" in query && query.cohortName) params.set("cohortName",query.cohortName);
+  if (kind === "CLASSES" && "schedulePresence" in query && query.schedulePresence !== "ALL") params.set("schedulePresence",query.schedulePresence);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }

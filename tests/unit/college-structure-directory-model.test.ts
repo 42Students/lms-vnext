@@ -160,4 +160,10 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeClassQuerySchema.safeParse({cohortName:"x".repeat(256)}).success).toBe(false);
     expect(readCollegeStructureParams({cohortName:""})).toEqual({});
   });
+  it("Saved section schedule validates persisted evidence and retains class/export filters",()=>{
+    const query=collegeClassQuerySchema.parse({schedulePresence:"NO_EVENTS"});
+    expect(collegeStructureHref("CLASSES",query)).toContain("schedulePresence=NO_EVENTS");
+    expect(classesExportHref(query)).toContain("schedulePresence=NO_EVENTS");
+    expect(collegeClassQuerySchema.safeParse({schedulePresence:"INFERRED"}).success).toBe(false);
+  });
 });

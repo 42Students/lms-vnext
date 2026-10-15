@@ -16,6 +16,7 @@ import {
   membershipRoles,
   programs,
   sectionEnrollments,
+  sectionScheduleEvents,
   sections,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -92,6 +93,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.schedulePresence === "HAS_EVENTS" ? exists(db.select({id:sectionScheduleEvents.id}).from(sectionScheduleEvents).where(eq(sectionScheduleEvents.sectionId,sections.id))) : query.schedulePresence === "NO_EVENTS" ? not(exists(db.select({id:sectionScheduleEvents.id}).from(sectionScheduleEvents).where(eq(sectionScheduleEvents.sectionId,sections.id)))) : undefined,
       query.cohortName ? eq(cohorts.name,query.cohortName) : undefined,
       query.className ? eq(sections.name,query.className) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
