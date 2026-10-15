@@ -857,3 +857,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 students-with-overrides queue (PARTIAL):** The learner module-access trace can now filter to active learners with a persisted membership-level Projects/Placements/Electives rule, scoped in the original college SQL and preserving the filter through pagination/deep links. No contact data or edit privilege is added. Model and disposable-PG tests authored, not executed; editing and full legacy override/lock drawer remain open.
+
+
+**2026-10-15 chat-6 module hierarchy descendant scope filter (PARTIAL):** Existing selected-college rules can now be filtered by Department, Program, Cohort, Section or Membership, combined with optional module filter. SQL applies exact enum-checked filters to count and rows, and page links retain both. A disposable-PG fixture and schema regression authored; no runtime browser/PG execution. Edit, audit/history, learner count and lock workflows remain open.

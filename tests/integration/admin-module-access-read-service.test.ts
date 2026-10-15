@@ -52,6 +52,14 @@ describe("module access admin read against PostgreSQL", () => {
     await expect(getSuperAdminCollegeModuleAccess({...superAdmin,user:{...superAdmin.user,systemRoles:[]}},SEED_IDS.collegeA,{module:"projects"})).rejects.toBeDefined();
   });
 
+  it("filters persisted descendant scope and module in the same scoped query",async()=>{
+    const result=await getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{scope:"MEMBERSHIP",module:"projects"});
+    expect(result).not.toBeNull();
+    expect(result!.scopeFilter).toBe("MEMBERSHIP");
+    expect(result!.descendants.every(r=>r.scopeType==="MEMBERSHIP"&&r.module==="projects")).toBe(true);
+    await expect(getSuperAdminCollegeModuleAccess(superAdmin,SEED_IDS.collegeA,{scope:"GLOBAL"})).rejects.toBeDefined();
+  });
+
   it("returns null for an unknown college and rejects non-super-admins", async () => {
     expect(await getSuperAdminCollegeModuleAccess(superAdmin, randomUUID(), {})).toBeNull();
     await expect(
