@@ -21,7 +21,6 @@ import {
   shipProjectRelease,
   startProjectSprint,
   unshipProjectRelease,
-  updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {
   assignProjectTemplateToCollege,
@@ -29,6 +28,8 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {approveProjectTaskThroughReview} from "./support/projects-review-fixture";
+import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -365,27 +366,17 @@ describe("Projects P5 lifecycle", () => {
       code: "PROJECT_SPRINT_HAS_OPEN_TASKS",
     });
 
-    await expect(
-      updateProjectTaskStatus(
-        mentor,
-        project.id,
-        firstTask.id,
-        { status: "IN_REVIEW" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
-      ),
-    ).rejects.toMatchObject({
-      code: "PROJECT_TASK_INVALID_STATE",
-    });
+    // Direct IN_REVIEW and DONE writes are not part of the task-status API.
+    for (const status of ["IN_REVIEW","DONE"]) {
+      expect(updateProjectTaskStatusInputSchema.safeParse({
+        status,expectedUpdatedAt:firstTask.updatedAt.toISOString(),
+      }).success).toBe(false);
+    }
 
-    await expect(
-      updateProjectTaskStatus(
-        mentor,
-        project.id,
-        firstTask.id,
-        { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
-      ),
-    ).resolves.toMatchObject({
-      status: "DONE",
+    const reviewed=await approveProjectTaskThroughReview({
+      learner,mentor,projectId:project.id,taskId:firstTask.id,
     });
+    expect(reviewed.review.submission.status).toBe("APPROVED");
 
     await expect(
       completeProjectSprint(
@@ -434,12 +425,7 @@ describe("Projects P5 lifecycle", () => {
           task.sprintId === sprint.id,
       );
       for (const task of sprintTasks) {
-        await updateProjectTaskStatus(
-          mentor,
-          project.id,
-          task.id,
-          { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
-        );
+        await approveProjectTaskThroughReview({learner,mentor,projectId:project.id,taskId:task.id});
       }
 
       await completeProjectSprint(
@@ -465,7 +451,7 @@ describe("Projects P5 lifecycle", () => {
         [project.id],
       )
     ).rows;
-    expect(row?.status).toBe("COMPLETED");
+    expect(row?.status).toBe("ACTIVE");
   });
 
   it("requires un-shipping before reopening a completed sprint", async () => {
@@ -492,12 +478,7 @@ describe("Projects P5 lifecycle", () => {
         (candidate) =>
           candidate.sprintId === sprint.id,
       )) {
-        await updateProjectTaskStatus(
-          mentor,
-          project.id,
-          task.id,
-          { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
-        );
+        await approveProjectTaskThroughReview({learner,mentor,projectId:project.id,taskId:task.id});
       }
       await completeProjectSprint(
         mentor,

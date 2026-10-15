@@ -19,7 +19,6 @@ import {
   completeProjectSprint,
   shipProjectRelease,
   startProjectSprint,
-  updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {
   getProjectReadiness,
@@ -39,6 +38,7 @@ import {
   publishProjectTemplate,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {approveProjectTaskThroughReview} from "./support/projects-review-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -458,12 +458,7 @@ describe("Projects P7A resources and readiness", () => {
       project.id,
       sprint.id,
     );
-    await updateProjectTaskStatus(
-      mentor,
-      project.id,
-      task.id,
-      { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
-    );
+    await approveProjectTaskThroughReview({learner,mentor,projectId:project.id,taskId:task.id});
     await completeProjectSprint(
       mentor,
       project.id,
@@ -480,7 +475,7 @@ describe("Projects P7A resources and readiness", () => {
       project.id,
     );
     expect(readiness).toMatchObject({
-      projectStatus: "COMPLETED",
+      projectStatus: "ACTIVE",
       execution: {
         complete: true,
         releases: { total: 1, shipped: 1 },
