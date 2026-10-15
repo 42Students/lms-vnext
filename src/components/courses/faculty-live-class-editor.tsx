@@ -5,11 +5,13 @@ import {useMemo,useState} from "react";
 import {facultyLiveEditorCommand} from "@/modules/courses/faculty-live-editor-command";
 import {facultyLiveSaveFeedback} from "@/modules/courses/faculty-live-save-feedback";
 import {facultyLiveEditorDraft} from "@/modules/courses/faculty-live-editor-model";
+import {facultyLiveSessionOption} from "@/modules/courses/faculty-live-session-option";
 
 type Choice={id:string;title:string;deliveryId:string};
 type Session={
   id:string;deliveryId:string;title:string;startsAt:string;endsAt:string;
   expectedUpdatedAt:string|null;meetingUrl:string|null;
+  courseName:string;sectionName:string;
 };
 export function FacultyLiveClassEditor({
   choices,sessions,
@@ -95,7 +97,7 @@ export function FacultyLiveClassEditor({
         <label className="grid gap-1 text-sm">Published session
           <select value={selectedId} onChange={e=>preloadSession(e.target.value)}
             className="min-h-10 rounded border border-border bg-background p-2">
-            {sessions.map(x=><option key={x.id} value={x.id}>{x.title}</option>)}
+            {sessions.map(x=><option key={x.id} value={x.id}>{facultyLiveSessionOption(x)}</option>)}
           </select>
         </label>}
       {action!=="CANCEL"&&<>
