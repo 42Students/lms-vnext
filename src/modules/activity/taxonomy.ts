@@ -141,6 +141,8 @@ export const ACTIVITY_EVENT_TYPES = {
   PROJECTS_DELIVERY_DRAFT_UPDATED: "projects.delivery.draft_updated",
   PROJECTS_DELIVERY_SUBMITTED: "projects.delivery.submitted",
   PROJECTS_DELIVERY_REVIEWED: "projects.delivery.reviewed",
+  PROJECTS_DELIVERY_LOCKED: "projects.delivery.locked",
+  PROJECTS_DELIVERY_REOPENED: "projects.delivery.reopened",
   PROJECTS_TEAM_MEMBER_ADDED: "projects.team_member.added",
   PROJECTS_TEAM_MEMBER_UPDATED: "projects.team_member.updated",
   PROJECTS_TEAM_MEMBER_ENDED: "projects.team_member.ended",
