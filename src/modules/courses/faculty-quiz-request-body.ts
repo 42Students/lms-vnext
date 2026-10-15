@@ -1,11 +1,18 @@
 /** A bounded request parser for Faculty Quiz authoring; Zod still validates command fields. */
 export const FACULTY_QUIZ_COMMAND_LIMIT_BYTES=8*1024*1024;
 export class FacultyQuizBodyError extends Error {
- constructor(public readonly code:"FACULTY_QUIZ_BODY_TOO_LARGE"|"INVALID_QUIZ_JSON",public readonly status:400|413){
+ constructor(public readonly code:"FACULTY_QUIZ_BODY_TOO_LARGE"|"INVALID_QUIZ_JSON"|"UNSUPPORTED_QUIZ_CONTENT_TYPE",public readonly status:400|413|415){
   super(code);
  }
 }
+export function facultyQuizAcceptsContentType(raw:string|null):boolean {
+ if(raw===null)return false;
+ const mediaType=raw.split(";",1)[0]?.trim().toLowerCase();
+ return mediaType==="application/json"||Boolean(mediaType?.startsWith("application/")&&mediaType.endsWith("+json"));
+}
 export async function readFacultyQuizCommandBody(request:Request):Promise<unknown>{
+ if(!facultyQuizAcceptsContentType(request.headers.get("content-type")))
+  throw new FacultyQuizBodyError("UNSUPPORTED_QUIZ_CONTENT_TYPE",415);
  const declared=request.headers.get("content-length");
  if(declared!==null&&Number.isFinite(Number(declared))&&Number(declared)>FACULTY_QUIZ_COMMAND_LIMIT_BYTES)
   throw new FacultyQuizBodyError("FACULTY_QUIZ_BODY_TOO_LARGE",413);
