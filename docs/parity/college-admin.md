@@ -19,6 +19,9 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Per-item bulk results PARTIAL (chat-9):** Bulk decisions display server-returned succeeded/failed counts and each public-safe outcome, including stale-version, unavailable target and missing-document failures. Successful HTTP transport never implies every learner was verified. An explicit refresh button rechecks the server queue; integration/browser acceptance remains open.
+
+
 **Confirmed bulk Send back PARTIAL (chat-9):** College reviewer preview now accepts a required 3–500 character correction explanation and an explicit Send back confirmation, passing only the chosen waiting requests to the existing version-locked writer with individual audit/notification. The reason is saved only after server success, not inferred from local preview. Unit coverage authored; PG/browser acceptance remains open.
 
 

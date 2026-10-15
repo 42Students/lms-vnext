@@ -12,6 +12,7 @@ import {verificationSelectionKey,selectEligibleVerificationKeys} from "@/modules
 import {previewVerificationBulk} from "@/modules/verification/bulk-preview";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
+import {bulkReviewFailureLabel} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
@@ -99,6 +100,14 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
      className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">{bulkBusy?"Saving reviews…":"Confirm verify selected"}</button>}
     <button type="button" disabled={bulkBusy} onClick={()=>setBulkAction(null)} className="rounded-md border px-3 py-2 text-sm">Cancel preview</button>
    </div>}
+  </section>}
+  {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 rounded-md border p-3">
+   <h2 className="font-semibold">Bulk review results</h2>
+   <p className="text-sm">{bulkResult.summary.succeeded} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
+   <ul className="space-y-1 text-sm">{bulkResult.outcomes.map(result=><li key={result.learnerMembershipId+":"+result.section}>
+    {result.section} request {result.learnerMembershipId.slice(0,8)}: {bulkReviewFailureLabel(result.result)}
+   </li>)}</ul>
+   <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh queue</button>
   </section>}
   {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review failed: {bulkError}. No blanket success is assumed; refresh to inspect persisted decisions.</p>}
   <nav aria-label="Verification pagination"
