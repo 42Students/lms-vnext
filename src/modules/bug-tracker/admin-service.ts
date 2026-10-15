@@ -4,7 +4,6 @@ import {
   desc,
   eq,
   gt,
-  ilike,
   lt,
   or,
   sql,
@@ -144,12 +143,13 @@ export async function listBugTrackerIssuesForAdmin(
     conditions.push(eq(db10BugReports.environment, input.environment));
   }
   if (input.q) {
-    const pattern = `%${input.q}%`;
+    // Literal substring semantics: '%' and '_' in user input are data, not LIKE wildcards.
+    const term=input.q.toLowerCase();
     conditions.push(or(
-      ilike(db10BugReports.publicId, pattern),
-      ilike(db10BugReports.reporterName, pattern),
-      ilike(db10BugReports.page, pattern),
-      ilike(db10BugReports.description, pattern),
+      sql`position(${term}::text in lower(${db10BugReports.publicId})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.reporterName})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.page})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.description})) > 0`,
     )!);
   }
   if (input.beforeCreatedAt && input.beforeId) {
