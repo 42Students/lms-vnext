@@ -1,6 +1,8 @@
 import "server-only";
 
 import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
+import { exists } from "drizzle-orm";
+import { ne, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
@@ -91,11 +93,15 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.cohortCode ? eq(cohorts.code, query.cohortCode) : undefined,
+      query.classCode ? eq(sections.code,query.classCode) : undefined,
+      query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.capacityState === "CONFIGURED" ? isNotNull(sections.capacity) :
         query.capacityState === "UNSET" ? isNull(sections.capacity) : undefined,
       query.minimumCapacity !== undefined ? gte(sections.capacity, query.minimumCapacity) : undefined,
       query.maximumCapacity !== undefined ? lte(sections.capacity, query.maximumCapacity) : undefined,
       query.status === "ALL" ? undefined : eq(sections.status, query.status),
+      query.cohortStatus && query.cohortStatus !== "ALL" ? eq(cohorts.status,query.cohortStatus) : undefined,
+      query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.q ? or(
         ilike(sections.name, searchPattern(query.q)),
         ilike(sections.code, searchPattern(query.q)),
@@ -187,10 +193,16 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       isNull(electiveSlots.deletedAt),
       or(isNull(electiveSlots.academicPeriodId), sql`${academicPeriods.id} is not null`),
       query.programId ? eq(programs.id, query.programId) : undefined,
+      query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
       query.semesterNumber !== undefined ? eq(electiveSlots.semesterNumber, query.semesterNumber) : undefined,
+      query.offeringState === "HAS_ACTIVE" ? exists(db.select({id:electiveOfferings.id}).from(electiveOfferings).innerJoin(courses,eq(courses.id,electiveOfferings.courseId)).innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId))).where(and(eq(electiveOfferings.slotId,electiveSlots.id),eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt)))) :
+        query.offeringState === "NONE_ACTIVE" ? not(exists(db.select({id:electiveOfferings.id}).from(electiveOfferings).innerJoin(courses,eq(courses.id,electiveOfferings.courseId)).innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId))).where(and(eq(electiveOfferings.slotId,electiveSlots.id),eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt))))) : undefined,
+      query.choiceMode === "FLEXIBLE" ? ne(electiveSlots.minPick,electiveSlots.maxPick) :
+        query.choiceMode === "FIXED" ? not(ne(electiveSlots.minPick,electiveSlots.maxPick)) : undefined,
       query.minimumCredits !== undefined ? gte(electiveSlots.credits,query.minimumCredits) : undefined,
       query.maximumCredits !== undefined ? lte(electiveSlots.credits,query.maximumCredits) : undefined,
       query.status === "ALL" ? undefined : eq(electiveSlots.status, query.status),
+      query.periodState === "LINKED" ? isNotNull(electiveSlots.academicPeriodId) : query.periodState === "UNLINKED" ? isNull(electiveSlots.academicPeriodId) : undefined,
       query.q ? or(
         ilike(electiveSlots.name, searchPattern(query.q)),
         ilike(programs.name, searchPattern(query.q)),

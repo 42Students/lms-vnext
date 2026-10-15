@@ -11,7 +11,11 @@ export const collegeStructureQuerySchema = z.object({
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
-  cohortCode: z.string().trim().min(1).max(64).optional(),
+  cohortStatus: z.enum(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).optional(),
+  programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
+  cohortCode: z.string().trim().min(1).max(64).optional(),  classCode: z.string().trim().min(1).max(64).optional(),
+  periodCode: z.string().trim().min(1).max(64).optional(),
+
   capacityState: z.enum(["ALL","CONFIGURED","UNSET"]).default("ALL"),
   minimumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
   maximumCapacity: z.coerce.number().int().min(1).max(100000).optional(),
@@ -26,7 +30,11 @@ export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapaci
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
+  periodState: z.enum(["ALL","LINKED","UNLINKED"]).optional(),
+  choiceMode: z.enum(["ALL","FLEXIBLE","FIXED"]).optional(),
+  offeringState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
   semesterNumber: z.coerce.number().int().min(1).max(24).optional(),
+  programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   minimumCredits: z.coerce.number().int().min(1).max(500).optional(),
   maximumCredits: z.coerce.number().int().min(1).max(500).optional(),
 });
@@ -42,10 +50,10 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "page"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
+    if (typeof value === "string" && !((key === "programId" || key === "cohortCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits" || key === "periodCode" || key === "classCode") && !value)) {
       result[key] = value;
     }
   }
@@ -72,6 +80,13 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
     params.set("minimumCredits",String(query.minimumCredits));
   if (kind === "ELECTIVES" && "maximumCredits" in query && query.maximumCredits !== undefined)
     params.set("maximumCredits",String(query.maximumCredits));
+  if ("cohortStatus" in query && query.cohortStatus && query.cohortStatus !== "ALL") params.set("cohortStatus",query.cohortStatus);
+  if ("programStatus" in query && query.programStatus && query.programStatus !== "ALL") params.set("programStatus",query.programStatus);
+  if ("periodState" in query && query.periodState && query.periodState !== "ALL") params.set("periodState",query.periodState);
+  if ("periodCode" in query && query.periodCode) params.set("periodCode",query.periodCode);
+  if ("classCode" in query && query.classCode) params.set("classCode",query.classCode);
+  if ("choiceMode" in query && query.choiceMode && query.choiceMode !== "ALL") params.set("choiceMode",query.choiceMode);
+  if ("offeringState" in query && query.offeringState && query.offeringState !== "ALL") params.set("offeringState",query.offeringState);
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? path + "?" + params.toString() : path;
 }

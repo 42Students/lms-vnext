@@ -5,7 +5,15 @@ export const semesterCsvSchema=withCollegeSemesterCreditCheck(collegeSemesterDir
 export const batchCsvSchema=collegeBatchDirectorySchema.omit({page:true});
 export type AcademicCsvKind="SEMESTERS"|"BATCHES";
 export function academicExportHref(kind:AcademicCsvKind,query:{
- q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;maximumCredits?:number;yearStart?:number;currentTerm?:number;progression?:"ALL"|"RECORDED"|"MISSING";
+ q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;maximumCredits?:number;creditState?:"ALL"|"CONFIGURED"|"UNSET";yearStart?:number;currentTerm?:number;progression?:"ALL"|"RECORDED"|"MISSING";
+ programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
+ mappingState?:"ALL"|"MAPPED"|"UNMAPPED";
+ expectedEndState?:"ALL"|"SET"|"UNSET";
+ academicYearState?:"ALL"|"RECORDED"|"UNRECORDED";
+ activeLearnerState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
+ activeClassState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
+ startOnOrAfter?:string;
+ startOnOrBefore?:string;
 }){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
@@ -14,9 +22,19 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
  if(kind==="SEMESTERS"&&query.termNumber!==undefined)p.set("termNumber",String(query.termNumber));
  if(kind==="SEMESTERS"&&query.minimumCredits!==undefined)p.set("minimumCredits",String(query.minimumCredits));
  if(kind==="SEMESTERS"&&query.maximumCredits!==undefined)p.set("maximumCredits",String(query.maximumCredits));
+ if(kind==="SEMESTERS"&&query.creditState&&query.creditState!=="ALL")p.set("creditState",query.creditState);
+ if(kind==="BATCHES"&&query.programStatus&&query.programStatus!=="ALL")p.set("programStatus",query.programStatus);
  if(kind==="BATCHES"&&query.yearStart!==undefined)p.set("yearStart",String(query.yearStart));
  if(kind==="BATCHES"&&query.currentTerm!==undefined)p.set("currentTerm",String(query.currentTerm));
  if(kind==="BATCHES"&&query.progression&&query.progression!=="ALL")p.set("progression",query.progression);
+ if(kind==="SEMESTERS"&&query.programStatus&&query.programStatus!=="ALL")p.set("programStatus",query.programStatus);
+ if(kind==="SEMESTERS"&&query.mappingState&&query.mappingState!=="ALL")p.set("mappingState",query.mappingState);
+ if(kind==="BATCHES"&&query.expectedEndState&&query.expectedEndState!=="ALL")p.set("expectedEndState",query.expectedEndState);
+ if(kind==="BATCHES"&&query.academicYearState&&query.academicYearState!=="ALL")p.set("academicYearState",query.academicYearState);
+ if(kind==="BATCHES"&&query.startOnOrAfter)p.set("startOnOrAfter",query.startOnOrAfter);
+ if(kind==="BATCHES"&&query.startOnOrBefore)p.set("startOnOrBefore",query.startOnOrBefore);
+ if(kind==="BATCHES"&&query.activeClassState&&query.activeClassState!=="ALL")p.set("activeClassState",query.activeClassState);
+ if(kind==="BATCHES"&&query.activeLearnerState&&query.activeLearnerState!=="ALL")p.set("activeLearnerState",query.activeLearnerState);
  return "/api/academics/college-academic-export/"+(kind==="SEMESTERS"?"semesters":"batches")+
   (p.size?"?"+p.toString():"");
 }
