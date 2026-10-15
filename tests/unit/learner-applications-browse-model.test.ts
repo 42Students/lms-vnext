@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   browseLearnerApplications,
   learnerApplicationLatestActivity,
+  learnerApplicationViewCounts,
   learnerApplicationStage,
   learnerApplicationStageOptions,
   DEFAULT_LEARNER_APPLICATION_FILTERS as defaults,
@@ -34,6 +35,14 @@ describe("Learner placement application browser", () => {
     expect(browseLearnerApplications(records,{...defaults,search:"acme",stage:"REJECTED"})
       .map(x=>x.applicationId)).toEqual(["c"]);
     expect(learnerApplicationStage(records[3]!)).toBe("WITHDRAWN");
+  });
+  it("shows final recorded-status counts without equating shortlist with hiring",()=>{
+    expect(learnerApplicationViewCounts(records)).toEqual({
+      all:4,progress:2,completed:2,
+    });
+    expect(learnerApplicationViewCounts([])).toEqual({
+      all:0,progress:0,completed:0,
+    });
   });
   it("sorts newest activity, company and oldest submission",()=>{
     const changed=records.map(x=>({...x}));

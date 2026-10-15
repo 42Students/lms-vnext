@@ -1267,3 +1267,27 @@ Learner day/week desktop grids, mobile agendas, Today count/highlighting and ini
 
 
 **2026-10-15 chat-5 L11-019 PARTIAL (round 5):** Every learner placement dashboard numeric card now explicitly distinguishes an authorized successful zero from a failed source as the word Unknown, with a source-specific accessible action/description to open its own list and retry. Screen readers no longer hear only a dash or falsely imply no records. Pure zero/null/positive state regressions authored; CI/PG/browser acceptance still open.
+
+
+**2026-10-15 chat-5 L12-002 PARTIAL (round 6):** Drives browser explicitly summarizes all owned-visible published drives separately from their role-option count and distinct drives with actual recorded learner applications. This avoids presenting role rows as a drive count; filters still apply to the role list below. Model regression for multi-role duplicate applications authored; CI/mobile/PG acceptance pending.
+
+
+**2026-10-15 chat-5 L12-009 PARTIAL (round 6):** Drives employment-type filter options now show actual own-visible role-option counts from the same authorized browse rows, distinguishing multiple options at one employer from a separate drive. No extra people/employer query or inferred type; zero/missing types are not advertised. Unit regression authored; filter-navigation/mobile and PG acceptance pending.
+
+
+**2026-10-15 chat-5 L12-010 PARTIAL (round 6):** Drive location facets now trim and case-deduplicate the locations provided by own-authorized role records. Selecting one location matches all registered role locations case-insensitively, including multi-location roles, without creating new location guesses or changing eligibility. Pure regression authored; browser/PG/runtime acceptance pending.
+
+
+**2026-10-15 chat-5 L12-011 PARTIAL (round 6):** Eligible-only Drives filtering now requires both the learner's persisted canApply signal and a non-closed deadline state, preventing stale-positive role eligibility from displaying genuinely expired drives as actionable. This is a defensive client browse guard; the server remains authoritative for application actions. Pure regression authored; executed CI/PG and browser acceptance pending.
+
+
+**2026-10-15 chat-5 L12-015 PARTIAL (round 6):** Learner Drives pagination now uses a single bounded page-state model for slice indices, result labels and Previous/Next. Stale URL pages after filters clamp to the final valid page with an explicit recovery action, never displaying a false empty list while authorized matching records exist. Pure boundary/zero tests authored; mobile/browser/history and PG acceptance pending.
+
+
+**2026-10-15 chat-5 L14-004 PARTIAL (round 6):** All/In Progress/Final Recorded Status learner application views now show counts from the same own-authorized application history and explain exactly that rejected/withdrawn are final saved statuses. Shortlists, applied round results, and interview scheduling are not mislabeled hired/offer-completed. Read-side unit cases added, URL state/role scope retained; browser/PG gate pending.
+
+
+**2026-10-15 chat-5 L14-023 PARTIAL (round 6):** Learner Applications now distinguishes a true first-run zero-record history from a filtered zero-match view using a dedicated deterministic empty-state model. First run links to authorized published Drives; only a filtered mismatch offers reset. No missing source is converted to an empty account (server read failures remain errors). Pure-model regression authored; PG/browser/mobile acceptance outstanding.
+
+
+**2026-10-15 chat-5 L13-011 PARTIAL (round 6):** Authorized published drive detail now presents a per-role Registration and Evidence Requirements summary based solely on already-returned college eligibility checks, with pass/fail/missing counts and rules/profile routes. Since no independent registration/consent record is read, the UI explicitly says that this evidence checklist cannot certify placement-cell registration. A pure per-role test is authored; actual registration domain parity, browser/PG/CI acceptance remain open.
