@@ -5,7 +5,7 @@ import { facultyMetadataFromDraft,type FacultyMetadataDraftEntry } from "@/modul
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
-import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue,facultyProfileMetadataMatches} from "@/modules/people/faculty-profile-draft-actions";
+import {restoreFacultyMetadataDraft,facultyMetadataDraftIssue,facultyProfileMetadataMatches,removeFacultyMetadataDraftEntry} from "@/modules/people/faculty-profile-draft-actions";
 export function FacultyProfileMetadata({initial,pending,onSave}:{
  initial:FacultyProfileDocument["metadata"];pending:boolean;
  onSave:(section:FacultySelfSection,value:FacultyProfileDocument["metadata"])=>Promise<void>;
@@ -43,7 +43,8 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
      maxLength={5000} disabled={pending} value={row.value} onChange={event=>edit(row.id,"value",event.target.value)}/>
    </label>
    <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-3 text-sm text-error"
-    onClick={()=>{setRows(current=>current.filter(entry=>entry.id!==row.id));setDirty(true);}}>
+    onClick={()=>{if(!window.confirm("Remove metadata field "+row.key+" from this unsaved draft?"))return;
+     setRows(current=>removeFacultyMetadataDraftEntry(current,row.id));setDirty(true);}}>
     Remove draft
    </button>
   </div>)}
