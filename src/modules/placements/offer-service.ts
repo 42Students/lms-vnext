@@ -40,6 +40,7 @@ import {
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
+import { parsePlacementCascadeId } from "./placement-cascade-policy";
 import {
   canReleaseAnotherHeldOffer,
   minimumOfferResponseDeadline,
@@ -645,7 +646,14 @@ export async function actOnPlacementOffer(
 
     if (input.action === "ACCEPT") {
       if (offer.status === "ACCEPTED") {
-        return offer;
+        // A retried response returns the same durable cascade identifier.
+        const [acceptedHistory] = await tx.select({
+          reason: placementOfferStatusHistory.reason,
+        }).from(placementOfferStatusHistory).where(and(
+          eq(placementOfferStatusHistory.offerId, offer.id),
+          eq(placementOfferStatusHistory.toStatus, "ACCEPTED"),
+        )).orderBy(desc(placementOfferStatusHistory.createdAt)).limit(1);
+        return { ...offer, cascadeId: parsePlacementCascadeId(acceptedHistory?.reason) };
       }
       if (offer.status !== "ISSUED") {
         throw new PlacementsServiceError(
@@ -682,6 +690,7 @@ export async function actOnPlacementOffer(
         );
       }
 
+      const cascadeId = randomUUID();
       await tx
         .insert(
           placementOfferStatusHistory,
@@ -692,6 +701,7 @@ export async function actOnPlacementOffer(
           toStatus: "ACCEPTED",
           actorUserId:
             context.user.id,
+          reason: `cascade:${cascadeId}`,
         });
 
       await tx
@@ -706,7 +716,6 @@ export async function actOnPlacementOffer(
       // P-S1-06: accepting one placement offer atomically declines other
       // pending offers and withdraws other live applications. A durable
       // cascade id ties together all compensatable status histories.
-      const cascadeId = randomUUID();
       const otherOffers = await tx
         .select({
           id: placementOffers.id,
@@ -798,7 +807,7 @@ export async function actOnPlacementOffer(
         },
       );
 
-      return updated;
+      return { ...updated, cascadeId };
     }
 
     if (input.action === "DECLINE") {
