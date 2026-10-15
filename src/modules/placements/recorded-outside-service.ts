@@ -60,8 +60,6 @@ async function outsideActor(context:RequestContext,collegeId:string,relationship
 }
 export async function recordOutsideDrive(context:RequestContext,raw:unknown){
  const input=recordedOutsideDriveSchema.parse(raw);
- if(!await placementTableExists("placement_outside_drive_records"))
-  throw new Error("RECORDED_OUTSIDE_NOT_REGISTERED");
  const actor=await outsideActor(context,input.collegeId,input.companyRelationshipId);
  if(actor.role==="RECRUITER"&&!can(context,"placements.recruiter.outside.record",{
   collegeId:actor.relationship.collegeId,
@@ -83,6 +81,9 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
      eq(placementRecruiterCollegeGrants.status,"ACTIVE"))).for("share").limit(1);
    if(!current)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   }
+  // Check table readiness only after transactional TPO permission or live recruiter grant.
+  if(!await placementTableExists("placement_outside_drive_records"))
+   throw new Error("RECORDED_OUTSIDE_NOT_REGISTERED");
   const [saved]=await tx.insert(placementOutsideDriveRecords).values({
    collegeId:actor.relationship.collegeId,companyRelationshipId:actor.relationship.id,
    title:input.title,externalReferenceUrl:input.externalReferenceUrl??null,
