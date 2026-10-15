@@ -29,7 +29,7 @@ export function SidebarNav({
 
   return (
     <nav
-      aria-label="Primary navigation"
+      aria-label="Main navigation"
       className={cx(
         "flex gap-1",
         compact ? "flex-row" : "flex-col",
