@@ -22,7 +22,19 @@ type Submission = {
   sourceUrl: string | null;
   demoUrl: string | null;
   notes: string | null;
+  attachments?: unknown[];
 };
+
+type DeliveryAttachment={kind:"FILE"|"LINK";name:string;fileId:string|null;url:string|null};
+function safeDraftAttachments(items:unknown[]|undefined):DeliveryAttachment[]{
+  return (items??[]).filter((item):item is DeliveryAttachment=>{
+    if(!item||typeof item!=="object")return false;
+    const row=item as Record<string,unknown>;
+    return (row.kind==="FILE"||row.kind==="LINK")&&typeof row.name==="string"&&
+      (row.fileId===null||typeof row.fileId==="string")&&
+      (row.url===null||typeof row.url==="string");
+  });
+}
 
 export function LearnerFinalDeliveryControl({
   projectId,
@@ -52,6 +64,9 @@ export function LearnerFinalDeliveryControl({
   const [notes, setNotes] = useState(
     draft?.notes ?? "",
   );
+  const [attachments,setAttachments]=useState<DeliveryAttachment[]>(safeDraftAttachments(draft?.attachments));
+  const [linkName,setLinkName]=useState("");
+  const [linkUrl,setLinkUrl]=useState("");
   const [pending, setPending] =
     useState(false);
   const [error, setError] =
@@ -62,6 +77,8 @@ export function LearnerFinalDeliveryControl({
     setSourceUrl(draft?.sourceUrl ?? "");
     setDemoUrl(draft?.demoUrl ?? "");
     setNotes(draft?.notes ?? "");
+    setAttachments(safeDraftAttachments(draft?.attachments));
+    setLinkName("");setLinkUrl("");
   }
 
   async function save(
@@ -83,6 +100,7 @@ export function LearnerFinalDeliveryControl({
           demoUrl:
             demoUrl.trim() || undefined,
           notes: notes.trim() || undefined,
+          attachments,
         },
       );
       setOpen(false);
@@ -240,6 +258,27 @@ export function LearnerFinalDeliveryControl({
               }
             />
           </label>
+          <div className="grid gap-2">
+            <p className="m-0 text-sm font-semibold text-body">Additional files &amp; links</p>
+            {attachments.map((item,index)=><div key={index} className="flex items-center gap-2 text-sm">
+              <span className="min-w-0 flex-1 break-words">{item.name}</span>
+              <Button type="button" size="sm" variant="secondary" disabled={pending}
+                onClick={()=>setAttachments(rows=>rows.filter((_,i)=>i!==index))}>Remove</Button>
+            </div>)}
+            <label className="grid gap-1 text-xs font-semibold text-body">Title
+              <Input value={linkName} maxLength={255} onChange={event=>setLinkName(event.target.value)}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">URL
+              <Input type="url" value={linkUrl} maxLength={2048}
+                onChange={event=>setLinkUrl(event.target.value)}/>
+            </label>
+            <Button type="button" size="sm" variant="secondary" disabled={pending||
+                attachments.length>=10||!linkName.trim()||!/^https?:\/\//.test(linkUrl)}
+              onClick={()=>{setAttachments(rows=>[...rows,{kind:"LINK",name:linkName.trim(),
+                url:linkUrl.trim(),fileId:null}]);setLinkName("");setLinkUrl("");}}>
+              Add link
+            </Button>
+          </div>
           {error ? (
             <p
               role="alert"

@@ -366,9 +366,7 @@ export function ProjectWorkspace({
               <h2 className="m-0 text-base font-semibold text-foreground">
                 Your final delivery
               </h2>
-              <p className="mt-1 text-sm text-body">
-                Prepare the final draft early; submit it after all execution work is complete.
-              </p>
+
             </div>
             {!readOnly ? <LearnerFinalDeliveryControl
               projectId={workspace.project.id}
@@ -766,10 +764,7 @@ export function ProjectWorkspace({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Final delivery
           </h2>
-          <p className="mt-1 text-sm text-body">
-            Versioned submissions, immutable review history
-            and rubric evaluation.
-          </p>
+
         </div>
         {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
           <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">

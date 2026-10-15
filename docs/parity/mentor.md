@@ -1667,3 +1667,7 @@ P5 PostgreSQL tests cover task fields, comments and stale task tokens. P6B tests
 ### PR-S2-04 legacy task metadata and comments UI
 
 Mentor create/edit forms now expose 0090 Estimate, Type, Due date and Blocker reason and remove obsolete storage-unavailable warnings. Learner/Mentor/Admin task cards have an on-demand Comments panel with authorized read and member-authorized writes to the registered service. Exact legacy field labels covered by source tests. Real browser/mobile acceptance still outstanding.
+
+### PR-S2-07 Learner delivery metadata UI / exact legacy Projects copy
+
+The learner final-draft form now preserves existing validated 0091 FILE entries and edits 0091 LINK attachments (Additional files & links / Add link), with a bounded list and registered schema write payload. No browser file picker is added: files must first exist as READY project uploads; direct file-reference authoring remains a follow-up. Removed invented heading descriptions in the shared Mentor/Learner/Admin workspace. Confirmed one workspace section strip plus the account's own route-level strip in source. Browser visual, screen-reader, responsive and full exact-word audit are still open.
