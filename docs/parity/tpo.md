@@ -2037,3 +2037,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 request context navigation — PARTIAL:** Each global request now deep-links to the persisted round, offer/joining workspace or drive according to its recorded type and target IDs. These links confer no extra permissions; missing targets safely fall back to the drive.
 
 **Chat-2 global Requests CSV — PARTIAL:** GET `/api/placements/tpo/requests/export` reuses live scoped TPO authorization and URL filters; exports only the current bounded 25/50/100-row page, no request reason or decision note, with CSV formula neutralization and no-store headers. Full legacy/all-results export, real PG/browser execution and privacy certification remain open.
+
+**Chat-2 global Requests navigation — PARTIAL:** The TPO More/Work Requests destination now leads to the functional global pending decision inbox rather than the Students-specific list. The existing Students Requests tab remains available; full legacy navigation/browser checks are open.
