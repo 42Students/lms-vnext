@@ -3,7 +3,7 @@ import {sortLearnerCourseCards} from "@/modules/courses/learner-course-sort-mode
 const card=(id:string,name:string,type:string,percent:number|null,dueAt:string|null)=>({
  course:{deliveryId:id,courseName:name,offeringType:type},
  summary:{overallPercent:percent},nextDue:dueAt?{dueAt}:null,
-,lastActivity:null as string|null
+ lastActivity:null as string|null
 });
 const rows=[card("a","Zoology","REGULAR",90,null),card("b","Algebra","REGULAR",10,"2026-10-15T10:00:00Z"),card("c","Biology","ELECTIVE",0,"2026-10-14T10:00:00Z")];
 describe("learner Course card sorts",()=>{
