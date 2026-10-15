@@ -28,6 +28,7 @@ export const collegeProgressQuerySchema=collegeLearningQuerySchema.extend({
   programCode:z.string().trim().min(1).max(64).optional(),
   periodCode:z.string().trim().min(1).max(64).optional(),
   cohortCode:z.string().trim().min(1).max(64).optional(),
+  offeringType:z.enum(["ALL","CORE","ELECTIVE"]).optional(),
 });
 export type CollegeProgressQuery=z.infer<typeof collegeProgressQuerySchema>;
 
@@ -36,6 +37,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status !== "ACTIVE") params.set("status", query.status);
+  if (kind === "PROGRESS" && "offeringType" in query && query.offeringType && query.offeringType !== "ALL") params.set("offeringType",query.offeringType);
   if ("courseCode" in query && query.courseCode) params.set("courseCode",query.courseCode);
   if ("programCode" in query && query.programCode) params.set("programCode",query.programCode);
   if ("periodCode" in query && query.periodCode) params.set("periodCode",query.periodCode);
