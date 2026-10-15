@@ -917,3 +917,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6: Readiness CSV evidence export — PARTIAL.** Authorized read-only GET reuses college-scoped readiness service and exports all checks, not the selected UI subset, as formula-neutralized CSV. It does not claim runtime DNS/login or production launch approval; caches disabled. Pure and disposable-PostgreSQL tests authored, not executed; browser/download gates open.
+
+
+**2026-10-15 chat-6: readiness area filters — PARTIAL.** Ten persisted checks can be organized into tenant lifecycle, academics, people, placements and domains, composed with status, without altering totals, evidence or readiness decision. Typed area model and unit tests authored but not run. Legacy/browser readiness workflow remains open.
