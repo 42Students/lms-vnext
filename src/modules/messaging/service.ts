@@ -6,7 +6,8 @@ export interface OutboundProvider {
 export type DeliveryRecord = {
   batchId: string;
   channel: OutboundSendRequest["channel"];
-  recipient: string;
+  /** Opaque keyed recipient reference; never store an address or phone. */
+  recipientKey: string;
   templateKey: string;
   purpose: string;
   status: OutboundStatus;
@@ -23,6 +24,7 @@ export async function deliverBatch(args: {
   provider: OutboundProvider;
   repository: DeliveryRepository;
   policyFor: (request: OutboundSendRequest) => Promise<DeliveryPolicy>;
+  recipientKeyFor: (request: OutboundSendRequest) => Promise<string>;
 }): Promise<DeliveryRecord[]> {
   const records: DeliveryRecord[] = [];
   for (const raw of args.requests) {
@@ -31,7 +33,7 @@ export async function deliverBatch(args: {
     const record: DeliveryRecord = {
       batchId: args.batchId,
       channel: request.channel,
-      recipient: normalizeRecipient(request.channel, request.recipient),
+      recipientKey: await args.recipientKeyFor(request),
       templateKey: request.templateKey,
       purpose: request.purpose,
       status: decision.status,
@@ -41,7 +43,7 @@ export async function deliverBatch(args: {
     await args.repository.insert(record);
     if (record.status === "QUEUED") {
       try {
-        record.status = await args.provider.send({ ...request, recipient: record.recipient }) ? "SENT" : "FAILED";
+        record.status = await args.provider.send({ ...request, recipient: normalizeRecipient(request.channel, request.recipient) }) ? "SENT" : "FAILED";
       } catch {
         record.status = "FAILED";
       }
