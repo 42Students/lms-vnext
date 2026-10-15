@@ -4,6 +4,7 @@ import Link from "next/link";
 import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
 import { learnerBoardTaskStatusLabel, learnerBoardTaskPriorityLabel } from "@/modules/projects/learner-board-task-status-label-model";
 import { learnerBoardTaskStatusTone, learnerBoardTaskPriorityTone } from "@/modules/projects/learner-board-task-attention-tone-model";
+import { createLearnerBoardTaskDialogNavigationGuard } from "@/modules/projects/learner-board-task-dialog-navigation-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useRouter } from "next/navigation";
 import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
@@ -21,18 +22,19 @@ export function LearnerBoardTaskDetailDialog({
   sprintTitle:string|null;
 }) {
   const ref=useRef<HTMLDialogElement>(null);
-  const navigatingRef=useRef(false);
+  const navigatingRef=useRef(createLearnerBoardTaskDialogNavigationGuard());
   const router=useRouter();
   const returnHref=learnerBoardTaskHref(projectId,filters);
   useEffect(()=>{
     const dialog=ref.current;
     if(!dialog)return;
+    navigatingRef.current.reset();
     if(!dialog.open)dialog.showModal();
     return ()=>{if(dialog.open)dialog.close();};
   },[task.id]);
   return (
     <dialog ref={ref} aria-labelledby="learner-task-dialog-title"
-      onClose={()=>{if(!navigatingRef.current)router.replace(returnHref);}}
+      onClose={()=>{if(navigatingRef.current.shouldReturn())router.replace(returnHref);}}
       className="fixed inset-0 m-auto max-h-[85dvh] w-[min(94vw,38rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -58,7 +60,7 @@ export function LearnerBoardTaskDetailDialog({
       </section>
       <div className="mt-5 flex flex-wrap gap-3">
         <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
-          onClick={() => { navigatingRef.current=true; }}
+          onClick={() => { navigatingRef.current.startNavigation(); }}
           className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">
           Open task actions in Board
         </Link>
