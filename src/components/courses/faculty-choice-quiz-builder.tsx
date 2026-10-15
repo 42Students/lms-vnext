@@ -251,7 +251,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      className="rounded border border-border px-2 py-1 text-xs">Remove</button>
    </div>)}
    <button type="button" disabled={q.options.length>=20}
-    onClick={()=>{const pasted=window.prompt("Paste answer choices separated by a new line or |. Empty draft choices will be replaced.");
+    onClick={()=>{const pasted=window.prompt("Paste up to 20 answer choices separated by a new line or |. Empty draft choices will be replaced.");
      if(pasted===null)return;
      const result=facultyQuizApplyPastedOptions(q.options,pasted);
      if(!result.ok){setError(result.issue);return;}
