@@ -570,7 +570,8 @@ export async function readRecruiterThreadMessages(
 ){
  const threadId=threadIdSchema.parse(threadIdInput);
  const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
- if(!context.recruiter||context.recruiter.status!=="ACTIVE")
+ if(!context.recruiter||context.recruiter.status!=="ACTIVE" ||
+    context.recruiter.userId!==context.user.id)
   throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
  return getDb().transaction(async tx=>{
   const [thread]=await tx.select({
@@ -581,11 +582,12 @@ export async function readRecruiterThreadMessages(
    .where(eq(placementTpoMessageThreads.id,threadId)).for("share").limit(1);
   if(!thread||thread.recruiterUserId!==context.user.id)
    throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
-  const actor=await mutationActor(tx,context,thread.collegeId);
-  if(actor.type!=="RECRUITER"||actor.userId!==thread.recruiterUserId)
-   throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+  // The account may also be TPO: recruiter reads must check recruiter grants
+  // directly rather than routing through the TPO-first messaging actor resolver.
+  const grant=await loadActiveRecruiterGrant(tx,context.user.id,thread.collegeId,true);
+  if(!grant)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
   if(thread.jobId)await assertJobForThread(
-   tx,actor.collegeId,thread.jobId,actor.companyRelationshipId,true,
+   tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
   );
   const [count]=await tx.select({total:sql<number>`count(*)::integer`})
    .from(placementTpoMessages).where(eq(placementTpoMessages.threadId,thread.id));
@@ -619,6 +621,9 @@ export async function acknowledgeRecruiterThread(
   threadIdInput: unknown,
 ) {
   const threadId = threadIdSchema.parse(threadIdInput);
+  if (context.recruiter?.status !== "ACTIVE" ||
+      context.recruiter.userId !== context.user.id)
+    throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
   return getDb().transaction(async (tx) => {
     const [thread] = await tx.select({
       id: placementTpoMessageThreads.id,
@@ -630,11 +635,10 @@ export async function acknowledgeRecruiterThread(
       .for("update").limit(1);
     if (!thread || thread.recruiterUserId !== context.user.id)
       throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
-    const actor = await mutationActor(tx, context, thread.collegeId);
-    if (actor.type !== "RECRUITER" || actor.userId !== thread.recruiterUserId)
-      throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+    const grant = await loadActiveRecruiterGrant(tx, context.user.id, thread.collegeId, true);
+    if (!grant) throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
     if (thread.jobId)
-      await assertJobForThread(tx, actor.collegeId, thread.jobId, actor.companyRelationshipId, true);
+      await assertJobForThread(tx, thread.collegeId, thread.jobId, grant.companyRelationshipId, true);
     const rows = await tx.update(placementTpoMessages).set({readAt: new Date()})
       .where(and(
         eq(placementTpoMessages.threadId, thread.id),
