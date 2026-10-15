@@ -1,3 +1,4 @@
+import { matchesMentorProjectAssignment } from "@/modules/projects/mentor-project-assignment-filter-model";
 import { matchesMentorProjectAttention } from "@/modules/projects/mentor-project-attention-filter-model";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -91,6 +92,8 @@ export default async function MentorProjectsPage({
       status === "ARCHIVED"
         ? status
         : undefined,
+    assignment: one(params.assignment) === "PRIMARY" || one(params.assignment) === "SUPPORTING"
+      ? one(params.assignment) as "PRIMARY" | "SUPPORTING" : undefined,
     attention:
       attention === "MENTOR_REVIEW" || attention === "MENTOR_REQUESTED" || attention === "MENTOR_STALLED" || attention === "MENTOR_MEETING_SOON" || attention === "MENTOR_ANY_ATTENTION" || attention === "MENTOR_NO_ATTENTION"
         ? attention
@@ -163,6 +166,7 @@ export default async function MentorProjectsPage({
       (row) =>
         row.memberRole === "MENTOR",
     )
+    .filter(row => matchesMentorProjectAssignment(query.assignment, row.isPrimaryMentor))
     .filter((row) => {
       if (!normalizedSearch) {
         return true;
@@ -347,14 +351,14 @@ export default async function MentorProjectsPage({
         emptyTitle={
           query.search ||
           query.status ||
-          query.attention
+          query.attention || query.assignment
             ? "No mentoring Projects match these filters"
             : "No mentoring Projects"
         }
         emptyDescription={
           query.search ||
           query.status ||
-          query.attention
+          query.attention || query.assignment
             ? "Clear or change the filters to see other assigned Projects."
             : "Projects appear here when a College Admin assigns your Mentor membership to the team."
         }
