@@ -1492,3 +1492,16 @@ Faculty lane branch `chatgpt/chat-4` merged latest `main` at `1ddd538312f8dface5
 - **Open dependencies:** administrator-only visibility editing + migration promotion, remaining Faculty quiz shuffle, full Profile workflows, report browser/mobile QA, assignment file permissions and independent PostgreSQL verification. No other checkbox changed to DONE.
 
 **Verification status:** GitHub commits were pushed; repository tests, typecheck, build and browser gates were not run by this chat. Owner/orchestrator remains responsible for final gates and acceptance.
+
+## 2026-10-15 Faculty Self Profile staged section editors — PARTIAL
+
+This chat-4 batch starts from current `main` and implements the next Faculty Self Profile gaps as a staged, migration-aware path. **No Faculty parity row becomes DONE on source-only evidence.**
+
+- **Storage proposal:** `docs/proposed-migrations/faculty-profile-document.sql` proposes JSON document + optimistic version fields on the existing `faculty_profiles` table. No migration is registered or executed here and no `src/db/schema` or migration-journal files were changed. The optional columns are checked before any staged read/write; absent columns show an explicit unavailable panel and no save control.
+- **Scoped persistence API:** `GET/PATCH /api/people/faculty-self-document` uses authenticated context, same-origin PATCH, exact persisted user/membership/FACULTY-role authorization from `assertPersistedPlatformPermission`, full-document Zod revalidation, version conflict denial, and a same-transaction readiness check. Client state preserves unsaved text on network failure and distinguishes an unregistered storage blocker from optimistic conflicts.
+- **Profile page:** `/teacher/profile/details` is linked from the Faculty Profile. It has real loading/error/retry and a mobile-responsive editor available only after registered storage is detected.
+- **Editor sections implemented:** About description; self-reported personal details (gender/date of birth/blood group); current/permanent address; public professional social links; repeatable Skills with add/remove/proficiency. Each section saves through the same versioned backend; private login identity, college-owned academic title/employment, Aadhaar/PAN, profile files, private contact-editing and administrator-controlled fields are not modified.
+- **Tests authored:** focused strict-section validation and duplicate/invalid fields; a disposable PostgreSQL integration fixture covering save/version, foreign college, wrong role and revoked role after migration. When storage remains unregistered, the DB test asserts the documented readiness denial instead of inventing a passing persistence path.
+- **Still OPEN:** orchestrator migration registration and full PostgreSQL execution; desktop/mobile authenticated browser acceptance; Education, Experience, Certifications, Publications, Awards, Languages and Metadata UI; section-scoped upload receipts, identity verification and full legacy profile completeness. The existing contact editing blocker is unchanged.
+
+**Status: PARTIAL only.** Do not relabel the shared matrix or claim live persistence until W01 registers the migration and independent gates verify exact SHA.
