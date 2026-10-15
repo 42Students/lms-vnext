@@ -60,6 +60,7 @@ export default async function BatchRegistrations({params,searchParams}:{
       <span>{row.choice?.replaceAll("_"," ")??"Not recorded"}</span></div>
      <p className="text-xs text-muted-foreground">Source: {row.source??"None"} · {tpoRegistrationRecordedAtLabel(row.updatedAt)}{tpoRegistrationDaysSince(row.updatedAt,snapshotTime)!==null?" · "+tpoRegistrationDaysSince(row.updatedAt,snapshotTime)+" days ago":""}</p>
      <p className="mt-1 text-xs text-muted-foreground">{tpoPlacementConsentDescription(row.placementConsentEvidence)}</p>
+     <Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/registrations/"+encodeURIComponent(row.membershipId)+"/history"} className="mr-4 mt-2 inline-flex min-h-10 items-center text-primary-text underline">Registration change history</Link>
      <Link href={"/tpo/students/"+row.membershipId+"/participation"} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Review participation</Link>
     </li>)}</ul>}
    <nav aria-label="Registration pages" className="flex flex-wrap gap-2">

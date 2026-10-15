@@ -2131,3 +2131,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / placement consent evidence clarity — PARTIAL:** The authorized batch roster now checks recorded PLACEMENTS consent timestamp plus version and explicitly distinguishes missing evidence versus other choices. This is placement registration evidence only, not permission for SMS/email/WhatsApp; raw version, actor or contact data is never shown. Runtime/PG/browser acceptance open.
 
 **Chat-2 / registration timeline labels — PARTIAL:** Recorded registration updates are formatted explicitly in IST and show elapsed whole days from a single server render clock; missing/invalid/future values remain unknown, never converted to an implied deadline. Browser acceptance open.
+
+**Chat-2 / scoped immutable learner registration history — PARTIAL:** Added a TPO-only per-batch learner history drill-in using registered DB08 event rows. Both active TPO college/batch and active subject learner-cohort membership are persisted-verified before the bounded 100-event read; no consent versions, contacts, or actor PII exposed. Runtime PG cross-college denial and browser verification open.
