@@ -8,7 +8,7 @@ export type RawEntry = {
 
 function comparableEndYear(raw: string): number {
   const value = raw.trim();
-  return /^\\d{4}$/.test(value) ? Number(value) : -1;
+  return /^\d{4}$/.test(value) ? Number(value) : -1;
 }
 
 /**
