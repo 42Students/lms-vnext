@@ -1343,3 +1343,8 @@ The registered Project resource update write now emits `projects.resource.update
 ## 2026-10-15 chat-11 — transactional resource archive audit (PARTIAL)
 
 The registered Project resource archive write now emits `projects.resource.archived` within its existing scoped database transaction. Event failures roll back the resource mutation, with project/college/organization IDs and no URL/description/private payload in event metadata. Scoped Mentor Activity filters display only the fixed label. Pure payload test authored; database execution and browser acceptance remain OPEN.
+
+
+## 2026-10-15 chat-11 — resource-positive-event-lifecycle (PARTIAL)
+
+Source regression in existing seeded disposable PostgreSQL suite for Resource activity producer. Verifies real tenant-scoped actor/audit data, safe Mentor event labels, and denied mutations with no phantom events. Tests have not been executed; no DONE or legacy source fidelity certification.
