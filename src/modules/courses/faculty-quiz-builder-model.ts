@@ -217,3 +217,12 @@ export function facultyDuplicateQuizQuestion<T extends {options:readonly object[
  const clone={...original,options:original.options.map(option=>({...option}))} as T;
  const next=[...rows];next.splice(index+1,0,clone);return next;
 }
+
+/** A copied answer must never silently introduce a second correct answer. */
+export function facultyDuplicateQuizOption<T extends {correct:boolean}>(options:readonly T[],index:number):T[]{
+ if(index<0||index>=options.length||options.length>=20)return [...options];
+ const original=options[index]!;
+ const cloned={...original,correct:false};
+ const next=[...options];next.splice(index+1,0,cloned);
+ return next;
+}
