@@ -545,6 +545,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Resources
+**Parent lesson archival triage PARTIAL (2026-10-15):** Video and Resource catalogues isolate content belonging to ACTIVE versus ARCHIVED lessons, separately from content publication and learning-path lifecycle; same-college filtering precedes count/pagination and matches safe CSV. Tests authored; runtime/browser gates pending.
+
 **CORE and ELECTIVE course content PARTIAL (2026-10-15):** Video and Resource catalogues now distinguish actual persisted course offering CORE/ELECTIVE type, independently of content format, status and audience. Filter survives pagination and capped CSV. Isolated PG fixture authored, executed/browser parity open.
 
 **Academic-period-specific content search PARTIAL (2026-10-15):** Video and Resource views filter by exact persisted in-college academic-period code before pagination, retaining the filter in CSV. Typed URL and isolated positive/negative PostgreSQL fixtures authored; runtime and browser acceptance outstanding.

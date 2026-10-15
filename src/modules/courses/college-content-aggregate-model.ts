@@ -13,6 +13,7 @@ export const collegeContentQuerySchema = z.object({
   periodCode: z.string().trim().min(1).max(64).optional(),
   departmentCode: z.string().trim().min(1).max(64).optional(),
   offeringType: z.enum(["ALL","CORE","ELECTIVE"]).optional(),
+  lessonStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   pathStatus: z.enum(["ALL",...LEARNING_PATH_STATUSES]).optional(),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "ARCHIVED"]).default("ALL"),
   format: z.enum(["ALL", "VIDEO", "YOUTUBE"]).default("ALL"),
@@ -39,6 +40,7 @@ export function collegeContentHref(kind: CollegeContentKind, query: CollegeConte
   if(kind!=="LIVE_CLASS"&&query.periodCode)params.set("periodCode",query.periodCode);
   if(kind!=="LIVE_CLASS"&&query.departmentCode)params.set("departmentCode",query.departmentCode);
   if(kind!=="LIVE_CLASS"&&query.offeringType&&query.offeringType!=="ALL")params.set("offeringType",query.offeringType);
+  if(kind!=="LIVE_CLASS"&&query.lessonStatus&&query.lessonStatus!=="ALL")params.set("lessonStatus",query.lessonStatus);
   if(kind!=="LIVE_CLASS"&&query.pathStatus&&query.pathStatus!=="ALL")params.set("pathStatus",query.pathStatus);
   if (query.status !== "ALL") params.set("status", query.status);
   if (kind === "VIDEO" && query.format !== "ALL") params.set("format", query.format);
@@ -69,7 +71,7 @@ export function collegeContentSearchParams(
   params: Record<string, string | string[] | undefined>,
 ) {
   const raw: Record<string, string> = {};
-  for (const key of ["q", "courseCode", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentCode", "offeringType", "status", "format", "scope", "visibility", "offeringStatus", "page"] as const) {
+  for (const key of ["q", "courseCode", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentCode", "offeringType", "lessonStatus", "status", "format", "scope", "visibility", "offeringStatus", "page"] as const) {
     const value = params[key];
     if (typeof value === "string") raw[key] = value;
     else if (value !== undefined) return null;
