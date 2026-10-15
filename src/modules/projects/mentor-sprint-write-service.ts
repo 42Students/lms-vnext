@@ -6,10 +6,8 @@ import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks, projectMembers } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { can } from "@/modules/permissions/policy";
-import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { requireProjectLifecycleAccess } from "./access";
+import type { RequestContext } from "@/modules/identity/context";
+import { requireProjectLifecycleMutationAccess } from "./access";
 import { ProjectsServiceError, postgresConstraintName } from "./errors";
 import {
   mentorSprintCreateParamsSchema, mentorSprintCreateSchema,
@@ -17,19 +15,8 @@ import {
   isValidMentorSprintTransition,
 } from "./mentor-sprint-write-model";
 
-async function mentorSprintWriteScope(context:RequestContext,projectId:string) {
-  const membership=context.membership;
-  if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"MENTOR")) {
-    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  }
-  const scope=await requireProjectLifecycleAccess(context,projectId);
-  if (scope.access!=="MENTOR" || !can(context,"projects.read",{
-    organizationId:scope.organizationId,collegeId:scope.collegeId,
-  })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const modules=await resolveOptionalModuleAccess(context);
-  if(!modules.projects.enabled) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  return scope;
+async function mentorSprintWriteScope(context: RequestContext, projectId: string) {
+  return requireProjectLifecycleMutationAccess(context, projectId);
 }
 
 /** Serializes sprint creations under project-row lock, avoiding sibling sequence races. */
