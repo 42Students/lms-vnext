@@ -13,7 +13,7 @@ export function learnerCourseListSignals(
   const activity=lessons.flatMap(lesson=>[
     ...lesson.contents.map(item=>item.progress.completedAt?.getTime()??null),
     ...lesson.assignments.map(item=>item.submittedAt?.getTime()??null),
-  ]).filter((value):value is number=>value!==null && Number.isFinite(value));
+  ]).filter((value):value is number=>value!==null && Number.isFinite(value) && Number.isFinite(now.getTime()) && value<=now.getTime());
   // Spreading a long history into Math.max overflows the argument stack.
   const latest=activity.reduce((value,when)=>Math.max(value,when),Number.NEGATIVE_INFINITY);
   const lastActivity=Number.isFinite(latest)?new Date(latest).toISOString():null;

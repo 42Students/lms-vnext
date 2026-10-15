@@ -77,3 +77,15 @@ describe("in-progress quiz course-card deadlines",()=>{
   expect(result.nextDue?.title).toBe("Resume quiz");
  });
 });
+
+describe("course recorded activity cannot be a future event",()=>{
+ it("uses the most recent event already recorded by snapshot time",()=>{
+  const now=new Date("2026-10-15T10:00:00Z");
+  const previous=new Date("2026-10-14T10:00:00Z");
+  const result=learnerCourseListSignals([{contents:[
+    {progress:{completedAt:previous}},
+    {progress:{completedAt:new Date("2026-10-17T10:00:00Z")}},
+  ],assignments:[],quizzes:[]}],{itemsTotal:2,overallPercent:50},now);
+  expect(result.lastActivity).toBe(previous.toISOString());
+ });
+});
