@@ -8,7 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PEOPLE_PAGE_SIZE, peoplePageState } from "@/modules/admin-ui/people-pagination";
-import { collegePeopleDirectoryHref, parseCollegePeopleDirectorySearchParams, type CollegePeopleDirectoryFilter } from "@/modules/people/college-people-directory-model";
+import { collegePeopleHasFilters, collegePeopleDirectoryHref, parseCollegePeopleDirectorySearchParams, type CollegePeopleDirectoryFilter } from "@/modules/people/college-people-directory-model";
 import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 import type { PersonMembershipView } from "@/modules/people/service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
@@ -103,9 +103,13 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       <p className="text-sm text-muted-foreground">{pagination.total} matching membership{pagination.total === 1 ? "" : "s"}</p>
       {people.items.length ? <DataTable columns={columns} rows={people.items}
         getRowKey={person => person.membership.id} /> :
-        <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
-          No matching memberships. Clear filters or onboard a person to this college.
-        </p>}
+        <div role="status" className="space-y-3 rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
+          <p>{collegePeopleHasFilters(filter)
+            ?"No memberships match the selected People filters."
+            :"No memberships are recorded in this college yet."}</p>
+          {collegePeopleHasFilters(filter)?<Link href="/college/people"
+            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Clear People filters</Link>:null}
+        </div>}
     </section>
     <nav aria-label="People directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <span className="text-muted-foreground">
