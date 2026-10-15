@@ -78,3 +78,16 @@ export function collegeLegacyTabActive(pathname: string, href: string): boolean 
     tab.href.startsWith(href + "/") && matches(tab.href)
   ));
 }
+
+/** Individual project workspaces render their own Summary/Team/Sprints/etc tabs.
+ * List-level legacy group tabs must not be duplicated above those detail tabs.
+ */
+export function collegeProjectWorkspaceOwnsTabs(pathname:string):boolean {
+  const prefix="/college/projects/";
+  if(!pathname.startsWith(prefix))return false;
+  const rest=pathname.slice(prefix.length).split("/").filter(Boolean);
+  if(rest.length<1)return false;
+  const reserved=new Set(["at-risk","readiness","submissions","templates","audit",
+    "reassign-mentor","workspaces"]);
+  return !reserved.has(rest[0]!);
+}

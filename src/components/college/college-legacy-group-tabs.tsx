@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { collegeLegacyGroupForPath, collegeLegacyTabActive } from
+import { collegeLegacyGroupForPath, collegeLegacyTabActive, collegeProjectWorkspaceOwnsTabs } from
   "@/modules/people/college-legacy-tabs-model";
 
 /** Route-aware nested College Admin tabs, scoped to existing College pages. */
 export function CollegeLegacyGroupTabs() {
   const pathname = usePathname();
   const group = collegeLegacyGroupForPath(pathname);
-  if (!group) return null;
+  if (!group || collegeProjectWorkspaceOwnsTabs(pathname)) return null;
   return <nav aria-label={group.title}
     className="mx-auto w-full max-w-[1600px] overflow-x-auto border-b border-border bg-surface px-4 sm:px-6">
     <h2 className="pt-3 text-base font-semibold text-foreground">{group.title}</h2>
