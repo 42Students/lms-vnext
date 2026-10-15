@@ -301,16 +301,27 @@ export async function reviseProjectTemplate(
 
   try {
     return await db.transaction(async (tx) => {
+      const [locked] = await tx.select({
+        currentVersion: projectTemplates.currentVersion,
+        status: projectTemplates.status,
+      }).from(projectTemplates).where(eq(projectTemplates.id, templateId))
+        .for("update").limit(1);
+      if (!locked) throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+      if (locked.status === "ARCHIVED" ||
+          locked.currentVersion !== input.expectedVersion) {
+        throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
+      }
       const [template] = await tx
         .update(projectTemplates)
         .set({
           title: input.title,
           summary: input.summary ?? null,
-          currentVersion: sql`${projectTemplates.currentVersion} + 1`,
+          currentVersion: locked.currentVersion + 1,
           updatedAt: new Date(),
         })
         .where(
-          eq(projectTemplates.id, templateId),
+          and(eq(projectTemplates.id, templateId),
+              eq(projectTemplates.currentVersion, input.expectedVersion)),
         )
         .returning();
 
