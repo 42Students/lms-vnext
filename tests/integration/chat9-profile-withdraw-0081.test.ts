@@ -13,7 +13,7 @@ const enabled=Boolean(process.env.TEST_DATABASE_URL) &&
  process.env.DB04_VERIFICATION_READY==="1";
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL}):null;
-const ids={user:randomUUID(),member:randomUUID(),role:randomUUID(),record:randomUUID()};
+const ids={user:randomUUID(),member:randomUUID(),role:randomUUID(),record:randomUUID(),educationRecord:randomUUID()};
 const context:RequestContext={
  user:{id:ids.user,identityUid:"withdraw-fixture",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:ids.member,collegeId:SEED_IDS.collegeA,
@@ -35,10 +35,20 @@ describe.skipIf(!enabled)("DB04 migration 0081 withdrawn event and optimistic re
    values($1::uuid,$2::uuid,'IDENTITY','UPDATE_PENDING',$3::jsonb,$4::jsonb,
     now(),now()-interval '1 day',2)`,
    [ids.record,ids.member,JSON.stringify({identity:"pending"}),JSON.stringify({identity:"accepted"})]);
+  await pool.query(`insert into profile_verifications
+   (id,learner_membership_id,section,status,submitted_snapshot,verified_snapshot,
+    submitted_at,verified_at,row_version)
+   values($1::uuid,$2::uuid,'EDUCATION','UPDATE_PENDING',$3::jsonb,$4::jsonb,
+    now(),now()-interval '1 day',4)`,
+   [ids.educationRecord,ids.member,
+    JSON.stringify({education:[{grade:"99"}]}),
+    JSON.stringify({education:[{grade:"72"}]})]);
  });
  afterAll(async()=>{
   try{
    if(pool){
+    await pool.query("delete from profile_verification_events where verification_id=$1::uuid",[ids.educationRecord]);
+    await pool.query("delete from profile_verifications where id=$1::uuid",[ids.educationRecord]);
     await pool.query("delete from profile_verification_events where verification_id=$1::uuid",[ids.record]);
     await pool.query("delete from profile_verifications where id=$1::uuid",[ids.record]);
     await pool.query("delete from membership_roles where id=$1::uuid",[ids.role]);
@@ -85,6 +95,24 @@ describe.skipIf(!enabled)("DB04 migration 0081 withdrawn event and optimistic re
    action:"WITHDRAWN",actor_kind:"LEARNER",actor_user_id:ids.user,
    prior_version:2,next_version:3,
   });
+ });
+ it("withdraws Education without replacing existing VERIFIED eligibility evidence",async()=>{
+  const before=await pool!.query(
+   "select count(*)::integer as total from placement_candidate_academic_evidence where membership_id=$1::uuid",
+   [ids.member]);
+  const record=await withdrawOwnPendingVerification(context,"EDUCATION",4,
+   createProfileVerificationRepository());
+  expect(record.status).toBe("VERIFIED");
+  expect(record.verifiedSnapshot).toEqual({education:[{grade:"72"}]});
+  expect(record.submittedSnapshot).toEqual(record.verifiedSnapshot);
+  const after=await pool!.query(
+   "select count(*)::integer as total from placement_candidate_academic_evidence where membership_id=$1::uuid",
+   [ids.member]);
+  expect(after.rows[0].total).toBe(before.rows[0].total);
+  const events=await pool!.query(
+   "select action from profile_verification_events where verification_id=$1::uuid",
+   [ids.educationRecord]);
+  expect(events.rows.map(x=>x.action)).toEqual(["WITHDRAWN"]);
  });
  it("rejects a stale repeat without writing another event",async()=>{
   await expect(withdrawOwnPendingVerification(context,"IDENTITY",2,
