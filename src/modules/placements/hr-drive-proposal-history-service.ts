@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,isNull,like,sql} from "drizzle-orm";
+import {and,asc,desc,eq,isNull,like,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementTpoMessageThreads,placementTpoMessages} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
@@ -47,7 +47,7 @@ export async function listHrDriveProposals(context:RequestContext,raw:unknown={}
   body:placementTpoMessages.body,
   createdAt:placementTpoMessages.createdAt,
  }).from(placementTpoMessages).where(where)
-  .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
+  .orderBy(...(query.sort==="OLDEST"?[asc(placementTpoMessages.createdAt),asc(placementTpoMessages.id)] : [desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id)]))
   .limit(HR_PROPOSAL_PAGE_SIZE).offset(window.offset);
  const items=messages.flatMap(message=>{
   const preview=previewHrDriveProposalMessage(message.body);
