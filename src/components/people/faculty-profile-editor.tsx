@@ -68,7 +68,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
   {error?<div role="alert" className="space-y-2 rounded-md border border-border p-3 text-sm text-error">
    <p>{error}</p>
-   {needsReload?<button type="button" onClick={()=>window.location.reload()} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">Reload latest profile</button>:null}
+   {needsReload?<button type="button" onClick={()=>{
+    if(window.confirm("Reload the latest Faculty profile? Any unsaved changes in every section will be lost."))window.location.reload();
+   }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">Reload latest profile</button>:null}
   </div>:null}
   {success?<p role="status" className="rounded-md border border-border p-3 text-sm text-foreground">{success}</p>:null}
   <nav aria-label="Profile sections" className="rounded-xl border border-border bg-surface p-4">
