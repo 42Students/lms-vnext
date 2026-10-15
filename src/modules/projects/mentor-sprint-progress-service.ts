@@ -92,7 +92,11 @@ export async function getMentorSprintProgress(
     .innerJoin(projectInstances, eq(projectInstances.id, projectSprints.projectId))
     .innerJoin(projectReleases, eq(projectReleases.id, projectSprints.releaseId))
     .where(filters)
-    .orderBy(asc(projectInstances.title), asc(projectSprints.sequence), asc(projectSprints.id))
+    .orderBy(
+      ...(query.order==="ACTIVE_FIRST"?[
+        asc(sql<number>`case when ${projectSprints.status}='ACTIVE' then 0 when ${projectSprints.status}='PLANNED' then 1 else 2 end`),
+      ]:[]),
+      asc(projectInstances.title), asc(projectSprints.sequence), asc(projectSprints.id))
     .limit(pagination.pageSize)
     .offset((pagination.page - 1) * pagination.pageSize);
 

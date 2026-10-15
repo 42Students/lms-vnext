@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-sprint-progress-model";
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 
-type Params = { taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
+type Params = { order?:string|string[];taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -23,6 +23,7 @@ export default async function MentorSprintProgressPage({
     state: first(raw.state) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
     taskAttention:first(raw.taskAttention) ?? undefined,
+    order:first(raw.order) ?? undefined,
     release: first(raw.release) ?? undefined,
     search: first(raw.search) ?? undefined,
     page: first(raw.page) ?? undefined,
@@ -74,6 +75,11 @@ export default async function MentorSprintProgressPage({
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Sprint order
+          <select name="order" defaultValue={data.query.order} className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
+          </select>
+        </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
           Filter
         </button>
@@ -84,6 +90,7 @@ export default async function MentorSprintProgressPage({
           new URLSearchParams({
             state:data.query.state,release:data.query.release,search:data.query.search,
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
+            order:data.query.order,
           }).toString()}
           download className="min-h-10 rounded-md border border-border px-4 py-2 font-semibold text-primary-text">
           Export filtered sprint CSV (max 100)
