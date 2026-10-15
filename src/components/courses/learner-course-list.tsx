@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { LearnerCourseCardImage } from "./learner-course-card-image";
+import {learnerCourseImageResetKey} from "@/modules/courses/learner-course-image-reset-key-model";
 import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card-due-label-model";
 import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
 import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
@@ -337,7 +338,7 @@ export function LearnerCourseList({
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                   >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
-                      <LearnerCourseCardImage thumbnailUrl={row.thumbnailUrl} />
+                      <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl} />
                       <div className="flex w-full items-end justify-between gap-3">
                         <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
                           {row.course.courseCode}
