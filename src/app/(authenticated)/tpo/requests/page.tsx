@@ -4,14 +4,15 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
+import {GLOBAL_TPO_REQUEST_TYPES} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
-type Params = { status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
-function href(input: { status: string; search: string; page: number; pageSize: number }) {
+function href(input: { status: string; requestType:string; search: string; page: number; pageSize: number }) {
   const p = new URLSearchParams();
-  p.set("status", input.status); if (input.search) p.set("search", input.search);
+  p.set("status", input.status);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);
   p.set("page", String(input.page)); p.set("pageSize", String(input.pageSize));
   return "/tpo/requests?" + p.toString();
 }
@@ -22,7 +23,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   }
   const raw = await searchParams;
   const data = await getTpoGlobalRequestsInbox(context, {
-    status:first(raw.status), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
+    status:first(raw.status),requestType:first(raw.requestType), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
   });
   return <main className="min-w-0 space-y-5">
     <PageHeader eyebrow="TPO · Operations" title="Requests" description="College-wide learner placement requests. Decisions update recorded applications, rounds or offers only through the existing verified action." />
@@ -33,6 +34,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     </nav>
     <form method="get" action="/tpo/requests" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
       <input type="hidden" name="status" value={data.query.status}/>
+      <label className="text-sm">Request kind<select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</select></label>
       <label className="min-w-0 flex-1 text-sm">Search student, job or company
         <input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3" />
       </label>

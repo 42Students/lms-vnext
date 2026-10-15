@@ -1,8 +1,9 @@
 import {expect,it} from "vitest";
-import {globalTpoRequestsQuerySchema} from "@/modules/placements/tpo-global-requests-service";
-it("defaults to actionable pending requests with bounded pages",()=>{
- expect(globalTpoRequestsQuerySchema.parse({})).toEqual({status:"PENDING",search:"",page:1,pageSize:25});
- expect(globalTpoRequestsQuerySchema.safeParse({page:"0"}).success).toBe(false);
- expect(globalTpoRequestsQuerySchema.safeParse({pageSize:5000}).success).toBe(false);
- expect(globalTpoRequestsQuerySchema.safeParse({status:"FOREIGN"}).success).toBe(false);
+import {globalTpoRequestsQuerySchema,requestKindMatches} from "@/modules/placements/tpo-global-requests-model";
+it("uses a fixed kind allowlist and never converts unknown kinds to ALL",()=>{
+ expect(globalTpoRequestsQuerySchema.parse({}).requestType).toBe("ALL");
+ expect(globalTpoRequestsQuerySchema.safeParse({requestType:"PRIVATE"}).success).toBe(false);
+ expect(globalTpoRequestsQuerySchema.parse({requestType:"ROUND_RESCHEDULE"}).requestType).toBe("ROUND_RESCHEDULE");
+ expect(requestKindMatches("ROUND_RESCHEDULE","ROUND_RESCHEDULE")).toBe(true);
+ expect(requestKindMatches("OFFER_EXTENSION","ROUND_RESCHEDULE")).toBe(false);
 });
