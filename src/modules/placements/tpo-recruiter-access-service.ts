@@ -34,6 +34,7 @@ import {
   requirePlacementManageScope,
 } from "./scope";
 import {escapeLiteralApplicantSearch} from "./company-share/public-filter-model";
+import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 
 const PAGE_SIZE = 25;
 
@@ -70,6 +71,7 @@ export async function listTpoRecruiterAccess(
     context,
     collegeId,
   );
+  await requirePersistedTpoMembership(context,collegeId);
 
   const query =
     tpoRecruiterAccessQuerySchema.parse(
