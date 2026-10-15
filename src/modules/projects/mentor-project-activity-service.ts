@@ -46,7 +46,10 @@ export async function getMentorProjectActivityHistory(
     or(
       and(eq(activityEvents.subjectType,"project"),
         eq(activityEvents.subjectId,scope.project.id)),
-      sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+      and(
+        sql`${activityEvents.subjectType} <> 'project'`,
+        sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+      ),
     ),
     query.importance==="ALL"?undefined:
       eq(activityEvents.importance,query.importance),
