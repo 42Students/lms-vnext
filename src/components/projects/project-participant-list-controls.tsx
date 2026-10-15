@@ -54,7 +54,8 @@ export function ProjectParticipantListControls({
           name="search"
           type="search"
           defaultValue={query.search ?? ""}
-          placeholder="Project title or slug"
+          aria-label="Search my projects"
+          placeholder="Search project title, course or slug"
           className="min-w-60 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         />
       </label>
@@ -91,7 +92,7 @@ export function ProjectParticipantListControls({
             className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
           >
             <option value="">
-              All projects
+              All attention states
             </option>
             {mentor ? (
               <>

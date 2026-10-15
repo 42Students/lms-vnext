@@ -80,7 +80,7 @@ export function ProjectList({
                 </p>
               ) : (
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-                  Project workspace
+                  Project
                 </p>
               )}
               <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
@@ -109,7 +109,7 @@ export function ProjectList({
 
           <p className="mt-3 line-clamp-3 text-sm leading-6 text-body">
             {item.summary ??
-              "Project execution workspace with team, sprints, tasks, delivery and review history."}
+              "Project workspace."}
           </p>
 
           {(item.mentorName || item.memberCount !== undefined || item.progressPercent !== undefined) ? (
@@ -151,7 +151,7 @@ export function ProjectList({
               aria-hidden="true"
               className="text-lg text-primary-text transition-transform group-hover:translate-x-0.5"
             >
-              →
+              <span className="sr-only">Open workspace</span>→
             </span>
           </div>
         </Link>
