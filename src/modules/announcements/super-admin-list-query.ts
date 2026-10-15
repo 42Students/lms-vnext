@@ -2,6 +2,7 @@ import { z } from "zod";
 const querySchema = z.strictObject({
  deleted: z.literal("1").optional(),
  q: z.string().trim().min(1).max(120).optional(),
+ receiverType: z.enum(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"]).optional(),
  beforeCreatedAt: z.iso.datetime({offset:true}).optional(),
  beforeId: z.uuid().optional(),
 }).superRefine((value,ctx)=>{
@@ -11,6 +12,6 @@ const querySchema = z.strictObject({
 });
 export function parseSuperAdminAnnouncementParams(raw:Record<string,string|string[]|undefined>){
  if(Object.values(raw).some(Array.isArray))return null;
- const parsed=querySchema.safeParse({...raw,q:raw.q === "" ? undefined : raw.q});
+ const parsed=querySchema.safeParse({...raw,q:raw.q === "" ? undefined : raw.q,receiverType:raw.receiverType === "" ? undefined : raw.receiverType});
  return parsed.success?parsed.data:null;
 }
