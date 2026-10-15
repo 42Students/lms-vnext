@@ -3,6 +3,7 @@ import {mentorMeetingDisplayStatus,type MentorMeetingCalendarItem} from "./mento
 
 /** Filters only rows returned by the current Mentor's persisted scoped roster. */
 export const mentorCalendarFiltersSchema=z.object({
+  projectId:z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   attention:z.enum(["ALL","OVERDUE_REQUESTED","SOON_SCHEDULED","MISSED_SCHEDULED"]).default("ALL"),
   status:z.enum(["ALL","REQUESTED","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   type:z.enum(["ALL","GENERAL","PLANNING","STANDUP","REVIEW","RETRO"]).default("ALL"),
@@ -16,7 +17,7 @@ export function filterMentorCalendar(
   meetings:readonly MentorMeetingCalendarItem[],
   query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
     {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
-      attention?:MentorCalendarFilters["attention"]},
+      attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"]},
   now:Date=new Date(),
 ){
   const term=query.search.toLocaleLowerCase("en-IN");
@@ -36,6 +37,7 @@ export function filterMentorCalendar(
       query.period==="NEXT_7_DAYS"?diff>=0&&diff<=6:diff<=-1&&diff>=-7;
   };
   return meetings.filter(row=>
+    (!query.projectId||row.projectId===query.projectId)&&
     (!query.attention||query.attention==="ALL"||
       (query.attention==="OVERDUE_REQUESTED"
         ? row.status==="REQUESTED"&&Date.parse(row.startsAt)<now.getTime()
@@ -53,8 +55,9 @@ export function filterMentorCalendar(
 }
 export function mentorCalendarFilterHref(query:Pick<MentorCalendarFilters,"status"|"search"|"period"> &
   {type?:MentorCalendarFilters["type"];projectState?:MentorCalendarFilters["projectState"];
-   attention?:MentorCalendarFilters["attention"]}){
+   attention?:MentorCalendarFilters["attention"];projectId?:MentorCalendarFilters["projectId"]}){
   const params=new URLSearchParams();
+  if(query.projectId)params.set("projectId",query.projectId);
   if(query.status!=="ALL")params.set("status",query.status);
   if(query.attention&&query.attention!=="ALL")params.set("attention",query.attention);
   if(query.type&&query.type!=="ALL")params.set("type",query.type);
