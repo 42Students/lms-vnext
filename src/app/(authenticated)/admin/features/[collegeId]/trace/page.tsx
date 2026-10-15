@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import {strictTraceRouteParams} from "@/modules/module-access/admin-trace-route-params";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -28,13 +29,6 @@ type SearchParams = Record<
   string | string[] | undefined
 >;
 
-function one(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function scopeLabel(level: string): string {
   if (level === "DEFAULT") {
@@ -68,10 +62,11 @@ export default async function SuperAdminLearnerAccessTracePage({
   }
 
   const paramsValue = await searchParams;
-  if (Array.isArray(paramsValue.overridesOnly)) notFound();
+  const strictParams = strictTraceRouteParams(paramsValue);
+  if (!strictParams) notFound();
 
   const membershipId =
-    one(paramsValue.membershipId);
+    strictParams.membershipId;
 
   if (
     membershipId &&
@@ -83,10 +78,10 @@ export default async function SuperAdminLearnerAccessTracePage({
 
   const parsed =
     adminModuleTraceQuerySchema.safeParse({
-      q: one(paramsValue.q) || undefined,
-      overridesOnly: one(paramsValue.overridesOnly) || undefined,
+      q: strictParams.q || undefined,
+      overridesOnly: strictParams.overridesOnly || undefined,
       page:
-        one(paramsValue.page) || undefined,
+        strictParams.page || undefined,
       membershipId:
         membershipId || undefined,
     });

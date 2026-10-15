@@ -890,3 +890,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Companies page export (PARTIAL):** Added Super Admin-only server-validated CSV export of exactly the currently scoped, filtered 50-row directory page, with formula neutralization and capped row/total metadata. No CRM contacts/private fields; GET uses existing permissioned service, rejects duplicate query keys and emits no-store. Pure test authored, not executed; full export and browser privacy gates remain open.
+
+
+**2026-10-15 chat-6 trace route strict query keys (PARTIAL):** Access-trace deep links reject repeated member IDs, page/search/override selectors and unexpected parameters before scoped SQL. The existing Zod validated service handles field content and cross-college denial. Pure unit tests authored, unexecuted; browser redirect and test acceptance remain open.
