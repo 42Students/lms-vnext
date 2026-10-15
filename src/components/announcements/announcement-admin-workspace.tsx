@@ -56,9 +56,11 @@ function splitTarget(value: string) {
 export function AnnouncementAdminWorkspace({
   items,
   targets,
+  requiresPublicationConsent=false,
 }: {
   items: readonly AnnouncementAdminItem[];
   targets: readonly AnnouncementTarget[];
+  requiresPublicationConsent?:boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -101,7 +103,7 @@ export function AnnouncementAdminWorkspace({
           scheduledAt: isoOrNull(scheduledAt),
           expiresAt: isoOrNull(expiresAt),
           isPinned: pinned,
-          publishConsent:true,
+          publishConsent:requiresPublicationConsent?true:undefined,
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -171,7 +173,7 @@ export function AnnouncementAdminWorkspace({
           scheduledAt: isoOrNull(String(data.get("scheduledAt") ?? "")),
           expiresAt: isoOrNull(String(data.get("expiresAt") ?? "")),
           isPinned: data.get("isPinned") === "on",
-          publishConsent:true,
+          publishConsent:requiresPublicationConsent?true:undefined,
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -240,8 +242,8 @@ export function AnnouncementAdminWorkspace({
               Pin for recipients
             </label>
             <div className="md:col-span-2">
-              <Button disabled={pending || !title.trim() || !message.trim() || !target} onClick={()=>setReviewPublish(true)}>
-                Review publication
+              <Button disabled={pending || !title.trim() || !message.trim() || !target} onClick={requiresPublicationConsent?()=>setReviewPublish(true):create}>
+                {requiresPublicationConsent?"Review publication":pending?"Creating…":"Create announcement"}
               </Button>
             </div>
           </div>
@@ -293,7 +295,7 @@ export function AnnouncementAdminWorkspace({
         )}
       </section>
 
-      <Dialog open={reviewPublish} onOpenChange={setReviewPublish} title="Confirm announcement publication"
+      {requiresPublicationConsent?<Dialog open={reviewPublish} onOpenChange={setReviewPublish} title="Confirm announcement publication"
        description="The selected recipients will see this notice when it becomes visible. This does not send external SMS or email."
        footer={<><Button variant="secondary" disabled={pending} onClick={()=>setReviewPublish(false)}>Cancel</Button>
          <Button disabled={pending} onClick={create}>{pending?"Publishing…":"Confirm and publish"}</Button></>}>
@@ -305,7 +307,7 @@ export function AnnouncementAdminWorkspace({
         }).map(line=><li key={line}>{line}</li>)}
        </ul>
        <p className="mt-3 text-xs text-muted-foreground">You are confirming publication to the selected audience. No external outbound delivery is initiated.</p>
-      </Dialog>
+      </Dialog>:null}
       <Dialog
         open={Boolean(editing)}
         onOpenChange={(open) => { if (!open) setEditing(null); }}
@@ -314,16 +316,16 @@ export function AnnouncementAdminWorkspace({
         footer={
           <>
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
-            <Button disabled={pending || !editing || !editConsent} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
+            <Button disabled={pending || !editing || (requiresPublicationConsent&&!editConsent)} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
           </>
         }
       >
         {editing ? (
           <form id="announcement-edit-form" className="grid gap-4">
-            <label className="flex items-start gap-2 text-sm text-body">
+            {requiresPublicationConsent?<label className="flex items-start gap-2 text-sm text-body">
               <input type="checkbox" checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
-            </label>
+            </label>:null}
             <label className="text-sm font-semibold text-body">
               Audience
               <select
