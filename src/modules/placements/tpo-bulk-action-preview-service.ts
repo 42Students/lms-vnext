@@ -5,7 +5,7 @@ import { placementApplications, placementApplicationScreenings, placementJobs } 
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
 import { getTpoLearnerParticipation } from "./tpo-participation-service";
-import { tpoBulkPreviewRequestSchema, selectedBulkActionRows,
+import { tpoBulkPreviewRequestSchema, selectedBulkActionRows, requireTpoBulkRegistered,
   type TpoBulkPreviewRequest } from "./tpo-bulk-workflow-model";
 import { signTpoBulkPreview } from "./tpo-bulk-preview-token";
 import { getAuthConfig } from "@/modules/auth/config";
@@ -16,6 +16,7 @@ export type TpoBulkCurrent={version:string;ready:boolean};
 /** Read only; only current college-scoped records are projected, never person names. */
 export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPreviewRequest){
  const collegeId=await requireTpoJobCollege(context);
+ requireTpoBulkRegistered(plan.target,process.env.DB09_TPO_API_READY==="DB09_VERIFIED");
  await getDb().transaction(async tx=>requireTpoJobActor(tx,context),{accessMode:"read only"});
  const current=new Map<string,TpoBulkCurrent>();
  if(plan.target==="STUDENTS"){

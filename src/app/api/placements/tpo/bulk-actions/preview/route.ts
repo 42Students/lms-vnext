@@ -4,6 +4,7 @@ import {requireTpoJobCollege} from "@/modules/placements/tpo-job-write-base";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {previewTpoBulkAction} from "@/modules/placements/tpo-bulk-action-preview-service";
+import {TpoBulkApplicationsUnavailable} from "@/modules/placements/tpo-bulk-workflow-model";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))
@@ -20,5 +21,10 @@ export async function POST(request:Request){
    return NextResponse.json(result,{
      headers:{"Cache-Control":"private, no-store"},
    });
- }catch(error){return apiErrorResponse(error);}
+ }catch(error){
+   if(error instanceof TpoBulkApplicationsUnavailable)
+     return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
+       headers:{"Cache-Control":"private, no-store"}});
+   return apiErrorResponse(error);
+ }
 }

@@ -44,3 +44,11 @@ export function selectedBulkActionRows(ids:readonly string[],readiness:ReadonlyM
   });
 }
 export function safeBulkActionFailure(){return "Not applied; row changed or is no longer eligible";}
+
+// DB09 remains a separate acceptance gate, even when a service is called outside a route.
+export class TpoBulkApplicationsUnavailable extends Error {
+  constructor(){super("DB09_MIGRATIONS_PENDING");this.name="TpoBulkApplicationsUnavailable";}
+}
+export function requireTpoBulkRegistered(target:"STUDENTS"|"APPLICATIONS",registered:boolean){
+  if(target==="APPLICATIONS"&&!registered)throw new TpoBulkApplicationsUnavailable();
+}
