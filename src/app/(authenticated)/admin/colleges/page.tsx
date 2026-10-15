@@ -14,36 +14,33 @@ import {canManageCollegeDirectoryRow} from "@/modules/colleges/admin-directory-a
 import { listColleges } from "@/modules/colleges/service";
 import { listOrganizations } from "@/modules/organizations/service";
 
-type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number] & {canManage:boolean};
+type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number] & {canManage:boolean;organizationName:string};
 
 const columns: DataTableColumn<CollegeRow>[] = [
   {
-    key: "college",
-    header: "College",
-    cell: (college) => (
-      <div>
-        <p className="m-0 font-semibold text-foreground">
-          {college.name}
-        </p>
-        <p className="mt-1 text-xs font-medium text-muted-foreground">
-          {college.code}
-        </p>
-      </div>
-    ),
+    key: "name",
+    header: "Name",
+    cell: (college) => <span className="font-semibold text-foreground">{college.name}</span>,
   },
   {
-    key: "location",
-    header: "Location",
-    cell: (college) =>
-      [college.city, college.state, college.country]
-        .filter(Boolean)
-        .join(", ") || "—",
+    key: "organization",
+    header: "Organization",
+    cell: (college) => college.organizationName,
   },
   {
-    key: "created",
-    header: "Created",
-    cell: (college) =>
-      college.createdAt.toISOString().slice(0, 10),
+    key: "uniqueId",
+    header: "Unique ID",
+    cell: (college) => college.code,
+  },
+  {
+    key: "city",
+    header: "City",
+    cell: (college) => college.city || "—",
+  },
+  {
+    key: "state",
+    header: "State",
+    cell: (college) => college.state || "—",
   },
   {
     key: "actions",
@@ -82,8 +79,11 @@ export default async function CollegesPage() {
     listColleges(context),
     listOrganizations(context),
   ]);
+  const organizationNames=new Map(organizations.map(x=>[x.id,x.name]));
   const rows:CollegeRow[] = colleges.map(college=>({
-    ...college,canManage:canManageCollegeDirectoryRow(context,college),
+    ...college,
+    organizationName:organizationNames.get(college.organizationId)??"—",
+    canManage:canManageCollegeDirectoryRow(context,college),
   }));
   const creatableOrganizations = organizations.filter(
     (organization) =>

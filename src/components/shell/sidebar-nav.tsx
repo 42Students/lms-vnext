@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cx } from "@/lib/class-names";
 import type { ShellNavItem } from "./shell-model";
+import {legacySidebarItemActive} from "./legacy-sidebar-active-model";
 import {superAdminLegacyGroupForPath} from "@/modules/people/super-admin-legacy-tabs-model";
 import {collegeLegacyGroupForPath} from "@/modules/people/college-legacy-tabs-model";
 
@@ -49,19 +50,8 @@ export function SidebarNav({
           ?superAdminLegacyGroupForPath(pathname):null;
         const collegeGroup=pathname.startsWith("/college/")
           ?collegeLegacyGroupForPath(pathname):null;
-        const isFeatureDetail=pathname.startsWith("/admin/features/");
-        const active =
-          pathname === item.href ||
-          (item.href !== "/dashboard" &&
-            pathname.startsWith(`${item.href}/`) &&
-            !(item.label==="Feature Controls"&&isFeatureDetail)) ||
-          (superAdminGroup!==null&&superAdminGroup.title===item.label) ||
-          (collegeGroup!==null&&collegeGroup.title===item.label) ||
-          (item.label==="Module Access"&&isFeatureDetail) ||
-          (item.label==="Activity Log"&&
-            (pathname==="/tracker/audit-findings"||
-             pathname.startsWith("/tracker/audit-findings/"))) ||
-          (item.label==="Projects"&&pathname.startsWith("/admin/projects/"));
+        const active=legacySidebarItemActive(pathname,item,
+          superAdminGroup?.title??null,collegeGroup?.title??null);
 
         return (
           <Fragment key={item.href}>

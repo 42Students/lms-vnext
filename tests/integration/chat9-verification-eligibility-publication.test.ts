@@ -121,4 +121,25 @@ describe.skipIf(!enabled)("T-S2-09 verified publication refreshes real eligibili
    [ids.member]);
   expect(evidence.rows[0]).toMatchObject({tenth_pct_basis_points:4500,source:"VERIFIED"});
  });
+ it("rolls back an incomplete verified snapshot and keeps previous eligibility intact",async()=>{
+  const read=async()=>{
+   const record=await pool!.query(
+    "select row_version,verified_snapshot from profile_verifications where id=$1::uuid",
+    [ids.record]);
+   const marks=await pool!.query(
+    "select level,original_grade,source_snapshot_version from profile_verification_academic_marks where learner_membership_id=$1::uuid order by level",
+    [ids.member]);
+   const evidence=await pool!.query(
+    "select tenth_pct_basis_points,source from placement_candidate_academic_evidence where membership_id=$1::uuid",
+    [ids.member]);
+   return {record:record.rows,marks:marks.rows,evidence:evidence.rows};
+  };
+  const before=await read();
+  const invalid={education:edu("98",false).education.filter(x=>x.educationType!=="10th")};
+  await expect(publish(invalid,3)).rejects.toMatchObject({code:"INVALID_SNAPSHOT"});
+  expect(await read()).toEqual(before);
+  const still=await evaluatePlacementEligibility(tpo,jobId,ids.member);
+  expect(still.status).toBe("INELIGIBLE");
+ });
+
 });
