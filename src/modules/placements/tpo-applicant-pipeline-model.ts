@@ -50,3 +50,11 @@ export function tpoApplicantSubmittedSince(value:"ALL"|"LAST_7_DAYS"|"LAST_30_DA
  if(value==="ALL")return null;
  return new Date(now.getTime()-(value==="LAST_7_DAYS"?7:30)*86400000);
 }
+
+/** Invalid deep links may never silently expand the learner roster. */
+export function parseTpoApplicantPipelineLink(value:unknown){
+ return tpoApplicantPipelineParams.safeParse(value);
+}
+export function tpoApplicantPipelineResetHref(jobId:string){
+ return "/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants-pipeline";
+}
