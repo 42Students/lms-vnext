@@ -318,7 +318,7 @@ describe("authenticated shell model", () => {
       "/hr/home", "/hr/drives", "/hr/calendar", "/hr/messages", "/hr/company",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
-      "Employer Recruiter",
+      "Recruiter",
     );
   });
 
@@ -329,8 +329,8 @@ describe("authenticated shell model", () => {
       "Dashboard",
       "Courses",
       "Placement eligibility",
-      "Engage",
-      "Drives",
+      "Recruiter Leads",
+      "Placement Operations",
       "Students",
       "Calendar",
     ]);
