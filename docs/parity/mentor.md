@@ -1323,3 +1323,8 @@ The assigned Mentor portfolio activity now exports at most 200 existing scoped, 
 ## 2026-10-15 chat-11 — portfolio activity persisted-positive regression (PARTIAL)
 
 The existing isolated PostgreSQL Project task fixture now verifies the registered Project-created activity event appears only for its actual current assigned Mentor, project-title search cannot fabricate matches, export excludes actor and auth fields, and Learner/foreign-college requests are denied. Source-authored but not executed; no release-complete claim.
+
+
+## 2026-10-15 chat-11 — persisted Resource activity lifecycle (PARTIAL)
+
+Registered safe Resource created/updated/archived Project activity event taxonomy, fixed non-PII labels, and Resource group filters across cross-project and exact-project Mentor activity. The next source commits wire the real transactional resource write producers. This mirrors the legacy activity category without exposing resource URLs, file content, actor details or raw audit metadata. Browser, PostgreSQL and legacy second-pass evidence remain OPEN.
