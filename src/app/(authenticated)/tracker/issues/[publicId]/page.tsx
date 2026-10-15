@@ -13,6 +13,7 @@ import { getBugTrackerIssueForAdmin } from "@/modules/bug-tracker/admin-service"
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { trackerPublicIdSchema } from "@/modules/bug-tracker/admin-validation";
 import { isSuperAdmin } from "@/modules/identity/context";
+import { auditActivityTransition } from "@/modules/bug-tracker/audit-activity-display-model";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -136,9 +137,12 @@ export default async function TrackerIssueDetailPage({
               <li key={activity.id} className="rounded-xl border border-border bg-surface p-4">
                 <p className="m-0 text-sm font-semibold text-foreground">{activity.type}</p>
                 <p className="mt-1 text-sm text-body">
-                  {[activity.fromValue, activity.toValue].filter(Boolean).join(" → ") || activity.note || "Workflow update"}
+                  {auditActivityTransition(activity)}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">{when(activity.createdAt)}</p>
+                {activity.note ? <p className="mt-1 whitespace-pre-wrap text-sm text-body">{activity.note}</p> : null}
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {activity.actorName ?? (activity.actorUserId ? "Platform administrator" : "Authorized tracker reporter")} · {when(activity.createdAt)}
+                </p>
               </li>
             ))}
           </ol>

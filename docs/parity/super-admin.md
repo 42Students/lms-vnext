@@ -1069,3 +1069,6 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 DB10 announcement account-status denial (PARTIAL):** The shared announcement services now deny suspended/inactive platform actors for admin list, mutation, audience targets and recipient feed, in addition to existing membership and tenant fences. Authored unit contract, negative DB/runtime tests still required.
+
+
+**2026-10-15 chat-6 immutable tracker activity readability (PARTIAL):** The finding detail no longer drops retest notes when the same audit record has from/to values; it renders transition, note, and non-secret actor attribution separately. Pure tests authored; browser history acceptance pending.
