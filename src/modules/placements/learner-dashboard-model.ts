@@ -149,8 +149,12 @@ export function learnerPlacementDashboard(
     thisWeekAssessmentCount:weekEvents.filter(event=>event.kind==="ASSESSMENT").length,
     upcomingInterviewCount: events.filter((event) => event.kind === "INTERVIEW").length,
     thisWeekInterviewCount:weekEvents.filter(event=>event.kind==="INTERVIEW").length,
-    activeOfferCount: input.offers.filter((row) => row.status === "ISSUED" &&
-      (row.expiresAt===null||row.expiresAt.getTime()>=nowMs)).length,
+    activeOfferCount: input.offers.filter((row) => {
+      if(row.status!=="ISSUED")return false;
+      if(row.expiresAt===null)return true;
+      const expiry=row.expiresAt.getTime();
+      return Number.isFinite(expiry) && Number.isFinite(nowMs) && expiry>nowMs;
+    }).length,
     activeApplicationCount: new Set(
       input.applications.filter((row) =>
         row.applicationStatus === "SUBMITTED" &&
