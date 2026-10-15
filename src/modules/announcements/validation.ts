@@ -25,6 +25,7 @@ export const announcementCreateSchema = z.object({
   scheduledAt: instant.nullable().optional(),
   expiresAt: instant.nullable().optional(),
   isPinned: z.boolean().default(false),
+  publishConsent: z.literal(true).optional(),
 }).strict().superRefine((v, ctx) => {
   if (v.scheduledAt && v.expiresAt && v.expiresAt <= v.scheduledAt) {
     ctx.addIssue({ code: "custom", path: ["expiresAt"], message: "Expiry must be after schedule" });
