@@ -635,6 +635,9 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 
 # People
 
+**Mixed-role Contacts triage PARTIAL (2026-10-15, chat-9):** A role-audience control distinguishes Faculty-only, Learner-only and dual Faculty+Learner memberships in a single current-college SQL filter. Dual-role learner contact fields remain masked even on Faculty tab and exports; no recipient privilege is inferred. Real database/browser acceptance pending.
+
+
 **Reverse-name Contacts sorting PARTIAL (2026-10-15, chat-9):** Contacts All/Faculty/Student tabs now support case-insensitive Z–A persisted-name order with deterministic UUID ties and identical ordering for export. Query schema and UI tests authored; database/browser evidence pending.
 
 
