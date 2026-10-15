@@ -22,6 +22,14 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
   sharedGroup(0),
   sharedGroup(1),
   sharedGroup(2),
+  {title:"Placements",tabs:[
+    {label:"Drives",href:"/admin/placements"},
+    {label:"Companies",href:"/admin/companies"},
+    {label:"Interviews",href:"/admin/placements/calendar"},
+    {label:"Analytics",href:"/admin/placements/hiring"},
+    {label:"Recruiter accounts",href:"/admin/recruiters"},
+    {label:"Announcements",href:"/admin/announcements"},
+  ]},
 ];
 
 export function superAdminLegacyNavigationPath(pathname:string):string {
