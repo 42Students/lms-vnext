@@ -801,40 +801,8 @@ export async function shipProjectRelease(
       );
     }
 
-    const [unshipped] = await tx
-      .select({ id: projectReleases.id })
-      .from(projectReleases)
-      .where(
-        and(
-          eq(projectReleases.projectId, scope.project.id),
-          ne(projectReleases.status, "SHIPPED"),
-        ),
-      )
-      .for("update")
-      .limit(1);
-
-    if (!unshipped) {
-      const [completedProject] = await tx
-        .update(projectInstances)
-        .set({
-          status: "COMPLETED",
-          updatedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(projectInstances.id, scope.project.id),
-            ne(projectInstances.status, "ARCHIVED"),
-            ne(projectInstances.status, "COMPLETED"),
-          ),
-        )
-        .returning({ id: projectInstances.id });
-
-      if (!completedProject) {
-        throw new ProjectsServiceError(
-          "PROJECT_RELEASE_INVALID_STATE",
-        );
-      }
-    }
+    // Shipping finishes the release; only the approved mentor closeout
+    // workflow may transition the project to COMPLETED.
 
     return shipped;
   });
