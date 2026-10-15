@@ -6,6 +6,7 @@ import { FacultyProfileTextSection } from "./faculty-profile-text-section";
 const ABOUT_FIELDS = [{name:"description",label:"About me",multiline:true,maxLength:5000}] as const;
 const PERSONAL_DETAILS_FIELDS = [{name:"gender",label:"Gender",maxLength:64},{name:"dateOfBirth",label:"Date of birth",type:"date",maxLength:10},{name:"bloodGroup",label:"Blood group",maxLength:16}] as const;
 const ADDRESS_FIELDS = [{name:"currentAddress",label:"Current address",maxLength:2000,multiline:true},{name:"currentCity",label:"Current city",maxLength:160},{name:"currentState",label:"Current state",maxLength:160},{name:"currentPincode",label:"Current postal code",maxLength:16},{name:"permanentAddress",label:"Permanent address",maxLength:2000,multiline:true},{name:"permanentCity",label:"Permanent city",maxLength:160},{name:"permanentState",label:"Permanent state",maxLength:160},{name:"permanentPincode",label:"Permanent postal code",maxLength:16}] as const;
+const SOCIAL_PROFILES_FIELDS = [{name:"linkedIn",label:"LinkedIn",maxLength:500,type:"url"},{name:"github",label:"GitHub",maxLength:500,type:"url"},{name:"portfolio",label:"Portfolio",maxLength:500,type:"url"},{name:"twitter",label:"X / Twitter",maxLength:500,type:"url"},{name:"googleScholar",label:"Google Scholar",maxLength:500,type:"url"},{name:"researchGate",label:"ResearchGate",maxLength:500,type:"url"}] as const;
 export function FacultyProfileEditor({initialDocument,initialVersion}:{
  initialDocument:FacultyProfileDocument;initialVersion:number;
 }){
@@ -46,5 +47,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    description="Private mailing information; never exported to Faculty directories."
    fields={ADDRESS_FIELDS}
    initial={{currentAddress:document.address.currentAddress,currentCity:document.address.currentCity,currentState:document.address.currentState,currentPincode:document.address.currentPincode,permanentAddress:document.address.permanentAddress,permanentCity:document.address.permanentCity,permanentState:document.address.permanentState,permanentPincode:document.address.permanentPincode,city:document.address.city,state:document.address.state,pincode:document.address.pincode}} pending={pending} onSave={save}/>
+  <FacultyProfileTextSection key={"socialProfiles-"+version} section="socialProfiles" title="Social profiles"
+   description="Optional HTTPS links to professional work and research."
+   fields={SOCIAL_PROFILES_FIELDS}
+   initial={document.socialProfiles} pending={pending} onSave={save}/>
  </div>;
 }
