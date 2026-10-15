@@ -6,14 +6,14 @@ import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
 import { z } from "zod";
-import {batchStudentViewSchema,filterBatchStudentNames,filterBatchStudentDecisions,filterBatchStudentDecisionSource,filterBatchStudentRegistration,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
+import {parseBatchStudentSearchParams,filterBatchStudentNames,filterBatchStudentDecisions,filterBatchStudentDecisionSource,filterBatchStudentRegistration,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export default async function BatchStudents({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{page?:string|string[];q?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[]}>}){
  const {batchId}=await params,raw=await searchParams;
  const parsed=pageSchema.safeParse(Array.isArray(raw.page)?raw.page[0]:raw.page??1);
  if(!parsed.success)return <p role="alert">Invalid page number. <Link href={"/tpo/batches/"+batchId+"/students"}>Start again</Link></p>;
- const view=batchStudentViewSchema.safeParse({q:Array.isArray(raw.q)?raw.q[0]:raw.q});
+ const view=parseBatchStudentSearchParams(raw);
  if(!view.success)return <p role="alert">Invalid student search. <Link href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
  const result=await getTpoBatchStudentRegistrations(await getCurrentRequestContext(),batchId,parsed.data);
  const visible=filterBatchStudentRegistration(filterBatchStudentDecisionSource(filterBatchStudentDecisions(filterBatchStudentNames(result.students,view.data.q),view.data.decision),view.data.source),view.data.registration,result.registrationAvailable);
@@ -35,7 +35,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  {!result.registrationAvailable&&view.data.registration!=="ALL"?<p role="status">Registration filtering unavailable; no learners are classified without records.</p>:null}
  <p className="text-xs text-muted-foreground">Search applies to the currently loaded 25 active learners, not every member of this batch. {visible.length} of {result.students.length} on this page match.</p>
  <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
- {visible.length===0?<p role="status">{result.students.length===0?"No active learners found on this page.":"No student names match on this page."}</p>:<ul className="space-y-2">
+ {visible.length===0?<p role="status">{result.students.length===0?"No active learners found on this page.":"No learners match the selected page filters."}</p>:<ul className="space-y-2">
  {visible.map(s=><li className="min-w-0 rounded-lg border border-border bg-surface p-3 text-sm" key={s.membershipId}>
   <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{s.name}</strong><span>{s.ambiguous?"Needs review":s.decision.replaceAll("_"," ")}</span></div>
   <p className="text-xs text-muted-foreground">Registration: {s.registration?s.registration.choice?.replaceAll("_"," ")??"Not recorded":"Unavailable"}{s.registration?.source?" · via "+s.registration.source.toLowerCase():""}</p>
