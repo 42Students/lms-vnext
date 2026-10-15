@@ -8,6 +8,7 @@ import {canDismissVerificationDialog} from "@/modules/verification/review-dialog
 import {verificationFocusWrap} from "@/modules/verification/review-focus-loop";
 import {verificationDecisionHistory} from "@/modules/verification/review-decision-history";
 import {verificationDecisionConfirmation} from "@/modules/verification/review-confirmation";
+import {canEditVerificationDecision} from "@/modules/verification/review-edit-guard";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
@@ -121,15 +122,15 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     {detail.review.status==="SUBMITTED"||detail.review.status==="UPDATE_PENDING"?<>
      <section className="space-y-2"><h3 className="font-semibold">Send back for correction</h3>
       <label className="block text-sm">Reason
-       <select className="mt-1 w-full rounded-md border bg-background p-2" value={reason} onChange={e=>setReason(e.target.value)}>
+       <select disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full rounded-md border bg-background p-2" value={reason} onChange={e=>setReason(e.target.value)}>
         {VERIFICATION_SEND_BACK_REASONS.map(item=><option key={item} value={item}>{item}</option>)}
        </select></label>
       <label className="block text-sm">Additional details
-       <textarea className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
+       <textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex flex-wrap gap-2">
-      <button type="button" disabled={saving} onClick={()=>setPendingAction("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
-      <button type="button" disabled={saving} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
+      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
+      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
      </div>
      {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
       <h3 className="font-semibold">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
