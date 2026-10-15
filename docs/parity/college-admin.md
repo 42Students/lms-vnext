@@ -19,6 +19,8 @@ Every page below also requires:
 
 ## Page: Profile Verification (legacy /college-admin/verification)
 
+**Explicit per-learner decision confirmation PARTIAL (chat-9):** Single-request Verify and Send back now require a second, cancellable confirmation displaying the action and correction reason before invoking the existing version-locked, audited same-origin writer. In-flight confirmation cannot be dismissed. Pure decision-copy tests authored; browser/API acceptance outstanding.
+
 **Previous reviewer decision visibility PARTIAL (chat-9):** The authorized review drawer now displays the persisted last decision timestamp in IST and the stored correction note, explicitly labeling absent history. It does not invent earlier history or expose these fields through the public roster. Pure projection coverage authored; private read/browser acceptance open.
 
 **Verification drawer keyboard dismissal PARTIAL (chat-9):** The private review drawer restores focus to the opener, focuses Close on entry and handles Escape. Dismissal is disabled while a decision request is in flight, avoiding an ambiguous discarded view. Pure keyboard-state tests authored; focus-trap and mobile browser acceptance remain open.
