@@ -29,7 +29,7 @@ function textPattern(value: string) {
 type AssessmentRow = Omit<
   CollegeAssessmentAggregateItem,
   "deliverySpecific" | "activityCount" | "resultsPublished"
-> & { deliveryId: string | null };
+> & { deliveryId: string | null; resultsPublished?: boolean | null };
 
 export async function listCollegeAssessmentAggregate(
   context: RequestContext,
@@ -109,6 +109,7 @@ export async function listCollegeAssessmentAggregate(
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
       query.scope==="SHARED"?isNull(courseQuizzes.deliveryId):
         query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
+      query.results!=="ALL"?eq(courseQuizzes.resultsPublished,query.results==="PUBLISHED"):undefined,
       query.q ? ilike(courseQuizzes.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
@@ -122,6 +123,7 @@ export async function listCollegeAssessmentAggregate(
       dueAt: courseQuizzes.dueAt,
       deliveryId: courseQuizzes.deliveryId,
       points: courseQuizzes.totalPoints,
+      resultsPublished: courseQuizzes.resultsPublished,
     }).from(courseQuizzes)
       .innerJoin(courseLessons, eq(courseLessons.id, courseQuizzes.lessonId))
       .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
@@ -170,7 +172,7 @@ export async function listCollegeAssessmentAggregate(
     deliverySpecific: row.deliveryId !== null,
     points: row.points,
     activityCount: countById.get(row.id) ?? 0,
-    resultsPublished: null,
+    resultsPublished: kind==="QUIZ" ? row.resultsPublished ?? false : null,
   }));
   return {
     kind,
