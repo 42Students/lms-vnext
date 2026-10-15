@@ -18,3 +18,18 @@ export function collegePeopleDirectoryHref(filter: CollegePeopleDirectoryFilter)
   if (filter.page > 1) params.set("page", String(filter.page));
   return "/college/people" + (params.size ? "?" + params.toString() : "");
 }
+
+/** Reject repeated/forged query values before any College Admin directory read. */
+export function parseCollegePeopleDirectorySearchParams(raw:Record<string,string|string[]|undefined>):CollegePeopleDirectoryFilter{
+ const entries:[string,string][]=[];
+ for(const [key,value] of Object.entries(raw)){
+  if(Array.isArray(value))throw Error("INVALID_PEOPLE_QUERY");
+  if(value!==undefined&&value!=="")entries.push([key,value]);
+ }
+ return collegePeopleDirectoryFilterSchema.parse(Object.fromEntries(entries));
+}
+
+/** Page and sort must never turn an otherwise empty directory into a false filtered result. */
+export function collegePeopleHasFilters(filter:CollegePeopleDirectoryFilter):boolean {
+ return Boolean(filter.q)||filter.role!=="ALL"||filter.status!=="ALL";
+}

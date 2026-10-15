@@ -85,11 +85,13 @@ export function clearedCollegeContactsHref(tab:CollegeContactsQuery["tab"]):stri
  return collegeContactsHref(collegeContactsQuerySchema.parse({tab}));
 }
 export function parseCollegeContactsSearchParams(raw:Record<string,string|string[]|undefined>){
- const normalized:Record<string,string>={};
+ const entries:[string,string][]=[];
  for(const [key,value] of Object.entries(raw)){
   if(Array.isArray(value))throw new Error("INVALID_CONTACT_FILTERS");
-  if(value!==undefined&&value!=="")normalized[key]=value;
+  if(value!==undefined&&value!=="")entries.push([key,value]);
  }
+ // Object.fromEntries retains "__proto__" as an own key for strict Zod rejection.
+ const normalized=Object.fromEntries(entries);
  const filter=collegeContactsQuerySchema.parse(normalized);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
@@ -100,4 +102,53 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
 /** Literal SQL LIKE search, never expose wildcard interpretation to callers. */
 export function collegeContactLiteralPattern(value:string):string {
  return "%"+value.replace(/[\\%_]/g,"\\$&")+"%";
+}
+
+/** Keep meaningful facets on tab changes, dropping only an impossible audience. */
+export function collegeContactsTabHref(filter:CollegeContactsQuery,tab:CollegeContactsQuery["tab"]):string{
+ const audience=contactRoleAudienceCompatible({tab,audience:filter.audience})?filter.audience:"ALL";
+ return collegeContactsHref({...filter,tab,audience,page:1});
+}
+
+/** Exit an exact membership bookmark without erasing meaningful directory filters. */
+export function collegeContactsWithoutMemberHref(filter:CollegeContactsQuery):string{
+ return collegeContactsHref({...filter,membershipId:undefined,page:1});
+}
+
+/** The public error explanation must not echo query values, memberships or internal stack traces. */
+export function collegeContactFilterMessage(error:unknown):string {
+ switch(error instanceof Error?error.message:"") {
+  case "INVALID_CONTACT_DATE_WINDOW":
+   return "Joined start date must be on or before the end date. No contacts were loaded.";
+  case "INVALID_CONTACT_ACADEMIC_COMBINATION":
+   return "The selected enrollment, class or teaching filters cannot be combined. No contacts were loaded.";
+  case "INVALID_CONTACT_ROLE_AUDIENCE":
+   return "That contact role audience is incompatible with the selected tab. No contacts were loaded.";
+  default:
+   return "A contact filter is invalid. No contacts were loaded.";
+ }
+}
+
+/** Honest first/last ordinal for scoped Contact result pages. */
+export function collegeContactsPageRange(page:number,pageSize:number,total:number):{first:number;last:number}{
+ if(total<=0)return {first:0,last:0};
+ return {first:Math.min(total,(page-1)*pageSize+1),last:Math.min(total,page*pageSize)};
+}
+
+/** URL-backed count intentionally excludes pagination, sorting and the selected tab. */
+export function activeCollegeContactFilterCount(filter:CollegeContactsQuery):number{
+ const params=new URL(collegeContactsHref(filter),"https://college.invalid").searchParams;
+ for(const key of ["tab","page","pageSize","sort"])params.delete(key);
+ return [...params.keys()].length;
+}
+
+/** Page-local only: these counts never pretend to summarize the full college. */
+export function collegeContactPageRoleCounts(rows:readonly {roles:readonly ("FACULTY"|"LEARNER")[]}[]){
+ let facultyOnly=0,learnerOnly=0,dual=0;
+ for(const row of rows){
+  if(row.roles.includes("FACULTY")&&row.roles.includes("LEARNER"))dual++;
+  else if(row.roles.includes("FACULTY"))facultyOnly++;
+  else if(row.roles.includes("LEARNER"))learnerOnly++;
+ }
+ return {facultyOnly,learnerOnly,dual};
 }

@@ -7,13 +7,22 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
-type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
+import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
+import {tpoApplicantPipelineHasFilters} from "@/modules/placements/tpo-applicant-pipeline-model";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
+type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
  const {jobId}=await params;const query=await searchParams;
+ const urlError=tpoApplicationFilterError(query,jobId);
+ if(urlError)return <div className="space-y-4">
+  <PageHeader eyebrow="TPO · Drive applicants" title="Invalid applicant filters"
+   description="No private application records were loaded."/>
+  <p role="alert" className="rounded-md border border-border p-4 text-sm">{urlError}</p>
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="font-semibold text-primary-text underline">Clear applicant filters</Link>
+ </div>;
  const columns=first(query.columns)?.slice(0,800);
  const data=await getTpoApplicantPipeline(context,{jobId,...(first(query.stage)?{stage:first(query.stage)}:{}),
    ...(first(query.search)?{search:first(query.search)}:{}),
@@ -77,10 +86,16 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     target="APPLICATIONS" jobId={jobId}
     rows={data.rows.map(row=>({id:row.id,
       label:(row.student??"Applicant")+" · "+row.role}))}/>:null}
-  {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:
-   <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
-    <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
-   </Suspense>}
+  {!data.rows.length?<div className="space-y-2">
+   <EmptyState title="No matching applicants" description={tpoApplicantPipelineHasFilters(data)
+    ?"No applications match the selected stage, channel, search or submission window."
+    :"No applications are available for this drive."}/>
+   {tpoApplicantPipelineHasFilters(data)?<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"}
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear applicant filters</Link>:null}
+  </div>:null}
+  <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
+   <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
+  </Suspense>
   <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3">
    {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link>:<span/>}
    {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Next</Link>:null}

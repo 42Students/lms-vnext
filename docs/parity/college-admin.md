@@ -11,7 +11,15 @@ Every page below also requires:
 - responsive behavior;
 - executed regression coverage.
 
+# Chat-9 2026-10-15 follow-up — PARTIAL (runtime acceptance pending)
+
+Contacts now show an honest page range, page-local Faculty/Learner/dual-role breakdown and a count of applied facets without treating a page as the whole college. Strict Contacts parsing rejects special-object keys rather than dropping them; the People membership directory now refuses repeated/unsupported URL params before sensitive listing. In verification, navigation and refresh are fenced while a bulk decision request is pending. Focused Vitest cases were added; actual browser, disposable PostgreSQL and global CI acceptance remain open. These are not DONE parity claims.
+
 # Operations
+
+**Chat-9 October 15 follow-up — PARTIAL; final acceptance open:** Faculty and Student directories now reject inherited/ambiguous URL query keys, give non-leaking reasons for incompatible role/date filters, distinguish unfiltered-empty from no-match states with clear-filter recovery, show bounded page ordinals and offer semantic narrow-screen cards with the same profile, Contacts, verification, class-move and faculty lifecycle actions. College People distinguishes no college memberships from filtered-empty results. College Contacts and People guard COLLEGE_ADMIN before parsing invalid filters; the verification queue likewise role-gates first, reuses one actor context and explains typed invalid date/tab/education combinations without echoing URL values. Bulk-review navigation remains frozen during in-flight decisions. Authored focused unit cases and source guards do not substitute for disposable PG denial, 375px mobile/browser, or final CI execution. No row is marked DONE solely from these changes.
+
+
 
 **Personal-notification unread counts PARTIAL (2026-10-15):** College Admin announcements displays a separate exact unread own-recipient count from registered notifications, independently of the 50-row inbox cap and regardless of unread-only filter. Count reads enforce the signed-in college and recipient; no college-wide send or delivery is inferred. Model, isolated PG tenant/role fixture updates authored; runtime/browser acceptance outstanding.
 
@@ -1502,3 +1510,7 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **Role directory filter denial parity PARTIAL (chat-9):** A single shared validator now rejects every Faculty/Students role-incompatible filter at the page and CSV boundary rather than returning a server error after service authorization. The data service still enforces the same restrictions. Unit and negative export parser tests authored; browser/PG acceptance open.
 **Deduplicated Faculty/Students CSV PARTIAL (chat-9):** The role-specific 1,000-record exports now suppress repeated membership IDs if directory pages shift during export and visibly mark incomplete results. The persisted same-college authorization still applies on each page; snapshot-level repeatable-read proof remains open.
 **Combined program/batch/class Students scope PARTIAL (chat-9):** The learner directory now applies all exact academic and optional class-presence facets within a single active current-college enrollment; unrelated past/parallel enrollments cannot jointly satisfy a filter. Matching export uses the same directory service. Scoped negative PostgreSQL evidence remains to be executed.
+
+**Chat-9 college contact/verification hardening (2026-10-15) — PARTIAL:** The Contacts tab pivot now drops an impossible Faculty-only / Learner-only audience combination while preserving other filters, exact-member bookmarks have a reversible directory exit, filtered-empty states have a same-tab reset, and the pager offers first/last jumps retaining query context. Verification filter drafts run the same cross-field guards as page/export before navigation, stale private detail dialogs close on queue changes, unknown server failure text is not echoed, and bulk outcome receipts must match only submitted eligible candidate keys and authoritative aggregate counts. Dedicated unit tests are authored; no executed unit, PostgreSQL, browser, privacy or cross-role acceptance evidence is claimed for this batch.
+
+**Chat-9 URL/validation round PARTIAL (2026-10-15):** College Contacts now gives bounded, non-leaking specific explanations for invalid joined-date windows, impossible academic combinations and role/audience contradictions before any directory read, with generic fallback for unrecognized errors. Automated unit cases authored; not executed in this connector-only round. Live/browser and exact legacy wording acceptance remain open.
