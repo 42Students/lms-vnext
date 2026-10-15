@@ -13,6 +13,7 @@ import {verificationBulkPreviewRows} from "@/modules/verification/bulk-preview-d
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 import {canStartVerificationBulkPreview} from "@/modules/verification/bulk-action-guard";
 import {emptyVerificationBulkFeedback} from "@/modules/verification/bulk-feedback-reset";
+import {safeCollegeBulkReviewFailure} from "@/modules/verification/bulk-safe-error";
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
@@ -57,7 +58,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    }
    const data=await response.json() as {summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[]};
    setBulkResult({...data,labels:describeBulkReviewOutcomeRows(data.outcomes,selectedRows)});setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
-  }catch(error){setBulkError(error instanceof Error?error.message:"Bulk review failed");}
+  }catch(error){setBulkError(safeCollegeBulkReviewFailure(error));}
   finally{setBulkBusy(false);}
  }
  function navigate(patch:Record<string,string>){
