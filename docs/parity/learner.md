@@ -1354,3 +1354,5 @@ Learner Course cards now read the existing verified-gated authored thumbnail via
 **Chat-7 Course time display (2026-10-15):** Overview activity and Learning Path class/assessment timestamps use one fixed Asia/Kolkata formatter; invalid timestamps are hidden rather than printed as authoritative schedules. Pure tests authored; mobile/timezone browser acceptance pending.
 
 **Chat-7 discussion timestamp clarity (2026-10-15):** all Learner Course discussion timestamps now show year and IST timezone and fail to `Time unavailable` for malformed stored dates, avoiding client-local discrepancies. Pure tests authored; desktop/mobile browser acceptance still open.
+
+**Chat-7 Learning Path percentage truth (2026-10-15):** a published path with no trackable items shows `Not measured` rather than a fabricated 0%; tracked zero remains 0%. Non-finite metrics also fail closed. Pure tests authored; mobile/CI/browser evidence still pending (L3-002).
