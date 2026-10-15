@@ -1,9 +1,9 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -13,6 +13,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
  assignments:readonly Existing[];
 }){
  const router=useRouter();
+ const mutationLock=useRef(false);
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  const [pending,setPending]=useState(false);
@@ -32,6 +33,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   setConfirmed(false);setError(null);setSuccess(null);
  }
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE"){
+  if(!facultyAssignmentMaySubmit(pending,mutationLock.current))return;
   if(!confirmed){setError("Confirm the selected action first.");return;}
   if(!assignmentActionAvailable(existing?.status??null,action)){
    setError("This assignment cannot perform the selected action. Reload the Section.");return;
@@ -45,6 +47,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
     setError("Save the draft changes first. Publish uses only the last saved revision.");
     return;
   }
+  mutationLock.current=true;
   setPending(true);setError(null);setSuccess(null);
   try{
    const base={action,confirmed:true};
@@ -64,7 +67,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
       assignmentId:existing?.id,title,maxPoints}))throw new Error("Assignment save status is uncertain. Reload the Section before retrying.");
    setConfirmed(false);setSuccess("Assignment "+action.toLowerCase()+" completed. Refresh if another author changed this Section.");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save changes.");}
-  finally{setPending(false);}
+  finally{mutationLock.current=false;setPending(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold">Assignment authoring</h2>

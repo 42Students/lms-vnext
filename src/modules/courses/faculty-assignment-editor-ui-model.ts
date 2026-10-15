@@ -36,3 +36,8 @@ export function facultyAssignmentCommandReceipt(
    (data.title!==request.title||data.maxPoints!==request.maxPoints))return false;
  return typeof data.updatedAt==="string" && Number.isFinite(Date.parse(data.updatedAt));
 }
+
+/** The caller owns a synchronous ref lock; a pending command cannot be duplicated. */
+export function facultyAssignmentMaySubmit(pending:boolean,locked:boolean){
+ return !pending && !locked;
+}
