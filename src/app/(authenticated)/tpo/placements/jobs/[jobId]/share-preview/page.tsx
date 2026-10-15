@@ -78,6 +78,10 @@ export default async function TpoShortlistSharePreviewPage({
         </tbody>
       </table>
     </div>}
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
+     className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+     View company-share access history
+    </Link>
     <CompanyShareControls jobId={data.job.id} ready={shares.ready}
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),
