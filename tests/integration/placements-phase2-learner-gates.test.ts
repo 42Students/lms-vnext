@@ -8,6 +8,7 @@ import { createPlacementJob, publishPlacementJob } from "@/modules/placements/jo
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { loadPlacementHeldOfferFacts } from "@/modules/placements/held-offer-facts-service";
+import { isPlacementLearnerDebarred } from "@/modules/placements/debarment-service";
 import { submitOwnExternalOffer, reviewExternalOffer } from "@/modules/placements/external-offer-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
@@ -155,4 +156,40 @@ describe("Section A: placement write/read integration boundaries", () => {
     const after = await listLearnerPlacementJobs(learner);
     expect(after.find(row => row.job.id === job.id)?.canApply).toBe(true);
   });
+  it("P-S1-02 enforces active debarment in the feed and application write", async () => {
+    const job = await makeJob("Debarment denied drive");
+    const inserted = await pool.query<{id:string}>(`
+      INSERT INTO placement_debarments
+        (college_id,membership_id,reason,until_date,created_by_user_id)
+      VALUES($1,$2,'Policy suspension','2099-12-31',$3)
+      RETURNING id
+    `, [SEED_IDS.collegeA, SEED_IDS.learnerCollegeAMembership, SEED_IDS.collegeAdminUser]);
+    const banId = inserted.rows[0]!.id;
+
+    expect(await isPlacementLearnerDebarred(
+      SEED_IDS.collegeA, SEED_IDS.learnerCollegeAMembership,
+    )).toBe(true);
+    // A college B lookup cannot re-use the same membership's college A ban.
+    expect(await isPlacementLearnerDebarred(
+      SEED_IDS.collegeB, SEED_IDS.learnerCollegeAMembership,
+    )).toBe(false);
+
+    const visible = await listLearnerPlacementJobs(learner);
+    expect(visible.find(row => row.job.id === job.id)?.canApply).toBe(false);
+    await expect(applyToPlacementJob(learner, job.id, {}))
+      .rejects.toMatchObject({code:"PLACEMENT_APPLICATION_INELIGIBLE"});
+
+    await pool.query(`
+      UPDATE placement_debarments
+         SET lifted_at=now(),lifted_by_user_id=$2,lifted_reason='Appeal accepted'
+       WHERE id=$1
+    `, [banId, SEED_IDS.collegeAdminUser]);
+    expect(await isPlacementLearnerDebarred(
+      SEED_IDS.collegeA, SEED_IDS.learnerCollegeAMembership,
+    )).toBe(false);
+    expect((await listLearnerPlacementJobs(learner))
+      .find(row => row.job.id === job.id)?.canApply).toBe(true);
+  });
+
+
 });
