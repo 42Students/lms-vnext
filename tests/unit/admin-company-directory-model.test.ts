@@ -15,5 +15,19 @@ describe("Super Admin company directory projection", () => {
   it("strictly validates filters", () => {
     expect(adminCompaniesQuerySchema.safeParse({ status: "HIDDEN" }).success).toBe(false);
     expect(adminCompaniesQuerySchema.safeParse({ q: "x".repeat(101) }).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({trust:"TRUSTED"}).trust).toBe("TRUSTED");
+    expect(adminCompaniesQuerySchema.safeParse({trust:"PENDING"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({sort:"RECENT"}).sort).toBe("RECENT");
+    expect(adminCompaniesQuerySchema.safeParse({sort:"RANDOM"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({searchField:"DOMAIN"}).searchField).toBe("DOMAIN");
+    expect(adminCompaniesQuerySchema.safeParse({searchField:"EMAIL"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.safeParse({companyId:"unknown"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({companyStatus:"ARCHIVED"}).companyStatus).toBe("ARCHIVED");
+    expect(adminCompaniesQuerySchema.safeParse({companyStatus:"DISABLED"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({page:"2"}).page).toBe(2);
+    expect(adminCompaniesQuerySchema.safeParse({page:0}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.safeParse({page:["1","2"]}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.safeParse({collegeId:"another-tenant"}).success).toBe(false);
+    expect(adminCompaniesQuerySchema.parse({collegeId:"ee258fa5-bce9-4d50-902f-16af8e62fb55"}).collegeId).toBe("ee258fa5-bce9-4d50-902f-16af8e62fb55");
   });
 });

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -66,7 +67,9 @@ export async function DELETE(
   try {
     const context = await getCurrentRequestContext();
     const { domainId } = await params;
-    await deleteTenantDomainWithRuntime(context, domainId);
+    const body: unknown = await request.json().catch(() => ({}));
+    const parsed = z.strictObject({ confirmationHost: z.string().max(255).optional() }).parse(body);
+    await deleteTenantDomainWithRuntime(context, domainId, parsed.confirmationHost);
 
     return NextResponse.json({ deleted: true });
   } catch (error) {

@@ -839,3 +839,63 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 hierarchy filter PG fixture follow-up (PARTIAL):** Added disposable-PostgreSQL regression covering per-module count-vs-row filtering, invalid module rejection, and non-admin denial. Multiple `module` query params are rejected before service invocation. Test is committed but NOT executed; real PG and browser acceptance remain open.
+
+
+**2026-10-15 chat-6 Tenant Domains primary confirmation (PARTIAL):** Selecting a newly verified primary host now opens explicit confirmation showing previous and next host, login routing and DNS consequences before invoking the existing same-origin authorized mutation. No DNS edit is claimed; pure-model tests authored but not executed. Redirect/browser acceptance and host-switch race remain open.
+
+
+**2026-10-15 chat-6 primary domain deletion (PARTIAL):** UI now requires exact typed primary hostname and disables destructive confirmation until it matches. Ordinary non-primary deletion retains its existing dialog. The DELETE endpoint still requires server-side stale-primary/typed-confirmation enforcement and browser race tests, so this is NOT a security-certified endpoint. Pure checks authored, unexecuted.
+
+
+**2026-10-15 chat-6 primary host server enforcement (PARTIAL):** The DELETE API now strictly parses an optional hostname and the domain service checks exact confirmation *after scoped authorization* for persisted primary hosts. The UI passes it to the same-origin guarded route. Explicit denial/success PostgreSQL fixture authored; not executed. Concurrent primary changes between read and delete still require transactional row-lock certification.
+
+
+**2026-10-15 chat-6 college creation handoff (PARTIAL):** The Super Admin Tenant Create stage now asks the existing permissioned scope API to select exactly the newly created college before advancing to Set up; malformed responses and failed selection show a non-success message rather than implicitly claiming a selected tenant. Shared College Create elsewhere retains its former refresh-only behavior. Unit tests authored, unexecuted; browser navigation and post-create permission/tenant fixtures remain open.
+
+
+**2026-10-15 chat-6 organization-to-college creation handoff (PARTIAL):** The Tenant Create form receives the newly created organization ID from the existing authorized API, returns to the college step with an allowlisted choice, and preselects only an organization present in the current scoped server result. Duplicate/forged URL values cannot select foreign tenants. Other organization-create usages retain their prior behavior. Pure tests authored, not run; browser and PG creation acceptance open.
+
+
+**2026-10-15 chat-6 students-with-overrides queue (PARTIAL):** The learner module-access trace can now filter to active learners with a persisted membership-level Projects/Placements/Electives rule, scoped in the original college SQL and preserving the filter through pagination/deep links. No contact data or edit privilege is added. Model and disposable-PG tests authored, not executed; editing and full legacy override/lock drawer remain open.
+
+
+**2026-10-15 chat-6 module hierarchy descendant scope filter (PARTIAL):** Existing selected-college rules can now be filtered by Department, Program, Cohort, Section or Membership, combined with optional module filter. SQL applies exact enum-checked filters to count and rows, and page links retain both. A disposable-PG fixture and schema regression authored; no runtime browser/PG execution. Edit, audit/history, learner count and lock workflows remain open.
+
+
+**2026-10-15 chat-6 Companies trust filter (PARTIAL):** Super Admin company relationships now filter by Trusted/Not trusted/All through a strict Zod enum and scoped SQL predicate, keeping status and name filters. Counts and curation candidates derive only from the selected subset, and the 200-row completeness caveat remains. Pure model and disposable-Postgres scope tests authored, not run; legacy curation verification/merge and browser tests still open.
+
+
+**2026-10-15 chat-6 Companies server pagination (PARTIAL):** The previously hard-capped 200-row Company directory now uses exact scoped PostgreSQL count and 50-row page/offset queries with strict page validation, filter-retaining Previous/Next links, and explicit page-local duplicate analysis. No cross-tenant scan or false all-tenant company totals are introduced. Unit and PG fixtures authored, unexecuted; large-dataset performance, race and browser checks still open.
+
+
+**2026-10-15 chat-6 Companies exact-college filter (PARTIAL):** Company relationship table has a validated college UUID filter intersected with the selected Super Admin safety scope; selected-college mismatch is denied before querying. The dropdown lists only authorized active colleges from the shared service; pagination keeps the college selection. Does not reveal recruiter PII or cross-tenant CRM notes. Unit and disposable-PostgreSQL success/foreign-scope tests authored but unexecuted, browser/privacy acceptance still open.
+
+
+**2026-10-15 chat-6 primary-host deletion atomic guard (PARTIAL):** Conditional repository DELETE now independently checks the persisted primary flag against the exact confirmed hostname at mutation time; stale UI decisions cannot bypass the database predicate. Existing authorization remains in service; regression fixture authored, not executed. Concurrent host switching and DNS redirect E2E still need certification.
+
+
+**2026-10-15 chat-6 locked-membership queue (PARTIAL):** College-scoped active learner finder can filter exact persisted locked membership overrides, not simply inherited locks. Query and link enums stay strict; scalar SQL `exists` filters both totals and pages. Author-only unit and disposable PG fixture, not executed; edits/drawer and browser tests remain open.
+
+
+**2026-10-15 chat-6 Company status separation (PARTIAL):** Company and college-relationship lifecycle filters can now be inspected independently; default MATCH retains previous status behavior. One status cannot silently stand in for the other; typed query, page links and PostgreSQL predicates match. Source tests authored but not executed; archive lifecycle/browser parity remains open.
+
+
+**2026-10-15 chat-6 Companies stable sorting (PARTIAL):** Sorted-by-name and recently-updated relationship modes now use server-side stable SQL ordering, with UUID tie-breaks, strict Zod enum and filter-preserving pages. Does not claim a historical activity timeline. Unit/PG tests authored, unrun; browser/performance acceptance open.
+
+
+**2026-10-15 chat-6 Companies domain search (PARTIAL):** Employer lookup can search persisted `primary_domain` as distinct from company name, preserving literal SQL wildcard escaping, college safety scope and pagination. No sensitive CRM/private contacts are retrieved. Strict model and real-Postgres fixture authored, not run; legacy employer alias search and browser parity open.
+
+
+**2026-10-15 chat-6 company identity drill-down (PARTIAL):** Each company relationship card links to an exact global employer-ID filter while retaining authorization against the caller's selected college/organization. Archived relationships can be inspected without making them editable; strict UUID input, pagination retention and unit/PG tests authored, unrun. Full legacy CRM detail and browser validation remain open.
+
+
+**2026-10-15 chat-6 Companies page export (PARTIAL):** Added Super Admin-only server-validated CSV export of exactly the currently scoped, filtered 50-row directory page, with formula neutralization and capped row/total metadata. No CRM contacts/private fields; GET uses existing permissioned service, rejects duplicate query keys and emits no-store. Pure test authored, not executed; full export and browser privacy gates remain open.
+
+
+**2026-10-15 chat-6 trace route strict query keys (PARTIAL):** Access-trace deep links reject repeated member IDs, page/search/override selectors and unexpected parameters before scoped SQL. The existing Zod validated service handles field content and cross-college denial. Pure unit tests authored, unexecuted; browser redirect and test acceptance remain open.
+
+
+**2026-10-15 chat-6 Settings inventory search (PARTIAL):** Super Admin can now filter the existing safe, non-secret source/college policy inventory by typed section and setting/source text. This is an in-memory filter over already-authorized reads; credentials and raw environment config remain unavailable. Unit tests authored, not executed; legacy mutable settings still absent and page is not DONE.
+
+
+**2026-10-15 chat-6 locked descendant hierarchy filter (PARTIAL):** The selected-college module hierarchy now filters persisted locked rows, composed safely with module and academic scope predicates in both the SQL count and page queries. UI/typed enum/pagination and PostgreSQL fixture authored; tests not executed. No authority to change lock state, and effective learner results still require the resolver trace.
