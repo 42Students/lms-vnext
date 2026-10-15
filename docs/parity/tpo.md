@@ -2129,3 +2129,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 / actual sampled registration breakdown — PARTIAL:** Added source-backed total, recorded, missing, each five choice counts and SELF/TPO/BACKFILL counts over the pre-filtered, already-authorized max-500 roster. Cap is disclosed; no rates or consent assumptions.
 
 **Chat-2 / placement consent evidence clarity — PARTIAL:** The authorized batch roster now checks recorded PLACEMENTS consent timestamp plus version and explicitly distinguishes missing evidence versus other choices. This is placement registration evidence only, not permission for SMS/email/WhatsApp; raw version, actor or contact data is never shown. Runtime/PG/browser acceptance open.
+
+**Chat-2 / registration timeline labels — PARTIAL:** Recorded registration updates are formatted explicitly in IST and show elapsed whole days from a single server render clock; missing/invalid/future values remain unknown, never converted to an implied deadline. Browser acceptance open.

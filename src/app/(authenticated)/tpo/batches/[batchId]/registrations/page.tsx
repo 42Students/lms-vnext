@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {tpoRegistrationRecordedAtLabel,tpoRegistrationDaysSince} from "@/modules/placements/tpo-batch-registration-date-label-model";
 import {tpoPlacementConsentDescription} from "@/modules/placements/tpo-batch-registration-consent-model";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listTpoBatchRegistrationRoster} from "@/modules/placements/tpo-batch-registration-roster-service";
@@ -12,6 +13,7 @@ export default async function BatchRegistrations({params,searchParams}:{
  const value={q:first(raw.q),choice:first(raw.choice),page:first(raw.page),source:first(raw.source),recency:first(raw.recency),order:first(raw.order),pageSize:first(raw.pageSize)};
  const ctx=await getCurrentRequestContext();
  const data=await listTpoBatchRegistrationRoster(ctx,batchId,value);
+ const snapshotTime=new Date();
  const url=(page:number)=>{const params=new URLSearchParams();
   if(data.filters.q)params.set("q",data.filters.q);
   if(data.filters.choice!=="ALL")params.set("choice",data.filters.choice);
@@ -56,7 +58,7 @@ export default async function BatchRegistrations({params,searchParams}:{
     <ul className="space-y-2">{data.items.map(row=><li key={row.membershipId} className="min-w-0 rounded border border-border p-3 text-sm">
      <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{row.name}</strong>
       <span>{row.choice?.replaceAll("_"," ")??"Not recorded"}</span></div>
-     <p className="text-xs text-muted-foreground">Source: {row.source??"None"}{row.updatedAt?" · Updated "+row.updatedAt:""}</p>
+     <p className="text-xs text-muted-foreground">Source: {row.source??"None"} · {tpoRegistrationRecordedAtLabel(row.updatedAt)}{tpoRegistrationDaysSince(row.updatedAt,snapshotTime)!==null?" · "+tpoRegistrationDaysSince(row.updatedAt,snapshotTime)+" days ago":""}</p>
      <p className="mt-1 text-xs text-muted-foreground">{tpoPlacementConsentDescription(row.placementConsentEvidence)}</p>
      <Link href={"/tpo/students/"+row.membershipId+"/participation"} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Review participation</Link>
     </li>)}</ul>}
