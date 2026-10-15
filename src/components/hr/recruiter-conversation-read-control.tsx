@@ -1,0 +1,34 @@
+"use client";
+import {useRouter} from "next/navigation";
+import {useState} from "react";
+import {hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
+export function RecruiterConversationReadControl({threadId}:{threadId:string}){
+ const router=useRouter();
+ const [busy,setBusy]=useState(false);
+ const [notice,setNotice]=useState("");
+ async function acknowledge(){
+  if(busy)return;
+  setBusy(true);
+  setNotice("");
+  let success=false;
+  let feedback="Could not confirm that these messages were marked read.";
+  try{
+   const response=await fetch("/api/placements/recruiter/conversations/"+threadId+"/acknowledge",{
+    method:"POST",credentials:"same-origin",
+   });
+   success=response.redirected&&response.status===200&&
+    new URL(response.url).pathname==="/hr/conversations/"+threadId;
+   if(!success)feedback=hrReplyErrorMessage(response.status);
+  }catch{feedback="Connection unavailable. Read status has not been confirmed.";}
+  if(success){setNotice("Read status updated.");router.refresh();}
+  else setNotice(feedback);
+  setBusy(false);
+ }
+ return <div className="space-y-2">
+  <button type="button" disabled={busy} onClick={acknowledge}
+   className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-60">
+   {busy?"Updating…":"Mark placement cell messages as read"}
+  </button>
+  {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+ </div>;
+}

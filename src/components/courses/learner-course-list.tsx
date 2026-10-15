@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { learnerCourseFallbackMedia } from "@/modules/courses/learner-course-card-media-model";
+import { learnerCourseCardMedia } from "@/modules/courses/learner-course-card-media-model";
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
 import { learnerCourseFilteredEmptyTitle } from "@/modules/courses/learner-course-filtered-empty-model";
+import { learnerCoursePreferredPeriod } from "@/modules/courses/learner-course-preferred-period-model";
 import { resolveLearnerCoursePeriod } from "@/modules/courses/learner-course-current-period-model";
 import { resolveLearnerCourseTypeFilter } from "@/modules/courses/learner-course-type-availability-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
@@ -38,6 +40,7 @@ export type LearnerCourseListRow = {
     periodStartDate: string;
     periodEndDate: string;
   };
+  thumbnailUrl: string | null;
   instructorNames: string[];
   summary: {
     overallPercent: number | null;
@@ -45,6 +48,7 @@ export type LearnerCourseListRow = {
     itemsTotal: number;
   };
   lastActivity: string | null;
+  overdueAssignments?: number;
   nextDue: {title:string;kind:"Assignment"|"Quiz";dueAt:string} | null;
   readOnly: boolean;
   learningPathReady: boolean;
@@ -100,8 +104,9 @@ export function LearnerCourseList({
     );
   }, [rows]);
 
-  const [periodId, setPeriodId] = useState(periods[0]?.id ?? "");
-  const selectedPeriodId = resolveLearnerCoursePeriod(periodId, periods);
+  const preferredPeriodId = learnerCoursePreferredPeriod(rows);
+  const [periodId, setPeriodId] = useState(preferredPeriodId);
+  const selectedPeriodId = resolveLearnerCoursePeriod(periodId, periods, preferredPeriodId);
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
   const [continueOnly, setContinueOnly] = useState(false);
@@ -191,6 +196,7 @@ export function LearnerCourseList({
               Search courses
               <input
                 value={query}
+                maxLength={100}
                 onChange={(event) => {
                   setQuery(event.target.value);
                   setVisibleLimit(PAGE_SIZE);
@@ -336,10 +342,25 @@ export function LearnerCourseList({
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                   >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
-                      {/* Canonical per-course media is not yet persisted; use one local, stable fallback. */}
-                      {/* eslint-disable-next-line @next/next/no-img-element -- bundled SVG decorative fallback */}
-                      <img src={learnerCourseFallbackMedia().src} alt="" aria-hidden="true"
-                        className="pointer-events-none absolute right-2 top-1 h-20 w-20 opacity-20" />
+                      {learnerCourseCardMedia(row.thumbnailUrl).source === "AUTHORED" ? (
+                        <Image
+                          src={learnerCourseCardMedia(row.thumbnailUrl).src}
+                          alt=""
+                          fill
+                          unoptimized
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="pointer-events-none object-cover opacity-20"
+                        />
+                      ) : (
+                        <Image
+                          src={learnerCourseCardMedia(row.thumbnailUrl).src}
+                          alt=""
+                          aria-hidden="true"
+                          width={80}
+                          height={80}
+                          className="pointer-events-none absolute right-2 top-1 h-20 w-20 opacity-20"
+                        />
+                      )}
                       <div className="flex w-full items-end justify-between gap-3">
                         <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
                           {row.course.courseCode}
@@ -402,6 +423,11 @@ export function LearnerCourseList({
                             style={{ width: `${row.summary.overallPercent}%` }}
                           />
                         </div> : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
+                        {!row.readOnly && row.overdueAssignments ? (
+                          <p className="mt-3 text-xs font-semibold text-warning" role="note">
+                            {row.overdueAssignments} overdue {row.overdueAssignments === 1 ? "assignment" : "assignments"} · late submission available
+                          </p>
+                        ) : null}
                         <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
                           <p className="m-0">
                             Last recorded activity: {row.lastActivity
