@@ -63,3 +63,10 @@ describe("W02 legacy QuizzesContent expired row parity", () => {
     expect(quizOverviewActionState({ ...base, dueAt: null }, now).review).toBe(false);
   });
 });
+
+describe("zero remaining learner quiz attempts",()=>{
+ it("never offers Start Quiz without an available attempt",()=>{
+  const result=quizOverviewActionState({...base,attemptsRemaining:0,attemptsUsed:0},now);
+  expect(result).toMatchObject({label:"No attempts remaining",action:"View quiz",review:true});
+ });
+});

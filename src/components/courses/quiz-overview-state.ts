@@ -40,6 +40,14 @@ export function quizOverviewActionState(
       review: true,
     };
   }
+  if (exhausted && item.attemptsUsed === 0) {
+    return {
+      label: "No attempts remaining",
+      tone: "neutral" as const,
+      action: "View quiz",
+      review: true,
+    };
+  }
   if (expired || item.progressStatus === "MISSED") {
     return {
       label: "Missed",
