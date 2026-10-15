@@ -1,0 +1,1 @@
+import {codingProfilePlatformSchema,normalizeCodingProfile} from "./tpo-coding-profile-model";export function learnerCodingProfileLink(platform:unknown,raw:unknown){const key=codingProfilePlatformSchema.safeParse(platform);if(!key.success||typeof raw!=="string")return null;return normalizeCodingProfile(key.data,raw);}
