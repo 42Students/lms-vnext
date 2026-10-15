@@ -269,4 +269,10 @@ describe("College Admin classes/electives read-only filters", () => {
   if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Last semester must not precede first semester"))).toBe(true);
   expect(collegeElectiveQuerySchema.safeParse({semesterFrom:4,semesterThrough:4}).success).toBe(true);
  });
+ it("rejects elective required versus allowed picks on the College Admin electives page",()=>{
+  const invalid=collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:4,maximumAllowedPicks:3});
+  expect(invalid.success).toBe(false);
+  if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("Maximum allowed choices cannot be below minimum required choices"))).toBe(true);
+  expect(collegeElectiveQuerySchema.safeParse({minimumRequiredPicks:2,maximumAllowedPicks:3}).success).toBe(true);
+ });
 });

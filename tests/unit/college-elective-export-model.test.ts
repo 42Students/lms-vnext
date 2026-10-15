@@ -112,4 +112,8 @@ describe("college electives CSV",()=>{
   expect(electiveCsvSchema.safeParse({semesterFrom:5,semesterThrough:4}).success).toBe(false);
   expect(electiveCsvSchema.safeParse({semesterFrom:4,semesterThrough:4}).success).toBe(true);
  });
+ it("rejects elective required versus allowed picks during CSV export",()=>{
+  expect(electiveCsvSchema.safeParse({minimumRequiredPicks:4,maximumAllowedPicks:3}).success).toBe(false);
+  expect(electiveCsvSchema.safeParse({minimumRequiredPicks:2,maximumAllowedPicks:3}).success).toBe(true);
+ });
 });
