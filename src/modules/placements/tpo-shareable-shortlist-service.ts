@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, inArray } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, placementApplications, placementApplicationScreenings,
@@ -9,6 +9,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoReadCollege } from "./tpo-surface-access";
+import {escapeLiteralApplicantSearch} from "./company-share/public-filter-model";
 import {
   projectRecruiterVisibleShortlist, tpoShareableShortlistQuerySchema,
 } from "./tpo-shareable-shortlist-model";
@@ -43,6 +44,7 @@ export async function getTpoShareableShortlist(
     eq(collegeMemberships.collegeId, college.id),
     eq(collegeMemberships.status, "ACTIVE"),
     eq(users.platformStatus, "ACTIVE"),
+    query.q ? ilike(users.displayName, "%" + escapeLiteralApplicantSearch(query.q) + "%") : undefined,
   );
   const base = () => db.select({
     applicationId: placementApplications.id,

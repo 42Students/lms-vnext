@@ -10,7 +10,7 @@ import { listTpoCompanyApplicantShares } from "@/modules/placements/company-shar
 import { CompanyShareControls } from "./company-share-controls";
 import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
 
-type SearchParams = { page?: string | string[]; shareStatus?: string|string[] };
+type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -27,6 +27,7 @@ export default async function TpoShortlistSharePreviewPage({
   const [{ jobId }, search] = await Promise.all([params, searchParams]);
   const parsed = tpoShareableShortlistQuerySchema.safeParse({
     jobId, ...(first(search.page) ? { page: first(search.page) } : {}),
+    q:first(search.q)??"",
   });
   if (!parsed.success) notFound();
   let data: Awaited<ReturnType<typeof getTpoShareableShortlist>>;
@@ -55,6 +56,16 @@ export default async function TpoShortlistSharePreviewPage({
         Export capped CSV
       </a>}
     />
+    <form action={path} method="get" className="flex flex-wrap items-end gap-3">
+      <label className="grid gap-2 text-sm font-semibold text-body">Search shortlisted learner
+        <input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
+          placeholder="Learner name" className="min-h-10 rounded border border-border bg-surface px-3"/>
+      </label>
+      <button type="submit" className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">
+        Search
+      </button>
+      <Link href={path} className="text-sm font-semibold text-primary-text underline">Clear</Link>
+    </form>
     <p className="text-sm text-body">
       {data.total} currently shortlisted application(s) in this drive.
       This preview deliberately includes only application ID, learner name and email,
@@ -90,7 +101,7 @@ export default async function TpoShortlistSharePreviewPage({
       {companyShareStatusSchema.options.map(status=><Link key={status}
        aria-current={shareStatus===status?"page":undefined}
        className="rounded border border-border px-3 py-2 font-semibold text-primary-text"
-       href={path+"?shareStatus="+encodeURIComponent(status)}>
+       href={path+"?"+new URLSearchParams({shareStatus:status,...(parsed.data.q?{q:parsed.data.q}:{})})}>
        {companyShareStatusLabel(status)}
       </Link>)}
     </nav>
@@ -104,9 +115,9 @@ export default async function TpoShortlistSharePreviewPage({
       className="flex flex-wrap justify-between gap-3 text-sm">
       <span>Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-4">
-        {data.page > 1 ? <Link href={path + "?page=" + (data.page - 1)}
+        {data.page > 1 ? <Link href={path + "?" + new URLSearchParams({page:String(data.page-1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
           className="font-semibold text-primary-text hover:underline">← Previous</Link> : null}
-        {data.page < data.totalPages ? <Link href={path + "?page=" + (data.page + 1)}
+        {data.page < data.totalPages ? <Link href={path + "?" + new URLSearchParams({page:String(data.page+1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
           className="font-semibold text-primary-text hover:underline">Next →</Link> : null}
       </div>
     </nav>
