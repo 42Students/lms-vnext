@@ -6,7 +6,7 @@ describe("TPO empty applicant grid recovery",()=>{
   const page=readFileSync("src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx","utf8");
   const grid=readFileSync("src/components/tpo/tpo-applications-spreadsheet.tsx","utf8");
   expect(page).toContain("TpoApplicationsSpreadsheet");
-  expect(page).toContain("TpoGrid");
+  expect(page).toContain("Loading applicant grid");
   expect(page).toContain("Clear applicant filters");
   expect(grid).toContain("TpoGridFilterPanel");
   expect(grid).toContain("TpoSpreadsheetGrid");
