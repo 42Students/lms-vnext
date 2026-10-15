@@ -99,3 +99,9 @@ export function parseCollegeRoleDirectorySearchParams(raw: Record<string, string
   }
   return collegeRoleDirectoryQuerySchema.parse(input);
 }
+
+/** Return a stable URL when deletions/filter changes make the requested page stale. */
+export function canonicalCollegeRoleDirectoryHref(kind: CollegeDirectoryKind, filter: CollegeRoleDirectoryQuery, totalPages: number): string | null {
+  const lastPage = Math.max(1, Math.floor(totalPages));
+  return filter.page > lastPage ? collegeRoleDirectoryHref(kind, {...filter, page:lastPage}) : null;
+}
