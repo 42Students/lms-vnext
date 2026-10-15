@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
-  facultyResponseFollowUpHref, parseFacultyFollowUpSearchParams,
+  facultyResponseFollowUpHref, parseFacultyFollowUpSearchParams, facultyFollowupEmptyState,
 } from "@/modules/courses/faculty-response-followup-model";
 import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
 import {facultyFollowUpCsvHref} from "@/modules/courses/faculty-followup-export";
@@ -23,6 +23,7 @@ export default async function FacultyResponseFollowUpsPage({
 
   const context = await getCurrentRequestContext();
   const data = await getFacultyResponseFollowUps(context, parsed.data);
+  const emptyState = facultyFollowupEmptyState(data.query,data.sections.length);
   return <div className="space-y-6">
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
@@ -83,8 +84,8 @@ export default async function FacultyResponseFollowUpsPage({
         Export this page counts (no learner details)
       </Link>
     </div>
-    {data.items.length === 0 ? <EmptyState title="No past-due assessments match"
-      description="Only published assessments with recorded due dates in the past are eligible. Drafts, undated and future work are omitted rather than marked overdue." />
+    {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
+      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/response-followups" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Clear follow-up filters</Link> : null}</div>
     : <div className="grid gap-3">{data.items.map(item =>
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
         className="rounded-xl border border-border bg-surface p-4">

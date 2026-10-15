@@ -88,3 +88,11 @@ export function parseFacultyFollowUpSearchParams(raw:Record<string,string|string
   pageSize:raw.pageSize||undefined,
  });
 }
+
+/** Absence of overdue work is not the same as a filtered miss. */
+export function facultyFollowupEmptyState(query:FacultyResponseFollowUpQuery,sectionCount:number){
+ if(sectionCount===0)return {title:"No current teaching Sections",description:"You need an active teaching Section assignment before there can be response follow-ups.",clearFilters:false};
+ const filtered=query.kind!=="ALL"||Boolean(query.deliveryId)||Boolean(query.search);
+ if(filtered)return {title:"No follow-ups match these filters",description:"Try another teaching Section, assessment type or search term.",clearFilters:true};
+ return {title:"No past-due assessments to review",description:"Only published assessments whose recorded due date has passed appear here. Future and undated items are not labeled overdue.",clearFilters:false};
+}
