@@ -872,3 +872,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 primary-host deletion atomic guard (PARTIAL):** Conditional repository DELETE now independently checks the persisted primary flag against the exact confirmed hostname at mutation time; stale UI decisions cannot bypass the database predicate. Existing authorization remains in service; regression fixture authored, not executed. Concurrent host switching and DNS redirect E2E still need certification.
+
+
+**2026-10-15 chat-6 locked-membership queue (PARTIAL):** College-scoped active learner finder can filter exact persisted locked membership overrides, not simply inherited locks. Query and link enums stay strict; scalar SQL `exists` filters both totals and pages. Author-only unit and disposable PG fixture, not executed; edits/drawer and browser tests remain open.
