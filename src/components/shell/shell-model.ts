@@ -258,18 +258,6 @@ function getLearnerItems(
     return true;
   });
 
-  if (access.driveDayEnabled) {
-    return [
-      ...items,
-      {
-        label: "Drive Day",
-        href: "/tpo/drive-day",
-        shortLabel: "D",
-        group: "career" as const,
-      },
-    ];
-  }
-
   return items;
 }
 
