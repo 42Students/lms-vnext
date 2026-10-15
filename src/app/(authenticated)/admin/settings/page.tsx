@@ -1,4 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {adminInventoryFilterSchema,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
+import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -11,12 +13,16 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function SuperAdminSettingsPage() {
+export default async function SuperAdminSettingsPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context =
     await getCurrentRequestContext();
 
-  const { selectedCollegeName, sections } =
+  const raw=await searchParams;
+  const parsed=adminInventoryFilterSchema.safeParse({q:raw.q,section:raw.section});
+  const { selectedCollegeName, sections: allSections } =
     await getSuperAdminPlatformSettings(context);
+  if(!parsed.success || Array.isArray(raw.q) || Array.isArray(raw.section)) return <ErrorState title="Invalid setting filter" description="Use a valid section or search query." action={<Link href="/admin/settings">Clear filters</Link>}/>;
+  const sections=filterPlatformInventory(allSections,parsed.data);
 
   return (
     <div className="space-y-6">
@@ -48,6 +54,19 @@ export default async function SuperAdminSettingsPage() {
         Authentication and privileged access checklist →
       </Link>
 
+      <form className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold text-body">Setting or source
+          <input name="q" defaultValue={parsed.data.q} maxLength={100} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+        </label>
+        <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Section
+          <select name="section" defaultValue={parsed.data.section} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
+          </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+        <Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
+      </form>
+      {sections.length===0 ? <p role="status" className="rounded-lg border border-border p-4 text-sm text-body">No visible settings match the selected filters.</p> : null}
       <nav
         aria-label="Settings sections"
         className="flex flex-wrap gap-2"
