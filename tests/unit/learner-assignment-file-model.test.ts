@@ -53,6 +53,7 @@ describe("learner assignment private-file boundary", () => {
       { ...grant, originalName: "different.pdf" },
       { ...grant, expiresAt: "2000-01-01T00:00:00Z" },
       { ...grant, requiredHeaders: { "content-type": "text/html" } },
+      { ...grant, requiredHeaders: { ...grant.requiredHeaders, "x-amz-meta-expected-size": "999" } },
     ]) {
       const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(Response.json({ grant: bad }));
       await expect(transferLearnerAssignmentFile("assignment", delivery, file, new AbortController().signal, fetcher)).rejects.toThrow();
