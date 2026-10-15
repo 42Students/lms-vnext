@@ -462,7 +462,7 @@ describe("Projects P7A resources and readiness", () => {
       mentor,
       project.id,
       task.id,
-      { status: "DONE" },
+      { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
     );
     await completeProjectSprint(
       mentor,

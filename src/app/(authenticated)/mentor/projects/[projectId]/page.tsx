@@ -116,7 +116,7 @@ export default async function MentorProjectPage({
       <ProjectWorkspace
         workspace={workspace}
         backHref="/mentor/projects"
-        backLabel="Mentoring Projects"
+        backLabel="Projects"
         eyebrow="Mentor Project"
         mode="MENTOR"
         currentMembershipId={

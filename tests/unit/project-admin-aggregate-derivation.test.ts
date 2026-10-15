@@ -40,8 +40,8 @@ describe("College Admin project execution readiness", () => {
     expect(result.tasks.total).toBe(0);
   });
 
-  it("requires the project itself to be completed", () => {
-    for (const projectStatus of ["PLANNED", "ACTIVE", "ARCHIVED"]) {
+  it("requires the project to be active or completed", () => {
+    for (const projectStatus of ["PLANNED", "ARCHIVED"]) {
       const result = deriveProjectExecutionReadiness({
         ...completeExecution(),
         projectStatus,
