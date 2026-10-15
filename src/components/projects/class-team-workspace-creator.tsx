@@ -12,6 +12,7 @@ import { previewVersion } from "@/modules/projects/class-team-preview-token";
 import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
 import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
 import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
+import {classTeamCreationFeedback} from "@/modules/projects/class-team-create-feedback-model";
 import type { AssignedProjectTemplateChoice } from "./project-create-control";
 
 type ClassChoice = { id:string;name:string;code:string };
@@ -91,7 +92,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
       else router.push(basePath);
       router.refresh();
     } catch(e) {
-      setError(e instanceof Error?e.message:"Could not create workspaces");
+      setError(classTeamCreationFeedback(e));
     } finally {
       setPending(false);
     }
