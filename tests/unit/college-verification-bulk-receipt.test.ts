@@ -13,6 +13,12 @@ describe("bulk review receipt contract",()=>{
   expect(()=>parseCollegeBulkReviewReceipt({...valid,outcomes:[outcome,outcome]},selected)).toThrow();
   expect(()=>parseCollegeBulkReviewReceipt({...valid,summary:{attempted:1,succeeded:0,failed:1}},selected)).toThrow();
  });
+ it("validates only submitted eligible candidates when local preview skipped another row",()=>{
+  const extra={learnerMembershipId:"22222222-2222-4222-8222-222222222222",section:"IDENTITY"};
+  const submitted=[selected[0]];
+  expect(parseCollegeBulkReviewReceipt(valid,submitted).outcomes).toHaveLength(1);
+  expect(()=>parseCollegeBulkReviewReceipt(valid,[...submitted,extra])).toThrow();
+ });
  it("rejects unknown result codes and raw private fields",()=>{
   expect(()=>parseCollegeBulkReviewReceipt({...valid,outcomes:[{...outcome,result:"UNKNOWN"}]},selected)).toThrow();
   expect(()=>parseCollegeBulkReviewReceipt({...valid,outcomes:[{...outcome,privateNote:"must not echo"}]},selected)).toThrow();
