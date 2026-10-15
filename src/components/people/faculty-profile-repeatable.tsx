@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-editor-model";
+import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -78,11 +79,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 </label>;
               })}
             </div>
-            <button type="button" disabled={pending} onClick={() => {
+            <button type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => {
               setRows(current => current.filter(item => item.id !== row.id)); setChanged(true);
             }} className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-error">
               Remove draft record
             </button>
+            {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground">This entry has a managed document. Contact your College to remove it.</p> : null}
           </fieldset>
         ))}
       </div>
