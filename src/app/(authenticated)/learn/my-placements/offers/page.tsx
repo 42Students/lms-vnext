@@ -1,4 +1,5 @@
 import { learnerOffersQueryHasInvalidFields } from "@/modules/placements/learner-offers-query-feedback-model";
+import {learnerOfferStatusTabLabel} from "@/modules/placements/learner-offer-status-label-model";
 import {learnerExpiredIssuedOffers} from "@/modules/placements/learner-offer-issued-expired-model";
 import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-empty-state-model";
 import Link from "next/link";
@@ -34,12 +35,12 @@ const joiningTabs = [
 ] as const;
 const kindTabs = [{id:"all",label:"All documents"},{id:"offer",label:"Offer letters"},{id:"loi",label:"Letters of intent"}] as const;
 const tabs: readonly { id: LearnerOfferView; label: string }[] = [
-  { id: "all", label: "All offers" },
-  { id: "pending", label: "Awaiting response" },
-  { id: "accepted", label: "Accepted" },
-  { id: "closed", label: "Declined / withdrawn" },
-  { id: "declined", label: "Declined" },
-  { id: "withdrawn", label: "Withdrawn by placement team" },
+  { id: "all", label: learnerOfferStatusTabLabel("all") },
+  { id: "pending", label: learnerOfferStatusTabLabel("pending") },
+  { id: "accepted", label: learnerOfferStatusTabLabel("accepted") },
+  { id: "closed", label: learnerOfferStatusTabLabel("closed") },
+  { id: "declined", label: learnerOfferStatusTabLabel("declined") },
+  { id: "withdrawn", label: learnerOfferStatusTabLabel("withdrawn") },
 ];
 
 export default async function LearnerOffersPage({
