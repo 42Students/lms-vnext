@@ -73,11 +73,11 @@ export default async function HrRoundsEditorPage({params,searchParams}:{
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Save changes</button>
      </form>:<p className="text-sm text-muted-foreground">Managed by placement cell, already used, or no longer pending; editing is disabled.</p>}
-    {round.editable?<form action={endpoint} method="post" className="flex flex-wrap gap-2">
-     <input type="hidden" name="action" value="REMOVE"/><input type="hidden" name="roundId" value={round.id}/>
-     <input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-     <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Remove unused round</button>
-    </form>:null}
+    {round.editable?<Link
+      href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Review round removal
+    </Link>:null}
    </article>)}
   </section>
  </main>;
