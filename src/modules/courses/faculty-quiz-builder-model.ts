@@ -250,3 +250,8 @@ export function facultyQuizDraftReview(questions:readonly {points:number;options
 export function facultyQuizCanSaveChanges(status:string|undefined,dirty:boolean,failed:boolean,pending:boolean){
  return !pending&&dirty&&!failed&&["DRAFT","PUBLISHED","CLOSED"].includes(status??"");
 }
+
+/** Explicitly reload persisted values or clear the unsaved new Quiz. */
+export function facultyQuizMayResetDraft(dirty:boolean,pending:boolean){
+ return dirty&&!pending;
+}
