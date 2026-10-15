@@ -624,6 +624,13 @@
       "when": 1792099487875,
       "tag": "0088_placement_phase2_dream_cascade_undo",
       "breakpoints": true
+    },
+    {
+      "idx": 89,
+      "version": "7",
+      "when": 1792099687783,
+      "tag": "0089_placement_verified_evidence_policy",
+      "breakpoints": true
     }
   ]
 }

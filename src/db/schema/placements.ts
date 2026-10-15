@@ -753,6 +753,10 @@ export const placementJobEligibilityPolicies = pgTable(
       .array()
       .notNull()
       .default(sql`'{}'::integer[]`),
+    /** P-S2-01: when true, SELF-sourced evidence never satisfies a threshold. */
+    requireVerifiedEvidence: boolean("require_verified_evidence")
+      .notNull()
+      .default(false),
     missingEvidencePolicy: varchar(
       "missing_evidence_policy",
       { length: 32 },
