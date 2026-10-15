@@ -5,11 +5,12 @@ import {actionableBatchHistory} from "@/modules/placements/tpo-batch-history-und
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getTpoBatch, listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { getTpoBatchEligibilitySummary } from "@/modules/placements/tpo-batch-eligibility-summary-service";
+import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;const context=await getCurrentRequestContext();
- const [{batch,lifecycle,ready},eligibility,history]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId)]);
+ const [{batch,lifecycle,ready},eligibility,history,registrations]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId)]);
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
  const tabs=[{label:"Students",href:"students"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
@@ -50,6 +51,23 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
   <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed cohort action is offered. If any later change occurred, the server will reject the undo.</p>
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
  </section>:null}
+ <section aria-label="Registration decisions" className="min-w-0 space-y-3 rounded-lg border border-border p-4">
+  <h2 className="font-semibold">Registration choices</h2>
+  {!registrations.available?<p role="status" className="text-sm">Registration storage is unavailable; no counts are inferred.</p>:
+   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+    {[
+     ["Active learners",registrations.activeLearners],
+     ["Choices recorded",registrations.registered],
+     ["No choice recorded",registrations.unrecorded],
+     ["Placements",registrations.byChoice?.PLACEMENTS],
+     ["Higher studies",registrations.byChoice?.HIGHER_STUDIES],
+     ["Other choices",(registrations.byChoice?.NOT_INTERESTED??0)+(registrations.byChoice?.ENTREPRENEURSHIP??0)+(registrations.byChoice?.COMPETITIVE_EXAMS??0)],
+    ].map(([name,value])=><div key={name} className="rounded border border-border p-2 text-sm">
+     <dt>{name}</dt><dd className="font-semibold tabular-nums">{value??"—"}</dd>
+    </div>)}
+   </dl>}
+  <p className="text-xs text-muted-foreground">Registration choices come from DB08 records; invitation, eligibility and consent are separate facts.</p>
+ </section>
  <nav aria-label="Batch workspace" className="flex flex-wrap gap-2">{tabs.map(tab=><Link key={tab.href} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm" href={"/tpo/batches/"+batchId+"/"+tab.href}>{tab.label}</Link>)}</nav>
  <p className="rounded border border-border p-4 text-sm">Choose Students to review participation, Rules for batch policy, or History for decisions and exact undo.</p>
  </main>;
