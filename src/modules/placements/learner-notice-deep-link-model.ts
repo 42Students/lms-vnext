@@ -16,3 +16,8 @@ export function learnerNoticeFocusPage<T extends {id:string}>(
  const index=authorized.findIndex(row=>row.id===focus);
  return index>=0?{page:Math.floor(index/pageSize)+1,found:true}:{page:requestedPage,found:false};
 }
+
+/** An inaccessible UUID is never looked up outside authorized results. */
+export function learnerNoticeMissing(focus:string|null,found:boolean):boolean{
+ return focus!==null&&!found;
+}
