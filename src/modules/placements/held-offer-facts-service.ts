@@ -5,6 +5,7 @@ import {
 } from "@/db/schema";
 import { placementExternalOffers } from "@/db/schema/placement-external";
 import type { HeldPlacementOffer } from "./held-offer-policy";
+import { placementTableExists } from "./staged-tables";
 
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
@@ -50,13 +51,17 @@ export async function loadPlacementHeldOfferFacts(
       inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
     ));
 
-  const external = await db.select({
+  // DB08-C is modeled in Drizzle but has no registered migration yet.
+  // Do not issue SQL against a missing table. Never catch generic SQL errors:
+  // unexpected failures must fail the transaction rather than weaken the gate.
+  const externalAvailable = await placementTableExists("placement_external_offers");
+  const external = externalAvailable ? await db.select({
     ctcLpa: placementExternalOffers.ctcLpa,
   }).from(placementExternalOffers).where(and(
     eq(placementExternalOffers.collegeId, collegeId),
     eq(placementExternalOffers.membershipId, membershipId),
     eq(placementExternalOffers.status, "VERIFIED"),
-  ));
+  )) : [];
 
   return [
     ...internal,
