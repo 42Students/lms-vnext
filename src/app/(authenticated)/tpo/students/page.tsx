@@ -226,6 +226,7 @@ export default async function TpoStudentsPage({
             >
               Student Requests
             </Link>
+            <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body">Preparation support</Link>
             <a
               href={exportHref}
               className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"

@@ -72,6 +72,8 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
    </dl>}
   <p className="text-xs text-muted-foreground">Registration choices come from DB08 records; invitation, eligibility and consent are separate facts. A learner choosing Placements must have recorded their own consent.</p>
  </section>
+ <Link href={"/tpo/batches/"+batchId+"/invitation-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Prepare invitation draft</Link>
+ <Link href={"/tpo/batches/"+batchId+"/reminder-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Prepare registration reminder</Link>
  <nav aria-label="Batch workspace" className="flex flex-wrap gap-2">{tabs.map(tab=><Link key={tab.href} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm" href={"/tpo/batches/"+batchId+"/"+tab.href}>{tab.label}</Link>)}</nav>
  <p className="rounded border border-border p-4 text-sm">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </main>;

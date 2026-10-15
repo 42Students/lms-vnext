@@ -473,6 +473,7 @@ export const placementJobs = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_jobs_id_college_uq").on(table.id, table.collegeId),
     index("placement_jobs_college_status_idx").on(
       table.collegeId,
       table.status,
@@ -887,6 +888,7 @@ export const placementApplications = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_applications_id_job_uq").on(table.id, table.jobId),
     uniqueIndex(
       "placement_applications_role_membership_uq",
     ).on(table.roleOptionId, table.membershipId),
