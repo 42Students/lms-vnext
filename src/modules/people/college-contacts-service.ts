@@ -6,6 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
+import {collegeContactAcademicScope} from "./college-contacts-academic-scope";
 import {collegeContactsQuerySchema,contactDateWindowValid,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
 
 export type CollegeContactRow={
@@ -30,6 +31,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    tx.select({roleId:membershipRoles.id}).from(membershipRoles).where(and(
     eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,role))));
   const faculty=hasRole("FACULTY"),learner=hasRole("LEARNER");
+  const academic=collegeContactAcademicScope(claim.collegeId);
   const search=filter.q?"%"+filter.q.replace(/[\\%_]/g,"\\$&")+"%":null;
   const matches=and(eq(collegeMemberships.collegeId,claim.collegeId),
    filter.tab==="FACULTY"?faculty:filter.tab==="STUDENT"?learner:or(faculty,learner),
@@ -42,6 +44,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.audience==="FACULTY_ONLY"?and(faculty,sql`not (${learner})`):
    filter.audience==="LEARNER_ONLY"?and(learner,sql`not (${faculty})`):
    filter.audience==="DUAL"?and(faculty,learner):undefined,
+   filter.profile==="PROFILED"?or(and(learner,academic.learnerProfile),and(faculty,academic.facultyProfile)):filter.profile==="UNPROFILED"?or(and(learner,not(academic.learnerProfile)),and(faculty,not(academic.facultyProfile))):undefined,
    search?or(
     ilike(users.displayName,search),
     // Only staff who are not also learners may be located by email.
