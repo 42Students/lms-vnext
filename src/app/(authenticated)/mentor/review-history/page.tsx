@@ -10,7 +10,7 @@ import {
 } from "@/modules/projects/mentor-review-history-model";
 import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
 
-type Search = { projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
+type Search = { version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -21,6 +21,7 @@ export default async function MentorReviewHistoryPage({
   const parsed=mentorReviewHistoryQuerySchema.safeParse({
     decision:first(raw.decision) ?? undefined, search:first(raw.search) ?? undefined,
     projectId:first(raw.projectId) ?? undefined,
+    version:first(raw.version) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
@@ -54,6 +55,9 @@ export default async function MentorReviewHistoryPage({
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Delivery submission version
+          <input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-10 w-36 rounded-md border border-border bg-background px-3"/>
         </label>
         <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
         <Link href="/mentor/review-history" className="text-sm text-primary-text underline">Clear</Link>
