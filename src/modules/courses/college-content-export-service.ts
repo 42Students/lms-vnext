@@ -14,7 +14,7 @@ export async function exportCollegeContentMetadata(
     view:query.view,from:query.from,to:query.to,page,
   } : {
     q:query.q,courseCode:query.courseCode,status:query.status,
-    format:query.format,scope:query.scope,offeringStatus:query.offeringStatus,page,
+    format:query.format,scope:query.scope,visibility:query.visibility,offeringStatus:query.offeringStatus,page,
   }),
   COLLEGE_CONTENT_PAGE_SIZE,CONTENT_METADATA_EXPORT_CAP);
  return {...result,csv:kind==="LIVE_CLASS" ? renderCollegeLiveClassCsv(result.rows,result.truncated)

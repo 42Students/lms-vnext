@@ -64,6 +64,15 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
             </label>
           ) : null}
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Visible to students
+            <select name="visibility" defaultValue={data.query.visibility}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All visibility settings</option>
+              <option value="VISIBLE">Visible</option>
+              <option value="HIDDEN">Hidden</option>
+            </select>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Owning offering status
             <select name="offeringStatus" defaultValue={data.query.offeringStatus??"ALL"}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -118,7 +127,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     Lesson: {item.lessonName} · Path: {item.learningPathTitle} ({item.learningPathStatus})
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {collegeContentScopeLabel(item.deliveryId)}
+                    {collegeContentScopeLabel(item.deliveryId)} · {item.visibleToStudents ? "Visible to students" : "Hidden from students"}
                     {videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
                   </p>
                 </article>
@@ -157,6 +166,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                   </td>
                   <td className="px-4 py-4 text-body">
                     {collegeContentScopeLabel(item.deliveryId)}
+                    <p className="mt-1 text-xs">{item.visibleToStudents ? "Visible to students" : "Hidden from students"}</p>
                   </td>
                   <td className="px-4 py-4 text-body">{item.status}</td>
                 </tr>
