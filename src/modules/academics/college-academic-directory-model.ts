@@ -34,6 +34,7 @@ export const collegeBatchDirectorySchema = z.object({
   programStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
   expectedEndState: z.enum(["ALL","SET","UNSET"]).optional(),
   academicYearState: z.enum(["ALL","RECORDED","UNRECORDED"]).optional(),
+  startOnOrAfter: z.iso.date().optional(),
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
@@ -61,6 +62,7 @@ export function academicDirectoryHref(
   if ("mappingState" in query && query.mappingState && query.mappingState !== "ALL") params.set("mappingState",query.mappingState);
   if ("expectedEndState" in query && query.expectedEndState && query.expectedEndState !== "ALL") params.set("expectedEndState",query.expectedEndState);
   if ("academicYearState" in query && query.academicYearState && query.academicYearState !== "ALL") params.set("academicYearState",query.academicYearState);
+  if ("startOnOrAfter" in query && query.startOnOrAfter) params.set("startOnOrAfter",query.startOnOrAfter);
   if (query.page !== 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
@@ -73,10 +75,10 @@ export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "page"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
-    if (typeof value === "string" && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
+    if (typeof value === "string" && (key !== "startOnOrAfter" || value !== "") && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
       result[key] = value;
     }
   }

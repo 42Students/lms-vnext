@@ -183,6 +183,12 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
               </select>
             </label>
           ) : null}
+          {data.kind === "BATCHES" ? (
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch start on or after
+              <input type="date" name="startOnOrAfter" defaultValue={data.query.startOnOrAfter ?? ""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            </label>
+          ) : null}
           <div className="flex items-end gap-2">
             <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter
