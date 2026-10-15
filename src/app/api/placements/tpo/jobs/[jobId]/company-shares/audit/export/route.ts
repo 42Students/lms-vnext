@@ -7,7 +7,7 @@ export const dynamic="force-dynamic";
 export async function GET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
   const {jobId}=await params;
-  const result=await listTpoCompanyShareAudit(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("kind")??"ALL");
+  const result=await listTpoCompanyShareAudit(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("kind")??"ALL",1,{exportAll:true});
   if(!result.ready)return new Response("Audit migration pending",{
    status:503,headers:{"Cache-Control":"private, no-store"},
   });
