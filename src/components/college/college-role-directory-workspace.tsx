@@ -197,6 +197,8 @@ export async function CollegeRoleDirectoryWorkspace({
             <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="">All employment types</option>
+              {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
+                <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
               {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
             </select>
             {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">

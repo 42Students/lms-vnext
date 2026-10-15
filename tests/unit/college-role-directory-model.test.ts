@@ -158,3 +158,10 @@ describe("Selected Faculty department beyond directory option cap",()=>{
   expect(selectedDirectoryValueNotListed(id,[id])).toBe(false);
  });
 });
+
+describe("Selected Faculty employment type beyond options",()=>{
+ it("preserves a typed value even when the first 100 distinct types omit it",()=>{
+  expect(selectedDirectoryValueNotListed("VISITING",["FULL_TIME"])).toBe(true);
+  expect(selectedDirectoryValueNotListed("VISITING",["VISITING"])).toBe(false);
+ });
+});
