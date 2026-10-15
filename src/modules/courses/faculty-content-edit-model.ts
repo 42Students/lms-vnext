@@ -20,6 +20,7 @@ export function facultyContentPatch(input: {
     let parsed: URL;
     try { parsed = new URL(url); } catch { throw new Error("Enter a valid HTTPS URL."); }
     if (parsed.protocol !== "https:") throw new Error("Only HTTPS URLs are allowed.");
+    if (parsed.username || parsed.password) throw new Error("Remove embedded credentials from the HTTPS URL.");
     if (input.kind === "YOUTUBE") {
       const host = parsed.hostname.toLowerCase();
       if (host !== "youtube.com" && !host.endsWith(".youtube.com") && host !== "youtu.be")
