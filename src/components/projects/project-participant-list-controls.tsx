@@ -17,8 +17,8 @@ export type ProjectParticipantListQuery = {
     | "MENTOR_ANY_ATTENTION"
     | "MENTOR_NO_ATTENTION"
     | "LEARNER_ACTION";
-  work?: "BLOCKED" | "NO_TASKS" | "HAS_OPEN_TASKS";
-  sort?: "RECENT" | "TITLE" | "PROGRESS";
+  work?: "BLOCKED" | "NO_TASKS" | "HAS_OPEN_TASKS" | "ALL_DONE" | "HAS_DONE_TASKS";
+  sort?: "RECENT" | "TITLE" | "PROGRESS" | "PROGRESS_DESC" | "OPEN_TASKS" | "TEAM_SIZE_DESC" | "TEAM_SIZE_ASC";
   page?: number;
   pageSize?: number;
 };
@@ -114,7 +114,7 @@ export function ProjectParticipantListControls({
 
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Sort
         <select name="sort" defaultValue={query.sort ?? "RECENT"} className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
-          <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option>
+          <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option><option value="OPEN_TASKS">Most open tasks first</option><option value="TEAM_SIZE_DESC">Largest active team first</option><option value="TEAM_SIZE_ASC">Smallest active team first</option>
         </select></label>) : null}
       {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
         <select name="assignment" defaultValue={query.assignment ?? ""}
@@ -131,6 +131,8 @@ export function ProjectParticipantListControls({
             <option value="">All task coverage</option>
             <option value="NO_TASKS">No tracked tasks</option>
             <option value="HAS_OPEN_TASKS">Open tasks recorded</option>
+            <option value="ALL_DONE">All recorded tasks done</option>
+            <option value="HAS_DONE_TASKS">Some recorded tasks done</option>
           </select>
         </label>
       ) : null}

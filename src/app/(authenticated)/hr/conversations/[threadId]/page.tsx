@@ -6,6 +6,8 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hrConversationDetailHref} from "@/modules/placements/hr-conversation-detail-links-model";
+import {recruiterProposalMessageMarker} from "@/modules/placements/hr-proposal-message-marker-model";
+import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {readRecruiterThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
@@ -27,6 +29,9 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   if(error instanceof TpoMessagingError)notFound();
   throw error;
  }
+ const messages=result.messages.map(message=>({
+  ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
+ }));
  return <main className="space-y-5">
   <PageHeader eyebrow="Recruiter · Conversations" title="Placement cell discussion"
    description="Only messages shared with your currently authorized recruiter account and college are visible."/>
@@ -35,9 +40,19 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
   <ol aria-label="Employer and placement cell messages" className="space-y-3">
-   {result.messages.map(message=><li key={message.id}
+   {messages.map(message=><li key={message.id}
     className="rounded-xl border border-border bg-surface p-4">
     <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"Recruiter":"Placement cell"} · {dateTime(message.createdAt)} IST</p>
+    {message.proposal?<div className="mt-2 rounded-md border border-border bg-surface-secondary p-3 text-xs text-body">
+      <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
+      <p>Role: {message.proposal.title}</p>
+      <p>Proposal reference: {message.proposal.referenceId}</p>
+      <p>Not a submitted approval request or a published drive.</p>
+      <Link href={hrSentProposalsHref(result.thread.collegeId)}
+       className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text">
+       View sent proposal history
+      </Link>
+     </div>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
    </li>)}
   </ol>

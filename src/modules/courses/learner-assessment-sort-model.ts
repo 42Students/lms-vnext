@@ -16,7 +16,12 @@ export function learnerAssessmentSort<T extends Assessment>(items:readonly T[],m
  const mode=schema.parse(modeInput);
  return [...items].sort((a,b)=>{
   if(mode==="TITLE")return a.title.localeCompare(b.title)||a.id.localeCompare(b.id);
-  if(mode==="CREATED")return (when(b.createdAt)??0)-(when(a.createdAt)??0)||a.id.localeCompare(b.id);
+  if(mode==="CREATED"){
+   const x=when(a.createdAt),y=when(b.createdAt);
+   if(x===null&&y!==null)return 1;
+   if(y===null&&x!==null)return -1;
+   return (y??0)-(x??0)||a.id.localeCompare(b.id);
+  }
   const x=when(a.dueAt),y=when(b.dueAt);
   if(x===null&&y!==null)return 1;
   if(y===null&&x!==null)return -1;
