@@ -1,6 +1,7 @@
 import "server-only";
 
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import { activityEvents, inAppNotifications } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -13,7 +14,8 @@ import { presentOwnLearnerPlacementAlerts } from "./learner-placement-alerts-mod
  * Personal PLACEMENTS events do not establish an official college notice
  * or a disputable placement sanction; do not present them as such.
  */
-export async function getOwnLearnerPlacementAlerts(context: RequestContext) {
+export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:unknown={}) {
+  const input=z.strictObject({unreadOnly:z.boolean().default(false),limit:z.number().int().min(1).max(50).default(8)}).parse(raw);
   const membership = await requireLearnerPlacementAccess(context);
   requirePermission(context, "placements.read", {
     collegeId: membership.collegeId,
@@ -32,8 +34,9 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext) {
       eq(inAppNotifications.userId, context.user.id),
       eq(activityEvents.collegeId, membership.collegeId),
       eq(activityEvents.module, "PLACEMENTS"),
+      ...(input.unreadOnly ? [isNull(inAppNotifications.readAt)] : []),
     ))
     .orderBy(desc(inAppNotifications.createdAt), desc(inAppNotifications.id))
-    .limit(8);
+    .limit(input.limit);
   return presentOwnLearnerPlacementAlerts(rows);
 }

@@ -1,0 +1,1 @@
+import {it,expect} from "vitest";import {z} from "zod";const schema=z.strictObject({unreadOnly:z.boolean().default(false),limit:z.number().int().min(1).max(50).default(8)});it("rejects unbounded personal notification fetching",()=>{expect(schema.safeParse({limit:1000}).success).toBe(false);expect(schema.parse({}).limit).toBe(8);});
