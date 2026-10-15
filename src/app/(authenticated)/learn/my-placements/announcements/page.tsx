@@ -67,8 +67,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             placeholder="Title or message" className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3" />
         </label>
         <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
-        {queryText ? <Link href="/learn/my-placements/announcements"
-          className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear filters</Link> : null}
+        {queryText ? <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:"",sort:sortKey})}
+          className="inline-flex min-h-11 items-center text-sm text-primary-text underline">Clear search</Link> : null}
       </form>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
         {pinnedOnly?<input type="hidden" name="pinned" value="1"/>:null}
