@@ -4,7 +4,7 @@ import Link from "next/link";
 import {aiGradingRubricForMaximum,type AiGradingSelection,type AiGradingRubric} from "@/modules/courses/faculty-ai-grading-model";
 import {facultyAiGradingReportHref} from "@/modules/courses/faculty-ai-grading-links";
 import {verifyFacultyAiGradingResult} from "@/modules/courses/faculty-ai-grading-result";
-import {facultyAiGradingEvidenceReviewed,toggleFacultyAiGradingReview} from "@/modules/courses/faculty-ai-grading-review";
+import {facultyAiGradingEvidenceReviewed,toggleFacultyAiGradingReview,facultyAiGradingDraftPoints} from "@/modules/courses/faculty-ai-grading-review";
 import {facultyAiGradingReviewReceipt} from "@/modules/courses/faculty-ai-grading-audit";
 
 type Selected={
@@ -69,13 +69,14 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
  function downloadReviewReceipt(){
   if(!reviewed||!suggestion||!submission.eligible)return;
   const rubric=parseRubric();
-  if(!rubric)return;
+  const humanPoints=facultyAiGradingDraftPoints(draftPoints,maxPoints);
+  if(!rubric||humanPoints===null){setReceiptStatus("Enter valid whole-number draft points before exporting.");return;}
   try{
    const receipt=facultyAiGradingReviewReceipt({
     reviewedAt:new Date().toISOString(),assignmentId:selection.assignmentId,
     deliveryId:selection.deliveryId,submissionId:selection.submissionId,
     submissionVersion:submission.version,rubric,suggestion,reviewedEvidence,
-    humanDraftPoints:Number(draftPoints),
+    humanDraftPoints:humanPoints,
    });
    const blob=new Blob([JSON.stringify(receipt,null,2)],{type:"application/json"});
    const url=URL.createObjectURL(blob);
@@ -125,7 +126,7 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
    <ol className="space-y-2">{suggestion.evidence.map(item=><li key={item.criterionId} className="rounded-md border border-border p-3 text-sm">
     <label className="flex items-start gap-2 font-semibold">
       <input type="checkbox" checked={reviewedEvidence.includes(item.criterionId)}
-       onChange={()=>setReviewedEvidence(current=>toggleFacultyAiGradingReview(current,item.criterionId))}/>
+       onChange={()=>{setReviewed(false);setReviewedEvidence(current=>toggleFacultyAiGradingReview(current,item.criterionId));}}/>
       Reviewed {item.criterionId}: {item.earnedPoints} points suggested
     </label>
     <blockquote className="mt-1 border-l-2 border-border pl-3">{item.excerpt}</blockquote>
