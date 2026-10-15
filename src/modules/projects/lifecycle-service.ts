@@ -22,7 +22,7 @@ import {
   postgresConstraintName,
 } from "./errors";
 import {
-  requireProjectLifecycleAccess,
+  requireProjectLifecycleMutationAccess,
 } from "./access";
 import {
   projectReleaseIdSchema,
@@ -133,7 +133,7 @@ export async function startProjectSprint(
   sprintIdInput: string,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
@@ -273,7 +273,7 @@ export async function completeProjectSprint(
   sprintIdInput: string,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
@@ -367,7 +367,7 @@ export async function reopenProjectSprint(
   sprintIdInput: string,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
@@ -512,7 +512,7 @@ export async function updateProjectTaskStatus(
   taskIdInput: string,
   rawInput: UpdateProjectTaskStatusInput,
 ) {
-  const scope = await requireProjectLifecycleAccess(context, projectIdInput);
+  const scope = await requireProjectLifecycleMutationAccess(context, projectIdInput);
   const input = updateProjectTaskStatusInputSchema.parse(rawInput);
   const taskId = projectTaskIdSchema.parse(taskIdInput);
 
@@ -591,7 +591,7 @@ export async function unshipProjectRelease(
   releaseIdInput: string,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
@@ -696,7 +696,7 @@ export async function shipProjectRelease(
   releaseIdInput: string,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
