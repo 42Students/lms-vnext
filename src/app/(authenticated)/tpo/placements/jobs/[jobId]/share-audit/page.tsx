@@ -1,0 +1,69 @@
+import Link from "next/link";
+import {redirect} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manage-service";
+import {tpoCompanyAuditKindSchema,tpoCompanyAuditHref,tpoCompanyAuditExportHref} from "@/modules/placements/company-share/audit-kind-model";
+import {companyShareAuditPageHref} from "@/modules/placements/company-share/audit-page-model";
+import {parseCompanyShareAuditQuery} from "@/modules/placements/company-share/audit-query-model";
+export const dynamic="force-dynamic";
+export default async function TpoCompanyShareAuditPage({params,searchParams}:{
+ params:Promise<{jobId:string}>;
+ searchParams:Promise<{kind?:string|string[];page?:string|string[]}>;
+}){
+ const context=await getCurrentRequestContext();
+ if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const {jobId}=await params;
+ const search=await searchParams;
+ const rawKind=Array.isArray(search.kind)?search.kind[0]:search.kind;
+ const rawPage=Array.isArray(search.page)?search.page[0]:search.page;
+ const parsed=parseCompanyShareAuditQuery({kind:rawKind,page:rawPage});
+ const back="/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview";
+ if(!parsed.success)return <section role="alert" className="space-y-3 rounded-xl border border-border bg-surface p-6">
+  <h1 className="text-lg font-semibold text-foreground">Invalid share-audit filters</h1>
+  <p className="text-sm text-body">Choose a valid event kind and page number. No access history was loaded.</p>
+  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-audit"} className="text-primary-text underline">Clear filters</Link>
+ </section>;
+ const {kind,page:auditPage}=parsed.data;
+ const result=await listTpoCompanyShareAudit(context,jobId,kind,auditPage);
+ return <div className="space-y-5">
+  <Link href={back} className="text-sm font-semibold text-primary-text underline">
+   Back to company-share preview
+  </Link>
+  <h1 className="text-2xl font-semibold text-foreground">Company-share access history</h1>
+  <nav aria-label="Company-share event filters" className="flex flex-wrap gap-3">
+   {tpoCompanyAuditKindSchema.options.map(option=><Link key={option}
+    href={tpoCompanyAuditHref(jobId,option)}
+    aria-current={kind===option?"page":undefined}
+    className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+    {option==="ALL"?"All events":option==="VIEW"?"Page views":"CSV downloads"}
+   </Link>)}
+  </nav>
+  {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)}
+    className="inline-flex min-h-10 items-center rounded bg-primary px-4 text-sm font-semibold text-on-primary">
+    Export access history CSV
+  </a>:null}
+  {!result.ready?<p role="status" className="rounded border border-border p-5">
+   Access history is unavailable until the share-audit migration is registered.
+  </p>:result.entries.length===0?<p role="status" className="rounded border border-border p-5">
+   No share-page views or CSV downloads match this event filter for this drive.
+  </p>:<div className="overflow-x-auto rounded-xl border border-border">
+   <table className="w-full min-w-[28rem] text-left text-sm">
+    <thead><tr><th className="p-3">Link prefix</th><th className="p-3">Action</th>
+     <th className="p-3">UTC timestamp</th></tr></thead>
+    <tbody>{result.entries.map((entry,index)=><tr key={index} className="border-t border-border">
+     <td className="p-3 font-mono">{entry.sharePrefix}</td>
+     <td className="p-3">{entry.kind}</td>
+     <td className="p-3">{entry.at}</td>
+    </tr>)}</tbody>
+   </table>
+  </div>}
+  {result.ready?<nav aria-label="Access history pages" className="flex flex-wrap gap-4 text-sm">
+   <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
+   {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
+    className="font-semibold text-primary-text underline">Previous</Link>:null}
+   {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
+    className="font-semibold text-primary-text underline">Next</Link>:null}
+  </nav>:null}
+ </div>;
+}

@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
+import {tpoStudentRequestShortcutFilters} from "@/modules/placements/tpo-student-request-shortcut-model";
 import {
   listTpoStudentRequests,
   tpoStudentRequestsQuerySchema,
@@ -200,7 +201,7 @@ export default async function TpoStudentRequestsPage({
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Link
-          href={requestsHref({ pageSize: query.pageSize })}
+          href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize))}
           aria-current={!query.status ? "page" : undefined}
           className={
             "rounded-xl border p-4 hover:border-primary " +
@@ -218,10 +219,7 @@ export default async function TpoStudentRequestsPage({
         {STATUSES.map((status) => (
           <Link
             key={status}
-            href={requestsHref({
-              status,
-              pageSize: query.pageSize,
-            })}
+            href={requestsHref(tpoStudentRequestShortcutFilters(query.search,query.pageSize,status))}
             aria-current={
               query.status === status ? "page" : undefined
             }
@@ -336,7 +334,37 @@ export default async function TpoStudentRequestsPage({
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <>
+          <ul aria-label="Student requests mobile view" className="space-y-3 md:hidden">
+            {data.requests.map((request) => (
+              <li key={request.id} className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="break-words font-semibold text-foreground">{request.studentName}</p>
+                    <p className="text-xs text-muted-foreground">{request.rollNumber ?? "No roll number"}</p>
+                  </div>
+                  <StatusBadge tone={requestTone(request.status)}>{humanize(request.status)}</StatusBadge>
+                </div>
+                <p className="text-sm font-semibold">{humanize(request.requestType)}</p>
+                <p className="break-words text-sm text-body">{request.jobTitle} · {request.companyName}</p>
+                <p className="whitespace-pre-wrap break-words text-sm text-body">{request.reason}</p>
+                {request.decisionNote ? <p className="whitespace-pre-wrap break-words text-sm text-muted-foreground">
+                  Decision: {request.decisionNote}
+                </p> : null}
+                <time dateTime={request.requestedAt.toISOString()} className="block text-xs text-muted-foreground">
+                  {formatRequestedAt(request.requestedAt)} IST
+                </time>
+                <Link href={`/tpo/placements/jobs/${encodeURIComponent(request.jobId)}`}
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  Open placement job
+                </Link>
+                {request.status==="PENDING" ? <TpoRequestDecisionControl
+                  requestId={request.id} expectedUpdatedAt={request.updatedAt.toISOString()}
+                  requestType={request.requestType}/> : null}
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
             <table className="w-full min-w-[65rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
@@ -421,6 +449,7 @@ export default async function TpoStudentRequestsPage({
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         <div className="flex flex-wrap items-center justify-between gap-3">

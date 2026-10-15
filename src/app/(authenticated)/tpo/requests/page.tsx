@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
-import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink} from "@/modules/placements/tpo-global-requests-model";
+import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
@@ -23,9 +23,23 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     redirect("/dashboard");
   }
   const raw = await searchParams;
-  const data = await getTpoGlobalRequestsInbox(context, {
-    status:first(raw.status),age:first(raw.age),sort:first(raw.sort),requestType:first(raw.requestType), search:first(raw.search), page:first(raw.page), pageSize:first(raw.pageSize),
+  const parsed=parseGlobalTpoRequestFilters({
+    status:first(raw.status),age:first(raw.age),sort:first(raw.sort),
+    requestType:first(raw.requestType),search:first(raw.search),
+    page:first(raw.page),pageSize:first(raw.pageSize),
   });
+  if(!parsed.success)return <main className="space-y-5">
+    <PageHeader eyebrow="TPO · Operations" title="Requests"
+      description="College-wide learner placement requests."/>
+    <section role="alert" className="rounded-xl border border-border bg-surface p-6">
+      <h2 className="font-semibold text-foreground">Invalid request filters</h2>
+      <p className="mt-2 text-sm text-body">Check the request status, kind, age, sorting and page values. No request data was loaded.</p>
+      <Link href="/tpo/requests" className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+        Clear invalid filters
+      </Link>
+    </section>
+  </main>;
+  const data = await getTpoGlobalRequestsInbox(context, parsed.data);
   const statusCounts=tpoRequestStatusCounts(data.summary);
   const asOf=new Date();
   return <main className="min-w-0 space-y-5">
@@ -46,15 +60,18 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <option value="25">25</option><option value="50">50</option><option value="100">100</option>
         </select>
       </label>
-      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option></select></label>
+      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
       <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
     </form>
     <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export current page CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
-      {data.total>0?"No requests on this page.":"No requests match the current filters."}
-      <Link href="/tpo/requests" className="ml-3 text-primary-text underline">Reset</Link>
+      {data.total>0?"This page is past the available request results.":"No requests match the current filters."}
+      <Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):"/tpo/requests"}
+       className="ml-3 inline-flex min-h-11 items-center text-primary-text underline">
+       {data.total>0?"First matching page":"Reset filters"}
+      </Link>
     </section>:<ul className="space-y-3">{data.requests.map(request=>
       <li key={request.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">

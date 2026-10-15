@@ -3,7 +3,7 @@ export const GLOBAL_TPO_REQUEST_TYPES=["ALL","APPLICATION_WITHDRAWAL","ROUND_RES
 export const globalTpoRequestsQuerySchema = z.object({
   status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
   requestType: z.enum(GLOBAL_TPO_REQUEST_TYPES).default("ALL"),
-  age: z.enum(["ALL","OLDER_THAN_7_DAYS"]).default("ALL"),
+  age: z.enum(["ALL","OLDER_THAN_1_DAY","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   sort: z.enum(["NEWEST_FIRST","OLDEST_FIRST"]).default("NEWEST_FIRST"),
   search: z.string().trim().max(150).default(""),
   page: z.coerce.number().int().min(1).max(100000).default(1),
@@ -43,4 +43,28 @@ export function tpoRequestContextLink(row:{requestType:string;roundId:string|nul
    return {href:"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)+"/joining",label:"Review offer and joining"};
  }
  return {href:"/tpo/placements/jobs/"+encodeURIComponent(row.jobId),label:"Open drive"};
+}
+
+/** Read-only URL recovery never attempts a data query with invalid filters. */
+export function parseGlobalTpoRequestFilters(raw:unknown){
+ return globalTpoRequestsQuerySchema.safeParse(raw);
+}
+
+export function globalTpoRequestFirstPageHref(query:{
+ status:string;age:string;sort:string;requestType:string;search:string;pageSize:number;
+}){
+ const p=new URLSearchParams();
+ p.set("status",query.status);
+ if(query.age!=="ALL")p.set("age",query.age);
+ p.set("sort",query.sort);
+ if(query.requestType!=="ALL")p.set("requestType",query.requestType);
+ if(query.search)p.set("search",query.search);
+ p.set("page","1");p.set("pageSize",String(query.pageSize));
+ return "/tpo/requests?"+p.toString();
+}
+
+/** Fixed clock injection makes the age cutoff reproducible in tests. */
+export function tpoRequestAgeCutoff(age:"ALL"|"OLDER_THAN_1_DAY"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS",asOf:Date){
+ if(age==="ALL")return undefined;
+ return new Date(asOf.getTime()-(age==="OLDER_THAN_1_DAY"?1:age==="OLDER_THAN_7_DAYS"?7:30)*86400000);
 }

@@ -27,15 +27,18 @@ import {
 import {
   TPO_RECRUITER_ACCESS_FILTERS,
   tpoRecruiterAccessHref,
+  nextTpoRecruiterGrantPage,
   tpoRecruiterAccessQuerySchema,
 } from "@/modules/placements/tpo-recruiter-access-model";
 import {
   listTpoRecruiterAccess,
 } from "@/modules/placements/tpo-recruiter-access-service";
+import {tpoRecruiterGrantExportHref} from "@/modules/placements/tpo-recruiter-grant-export-model";
 
 type SearchParams = {
   status?: string | string[];
   page?: string | string[];
+  q?: string | string[];
 };
 
 function first(
@@ -67,6 +70,7 @@ export default async function TpoRecruiterAccessPage({
     tpoRecruiterAccessQuerySchema.safeParse({
       status:
         first(params.status) || undefined,
+      q: first(params.q) || "",
       page:
         first(params.page) || undefined,
     });
@@ -183,6 +187,12 @@ export default async function TpoRecruiterAccessPage({
             </select>
           </label>
 
+          <label className="grid min-w-44 gap-2 text-sm font-semibold text-body">
+            Search recruiter or company
+            <input type="search" name="q" defaultValue={query.q} maxLength={80}
+              placeholder="Name contains..."
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
+          </label>
           <button
             type="submit"
             className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover"
@@ -204,6 +214,10 @@ export default async function TpoRecruiterAccessPage({
           <h2 className="text-lg font-semibold text-foreground">
             Grant records
           </h2>
+          <a href={tpoRecruiterGrantExportHref(query)}
+            className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Export filtered grants CSV
+          </a>
 
           <p className="text-sm text-muted-foreground">
             {total === 0
@@ -328,6 +342,7 @@ export default async function TpoRecruiterAccessPage({
               <Link
                 href={tpoRecruiterAccessHref({
                   status: query.status,
+                  q:query.q,
                   page: page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
@@ -338,10 +353,7 @@ export default async function TpoRecruiterAccessPage({
 
             {page < totalPages ? (
               <Link
-                href={tpoRecruiterAccessHref({
-                  status: query.status,
-                  page: page + 1,
-                })}
+                href={nextTpoRecruiterGrantPage(query,page)}
                 className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
               >
                 Next →
