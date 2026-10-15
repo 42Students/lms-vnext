@@ -32,6 +32,7 @@ import {
   placementJobEligibilityPolicies,
   placementCollegeRules,
   placementOffers,
+  placementRoundResults,
   placementBatchRegistrations,
   placementJobRoleOptions,
   programs,
@@ -549,6 +550,17 @@ export function resolveExistingApplication(
   return existing;
 }
 
+/** Re-application never resurrects stale screening, rounds, or official offers. */
+export function canReapplyWithdrawnPlacementApplication(input: {
+  sameChannel: boolean;
+  hasPriorOffer: boolean;
+  hasPriorRound: boolean;
+  screeningStatus: string | null;
+}): boolean {
+  return input.sameChannel && !input.hasPriorOffer && !input.hasPriorRound &&
+    input.screeningStatus === "PENDING";
+}
+
 export async function applyToPlacementJob(
   context: RequestContext,
   jobIdInput: string,
@@ -620,12 +632,11 @@ export async function applyToPlacementJob(
     )
     .limit(1);
 
-  if (existing) {
-    return resolveExistingApplication(
-      existing,
-      channel,
-    );
+  if (existing && existing.status !== "WITHDRAWN") {
+    return resolveExistingApplication(existing, channel);
   }
+  // A WITHDRAWN application must pass all current live eligibility gates
+  // again; only the audited transaction may restore SUBMITTED.
 
   const eligibility =
     await evaluatePlacementEligibility(
@@ -795,7 +806,46 @@ export async function applyToPlacementJob(
           eq(placementApplications.roleOptionId, roleOption.id),
           eq(placementApplications.membershipId, membership.id),
         )).for("update").limit(1);
-      if (liveExisting) return resolveExistingApplication(liveExisting, channel);
+      if (liveExisting) {
+        if (liveExisting.status !== "WITHDRAWN") {
+          return resolveExistingApplication(liveExisting, channel);
+        }
+        // P-S2-11: old withdrawn applications can be re-applied via 0088
+        // history ONLY if no previous offer/round/review must be unwound.
+        const [existingOffer] = await tx.select({ id: placementOffers.id })
+          .from(placementOffers)
+          .where(eq(placementOffers.applicationId, liveExisting.id)).limit(1);
+        const [existingRound] = await tx.select({ id: placementRoundResults.id })
+          .from(placementRoundResults)
+          .where(eq(placementRoundResults.applicationId, liveExisting.id)).limit(1);
+        const [screening] = await tx.select({ status: placementApplicationScreenings.status })
+          .from(placementApplicationScreenings)
+          .where(eq(placementApplicationScreenings.applicationId, liveExisting.id))
+          .for("update").limit(1);
+        if (!canReapplyWithdrawnPlacementApplication({
+          sameChannel: liveExisting.channel === channel,
+          hasPriorOffer: Boolean(existingOffer),
+          hasPriorRound: Boolean(existingRound),
+          screeningStatus: screening?.status ?? null,
+        })) {
+          throw new PlacementsServiceError("PLACEMENT_APPLICATION_ALREADY_WITHDRAWN");
+        }
+        const [restored] = await tx.update(placementApplications).set({
+          status: "SUBMITTED", withdrawnAt: null,
+          eligibilityStatus: liveEligibility.status,
+          eligibilitySnapshot: liveEligibility,
+          submittedAt: new Date(), submittedByUserId: context.user.id,
+          updatedAt: new Date(),
+        }).where(and(eq(placementApplications.id, liveExisting.id),
+          eq(placementApplications.status, "WITHDRAWN"))).returning();
+        if (!restored) throw new PlacementsServiceError("PLACEMENT_APPLICATION_ALREADY_WITHDRAWN");
+        await tx.insert(placementApplicationStatusHistory).values({
+          applicationId: restored.id,
+          fromStatus: "WITHDRAWN", toStatus: "SUBMITTED",
+          actorUserId: context.user.id,
+        });
+        return restored;
+      }
 
       const [application] = await tx
         .insert(placementApplications)
