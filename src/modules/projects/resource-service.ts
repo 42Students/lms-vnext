@@ -5,6 +5,9 @@ import {
   eq,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {projectResourceAuditInput} from "./mentor-resource-audit-model";
+import {randomUUID} from "node:crypto";
 import {
   projectInstances,
   projectResources,
@@ -124,6 +127,10 @@ export async function createProjectResource(
         })
         .returning();
 
+      if(!resource)throw new ProjectsServiceError("PROJECT_RESOURCE_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("CREATED",{
+        projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+      },resource));
       return resource;
     });
   } catch (error) {
@@ -222,6 +229,9 @@ export async function updateProjectResource(
       );
     }
 
+    await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("UPDATED",{
+      projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+    },updated,randomUUID()));
     return updated;
   });
 }
@@ -293,6 +303,9 @@ export async function archiveProjectResource(
       );
     }
 
+    await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("ARCHIVED",{
+      projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
+    },archived));
     return archived;
   });
 }
