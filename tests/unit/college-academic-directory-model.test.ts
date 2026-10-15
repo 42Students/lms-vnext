@@ -160,4 +160,10 @@ describe("College Admin semester and batch read models", () => {
   if(!bad.success)expect(bad.error.issues[0]?.message).toContain("Batch start-date end limit must not precede start limit");
   expect(collegeBatchDirectorySchema.safeParse({startOnOrAfter:"2026-09-09",startOnOrBefore:"2026-09-10"}).success).toBe(true);
  });
+ it("rejects missing progression versus recorded term but accepts noncontradictory choices",()=>{
+  const bad=collegeBatchDirectorySchema.safeParse({progression:"MISSING",currentTerm:2});
+  expect(bad.success).toBe(false);
+  if(!bad.success)expect(bad.error.issues[0]?.message).toContain("A missing progression record cannot have a recorded current term");
+  expect(collegeBatchDirectorySchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
+ });
 });

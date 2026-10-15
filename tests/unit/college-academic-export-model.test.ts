@@ -78,4 +78,8 @@ describe("college semester CSV",()=>{
   expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-09-10",startOnOrBefore:"2026-09-09"}).success).toBe(false);
   expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-09-09",startOnOrBefore:"2026-09-10"}).success).toBe(true);
  });
+ it("rejects missing progression versus recorded term in matching batch CSV",()=>{
+  expect(batchCsvSchema.safeParse({progression:"MISSING",currentTerm:2}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
+ });
 });
