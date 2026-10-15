@@ -185,6 +185,8 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
       query.progression === "RECORDED" ? isNotNull(cohortProgressionState.cohortId) :
         query.progression === "MISSING" ? isNull(cohortProgressionState.cohortId) : undefined,
       query.status === "ALL" ? undefined : eq(cohorts.status, query.status),
+      query.activeLearnerState === "HAS_ACTIVE" ? exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments).innerJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"))).where(and(eq(learnerProgramEnrollments.cohortId,cohorts.id),eq(learnerProgramEnrollments.status,"ACTIVE")))) :
+        query.activeLearnerState === "NONE_ACTIVE" ? not(exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments).innerJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"))).where(and(eq(learnerProgramEnrollments.cohortId,cohorts.id),eq(learnerProgramEnrollments.status,"ACTIVE"))))) : undefined,
       query.activeClassState === "HAS_ACTIVE" ? exists(db.select({id:sections.id}).from(sections).where(and(eq(sections.cohortId,cohorts.id),eq(sections.status,"ACTIVE")))) :
         query.activeClassState === "NONE_ACTIVE" ? not(exists(db.select({id:sections.id}).from(sections).where(and(eq(sections.cohortId,cohorts.id),eq(sections.status,"ACTIVE"))))) : undefined,
       query.expectedEndState === "SET" ? isNotNull(cohorts.expectedEndPeriodId) : query.expectedEndState === "UNSET" ? isNull(cohorts.expectedEndPeriodId) : undefined,
