@@ -30,15 +30,21 @@ export const studentRuleHistoryCursorSchema=z.strictObject({
  beforeId:z.uuid().optional(),
  module:z.enum(["all","projects","electives"]).default("all"),
  actorName:z.string().trim().max(100).default(""),
+ from:z.union([z.literal(""),z.iso.date()]).default(""),
+ to:z.union([z.literal(""),z.iso.date()]).default(""),
 }).refine(value=>Boolean(value.beforeOccurredAt)===Boolean(value.beforeId),{
  message:"Both pagination cursor fields are required",
+}).refine(value=>!value.from||!value.to||value.from<=value.to,{
+ message:"History start cannot be later than end",path:["to"],
 });
 export function studentRuleHistoryHref(collegeId:string,membershipId:string,
- next:{beforeOccurredAt:Date;beforeId:string}|null,module:"all"|"projects"|"electives"="all",actorName=""){
+ next:{beforeOccurredAt:Date;beforeId:string}|null,module:"all"|"projects"|"electives"="all",actorName="",from="",to=""){
  const base="/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)+"/history";
  const query=new URLSearchParams();
  if(module!=="all")query.set("module",module);
  if(actorName.trim())query.set("actorName",actorName.trim());
+ if(from)query.set("from",from);
+ if(to)query.set("to",to);
  if(next){query.set("beforeOccurredAt",next.beforeOccurredAt.toISOString());query.set("beforeId",next.beforeId);}
  return query.size?base+"?"+query.toString():base;
 }

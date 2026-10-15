@@ -31,4 +31,11 @@ describe("Super Admin student rule audit projection",()=>{
   expect(studentRuleHistoryCursorSchema.parse(Object.fromEntries(new URL(url,"https://example.com").searchParams)).actorName).toBe("Admin A");
   expect(studentRuleHistoryCursorSchema.safeParse({actorName:"x".repeat(101)}).success).toBe(false);
  });
+ it("enforces validated India-day history date range across pages",()=>{
+  const id="92b172ff-3817-44bf-9b48-e9afab2e93d0";
+  expect(studentRuleHistoryCursorSchema.safeParse({from:"2026-10-16",to:"2026-10-15"}).success).toBe(false);
+  expect(studentRuleHistoryCursorSchema.safeParse({from:"2026-13-01"}).success).toBe(false);
+  const href=studentRuleHistoryHref(id,id,null,"all","","2026-10-01","2026-10-15");
+  expect(studentRuleHistoryCursorSchema.parse(Object.fromEntries(new URL(href,"https://example.com").searchParams)).to).toBe("2026-10-15");
+ });
 });

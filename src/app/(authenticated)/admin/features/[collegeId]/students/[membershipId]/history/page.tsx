@@ -26,6 +26,12 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
     <input name="actorName" maxLength={100} defaultValue={cursor.data.actorName}
      className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
    </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">From (India day)
+    <input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">To (India day)
+    <input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
+   </label>
    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter history</button>
    <Link href={studentRuleHistoryHref(collegeId,membershipId,null)} className="inline-flex min-h-11 items-center text-primary-text">Clear</Link>
   </form>
@@ -35,7 +41,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
     <p className="mt-2 text-sm text-body">{item.change}</p>
     <p className="mt-2 text-xs text-muted-foreground">{item.actorName} · {item.occurredAt.toLocaleString("en-IN")}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName)} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Older changes →</Link>:null}
+  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Older changes →</Link>:null}
   <Link href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open scoped Activity Log →</Link>
  </div>;

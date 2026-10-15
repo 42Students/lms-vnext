@@ -16,6 +16,7 @@ export async function listSuperAdminStudentRuleHistory(context:RequestContext,co
   subjectType:"MEMBERSHIP",subjectId:membershipId,limit:40,
   metadataModule:cursor.module==="all"?undefined:cursor.module,
   actorName:cursor.actorName||undefined,
+  from:cursor.from||undefined,to:cursor.to||undefined,
   beforeOccurredAt:cursor.beforeOccurredAt?new Date(cursor.beforeOccurredAt):undefined,
   beforeId:cursor.beforeId
  });
