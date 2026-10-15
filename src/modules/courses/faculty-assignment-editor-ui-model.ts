@@ -61,3 +61,11 @@ export function facultyAssignmentArchiveWarning(title:string){
  const name=title.trim().slice(0,120)||"this assignment";
  return "Archive "+name+"? It will leave active course views, but historical submission and audit records remain.";
 }
+
+/** Persisted due instants cannot be published after the deadline passes. */
+export function facultyAssignmentPublishIssue(dueAt:string|null,now:Date):string|null {
+ if(dueAt===null)return null;
+ const when=new Date(dueAt).getTime();
+ if(!Number.isFinite(when))return "Assignment due date is invalid; reload this Section.";
+ return when<=now.getTime()?"Due date has passed. Save a future deadline before publishing.":null;
+}
