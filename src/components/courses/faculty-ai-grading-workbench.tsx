@@ -4,6 +4,7 @@ import Link from "next/link";
 import {aiGradingRubricForMaximum,type AiGradingSelection,type AiGradingRubric} from "@/modules/courses/faculty-ai-grading-model";
 import {facultyAiGradingReportHref} from "@/modules/courses/faculty-ai-grading-links";
 import {verifyFacultyAiGradingResult} from "@/modules/courses/faculty-ai-grading-result";
+import {facultyAiGradingEvidenceReviewed,toggleFacultyAiGradingReview} from "@/modules/courses/faculty-ai-grading-review";
 
 type Selected={
  id:string;version:number;submissionType:string;gradingStatus:string;
@@ -24,6 +25,7 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
  const [permission,setPermission]=useState(false);
  const [suggestion,setSuggestion]=useState<ReturnType<typeof verifyFacultyAiGradingResult>["suggestion"]|null>(null);
  const [reviewed,setReviewed]=useState(false);
+ const [reviewedEvidence,setReviewedEvidence]=useState<string[]>([]);
  const [draftPoints,setDraftPoints]=useState("");
  const [draftFeedback,setDraftFeedback]=useState("");
  function parseRubric():AiGradingRubric|null{
@@ -33,12 +35,12 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
   }catch{setRubricError("Enter valid rubric JSON with unique criterion IDs and exactly "+maxPoints+" total points.");return null;}
  }
  function onRubricChange(value:string){
-  setRubricText(value);setSuggestion(null);setReviewed(false);setRubricError(null);setProviderStatus(null);
+  setRubricText(value);setSuggestion(null);setReviewed(false);setReviewedEvidence([]);setRubricError(null);setProviderStatus(null);
  }
  async function requestSuggestion(){
   const rubric=parseRubric();
   if(!rubric||!permission||!submission.eligible||!submission.textContent)return;
-  setSuggestion(null);setReviewed(false);setProviderStatus(null);setRequesting(true);
+  setSuggestion(null);setReviewed(false);setReviewedEvidence([]);setProviderStatus(null);setRequesting(true);
   try{
    const response=await fetch("/api/ai-grading/suggest",{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -101,12 +103,20 @@ export function FacultyAiGradingWorkbench({selection,maxPoints,submission}:{
    <p className="text-sm text-body">{suggestion.feedback}</p>
    <p className="text-sm font-semibold text-body">Suggested {suggestion.proposedScore} / {maxPoints} points (not a grade)</p>
    <ol className="space-y-2">{suggestion.evidence.map(item=><li key={item.criterionId} className="rounded-md border border-border p-3 text-sm">
-    <p className="font-semibold">{item.criterionId}: {item.earnedPoints} points suggested</p>
+    <label className="flex items-start gap-2 font-semibold">
+      <input type="checkbox" checked={reviewedEvidence.includes(item.criterionId)}
+       onChange={()=>setReviewedEvidence(current=>toggleFacultyAiGradingReview(current,item.criterionId))}/>
+      Reviewed {item.criterionId}: {item.earnedPoints} points suggested
+    </label>
     <blockquote className="mt-1 border-l-2 border-border pl-3">{item.excerpt}</blockquote>
     <p className="mt-2 text-body">{item.reason}</p>
    </li>)}</ol>
    <p className="text-xs text-muted-foreground">Review every rubric finding against the submitted text before accepting a draft.</p>
-   <button type="button" onClick={()=>setReviewed(true)} className="min-h-10 rounded-md border border-border px-4 text-sm">Mark evidence reviewed</button>
+   <button type="button" disabled={!facultyAiGradingEvidenceReviewed(suggestion.evidence,reviewedEvidence)}
+    onClick={()=>{
+      if(!window.confirm("Use this untrusted suggestion as an unsaved draft after reviewing every criterion? No grade will be saved or published."))return;
+      setDraftPoints(String(suggestion.proposedScore));setDraftFeedback(suggestion.feedback);setReviewed(true);
+    }} className="min-h-10 rounded-md border border-border px-4 text-sm disabled:opacity-50">Accept into local draft only</button>
   </div>:null}
   {reviewed?<section className="space-y-2 rounded-lg border border-border p-4">
    <h3 className="font-semibold">Human draft only</h3>
