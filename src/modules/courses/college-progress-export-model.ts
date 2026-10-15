@@ -4,7 +4,6 @@ export const PROGRESS_EXPORT_CAP=1000;
 export const collegeProgressCsvSchema=collegeProgressQuerySchema.omit({page:true});
 export {exportParams};
 export function collegeProgressCsvHref(query: Partial<Omit<CollegeProgressQuery, "page">>) {
-export function collegeProgressCsvHref(query: CollegeProgressQuery) {
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.courseCode)p.set("courseCode",query.courseCode);
@@ -33,16 +32,6 @@ export function collegeProgressCsvHref(query: CollegeProgressQuery) {
  if(query.hiddenContentState&&query.hiddenContentState!=="ALL")p.set("hiddenContentState",query.hiddenContentState);
  if(query.sharedContentState&&query.sharedContentState!=="ALL")p.set("sharedContentState",query.sharedContentState);
  if(query.sectionContentState&&query.sectionContentState!=="ALL")p.set("sectionContentState",query.sectionContentState);
- if(query.lessonPresence!=="ALL")p.set("lessonPresence",query.lessonPresence);
- if(query.assignmentPresence!=="ALL")p.set("assignmentPresence",query.assignmentPresence);
- if(query.quizPresence!=="ALL")p.set("quizPresence",query.quizPresence);
- if(query.resourcePresence!=="ALL")p.set("resourcePresence",query.resourcePresence);
- if(query.liveClassPresence!=="ALL")p.set("liveClassPresence",query.liveClassPresence);
- if(query.videoContentState!=="ALL")p.set("videoContentState",query.videoContentState);
- if(query.publishedContentState!=="ALL")p.set("publishedContentState",query.publishedContentState);
- if(query.hiddenContentState!=="ALL")p.set("hiddenContentState",query.hiddenContentState);
- if(query.sharedContentState!=="ALL")p.set("sharedContentState",query.sharedContentState);
- if(query.sectionContentState!=="ALL")p.set("sectionContentState",query.sectionContentState);
  if(query.offeringId)p.set("offeringId",query.offeringId);
  if(query.draftContentState!=="ALL")p.set("draftContentState",query.draftContentState);
  if(query.archivedContentState!=="ALL")p.set("archivedContentState",query.archivedContentState);

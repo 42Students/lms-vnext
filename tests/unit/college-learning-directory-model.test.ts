@@ -13,6 +13,23 @@ import {
 } from "@/modules/courses/college-learning-directory-model";
 
 describe("College Admin lessons and course progress pure models", () => {
+
+  it("serializes merged College Admin progress facets without duplicate URL parameters", () => {
+    const query = collegeProgressQuerySchema.parse({
+      draftContentState: "NO_DRAFT",
+      archivedContentState: "HAS_ARCHIVED",
+      sectionContentState: "NO_SECTION",
+      sharedContentState: "HAS_SHARED",
+    });
+    const href = collegeProgressCsvHref(query);
+    const params = new URL(href, "https://example.test").searchParams;
+    expect(params.get("draftContentState")).toBe("NO_DRAFT");
+    expect(params.get("archivedContentState")).toBe("HAS_ARCHIVED");
+    expect(params.get("sectionContentState")).toBe("NO_SECTION");
+    expect(params.get("sharedContentState")).toBe("HAS_SHARED");
+    expect([...params.keys()].length).toBe(new Set(params.keys()).size);
+  });
+
   it("defaults to active rows and strict college-independent query boundaries", () => {
     expect(collegeLearningQuerySchema.parse({}))
       .toEqual({ q: "", status: "ACTIVE", page: 1 });
