@@ -884,3 +884,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 Companies domain search (PARTIAL):** Employer lookup can search persisted `primary_domain` as distinct from company name, preserving literal SQL wildcard escaping, college safety scope and pagination. No sensitive CRM/private contacts are retrieved. Strict model and real-Postgres fixture authored, not run; legacy employer alias search and browser parity open.
+
+
+**2026-10-15 chat-6 company identity drill-down (PARTIAL):** Each company relationship card links to an exact global employer-ID filter while retaining authorization against the caller's selected college/organization. Archived relationships can be inspected without making them editable; strict UUID input, pagination retention and unit/PG tests authored, unrun. Full legacy CRM detail and browser validation remain open.

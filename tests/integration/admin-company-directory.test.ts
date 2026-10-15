@@ -41,6 +41,8 @@ describe.skipIf(!enabled)("Super Admin company directory PostgreSQL", () => {
     expect(recent.rows.some(row=>row.relationshipId===created.relationship.id)).toBe(true);
     const byDomain=await listSuperAdminCompanyDirectory(chosen,{q:"sa-"+unique+".example",searchField:"DOMAIN"});
     expect(byDomain.rows.some(row=>row.relationshipId===created.relationship.id)).toBe(true);
+    const sameCompany=await listSuperAdminCompanyDirectory(chosen,{companyId:created.company.id,status:"ALL",companyStatus:"ALL"});
+    expect(sameCompany.rows.every(row=>row.companyId===created.company.id)).toBe(true);
     const trusted = await listSuperAdminCompanyDirectory(chosen, {q: "SA Company " + unique, trust:"TRUSTED"});
     const untrusted = await listSuperAdminCompanyDirectory(chosen, {q: "SA Company " + unique, trust:"UNTRUSTED"});
     expect([...trusted.rows,...untrusted.rows].some(row=>row.relationshipId===created.relationship.id)).toBe(true);
