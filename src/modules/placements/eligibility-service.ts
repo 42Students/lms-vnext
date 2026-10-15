@@ -804,6 +804,28 @@ export function derivePlacementLateralEntry(evidence: {
       evidence?.twelfthPctBasisPoints == null);
 }
 
+/**
+ * P-S2-02: lowest completed school/college percentage in basis points.
+ * Return null unless all required stages are provided; missing is not 0%.
+ * A lateral entrant uses diploma as their secondary qualification.
+ */
+export function placementPercentageThroughout(input: {
+  tenthPctBasisPoints: number | null;
+  twelfthPctBasisPoints: number | null;
+  diplomaPctBasisPoints: number | null;
+  undergraduatePctBasisPoints: number | null;
+  isLateralEntry: boolean | null;
+}): number | null {
+  const secondary = derivePlacementLateralEntry(input)
+    ? input.diplomaPctBasisPoints : input.twelfthPctBasisPoints;
+  const required = [
+    input.tenthPctBasisPoints, secondary, input.undergraduatePctBasisPoints,
+  ];
+  return required.every((value): value is number =>
+    value !== null && Number.isFinite(value) && value >= 0)
+    ? Math.min(...(required as number[])) : null;
+}
+
 export async function evaluatePlacementEligibility(
   context: RequestContext,
   jobIdInput: string,
