@@ -581,6 +581,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Empty/error states match.
 
 ## Page: Assignments
+**Missing assessment deadline triage PARTIAL (2026-10-15):** College Admin Assignment and Quiz directories now isolate persisted NULL deadlines from configured due timestamps before the record cap. Strict Zod, pagination and own-college PostgreSQL fixture coverage added; no due date is inferred. Browser acceptance pending.
+
 **Exact course-code aggregate filter PARTIAL (2026-10-15):** College Admin quizzes and assignments accept an exact persisted course code before paginated totals with a URL-preserved filter and strict validation. The database fixture tests positive/negative matches in the existing college-owned assessment ancestry. Browser/runtime acceptance open.
 
 **Legacy:** `/college-admin/assignments`
