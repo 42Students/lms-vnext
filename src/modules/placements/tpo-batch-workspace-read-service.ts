@@ -8,6 +8,7 @@ import { placementBatchLifecycles, placementEligibilityEvents } from "@/db/schem
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { placementTableExists } from "./staged-tables";
+import { requirePlacementManageScope } from "./scope";
 const uuid=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export async function requireTpoBatchActor(ctx:RequestContext) {
@@ -19,8 +20,9 @@ export async function requireTpoBatchActor(ctx:RequestContext) {
   .where(and(eq(collegeMemberships.id,m.id),eq(collegeMemberships.collegeId,m.collegeId),
    eq(collegeMemberships.userId,ctx.user.id),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))).limit(1);
  if(!persisted)throw new AuthorizationError("placements.manage");
- requirePermission(ctx,"placements.manage",{collegeId:m.collegeId,organizationId:m.organizationId});
- return m.collegeId;
+ const college=await requirePlacementManageScope(ctx,m.collegeId);
+ requirePermission(ctx,"placements.manage",{collegeId:college.id,organizationId:college.organizationId});
+ return college.id;
 }
 export async function listTpoBatches(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
