@@ -361,4 +361,17 @@ describe.skipIf(!enabled)("College learning directories use disposable PostgreSQ
     expect(foreign.items).toEqual([]);
   });
 
+  it("lessons departmentCode matches only the registered owning course department",async()=>{
+    const result=await pool!.query<{code:string}>("SELECT code FROM departments WHERE id=$1",[SEED_IDS.departmentA]);
+    const code=result.rows[0]!.code;
+    const [yes,no,foreign]=await Promise.all([
+      listCollegeLessons(own,{q:name,departmentCode:code}),
+      listCollegeLessons(own,{q:name,departmentCode:"NO-EXISTENT-DEPT"}),
+      listCollegeLessons(otherCollege,{q:name,departmentCode:code}),
+    ]);
+    expect(yes.items.map(row=>row.id)).toContain(ids.lesson);
+    expect(no.items).toEqual([]);
+    expect(foreign.items).toEqual([]);
+  });
+
 });
