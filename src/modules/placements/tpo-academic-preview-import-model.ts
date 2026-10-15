@@ -13,12 +13,14 @@ export function parseTpoAcademicPreviewCsv(csv:string){
  return rows.slice(1).filter(Boolean).map((line,index)=>{
   if(line.includes('"')||line.split(",").length!==3)throw new Error("Invalid unquoted CSV at row "+(index+2));
   const [studentCode,cgpa,activeBacklogs]=line.split(",");
-  const result=tpoAcademicPreviewRowSchema.parse({studentCode:studentCode.trim(),cgpa:cgpa.trim(),activeBacklogs:activeBacklogs.trim()});
+  const cgpaText=z.string().regex(/^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/).parse(cgpa.trim());
+  const backlogText=z.string().regex(/^(?:0|[1-9]\d*)$/).parse(activeBacklogs.trim());
+  const result=tpoAcademicPreviewRowSchema.parse({studentCode:studentCode.trim(),cgpa:Number(cgpaText),activeBacklogs:Number(backlogText)});
   if(seen.has(result.studentCode))throw new Error("Duplicate learner UUID at row "+(index+2));
   seen.add(result.studentCode);return result;
  });
 }
-export function previewTpoAcademicPageMatches<T extends {studentCode:string}>(rows:readonly T[],scopedIds:readonly string[]){
+export function previewTpoAcademicPageMatches<T extends {studentCode:string}>(rows:readonly T[],scopedIds:readonly string[]):Array<T&{matchedOnCurrentPage:boolean}>{
  const ids=new Set(scopedIds);
  return rows.map(row=>({...row,matchedOnCurrentPage:ids.has(row.studentCode)}));
 }
