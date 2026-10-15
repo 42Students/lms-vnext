@@ -17,6 +17,8 @@ Every page below also requires:
 
 **Announcements personal inbox unread filter PARTIAL (2026-10-15):** College Admin notices can filter unread, own-recipient *registered* notifications within the signed-in college before the 50-row cap. Toggle preserves the deleted-announcement selector. The draft college-wide DB10 announcement table remains gated and no broadcast sending is claimed. Pure model and isolated PG own/foreign/wrong-role tests authored; runtime/browser acceptance open.
 
+**Cross-lane delegated TPO spreadsheet wiring PARTIAL (chat-9):** Per orchestrator request, shared grid, column chooser and URL-kept canonical filters are now mounted on TPO Students and drive Applications, retaining scoped server reads and row actions. Export-only fields do not enter visible columns. UI/browser acceptance and legacy inline-edit parity open.
+
 ## Page: Profile Verification (legacy /college-admin/verification)
 **Bulk confirmation draft hygiene PARTIAL (chat-9):** Changing selected learners or switching bulk action clears prior shared correction reasons; controls and draft input lock during in-flight saves. This prevents accidentally applying a previous batch’s correction text to new learners. Count/busy-state unit tests authored; browser/API acceptance remains open.
 **Frozen single-review confirmation inputs PARTIAL (chat-9):** When a Verify/Send back confirmation is open, staff cannot silently change correction reasons or swap actions before clicking Confirm; Cancel returns to editable inputs. In-flight saves remain locked. Pure transition tests authored, browser/end-to-end acceptance pending.

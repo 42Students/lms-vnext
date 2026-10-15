@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {Suspense} from "react";
+import {TpoApplicationsSpreadsheet} from "@/components/tpo/tpo-applications-spreadsheet";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -71,17 +73,9 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
   {!data.rows.length?<EmptyState title="No matching applicants" description="No stored applications match the selected stage and search."/>:
-   <section className="grid gap-3" aria-label="Applicant records">
-   {data.rows.map(a=><article key={a.id} className="rounded-xl border border-border bg-surface p-4">
-     <h2 className="font-semibold text-foreground">{a.student??"Name unavailable"}</h2>
-     <p className="mt-1 text-sm text-body">{a.role} · {applicantStage(a)} · Application {a.applicationStatus}</p>
-     <p className="mt-1 text-xs text-body">Submitted {new Date(a.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={data.job.status} app={a}/>
-     <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+a.id}
-       className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
-       Open applicant detail →
-     </Link>
-   </article>)}</section>}
+   <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
+    <TpoApplicationsSpreadsheet rows={data.rows} jobId={jobId} jobStatus={data.job.status}/>
+   </Suspense>}
   <nav aria-label="Applicant pages" className="flex flex-wrap items-center justify-between gap-3">
    {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link>:<span/>}
    {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Next</Link>:null}
