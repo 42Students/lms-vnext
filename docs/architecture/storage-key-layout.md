@@ -16,7 +16,7 @@ Key shape: `org-<orgId>/college-<collegeId>/<folder>[/<owner>][/project-<id>]/<r
 ## vNext (`src/modules/storage/private-object-storage.ts`)
 
 Logical key (stored in the DB): `private/<college UUID>/<membership UUID>/<namespace>/<object UUID>`.
-Namespaces: `profile-verification`, `assignment-submission`, `course-resource`, `project-resource`.
+Namespaces: `profile-verification`, `assignment-submission`, `course-resource`, `project-resource`, `lesson-video` (lesson videos and their thumbnails).
 
 | Legacy folder | vNext namespace |
 | --- | --- |
@@ -24,5 +24,6 @@ Namespaces: `profile-verification`, `assignment-submission`, `course-resource`, 
 | `assignments` (course and project submissions) | `assignment-submission` |
 | `lesson-content` | `course-resource` |
 | project resources | `project-resource` |
+| lesson videos (`lesson-content` with `type=video`) | `lesson-video` |
 
 Dev bucket sharing: with `R2_PRIVATE_PREFIX=vnext-dev/` (development only) the physical object key is `vnext-dev/private/<college>/<membership>/<namespace>/<uuid>`. The prefix never overlaps with legacy keys, which all start with `org-`. Health-check objects live at `vnext-dev/_healthcheck/<random>.txt`. Never list, overwrite or delete anything outside `vnext-dev/`.

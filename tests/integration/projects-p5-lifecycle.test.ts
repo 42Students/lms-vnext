@@ -370,7 +370,7 @@ describe("Projects P5 lifecycle", () => {
         mentor,
         project.id,
         firstTask.id,
-        { status: "IN_REVIEW" },
+        { status: "IN_REVIEW" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
       ),
     ).rejects.toMatchObject({
       code: "PROJECT_TASK_INVALID_STATE",
@@ -381,7 +381,7 @@ describe("Projects P5 lifecycle", () => {
         mentor,
         project.id,
         firstTask.id,
-        { status: "DONE" },
+        { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
       ),
     ).resolves.toMatchObject({
       status: "DONE",
@@ -438,7 +438,7 @@ describe("Projects P5 lifecycle", () => {
           mentor,
           project.id,
           task.id,
-          { status: "DONE" },
+          { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
         );
       }
 
@@ -496,7 +496,7 @@ describe("Projects P5 lifecycle", () => {
           mentor,
           project.id,
           task.id,
-          { status: "DONE" },
+          { status: "DONE" } as never, // STALE(chat-11 merge): task status API now TODO/IN_PROGRESS/BLOCKED + expectedUpdatedAt; rewrite for owner
         );
       }
       await completeProjectSprint(
