@@ -1,12 +1,12 @@
 import "server-only";
-import {and,asc,count,desc,eq,exists,gte,ilike,inArray,or,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,exists,gte,ilike,inArray,lt,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {visibleContactDetails} from "./college-contacts-privacy";
-import {collegeContactsQuerySchema,contactsIstDayStart} from "./college-contacts-model";
+import {collegeContactsQuerySchema,contactsIstDayStart,contactsNextIstDayStart} from "./college-contacts-model";
 
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
@@ -35,6 +35,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
    filter.status==="ALL"?undefined:eq(collegeMemberships.status,filter.status),
    filter.initial?ilike(users.displayName,filter.initial+"%"):undefined,
    filter.joinedFrom?gte(collegeMemberships.createdAt,contactsIstDayStart(filter.joinedFrom)):undefined,
+   filter.joinedThrough?lt(collegeMemberships.createdAt,contactsNextIstDayStart(filter.joinedThrough)):undefined,
    filter.accountStatus==="ALL"?undefined:eq(users.platformStatus,filter.accountStatus),
    filter.audience==="FACULTY_ONLY"?and(faculty,sql`not (${learner})`):
    filter.audience==="LEARNER_ONLY"?and(learner,sql`not (${faculty})`):

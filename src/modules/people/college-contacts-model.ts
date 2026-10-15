@@ -5,6 +5,7 @@ export const collegeContactsQuerySchema=z.strictObject({
   q:z.string().trim().max(100).default(""),
   initial:z.string().regex(/^[A-Z]$/).optional(),
   joinedFrom:z.iso.date().optional(),
+  joinedThrough:z.iso.date().optional(),
   status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
   accountStatus:z.enum(["ALL","ACTIVE","DISABLED"]).default("ALL"),
   audience:z.enum(["ALL","FACULTY_ONLY","LEARNER_ONLY","DUAL"]).default("ALL"),
@@ -16,12 +17,16 @@ export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
 export function contactsIstDayStart(day:string):Date {
  return new Date(day+"T00:00:00+05:30");
 }
+export function contactsNextIstDayStart(day:string):Date {
+ return new Date(contactsIstDayStart(day).getTime()+86400000);
+}
 export function collegeContactsHref(filter:CollegeContactsQuery):string{
  const params=new URLSearchParams();
  if(filter.tab!=="ALL")params.set("tab",filter.tab);
  if(filter.q)params.set("q",filter.q);
  if(filter.initial)params.set("initial",filter.initial);
  if(filter.joinedFrom)params.set("joinedFrom",filter.joinedFrom);
+ if(filter.joinedThrough)params.set("joinedThrough",filter.joinedThrough);
  if(filter.status!=="ACTIVE")params.set("status",filter.status);
  if(filter.accountStatus!=="ALL")params.set("accountStatus",filter.accountStatus);
  if(filter.audience!=="ALL")params.set("audience",filter.audience);
