@@ -2,6 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
+import {authoringDueInstant,authoringLocalDateTime} from "@/modules/courses/faculty-authoring-datetime-model";
 
 type Choice={id:string;title:string;deliveryId:string};
 type Session={
@@ -38,8 +39,8 @@ export function FacultyLiveClassEditor({
           action, ...(action==="CREATE"?{lessonId}:{contentId:chosen?.id,
             expectedUpdatedAt:chosen?.expectedUpdatedAt}),
           title,meetingUrl,
-          startsAt:new Date(startsAt).toISOString(),
-          endsAt:new Date(endsAt).toISOString(),confirm:true,
+          startsAt:authoringDueInstant(startsAt),
+          endsAt:authoringDueInstant(endsAt),confirm:true,
         };
       const result=await fetch(
         "/api/courses/faculty/live-classes/"+encodeURIComponent(deliveryId)+"/command",
@@ -54,7 +55,7 @@ export function FacultyLiveClassEditor({
     className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Schedule or manage a live class</h2>
     <p className="text-xs text-muted-foreground">
-      Use your device time zone for the meeting time; dates are stored as offset-aware instants.
+      Enter meeting times in IST (Asia/Kolkata), regardless of your device time zone.
       Each confirmed write is scoped to your assigned Section. HTTPS links only.
     </p>
     <div className="grid gap-3 sm:grid-cols-2">
