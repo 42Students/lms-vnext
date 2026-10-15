@@ -1482,3 +1482,5 @@ Thirty of chat-3's 43 comparison paths already match main byte-for-byte, includi
 **2026-10-15 Electives PARTIAL:** Elective active offering presence reflects persisted, tenant-scoped active linked course offerings, keeping pagination/CSV aligned; unit and disposable-PG tests authored, executed/browser/legacy gates open.
 
 **2026-10-15 Super Admin template creation safety (chat-3, source-authored):** Direct `/admin/projects/templates/new` navigation in a selected college/organization scope now renders a non-leaking access-denied panel with a route back to the catalogue instead of throwing `project-template.manage`; unscoped global creation retains its permission gate. Regression guard and scoped permission checks authored; actual browser acceptance pending.
+
+**College Admin Batches filter validation PARTIAL (2026-10-15 chat-3):** batch start-date order rejects contradictory URL and CSV choices before querying tenant data, with page/CSV regression tests authored. Execution, browser and legacy oracle verification remain open.

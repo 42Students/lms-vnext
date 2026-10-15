@@ -154,4 +154,10 @@ describe("College Admin semester and batch read models", () => {
     expect(academicDirectoryHref("BATCHES",collegeBatchDirectorySchema.parse({activeLearnerState:"HAS_ACTIVE"}))).toContain("activeLearnerState=HAS_ACTIVE");
   });
 
+ it("rejects batch start-date order but accepts noncontradictory choices",()=>{
+  const bad=collegeBatchDirectorySchema.safeParse({startOnOrAfter:"2026-09-10",startOnOrBefore:"2026-09-09"});
+  expect(bad.success).toBe(false);
+  if(!bad.success)expect(bad.error.issues[0]?.message).toContain("Batch start-date end limit must not precede start limit");
+  expect(collegeBatchDirectorySchema.safeParse({startOnOrAfter:"2026-09-09",startOnOrBefore:"2026-09-10"}).success).toBe(true);
+ });
 });

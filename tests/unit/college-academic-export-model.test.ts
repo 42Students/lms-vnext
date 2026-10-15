@@ -74,5 +74,8 @@ describe("college semester CSV",()=>{
    expect(academicExportHref("BATCHES",{q:"",status:"ALL",activeLearnerState:"NONE_ACTIVE"})).toContain("activeLearnerState=NONE_ACTIVE");
  });
 
+ it("rejects batch start-date order in matching batch CSV",()=>{
+  expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-09-10",startOnOrBefore:"2026-09-09"}).success).toBe(false);
+  expect(batchCsvSchema.safeParse({startOnOrAfter:"2026-09-09",startOnOrBefore:"2026-09-10"}).success).toBe(true);
+ });
 });
-

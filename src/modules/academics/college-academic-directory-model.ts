@@ -26,7 +26,7 @@ export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCred
 
 export const collegeSemesterDirectorySchema = withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema);
 
-export const collegeBatchDirectorySchema = z.object({
+export const collegeBatchDirectoryBaseSchema = z.object({
   ...common,
   yearStart: z.coerce.number().int().min(1900).max(9998).optional(),
   currentTerm: z.coerce.number().int().min(1).max(24).optional(),
@@ -40,6 +40,12 @@ export const collegeBatchDirectorySchema = z.object({
   startOnOrBefore: z.iso.date().optional(),
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
+
+export function withCollegeBatchFilterCheck<T extends z.ZodType<{startOnOrAfter?:string;startOnOrBefore?:string;progression?:"ALL"|"RECORDED"|"MISSING";currentTerm?:number;yearStart?:number;academicYearState?:"ALL"|"RECORDED"|"UNRECORDED"}>>(schema:T){
+ return schema.refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||q.startOnOrAfter<=q.startOnOrBefore,
+  {path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit"});
+}
+export const collegeBatchDirectorySchema=withCollegeBatchFilterCheck(collegeBatchDirectoryBaseSchema);
 
 export type CollegeSemesterDirectoryQuery = z.infer<typeof collegeSemesterDirectorySchema>;
 export type CollegeBatchDirectoryQuery = z.infer<typeof collegeBatchDirectorySchema>;
