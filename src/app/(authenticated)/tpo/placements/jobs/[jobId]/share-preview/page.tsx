@@ -8,6 +8,7 @@ import { tpoShareableShortlistQuerySchema } from "@/modules/placements/tpo-share
 import { getTpoShareableShortlist } from "@/modules/placements/tpo-shareable-shortlist-service";
 import { listTpoCompanyApplicantShares } from "@/modules/placements/company-share/manage-service";
 import { CompanyShareControls } from "./company-share-controls";
+import {tpoFilteredSharePreviewExportHref} from "@/modules/placements/tpo-share-preview-export-href";
 import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; q?:string|string[] };
@@ -51,7 +52,7 @@ export default async function TpoShortlistSharePreviewPage({
     <PageHeader eyebrow="TPO · Placements"
       title={data.job.title + " · Recruiter-visible shortlist preview"}
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
-      actions={<a href={"/api/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview/export"}
+      actions={<a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
         className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Export capped CSV
       </a>}
