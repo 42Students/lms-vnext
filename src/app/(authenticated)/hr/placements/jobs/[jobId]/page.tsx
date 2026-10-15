@@ -14,6 +14,8 @@ import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-mod
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
+import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
+import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 
@@ -67,6 +69,15 @@ export default async function HrPlacementJobPage({
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
   if (filters.applicant && !selectedApplicant) notFound();
+  let applicantNotes: Awaited<ReturnType<typeof listRecruiterApplicantNotes>> | null = null;
+  if (selectedApplicant) {
+    try {
+      applicantNotes = await listRecruiterApplicantNotes(context, workspace.job.id, selectedApplicant.id);
+    } catch (error) {
+      // Withdrawn applicants are outside the notes scope; any other failure is real.
+      if (!(error instanceof PlacementsServiceError && error.code === "PLACEMENT_APPLICATION_NOT_FOUND")) throw error;
+    }
+  }
   const selectedRound = workspace.rounds.find(round => round.id === filters.roundId) ??
     (filters.roundId ? null : workspace.rounds[0] ?? null);
   if (filters.roundId && !selectedRound) notFound();
@@ -265,7 +276,16 @@ export default async function HrPlacementJobPage({
                 <div><dt className="text-muted-foreground">Placement-cell screening</dt><dd className="text-foreground">{selectedApplicant.screening}</dd></div>
                 <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(selectedApplicant.submittedAt)}</dd></div>
               </dl>
-              <p className="mt-5 text-sm text-muted-foreground">Recruiter notes and round-specific review decisions are not yet persisted by this read-only drawer. The placement team controls official screening.</p>
+              {applicantNotes ? (
+                <div className="mt-5">
+                  <ApplicantNotesPanel
+                    endpoint={"/api/placements/recruiter/jobs/" + workspace.job.id + "/applicants/" + selectedApplicant.id + "/notes"}
+                    snapshot={applicantNotes}
+                    audience="recruiters of your company with access to this drive"
+                  />
+                </div>
+              ) : null}
+              <p className="mt-5 text-sm text-muted-foreground">Round-specific review decisions are not persisted by this drawer. The placement team controls official screening.</p>
               <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"}
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
