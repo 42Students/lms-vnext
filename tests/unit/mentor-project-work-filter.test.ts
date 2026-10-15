@@ -5,3 +5,10 @@ describe("Mentor tracked task coverage",()=>{
  it("keeps unfiltered projects visible",()=>expect(f(undefined,undefined)).toBe(true));
  it("validates URL state strictly",()=>expect(schema.parse({work:"NO_TASKS"}).work).toBe("NO_TASKS"));
 });
+
+it("shows only projects with persisted non-DONE work",()=>{
+  expect(f("HAS_OPEN_TASKS",undefined)).toBe(false);
+  expect(f("HAS_OPEN_TASKS",{total:3,open:2})).toBe(true);
+  expect(f("HAS_OPEN_TASKS",{total:2,open:0})).toBe(false);
+  expect(schema.safeParse({work:"UNREGISTERED"}).success).toBe(false);
+});

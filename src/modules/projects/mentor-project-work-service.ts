@@ -1,5 +1,5 @@
 import "server-only";
-import { count, inArray, eq } from "drizzle-orm";
+import { count, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectTasks } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -16,8 +16,9 @@ export async function getMentorProjectWorkCounts(context: RequestContext) {
   const ids=projects.map(row=>row.project.id);
   const counts=new Map<string,{total:number;open:number}>();
   if(!ids.length)return counts;
-  const rows=await getDb().select({projectId:projectTasks.projectId,total:count()})
+  const rows=await getDb().select({projectId:projectTasks.projectId,total:count(),
+      open:sql<number>`count(*) filter (where ${projectTasks.status} <> 'DONE')::int`})
     .from(projectTasks).where(inArray(projectTasks.projectId,ids)).groupBy(projectTasks.projectId);
-  for(const row of rows)counts.set(row.projectId,{total:Number(row.total),open:0});
+  for(const row of rows)counts.set(row.projectId,{total:Number(row.total),open:Number(row.open)});
   return counts;
 }
