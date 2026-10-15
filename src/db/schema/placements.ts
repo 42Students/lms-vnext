@@ -722,6 +722,11 @@ export const placementJobEligibilityPolicies = pgTable(
       .array()
       .notNull()
       .default(sql`'{}'::uuid[]`),
+    /** P-S2-04: section targeting; empty = no section restriction. */
+    allowedSectionIds: uuid("allowed_section_ids")
+      .array()
+      .notNull()
+      .default(sql`'{}'::uuid[]`),
     minCgpaHundredths: integer("min_cgpa_hundredths"),
     maxActiveBacklogs: integer("max_active_backlogs"),
     maxPastBacklogs: integer("max_past_backlogs"),
