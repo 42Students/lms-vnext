@@ -5,7 +5,7 @@ export const semesterCsvSchema=withCollegeSemesterCreditCheck(collegeSemesterDir
 export const batchCsvSchema=collegeBatchDirectorySchema.omit({page:true});
 export type AcademicCsvKind="SEMESTERS"|"BATCHES";
 export function academicExportHref(kind:AcademicCsvKind,query:{
- q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;maximumCredits?:number;yearStart?:number;currentTerm?:number;progression?:"ALL"|"RECORDED"|"MISSING";
+ q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;maximumCredits?:number;creditState?:"ALL"|"CONFIGURED"|"UNSET";yearStart?:number;currentTerm?:number;progression?:"ALL"|"RECORDED"|"MISSING";
 }){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
@@ -14,6 +14,7 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
  if(kind==="SEMESTERS"&&query.termNumber!==undefined)p.set("termNumber",String(query.termNumber));
  if(kind==="SEMESTERS"&&query.minimumCredits!==undefined)p.set("minimumCredits",String(query.minimumCredits));
  if(kind==="SEMESTERS"&&query.maximumCredits!==undefined)p.set("maximumCredits",String(query.maximumCredits));
+ if(kind==="SEMESTERS"&&query.creditState&&query.creditState!=="ALL")p.set("creditState",query.creditState);
  if(kind==="BATCHES"&&query.yearStart!==undefined)p.set("yearStart",String(query.yearStart));
  if(kind==="BATCHES"&&query.currentTerm!==undefined)p.set("currentTerm",String(query.currentTerm));
  if(kind==="BATCHES"&&query.progression&&query.progression!=="ALL")p.set("progression",query.progression);

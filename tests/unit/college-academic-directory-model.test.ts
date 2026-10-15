@@ -101,4 +101,9 @@ describe("College Admin semester and batch read models", () => {
       currentTermNumber: 3, currentAcademicYearStart: 2026,
     })).toBe("Term 3 · 2026–2027");
   });
+  it("distinguishes semester credits that are configured from missing evidence", () => {
+    expect(collegeSemesterDirectorySchema.safeParse({creditState:"GUESSED"}).success).toBe(false);
+    expect(academicDirectoryHref("SEMESTERS",collegeSemesterDirectorySchema.parse({creditState:"UNSET"}))).toContain("creditState=UNSET");
+  });
+
 });
