@@ -23,6 +23,7 @@ type SearchParams = {
   q?: string | string[];
   page?: string | string[];
   sort?: string | string[];
+  outcome?:string|string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -41,7 +42,7 @@ export default async function TpoByCompanyReportPage({
   }
 
   const query = await searchParams;
-  const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{})});
+  const viewQuery=companyReportViewSchema.safeParse({...(first(query.q)?{q:first(query.q)}:{}),...(first(query.page)?{page:first(query.page)}:{}),...(first(query.sort)?{sort:first(query.sort)}:{}),...(first(query.outcome)?{outcome:first(query.outcome)}:{})});
   if(!viewQuery.success)return <section role="alert" className="rounded-xl border border-border bg-surface p-6"><h1 className="font-semibold text-foreground">Invalid company report filters</h1><p className="mt-2 text-sm text-body">Check search length and page number.</p></section>;
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
@@ -51,7 +52,7 @@ export default async function TpoByCompanyReportPage({
 
   const view=paginateCompanyReport(workspace.report.byCompany,viewQuery.data);
   const companyLinks=buildTpoCompanyReportLinks(view.rows);
-  const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,sort:view.query.sort,page});
+  const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page});
   return (
     <div className="space-y-6">
       <PageHeader
@@ -61,7 +62,7 @@ export default async function TpoByCompanyReportPage({
         actions={<div className="flex flex-wrap items-center gap-2">
           <ReportCsvLink workspace={workspace} kind="by-company" />
           <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
-            jobId:workspace.selectedJobId??undefined,q:view.query.q,sort:view.query.sort,page:view.page})}
+            jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
             className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
             Export visible companies CSV
           </a>
@@ -76,6 +77,12 @@ export default async function TpoByCompanyReportPage({
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">Search company name
           <input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+        </label><label className="grid gap-1 text-sm font-semibold text-body">Recorded placement outcome
+          <select name="outcome" defaultValue={view.query.outcome}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="ALL">All companies</option><option value="HAS_PLACED">At least one placed learner</option>
+            <option value="NO_PLACED">No placed learners recorded</option>
+          </select>
         </label><label className="grid gap-1 text-sm font-semibold text-body">Order companies
           <select name="sort" defaultValue={view.query.sort} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>

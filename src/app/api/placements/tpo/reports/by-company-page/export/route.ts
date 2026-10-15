@@ -15,7 +15,7 @@ export async function GET(request:Request){
   }
   const params=new URL(request.url).searchParams;
   const parsed=companyReportViewSchema.safeParse({
-   q:params.get("q")??"",sort:params.get("sort")??"NAME",page:params.get("page")??1,
+   q:params.get("q")??"",outcome:params.get("outcome")??"ALL",sort:params.get("sort")??"NAME",page:params.get("page")??1,
   });
   if(!parsed.success)return NextResponse.json({error:"INVALID_REPORT_FILTERS"},{status:400});
   const workspace=await getPlacementReportWorkspace(context,{

@@ -11,12 +11,13 @@ export function tpoVisibleCompanyReportCsv(rows:readonly PlacementReportCompanyR
  );
 }
 export function tpoCompanyPageCsvHref(filters:{
- seasonId?:string;jobId?:string;q?:string;sort:string;page:number;
+ seasonId?:string;jobId?:string;q?:string;outcome?:string;sort:string;page:number;
 }){
  const p=new URLSearchParams();
  if(filters.seasonId)p.set("seasonId",filters.seasonId);
  if(filters.jobId)p.set("jobId",filters.jobId);
  if(filters.q)p.set("q",filters.q);
+ if(filters.outcome&&filters.outcome!=="ALL")p.set("outcome",filters.outcome);
  p.set("sort",filters.sort);p.set("page",String(filters.page));
  return "/api/placements/tpo/reports/by-company-page/export?"+p.toString();
 }
