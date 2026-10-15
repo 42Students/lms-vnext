@@ -13,6 +13,7 @@ import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { FacultySubmissionFileReview } from "./faculty-submission-file-review";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
@@ -261,7 +262,9 @@ function SubmissionGradeCard({
       </div>
 
       <div className="mt-3 rounded-md bg-[var(--lms-neutral-50)] p-3">
-        {content.kind === "TEXT" ? (
+        {submission.submissionType === "FILE" && filesEnabled ? (
+          <FacultySubmissionFileReview submissionId={submission.id} />
+        ) : content.kind === "TEXT" ? (
           <p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p>
         ) : content.kind === "FILE" || content.kind === "LINK" ? (
           <Link href={content.href} target="_blank" rel="noopener noreferrer" prefetch={false}
