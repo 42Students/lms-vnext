@@ -1019,3 +1019,6 @@ Auth, scope and storage tests included where appropriate are **authored, not exe
 
 
 **2026-10-15 chat-6 default feature filter correction (PARTIAL):** Normalize the browser form's empty Any-college module selector into no filter before strict Zod service parsing. Unknown module strings still fail closed. Unit default-form regression authored; manual browser submission not yet run.
+
+
+**2026-10-15 chat-6 disposable PostgreSQL filter acceptance fixture (AUTHORED, NOT EXECUTED):** A temporary organization-owned college verifies no-rule → stored locked Off transitions, same-row module/value/lock/recent filters, count and row consistency, foreign selected-college denial and wrong-role denial, plus page CSV. Guarded behind TEST_DATABASE_URL and DB03 isolated target; cleans up temporary rule and college. Execution/CI and visual parity remain blockers.
