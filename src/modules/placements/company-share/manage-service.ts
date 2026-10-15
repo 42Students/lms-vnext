@@ -2,7 +2,7 @@ import "server-only";
 import { and, count, desc, eq, gt, inArray, isNotNull, isNull, lte, sql } from "drizzle-orm";
 import { projectCompanyShareAudit } from "./audit-history-model";
 import {tpoCompanyAuditKindSchema} from "./audit-kind-model";
-import {companyShareAuditPageSchema,COMPANY_SHARE_AUDIT_PAGE_SIZE,COMPANY_SHARE_AUDIT_EXPORT_LIMIT} from "./audit-page-model";
+import {companyShareAuditPageSchema,COMPANY_SHARE_AUDIT_PAGE_SIZE,COMPANY_SHARE_AUDIT_EXPORT_LIMIT,clampCompanyShareAuditPage} from "./audit-page-model";
 import { getDb } from "@/db/client";
 import {placementJobs} from "@/db/schema";
 import {requirePersistedTpoMembership} from "../tpo-persisted-actor-service";
@@ -128,16 +128,20 @@ export async function listTpoCompanyShareAudit(
  const jobId=companyShareIssueSchema.shape.jobId.parse(rawJobId);
  const college=await tpoJob(context,jobId);
  if(!await companyShareTablesReady())return {ready:false,entries:[],limited:false,page};
- const rows=await getDb().select({
+ const filter=and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId),
+  kind==="ALL"?undefined:eq(views.eventKind,kind));
+ const joined=()=>getDb().select({
   shareId:views.shareId,eventKind:views.eventKind,occurredAt:views.occurredAt,
- }).from(views).innerJoin(shares,and(
-  eq(shares.id,views.shareId),eq(shares.collegeId,views.collegeId),
- )).where(and(eq(shares.collegeId,college.id),eq(shares.jobId,jobId),
-  kind==="ALL"?undefined:eq(views.eventKind,kind)))
-  .orderBy(desc(views.occurredAt),desc(views.id))
+ }).from(views).innerJoin(shares,and(eq(shares.id,views.shareId),eq(shares.collegeId,views.collegeId))).where(filter);
+ const [totals]=await getDb().select({total:count()}).from(views)
+  .innerJoin(shares,and(eq(shares.id,views.shareId),eq(shares.collegeId,views.collegeId))).where(filter);
+ const total=totals?.total??0;
+ const pagination=clampCompanyShareAuditPage(page,total);
+ const rows=await joined().orderBy(desc(views.occurredAt),desc(views.id))
   .limit((options.exportAll?COMPANY_SHARE_AUDIT_EXPORT_LIMIT:COMPANY_SHARE_AUDIT_PAGE_SIZE)+1)
-  .offset(options.exportAll?0:(page-1)*COMPANY_SHARE_AUDIT_PAGE_SIZE);
+  .offset(options.exportAll?0:(pagination.page-1)*COMPANY_SHARE_AUDIT_PAGE_SIZE);
  const limit=options.exportAll?COMPANY_SHARE_AUDIT_EXPORT_LIMIT:COMPANY_SHARE_AUDIT_PAGE_SIZE;
  return {ready:true,entries:projectCompanyShareAudit(rows.slice(0,limit)),
-  page:options.exportAll?1:page,limited:rows.length>limit};
+  page:options.exportAll?1:pagination.page,total,totalPages:pagination.totalPages,
+  limited:rows.length>limit};
 }
