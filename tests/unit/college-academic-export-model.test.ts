@@ -90,4 +90,9 @@ describe("college semester CSV",()=>{
   expect(batchCsvSchema.safeParse({progression:"MISSING",yearStart:2026}).success).toBe(false);
   expect(batchCsvSchema.safeParse({progression:"RECORDED",yearStart:2026}).success).toBe(true);
  });
+ it("enforces the same missing-credit constraints for semester CSV",()=>{
+  expect(semesterCsvSchema.safeParse({creditState:"UNSET",minimumCredits:10}).success).toBe(false);
+  expect(semesterCsvSchema.safeParse({creditState:"UNSET",maximumCredits:10}).success).toBe(false);
+  expect(semesterCsvSchema.safeParse({creditState:"UNSET"}).success).toBe(true);
+ });
 });
