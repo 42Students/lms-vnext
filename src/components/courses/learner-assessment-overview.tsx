@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { learnerAssessmentCourseScopeCount } from "@/modules/courses/learner-assessment-course-scope-count-model";
 import { learnerAssessmentDateLabel } from "@/modules/courses/learner-assessment-date-label-model";
 import {
   useEffect,
@@ -220,7 +221,7 @@ export function LearnerAssessmentOverview({
         />
         <Metric
           label="Courses"
-          value={courses.length}
+          value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
         />
         <Metric label="Needs action" value={actionCounts.pending} />
         <Metric label="Overdue / missed" value={actionCounts.overdue} />
