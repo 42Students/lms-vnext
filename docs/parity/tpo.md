@@ -2073,3 +2073,5 @@ Main already contains migration 0064, TPO batch list/student/rules/history reade
 **Chat-2 live unrecorded attendance — PARTIAL:** Added separate UNKNOWN focus on actual records, never classifying unknown as a no-show; filters operate on authorized, capped rounds. Integration/browser verification remains open.
 
 **Chat-2 live unresolved attention — PARTIAL:** Added pending-or-unrecorded focus from persisted counts. Explicit absent-only rounds are excluded and unrecorded is not inferred absent; TPO live sample cap persists.
+
+**Chat-2 live unresolved ranking — PARTIAL:** TPO can prioritize scoped live rounds by sum of recorded WAITING and UNKNOWN counts with deterministic ties, without mixing explicit ABSENT/no-show into unresolved; runtime verification pending.
