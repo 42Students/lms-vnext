@@ -596,6 +596,8 @@ Implementation note (2026-10-14): `/college/attendance` has a policy card, Class
 - [ ] Loading/empty/error states match.
 
 ## Page: Quizzes
+**Shared versus section-specific assessment scope PARTIAL (2026-10-15):** The quizzes and assignments aggregates now distinguish actual NULL versus non-NULL delivery associations before page totals; URL state and strictly typed filter options are preserved. Disposable PostgreSQL own-college scope fixtures authored; browser acceptance pending.
+
 **Legacy:** `/college-admin/quizzes`
 
 **Read-first aggregate PARTIAL:** `/college/quizzes` lists persisted college-owned quizzes, with title/status filters, due dates, lesson/course context, attempt-row counts, an offering deep link, loading/error/empty states and no quiz-answer disclosure. Legacy authoring/edit/question/results management and browser parity remain unchecked.

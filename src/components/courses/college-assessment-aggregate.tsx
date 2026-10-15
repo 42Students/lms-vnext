@@ -74,6 +74,14 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+            Audience scope
+            <select name="scope" defaultValue={data.query.scope}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
+              <option value="SECTION">Section-specific</option>
+            </select>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">

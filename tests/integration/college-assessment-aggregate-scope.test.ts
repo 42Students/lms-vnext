@@ -163,6 +163,12 @@ describe.skipIf(!enabled)("College Admin assessment aggregates — disposable Po
     }
     expect(foreignAssignments.items).toEqual([]);
     expect(foreignQuizzes.items).toEqual([]);
+    for(const kind of ["ASSIGNMENT","QUIZ"] as const){
+      const shared=await listCollegeAssessmentAggregate(adminA,kind,{q:code,scope:"SHARED"});
+      const section=await listCollegeAssessmentAggregate(adminA,kind,{q:code,scope:"SECTION"});
+      expect(shared.items).toHaveLength(1);
+      expect(section.items).toEqual([]);
+    }
   });
 
   it("denies learners and fails closed on foreign college parameters", async () => {

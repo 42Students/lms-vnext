@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNull, isNotNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   assignmentSubmissions,
@@ -70,6 +70,8 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.scope==="SHARED"?isNull(courseAssignments.deliveryId):
+        query.scope==="SECTION"?isNotNull(courseAssignments.deliveryId):undefined,
       query.q ? ilike(courseAssignments.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
@@ -105,6 +107,8 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.scope==="SHARED"?isNull(courseQuizzes.deliveryId):
+        query.scope==="SECTION"?isNotNull(courseQuizzes.deliveryId):undefined,
       query.q ? ilike(courseQuizzes.title, textPattern(query.q)) : undefined,
     );
     const scoped = db.select({
