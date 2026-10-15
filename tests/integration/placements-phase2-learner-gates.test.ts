@@ -290,4 +290,66 @@ describe("Section A: placement write/read integration boundaries", () => {
   });
 
 
+  it("P-S1-06 accept cascade declines sibling offers and withdraws sibling applications atomically", async () => {
+    const first = await makeJob("Accepted primary");
+    const second = await makeJob("Withdrawn sibling");
+    const applicationA = await applyToPlacementJob(learner, first.id, {});
+    const applicationB = await applyToPlacementJob(learner, second.id, {});
+    const deadline = new Date(Date.now()+7*24*3_600_000);
+    const createOffer = async (applicationId:string, version:number, ctc:number) => {
+      const row = await pool.query<{id:string}>(`
+        INSERT INTO placement_offers
+          (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
+        VALUES($1,$2,'OFFER','ISSUED','Placement Engineer',$3,$4,$5)
+        RETURNING id
+      `, [applicationId, version, ctc, SEED_IDS.facultyUser, deadline]);
+      return row.rows[0]!.id;
+    };
+    const chosenId = await createOffer(applicationA.id, 1, 1_500_000);
+    const siblingId = await createOffer(applicationB.id, 1, 1_800_000);
+
+    const accepted = await actOnPlacementOffer(learner, chosenId, {action:"ACCEPT"});
+    expect(accepted.status).toBe("ACCEPTED");
+    expect(accepted).toMatchObject({cascadeId:expect.any(String)});
+
+    const live = await pool.query<{id:string;status:string}>(`
+      SELECT id,status FROM placement_offers WHERE id=ANY($1::uuid[])
+    `, [[chosenId,siblingId]]);
+    expect(live.rows.find(x=>x.id===chosenId)?.status).toBe("ACCEPTED");
+    expect(live.rows.find(x=>x.id===siblingId)?.status).toBe("DECLINED");
+
+    const application = await pool.query<{status:string}>(`
+      SELECT status FROM placement_applications WHERE id=$1
+    `, [applicationB.id]);
+    expect(application.rows[0]?.status).toBe("WITHDRAWN");
+
+    const acceptedHistory = await pool.query<{reason:string|null}>(`
+      SELECT reason FROM placement_offer_status_history
+      WHERE offer_id=$1 AND to_status='ACCEPTED'
+    `, [chosenId]);
+    const reason = acceptedHistory.rows[0]?.reason;
+    expect(reason).toMatch(/^cascade:[0-9a-f-]{36}$/);
+    const token = reason!.slice("cascade:".length);
+    const siblingHistory = await pool.query<{reason:string|null}>(`
+      SELECT reason FROM placement_offer_status_history
+      WHERE offer_id=$1 AND to_status='DECLINED'
+    `, [siblingId]);
+    expect(siblingHistory.rows[0]?.reason).toBe("placed elsewhere; cascade:"+token);
+    const applicationHistory = await pool.query<{reason:string|null}>(`
+      SELECT reason FROM placement_application_status_history
+      WHERE application_id=$1 AND to_status='WITHDRAWN'
+    `, [applicationB.id]);
+    expect(applicationHistory.rows[0]?.reason).toBe("placed elsewhere; cascade:"+token);
+
+    // A retry cannot create a second cascade or duplicate sibling history.
+    const repeated = await actOnPlacementOffer(learner, chosenId, {action:"ACCEPT"});
+    expect(repeated).toMatchObject({status:"ACCEPTED",cascadeId:token});
+    const count = await pool.query<{count:number}>(`
+      SELECT count(*)::int AS count FROM placement_offer_status_history
+      WHERE offer_id=$1 AND to_status='DECLINED'
+    `, [siblingId]);
+    expect(count.rows[0]?.count).toBe(1);
+  });
+
+
 });
