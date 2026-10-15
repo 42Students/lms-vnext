@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementCalendarWorkspace } from "@/components/placements/placement-calendar-workspace";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {parseTpoCalendarUrl} from "@/modules/placements/tpo-calendar-url-model";
+import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 
 type SearchParams = {
   date?: string | string[];
@@ -28,6 +29,7 @@ export default async function TpoCalendarPage({
     redirect("/dashboard");
   }
 
+  await requirePersistedTpoMembership(context,context.membership.collegeId);
   const raw=await searchParams;
   const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
   const parsed=parseTpoCalendarUrl({
