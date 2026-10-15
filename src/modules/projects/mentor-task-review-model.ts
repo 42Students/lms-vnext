@@ -6,7 +6,7 @@ export const mentorTaskReviewQuerySchema = z.object({
   projectId: z.preprocess(v=>v===""?undefined:v,z.string().uuid().optional()),
   priority: z.enum(["ALL","LOW","MEDIUM","HIGH","CRITICAL"]).default("ALL"),
   version: z.preprocess(v=>v===""?undefined:v,z.coerce.number().int().min(1).max(100000).optional()),
-  age: z.enum(["ALL","LAST_7_DAYS","OLDER_THAN_7_DAYS"]).default("ALL"),
+  age: z.enum(["ALL","LAST_7_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   order: z.enum(["NEWEST","OLDEST","PRIORITY"]).default("NEWEST"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().min(1).max(50).default(20),
@@ -49,4 +49,15 @@ export function mentorTaskReviewSummary(input: {
     first:input.total===0?0:(page-1)*input.pageSize+1,
     last:Math.min(input.total,page*input.pageSize),
   };
+}
+
+/** Shared cutoff keeps the SQL queue's persisted submit-age filters testable. */
+export function mentorTaskReviewAgeBoundary(
+  age:"ALL"|"LAST_7_DAYS"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS",
+  now: Date,
+){
+ if(age==="ALL")return null;
+ const days=age==="OLDER_THAN_30_DAYS"?30:7;
+ return {cutoff:new Date(now.getTime()-days*86400000),
+   older:age==="OLDER_THAN_7_DAYS"||age==="OLDER_THAN_30_DAYS"};
 }

@@ -26,7 +26,8 @@ export function verificationEnrollmentPredicates(collegeId:string,filter:Verific
     filter.branchId?eq(departments.id,filter.branchId):undefined,
     filter.programId?eq(programs.id,filter.programId):undefined))
  ):undefined;
- const section=mode==="SECTION"?exists(
+ const sectionId=filter.sectionId;
+ const section=mode==="SECTION"&&sectionId?exists(
   db.select({sectionEnrollmentId:sectionEnrollments.id}).from(sectionEnrollments)
    .innerJoin(learnerProgramEnrollments,and(
      eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
@@ -41,11 +42,11 @@ export function verificationEnrollmentPredicates(collegeId:string,filter:Verific
    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
      eq(departments.collegeId,collegeId)))
    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
-     eq(sectionEnrollments.sectionId,filter.sectionId),
+     eq(sectionEnrollments.sectionId,sectionId),
      eq(sectionEnrollments.status,"ACTIVE"),
      filter.batchId?eq(cohorts.id,filter.batchId):undefined,
      filter.branchId?eq(departments.id,filter.branchId):undefined,
-     filter.programId?eq(programs.id,filter.programId):undefined)))
+     filter.programId?eq(programs.id,filter.programId):undefined))
  ):undefined;
  return [cohortOrBranch,section,filter.enrollment==="ACTIVE"?hasEnrollment:filter.enrollment==="NONE"?not(hasEnrollment):undefined] as const;
 }

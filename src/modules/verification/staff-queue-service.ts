@@ -19,7 +19,7 @@ import {requireCollegeVerificationActor,requireVerificationTables} from "./staff
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
 import {verificationEnrollmentPredicates} from "./staff-filter-scope";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
-import type {VerificationRecord,VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
+import type {VerificationStatus,VerificationSection} from "@/modules/profile-verification/domain";
 
 export class VerificationQueueLimitError extends Error {
  constructor(){super("VERIFICATION_QUEUE_LIMIT_REACHED");}
