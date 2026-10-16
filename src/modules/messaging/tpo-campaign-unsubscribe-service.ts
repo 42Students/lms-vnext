@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoLeadActivities,placementTpoEmailCampaignRecipients} from "@/db/schema/tpo-crm";
 import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision} from "./tpo-campaign-recipient-token";
@@ -8,17 +8,16 @@ export class CampaignUnsubscribeInvalid extends Error {
   constructor(){super("CAMPAIGN_UNSUBSCRIBE_INVALID");this.name="CampaignUnsubscribeInvalid";}
 }
 
-/** T-S2-04: NOT ROUTED (tables registered in migration 0095).
- * The delivery provider and TPO_CAMPAIGNS_READY gate must be approved first.
+/** T-S2-04: routed for verified signed recipient opt-outs.
+ * Campaign delivery still requires a provider and allowlist-approved send path.
  * A signed link alone cannot switch identities; live recipient rows are locked
  * and tied to the matching college, campaign and lead before any update.
  */
 export async function unsubscribeTpoCampaignRecipient(
   token:string,
 ):Promise<{unsubscribed:true}>{
-  if(process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"){
-    throw new Error("TPO_CAMPAIGNS_NOT_REGISTERED");
-  }
+  const registered=await getDb().execute<{ready:boolean}>(sql`select to_regclass('public.placement_tpo_email_campaign_recipients') is not null as ready`);
+  if(registered.rows[0]?.ready!==true)throw new Error('TPO_CAMPAIGNS_NOT_REGISTERED');
   const key=process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"";
   const claim=verifyTpoCampaignRecipientToken(token,key,Date.now());
   if(!claim)throw new CampaignUnsubscribeInvalid();
