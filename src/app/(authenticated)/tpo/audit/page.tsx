@@ -135,11 +135,17 @@ export default async function TpoAuditPage({
         eyebrow="TPO · Oversight"
         title="Audit log"
         description="Read-only college-wide placement event history. Times are shown in IST. Duplicate canonical and domain-history records may describe the same underlying action."
-        actions={
+        actions={<div className="flex flex-wrap gap-2">
+          <a href={"/api/placements/tpo/audit/actors/export?"+new URLSearchParams({
+           ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
+          }).toString()}
+           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+           Export audit-log CSV (canonical events)
+          </a>
           <Link href="/tpo/audit/actors" className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             Actor / entity filters and CSV →
           </Link>
-        }
+        </div>}
       />
 
       <section
