@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {projectInstances,projectSubmissions,projectSubmissionReviews} from "@/db/schema";
+import {projectInstances,projectSubmissions,projectSubmissionReviews,projectDeliveryEvents} from "@/db/schema";
 import {type RequestContext,hasActiveMembership,hasMembershipRole} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -10,6 +10,9 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {projectSubmissionIdSchema} from "./validation";
 import {mentorFinalDeliveryCanReview,mentorFinalDeliveryDecisionSchema} from "./mentor-final-delivery-decision-model";
+import {projectDeliveryActivity} from "./delivery-activity-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
+import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
 
 export async function decideMentorFinalDelivery(context:RequestContext,projectId:string,
  submissionIdInput:string,raw:unknown){
@@ -36,6 +39,7 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
   const now=new Date(Math.max(Date.now(),submission.updatedAt.getTime()+1));
   const [updated]=await tx.update(projectSubmissions).set({
     status:input.decision,updatedAt:now,
+    ...(input.decision==="APPROVED"?{lockedAt:now,reopenedAt:null}:{}),
   }).where(and(eq(projectSubmissions.id,submission.id),
    eq(projectSubmissions.projectId,scope.project.id),
    eq(projectSubmissions.status,"SUBMITTED"),
@@ -47,7 +51,7 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
    feedback:input.feedback??null,reviewedByUserId:context.user.id,
    reviewedByMembershipId:membership.id,
   }).returning();
-  await recordActivityEventInTransaction(tx,context,{
+  const reviewedEvent = await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REVIEWED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project_submission",subjectId:submission.id,
@@ -56,6 +60,25 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
     reviewId:review!.id},
    groupKey:"project:"+scope.project.id+":final-review",
   });
+  // LEARNER-projects-R01: project reviews reach active learners through the same transaction.
+  const notice=learnerProjectDeliveryReviewNotice(scope.project.id,input.decision);
+  await notifyActiveProjectMembers(tx,reviewedEvent.id,{
+    projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
+    exceptUserId:context.user.id,title:notice.title,body:notice.body,actionHref:notice.actionHref,
+  });
+  if(input.decision==="APPROVED"){
+   // MEN-projects-meetings-R01: reopening an accepted delivery requires a
+   // persisted lock, and registered 0091 requires a matching immutable event.
+   await tx.insert(projectDeliveryEvents).values({
+    projectId:scope.project.id,submissionId:updated.id,
+    eventType:"LOCKED",actorMembershipId:membership.id,
+    reason:"Submission approved",occurredAt:now,
+   });
+   await recordActivityEventInTransaction(tx,context,projectDeliveryActivity({
+    action:"LOCKED",collegeId:scope.collegeId,organizationId:scope.organizationId,
+    projectId:scope.project.id,submissionId:updated.id,version:updated.version,
+   }));
+  }
   return {submission:updated,review:review!};
  });
 }

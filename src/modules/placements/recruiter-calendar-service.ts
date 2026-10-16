@@ -188,10 +188,7 @@ export async function listRecruiterCalendarEvents(
                 placementJobRounds.jobId,
                 authorizedJobIds,
               ),
-              inArray(
-                placementJobRounds.status,
-                ["SCHEDULED", "COMPLETED"],
-              ),
+              // Published-drive rounds are visible as soon as dated, including PENDING.
               or(
                 and(
                   gte(placementJobRounds.scheduledAt, startsAt),

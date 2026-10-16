@@ -1,5 +1,7 @@
 import { and, asc, eq, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { colleges, organizations } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -175,17 +177,18 @@ export async function createOrganization(
   const db = getDb();
 
   try {
-    const [created] = await db
-      .insert(organizations)
-      .values({ name: input.name })
-      .returning({
-        id: organizations.id,
-        name: organizations.name,
-        createdAt: organizations.createdAt,
-        updatedAt: organizations.updatedAt,
+    return await db.transaction(async tx=>{
+      const [created]=await tx.insert(organizations).values({name:input.name})
+       .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
+        updatedAt:organizations.updatedAt});
+      if(!created)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PLATFORM_ORGANIZATION_CREATED,
+        organizationId:created.id,subjectType:"organization",subjectId:created.id,
+        subjectLabel:created.name,summary:"Organization created",
       });
-
-    return created;
+      return created;
+    });
   } catch (error) {
     if (isUniqueViolation(error)) {
       throw new OrganizationServiceError("ORGANIZATION_NAME_CONFLICT");
@@ -213,30 +216,20 @@ export async function renameOrganization(
   const db = getDb();
 
   try {
-    const [updated] = await db
-      .update(organizations)
-      .set({
-        name: input.name,
-        updatedAt: new Date(),
-      })
-      .where(
-        and(
-          eq(organizations.id, organizationId),
-          eq(organizations.status, "ACTIVE"),
-        ),
-      )
-      .returning({
-        id: organizations.id,
-        name: organizations.name,
-        createdAt: organizations.createdAt,
-        updatedAt: organizations.updatedAt,
+    return await db.transaction(async tx=>{
+      const [updated]=await tx.update(organizations).set({name:input.name,updatedAt:new Date()})
+       .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
+       .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
+        updatedAt:organizations.updatedAt});
+      if(!updated)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PLATFORM_ORGANIZATION_RENAMED,
+        organizationId:updated.id,subjectType:"organization",subjectId:updated.id,
+        subjectLabel:updated.name,summary:"Organization renamed",
+        metadata:{previousName:organization.name},
       });
-
-    if (!updated) {
-      throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
-    }
-
-    return updated;
+      return updated;
+    });
   } catch (error) {
     if (isUniqueViolation(error)) {
       throw new OrganizationServiceError("ORGANIZATION_NAME_CONFLICT");
@@ -274,27 +267,16 @@ export async function archiveOrganization(
     throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES");
   }
 
-  const [archived] = await db
-    .update(organizations)
-    .set({
-      status: "ARCHIVED",
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(organizations.id, organizationId),
-        eq(organizations.status, "ACTIVE"),
-      ),
-    )
-    .returning({
-      id: organizations.id,
-      name: organizations.name,
-      status: organizations.status,
+  return db.transaction(async tx=>{
+    const [archived]=await tx.update(organizations).set({status:"ARCHIVED",updatedAt:new Date()})
+     .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
+     .returning({id:organizations.id,name:organizations.name,status:organizations.status});
+    if(!archived)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLATFORM_ORGANIZATION_ARCHIVED,
+      organizationId:archived.id,subjectType:"organization",subjectId:archived.id,
+      subjectLabel:archived.name,summary:"Organization archived",
     });
-
-  if (!archived) {
-    throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
-  }
-
-  return archived;
+    return archived;
+  });
 }

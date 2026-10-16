@@ -40,6 +40,7 @@ export function LearnerVideoPlayer({
   const [saveError, setSaveError] = useState<string | null>(null);
   const [mediaError, setMediaError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [observedDuration,setObservedDuration] = useState(0);
 
   const persist = useCallback(async (force: boolean, keepalive = false) => {
     const video = videoRef.current;
@@ -151,6 +152,8 @@ export function LearnerVideoPlayer({
     const video = videoRef.current;
     if (!video) return;
     const onLoaded = () => {
+      if(Number.isFinite(video.duration) && video.duration>0)
+        setObservedDuration(video.duration);
       const maxSeek = Number.isFinite(video.duration) && video.duration > 1
         ? video.duration - 1 : seekRef.current;
       video.currentTime = Math.min(Math.max(0, seekRef.current), Math.max(0, maxSeek));
@@ -201,7 +204,7 @@ export function LearnerVideoPlayer({
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
       <span role="status">{loading ? "Loading video…" : mediaError ? "Video could not be loaded" :
         readOnly ? "Past semester · progress is read only" : isCompleted ? "Completed" : "Progress saves automatically"}</span>
-      <span>Saved at {formatDuration(savedSeconds)} / {formatDuration(authoredDurationSeconds)}</span>
+      <span>Saved at {formatDuration(savedSeconds)} / {formatDuration(authoredDurationSeconds>0?authoredDurationSeconds:observedDuration)}</span>
     </div>
     {mediaError ? <div className="space-y-2">
       <p role="alert" className="text-sm font-semibold text-error">{mediaError}</p>

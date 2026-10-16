@@ -2,9 +2,9 @@ import {describe,expect,it} from "vitest";
 import {learnerQuizSubmitDeadlineOpen} from "@/modules/courses/learner-quiz-submit-deadline-model";
 describe("learner quiz submit deadline",()=>{
  const now=Date.parse("2026-10-15T10:00:00Z");
- it("allows no deadline and the exact recorded expiry instant",()=>{
-   expect(learnerQuizSubmitDeadlineOpen(null,now)).toBe(true);
-   expect(learnerQuizSubmitDeadlineOpen("2026-10-15T10:00:00Z",now)).toBe(true);
+ it("legacy: no deadline and the exact expiry instant are closed",()=>{
+   expect(learnerQuizSubmitDeadlineOpen(null,now)).toBe(false);
+   expect(learnerQuizSubmitDeadlineOpen("2026-10-15T10:00:00Z",now)).toBe(false);
  });
  it("fails closed for invalid and past deadlines",()=>{
    expect(learnerQuizSubmitDeadlineOpen("invalid",now)).toBe(false);

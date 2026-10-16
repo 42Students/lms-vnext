@@ -1,5 +1,6 @@
 "use client";
 
+import {LEARNER_EDUCATION_TYPES,LEARNER_QUALIFYING_EXAMS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
 import { learnerProfileCollectionMayEdit } from "@/modules/people/learner-profile-collection-busy-model";
@@ -182,6 +183,7 @@ export function LearnerProfileWorkspace(props: {
   const [collection, setCollection] = useState<CollectionKey | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
+  const [educationError,setEducationError] = useState<string|null>(null);
   const [pending, startTransition] = useTransition();
 
   const checklist = useMemo(
@@ -355,6 +357,18 @@ export function LearnerProfileWorkspace(props: {
 
   function saveCollection() {
     if (!collection) return;
+    if(collection==="education"){
+      const issue=learnerEducationValidationProblem({
+        educationType:String(itemDraft.educationType??""),
+        gradingType:String(itemDraft.gradingType??""),
+        gradeObtained:String(itemDraft.gradeObtained??""),
+        maxGrade:String(itemDraft.maxGrade??""),
+        startYear:String(itemDraft.startYear??""),
+        endYear:String(itemDraft.endYear??""),
+      });
+      if(issue){setEducationError(issue.message);return;}
+      setEducationError(null);
+    }
     const normalized = {
       ...itemDraft,
       ...(collection === "projects"
@@ -723,10 +737,21 @@ export function LearnerProfileWorkspace(props: {
             {fields[collection].map((field) => {
               const raw = itemDraft[field.key];
               const value = field.key === "skills" && Array.isArray(raw) ? raw.join(", ") : String(raw || "");
+              if(collection==="education"&&(field.key==="educationType"||field.key==="qualifyingExam"))
+                return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
+                  <input className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3"
+                    list={"learner-education-"+field.key} value={value} maxLength={120}
+                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}/>
+                  <datalist id={"learner-education-"+field.key}>
+                    {(field.key==="educationType"?LEARNER_EDUCATION_TYPES:LEARNER_QUALIFYING_EXAMS)
+                      .map(option=><option key={option} value={option}/>)}
+                  </datalist>
+                </label>;
               if (field.type === "textarea") return <label key={field.key} className="text-xs font-semibold text-body sm:col-span-2">{field.label}<Textarea className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
               if (field.type === "select") return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Select className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
               return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
+            {collection==="education"&&educationError?<p role="alert" className="sm:col-span-2 text-sm text-error">{educationError}</p>:null}
             {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><input type="checkbox" checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>
         ) : null}

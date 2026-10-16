@@ -14,6 +14,7 @@ import {randomUUID} from "node:crypto";
 import {projectTeamAuditInput} from "./mentor-team-audit-model";
 import { mayRemovePrimaryProjectMentor } from "./primary-mentor-policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { notifyActiveProjectMembers, notifyProjectMemberships } from "./project-notification-service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
@@ -507,7 +508,7 @@ export async function reassignProjectPrimaryMentor(
           ),
         );
 
-      await recordActivityEventInTransaction(
+      const reassignedEvent = await recordActivityEventInTransaction(
         tx,
         context,
         {
@@ -541,6 +542,20 @@ export async function reassignProjectPrimaryMentor(
         },
       );
 
+      await notifyProjectMemberships(tx, reassignedEvent.id, {
+        projectId: project.id, collegeId: scope.collegeId,
+        membershipIds: [mentorMembershipId, ...(currentPrimary?.membershipId &&
+          currentPrimary.membershipId !== mentorMembershipId ? [currentPrimary.membershipId] : [])],
+        title: "Project mentor reassigned",
+        body: "The mentor for " + scope.project.title + " has changed.",
+        actionHref: "/mentor/projects/" + project.id,
+      });
+      await notifyActiveProjectMembers(tx, reassignedEvent.id, {
+        projectId: project.id, collegeId: scope.collegeId, roles: ["LEARNER"],
+        title: "Project mentor reassigned",
+        body: "Your project " + scope.project.title + " has a new mentor.",
+        actionHref: "/learn/projects/" + project.id,
+      });
       return {
         projectId: project.id,
         reassigned: true,
@@ -676,9 +691,16 @@ export async function addProjectMember(
         createdByUserId: context.user.id,
       }).returning();
       if(!created)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
-      await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ADDED",{
+      const event = await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ADDED",{
         projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
       },created));
+      await notifyProjectMemberships(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,
+        membershipIds:[created.membershipId],
+        title:created.role==="MENTOR"?"New project assigned":"Added to project",
+        body:"You have been added to "+scope.project.title+".",
+        actionHref:(created.role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+scope.project.id,
+      });
       return [created];
     });
     return member;
@@ -796,9 +818,15 @@ export async function endProjectMember(
         eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
       .returning();
     if(!ended)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
-    await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ENDED",{
+    const event = await recordActivityEventInTransaction(tx,context,projectTeamAuditInput("ENDED",{
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
     },ended));
+    await notifyProjectMemberships(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      membershipIds:[ended.membershipId],title:"Removed from project",
+      body:"Your membership in "+scope.project.title+" has ended.",
+      actionHref:(ended.role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+scope.project.id,
+    });
     return ended;
   });
 }

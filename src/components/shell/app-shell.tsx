@@ -3,6 +3,7 @@ import Link from "next/link";
 import { RECRUITER_REQUEST_DRIVE_HREF } from "@/modules/placements/recruiter-page-copy";
 import {
   hasMembershipRole,
+  hasActiveRecruiter,
   isSuperAdmin,
   type RequestContext,
 } from "@/modules/identity/context";
@@ -16,6 +17,7 @@ import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
+import {HrRecruiterBell} from "@/components/hr/hr-recruiter-bell";
 import { ToastProvider } from "@/components/ui/toast";
 import { getLearnerShellAccess } from "@/modules/module-access/learner-shell-access";
 import {getTpoShellVerificationAccess} from "@/modules/verification/tpo-shell-access-service";
@@ -147,7 +149,8 @@ export async function AppShell({
                   Request a drive
                 </Link>
               ) : null}
-              <AccountActions showNotifications={!learner} variant={accountVariant} />
+              {hasActiveRecruiter(context)?<HrRecruiterBell/>:null}
+              <AccountActions showNotifications={!learner&&!hasActiveRecruiter(context)} variant={accountVariant} />
             </div>
           </div>
         </header>

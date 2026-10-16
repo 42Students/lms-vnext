@@ -10,6 +10,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
+import { SuperAdminTemplatePlanEditor } from "@/components/projects/super-admin-template-plan-editor";
+import { can } from "@/modules/permissions/policy";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import {
   getSuperAdminTemplateSubview,
@@ -199,9 +201,18 @@ export async function SuperAdminTemplateSubviewPage({
         active={section}
       />
 
+      {blueprint && (section === "sprints" || section === "tasks") &&
+        can(context, "project-template.manage") && detail.template.status !== "ARCHIVED" ? (
+        <SuperAdminTemplatePlanEditor key={currentVersion?.version}
+          templateId={detail.template.id}
+          templateTitle={detail.template.title}
+          templateSummary={detail.template.summary}
+          currentVersion={detail.template.currentVersion}
+          blueprint={blueprint}
+          section={section} />
+      ) : null}
       <p className="m-0 text-xs leading-5 text-muted-foreground">
-        This section is read-only. Sprints, tasks and resources
-        below reflect the current template version.
+        The sections below reflect the current template version.
         Published and college-assigned versions may differ.
       </p>
 
@@ -273,10 +284,11 @@ export async function SuperAdminTemplateSubviewPage({
                       label="Release key"
                       value={sprint.releaseKey}
                     />
+                    <DetailField label="Due" value={sprint.dueLabel ?? "Not set"} />
                   </dl>
 
                   <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-body">
-                    {sprint.description ||
+                    {sprint.goal || sprint.description ||
                       "No sprint description recorded."}
                   </p>
                 </article>
@@ -363,6 +375,7 @@ export async function SuperAdminTemplateSubviewPage({
                       label="Sequence"
                       value={task.sequence}
                     />
+                    <DetailField label="Estimate (points)" value={task.estimatePoints ?? "Not set"} />
                   </dl>
 
                   {task.description ? (

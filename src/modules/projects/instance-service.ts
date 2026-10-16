@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { notifyProjectMemberships } from "./project-notification-service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
@@ -340,6 +341,7 @@ export async function createProjectInstance(
             acceptanceCriteria:
               task.acceptanceCriteria ?? null,
             priority: task.priority,
+            estimatePoints: task.estimatePoints ?? null,
             sequence: task.sequence,
           };
         });
@@ -367,7 +369,7 @@ export async function createProjectInstance(
         );
       }
 
-      await recordActivityEventInTransaction(
+      const createdEvent = await recordActivityEventInTransaction(
         tx,
         context,
         {
@@ -395,6 +397,15 @@ export async function createProjectInstance(
         },
       );
 
+      if(input.primaryMentorMembershipId) {
+        await notifyProjectMemberships(tx, createdEvent.id, {
+          projectId: project.id, collegeId: college.id,
+          membershipIds: [input.primaryMentorMembershipId],
+          title: "New project assigned",
+          body: "You have been assigned to " + project.title + ".",
+          actionHref: "/mentor/projects/" + project.id,
+        });
+      }
       return project;
     });
   } catch (error) {

@@ -14,6 +14,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   assignmentSubmissions,
+  inAppNotifications,
   courseAssignments,
   courseTeachingAssignments,
   collegeMemberships,
@@ -54,6 +55,7 @@ import {
 import {
   courseSectionDeliveryIdSchema,
 } from "./validation";
+import {learnerAssignmentPublishedNotice} from "./learner-assignment-notification-model";
 import {
   prepareAssignmentFileReceipt,
 } from "./assignment-file-service";
@@ -336,7 +338,7 @@ export async function submitCourseAssignment(
         .returning();
 
       // Audit only identifiers and type, never the learner's answer.
-      await recordActivityEventInTransaction(tx, context, {
+      const submissionEvent = await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_SUBMITTED,
         collegeId: assignment.collegeId,
         organizationId: assignment.organizationId,
@@ -346,6 +348,15 @@ export async function submitCourseAssignment(
         metadata: { submissionId: created!.id, deliveryId: input.deliveryId, submissionType: input.submissionType },
         dedupeKey: "assignment-submission:" + created!.id + ":submitted",
       });
+      // A receipt bell reflects a committed submission; the grade is private
+      // until Faculty publishes it. The learner is the persisted recipient.
+      await tx.insert(inAppNotifications).values({
+        userId:context.user.id,eventId:submissionEvent.id,
+        title:"Assignment submitted",
+        body:"Your assignment submission was recorded. You can review it while waiting for a grade.",
+        actionHref:"/learn/allAssignments/"+encodeURIComponent(assignmentId)+
+          "?deliveryId="+encodeURIComponent(input.deliveryId),
+      }).onConflictDoNothing();
 
       if (
         input.submissionType === "FILE"
@@ -840,7 +851,7 @@ export async function publishAssignmentGrade(
     if (!updated) {
       throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
     }
-    await recordActivityEventInTransaction(tx, context, {
+    const gradeEvent = await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADE_PUBLISHED,
       collegeId: current.collegeId,
       organizationId: current.organizationId,
@@ -856,6 +867,20 @@ export async function publishAssignmentGrade(
       groupKey: `course-assignment:${updated.assignmentId}:grading`,
       dedupeKey: `assignment-submission:${updated.id}:grade-published:${updated.version}`,
     });
+    // Send a personal in-app notice to the persisted learner, not a caller ID.
+    const [recipient]=await tx.select({userId:collegeMemberships.userId})
+      .from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"LEARNER")))
+      .where(and(eq(collegeMemberships.id,updated.membershipId),
+        eq(collegeMemberships.collegeId,current.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))).limit(1);
+    if(recipient){
+      const notice=learnerAssignmentPublishedNotice(updated.assignmentId,updated.deliveryId);
+      await tx.insert(inAppNotifications).values({
+        eventId:gradeEvent.id,userId:recipient.userId,...notice,
+      }).onConflictDoNothing();
+    }
     return updated;
   });
 }

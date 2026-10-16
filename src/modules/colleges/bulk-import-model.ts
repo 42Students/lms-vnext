@@ -1,0 +1,47 @@
+import {z} from "zod";
+export const MAX_COLLEGE_IMPORT_ROWS=200;
+export const collegeImportInputSchema=z.strictObject({organizationId:z.uuid(),csv:z.string().min(1).max(150000)});
+export type CollegeImportRow={line:number;name:string;code:string;city:string|null;state:string|null;country:string|null};
+export function parseCollegeImportCsv(raw:string):CollegeImportRow[]{
+ const records:string[][]=[], source=raw.replace(/^\uFEFF/,"");
+ let fields:string[]=[],value="",inside=false;
+ for(let i=0;i<source.length;i++){
+  const char=source[i];
+  if(inside){
+   if(char==='"'&&source[i+1]==='"'){value+='"';i++;}
+   else if(char==='"')inside=false;
+   else value+=char;
+  }else if(char==='"'&&value.length===0){inside=true;}
+  else if(char===","||char==="\n"||char==="\r"){
+   fields.push(value.trim());value="";
+   if(char!==","){
+    if(char==="\r"&&source[i+1]==="\n")i++;
+    if(fields.some(Boolean))records.push(fields);
+    fields=[];
+   }
+  }else{
+   if(char==='"')throw Error("Malformed CSV quote");
+   value+=char;
+  }
+ }
+ if(inside)throw Error("Unclosed CSV quote");
+ fields.push(value.trim());if(fields.some(Boolean))records.push(fields);
+ if(!records.length)throw Error("Paste at least one college.");
+ const header=records[0].map(x=>x.toLowerCase().replace(/\s+/g,""));
+ const withHeader=header.includes("name")&&header.includes("code");
+ const keys=["name","code","city","state","country"];
+ const positions=withHeader?keys.map(k=>header.indexOf(k)):[0,1,2,3,4];
+ const data=withHeader?records.slice(1):records;
+ if(data.length>MAX_COLLEGE_IMPORT_ROWS)throw Error("Bulk Import accepts at most 200 colleges.");
+ const codes=new Set<string>();
+ return data.map((row,index)=>{
+  const v=(i:number)=>positions[i]<0?"":(row[positions[i]]??"").trim();
+  const name=v(0),code=v(1);
+  if(!name||name.length>255||!code||code.length>64)
+   throw Error("Row "+(index+1)+": name and code are required within length limits.");
+  if(row.length>(withHeader?header.length:5))throw Error("Row "+(index+1)+": too many columns.");
+  if(codes.has(code.toLowerCase()))throw Error("Duplicate college code in CSV: "+code);
+  codes.add(code.toLowerCase());
+  return {line:index+(withHeader?2:1),name,code,city:v(2)||null,state:v(3)||null,country:v(4)||null};
+ });
+}
