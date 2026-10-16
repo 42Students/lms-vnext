@@ -1,0 +1,69 @@
+import Link from "next/link";
+import {redirect} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
+import {getTpoAfterCollegeReport} from "@/modules/placements/tpo-after-college-report-service";
+import {AFTER_COLLEGE_LABELS,AFTER_COLLEGE_OUTCOMES} from "@/modules/placements/tpo-after-college-model";
+export const dynamic="force-dynamic";
+type Raw=Record<string,string|string[]|undefined>;
+const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
+export default async function AfterCollegeReportPage({searchParams}:{searchParams:Promise<Raw>}){
+ const ctx=await getCurrentRequestContext();
+ if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
+ const raw=await searchParams;
+ const batches=await listTpoBatches(ctx);
+ const batchId=first(raw.batchId)||undefined,branchId=first(raw.branchId)||undefined;
+ if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
+  return <p role="alert">Invalid batch. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
+ const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,batchId,branchId});
+ const branches=new Map(data.rows.map(row=>[row.branchId,row.branchName]));
+ const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
+ return <main className="space-y-5">
+  <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text underline">← All reports</Link>
+  <PageHeader eyebrow="TPO · Reports" title="After college"
+   description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
+  {!data.available?<p role="status" className="rounded border border-border p-4">
+    After-college outcomes storage is unavailable. This page does not infer destinations.
+   </p>:<>
+   <form method="get" className="flex flex-wrap items-end gap-3 rounded border border-border p-4">
+    <label className="grid gap-1 text-sm">Batch
+     <select name="batchId" defaultValue={batchId??""} className="min-h-10 rounded border border-border p-2">
+      <option value="">All current batches</option>
+      {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+     </select></label>
+    <label className="grid gap-1 text-sm">Branch
+     <select name="branchId" defaultValue={branchId??""} className="min-h-10 rounded border border-border p-2">
+      <option value="">All branches</option>
+      {[...branches].map(([id,label])=><option key={id} value={id}>{label}</option>)}
+     </select></label>
+    <button type="submit" className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">Filter</button>
+    <Link href="/tpo/reports/after-college" className="text-primary-text underline">Clear</Link>
+    <a href={"/api/placements/tpo/reports/after-college?"+query.toString()}
+      className="text-primary-text underline">Download CSV</a>
+   </form>
+   <p className="text-sm text-body">{data.total} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
+   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+    {AFTER_COLLEGE_OUTCOMES.map(key=><div key={key} className="rounded border border-border p-4">
+     <p className="text-xs font-semibold">{AFTER_COLLEGE_LABELS[key]}</p>
+     <p className="mt-2 text-2xl font-bold tabular-nums">{data.counts[key]}</p>
+    </div>)}
+   </div>
+   <section className="overflow-x-auto rounded border border-border">
+    {data.rows.length?<table className="w-full min-w-[45rem] text-left text-sm">
+     <thead className="bg-surface-subtle"><tr>
+      {["Student","Roll no.","Batch","Branch","After college","Applications"].map(label=>
+       <th key={label} className="p-3" scope="col">{label}</th>)}
+     </tr></thead>
+     <tbody>{data.rows.slice(0,300).map(row=><tr key={row.membershipId} className="border-t border-border">
+      <td className="p-3">{row.displayName}</td><td className="p-3">{row.rollNumber??"—"}</td>
+      <td className="p-3">{row.cohortName}</td><td className="p-3">{row.branchName}</td>
+      <td className="p-3">{AFTER_COLLEGE_LABELS[row.outcome]}</td>
+      <td className="p-3 tabular-nums">{row.applicationCount}</td>
+     </tr>)}</tbody></table>:<p className="p-5 text-sm">No students match these filters.</p>}
+   </section>
+   {data.rows.length>300?<p className="text-xs text-muted-foreground">Showing the first 300 rows. Download CSV for the complete filtered list.</p>:null}
+  </>}
+ </main>;
+}
