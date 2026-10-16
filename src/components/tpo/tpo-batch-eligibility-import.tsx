@@ -14,6 +14,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [lastActionId,setLastActionId]=useState<string|null>(null);
  const [skippedByUser,setSkippedByUser]=useState<number[]>([]);
+ const [previewTab,setPreviewTab]=useState<"ALL"|"MATCHED"|"UNUSABLE">("ALL");
  const [chosenName,setChosenName]=useState("");
  async function chooseFile(file:File|null){
   if(!file)return;
@@ -86,7 +87,15 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-11 rounded border border-border px-4 text-sm">{busy?"Working…":"Preview import"}</button>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
-   <ul className="max-h-64 space-y-1 overflow-y-auto text-xs">{preview.preview.map((row,i)=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
+   <div role="tablist" aria-label="Import preview filters" className="flex flex-wrap gap-2">
+    {(["ALL","MATCHED","UNUSABLE"] as const).map(tab=><button key={tab} type="button" role="tab"
+     aria-selected={previewTab===tab} onClick={()=>setPreviewTab(tab)}
+     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+     {tab==="ALL"?"All":tab==="MATCHED"?"Matched":"Can't use"}</button>)}
+   </div>
+   <ul className="max-h-64 space-y-1 overflow-y-auto text-xs">{preview.preview.map((row,i)=>({row,i}))
+    .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
+    .map(({row,i})=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
     <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy||row.status!=="matched"}/>Include</label>
     Row {i+1}: {row.status==="matched"?"Will update":"Skipped"} {preview.rows[i]?.studentCode}{row.reason?" — "+row.reason:""}
    </li>)}</ul>
