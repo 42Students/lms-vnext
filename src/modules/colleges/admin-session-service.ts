@@ -45,6 +45,16 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
   if(!item.roles.includes(row.role))item.roles.push(row.role);
   map.set(item.userId,item);
  }
+ if(map.size){
+  const allRoles=await getDb().select({membershipId:membershipRoles.membershipId,
+   role:membershipRoles.role}).from(membershipRoles)
+   .where(inArray(membershipRoles.membershipId,[...map.values()].map(item=>item.membershipId)));
+  const byMembership=new Map([...map.values()].map(item=>[item.membershipId,item]));
+  for(const role of allRoles){
+   const item=byMembership.get(role.membershipId);
+   if(item&&!item.roles.includes(role.role))item.roles.push(role.role);
+  }
+ }
  return {college,items:[...map.values()],truncated:rows.length>500};
 }
 
