@@ -47,8 +47,8 @@ function putWithProgress(file:File,url:string,headers:Record<string,string>,
     xhr.send(file);
   });
 }
-export function ProjectResourceFilesPanel({projectId,initialFiles,canManage}:{
-  projectId:string;initialFiles:ProjectResourceFile[];canManage:boolean;
+export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canUpload=canManage}:{
+  projectId:string;initialFiles:ProjectResourceFile[];canManage:boolean;canUpload?:boolean;
 }){
   const [files,setFiles]=useState(initialFiles);
   const [selected,setSelected]=useState<File|null>(null);
@@ -151,7 +151,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage}:{
   }
   return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
     <h3 className="m-0 text-base font-semibold text-foreground">Attached</h3>
-    {canManage&&<form onSubmit={upload} className="space-y-3">
+    {canUpload&&<form onSubmit={upload} className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm font-medium text-body">Title
           <input className="mt-1 block w-full rounded border border-border bg-surface p-2"
