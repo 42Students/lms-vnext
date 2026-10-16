@@ -9,7 +9,7 @@ import { loadProjectCollegeScope } from "./scope";
 const mentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]);
 const inputSchema = z.object({
   q: z.string().trim().max(120).optional(),
-  status: z.enum(["PLANNED", "ACTIVE", "COMPLETED"]).optional(),
+  status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
   fromMentorId: mentorId.optional(),
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(10).max(100).default(25),
@@ -106,8 +106,15 @@ export async function listCollegeReassignmentWorkspaces(
   const rows = await joined().where(where)
     .orderBy(asc(projectInstances.title), asc(projectInstances.id))
     .limit(query.pageSize).offset((query.page - 1) * query.pageSize);
+  const matchingWorkspaces = await db.select({
+    id: projectInstances.id,
+    mentorMembershipId: projectMembers.membershipId,
+  }).from(projectInstances).leftJoin(projectMembers, and(
+    eq(projectMembers.projectId, projectInstances.id), activePrimaryMentor,
+  )).where(where).orderBy(asc(projectInstances.id));
   return {
     items: rows,
+    matchingWorkspaces,
     total, page: query.page, pageSize: query.pageSize,
     totalPages: Math.max(1, Math.ceil(total / query.pageSize)),
   };
