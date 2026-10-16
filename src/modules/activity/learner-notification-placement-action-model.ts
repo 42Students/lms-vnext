@@ -14,7 +14,7 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
     const ids=url.searchParams.getAll("applicationId");
     if(ids.length>1||ids.length===1&&!uuid.safeParse(ids[0]).success)return null;
     return ids.length===1
-      ?{href:"/learn/my-placements/applications?applicationId="+encodeURIComponent(ids[0]!),label:"View your application"}
+      ?{href:"/learn/my-placements/applications?applicationId="+encodeURIComponent(ids[0]!),label:"View in My Applications"}
       :{href:"/learn/my-placements/applications",label:"View applications"};
   }
   const applicationDetail=url.pathname.match(/^\/learn\/my-placements\/applications\/([^/]+)(\/history)?$/);
@@ -41,7 +41,7 @@ export function learnerNotificationPlacementAction(raw:string|null|undefined){
     if(app.length!==1||round.length!==1||
       !uuid.safeParse(app[0]).success||!uuid.safeParse(round[0]).success)return null;
     return {href:"/learn/my-placements/interviews?applicationId="+encodeURIComponent(app[0]!)+
-      "&roundId="+encodeURIComponent(round[0]!),label:"View interview details"};
+      "&roundId="+encodeURIComponent(round[0]!),label:"View Interview"};
   }
   const course=learnerNotificationCourseAction(safe);
   if(course)return course;
