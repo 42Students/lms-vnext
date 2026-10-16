@@ -30,6 +30,11 @@ type Lead = {
   unsubscribedAt: string | null;
   chips: RecruiterAttentionChip[];
   quietDays: number;
+  createdAt:string;
+  ownerName:string|null;
+  lastActivityAt:string|null;
+  nextFollowupAt:string|null;
+  inviteStatus:string;
 };
 
 type CompanySummary = {
@@ -431,7 +436,7 @@ export function RecruiterLeadsWorkspace({
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                  <tr>{["Contact", "Company", "Stage", "Flags", "Source", "Email", "Phone"].map(x =>
+                  <tr>{["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone"].map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
@@ -442,7 +447,13 @@ export function RecruiterLeadsWorkspace({
                           href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name}</Link>
                       </td>
                       <td className="px-4 py-3">{lead.companyName || "—"}</td>
-                      <td className="px-4 py-3">{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</td>
+                      <td className="px-4 py-3">{lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"}</td>
+                       <td className="px-4 py-3">{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</td>
+                       <td className="px-4 py-3">{lead.ownerName??"Unassigned"}</td>
+                       <td className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
+                       <td className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
+                       <td className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
+                       <td className="px-4 py-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))}</td>
                       <td className="px-4 py-3">
                         {lead.chips?.map(chip => (
                           <span key={chip} className="mr-1 inline-block rounded border border-border px-1.5 py-0.5 text-xs">
