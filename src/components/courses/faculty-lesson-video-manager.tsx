@@ -156,7 +156,13 @@ export function FacultyLessonVideoManager({
       if(currentStatus==="DRAFT"){
         await request(`/api/courses/lesson-contents/${encodeURIComponent(contentId)}/transition`,"POST",{action:"PUBLISH"},signal);
       }
-      setInfo("Video linked to the lesson content. Publish the video to make it available to eligible learners.");
+      // A ready video becomes available immediately after its lesson link
+      // and learner-visible content are saved; no separate state maze.
+      const published=await request(`/api/courses/videos/${encodeURIComponent(video.id)}`,"PATCH",{
+        publishStatus:"PUBLISHED",visibleToStudents:true,
+      },signal);
+      managedVideoAfterAction(published,video.id,lessonId);
+      setInfo("Video Created Successfully. Published to eligible learners.");
       router.refresh();
     });
   }
@@ -243,7 +249,7 @@ export function FacultyLessonVideoManager({
             </Button>
             <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit||video.processingStatus!=="READY"}
               onClick={()=>linkContent(video)}>
-              {video.lessonContentId?"Publish lesson content":"Add to lesson"}
+              {video.lessonContentId?"Publish to students":"Add to lesson & publish"}
             </Button>
             <Button size="sm" variant="secondary" type="button" disabled={busy||!canEdit}
               onClick={()=>{if(window.confirm("Delete this video?"))run(async signal=>{
