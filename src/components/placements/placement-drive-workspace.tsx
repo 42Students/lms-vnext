@@ -22,6 +22,8 @@ import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
 import { TpoDriveLifecycleControls } from "./tpo-drive-lifecycle-controls";
 import { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
+import {getTpoRoundReorderReadiness} from "@/modules/placements/round-service";
+import {TpoRoundReorder} from "./tpo-round-reorder";
 import { PlacementOfferControls } from "./placement-offer-controls";
 import { PlacementRoleOptions } from "./placement-role-options";
 import { PlacementRequestQueue } from "./placement-request-queue";
@@ -78,6 +80,8 @@ export async function PlacementDriveWorkspace({
         getTpoDriveShortlist(context, { jobId }).catch(() => null),
       ])
     : [null, null];
+
+  const roundOrder = isTpo ? await getTpoRoundReorderReadiness(context,jobId) : null;
 
   const scheduleWarnings = isTpo
     ? projectTpoDriveScheduleWarnings(
@@ -563,6 +567,7 @@ export async function PlacementDriveWorkspace({
       <PlacementDriveDayOverview
         driveDay={driveDay}
       />
+      {roundOrder?<TpoRoundReorder jobId={jobId} readiness={roundOrder}/>:null}
       <section id="drive-round-actions">
       <PlacementDriveControls
         data={controlData}
