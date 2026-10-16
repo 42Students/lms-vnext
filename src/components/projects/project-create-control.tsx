@@ -286,6 +286,21 @@ export function CreateProjectControl({
               If selected, the Mentor assignment is validated and committed atomically with workspace creation.
             </span>
           </label>
+          <label className="grid gap-1 text-sm font-semibold">Class
+            <select value={sectionId} onChange={e=>setSectionId(e.target.value)}
+              className="min-h-11 rounded-md border border-border bg-background px-3">
+              <option value="">No class</option>
+              {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Status
+            <select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
+              className="min-h-11 rounded-md border border-border bg-background px-3">
+              <option value="PLANNED">Planned</option>
+              <option value="ACTIVE" disabled={!mentorMembershipId}>Active</option>
+            </select>
+          </label>
+          {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
           {mentorsError ? (
             <p role="alert" className="m-0 text-xs font-semibold text-warning">
               {mentorsError} You can create the planned workspace and assign a Mentor from Team later.
