@@ -22,6 +22,15 @@ import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { hrDriveMessagesHref } from "@/modules/placements/hr-drive-messages-link-model";
 
+function safeDriveReturnTo(raw:string|undefined){
+ if(!raw)return "/hr/drives";
+ try{
+  const url=new URL(raw,"https://internal.invalid");
+  if(url.origin!=="https://internal.invalid" ||
+      !["/hr/drives","/recruiter/drives"].includes(url.pathname))return "/hr/drives";
+  return url.pathname+url.search;
+ }catch{return "/hr/drives";}
+}
 function formatCtc(
   value: number | null,
 ) {
@@ -40,7 +49,7 @@ export default async function HrPlacementJobPage({
   params: Promise<{ jobId: string }>;
   searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
     offerPage?:string; offerState?:string;
-    roundId?:string; outcome?:string; review?:string }>;
+    roundId?:string; outcome?:string; review?:string; returnTo?:string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -50,6 +59,8 @@ export default async function HrPlacementJobPage({
 
   const { jobId } = await params;
   const query = await searchParams;
+  const returnTo = safeDriveReturnTo(query.returnTo);
+  const returnQuery = "&returnTo="+encodeURIComponent(returnTo);
   let hiring: Awaited<ReturnType<typeof getHrJobRead>>;
   try {
     // Parse only the known params: extra ones (for example ?collegeId=) are ignored.
@@ -125,6 +136,9 @@ export default async function HrPlacementJobPage({
 
   return (
     <div className="space-y-6">
+      <Link href={returnTo} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+        ← Back to Drives
+      </Link>
       <PageHeader
         eyebrow="Employer Recruiter"
         title={workspace.job.title}
@@ -237,9 +251,9 @@ export default async function HrPlacementJobPage({
             </div>)}
           </div>
           <div className="flex flex-wrap gap-3 text-sm">
-            <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=applicants"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">Review applicants</Link>
-            <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">Rounds & results</Link>
-            <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=offers"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">View offers</Link>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants"+returnQuery} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">Review applicants</Link>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">Rounds & results</Link>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers"+returnQuery} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-primary-text">View offers</Link>
           </div>
         </section>
       ) : null}
@@ -255,7 +269,7 @@ export default async function HrPlacementJobPage({
       </div>
       <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
         {(["overview", "applicants", "offers", "rounds"] as const).map(tab => (
-          <Link key={tab} href={`/hr/placements/jobs/${workspace.job.id}?tab=${tab}`}
+          <Link key={tab} href={`/recruiter/drives/${workspace.job.id}?tab=${tab}${returnQuery}`}
             aria-current={filters.tab === tab ? "page" : undefined}
             className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold capitalize ${filters.tab === tab ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
             {tab}
@@ -335,7 +349,7 @@ export default async function HrPlacementJobPage({
                 </div>
               ) : null}
               <p className="mt-5 text-sm text-muted-foreground">Round-specific review decisions are not persisted by this drawer. The placement team controls official screening.</p>
-              <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"}
+              <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
           ) : null}
