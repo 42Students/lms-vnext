@@ -4,22 +4,21 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {cohorts,courseOfferings,courseSectionDeliveries,courses,departments,
  electiveSlots,lmsGroups,programs,sections} from "@/db/schema";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
-import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
+import type {RequestContext} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
+
 import {ElectivesServiceError,listElectiveOfferings} from "./service";
 const id=z.string().uuid();
 /** Existing elective groups/deliveries only: creating a group/delivery is a separate
  * prerequisite, never an invented insert or a cross-tenant lookup. */
 export async function listCollegeOfferingChoices(ctx:RequestContext,rawSlotId:string){
- if(!hasMembershipRole(ctx,"COLLEGE_ADMIN")||!ctx.membership)
-  throw new AuthorizationError("academics.manage");
+ const acting=await resolveActingCollege(ctx,"academics.manage");
  const slotId=id.parse(rawSlotId);
  const [slot]=await getDb().select().from(electiveSlots)
-  .where(and(eq(electiveSlots.id,slotId),eq(electiveSlots.collegeId,ctx.membership.collegeId),
+  .where(and(eq(electiveSlots.id,slotId),eq(electiveSlots.collegeId,acting.collegeId),
    isNull(electiveSlots.deletedAt))).limit(1);
  if(!slot||slot.status!=="ACTIVE")throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
- requirePermission(ctx,"academics.manage",{collegeId:slot.collegeId,
-  organizationId:ctx.membership.organizationId});
+
  const [deliveries,groups,offerings]=await Promise.all([
   getDb().select({id:courseSectionDeliveries.id,courseId:courses.id,course:courses.name,
    code:courses.code,section:sections.name})
