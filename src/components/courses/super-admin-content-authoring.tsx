@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
 import { FacultyLessonAuthoring } from "@/components/courses/faculty-lesson-authoring";
+import { FacultyLessonVideoManager } from "@/components/courses/faculty-lesson-video-manager";
 
 type Lesson={id:string;name:string;courseName:string;courseCode:string;offeringId:string;nextContentSequence:number};
 type Kind="VIDEOS"|"LIVE_CLASSES"|"RESOURCES";
 const modes={VIDEOS:["YOUTUBE"],LIVE_CLASSES:["LIVE_CLASS"],RESOURCES:["RESOURCE"]} as const;
-export function SuperAdminContentAuthoring({kind,lessons}:{kind:Kind;lessons:Lesson[]}){
+export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=false}:{kind:Kind;lessons:Lesson[];allowVideoUpload?:boolean}){
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const selected=lessons.find(x=>x.id===lessonId);
  return <section aria-label="Create lesson content" className="space-y-3 rounded-xl border border-border bg-surface p-4">
@@ -21,6 +22,9 @@ export function SuperAdminContentAuthoring({kind,lessons}:{kind:Kind;lessons:Les
      deliveryId={null} audience="OFFERING" nextContentSequence={selected.nextContentSequence}
      nextAssignmentSequence={0} nextQuizSequence={0} initialMode={modes[kind][0]}
      availableModes={modes[kind]}/>:null}
+   {kind==="VIDEOS"&&selected&&(allowVideoUpload?
+    <FacultyLessonVideoManager key={"video:"+selected.id} lessonId={selected.id} deliveryId={null} nextContentSequence={selected.nextContentSequence}/>:
+    <p className="text-sm text-muted-foreground">Binary video upload requires a real active membership in this selected college. You can still author YouTube video links. Super Admin-only user-owned uploads require the pending storage actor migration.</p>)}
   </>}
  </section>;
 }
