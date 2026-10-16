@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];page?:string|string[] };
+type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -25,11 +25,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.minApplied)?{minApplied:first(params.minApplied)}:{}),
     ...(first(params.minOffers)?{minOffers:first(params.minOffers)}:{}),
     ...(first(params.payCategory)?{payCategory:first(params.payCategory)}:{}),
+    ...(first(params.attention)?{attention:first(params.attention)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
     payCategory:data.payCategory,
+    attention:data.attention,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
     ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
     workMode:data.workMode,employmentType:data.employmentType,
@@ -44,6 +46,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
    ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
+   attention:data.attention,
    ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
   }};}
@@ -123,6 +126,26 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         Export all matching drives (CSV)
       </Link>
     </div>
+    <nav aria-label="Needs doing" className="flex flex-wrap gap-2 rounded-xl border border-border bg-surface p-3">
+      <span className="mr-2 self-center text-sm font-semibold">Needs doing:</span>
+      {([
+       ["NO_APPLICANTS","Nobody has applied"],
+       ["NO_DEADLINE","Live with no deadline"],
+       ["DUE_SOON","Close in the next 7 days"],
+       ["OVERDUE","Deadline passed, still open"],
+       ["ALL","All drives"],
+      ] as const).map(([attention,label])=><Link key={attention} href={{
+        pathname:"/tpo/placements/lifecycle",query:{
+          ...(data.season?{seasonId:data.season.id}:{}),
+          attention,view:"ALL",page:1,
+        },
+       }} className={"inline-flex min-h-10 items-center rounded-md border px-3 text-sm "+
+       (data.attention===attention?"border-primary bg-primary-subtle font-semibold":"border-border")}>
+       {label}
+      </Link>)}
+      <Link className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm"
+       href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
+    </nav>
     <nav aria-label="Drive status tabs" className="flex flex-wrap gap-2">
       {([["REQUESTS","Requests"],["LIVE","Live"],["DRAFT","Drafts"],["CLOSED","Closed"],["ALL","All jobs"]] as const).map(([view,label])=>
         <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
