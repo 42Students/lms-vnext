@@ -21,6 +21,7 @@ import {
 import {
   TPO_AUDIT_KINDS,
   summarizeTpoAuditKinds,
+  tpoAuditActorLabel,
   type TpoAuditKind,
 } from "./tpo-audit-model";
 import { requirePlacementManageScope } from "./scope";
@@ -134,8 +135,23 @@ function auditSources(
           ae.id as event_id,
           'ACTIVITY'::text as kind,
           ae.event_type::text as event_type,
-          'Placement activity'::text as title,
-          'Recorded placement event'::text as detail,
+          case
+           when ae.subject_type in ('placement_job','placement_season')
+             then coalesce(nullif(trim(ae.subject_label),''),'Placement activity')
+           else 'Placement activity'
+          end::text as title,
+          case
+           when ae.event_type = 'PLACEMENTS_COLLEGE_RULES_UPDATED'
+             then concat('Held offers: ',
+              coalesce(ae.metadata->'to'->>'maxHeldOffers','unknown'),
+              ' · Uplift: ',coalesce(ae.metadata->'to'->>'upliftPct','unknown'),
+              '% · Response hours: ',
+              coalesce(ae.metadata->'to'->>'minResponseHours','unknown'))
+           when ae.event_type = 'PLACEMENTS_SEASON_DETAILS_UPDATED'
+             then concat('Season: ',coalesce(ae.metadata->'after'->>'name','unknown'),
+              ' · Ends: ',coalesce(ae.metadata->'after'->>'endDate','unknown'))
+           else coalesce(nullif(trim(ae.summary),''),'Recorded placement event')
+          end::text as detail,
           ae.occurred_at as occurred_at,
           null::uuid as job_id,
           ae.actor_user_id as actor_user_id
@@ -534,7 +550,3 @@ export async function getTpoAuditLog(
   };
 }
 
-/** Actor name only; IDs, emails and phone numbers stay private. */
-export function tpoAuditActorLabel(displayName:string|null|undefined):string{
- return displayName?.trim()||"System / unknown";
-}

@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
-import {tpoAuditActorLabel} from "@/modules/placements/tpo-audit-service";
+import {tpoAuditActorLabel} from "@/modules/placements/tpo-audit-model";
 const source=readFileSync(new URL("../../src/modules/placements/tpo-audit-service.ts",import.meta.url),"utf8");
 describe("TPO-settings-audit-90 actor column",()=>{
  it("returns the display name without exposing internal UUIDs",()=>{

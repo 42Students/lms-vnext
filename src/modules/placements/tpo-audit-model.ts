@@ -138,3 +138,8 @@ export function formatTpoAuditEventType(
       character.toUpperCase(),
     );
 }
+
+/** TPO-settings-audit-90: show a safe actor name or an honest fallback, never UUIDs. */
+export function tpoAuditActorLabel(displayName:string|null|undefined):string{
+ return displayName?.trim()||"System / unknown";
+}
