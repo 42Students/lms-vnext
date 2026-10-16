@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents, collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRounds, placementJobs, placementRoundAttendance, placementDebarments,
+  placementJobRounds, placementJobs, placementRoundAttendance, placementDebarments, placementLearnerRequests,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -69,6 +69,17 @@ export async function confirmTpoDriveDayCheckIn(
         eq(collegeMemberships.collegeId, collegeId), eq(collegeMemberships.status, "ACTIVE")))
       .for("share").limit(1);
     if (!candidate) throw new PlacementsServiceError("PLACEMENT_DRIVE_DAY_CANDIDATE_NOT_FOUND");
+    if (input.status === "ABSENT") {
+      // TPO-requests-verification-05: pending withdrawal excuses the learner.
+      // Escalation is informational; do not mark them absent while undecided.
+      const [withdrawal] = await tx.select({id:placementLearnerRequests.id})
+        .from(placementLearnerRequests).where(and(
+          eq(placementLearnerRequests.applicationId,input.applicationId),
+          eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+          eq(placementLearnerRequests.status,"PENDING")))
+        .limit(1);
+      if(withdrawal)throw new PlacementsServiceError("PLACEMENT_REQUEST_PENDING_WITHDRAWAL");
+    }
     if (input.status === "PRESENT") {
       // P-S1-02: being on the existing shortlist never overrides a later ban.
       const bans = await tx.select().from(placementDebarments).where(and(
