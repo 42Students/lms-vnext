@@ -41,7 +41,7 @@ export default async function TpoRecruiterConversationPage({params}:{
      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground">{item.body}</p>
     </article>)}
   </section>
-  <TpoRecruiterMessageReply threadId={threadId} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />
+  <TpoRecruiterMessageReply threadId={threadId} actorUserId={context.user.id} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />
   <p className="text-xs text-muted-foreground">Reading and sending require explicit confirmation.</p>
  </main>;
 }
