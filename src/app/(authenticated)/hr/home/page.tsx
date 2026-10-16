@@ -25,6 +25,7 @@ import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-driv
 import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-service";
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
 import {recruiterTodayWaitingRequests} from "@/modules/placements/recruiter-today-waiting-model";
+import {recruiterTodayWeekEvents} from "@/modules/placements/recruiter-today-week-events-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -89,6 +90,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const requests = await listOwnRecruiterDriveRequests(context,selectedId);
   const requestCount=requests.length;
   const waitingRequests=recruiterTodayWaitingRequests(requests);
+  const weekEvents=recruiterTodayWeekEvents({events:calendar.events,resultsDue:dueResults,allowedJobs:collegeJobs.map(row=>row.job.id),now});
   const profile = await getRecruiterSelfProfile(context);
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
   const actions = [
@@ -153,6 +155,24 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           <p className="mt-2 text-sm text-body">New applicants, replies and decisions from the placement cell will show up here.</p>
         </div>
       )}
+    </section>
+    <section aria-label="This week" className="rounded-xl border border-border bg-surface p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-semibold text-foreground">This week</h2>
+        <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="text-sm text-primary-text">Full calendar</Link>
+      </div>
+      {weekEvents.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {weekEvents.map(item=><li key={item.id}>
+          <Link href={item.href} className="block rounded-lg border border-border p-3 hover:border-primary">
+            <span className="block text-xs font-semibold text-muted-foreground">{item.kind.replaceAll("_"," ")}</span>
+            <span className="mt-1 block font-semibold text-foreground">{item.title}</span>
+            <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(item.startsAt)} IST
+            </span>
+          </Link>
+        </li>)}
+      </ul>:<p className="mt-3 text-sm text-muted-foreground">Nothing scheduled here for the next eight days.</p>}
     </section>
     <section aria-label="Live recruiter hiring drives" className="rounded-xl border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
