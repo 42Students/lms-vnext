@@ -61,6 +61,15 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
+  useEffect(()=>{
+    if(!draft.trim()&&!posting)return;
+    const guard=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="";
+    };
+    window.addEventListener("beforeunload",guard);
+    return ()=>window.removeEventListener("beforeunload",guard);
+  },[draft,posting]);
   const [replyTo, setReplyTo] = useState<{id:string;text:string;updatedAt:string}|null>(null);
   const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
