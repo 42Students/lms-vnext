@@ -62,8 +62,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  }
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
- const preview=bulkAction?verificationBulkPreviewRows(selectedRows,bulkAction):null;
- function resetBulkFeedback(){const state=emptyVerificationBulkFeedback();
+ const preview=bulkAction?verificationBulkPreviewRows(
+  bulkAction==="VERIFY"?selectedRows.filter(row=>!row.missingMarksheet):selectedRows,bulkAction):null;
+ const missingProof=bulkAction==="VERIFY"?selectedRows.filter(row=>row.missingMarksheet):[];
+ function resetBulkFeedback(){setAcknowledged(false);const state=emptyVerificationBulkFeedback();
   setBulkAction(state.pendingAction);setBulkReason(state.reason);setBulkError(state.error);setBulkResult(state.result);
  }
  function choose(row:VerificationQueueCard,checked:boolean){
@@ -76,9 +78,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   });
  }
  async function executeBulk(action:"VERIFY"|"SEND_BACK",reason?:string){
-  if(bulkBusy||selectedRows.length===0||selectedRows.length>20)return;
-  const body=collegeBulkReviewPayload(selectedRows,action,reason);
-  if(body.items.length===0)return;
+  if(bulkBusy||selectedRows.length===0||selectedRows.length>20||
+    (action==="VERIFY"&&!acknowledged))return;
+  const body=collegeBulkReviewPayload(action==="VERIFY" ? selectedRows.filter(row=>!row.missingMarksheet) : selectedRows,action,reason);
+  if(body.items.length===0){setBulkError("Every one picked has a document missing. Open them to send back with a reason.");return;}
   setBulkBusy(true);setBulkError("");setBulkResult(null);
   try{
    const response=await fetch("/api/college/verification/bulk-review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -145,6 +148,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <ul className="max-h-48 space-y-1 overflow-y-auto text-sm" aria-label="Selected review candidates">
      {preview?.eligible.map(item=><li key={item.key} className="break-words">{item.name} · {item.section} · version {item.version}</li>)}
      {preview?.skipped.map(item=><li key={item.key} className="break-words">{item.name} · {item.section}: skipped ({item.reason})</li>)}
+     {missingProof.map(item=><li key={verificationSelectionKey(item)} className="break-words">{item.learnerName} · {item.section}: left out: a document is missing</li>)}
     </ul>
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
      <textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
@@ -154,8 +158,18 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     {bulkAction==="SEND_BACK"&&<button type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
       onClick={()=>void executeBulk("SEND_BACK",bulkReason)} className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">
       {bulkBusy?"Sending decisions…":"Confirm send back selected"}</button>}
-    {bulkAction==="VERIFY"&&<button type="button" disabled={bulkBusy||selectedRows.length===0} onClick={()=>void executeBulk("VERIFY")}
-     className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">{bulkBusy?"Saving reviews…":"Confirm verify selected"}</button>}
+    {bulkAction==="VERIFY"&&<>
+     <h3 className="font-semibold">Verify without opening</h3>
+     <p className="text-sm">Only do this when you have checked these students' documents another way (for example against the college's own records). Each one is recorded with your name.</p>
+     <label className="flex items-start gap-2 text-sm">
+       <input type="checkbox" checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
+       I have checked their documents another way (for example the college's own records).
+     </label>
+     <p className="text-xs text-muted-foreground">A missing marksheet or ID document blocks blind verification. The server rechecks document receipts before any decision.</p>
+     <button type="button" disabled={bulkBusy||!acknowledged||(preview?.eligible.length??0)===0}
+      onClick={()=>void executeBulk("VERIFY")}
+      className="rounded-md border px-3 py-2 text-sm font-semibold disabled:opacity-50">{bulkBusy?"Saving reviews…":"Verify "+(preview?.eligible.length??0)+" without opening each"}</button>
+    </>}
     <button type="button" disabled={bulkBusy} onClick={()=>setBulkAction(null)} className="rounded-md border px-3 py-2 text-sm">Cancel preview</button>
    </div>}
   </section>}
