@@ -44,6 +44,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   SECOND_FACTOR_REQUIRED: "Enter both codes to continue.",
   SECOND_FACTOR_UNAVAILABLE:
     "This administrator account needs both a verified phone number and email address.",
+  CHANNEL_DISABLED: "This college does not allow that sign-in method. Select an available method.",
   AUTH_NOT_CONFIGURED:
     "Sign-in is temporarily unavailable. Please try again shortly.",
 };
@@ -70,9 +71,11 @@ async function post<T>(url: string, body: unknown) {
 export function LoginForm({
   collegeName,
   defaultChannel = "EMAIL",
+  allowedChannels = ["EMAIL", "PHONE"],
 }: {
   collegeName?: string | null;
   defaultChannel?: Channel;
+  allowedChannels?: readonly Channel[];
 }) {
   const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [contact, setContact] = useState("");
@@ -106,6 +109,7 @@ export function LoginForm({
   async function start(event?: React.FormEvent) {
     event?.preventDefault();
     if (busy) return;
+    if(!allowedChannels.includes(channel))return;
     const input = contact.trim();
     const phone = input.replace(/[\s()-]/g, "");
     const validation = channel === "PHONE"
@@ -238,7 +242,7 @@ export function LoginForm({
             aria-label="Sign in method"
             className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1"
           >
-            {(["PHONE", "EMAIL"] as const).map((value) => (
+            {(["PHONE", "EMAIL"] as const).filter(value=>allowedChannels.includes(value)).map((value) => (
               <button
                 key={value}
                 type="button"
@@ -259,9 +263,8 @@ export function LoginForm({
                   const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
                   if (!keys.includes(event.key)) return;
                   event.preventDefault();
-                  const next = event.key === "Home" ? "PHONE"
-                    : event.key === "End" ? "EMAIL"
-                    : value === "PHONE" ? "EMAIL" : "PHONE";
+                  const other = value === "PHONE" ? "EMAIL" : "PHONE";
+                  const next = allowedChannels.includes(other)?other:value;
                   setChannel(next);
                   setContact("");
                   setContactError(null);
