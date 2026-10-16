@@ -25,20 +25,30 @@ export default async function TpoHome(){
  const pendingRequestCount=await getPendingTpoRequestsCount(ctx);
  const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
  const firstBatch=batches.batches[0];
- const uninvitedBatch=batches.ready?batches.batches.find(b=>!b.invitedAt&&!b.finishedAt):undefined;
- const attentionBatch=uninvitedBatch??firstBatch;
- const [eligibility,registration]=attentionBatch?await Promise.all([
-  getTpoBatchEligibilitySummary(ctx,attentionBatch.id),
-  getTpoBatchRegistrationSummary(ctx,attentionBatch.id),
- ]):[null,null];
- const batchEligible=eligibility?.summary.complete?eligibility.summary.eligible:null;
- const batchRegistered=registration?.available?registration.registered:null;
- const inviteReady=!!uninvitedBatch&&uninvitedBatch.id===attentionBatch?.id&&
-  batchEligible!==null&&batchRegistered!==null&&batchEligible>batchRegistered;
+ const inviteCandidates=batches.ready?batches.batches.filter(batch=>!batch.invitedAt&&!batch.finishedAt):[];
+ // Check each uninvited batch until an actionable cohort is found; a fully
+ // registered earlier cohort must not hide a later cohort needing an invite.
+ let inviteCandidate:typeof firstBatch|undefined;
+ let candidateEligible:number|null=null;
+ let candidateRegistered:number|null=null;
+ for(const candidate of inviteCandidates){
+  const [eligibility,registration]=await Promise.all([
+   getTpoBatchEligibilitySummary(ctx,candidate.id),
+   getTpoBatchRegistrationSummary(ctx,candidate.id),
+  ]);
+  const eligible=eligibility.summary.complete?eligibility.summary.eligible:null;
+  const registered=registration.available?registration.registered:null;
+  if(eligible!==null&&registered!==null&&eligible>registered){
+   inviteCandidate=candidate;candidateEligible=eligible;candidateRegistered=registered;
+   break;
+  }
+ }
+ const inviteReady=!!inviteCandidate;
  const rows=buildTpoLegacyHomeRows({
   batch:firstBatch?{name:firstBatch.name,invited:!!firstBatch.invitedAt,
-   eligible:firstBatch.id===attentionBatch?.id?batchEligible:null,
-   registered:firstBatch.id===attentionBatch?.id?batchRegistered:null,placed:null}:null,
+   eligible:firstBatch.id===inviteCandidate?.id?candidateEligible:null,
+   registered:firstBatch.id===inviteCandidate?.id?candidateRegistered:null,placed:null}:null,
+  hasUninvitedBatch:batches.batches.some(batch=>!batch.invitedAt),
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
   registered:null,placedUnique:null,recruiterLeads:null,followUps:null,recruiterAccess:null,
@@ -49,15 +59,15 @@ export default async function TpoHome(){
  const next=buildTpoLegacyNextUp({
   needsYou:[
    ...(inviteReady?[{type:"REGISTRATION_CLOSED",priority:0,
-      title:"Invite the batch to register",count:batchEligible!,
-      link:"/tpo/batches/"+uninvitedBatch!.id}]:[]),
+      title:"Invite the batch to register",count:candidateEligible!,
+      link:"/tpo/batches/"+inviteCandidate!.id}]:[]),
    ...deadlineTpoHomeNeeds(operations.jobs.map(item=>item.job)),
    ...operationalHomeNeeds(operations.workQueue),
    ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
       count:pendingRequestCount,link:"/tpo/requests"}]:[]),
   ],
-  batches:inviteReady?[{batchId:uninvitedBatch!.id,name:uninvitedBatch!.name,
-   eligible:batchEligible!,registered:batchRegistered!,invitedAt:null}]:[],
+  batches:inviteReady?[{batchId:inviteCandidate!.id,name:inviteCandidate!.name,
+   eligible:candidateEligible!,registered:candidateRegistered!,invitedAt:null}]:[],
   checklist:[],
  });
  return <main className="min-w-0 space-y-5">
