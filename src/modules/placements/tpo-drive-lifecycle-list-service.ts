@@ -120,6 +120,15 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     isDream: placementJobs.isDream,
     appliedCount: sql<number>`(select count(*)::int from placement_applications a
       where a.job_id = ${placementJobs.id} and a.status <> 'WITHDRAWN')`,
+    offersMade:sql<number>`(select count(*)::int from placement_offers o
+      join placement_applications a on a.id=o.application_id
+      where a.job_id=${placementJobs.id} and o.status in ('ISSUED','ACCEPTED'))`,
+    roundCount:sql<number>`(select count(*)::int from placement_job_rounds r
+      where r.job_id=${placementJobs.id} and r.status<>'CANCELLED' and r.kind<>'TALK')`,
+    roundsCompleted:sql<number>`(select count(*)::int from placement_job_rounds r
+      where r.job_id=${placementJobs.id} and r.status='COMPLETED' and r.kind<>'TALK')`,
+    nextRoundAt:sql<Date|null>`(select min(r.scheduled_at) from placement_job_rounds r
+      where r.job_id=${placementJobs.id} and r.status='SCHEDULED' and r.scheduled_at is not null)`,
     applicationDeadline: placementJobs.applicationDeadline,
   }).from(placementJobs)
     .innerJoin(placementCompanyRelationships, and(
@@ -136,6 +145,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .limit(pagination.pageSize).offset(pagination.offset);
    return {counts:totals,...pagination,rows:rows.map((row) => ({
     ...row, applicationDeadline: row.applicationDeadline?.toISOString() ?? null,
+    nextRoundAt:row.nextRoundAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"}):
    {counts:emptyCounts,...tpoDriveLifecyclePage(0,filters.page),rows:[]};
