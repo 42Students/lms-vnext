@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {TpoBatchLifecycleControl} from "@/components/tpo/tpo-batch-lifecycle-control";
+import {TpoBatchInvitationControl} from "@/components/tpo/tpo-batch-invitation-control";
 import {TpoBatchUndoControl} from "@/components/tpo/tpo-batch-undo-control";
 import {actionableBatchHistory} from "@/modules/placements/tpo-batch-history-undo-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -17,6 +18,13 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
  return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department}/>
  <Link href="/tpo/batches" className="text-sm text-primary-text underline">All batches</Link>
  <p className="text-sm">Status: {!ready?"Lifecycle unavailable":lifecycle?.finishedAt?"Finished":lifecycle?.invitedAt?"Invited":"Preparing"}</p>
+ {ready && registrations.available ? <TpoBatchInvitationControl
+  batchId={batchId} invitedAt={lifecycle?.invitedAt?.toISOString() ?? null}
+  finishedAt={lifecycle?.finishedAt?.toISOString() ?? null}
+  deadline={lifecycle?.registrationDeadline?.toISOString() ?? null}
+  expectedVersion={lifecycle?.updatedAt.toISOString() ?? "none"}
+  eligible={summary.eligible} complete={summary.complete && summary.needsReview === 0}
+  unrecorded={registrations.unrecorded} /> : null}
  {ready?<TpoBatchLifecycleControl batchId={batchId} state={lifecycle?{
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
   expectedVersion:lifecycle.updatedAt.toISOString(),
