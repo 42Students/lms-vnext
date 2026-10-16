@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useState } from "react";
 
 type Delivery = { id: string; courseId: string; course: string; code: string; section: string };
@@ -103,8 +104,15 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         {data.offerings.map(offering => <div key={offering.offeringId}
           className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-2 text-sm">
           <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers}</span>
-          <button type="button" onClick={() => startEdit(offering)}
-            className="rounded border border-border px-2 py-1 text-primary-text">Edit</button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
+              encodeURIComponent(offering.offeringId) + "/roster"}
+              className="rounded border border-border px-2 py-1 font-semibold text-primary-text">
+              Roster
+            </Link>
+            <button type="button" onClick={() => startEdit(offering)}
+              className="rounded border border-border px-2 py-1 text-primary-text">Edit</button>
+          </div>
         </div>)}
         <div className="border-t border-border pt-3">
           <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
