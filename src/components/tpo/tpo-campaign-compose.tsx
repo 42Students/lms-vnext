@@ -10,14 +10,14 @@ const SEGMENTS=[
  {value:"NEW",label:"New recruiter leads"},
  {value:"UNASSIGNED",label:"Unassigned recruiter leads"},
 ] as const;
-export function TpoCampaignCompose({deliveryReady=false}:{deliveryReady?:boolean}){
+export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{deliveryReady?:boolean;selectedLeadIds?:string[]}){
  const router=useRouter();
  const [title,setTitle]=useState(""),[subject,setSubject]=useState("");
  const [body,setBody]=useState(""),[segment,setSegment]=useState<(typeof SEGMENTS)[number]["value"]>("ALL_ELIGIBLE");
  const [templateKey,setTemplateKey]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
  async function save(){
-  const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment,templateKey});
+  const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
    setError(parsed.error.issues[0]?.message??"Check your campaign fields.");return;
   }
@@ -44,6 +44,7 @@ export function TpoCampaignCompose({deliveryReady=false}:{deliveryReady?:boolean
     <input value={title} maxLength={160} required className={field}
      onChange={e=>setTitle(e.target.value)}/>
    </label>
+   {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Sending to {selectedLeadIds.length} selected recruiter contacts (subject to eligibility and suppression checks)</p>:null}
    <label className="block text-sm font-semibold">To
     <select className={field} value={segment} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
