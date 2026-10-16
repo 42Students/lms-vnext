@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {LearnerPlacementRegistration} from "@/components/placements/learner-placement-registration";
+import {getOwnLearnerRegistration} from "@/modules/placements/learner-registration-read-service";
 import { LearnerPlacementAcademicEvidence } from "@/components/placements/learner-placement-academic-evidence";
 import {
   LearnerPlacementJobs,
@@ -58,15 +60,15 @@ export default async function LearnerPlacementsPage({
   requirePermission(context,"placements.read",{
     collegeId:ownMembership.collegeId,organizationId:ownMembership.organizationId,
   });
-  const [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead] =
+  const [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead,registrationRead] =
     await Promise.allSettled([
       listLearnerPlacementJobs(context),getCandidatePreferences(context),
       getLearnerPlacementJourneyWithActivity(context),getOwnAcademicEvidence(context),
-      listOwnPlacementOffers(context),getLearnerPlacementRequestWorkspace(context),
+      listOwnPlacementOffers(context),getLearnerPlacementRequestWorkspace(context),getOwnLearnerRegistration(context),
     ]);
   // Never turn a post-preflight authorization revocation into a partial read:
   // the entire page must deny access, even when other source calls succeeded.
-  for(const outcome of [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead]){
+  for(const outcome of [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead,registrationRead]){
     if(outcome.status==="rejected" && outcome.reason instanceof AuthorizationError)
       throw outcome.reason;
   }
@@ -234,6 +236,13 @@ export default async function LearnerPlacementsPage({
         </Link>
       </div>
 
+      {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
+        <section role="alert" aria-label="Placement registration" className="rounded-xl border border-border bg-surface p-4">
+          <h2 className="font-semibold text-foreground">Registration</h2>
+          <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
+          <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 items-center text-primary-text underline">Retry registration</Link>
+        </section>
+      )}
       <section aria-labelledby="learner-placement-verification"
         className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
