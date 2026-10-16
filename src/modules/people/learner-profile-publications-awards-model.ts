@@ -13,3 +13,9 @@ export function learnerProfilePublicationsAwards(
   ).map(item=>({id:item.id,value:item.value.trim()})),
  };
 }
+
+/** Opens the existing, persisted Additional information edit flow without
+ * manufacturing a parallel publications table or claiming college verification. */
+export function newLearnerPublicationEntry(id:string) {
+ return {id,key:"Publication",type:"long_text" as const,value:""};
+}

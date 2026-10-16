@@ -9,7 +9,7 @@ import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
-import {learnerProfilePublicationsAwards} from "@/modules/people/learner-profile-publications-awards-model";
+import {learnerProfilePublicationsAwards,newLearnerPublicationEntry} from "@/modules/people/learner-profile-publications-awards-model";
 import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
 import {learnerProfileSocialFocusField} from "@/modules/people/learner-profile-social-connect-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
@@ -150,6 +150,7 @@ function newItem(section: CollectionKey) {
   }
   if (section === "languages") item.proficiency = "Intermediate";
   if (section === "education") item.examDetails = {};
+  if (section === "metadata") item.type = "text";
   return item;
 }
 
@@ -561,18 +562,38 @@ export function LearnerProfileWorkspace(props: {
           </p>
           <div className="mt-3 space-y-3">
             <div>
-              <p className="text-sm font-semibold text-foreground">Achievements / possible awards</p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-foreground">Awards &amp; Recognitions (learner entered)</p>
+                <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                  onClick={()=>openCollection("achievements")}>Add award</Button>
+              </div>
               {authoredPublicationsAwards.achievements.length ?
-                <ul className="mt-1 space-y-1 text-sm text-body">
-                  {authoredPublicationsAwards.achievements.slice(0,4).map(item=><li key={item.id} className="break-words">{item.title}{item.year?" · "+item.year:""}</li>)}
+                <ul className="mt-1 space-y-2 text-sm text-body">
+                  {authoredPublicationsAwards.achievements.map(item=><li key={item.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2">
+                    <span className="break-words">{item.title}{item.year?" · "+item.year:""}</span>
+                    <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                      onClick={()=>openCollection("achievements",document.achievements.find(entry=>entry.id===item.id))}>
+                      Edit</Button>
+                  </li>)}
                 </ul> : <p className="mt-1 text-sm text-muted-foreground">No recorded achievements.</p>}
               <Link href="/learn/profile?section=achievements" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review achievements</Link>
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">Publication-labelled additional information</p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-foreground">Publications &amp; Research (learner entered)</p>
+                <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                  onClick={()=>openCollection("metadata",newLearnerPublicationEntry(crypto.randomUUID()))}>Add publication</Button>
+              </div>
               {authoredPublicationsAwards.publications.length ?
-                <ul className="mt-1 space-y-1 text-sm text-body">
-                  {authoredPublicationsAwards.publications.slice(0,4).map(item=><li key={item.id} className="break-words">{item.value}</li>)}
+                <ul className="mt-1 space-y-2 text-sm text-body">
+                  {authoredPublicationsAwards.publications.map(item=><li key={item.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2">
+                    <span className="break-words">{item.value}</span>
+                    <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                      onClick={()=>openCollection("metadata",document.metadata.find(entry=>entry.id===item.id))}>
+                      Edit</Button>
+                  </li>)}
                 </ul> : <p className="mt-1 text-sm text-muted-foreground">No publication-labelled entries recorded.</p>}
               <Link href="/learn/profile?section=metadata" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review additional information</Link>
             </div>
