@@ -16,6 +16,9 @@ export function facultyLiveEditorCommand(input:Input){
    startsAt:authoringDueInstant(input.startsAt),
    endsAt:authoringDueInstant(input.endsAt),confirm:true};
  const parsed=facultyLiveMutationSchema.safeParse(payload);
- if(!parsed.success)throw new Error("Check the meeting title, secure HTTPS link, start/end times and selected live class.");
+ if(!parsed.success){
+  const issue=parsed.error.issues[0];
+  throw new Error(issue?.message??"Check the meeting title, secure HTTPS link, start/end times and selected live class.");
+ }
  return parsed.data;
 }
