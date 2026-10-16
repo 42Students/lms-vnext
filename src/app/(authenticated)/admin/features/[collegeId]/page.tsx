@@ -30,6 +30,7 @@ type SearchParams = {
   locks?: string | string[];
   storedState?: string | string[];
   scopeId?: string | string[];
+  academicPage?:string|string[];
 };
 
 function one(
@@ -75,7 +76,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
   }
 
   const { college, modules, ancestors } = result;
-  const academicScopes=await listCollegeModuleScopeChoices(context,college.id);
+  const requestedAcademicPage=Number(one(query.academicPage)??"1");
+  const academicPage=Number.isSafeInteger(requestedAcademicPage)?
+   Math.max(1,Math.min(10000,requestedAcademicPage)):1;
+  const academicScopes=await listCollegeModuleScopeChoices(context,college.id,academicPage);
   const ancestorLevels = [
     "GLOBAL",
     "ORGANIZATION",
@@ -356,7 +360,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <h2 className="font-semibold">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
-        <AcademicModuleScopeInventory scopes={academicScopes}/>
+        <AcademicModuleScopeInventory scopes={academicScopes} page={academicPage}
+   baseHref={"/admin/features/"+encodeURIComponent(college.id)}/>
       </section>
       <section className="space-y-3">
         <div>
