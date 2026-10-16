@@ -101,6 +101,7 @@ export function RecruiterLeadsWorkspace({
   const [rows, setRows] = useState<Lead[]>([]);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
   const [exportFeedback,setExportFeedback]=useState("");
+  const [actionToast,setActionToast]=useState("");
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -291,6 +292,7 @@ export function RecruiterLeadsWorkspace({
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(friendlyError(response.status, data));
       setAdding(false);
+      setActionToast("Recruiter lead added");
       setForm(EMPTY);
       setDuplicate(null);
       await load();
@@ -321,7 +323,8 @@ export function RecruiterLeadsWorkspace({
         </div>
       </div>
 
-      {phase !== "ready" ? (
+      {actionToast?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm">{actionToast}</p>:null}
+      {phase !== "ready" && view!=="companies" ? (
         <div role={phase === "loading" ? "status" : "alert"}
           className="rounded-lg border border-border bg-surface p-5">
           {phase === "loading" ? "Loading recruiter leads…" : error}
