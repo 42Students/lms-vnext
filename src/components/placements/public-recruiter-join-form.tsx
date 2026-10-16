@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect,useRef,useState } from "react";
 import type { PublicJoinPreview } from "@/modules/placements/public-join/preview-model";
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
 
 export function PublicRecruiterJoinForm({
   token, scope, preview,
 }: { token: string; scope: "COLLEGE" | "COMPANY"; preview: PublicJoinPreview }) {
+  const hasRecordedOpen=useRef(false);
+  useEffect(()=>{
+    if(preview.kind!=="READY"||hasRecordedOpen.current)return;
+    hasRecordedOpen.current=true;
+    void fetch("/api/public/join-link/open",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({token,scope})}).catch(()=>undefined);
+  },[token,scope,preview.kind]);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
