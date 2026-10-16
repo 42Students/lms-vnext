@@ -48,7 +48,7 @@ export async function listCollegeLearnerProgressChoices(context:RequestContext){
   .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),
     eq(academicPeriods.collegeId,collegeId)))
   .where(and(isNull(courseSectionDeliveries.endedAt),
-    eq(courseOfferings.status,"ACTIVE")))
+    eq(courseOfferings.status,"ACTIVE"),eq(sections.status,"ACTIVE")))
   .orderBy(asc(sections.name),asc(courses.code))
   .limit(2000);
 }
@@ -154,7 +154,7 @@ export async function getCollegeLearnerProgressReport(
   const completed=videoDone+assignmentDone+quizDone;
   return {...member,videoDone,assignmentDone,quizDone,completed,
    progress:itemsMeasured?Math.round(100*completed/itemsMeasured):0};
- }).sort((a,b)=>a.progress-b.progress||a.name.localeCompare(b.name));
+ }).sort((a,b)=>a.progress-b.progress||String(a.name??"").localeCompare(String(b.name??"")));
  return {choices,report:{
   chosen,rows,totalVideos:videoIds.length,totalAssignments:assignmentIds.length,
   totalQuizzes:quizIds.length,itemsMeasured,students:rows.length,
