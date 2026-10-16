@@ -11,6 +11,7 @@ import {
   registrationDeadlineAtEndOfDay,
   TpoBatchInvitationError,
   tpoBatchInvitationSchema,
+  tpoBatchDeadlineSchema,
 } from "./tpo-batch-invitation-model";
 
 /**
@@ -50,4 +51,31 @@ export async function inviteTpoBatch(
   return { invitedAt: invited.invitedAt?.toISOString() ?? null,
     deadline: invited.registrationDeadline?.toISOString() ?? null,
     delivery: "NOT_SENT" as const };
+}
+
+/**
+ * Update, clear or reopen the date without replacing any batch-level rules.
+ * This keeps the existing invitedAt intact. Reopening the window does not
+ * claim that a recruiter/student notification was delivered.
+ */
+export async function saveTpoBatchRegistrationDeadline(
+  ctx: RequestContext, batchId: string, raw: unknown,
+) {
+  const input = tpoBatchDeadlineSchema.parse(raw);
+  const deadline = input.deadline === null ? null :
+    registrationDeadlineAtEndOfDay(input.deadline, new Date());
+  const { collegeId, lifecycle, ready } = await getTpoBatch(ctx, batchId);
+  if (!ready) throw new TpoBatchInvitationError("ELIGIBILITY_INCOMPLETE");
+  if (lifecycle?.finishedAt) throw new TpoBatchInvitationError("BATCH_FINISHED");
+  const saved = await upsertPlacementBatchSettings(ctx, {
+    collegeId, cohortId: batchId, registrationDeadline: deadline,
+    rulesOverride: lifecycle?.rulesOverride ?? null,
+    expectedVersion: input.expectedVersion,
+  });
+  return {
+    deadline: saved.registrationDeadline?.toISOString() ?? null,
+    invitedAt: saved.invitedAt?.toISOString() ?? null,
+    delivery: "NOT_SENT" as const,
+    version: saved.updatedAt.toISOString(),
+  };
 }

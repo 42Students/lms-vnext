@@ -51,7 +51,57 @@ export function TpoBatchInvitationControl(props: Props) {
     } finally { setBusy(false); }
   }
   if (props.finishedAt) return <p>{TPO_INVITATION_COPY.markFinished}</p>;
-  if (props.invitedAt) return <p>Registration invitation recorded. Students can register while the deadline is open.</p>;
+
+  async function saveDeadline(clear: boolean) {
+    setError(""); setMessage("");
+    if (!clear && !date) { setError(TPO_INVITATION_COPY.pickDate); return; }
+    setBusy(true);
+    try {
+      const response = await fetch("/api/placements/tpo/batches/" + props.batchId + "/invitation", {
+        method: "PATCH", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deadline: clear ? null : date, expectedVersion: props.expectedVersion,
+        }),
+      });
+      const body = await response.json() as { error?: string };
+      if (!response.ok)
+        throw new Error(response.status === 409 ? "Batch changed. Refresh before saving." :
+          errors[body.error ?? ""] ?? "Could not save the deadline.");
+      setMessage("Registration deadline saved. No messages were sent to students.");
+      router.refresh();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not save the deadline.");
+    } finally { setBusy(false); }
+  }
+  if (props.invitedAt) {
+    const deadlinePassed = props.deadline !== null &&
+      new Date(props.deadline).getTime() <= Date.now();
+    return <section aria-label="Registration deadline" className="space-y-3 rounded border border-border bg-surface p-4">
+      <h2 className="font-semibold">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
+      <label htmlFor="batch-move-date" className="block text-sm">Register by</label>
+      <input id="batch-move-date" aria-label="Registration deadline" type="date"
+        value={date} onChange={event => setDate(event.target.value)}
+        className="min-h-11 rounded border border-border bg-surface px-3"/>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" disabled={busy || !date}
+          onClick={() => void saveDeadline(false)}
+          className="min-h-11 rounded border border-border px-4 disabled:opacity-50">
+          {busy ? "Saving…" : TPO_INVITATION_COPY.move}
+        </button>
+        <button type="button" disabled={busy || !props.deadline}
+          onClick={() => void saveDeadline(true)}
+          className="min-h-11 rounded border border-border px-4 disabled:opacity-50">
+          {TPO_INVITATION_COPY.clear}
+        </button>
+      </div>
+      {deadlinePassed ? <p className="text-sm text-muted-foreground">
+        Move the deadline to reopen it. Telling students again requires a separate reminder.
+      </p> : null}
+      {message ? <p role="status" className="text-sm">{message}</p> : null}
+      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+    </section>;
+  }
   return <section className="space-y-3 rounded border border-border bg-surface p-4" aria-label="Invite batch">
     <h2 className="font-semibold">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
     <label className="block text-sm" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
