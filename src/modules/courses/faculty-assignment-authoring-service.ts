@@ -96,7 +96,7 @@ export async function commandFacultyAssignment(
           if(!changedFields.length)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
           eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
         }else if(input.action==="PUBLISH"){
-          if(current.status!=="DRAFT"||(current.dueAt&&current.dueAt.getTime()<=Date.now()))
+          if(current.status!=="DRAFT"||!current.dueAt||current.dueAt.getTime()<=Date.now())
             throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
           changedFields=["status"];eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_PUBLISHED;
         }else{
