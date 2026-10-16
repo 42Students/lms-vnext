@@ -356,7 +356,18 @@ export function RecruiterLeadDetailWorkspace({
           {actionToast?<p role="status" className="rounded-md border border-border p-3 text-sm">{actionToast}</p>:null}
           {actionError ? <p role="alert" className="rounded-md border border-border p-3 text-sm text-destructive">{actionError}</p> : null}
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          {lead.companyName?<section aria-label="Company" className="rounded-lg border border-border bg-surface p-5">
+             <h2 className="font-semibold text-foreground">Company</h2>
+             <p className="mt-2 text-sm font-medium">{lead.companyName}</p>
+             <p className="mt-1 text-xs text-muted-foreground">
+               See company drives, applicant counts, offers and recruiter contacts in Company Memory.
+             </p>
+             <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
+               className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+               Open company memory
+             </Link>
+           </section>:null}
+           <div className="grid gap-5 lg:grid-cols-2">
             <section className="space-y-3 rounded-lg border border-border bg-surface p-5">
               <h2 className="text-lg font-semibold">Contact</h2>
               <dl className="space-y-2 text-sm">
