@@ -7,12 +7,11 @@ import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { issuePlacementOffer, listPlacementOfferCandidates } from "./offer-service";
 import {listPlacementRoleOptions} from "./role-option-service";
-import { placementTableExists } from "./staged-tables";
 import { auditTpoJobChange, requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
 import { placementJobIdSchema } from "./validation";
 import { recordSelectionsSchema, releaseSelectionsSchema, summarizeSelectionRelease } from "./tpo-drive-selection-model";
 
-const pendingCode = "Selection storage has not been registered yet. Ask the platform administrator to apply the staged placement_drive_selections migration.";
+const pendingCode = null;
 
 async function scopedJob(context: RequestContext, rawJobId: unknown) {
   const collegeId = await requireTpoJobCollege(context);
@@ -26,15 +25,10 @@ async function scopedJob(context: RequestContext, rawJobId: unknown) {
   return job;
 }
 
-async function requireRegisteredSelections() {
-  if (!await placementTableExists("placement_drive_selections")) {
-    throw new Error(pendingCode);
-  }
-}
 
 export async function getTpoSelectionWorkspace(context: RequestContext, rawJobId: unknown) {
   const job = await scopedJob(context, rawJobId);
-  const storageReady = await placementTableExists("placement_drive_selections");
+  const storageReady = true; // 0115 is registered on main
   const [candidates, roleOptions] = await Promise.all([
     listPlacementOfferCandidates(context, job.id),
     listPlacementRoleOptions(context, job.id),
@@ -77,7 +71,6 @@ export async function getTpoSelectionWorkspace(context: RequestContext, rawJobId
 export async function recordTpoDriveSelections(context: RequestContext, rawJobId: unknown, raw: unknown) {
   const job = await scopedJob(context, rawJobId);
   if (job.status !== "PUBLISHED") throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
-  await requireRegisteredSelections();
   const input = recordSelectionsSchema.parse(raw);
   const candidates = await listPlacementOfferCandidates(context, job.id);
   const ready = new Map(candidates.filter(item => item.offerReady &&
