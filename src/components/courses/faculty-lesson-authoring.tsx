@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
+import { facultyYouTubeLinkIssue,facultyLiveClassIssue } from "@/modules/courses/faculty-content-input-model";
 import { courseApiError } from "./learner-course-api";
 
 type Mode =
@@ -264,6 +265,8 @@ export function FacultyLessonAuthoring({
       }
 
       if (mode === "YOUTUBE") {
+        const issue=facultyYouTubeLinkIssue(url.trim());
+        if(issue)throw new Error(issue);
         const duration = Number(
           durationSeconds,
         );
@@ -305,6 +308,8 @@ export function FacultyLessonAuthoring({
             "Choose valid start and end times.",
           );
         }
+        const timingIssue=facultyLiveClassIssue(url.trim(),startIso,endIso);
+        if(timingIssue)throw new Error(timingIssue);
 
         await post(
           "/api/courses/lesson-contents",
