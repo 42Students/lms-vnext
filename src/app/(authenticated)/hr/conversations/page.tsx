@@ -13,6 +13,15 @@ const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[]};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
 function when(value:Date){return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);}
+function timeAgo(value:Date,now:Date){
+ const minutes=Math.max(0,Math.floor((now.getTime()-value.getTime())/60000));
+ if(minutes<1)return "just now";
+ if(minutes<60)return minutes+" minute"+(minutes===1?"":"s")+" ago";
+ const hours=Math.floor(minutes/60);
+ if(hours<24)return hours+" hour"+(hours===1?"":"s")+" ago";
+ const days=Math.floor(hours/24);
+ return days+" day"+(days===1?"":"s")+" ago";
+}
 export default async function RecruiterConversationsPage({searchParams}:{searchParams:Promise<Query>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
@@ -22,6 +31,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
  const result=await listHrConversations(context,parsed.data);
+ const displayNow=new Date();
  const decisionNotices=result.status==="READY"
   ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
  return <main className="space-y-5">
@@ -115,15 +125,15 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.items.length?<ol className="space-y-3">
     {result.items.map(row=><li key={row.id} className="rounded-xl border border-border bg-surface p-4">
      <Link href={"/hr/conversations/"+row.id}
-      className="block break-words font-semibold text-primary-text">{row.jobTitle}</Link>
+      className="block break-words font-semibold text-primary-text">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<span aria-label={row.unread+" unread messages"}
       className="mt-2 inline-flex rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">
-      {row.unread} unread
+      {row.unread} new
      </span>:null}
      {row.preview?<p className="mt-2 break-words text-sm text-body">
       {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}
      </p>:null}
-     <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?"Last update "+when(row.lastMessageAt):"No messages yet"} · Private employer thread</p>
+     <p className="mt-2 text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
    </ol>:<p role="status" className="rounded-xl border border-border p-5 text-body">No matching conversations with the placement cell for this college.</p>}
    <nav aria-label="Conversation pages" className="flex flex-wrap gap-3">
