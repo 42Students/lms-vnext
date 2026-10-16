@@ -426,6 +426,25 @@ export function ProjectWorkspace({
             </div>
           ) : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
           {mode === "LEARNER" ? (
+            <div className="mt-3 space-y-2 text-sm text-body">
+              {workspace.project.phase ? <p>Phase: <strong>{workspace.project.phase}</strong></p> : null}
+              {workspace.project.dueLabel || workspace.project.endDate ?
+                <p>Due date: <strong>{workspace.project.dueLabel ||
+                  workspace.project.endDate}</strong></p> : <p>No due date</p>}
+              {workspace.project.nextAction ?
+                <p>Next step: {workspace.project.nextAction}</p> : null}
+              {workspace.project.blocker ?
+                <div className="rounded-lg border border-warning-border bg-warning-subtle p-3">
+                  <p className="font-semibold">Requires attention</p>
+                  <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker}</p>
+                  <Link href={"/learn/projects/"+workspace.project.id+"?tab=board&taskStatus=BLOCKED"}
+                    className="inline-flex min-h-10 items-center text-primary-text underline">
+                    Open blocked work
+                  </Link>
+                </div> : null}
+            </div>
+          ) : null}
+          {mode === "LEARNER" ? (
             <section className="mt-4 rounded-lg border border-border bg-surface-subtle p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold text-foreground">Final submission</h3>
