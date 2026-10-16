@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
 export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
@@ -9,6 +9,12 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
  const draftKey=recruiterMessageDraftKey(actorUserId,threadId);
+ useEffect(()=>{
+  if(!body.trim())return;
+  const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",warn);
+  return ()=>window.removeEventListener("beforeunload",warn);
+ },[body]);
  function persistDraft(value:string){
   setBody(value);
   try{if(value)sessionStorage.setItem(draftKey,value);else sessionStorage.removeItem(draftKey);}catch{/* Storage is optional. */}
