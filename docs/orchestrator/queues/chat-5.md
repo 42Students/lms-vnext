@@ -26,13 +26,13 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-5-04-batches-placements-s2 | TODO | 20 gaps: S2 20
 5. WP-chat-5-05-batches-calendar-reports-s2 | TODO | 15 gaps: S2 15
 6. WP-chat-5-06-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — implemented TPO-drive-workspace-03/16/35/37 with unit + PostgreSQL integration tests authored; execution/browser acceptance not yet verified; other gaps TODO
-7. WP-chat-5-07-drives-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — TPO-drive-workspace-R02 and -45 round counts, TPO-drives-05/06 journey counts, -10 filter fields and -17 CSV exports committed; other S2 flows remain
+7. WP-chat-5-07-drives-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — R02/-45 counts; TPO-drives-05/06 journey and offer counts, -10 filtering, -17 filtered CSV export, -15/16 list links implemented; Excel/saved views/full parity still open
 8. WP-chat-5-08-drives-requests-verification-s2 | IN-PROGRESS | 20 gaps: S2 20 — TPO-requests-verification-02/03 decision dialogs with reasons now on main; earlier -07 settlement and -08 urgency queue already present; other IDs remain
 9. WP-chat-5-09-students-requests-verification-s2 | TODO | 20 gaps: S2 20
 10. WP-chat-5-10-students-placements-s2 | TODO | 23 gaps: S2 12, S3 11
 11. WP-chat-5-11-batches-placements-s3 | TODO | 20 gaps: S3 20
 12. WP-chat-5-12-drive-workspace-batches-s3 | TODO | 25 gaps: S3 25
-13. WP-chat-5-13-drives-inbox-team-s3 | IN-PROGRESS | 22 gaps: S3 22 — TPO-drives-R04/R06 previously implemented; remaining S3 screens open
+13. WP-chat-5-13-drives-inbox-team-s3 | IN-PROGRESS | 22 gaps: S3 22 — TPO-drives-R04/R06, -11 server-filtered attention shortcuts, -19 contextual empty states now on main; counts/tabs and other S3 items still open
 14. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps: S3 17
 15. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps: S3 15
 16. WP-chat-5-16-batches-placements-s4 | TODO | 15 gaps: S4 15
@@ -45,3 +45,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - TPO-requests-verification-05: escalation endpoint exists; **deployment scheduler invocation** remains outside this lane and WP-chat-5-02 is reassigned to chat-3; leave pending, move on.
 - TPO-drive-workspace-65: owner-sensitive company disclosure remains SKIP (OD-09); no widening permissions.
 - Reassignments.md is authoritative: chat-5 retains WPs 01,03,06,07,08,12,13 only. Old moved WP rows remain historical, not chat-5 work.
+
+- TPO-drives-17: CSV for matching/visible pages is live in source; Excel, selected-only export and named saved-view export remain.
+- TPO-drives-10/11: min applied/offers, pay category and needs-doing filters now wired; remaining legacy batch/company/owner filters and per-shortcut count badges remain.
+- TPO-drive-workspace-44/45: registered 0116 slots plus round-card proposal/booking/request counts are connected; independent recruiter proposals still use their own persisted table.
