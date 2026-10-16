@@ -38,6 +38,7 @@ import {
 import { loadProjectCollegeScope } from "./scope";
 
 const projectAdminQuerySchema = z.object({
+  riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
   q: z.string().trim().max(120).optional(),
   status: z
     .enum([
@@ -521,6 +522,9 @@ export async function listProjectAdminRiskQueue(
       pendingReview,
       blockedTask,
     ),
+    query.riskBucket === "STALLED" ? sql`${lastActivityAt} <= ${staleCutoff}` :
+      query.riskBucket === "BLOCKER" ? blockedTask :
+      query.riskBucket === "REVIEW" ? pendingReview : undefined,
   );
   const db = getDb();
 
