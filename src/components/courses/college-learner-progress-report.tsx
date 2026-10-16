@@ -65,6 +65,12 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
      <dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd>
     </div>)}
    </dl>
+   <Link prefetch={false} download
+    href={"/api/courses/college/learner-progress/export?"+
+     new URLSearchParams({offeringId:report.chosen.offeringId,deliveryId:report.chosen.deliveryId}).toString()}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+    Export per-learner CSV
+   </Link>
    <div className="overflow-x-auto">
     <table className="w-full min-w-[49rem] text-left text-sm">
      <thead className="bg-muted text-muted-foreground"><tr>
