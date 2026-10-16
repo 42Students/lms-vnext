@@ -104,6 +104,11 @@ export default async function TpoReportsPage({
           path: "/tpo/reports/unplaced",
         },
         {
+          title: "After college",
+          description:"Student-reported higher studies, entrepreneurship, competitive examinations and job-search destinations, by batch and branch.",
+          path:"/tpo/reports/after-college",
+        },
+        {
           title: "Offer expiry watchlist",
           description: "Currently issued offers expiring in a validated IST day window, with safe capped CSV.",
           path: "/tpo/reports/offers-expiry",
