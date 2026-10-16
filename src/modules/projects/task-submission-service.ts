@@ -7,11 +7,16 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {mentorTaskReviewTokenMatches} from "./mentor-task-review-token-model";
+import {learnerProjectTaskReviewNotice} from "./learner-project-review-notification-model";
 import {maySubmitAssignedProjectTask} from "./task-assignee-policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { can } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
+  collegeMemberships,
+  inAppNotifications,
+  membershipRoles,
+  users,
   projectInstances,
   projectSprints,
   projectTasks,
@@ -386,7 +391,7 @@ export async function reviewProjectTaskSubmission(
     // Record the decision in the SAME transaction. A rejected/concurrent
     // re-review cannot create an audit row because the conditional update
     // and the event insertion must both commit.
-    await recordActivityEventInTransaction(tx, context, {
+    const reviewEvent = await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.PROJECTS_TASK_REVIEWED,
       collegeId: scope.collegeId,
       organizationId: scope.organizationId,
@@ -405,6 +410,27 @@ export async function reviewProjectTaskSubmission(
       groupKey: "project:" + scope.project.id + ":task-submissions",
       dedupeKey: "project-task-submission:" + reviewed.id + ":reviewed",
     });
+    // Notify only the persisted active learner who authored this submission.
+    // The same transaction commits the review, audit and personal bell together.
+    const [recipient]=await tx.select({userId:collegeMemberships.userId})
+      .from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(
+        eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"LEARNER")))
+      .where(and(eq(collegeMemberships.id,reviewed.submittedByMembershipId),
+        eq(collegeMemberships.collegeId,scope.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
+      .limit(1);
+    if(recipient && recipient.userId!==context.user.id){
+      const notice=learnerProjectTaskReviewNotice({
+        projectId:scope.project.id,taskId:task.id,decision:input.decision,
+      });
+      await tx.insert(inAppNotifications).values({
+        eventId:reviewEvent.id,userId:recipient.userId,
+        title:notice.title,body:notice.body,actionHref:notice.actionHref,
+      }).onConflictDoNothing();
+    }
     return { submission: reviewed, task: updatedTask };
   });
 }
