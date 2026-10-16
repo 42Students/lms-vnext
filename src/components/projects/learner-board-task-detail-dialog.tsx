@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
+import { ProjectTaskComments } from "./project-task-comments";
 import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
 import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
 import { learnerBoardTaskStatusLabel, learnerBoardTaskPriorityLabel } from "@/modules/projects/learner-board-task-status-label-model";
@@ -72,6 +73,16 @@ export function LearnerBoardTaskDetailDialog({
         <h3 className="font-semibold">Acceptance criteria</h3>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.acceptanceCriteria??"No acceptance criteria recorded."}</p>
       </section>
+      <section className="mt-5 rounded-lg border border-border bg-surface-subtle p-3">
+        <h3 className="text-sm font-semibold">Done when</h3>
+        <p className="mt-2 whitespace-pre-wrap text-sm text-body">{task.acceptanceCriteria || "No criteria recorded."}</p>
+        {task.status === "BLOCKED" ? <p role="alert" className="mt-2 rounded-md border border-warning-border bg-warning-subtle p-2 text-sm">
+          Blocked: {task.blockerReason || "No blocker note recorded."}
+        </p> : null}
+      </section>
+      <ProjectTaskComments projectId={projectId} taskId={task.id}
+        updatedAt={task.updatedAt.toISOString()}
+        canPost={task.assigneeMembershipId === currentMembershipId && Boolean(currentMembershipId)}/>
       <LearnerTaskStatusActions projectId={projectId} task={task} currentMembershipId={currentMembershipId} />
       <div className="mt-5 flex flex-wrap gap-3">
         <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
@@ -80,7 +91,7 @@ export function LearnerBoardTaskDetailDialog({
           Open task actions in Board
         </Link>
       </div>
-      <p className="mt-3 text-xs leading-5 text-muted-foreground">Actions and submissions use the authorized Project workspace, not this read-only preview.</p>
+      <p className="mt-3 text-xs leading-5 text-muted-foreground">Submission review and additional task details are available in the full Board.</p>
     </dialog>
   );
 }
