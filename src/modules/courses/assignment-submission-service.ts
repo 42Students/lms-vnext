@@ -233,8 +233,8 @@ export async function submitCourseAssignment(
       }
 
       assertAssignmentSubmissionDeadline(currentAssignment.dueAt, new Date());
-      if(process.env.DB06_MULTIPART_SUBMISSIONS_READY==="DB06_VERIFIED"){
-        const [policy]=await tx.select({methods:sql<unknown>`allowed_submission_methods`})
+      {
+        const [policy]=await tx.select({methods:courseAssignments.allowedSubmissionMethods})
           .from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
         if(!policy||!allowedAssignmentSubmissionPart(policy.methods,{
           kind:input.submissionType,
