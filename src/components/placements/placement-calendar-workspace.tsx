@@ -506,10 +506,11 @@ export async function PlacementCalendarWorkspace({
   const recruiterLeads = calendarFollowupsWritable
     ? await listTpoLeads(context, collegeId)
     : [];
-  const displayedLeads = recruiterLeads.slice(0, 100).map((lead) => ({
+  const displayedLeads = recruiterLeads.map((lead) => ({
     id: lead.id,
     name: lead.name,
     companyName: lead.companyName,
+    email: lead.emailNorm,
   }));
 
   return (
