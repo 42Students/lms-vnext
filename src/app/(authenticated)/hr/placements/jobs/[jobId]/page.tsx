@@ -14,6 +14,7 @@ import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-mod
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
+import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/placements/recruiter-drive-progress-model";
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
@@ -201,6 +202,26 @@ export default async function HrPlacementJobPage({
               <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
                 {driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
+          </div>
+          <ol aria-label="Drive progress" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+            {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
+              aria-current={step.state==="CURRENT"?"step":undefined}
+              className={step.state==="CURRENT"
+                ?"rounded-lg border border-primary bg-primary-subtle px-3 py-3 text-sm font-semibold text-primary-text"
+                :"rounded-lg border border-border bg-surface-secondary px-3 py-3 text-sm text-body"}>
+              <span className="block text-xs">{step.state==="COMPLETE"?"Done":step.state==="CURRENT"?"Current":"Upcoming"}</span>
+              <span className="mt-1 block">{step.label}</span>
+            </li>)}
+          </ol>
+          <div className="rounded-lg border border-border bg-surface-secondary p-4">
+            <h3 className="font-semibold text-foreground">Next</h3>
+            <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
+            <Link href={recruiterDriveNextAction(driveOverview).tab
+               ? "/hr/placements/jobs/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab
+               : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
+              className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
+              {recruiterDriveNextAction(driveOverview).label}
+            </Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
