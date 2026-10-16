@@ -18,7 +18,7 @@ const template = "name,email,phone,companyName,designation,source\r\n" +
 
 type Preview = ReturnType<typeof previewTpoLeadCsv>;
 type ImportResponse = {
-  counts: { total: number; created: number; duplicate: number; invalid: number };
+  counts: { total: number; created: number; duplicate: number; invalid: number; skipped:number };
   results: TpoLeadImportRowResult[];
 };
 
@@ -30,10 +30,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ImportResponse | null>(null);
+  const [skipRows,setSkipRows]=useState<number[]>([]);
 
   async function chooseFile(file: File | undefined) {
     setResult(null);
+    setSkipRows([]);
     setPreview(null);
+    setSkipRows([]);
     setCsv("");
     setError("");
     setFileName(file?.name ?? "");
@@ -57,9 +60,10 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   }
 
   async function commit() {
-    if (!preview || !csv || preview.valid === 0 || busy) return;
+    const included=(preview?.valid??0)-skipRows.length;
+    if (!preview || !csv || included<=0 || busy) return;
     if (!window.confirm(
-      "Import " + preview.valid + " valid recruiter lead row(s) from " + fileName +
+      "Import " + included + " recruiter lead row(s) from " + fileName +
       "? " + preview.invalid + " invalid row(s) will be skipped. Existing contacts " +
       "will be reported as duplicates. Each created lead receives an immutable audit entry.",
     )) return;
@@ -71,7 +75,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ confirmed: true, csv }),
+        body: JSON.stringify({ confirmed: true, csv, skipRows }),
       });
       const data = await response.json() as ImportResponse & { error?: string };
       if (!response.ok || !Array.isArray(data.results)) {
@@ -148,7 +152,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 <p className="text-sm text-body" role="status">
                   {preview.total} rows: {preview.valid} valid, {preview.invalid} invalid.
                   Duplicate contacts are determined by the database when the import commits.
+                  {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
+                <p className="text-sm text-body">New: {preview.valid-skipRows.length} to import · Already recruiters: checked on submit · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
                 <div className="max-h-56 overflow-auto rounded-lg border border-border">
                   <table className="w-full text-left text-sm">
                     <thead className="sticky top-0 bg-surface-secondary text-muted-foreground">
@@ -156,6 +162,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         <th scope="col" className="px-3 py-2">CSV row</th>
                         <th scope="col" className="px-3 py-2">Name</th>
                         <th scope="col" className="px-3 py-2">Validation</th>
+                        <th scope="col" className="px-3 py-2">Include</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -163,7 +170,10 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         <tr key={item.row} className="border-t border-border">
                           <td className="px-3 py-2">{item.row}</td>
                           <td className="px-3 py-2">{item.name || "Unnamed"}</td>
-                          <td className="px-3 py-2">{item.error ?? "Ready to import"}</td>
+                          <td className="px-3 py-2">{item.error ?? (skipRows.includes(item.row)?"Skip row":"New")}</td>
+                          <td className="px-3 py-2"><input type="checkbox" aria-label={"Include row "+item.row}
+                            disabled={!item.lead || busy || Boolean(result)} checked={Boolean(item.lead)&&!skipRows.includes(item.row)}
+                            onChange={e=>setSkipRows(previous=>e.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row])}/></td>
                         </tr>
                       ))}
                     </tbody>
@@ -173,7 +183,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   <button
                     type="button"
                     className={primaryClass}
-                    disabled={busy || preview.valid === 0}
+                    disabled={busy || preview.valid-skipRows.length <= 0}
                     onClick={() => void commit()}
                   >
                     {busy ? "Importing…" : "Review and confirm import"}
@@ -186,7 +196,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 <h3 className="font-semibold text-foreground">Import results</h3>
                 <p className="text-sm text-body">
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
-                  {" "}{result.counts.invalid} invalid. {result.counts.total} rows processed.
+                  {" "}{result.counts.invalid} invalid, {result.counts.skipped??0} skipped. {result.counts.total} rows processed.
                 </p>
                 <div className="max-h-56 overflow-auto rounded-lg border border-border">
                   <table className="w-full text-left text-sm">
