@@ -16,14 +16,9 @@ async function scope(ctx:RequestContext){
   !hasMembershipRole(ctx,"TPO"))throw new AuthorizationError("placements.manage");
  return requirePlacementManageScope(ctx,ctx.membership.collegeId);
 }
-async function tableReady(){
- const value=await getDb().execute<{ready:boolean}>(sql`
-  select to_regclass('public.placement_tpo_company_communication') is not null as ready`);
- return value.rows[0]?.ready===true;
-}
 export async function listCompanyCommunication(ctx:RequestContext){
  const college=await scope(ctx);
- if(!await tableReady())return {ready:false as const,items:[]};
+
  const result=await getDb().execute<{company_key:string;status:string}>(sql`
   select company_key,status from placement_tpo_company_communication
   where college_id=${college.id}::uuid order by company_key limit 10000`);
@@ -31,7 +26,7 @@ export async function listCompanyCommunication(ctx:RequestContext){
 }
 export async function updateCompanyCommunication(ctx:RequestContext,raw:unknown){
  const input=companySchema.parse(raw),college=await scope(ctx);
- if(!await tableReady())throw new CompanyCommunicationUnavailable();
+
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
