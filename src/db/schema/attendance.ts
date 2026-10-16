@@ -55,7 +55,7 @@ export const attendancePolicies = pgTable(
     ),
     check(
       "attendance_policies_correction_window_ck",
-      sql`${table.correctionWindowHours} between 1 and 168`,
+      sql`${table.correctionWindowHours} between 1 and 8760`,
     ),
   ],
 );
