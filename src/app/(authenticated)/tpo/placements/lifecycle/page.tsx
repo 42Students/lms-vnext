@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
+import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -158,6 +158,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                     {job.isDream ? " · Dream" : ""}
                   </dd></div>
                 </dl>
+                <p className="mt-2 text-sm font-semibold text-foreground">
+                  Where it is: {tpoDriveWhereItIs(job,data.asOf)}
+                </p>
+                <p className="text-xs text-body">
+                  {job.roundsCompleted} of {job.roundCount} rounds completed · {job.offersMade} active offers
+                </p>
                 <p className="text-xs text-body">Deadline: {job.applicationDeadline
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>
