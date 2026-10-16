@@ -11,3 +11,9 @@ Order:
 5. Then S2 in the order of the two files: `REC-calendar-messages-profile-01, 08, 17, 21, 22, 25, 31, 39, 40, 43, 45, 46` and `REC-home-drives-01, 13, 14, 22..26, 33, 35, 37, 38, 39, 42, 43, 49`. Skip any gap marked blocked on storage (JD upload, resumes ZIP) and list it under "Needs owner decision".
 
 Final summary: gap IDs finished / remaining / what was not run.
+
+## Cross-lane update 2026-10-17 (read first)
+- Messages: the recruiter sidebar row `Messages` must open the placement-cell CONVERSATIONS inbox (legacy behaviour), not the drive-notification page. Today the sidebar opens `/hr/messages` (notifications) while `/recruiter/messages` serves conversations. Make the sidebar and topbar point to the conversations inbox, keep the notifications feed reachable (bell / notifications link), and update the unit tests that pin `/hr/messages` (shell-model, recruiter-message-navigation) to the new target. Exact label stays `Messages`.
+- Migration 0101 `placement_recruiter_drive_requests` is real: chat-5 builds the TPO side (Requests tab approve / send back / decline). Coordinate through statuses REQUEST, SENT_BACK, DRAFT, REJECTED, CANCELLED; do not add a second table. Make sure the recruiter side shows SENT_BACK reason and allows resubmit.
+- Round R recruiter reviews (`docs/audit/pages/recruiter/*-review.md`): include `REC-home-drives-R01` (placement cell notified when a recruiter adds a round, stages results or proposes slots), `REC-calendar-messages-profile-R01` (email when messages sit unread), `-R04` (join form error states), `REC-home-drives-R03` is an OWNER decision (recruiter sees only own drives vs all company drives): skip it.
+- Gates that are unset must show a visible message, not a generic failure.

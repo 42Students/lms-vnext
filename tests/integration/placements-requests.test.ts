@@ -393,6 +393,7 @@ describe("Placement learner requests and exceptions", () => {
         {
           kind: "INTERVIEW",
           name: "Technical interview",
+          durationMinutes: 60,
         },
       );
 

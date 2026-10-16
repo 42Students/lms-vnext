@@ -1,6 +1,6 @@
 /** Public recruiter join links and their email-code challenges. */
 import { sql } from "drizzle-orm";
-import { check, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, check, foreignKey, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 
 export const placementPublicJoinLinks = pgTable(
@@ -17,8 +17,14 @@ export const placementPublicJoinLinks = pgTable(
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    enabled: boolean("enabled").notNull().default(true),
+    postWithoutApproval: boolean("post_without_approval").notNull().default(false),
+    opensCount: integer("opens_count").notNull().default(0),
+    joinsCount: integer("joins_count").notNull().default(0),
   },
   (table) => [
+    check("placement_public_join_links_opens_count_ck", sql`${table.opensCount} >= 0`),
+    check("placement_public_join_links_joins_count_ck", sql`${table.joinsCount} >= 0`),
     uniqueIndex("public_join_links_hash_uq").on(table.tokenHash),
     index("public_join_links_college_idx").on(table.collegeId, table.scope),
     check("placement_public_join_links_token_ck", sql`${table.tokenHash} ~ '^[a-f0-9]{64}$'`),
@@ -48,5 +54,28 @@ export const placementPublicJoinChallenges = pgTable(
     index("public_join_challenges_link_email_idx").on(table.linkId, table.workEmail, table.createdAt.desc()),
     check("placement_public_join_challenges_code_ck", sql`${table.codeHash} ~ '^[a-f0-9]{64}$'`),
     check("placement_public_join_challenges_attempts_ck", sql`${table.attempts} BETWEEN 0 AND 5`),
+  ],
+);
+
+/** Per-network (hashed IP) throttle events for public join OTP send and join. */
+export const placementPublicJoinRateEvents = pgTable(
+  "placement_public_join_rate_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    linkId: uuid("link_id").notNull(),
+    ipHash: varchar("ip_hash", { length: 64 }).notNull(),
+    action: varchar("action", { length: 12 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      name: "public_join_rate_link_fk",
+      columns: [table.linkId],
+      foreignColumns: [placementPublicJoinLinks.id],
+    }).onDelete("restrict"),
+    index("public_join_rate_network_time_idx").on(table.ipHash, table.action, table.createdAt.desc()),
+    index("public_join_rate_link_time_idx").on(table.linkId, table.createdAt.desc()),
+    check("public_join_rate_hash_ck", sql`${table.ipHash} ~ '^[a-f0-9]{64}$'`),
+    check("public_join_rate_action_ck", sql`${table.action} in ('SEND_CODE','JOIN')`),
   ],
 );
