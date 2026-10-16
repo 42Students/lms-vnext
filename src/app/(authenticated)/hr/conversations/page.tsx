@@ -36,8 +36,10 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
  return <main className="space-y-5">
   <RecruiterConversationLiveRefresh/>
-  <PageHeader eyebrow="Recruiter · Messages" title="Conversations"
-   description="Private employer conversations with the placement cell. Notifications remain a separate inbox."/>
+  <PageHeader eyebrow="Recruiter · Messages" title="Messages"
+   description={result.status==="READY"
+    ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
+    : "Conversations with the placement cell, one per drive, plus a general one."}/>
   <Link href="/hr/messages" className="inline-flex min-h-11 items-center text-primary-text">Notification inbox</Link>
   {result.status!=="READY"?<section className="space-y-3 rounded-xl border border-border p-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active employer college access.":"Choose a college to view conversations."}</p>
@@ -73,6 +75,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </button>
     </form>
    </section>
+   <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
    <form method="get" action="/hr/conversations" className="flex flex-wrap gap-2">
     <input type="hidden" name="collegeId" value={result.collegeId}/>
     <input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
@@ -82,7 +85,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </select>
     </label>
-    <label className="flex-1 text-sm text-body">Search by conversation or drive ID
+    <label className="flex-1 text-sm text-body">Search by drive or message
      <input name="q" maxLength={120} defaultValue={parsed.data.q}
       className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/></label>
     <button type="submit" className="self-end rounded-md border border-border px-4 py-3 text-primary-text">Search</button>
