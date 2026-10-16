@@ -1,5 +1,5 @@
-/** Bulk endpoints are bounded to a single small page, never unbounded JSON uploads. */
-export const TPO_BULK_BODY_MAX_BYTES = 16 * 1024;
+/** Bulk endpoints accept at most 200 signed selections, not unbounded JSON uploads. */
+export const TPO_BULK_BODY_MAX_BYTES = 64 * 1024;
 export class TpoBulkBodyError extends Error {
   constructor(readonly status: 400 | 413 | 415) {
     super(status === 413 ? "REQUEST_TOO_LARGE" : status === 415 ? "UNSUPPORTED_MEDIA_TYPE" : "INVALID_JSON");
