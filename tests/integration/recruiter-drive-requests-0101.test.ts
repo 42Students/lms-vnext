@@ -95,6 +95,18 @@ describe.skipIf(!enabled)("REC-home-drives-21/12/22 recruiter requests on real m
    ...input,draft:{...draft,title:"Other role"},
   })).rejects.toMatchObject({code:"IDEMPOTENCY_CONFLICT"});
 
+  const edited=await updateOwnRecruiterDriveRequest(recruiter,{
+   requestId:id.request,collegeId:SEED_IDS.collegeA,action:"EDIT",
+   expectedUpdatedAt:first.request.updatedAt.toISOString(),
+   draft:{...draft,title:"Graduate Data Analyst II"},
+  });
+  expect(edited.status).toBe("REQUEST");
+  expect((edited.draft as {title:string}).title).toBe("Graduate Data Analyst II");
+  await expect(updateOwnRecruiterDriveRequest(recruiter,{
+   requestId:id.request,collegeId:SEED_IDS.collegeA,action:"EDIT",
+   expectedUpdatedAt:first.request.updatedAt.toISOString(),
+   draft:{...draft,title:"Should be rejected"},
+  })).rejects.toMatchObject({code:"STALE"});
   await pool.query(`update placement_recruiter_drive_requests set status='SENT_BACK',
    decision_note='Please correct the role title',updated_at=now() where id=$1`,[id.request]);
   const [sentBack]=await listOwnRecruiterDriveRequests(recruiter,SEED_IDS.collegeA);
