@@ -512,7 +512,7 @@ export async function upsertPlacementBatchSettings(
             userId, eventId: event.id,
             title: "Placement registration is open",
             body: "Your placement cell reopened registration. Please record your choice before the new deadline.",
-            actionHref: "/learner/placements",
+            actionHref: "/learn/placements",
           })),
         ).onConflictDoNothing();
       }
@@ -651,7 +651,7 @@ export async function markPlacementBatchInvited(
         eventId: invitationEvent.id,
         title: "Placement registration is open",
         body: "Your placement cell has invited you to register for placements.",
-        actionHref: "/learner/placements",
+        actionHref: "/learn/placements",
       }))).onConflictDoNothing();
     }
     return { ...updated, notifiedCount: recipientUserIds.length };
