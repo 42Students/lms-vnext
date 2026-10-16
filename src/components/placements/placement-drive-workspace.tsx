@@ -15,6 +15,7 @@ import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-confl
 import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
+import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
@@ -211,6 +212,14 @@ export async function PlacementDriveWorkspace({
     })),
   };
 
+  const headerFacts = projectTpoDriveHeader({
+    status:job.status,applicationMode:job.applicationMode,workMode:job.workMode,
+    employmentType:job.employmentType,
+    minimumAnnualCtcInr:job.minimumAnnualCtcInr,
+    maximumAnnualCtcInr:job.maximumAnnualCtcInr,
+    applicationDeadline:job.applicationDeadline,
+  });
+
   const nextStep = isTpo && lifecycleReadiness
     ? projectTpoDriveNextStep({
         jobId,
@@ -234,7 +243,7 @@ export async function PlacementDriveWorkspace({
         title={driveDay.job.title}
         description={
           driveDay.job.company.name +
-          " · live placement workspace"
+          " · " + headerFacts.status
         }
         actions={
           <div className="flex flex-wrap gap-2">
@@ -325,6 +334,19 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      <section aria-label="Drive status and details" className="rounded-xl border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <strong className="rounded-md border border-border bg-surface-secondary px-2 py-1">{headerFacts.status}</strong>
+          <span>{headerFacts.applicationMode}</span>
+          <span>· {headerFacts.workMode}</span>
+          <span>· {headerFacts.employmentType}</span>
+          {headerFacts.recordedOutside?<strong>Recorded: happened outside</strong>:null}
+        </div>
+        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-body">
+          <span>Pay: {headerFacts.ctc}</span>
+          <span>Applications close: {headerFacts.deadline}</span>
+        </div>
+      </section>
       {nextStep ? (
         <section aria-label="Next step" className="rounded-xl border border-border bg-surface p-5">
           <h2 className="text-base font-semibold text-foreground">Next step</h2>
