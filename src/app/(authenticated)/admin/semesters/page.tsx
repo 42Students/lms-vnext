@@ -72,6 +72,13 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
         <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
       </form>
     </section>
+    <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
+      {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
+      {data.query.programId ? <input type="hidden" name="programId" value={data.query.programId} /> : null}
+      <input type="hidden" name="status" value={data.query.status} />
+      <input type="hidden" name="page" value={String(data.query.page)} />
+      <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
+    </form>
     <section aria-label="Semesters" className="overflow-x-auto rounded-xl border border-border bg-surface">
       <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">{data.total} matching semesters</p>
       {data.items.length === 0 ? <p className="p-5 text-sm text-body">No semesters found. Create a program first, then add semesters.</p> :
