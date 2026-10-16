@@ -69,6 +69,15 @@ const NAME_RULES: { code: JunkReason; test: (text: string) => boolean }[] = [
   },
 ];
 
+/**
+ * Names of CHILD rows (rounds, tasks, notification titles) inside a parent that already passed the full
+ * rules. A real round is called "Written test" and a real task "Add integration tests", so only the
+ * unambiguous markers apply: E2E automation tokens and HTML or script payloads.
+ */
+export function junkChildNameReasons(...values: (string | null | undefined)[]): JunkReason[] {
+  return junkNameReasons(...values).filter((r) => r === "NAME_E2E" || r === "NAME_MARKUP");
+}
+
 export function junkNameReasons(...values: (string | null | undefined)[]): JunkReason[] {
   const reasons = new Set<JunkReason>();
   for (const raw of values) {

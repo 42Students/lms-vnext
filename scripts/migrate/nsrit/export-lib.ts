@@ -36,6 +36,8 @@ export type TableSpec = {
   deny?: string[];
   /** When set, ONLY these columns are exported. */
   only?: string[];
+  /** ORDER BY column (default `id`; tables without an id column name theirs). */
+  orderBy?: string;
 };
 
 export function isDeniedColumn(column: string, spec: TableSpec): boolean {
@@ -74,7 +76,7 @@ export function buildSelectSql(
     else if (column.dataType === "decimal") expr = `CAST(${ref} AS CHAR)`;
     return `'${column.name.replace(/'/g, "")}', ${expr}`;
   });
-  return `SELECT JSON_OBJECT(${parts.join(", ")}) FROM ${q(spec.table)} WHERE ${spec.where} ORDER BY ${q("id")}`;
+  return `SELECT JSON_OBJECT(${parts.join(", ")}) FROM ${q(spec.table)} WHERE ${spec.where} ORDER BY ${q(spec.orderBy ?? "id")}`;
 }
 
 export function scrubSecrets(
@@ -151,6 +153,13 @@ const CLASSES = `(select id from class where program_id in ${NEW_PROGRAM} or bat
 const FACULTY_IDS = "(select id from faculty where college_id = 6 or organization_id = 6)";
 const COURSES = `(select id from course where dept_id in ${DEPT} or created_by_org_id = 6)`;
 const LESSONS = `(select id from lesson where course_id in ${COURSES})`;
+const JOBS = "(select id from job where college_id = 6)";
+const APPS = `(select id from job_application where job_id in ${JOBS} or learner_id in ${LEARNERS})`;
+const WORKSPACES = "(select id from project_workspace where college_id = 6)";
+const TEMPLATES =
+  "(select id from project_template where college_id = 6 or organization_id = 6 or id in (select template_id from project_template_college where college_id = 6) or id in (select template_id from project_workspace where college_id = 6))";
+const COMPANIES =
+  "(select id from company where id in (select company_id from college_company where college_id = 6) or id in (select company_id from job where college_id = 6 and company_id is not null) or college_id = 6 or added_by_college_id = 6)";
 const RECRUITERS =
   "(select recruiter_id from recruiter_college_access where college_id = 6 or organization_id = 6)";
 
@@ -198,9 +207,22 @@ export const TABLE_SPECS: TableSpec[] = [
   },
   {
     table: "company",
-    where: `id in (select company_id from recruiter where id in ${RECRUITERS} and company_id is not null)`,
-    scope: "companies of NSRIT recruiters (name/site only)",
-    only: ["id", "name", "website", "industry", "is_deleted", "created_at", "updated_at"],
+    where: `id in (select company_id from college_company where college_id = 6) or id in (select company_id from job where college_id = 6 and company_id is not null) or id in (select company_id from recruiter where id in ${RECRUITERS} and company_id is not null) or college_id = 6 or added_by_college_id = 6`,
+    scope: "companies of college 6 (college_company, jobs, recruiters, added by college 6); name and site only, contact details withheld",
+    only: [
+      "id",
+      "name",
+      "website",
+      "industry",
+      "is_deleted",
+      "created_at",
+      "updated_at",
+      "college_id",
+      "organization_id",
+      "added_by_college_id",
+      "verified_by_42",
+      "merged_into_company_id",
+    ],
   },
   {
     table: "industry_company",
@@ -303,9 +325,141 @@ export const TABLE_SPECS: TableSpec[] = [
   { table: "lms_group_rule", where: "group_id in (select id from lms_group where college_id = 6)", scope: "groups of NSRIT" },
   { table: "elective_slot", where: "college_id = 6", scope: "college_id = 6" },
   { table: "elective_offering", where: "slot_id in (select id from elective_slot where college_id = 6)", scope: "slots of NSRIT" },
+
+  // ------------------------------------------------------------ stage 2b-ii
+  // Placements. Contact details of companies and recruiters stay out of the snapshot.
+  {
+    table: "college_company",
+    where: "college_id = 6",
+    scope: "college_id = 6 (contact and notes columns withheld)",
+    deny: ["contact_person_name", "contact_email", "contact_phone", "internal_notes"],
+  },
+  { table: "company_domain", where: `company_id in ${COMPANIES}`, scope: "domains of NSRIT companies" },
+  { table: "company_alias", where: `company_id in ${COMPANIES}`, scope: "aliases of NSRIT companies" },
+  {
+    table: "recruiter_college_access_capability",
+    where: "access_id in (select id from recruiter_college_access where college_id = 6 or organization_id = 6)",
+    scope: "grants of college 6",
+    orderBy: "access_id",
+  },
+  {
+    table: "tpo_college_settings",
+    where: "college_id = 6",
+    scope: "college_id = 6 (access validity and verification switches only)",
+    orderBy: "college_id",
+    only: [
+      "college_id",
+      "recruiter_access_months",
+      "recruiter_drive_needs_approval",
+      "tpo_can_verify_profiles",
+      "recruiter_sees_applicants",
+      "cgpa_to_pct",
+      "updated_at",
+    ],
+  },
+  { table: "placement_season", where: "college_id = 6", scope: "college_id = 6" },
+  { table: "placement_batch", where: `batch_id in ${BATCH}`, scope: "batches of NSRIT programs", orderBy: "batch_id" },
+  { table: "placement_registration", where: `learner_id in ${LEARNERS}`, scope: "NSRIT learners" },
+  { table: "placement_eligibility", where: "college_id = 6", scope: "college_id = 6" },
+  { table: "placement_eligibility_event", where: "college_id = 6", scope: "college_id = 6" },
+  { table: "placement_debarment", where: `learner_id in ${LEARNERS}`, scope: "NSRIT learners" },
+  {
+    table: "external_placement",
+    where: `college_id = 6 or learner_id in ${LEARNERS}`,
+    scope: "college 6 or NSRIT learners (letter link withheld)",
+    deny: ["letter_url"],
+  },
+  { table: "learner_saved_job", where: `learner_id in ${LEARNERS}`, scope: "NSRIT learners" },
+  { table: "job_preferences", where: `learner_id in ${LEARNERS}`, scope: "NSRIT learners" },
+  {
+    table: "learner_academic_record",
+    where: `learner_id in ${LEARNERS}`,
+    scope: "NSRIT learners",
+    deny: ["marks_json"],
+    orderBy: "learner_id",
+  },
+  { table: "job", where: "college_id = 6", scope: "college_id = 6" },
+  { table: "job_round", where: `job_id in ${JOBS}`, scope: "jobs of NSRIT" },
+  {
+    table: "round_slot",
+    where: `round_id in (select id from job_round where job_id in ${JOBS})`,
+    scope: "rounds of NSRIT jobs",
+  },
+  {
+    table: "round_assignment",
+    where: `round_id in (select id from job_round where job_id in ${JOBS})`,
+    scope: "rounds of NSRIT jobs",
+  },
+  {
+    table: "round_result",
+    where: `round_id in (select id from job_round where job_id in ${JOBS})`,
+    scope: "rounds of NSRIT jobs",
+  },
+  {
+    table: "job_application",
+    where: `job_id in ${JOBS} or learner_id in ${LEARNERS}`,
+    scope: "NSRIT jobs or NSRIT learners (internal notes and resume history withheld)",
+    deny: ["internal_notes", "resume_history"],
+  },
+  { table: "application_screening", where: `application_id in ${APPS}`, scope: "applications of NSRIT" },
+  { table: "job_application_status_history", where: `application_id in ${APPS}`, scope: "applications of NSRIT" },
+  { table: "job_offer", where: `application_id in ${APPS}`, scope: "applications of NSRIT" },
+  {
+    table: "interview",
+    where: `job_id in ${JOBS} or learner_id in ${LEARNERS}`,
+    scope: "NSRIT jobs or learners",
+    deny: ["interviewer_name", "notes", "feedback_comments", "reschedule_request_json"],
+  },
+  // Projects. Person display names are withheld (memberships carry identity).
+  {
+    table: "project_workspace",
+    where: "college_id = 6",
+    scope: "college_id = 6 (denormalised JSON copies of child tables withheld)",
+    deny: ["sprints", "tasks", "resources", "delivery", "meetings", "activity", "recoverable_content", "readiness_override_by"],
+  },
+  { table: "project_member", where: `project_id in ${WORKSPACES}`, scope: "workspaces of NSRIT", deny: ["display_name"] },
+  { table: "project_sprint", where: `project_id in ${WORKSPACES}`, scope: "workspaces of NSRIT" },
+  { table: "project_task", where: `project_id in ${WORKSPACES}`, scope: "workspaces of NSRIT", deny: ["assignee_name"] },
+  { table: "project_task_comment", where: `project_id in ${WORKSPACES}`, scope: "workspaces of NSRIT", deny: ["commenter_name"] },
+  { table: "project_resource", where: `project_id in ${WORKSPACES}`, scope: "workspaces of NSRIT", deny: ["uploaded_by_name"] },
+  {
+    table: "project_meeting",
+    where: `project_id in ${WORKSPACES}`,
+    scope: "workspaces of NSRIT",
+    deny: ["organizer_name", "attendees", "calendar_event_id", "calendar_sync_error"],
+  },
+  {
+    table: "project_delivery",
+    where: `project_id in ${WORKSPACES}`,
+    scope: "workspaces of NSRIT",
+    deny: ["draft_saved_by_name", "submitted_by_name", "reviewed_by_name", "last_updated_by_name", "locked_by_name", "file_name"],
+  },
+  { table: "project_delivery_event", where: `project_id in ${WORKSPACES}`, scope: "workspaces of NSRIT", deny: ["actor_name"] },
+  { table: "project_release", where: `project_id in ${WORKSPACES}`, scope: "workspaces of NSRIT" },
+  { table: "project_template", where: `id in ${TEMPLATES}`, scope: "templates of college 6, assigned to it or used by its workspaces" },
+  { table: "project_template_college", where: "college_id = 6", scope: "college_id = 6" },
+  { table: "project_template_version", where: `template_id in ${TEMPLATES}`, scope: "templates in scope" },
+  // Module switches of college 6 (placements and projects). Without the placements rule vNext keeps the module off.
+  {
+    table: "app_setting",
+    where: "scope_type = 'COLLEGE' and scope_id = 6 and setting_key like 'module.%'",
+    scope: "college 6 module switches only (module.* keys)",
+    only: ["id", "scope_type", "scope_id", "setting_key", "setting_value", "created_at", "updated_at"],
+  },
+  // Learner in-app notifications (never the outbox).
+  {
+    table: "notification",
+    where: `learner_id in ${LEARNERS} or class_id in ${CLASSES} or course_id in ${COURSES}`,
+    scope: "NSRIT learners, classes or courses",
+    deny: ["delivery_error", "assessment_url"],
+  },
 ];
 
+const FIRST_2BII = TABLE_SPECS.findIndex((s) => s.table === "college_company");
 /** Tables first needed by stage 2b-i (optional when reading a 2a-only snapshot). */
 export const STAGE_2B_TABLES: string[] = TABLE_SPECS.slice(
   TABLE_SPECS.findIndex((s) => s.table === "semester_course"),
+  FIRST_2BII,
 ).map((s) => s.table);
+/** Tables first needed by stage 2b-ii (placements, projects, notifications; optional on read). */
+export const STAGE_2BII_TABLES: string[] = TABLE_SPECS.slice(FIRST_2BII).map((s) => s.table);
