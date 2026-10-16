@@ -23,6 +23,11 @@ type AuthMessage = {
 };
 
 const messages: Record<string, AuthMessage> = {
+  "handoff-retired": {
+    title: "This old sign-in link has changed",
+    description: "For your security, legacy cross-college handoff links no longer work. Sign in with a fresh one-time code on this college’s LMS address.",
+    tone: "warning",
+  },
   expired: {
     title: "Your session expired",
     description:
