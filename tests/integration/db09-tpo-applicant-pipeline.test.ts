@@ -15,6 +15,8 @@ platformStatus:"ACTIVE",systemRoles:[]},membership:{id:SEED_IDS.facultyCollegeAM
 organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
 const ids:{company?:string;rel?:string;job?:string;role?:string;app?:string}={};const addedTpoRoleIds:string[]=[];
 const extraApps:string[]=[],extraMembers:string[]=[],extraUsers:string[]=[];
+const extraProfiles:string[]=[],extraEnrollments:string[]=[];
+const r02Roll="R02"+randomUUID().replaceAll("-","").slice(0,12);
 async function fixture(){
  if(!pool)throw Error("isolated DB required");
  const name="Pipeline-"+randomUUID();
@@ -29,6 +31,8 @@ async function cleanup(){
  if(!pool)return;
  if(ids.app)await pool.query("DELETE FROM placement_applications WHERE id=$1",[ids.app]);
  for(const id of extraApps)await pool.query("DELETE FROM placement_applications WHERE id=$1",[id]);
+ for(const id of extraProfiles)await pool.query("DELETE FROM learner_profiles WHERE membership_id=$1",[id]);
+ for(const id of extraEnrollments)await pool.query("DELETE FROM learner_program_enrollments WHERE id=$1",[id]);
  // These read-only learner fixtures never receive activity_events references.
  for(const id of extraMembers){await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[id]);
   await pool.query("DELETE FROM college_memberships WHERE id=$1",[id]);}
@@ -74,10 +78,39 @@ for(let i=0;i<25;i++){
  const member=(await pool.query<{id:string}>("INSERT INTO college_memberships(user_id,college_id) VALUES($1,$2) RETURNING id",
   [user,SEED_IDS.collegeA])).rows[0]!.id;extraMembers.push(member);
  await pool.query("INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",[member]);
+ if(i===0){
+  await pool.query("UPDATE users SET email=$1,phone_e164=$2 WHERE id=$3",[
+   "r02-"+r02Roll.toLowerCase()+"@example.invalid","+15550001012",user]);
+  await pool.query("INSERT INTO learner_profiles(membership_id,roll_number) VALUES($1,$2)",[member,r02Roll]);
+  extraProfiles.push(member);
+  const academic=await pool.query<{cohort_id:string;program_id:string}>(
+   "SELECT c.id AS cohort_id,p.id AS program_id FROM cohorts c JOIN programs p ON p.id=c.program_id JOIN departments d ON d.id=p.department_id WHERE d.college_id=$1 ORDER BY c.id LIMIT 1",
+   [SEED_IDS.collegeA]);
+  if(!academic.rows[0])throw Error("Seeded academic cohort required for R02 search regression");
+  const enrolled=await pool.query<{id:string}>(
+   "INSERT INTO learner_program_enrollments(membership_id,program_id,cohort_id) VALUES($1,$2,$3) RETURNING id",
+   [member,academic.rows[0].program_id,academic.rows[0].cohort_id]);
+  extraEnrollments.push(enrolled.rows[0]!.id);
+ }
  const app=(await pool.query<{id:string}>("INSERT INTO placement_applications(job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) RETURNING id",
   [jobId,ids.role,member,user])).rows[0]!.id;extraApps.push(app);
 }
-const alphabetical=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",sort:"LEARNER_NAME",page:1});
+const searchApp=extraApps[0];
+ for(const term of [r02Roll,"r02-"+r02Roll.toLowerCase()+"@example.invalid","+15550001012"]){
+  const searched=await getTpoApplicantPipeline(tpo,{jobId,search:term});
+  expect(searched.rows.some(r=>r.id===searchApp)).toBe(true);
+  expect(searched.totalMatching).toBe(1);
+ }
+ const academicSearch=await pool.query<{cohort_name:string;branch_name:string}>(
+  "SELECT c.name AS cohort_name,d.name AS branch_name FROM learner_program_enrollments e JOIN cohorts c ON c.id=e.cohort_id JOIN programs p ON p.id=e.program_id JOIN departments d ON d.id=p.department_id WHERE e.id=$1",
+  [extraEnrollments[0]]);
+ const branchAndBatch=academicSearch.rows[0]!;
+ for(const term of [branchAndBatch.cohort_name,branchAndBatch.branch_name]){
+  const searched=await getTpoApplicantPipeline(tpo,{jobId,search:term});
+  expect(searched.rows.some(r=>r.id===searchApp)).toBe(true);
+ }
+ expect((await getTpoApplicantPipeline(tpo,{jobId,search:r02Roll})).rows[0]?.rollNumber).toBe(r02Roll);
+ const alphabetical=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",sort:"LEARNER_NAME",page:1});
 expect(alphabetical.rows.length).toBeGreaterThan(0);
 expect(alphabetical.rows.map(row=>row.student??"").slice(0,2)).toEqual([...alphabetical.rows.map(row=>row.student??"").slice(0,2)].sort());
 const first=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",page:1});
