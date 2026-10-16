@@ -17,6 +17,7 @@ export type EditableCollege = {
   city: string | null;
   state: string | null;
   country: string | null;
+  addressLine1?:string|null;addressLine2?:string|null;landmark?:string|null;postalCode?:string|null;
 };
 
 export function CollegeEditDialog({
@@ -35,6 +36,10 @@ export function CollegeEditDialog({
   const [country, setCountry] = useState(
     college.country ?? "",
   );
+  const [addressLine1,setAddressLine1]=useState(college.addressLine1??"");
+  const [addressLine2,setAddressLine2]=useState(college.addressLine2??"");
+  const [landmark,setLandmark]=useState(college.landmark??"");
+  const [postalCode,setPostalCode]=useState(college.postalCode??"");
   const [pending, startTransition] = useTransition();
 
 
@@ -50,6 +55,9 @@ export function CollegeEditDialog({
             city: city.trim() || null,
             state: state.trim() || null,
             country: country.trim() || null,
+            addressLine1:addressLine1.trim()||null,
+            addressLine2:addressLine2.trim()||null,
+            landmark:landmark.trim()||null,postalCode:postalCode.trim()||null,
           }),
         },
       );
@@ -86,6 +94,8 @@ export function CollegeEditDialog({
           setCity(college.city ?? "");
           setState(college.state ?? "");
           setCountry(college.country ?? "");
+          setAddressLine1(college.addressLine1??"");setAddressLine2(college.addressLine2??"");
+          setLandmark(college.landmark??"");setPostalCode(college.postalCode??"");
           setOpen(true);
         }}
       >
@@ -116,6 +126,16 @@ export function CollegeEditDialog({
         }
       >
         <div className="grid gap-4 sm:grid-cols-2">
+          {([
+           ["Address",addressLine1,setAddressLine1,255],
+           ["Address line 2",addressLine2,setAddressLine2,255],
+           ["Landmark",landmark,setLandmark,255],
+           ["Pin Code",postalCode,setPostalCode,32],
+          ] as const).map(([field,value,setter,maxLength])=><label key={field}
+           className="grid gap-1 text-xs font-semibold text-body">{field}
+           <Input value={value} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
+          </label>)}
+
           <div className="sm:col-span-2">
             <label
               htmlFor={`college-name-${college.id}`}
