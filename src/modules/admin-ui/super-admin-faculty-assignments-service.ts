@@ -44,11 +44,11 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  const [counts,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.teacherName),asc(source.courseName),asc(source.id))
-   .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=counts[0]?.total??0;
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(value)+" IST";
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(row=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
   id:row.id,title:row.teacherName||"Unnamed faculty",subtitle:row.courseName+" ("+row.courseCode+")",
   status:row.teachingEnded||row.deliveryEnded?"ENDED":"ACTIVE",
   details:["Class: "+row.sectionName,"Teaching role: "+row.role,"Started: "+format(row.startedAt)],
