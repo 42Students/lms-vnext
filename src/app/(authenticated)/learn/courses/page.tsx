@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerCourseList,
@@ -106,7 +105,7 @@ export default async function LearnerCoursesPage() {
                 </h2>
                 <p className="mt-1 text-xs text-body">{course.academicPeriodName}</p>
                 <p className="mt-3 text-body">Course details temporarily unavailable.</p>
-                <Link href="/learn/courses" className="mt-3 inline-flex min-h-11 items-center text-primary-text underline">Retry</Link>
+                <a href="/learn/courses" className="mt-3 inline-flex min-h-11 items-center text-primary-text underline">Retry</a>
               </article>
             ))}
           </div>

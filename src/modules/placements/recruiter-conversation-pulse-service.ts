@@ -1,7 +1,8 @@
 import "server-only";
-import {createHash} from "node:crypto";
-import {and,asc,eq} from "drizzle-orm";
+import {and,asc,eq,isNull,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
+import {placementJobs} from "@/db/schema";
+import {recruiterConversationPulseSignature} from "./recruiter-conversation-pulse-model";
 import {placementTpoMessageThreads} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
@@ -12,16 +13,6 @@ const querySchema=z.strictObject({
  collegeId:z.string().uuid(),
  threadId:z.string().uuid().optional(),
 });
-/** Stable fingerprint: thread creation and any message update change it. */
-export function recruiterConversationPulseSignature(rows:readonly {
- id:string;lastMessageAt:Date|null;createdAt:Date;
-}[]):string{
- const sorted=[...rows].sort((a,b)=>a.id.localeCompare(b.id));
- return createHash("sha256").update(JSON.stringify(sorted.map(row=>[
-  row.id,row.createdAt.toISOString(),row.lastMessageAt?.toISOString()??null,
- ]))).digest("hex");
-}
-
 /** REC-calendar-messages-profile-13: read-only scoped pulse, no read receipts. */
 export async function getRecruiterConversationPulse(context:RequestContext,raw:unknown){
  const {collegeId,threadId}=querySchema.parse(raw);
@@ -36,9 +27,16 @@ export async function getRecruiterConversationPulse(context:RequestContext,raw:u
   id:placementTpoMessageThreads.id,
   createdAt:placementTpoMessageThreads.createdAt,
   lastMessageAt:placementTpoMessageThreads.lastMessageAt,
- }).from(placementTpoMessageThreads).where(and(
+ }).from(placementTpoMessageThreads)
+ .leftJoin(placementJobs,and(
+   eq(placementJobs.id,placementTpoMessageThreads.jobId),
+   eq(placementJobs.collegeId,placementTpoMessageThreads.collegeId),
+ ))
+ .where(and(
   eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
   eq(placementTpoMessageThreads.collegeId,collegeId),
+  or(isNull(placementTpoMessageThreads.jobId),
+    eq(placementJobs.companyRelationshipId,grant.companyRelationshipId)),
   ...(threadId?[eq(placementTpoMessageThreads.id,threadId)]:[]),
  )).orderBy(asc(placementTpoMessageThreads.id));
  if(threadId&&rows.length!==1)throw new Error("RECRUITER_CONVERSATION_NOT_FOUND");

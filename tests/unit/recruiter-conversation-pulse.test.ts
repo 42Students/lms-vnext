@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {recruiterConversationPulseSignature} from "@/modules/placements/recruiter-conversation-pulse-service";
+import {recruiterConversationPulseSignature} from "@/modules/placements/recruiter-conversation-pulse-model";
 describe("REC-calendar-messages-profile-13 scoped conversation pulse",()=>{
  const base={id:"a",createdAt:new Date("2026-10-17T00:00:00Z"),lastMessageAt:null};
  it("is stable regardless of row order",()=>{
