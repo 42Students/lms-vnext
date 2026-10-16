@@ -4,7 +4,7 @@ import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts,
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
-import {CollegeProjectSummaryEditor} from "./college-project-summary-editor";
+import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
 import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
@@ -316,9 +316,8 @@ export function ProjectWorkspace({
         </section>
       ) : null}
 
-      {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditor
-        project={{id:workspace.project.id,title:workspace.project.title,
-         summary:workspace.project.summary,status:workspace.project.status}}/>:null}
+      {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
+        project={workspace.project}/>:null}
       {show("summary") || show("readiness") || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Metric
