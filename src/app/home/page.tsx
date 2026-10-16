@@ -1,0 +1,33 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta } from "@/components/marketing/marketing-layout";
+export const metadata: Metadata = {title:"42 LMS | Talent development",description:"AI-first learning, projects and placements for universities and enterprises."};
+export default function HomeMarketingPage() {
+ return <MarketingLayout>
+  <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({"@context":"https://schema.org","@type":"SoftwareApplication",name:"42 LMS",applicationCategory:"EducationalApplication",operatingSystem:"Web"})}} />
+  <MarketingHero eyebrow="AI-first talent development" title="One connected platform for learning, projects and placements"
+    description="Help students build skills, deliver projects, get mentored, and connect to employers. One experience for every role." />
+  <MarketingFeatureGrid title="Your AI-enabled team" items={[
+    {title:"Learning",description:"Courses, guided paths, quizzes, assignments and learning progress."},
+    {title:"Projects",description:"Team projects with mentors, tasks, reviews and real delivery."},
+    {title:"Placement",description:"Eligibility, opportunities, screening, interviews and offers."},
+    {title:"Faculty",description:"Manage academic programs, courses, cohorts and progress."},
+    {title:"Mentor",description:"Guide project teams and give timely actionable feedback."},
+    {title:"HR and recruiters",description:"Collaborate with placement teams through a connected hiring workflow."}
+  ]}/>
+  <section className="grid gap-4 md:grid-cols-2" aria-label="Who the platform serves">
+   <Link href="/universities" className="rounded-xl border border-border bg-surface p-6"><h2 className="text-xl font-semibold">Universities</h2><p className="mt-2 text-body">Develop employable graduates with integrated learning and placements.</p></Link>
+   <Link href="/enterprises" className="rounded-xl border border-border bg-surface p-6"><h2 className="text-xl font-semibold">Enterprises</h2><p className="mt-2 text-body">Build talent pipelines with visible skills and practical experience.</p></Link>
+  </section>
+  <MarketingFeatureGrid title="Connected platform pillars" items={[
+    {title:"Personalised learning",description:"Give each learner a clear next step."},
+    {title:"Integrations",description:"Bring academic, learner and employer workflows together."},
+    {title:"Applied experience",description:"Connect theory and practice through projects."},
+    {title:"Career readiness",description:"Take learners from preparation through hiring."}
+  ]}/>
+  <section className="space-y-4"><h2 className="text-2xl font-semibold">One continuous journey</h2>
+   <ol className="grid gap-3 sm:grid-cols-4">{["Learn","Build","Demonstrate","Get hired"].map((step,i)=><li className="rounded-xl border border-border bg-surface p-5" key={step}><span className="text-sm text-primary-text">0{i+1}</span><p className="mt-2 font-semibold">{step}</p></li>)}</ol>
+  </section>
+  <MarketingCta title="See how 42 LMS connects the talent journey" />
+ </MarketingLayout>;
+}
