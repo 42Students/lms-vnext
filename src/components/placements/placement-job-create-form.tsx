@@ -205,7 +205,7 @@ export function PlacementJobCreateForm({
         throw new Error("Openings must be a whole number between 1 and 100,000.");
       }
       const years = splitList(String(data.get("passingYears") ?? ""));
-      if (years.some((year) => !/^\\d{4}$/.test(year))) {
+      if (years.some((year) => !/^\d{4}$/.test(year))) {
         throw new Error("Passing years must contain four-digit years separated by commas.");
       }
       const checks: Array<[string, string, number]> = [
