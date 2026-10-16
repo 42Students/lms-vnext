@@ -42,6 +42,7 @@ export default async function SuperAdminLectureHallsPage() {
         description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`}
       />
       <LectureHallManager
+        availabilityBase="/admin/lecture-halls"
         key={collegeId}
         collegeId={collegeId}
         halls={halls.items}
