@@ -30,8 +30,11 @@ export default async function PublicPlacementSettingsPage({
    {value.ready?<p className="mt-3 text-sm text-muted-foreground">
       Active consented placement cohort: {view.populationCount??"Unavailable"}
     </p>:null}
-   {value.ready?<TpoPublicPlacementToggle enabled={view.enabled} canEnable={view.canEnable}/>:null}
-   {!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
+   {value.ready?<TpoPublicPlacementToggle enabled={view.enabled} canEnable={view.canEnable}/>:
+    <p role="status" className="mt-3 rounded-md border border-border p-3 text-sm text-warning-text">
+     Public placement settings storage is unavailable until the registered migration is ready. No publication preference was changed.
+    </p>}
+   {value.ready&&!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
      Public statistics cannot be enabled without a recorded cohort of at least five.
     </p>:null}
    <Link href="/placements" className="mt-4 inline-block text-sm text-primary-text underline">
