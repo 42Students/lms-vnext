@@ -37,7 +37,7 @@ export default async function MentorProjectPage({
     projectId,
   );
 
-  if (access.access !== "MENTOR") {
+  if (access.access !== "MENTOR" && !(access.access === "OBSERVER" && access.member?.role === "MENTOR")) {
     redirect("/mentor/projects");
   }
 
@@ -52,7 +52,7 @@ export default async function MentorProjectPage({
       <MentorProjectTabs
         projectId={projectId}
       />
-      <div className="flex flex-wrap gap-3">
+      {access.access === "MENTOR" ? <div className="flex flex-wrap gap-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Task board status
@@ -105,7 +105,7 @@ export default async function MentorProjectPage({
         >
           Recorded project activity →
         </Link>
-      </div>
+      </div> : null}
       <ProjectWorkspace
         workspace={workspace}
         backHref="/mentor/projects"
@@ -113,6 +113,7 @@ export default async function MentorProjectPage({
 
 
         mode="MENTOR"
+        readOnlyOverride={access.access === "OBSERVER"}
         currentMembershipId={
           context.membership?.id ?? null
         }
