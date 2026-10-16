@@ -20,7 +20,7 @@ export async function getTpoDriveDeadlineState(context:RequestContext,rawJobId:u
  .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
  return {id:job.id,title:job.title,status:job.status,updatedAt:job.updatedAt.toISOString(),
   applicationDeadline:job.applicationDeadline?.toISOString()??null,
-  extendable:job.status==="PUBLISHED"&&season?.status==="ACTIVE"&&job.applicationDeadline!==null};
+  extendable:job.status==="PUBLISHED"&&season?.status==="ACTIVE"};
 }
 export async function extendTpoDriveDeadline(context:RequestContext,rawJobId:unknown,raw:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
@@ -50,8 +50,9 @@ export async function extendTpoDriveDeadline(context:RequestContext,rawJobId:unk
   )).returning({id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
    updatedAt:placementJobs.updatedAt,applicationDeadline:placementJobs.applicationDeadline});
   if(!updated)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
-  await auditTpoJobChange(tx,context,updated,"PLACEMENTS_TPO_DRIVE_DEADLINE_EXTENDED","extended deadline for",{
-   reason:input.reason,oldDeadline:job.applicationDeadline?.toISOString()??null,
+  await auditTpoJobChange(tx,context,updated,"PLACEMENTS_TPO_DRIVE_DEADLINE_EXTENDED",
+   job.applicationDeadline===null?"set deadline for":"extended deadline for",{
+   reason:input.reason,action:job.applicationDeadline===null?"SET":"EXTEND",oldDeadline:job.applicationDeadline?.toISOString()??null,
    newDeadline:updated.applicationDeadline?.toISOString()??null,
    fromUpdatedAt:job.updatedAt.toISOString(),toUpdatedAt:updated.updatedAt.toISOString(),
   });

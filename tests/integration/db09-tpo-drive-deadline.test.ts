@@ -61,6 +61,16 @@ describe.skipIf(!enabled)("TPO deadline extension isolated PostgreSQL",()=>{
   const audit=await pool.query<{count:number}>(
    "SELECT count(*)::int AS count FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_TPO_DRIVE_DEADLINE_EXTENDED'",[jobId]);
   expect(audit.rows[0]?.count).toBe(1);
+  await pool.query("UPDATE placement_jobs SET application_deadline=NULL WHERE id=$1",[jobId]);
+  const without=await getTpoDriveDeadlineState(tpo,jobId);
+  expect(without.extendable).toBe(true);
+  expect(without.applicationDeadline).toBeNull();
+  const firstDeadline=new Date(Date.now()+7*86400000).toISOString();
+  const firstSet=await extendTpoDriveDeadline(tpo,jobId,payload(without.updatedAt,firstDeadline));
+  expect(firstSet.applicationDeadline).toBe(firstDeadline);
+  const setAudit=await pool.query<{count:number}>(
+   "SELECT count(*)::int AS count FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_TPO_DRIVE_DEADLINE_EXTENDED'",[jobId]);
+  expect(setAudit.rows[0]?.count).toBe(2);
   const foreign:RequestContext={...tpo,membership:{...tpo.membership!,
    id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
   await expect(extendTpoDriveDeadline(foreign,jobId,payload(result.updatedAt,later)))

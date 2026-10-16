@@ -4,7 +4,7 @@ export const globalTpoRequestsQuerySchema = z.object({
   status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
   requestType: z.enum(GLOBAL_TPO_REQUEST_TYPES).default("ALL"),
   age: z.enum(["ALL","OLDER_THAN_1_DAY","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
-  sort: z.enum(["NEWEST_FIRST","OLDEST_FIRST"]).default("NEWEST_FIRST"),
+  sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
   page: z.coerce.number().int().min(1).max(100000).default(1),
   pageSize: z.coerce.number().int().refine(value=>[25,50,100].includes(value)).default(25),
@@ -13,7 +13,46 @@ export function requestKindMatches(actual:string,selected:(typeof GLOBAL_TPO_REQ
  return selected==="ALL"||actual===selected;
 }
 
-export function sortTpoRequestRows<T extends {id:string;requestedAt:Date}>(rows:readonly T[],sort:"NEWEST_FIRST"|"OLDEST_FIRST"):T[]{
+export type TpoRequestUrgencyFact={
+ status:string;requestType:string;requestedAt:Date;nextRoundAt?:Date|null;
+};
+export function tpoRequestUrgent(row:TpoRequestUrgencyFact,now:Date):boolean{
+ if(row.status!=="PENDING")return false;
+ const due=row.nextRoundAt?.getTime();
+ if(due!==undefined&&Number.isFinite(due)&&due>=now.getTime()&&due<=now.getTime()+86400000)return true;
+ return row.requestType==="APPLICATION_WITHDRAWAL"&&
+  row.requestedAt.getTime()<=now.getTime()-86400000;
+}
+export function tpoNextRoundCue(row:{nextRoundAt?:Date|null;nextRoundName?:string|null},now:Date):string|null{
+ const next=row.nextRoundAt;
+ if(!next||!Number.isFinite(next.getTime()))return null;
+ const day=(d:Date)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
+ const tomorrow=new Date(now.getTime()+86400000);
+ const dayLabel=day(next)===day(now)?"today":day(next)===day(tomorrow)?"tomorrow":
+  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(next);
+ const time=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true}).format(next);
+ return (row.nextRoundName||"Next round")+" "+dayLabel+" "+time+" IST";
+}
+export function sortTpoRequestRows<T extends {id:string;requestedAt:Date;status?:string;requestType?:string;nextRoundAt?:Date|null}>(
+ rows:readonly T[],sort:"URGENCY_FIRST"|"NEWEST_FIRST"|"OLDEST_FIRST",now:Date=new Date(),
+):T[]{
+ if(sort==="URGENCY_FIRST"){
+  const rank=(r:T)=>{
+   if(r.status!=="PENDING")return 2;
+   return tpoRequestUrgent({...r,status:r.status,requestType:r.requestType??""},now)?0:1;
+  };
+  return [...rows].sort((a,b)=>{
+   const diff=rank(a)-rank(b);
+   if(diff!==0)return diff;
+   const left=a.nextRoundAt?.getTime(),right=b.nextRoundAt?.getTime();
+   if(rank(a)===0){
+    if(left!==undefined&&right!==undefined&&left!==right)return left-right;
+    if(left!==undefined&&right===undefined)return -1;
+    if(left===undefined&&right!==undefined)return 1;
+   }
+   return a.requestedAt.getTime()-b.requestedAt.getTime()||a.id.localeCompare(b.id);
+  });
+ }
  const direction=sort==="OLDEST_FIRST"?1:-1;
  return [...rows].sort((a,b)=>direction*(a.requestedAt.getTime()-b.requestedAt.getTime())||direction*a.id.localeCompare(b.id));
 }
