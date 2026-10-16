@@ -8,6 +8,7 @@ import { getTpoBatch, listTpoBatchHistory } from "@/modules/placements/tpo-batch
 import { getTpoBatchEligibilitySummary } from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
 import {getTpoBatchInvitationPreview} from "@/modules/placements/tpo-batch-invitation-service";
+import {indianCalendarDate} from "@/modules/placements/tpo-batch-notification-model";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params}:{params:Promise<{batchId:string}>}){
@@ -25,7 +26,8 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
   deadline={lifecycle?.registrationDeadline?.toISOString() ?? null}
   expectedVersion={lifecycle?.updatedAt.toISOString() ?? "none"}
   invitable={invitePreview.invitable} eligible={invitePreview.eligible}
-  deadlinePassed={registrations.invitation.stage === "DEADLINE_PASSED"} /> : null}
+  deadlinePassed={registrations.invitation.stage === "DEADLINE_PASSED"}
+  minDate={indianCalendarDate(new Date())} /> : null}
  {ready?<TpoBatchLifecycleControl batchId={batchId} state={lifecycle?{
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
   expectedVersion:lifecycle.updatedAt.toISOString(),
