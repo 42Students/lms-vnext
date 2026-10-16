@@ -49,13 +49,13 @@ export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExten
     ctx.addIssue({code:"custom",message:"Too many selected records"});
 });
 export type TpoBulkConfirmRequest=z.output<typeof tpoBulkConfirmRequestSchema>;
-export function selectedBulkActionRows(ids:readonly string[],readiness:ReadonlyMap<string,{version:string;ready:boolean}>){
+export function selectedBulkActionRows(ids:readonly string[],readiness:ReadonlyMap<string,{version:string;ready:boolean;reason?:string}>){
   return previewBulkAction(ids.map((id,index)=>({
     id,version:readiness.get(id)?.version??"unavailable",
     label:"Selected row "+(index+1),
   })),row=>{
     const state=readiness.get(row.id);
-    return state?.ready?{allowed:true}:{allowed:false,reason:"Unavailable or ineligible; no change will be made"};
+    return state?.ready?{allowed:true}:{allowed:false,reason:state?.reason??"Unavailable or outside this college; no change will be made"};
   });
 }
 export function safeBulkActionFailure(){return "Not applied; row changed or is no longer eligible";}
