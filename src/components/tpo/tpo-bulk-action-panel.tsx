@@ -1,10 +1,12 @@
 "use client";
 
 import {useState} from "react";
+import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
 import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
+import {tpoReviewOneByOneHref,tpoShareWithCompanyHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
@@ -163,6 +165,28 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
      Check action counts
    </button>
+   {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="space-y-2 rounded-lg border border-border bg-surface p-3">
+     <h4 className="font-semibold">Other actions</h4>
+     <p className="text-xs text-muted-foreground">Review one by one opens each applicant's authorized detail. Share with the company uses the separate shortlist review and does not silently share the current selection.</p>
+     <div className="flex flex-wrap gap-2">
+       <Link href={tpoShareWithCompanyHref(jobId)} className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+         Share with the company
+       </Link>
+       <Link href={tpoReviewOneByOneHref(jobId,safeSelected[0])} className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+         Review one by one
+       </Link>
+     </div>
+     {safeSelected.length>1?<details className="text-sm">
+       <summary>Review selected applicants individually ({safeSelected.length})</summary>
+       <ol className="mt-2 max-h-40 space-y-2 overflow-y-auto">
+         {safeSelected.map((id,index)=><li key={id}>
+           <Link href={tpoReviewOneByOneHref(jobId,id)} className="text-primary-text underline">
+             Applicant {index+1}
+           </Link>
+         </li>)}
+       </ol>
+     </details>:null}
+   </div>:null}
    {actionCounts.length>0?<div className="grid gap-2 sm:grid-cols-2">
      {actionCounts.map(count=><div key={count.action} className="rounded-md border border-border bg-surface p-3 text-sm">
        <p className="font-semibold">{count.label}</p>
