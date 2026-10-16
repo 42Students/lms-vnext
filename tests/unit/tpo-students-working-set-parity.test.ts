@@ -1,11 +1,14 @@
 import {describe,expect,it} from "vitest";
-import {getLearnerPlacementAccess} from "@/modules/placements/batch-eligibility-policy";
-describe("TPO-students-01 and TPO-students-R01/R02/R08 roster rules",()=>{
- it("does not treat not-decided participation as eligible",()=>{
-  const none={status:"NOT_DECIDED" as const,source:"DEFAULT" as const,reason:null,note:null,decidedAt:null};
-  const res=getLearnerPlacementAccess({
-    collegeModuleEnabled:true,decision:none,batchFinished:false,
-  });
-  expect(res.showPlacements).toBe(false);
+import {selectTpoStudentWorkingSet,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
+describe("TPO-students-01 TPO-students-R01 working set",()=>{
+ it("defaults to eligible; explicit batch permits historical completed learners",()=>{
+  const item=(id:string,status:TpoStudentRow["participationStatus"],finished=false)=>
+    ({membershipId:id,participationStatus:status,fromFinishedBatch:finished} as TpoStudentRow);
+  const rows=[item("eligible","ELIGIBLE"),item("undecided","NOT_DECIDED"),
+    item("historical","INELIGIBLE",true)];
+  expect(selectTpoStudentWorkingSet(rows,false).map(x=>x.membershipId))
+    .toEqual(["eligible"]);
+  expect(selectTpoStudentWorkingSet(rows,true).map(x=>x.membershipId))
+    .toEqual(["eligible","historical"]);
  });
 });

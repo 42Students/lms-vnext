@@ -58,6 +58,7 @@ import {
   filterTpoStudentRoster,
   summarizeTpoStudentBranches,
   summarizeTpoStudents,
+  selectTpoStudentWorkingSet,
   type TpoStudentApplicationSignal,
   type TpoStudentOfferSignal,
   type TpoStudentRoundSignal,
@@ -828,9 +829,7 @@ export async function getTpoStudentsIntelligence(
 
   // Legacy working set: placement-eligible learners only; a completed
   // academic enrollment reappears only when its finished cohort is selected.
-  const workingRows = studentRows.filter(student =>
-    student.participationStatus==="ELIGIBLE" ||
-    Boolean(input.batchId && student.fromFinishedBatch));
+  const workingRows=selectTpoStudentWorkingSet(studentRows,Boolean(input.batchId));
   return {
     collegeId: college.id,
     season: activeSeason ?? null,
