@@ -12,6 +12,7 @@ type Props = {
   eligible: number;
   complete: boolean;
   unrecorded: number;
+  deadlinePassed: boolean;
 };
 const errors: Record<string, string> = {
   DEADLINE_REQUIRED: "Pick the date first",
@@ -75,8 +76,7 @@ export function TpoBatchInvitationControl(props: Props) {
     } finally { setBusy(false); }
   }
   if (props.invitedAt) {
-    const deadlinePassed = props.deadline !== null &&
-      new Date(props.deadline).getTime() <= Date.now();
+    const deadlinePassed = props.deadlinePassed;
     return <section aria-label="Registration deadline" className="space-y-3 rounded border border-border bg-surface p-4">
       <h2 className="font-semibold">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
       <label htmlFor="batch-move-date" className="block text-sm">Register by</label>

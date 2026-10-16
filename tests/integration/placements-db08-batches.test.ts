@@ -293,6 +293,18 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
       registrationDeadline: "2026-12-20T18:30:00+05:30", rulesOverride: null,
     });
     await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    const [inviteEvent] = (await pool.query(
+      "SELECT event_type,metadata FROM activity_events WHERE subject_type='COHORT' AND subject_id=$1 AND event_type='BATCH_INVITED'",
+      [a.cohortId],
+    )).rows;
+    expect(inviteEvent?.event_type).toBe("BATCH_INVITED");
+    expect(inviteEvent?.metadata?.registrationDeadline).toBeTruthy();
+    await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    const inviteCount = await pool.query(
+      "SELECT count(*)::int AS n FROM activity_events WHERE subject_type='COHORT' AND subject_id=$1 AND event_type='BATCH_INVITED'",
+      [a.cohortId],
+    );
+    expect(inviteCount.rows[0].n).toBe(1);
     await markPlacementBatchFinished(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
     await expect(markPlacementBatchFinished(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: b.cohortId,
