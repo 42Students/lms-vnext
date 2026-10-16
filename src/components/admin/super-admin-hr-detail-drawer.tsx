@@ -48,12 +48,13 @@ export function SuperAdminHrDetailDrawer({
   onReloadOptions: () => void;
   onEdit: (account: HrAccount) => void;
   onGrant: (
-    companyRelationshipId: string,
+    companyRelationshipId: string,validUntil:string|undefined,
   ) => Promise<boolean>;
   onRevokeRequest: (grant: HrGrant) => void;
   onTerminateRequest: (account: HrAccount) => void;
 }) {
   const id = useId();
+  const [validUntil,setValidUntil] = useState("");
   const [
     selectedRelationshipId,
     setSelectedRelationshipId,
@@ -79,10 +80,12 @@ export function SuperAdminHrDetailDrawer({
 
     const completed = await onGrant(
       selectedRelationshipId,
+      validUntil ? new Date(validUntil+"T23:59:59+05:30").toISOString() : undefined,
     );
 
     if (completed) {
       setSelectedRelationshipId("");
+      setValidUntil("");
     }
   }
 
@@ -221,7 +224,8 @@ export function SuperAdminHrDetailDrawer({
                         {grant.collegeName}
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Active college access
+                        {grant.validUntil ? `Until ${new Date(grant.validUntil).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}`:"Expiry not recorded"}
+                        {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=Date.now()?"Expired":grant.verificationStatus}
                       </p>
                     </div>
                     <Button
@@ -284,6 +288,12 @@ export function SuperAdminHrDetailDrawer({
                   )}
                 </Select>
 
+                <label className="mb-1.5 mt-3 block text-xs font-semibold text-body">
+                 Until (optional)
+                 <input type="date" value={validUntil} onChange={event=>setValidUntil(event.target.value)}
+                  className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+                 <span className="mt-1 block font-normal text-muted-foreground">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
+                </label>
                 {optionsLoading ? (
                   <p
                     role="status"
