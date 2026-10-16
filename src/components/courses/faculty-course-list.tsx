@@ -64,7 +64,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
         <div className="grid gap-3 md:grid-cols-3">
           <label className="grid gap-1 text-sm font-semibold text-body">Search courses
             <input name="q" type="search" defaultValue={query.q} maxLength={120}
-              placeholder="Course, code, Section or academic period"
+              placeholder="Search courses…"
               className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Academic period
