@@ -33,6 +33,7 @@ function ResourceForm({
   onDescription,
   onUrl,
   onRequired,
+  isLearner = false,
 }: {
   title: string;
   description: string;
@@ -44,6 +45,7 @@ function ResourceForm({
   onDescription: (value: string) => void;
   onUrl: (value: string) => void;
   onRequired: (value: boolean) => void;
+  isLearner?: boolean;
 }) {
   return (
     <div className="grid gap-4">
@@ -88,15 +90,15 @@ function ResourceForm({
           }
         />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">
+      {!isLearner ? <label className="grid gap-1 text-sm font-semibold text-body">
         Visible to
         <select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
           className="min-h-10 rounded-md border border-border bg-surface px-3 py-2">
           <option value="TEAM">Everyone</option>
           <option value="MENTOR_ONLY">Mentors only</option>
         </select>
-      </label>
-      <label className="flex items-center gap-2 text-sm font-semibold text-body">
+      </label> : null}
+      {!isLearner ? <label className="flex items-center gap-2 text-sm font-semibold text-body">
         <input
           type="checkbox"
           checked={required}
@@ -105,15 +107,16 @@ function ResourceForm({
           }
         />
         Required resource
-      </label>
+      </label> : null}
     </div>
   );
 }
 
 export function CreateProjectResourceControl({
-  projectId,
+  projectId, isLearner = false,
 }: {
   projectId: string;
+  isLearner?: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -153,7 +156,8 @@ export function CreateProjectResourceControl({
             description.trim() || undefined,
           url: url.trim() || undefined,
           required,
-          visibility,
+          visibility: isLearner ? "TEAM" : visibility,
+          required: isLearner ? false : required,
         },
       );
       setOpen(false);
@@ -185,12 +189,12 @@ export function CreateProjectResourceControl({
         variant="secondary"
         onClick={() => setOpen(true)}
       >
-        Add resource
+        {isLearner ? "Share a resource" : "Add resource"}
       </Button>
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Add Project resource"
+        title={isLearner ? "Share a resource" : "Add Project resource"}
         description="Share a safe HTTP(S) link or an internal text resource with the Project team."
       >
         <form
@@ -198,6 +202,7 @@ export function CreateProjectResourceControl({
           className="grid gap-4"
         >
           <ResourceForm
+            isLearner={isLearner}
             title={title}
             description={description}
             url={url}
