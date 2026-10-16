@@ -425,6 +425,32 @@ export function ProjectWorkspace({
             </div>
           ) : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
           {mode === "LEARNER" ? (
+            <section className="mt-4 rounded-lg border border-border bg-surface-subtle p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-sm font-semibold text-foreground">Final submission</h3>
+                <StatusBadge tone={readiness.finalSubmission.latest?.status === "APPROVED" ? "success" :
+                  readiness.finalSubmission.latest?.status === "SUBMITTED" ? "info" : "warning"}>
+                  {readiness.finalSubmission.latest?.status === "APPROVED" ? "Ready for review" :
+                    readiness.finalSubmission.latest?.status === "SUBMITTED" ? "Submitted" :
+                    "Waiting for completion"}
+                </StatusBadge>
+              </div>
+              <p className="mt-2 text-sm text-body">{readiness.finalSubmission.latest
+                ? "Latest submission: " + label(readiness.finalSubmission.latest.status)
+                : "Complete project work to prepare your final submission."}</p>
+              {workspace.finalDelivery.reviews.at(-1)?.feedback ? (
+                <p className="mt-2 text-sm text-body">Mentor left feedback: {
+                  workspace.finalDelivery.reviews.at(-1)?.feedback
+                }</p>
+              ) : null}
+              <Link href={"/learn/projects/" + workspace.project.id + "?tab=delivery"}
+                className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                {readiness.finalSubmission.latest?.status === "CHANGES_REQUESTED"
+                  ? "Update your submission" : "Open final submission"}
+              </Link>
+            </section>
+          ) : null}
+          {mode === "LEARNER" ? (
             <div className="mt-4 space-y-3">
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-lg bg-muted p-3 text-sm">
