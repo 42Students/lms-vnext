@@ -4,11 +4,11 @@ import { LEARNER_BOARD_STATUS_LABELS, learnerBoardStatusFilterHref, type Learner
 import { LEARNER_BOARD_PRIORITY_LABELS, learnerBoardPriorityFilterHref, type LearnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
 import type { LearnerBoardSort } from "@/modules/projects/learner-board-sort-model";
 export function LearnerProjectBoardSearch({
-  projectId, search, priority, status, taskSort, sprintId, sprints, releaseId, releases, shown, total, statusCounts, priorityCounts,
-}: {projectId:string;search:string;priority:string;status:string;taskSort:LearnerBoardSort;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
+  projectId, search, priority, status, taskSort, mine, sprintId, sprints, releaseId, releases, shown, total, statusCounts, priorityCounts,
+}: {projectId:string;search:string;priority:string;status:string;taskSort:LearnerBoardSort;mine:boolean;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
   const base="/learn/projects/"+encodeURIComponent(projectId)+"?tab=board";
   const emptyState=learnerBoardEmptyState(total,shown);
-  const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId,taskSort});
+  const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId,taskSort,mine});
   const form=(
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
         method="get" className="grid gap-3 py-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -63,6 +63,11 @@ export function LearnerProjectBoardSearch({
             {releases.map(release=>(
               <option key={release.id} value={release.id}>{release.title}</option>
             ))}
+          </select>
+        </label>
+        <label className="text-sm font-semibold text-foreground">Assignee
+          <select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal">
+            <option value="">Everyone</option><option value="mine">Mine</option>
           </select>
         </label>
         <button type="submit" className="min-h-11 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply</button>
