@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {TPO_RULE_LIMITS} from "./tpo-rule-limits";
 
 const collegeId = z.string().uuid();
 const expectedVersion = z.number()
@@ -15,9 +16,9 @@ export const placementCollegeRulesPatchSchema = z.object({
     "OFFER_RELEASED",
     "OFFER_ACCEPTED",
   ]).optional(),
-  maxHeldOffers: z.number().int().min(1).optional(),
-  upliftPct: z.number().int().min(0).optional(),
-  minResponseHours: z.number().int().min(1).optional(),
+  maxHeldOffers: z.number().int().min(TPO_RULE_LIMITS.maxHeldOffers.min).max(TPO_RULE_LIMITS.maxHeldOffers.max).optional(),
+  upliftPct: z.number().int().min(TPO_RULE_LIMITS.upliftPct.min).max(TPO_RULE_LIMITS.upliftPct.max).optional(),
+  minResponseHours: z.number().int().min(TPO_RULE_LIMITS.minResponseHours.min).max(TPO_RULE_LIMITS.minResponseHours.max).optional(),
 }).strict().refine(
   (v) =>
     v.countsAsPlacedAt !== undefined ||
