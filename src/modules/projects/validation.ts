@@ -321,8 +321,18 @@ export const createProjectInstanceInputSchema = z
     title: titleSchema,
     summary: z.string().trim().min(1).max(2000).optional(),
     primaryMentorMembershipId: z.string().uuid().optional(),
+    sectionId: z.string().uuid().optional(),
+    initialStatus: z.enum(["PLANNED","ACTIVE"]).default("PLANNED"),
+    learnerMembershipIds: z.array(z.string().uuid()).max(500).default([]),
   })
-  .strict();
+  .strict().superRefine((v,ctx)=>{
+    if(v.initialStatus==="ACTIVE"&&!v.primaryMentorMembershipId)
+      ctx.addIssue({code:"custom",path:["primaryMentorMembershipId"],message:"This workspace has no mentor"});
+    if(v.learnerMembershipIds.length && !v.sectionId)
+      ctx.addIssue({code:"custom",path:["sectionId"],message:"Choose a class for the selected students"});
+    if(new Set(v.learnerMembershipIds).size!==v.learnerMembershipIds.length)
+      ctx.addIssue({code:"custom",path:["learnerMembershipIds"],message:"Duplicate student"});
+  });
 
 export type CreateProjectInstanceInput = z.infer<
   typeof createProjectInstanceInputSchema
