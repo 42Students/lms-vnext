@@ -266,9 +266,15 @@ describe("Section A: placement write/read integration boundaries", () => {
       DO UPDATE SET enabled=true,population_count=5,published_at=now()
     `,[SEED_IDS.collegeA]);
     try{
+      // Apply to all five jobs first: once an offer is held, the held-offer
+      // policy (correctly) blocks further applications by the same learner.
+      const apps=[];
       for(let i=0;i<5;i++){
         const job=await makeJob("CTC privacy "+i);
-        const app=await applyToPlacementJob(learner,job.id,{});
+        apps.push(await applyToPlacementJob(learner,job.id,{}));
+      }
+      for(let i=0;i<5;i++){
+        const app=apps[i]!;
         await pool.query(`
           INSERT INTO placement_offers
            (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
