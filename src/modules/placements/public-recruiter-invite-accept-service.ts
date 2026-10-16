@@ -78,7 +78,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   }).onConflictDoNothing();
   const [user]=await tx.select({id:users.id,status:users.platformStatus})
    .from(users).where(sql`lower(${users.email})=${email}`).for("update").limit(1);
-  if(!user||user.status!=="ACTIVE")return {result:"DENIED" as const};
+  if(!user||user.status!=="ACTIVE")throw invalid();
   await tx.insert(placementRecruiterProfiles).values({
    userId:user.id,companyId:relationship.companyId,createdByUserId:user.id,
    title:lead.designation,
@@ -86,20 +86,20 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   const [profile]=await tx.select().from(placementRecruiterProfiles)
     .where(eq(placementRecruiterProfiles.userId,user.id)).for("update").limit(1);
   if(!profile||profile.companyId!==relationship.companyId||profile.status!=="ACTIVE")
-    return {result:"DENIED" as const};
+    throw invalid();
   const [existing]=await tx.select({id:placementRecruiterCollegeGrants.id})
    .from(placementRecruiterCollegeGrants).where(and(
     eq(placementRecruiterCollegeGrants.recruiterUserId,user.id),
     eq(placementRecruiterCollegeGrants.companyRelationshipId,lead.companyRelationshipId),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
    )).limit(1);
-  if(existing)return {result:"DENIED" as const};
+  if(existing)throw invalid();
   const [grant]=await tx.insert(placementRecruiterCollegeGrants).values({
    recruiterUserId:user.id,companyRelationshipId:lead.companyRelationshipId,
    grantedByUserId:user.id,validUntil:recruiterGrantValidUntil(now,months),
    capabilities:["DRIVES","MESSAGES"],verificationStatus:"VERIFIED",
   }).onConflictDoNothing().returning({id:placementRecruiterCollegeGrants.id});
-  if(!grant)return {result:"DENIED" as const};
+  if(!grant)throw invalid();
   const [consumed]=await tx.update(recruiterInviteCodes).set({consumedAt:now})
    .where(and(eq(recruiterInviteCodes.id,challenge.id),
      isNull(recruiterInviteCodes.consumedAt))).returning({id:recruiterInviteCodes.id});
