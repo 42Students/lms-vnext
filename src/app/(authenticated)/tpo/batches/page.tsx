@@ -98,7 +98,13 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         { key: "review", label: "Needs review", count: summary.needsReview, color: "bg-warning" },
       ] as const;
       return <div className="space-y-2">
-        <p className="text-xs text-muted-foreground">{summary.assessed} active learners in batch</p>
+        <p className="text-xs text-muted-foreground">{summary.assessed} {summary.assessed===1?"student":"students"} in batch</p>
+        <dl className="grid grid-cols-2 gap-1 text-xs">
+         <div><dt className="text-muted-foreground">Invited</dt><dd className="font-semibold">{b.invitedAt?"Yes":"Not yet"}</dd></div>
+         <div><dt className="text-muted-foreground">Registered</dt><dd className="font-semibold">{journey.get(b.id)?.registered??0}</dd></div>
+         <div><dt className="text-muted-foreground">Verified profiles</dt><dd className="font-semibold">{journey.get(b.id)?.verified??0}</dd></div>
+         <div><dt className="text-muted-foreground">Placed (offer evidence)</dt><dd className="font-semibold">{journey.get(b.id)?.placed??0}</dd></div>
+        </dl>
         <dl className="grid grid-cols-2 gap-1 text-xs">
           {split.map(part=><div key={part.key}>
             <dt className="text-muted-foreground">{part.label}</dt>
