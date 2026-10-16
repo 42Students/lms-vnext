@@ -2,7 +2,7 @@
  * Counts are only displayed when a corresponding persisted source has been read. */
 export type TpoHomeSummary={
  batch:{name:string;invited:boolean;eligible:number|null;registered:number|null;placed:number|null}|null;
- moreBatches:number;liveDrives:number;driveAttention:number;
+ moreBatches:number;hasUninvitedBatch?:boolean;liveDrives:number;driveAttention:number;
  registered:number|null;placedUnique:number|null;
  recruiterLeads:number|null;followUps:number|null;recruiterAccess:number|null;
  pendingRequests:number;messages:number|null;
@@ -34,7 +34,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  };
  return [
   {key:"batches",title:"Placement eligibility",status:batchStatus,href:"/tpo/batches",
-   needsAttention:!batch||!batch.invited},
+   needsAttention:!batch||(d.hasUninvitedBatch??!batch.invited)},
   {key:"drives",title:"Drives",status:drives,href:"/tpo/placements",
    needsAttention:d.driveAttention>0},
   {key:"students",title:"Students",status:d.registered===null?"Open student roster":
