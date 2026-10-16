@@ -9,3 +9,4 @@ The owner wants every audit gap closed as fast as possible. Correctness is check
 5. **New tables/columns:** write the schema and a proposal under `docs/proposed-migrations/<id>.sql` and keep going; the orchestrator registers migrations.
 6. **Update status:** mark finished WPs in your queue file (`docs/orchestrator/queues/chat-N.md`) in the same pushes. Keep going down the queue without waiting for the orchestrator: when a WP is done, take the next TODO WP immediately.
 7. Final summary of each reply: gap IDs finished / remaining. Do not report test results.
+8. **Start EVERY commit message with your lane tag in square brackets**, e.g. `[chat-2] fix(tpo): TPO-recruiters-12 ...`. The orchestrator tells lanes apart by this tag.
