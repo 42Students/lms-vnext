@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
+import {facultyCourseTabHref} from "@/modules/courses/faculty-course-navigation";
 import { FacultyLessonVideoManager } from "./faculty-lesson-video-manager";
 import { FacultyContentEditor } from "./faculty-content-editor";
 import { facultyContentExternalHref, facultyYouTubeEmbed } from "@/modules/courses/faculty-content-preview-model";
@@ -366,6 +367,7 @@ export function FacultyCourseWorkspace({
   homeSignals,
   display,
   view = "ALL",
+  contentFilter="ALL",
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
@@ -373,6 +375,7 @@ export function FacultyCourseWorkspace({
   >;
   display: CourseDisplayContentView | null;
   view?: "ALL" | "OVERVIEW" | "BLUEPRINT";
+  contentFilter?:"ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -508,6 +511,20 @@ export function FacultyCourseWorkspace({
             </div>
           </section>
 
+          <nav aria-label="Blueprint content filters" className="flex flex-wrap gap-2">
+            {([
+              ["ALL","All"],["LECTURES","Lectures"],["RESOURCES","Resources"],
+              ["ASSESSMENTS","Assessments"],["LIVE","Live sessions"],
+            ] as const).map(([value,label])=><Link key={value}
+              href={facultyCourseTabHref(course.deliveryId,"blueprint")+
+                (value==="ALL"?"":"?filter="+value)}
+              aria-current={contentFilter===value?"page":undefined}
+              className={"inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold "+
+                (contentFilter===value?"border-primary bg-primary-subtle text-primary-text":
+                "border-border bg-surface text-body")}>
+              {label}
+            </Link>)}
+          </nav>
           {workspace.lessons.length === 0 ? (
             <EmptyState
               title="No lessons yet"
