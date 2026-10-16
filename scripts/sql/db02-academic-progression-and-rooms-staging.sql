@@ -701,7 +701,7 @@ ALTER TABLE cohorts
 -- upper limit. Keep vNext capacity nullable for non-legacy creation flows, while compatibility
 -- producers must provide it and obey the legacy 1..500 bound.
 ALTER TABLE sections
-  ADD COLUMN description text,
+  ADD COLUMN IF NOT EXISTS description text, -- registered by migration 0098
   ADD COLUMN minimum_capacity integer NOT NULL DEFAULT 0,
   ADD COLUMN start_date date,
   ADD COLUMN end_date date;

@@ -14,6 +14,9 @@ describe("legacy learner assignment detail — ViewAssignmentModal.jsx dev",()=>
   }
   expect(src).toContain("item.gradePublished");
   expect(src).toContain("AssignmentFileOpenControl");
-  expect(src).toContain("The deadline has passed; this published assignment accepts late submissions.");
+  // Late and unset deadlines are rejected (LEARNER-learning-misc-05/06); the dev legacy
+  // Alert message for a passed deadline is exactly "Submissions are closed".
+  expect(src).toContain("Submissions are closed");
+  expect(src).not.toContain("accepts late submissions");
  });
 });

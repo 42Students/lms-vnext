@@ -105,6 +105,6 @@ test("DB05 browser fixture avoids eager server-only ordering imports while featu
     /^import[^;]*["']\.\/lesson-content-order-service["'];/m,
     "Do not load the staged, server-only writer in ordinary lesson-service module initialization",
   );
-  assert.match(service, /!deliveryId\s*\|\|\s*rows\.length\s*<=\s*1\s*\|\|\s*!lessonContentOrderRuntimeEnabled\(\)/);
-  assert.match(service, /return rows;[\s\S]*await import\("\.\/lesson-content-order-service"\)/);
+  assert.match(service, /!deliveryId\s*\|\|\s*(?:visibleRows|rows)\.length\s*<=\s*1\s*\|\|\s*!lessonContentOrderRuntimeEnabled\(\)/);
+  assert.match(service, /return (?:visibleRows|rows);[\s\S]*await import\("\.\/lesson-content-order-service"\)/);
 });
