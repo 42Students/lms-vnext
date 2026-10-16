@@ -74,6 +74,7 @@ const batchSettingsInput = cohortInput.extend({
   registrationDeadline: z.coerce.date().nullable(),
   // null means inherit the college's placement rules, never an empty override.
   rulesOverride: z.record(z.string(), z.unknown()).nullable(),
+  expectedVersion: z.string().min(1).max(80).optional(),
 }).strict();
 
 type Scope = z.infer<typeof scope>;
@@ -449,6 +450,9 @@ export async function upsertPlacementBatchSettings(
       .where(eq(placementBatchLifecycles.cohortId, input.cohortId))
       .limit(1);
     if (current?.finishedAt) throw new PlacementBatchError("DB08_ACTION_INVALID");
+    if (input.expectedVersion !== undefined &&
+        (current?.updatedAt.toISOString() ?? "none") !== input.expectedVersion)
+      throw new PlacementBatchError("DB08_ACTION_STALE");
 
     const [row] = await tx.insert(placementBatchLifecycles).values({
       cohortId: input.cohortId,
@@ -484,6 +488,8 @@ export async function markPlacementBatchInvited(
     if (!current) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
     if (current.finishedAt) throw new PlacementBatchError("DB08_ACTION_INVALID");
     if (current.invitedAt) return current;
+    if (!current.registrationDeadline || current.registrationDeadline <= new Date())
+      throw new PlacementBatchError("DB08_ACTION_INVALID");
     const [updated] = await tx.update(placementBatchLifecycles).set({
       invitedAt: new Date(),
       updatedByUserId: context.user.id,
