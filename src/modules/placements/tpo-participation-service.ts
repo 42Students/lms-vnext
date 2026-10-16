@@ -16,6 +16,7 @@ import {
   sections,
   users,
   placementEligibilityDecisions,
+  placementBatchLifecycles,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -35,6 +36,7 @@ import {
   type TpoStoredDecision,
 } from "./tpo-participation-model";
 import { requirePlacementManageScope } from "./scope";
+import { placementTableExists } from "./staged-tables";
 
 const uuid = z.string().uuid();
 type Client = ReturnType<typeof getDb>;
@@ -234,6 +236,7 @@ export async function decideTpoLearnerParticipation(
 
     const enrollments = await tx.select({
       collegeId: departments.collegeId,
+      cohortId: learnerProgramEnrollments.cohortId,
     }).from(learnerProgramEnrollments)
       .innerJoin(cohorts, and(
         eq(cohorts.id, learnerProgramEnrollments.cohortId),
@@ -247,6 +250,15 @@ export async function decideTpoLearnerParticipation(
       )).limit(2);
     if (enrollments.length !== 1 || enrollments[0].collegeId !== college.id) {
       return unavailable();
+    }
+
+    if (await placementTableExists("placement_batch_lifecycles")) {
+      const [batchLifecycle] = await tx.select({finishedAt:placementBatchLifecycles.finishedAt})
+        .from(placementBatchLifecycles)
+        .where(and(eq(placementBatchLifecycles.collegeId,college.id),
+          eq(placementBatchLifecycles.cohortId,enrollments[0].cohortId)))
+        .limit(1);
+      if (batchLifecycle?.finishedAt) throw new TpoParticipationConflictError();
     }
 
     const [current] = await tx.select().from(placementEligibilityDecisions)
