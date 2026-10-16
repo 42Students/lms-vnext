@@ -3,11 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { calendarLocalIstToOffset } from "@/modules/placements/tpo-calendar-followup-model";
+import {searchTpoCalendarLeads} from "@/modules/placements/tpo-calendar-lead-search-model";
 
 export type TpoCalendarLeadOption = {
   id: string;
   name: string;
   companyName: string | null;
+  emailNorm: string | null;
 };
 
 async function submitFollowup(
@@ -47,6 +49,9 @@ export function TpoCalendarCreateFollowup({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [query,setQuery]=useState("");
+  const [selectedLeadId,setSelectedLeadId]=useState("");
+  const matches=searchTpoCalendarLeads(leads,query,30);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -56,11 +61,11 @@ export function TpoCalendarCreateFollowup({
     setMessage("");
     try {
       await submitFollowup("/api/placements/tpo/calendar/follow-ups", "POST", {
-        leadId: String(data.get("leadId") ?? ""),
+        leadId: selectedLeadId,
         dueAt: calendarLocalIstToOffset(String(data.get("dueAt") ?? "")),
         note: String(data.get("note") ?? "").trim() || null,
       });
-      form.reset();
+      form.reset();setQuery("");setSelectedLeadId("");
       setMessage("Follow-up created. The calendar is refreshing.");
       router.refresh();
     } catch (error) {
@@ -76,28 +81,32 @@ export function TpoCalendarCreateFollowup({
       <p className="mt-1 text-sm text-body">
         Schedule for an existing recruiter lead. Enter the due date and time in IST.
       </p>
-      {totalLeads > leads.length ? (
-        <p className="mt-2 text-xs text-muted-foreground">
-          Showing the {leads.length} most recently updated leads. Use the recruiter leads workspace
-          to manage follow-ups for older leads.
-        </p>
-      ) : null}
+      <p className="mt-2 text-xs text-muted-foreground">
+       Search all {totalLeads} recruiter leads by name, company or email. Enter at least two characters.
+      </p>
       {leads.length === 0 ? (
         <p className="mt-3 text-sm text-muted-foreground">
           No recruiter leads found. Create a lead in Engage first.
         </p>
       ) : (
         <form onSubmit={onSubmit} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
-            Recruiter lead
-            <select name="leadId" required className={inputClass}>
-              {leads.map((lead) => (
-                <option key={lead.id} value={lead.id}>
-                  {lead.name} · {lead.companyName || "Unspecified company"}
-                </option>
-              ))}
+          <div className="space-y-2">
+           <label className="flex flex-col gap-1 text-sm font-semibold text-body">Search recruiter
+            <input type="search" className={inputClass} placeholder="Name, company or email"
+             value={query} onChange={e=>{setQuery(e.target.value);setSelectedLeadId("");}}
+             minLength={2}/>
+           </label>
+           <label className="flex flex-col gap-1 text-sm font-semibold text-body">Recruiter lead
+            <select name="leadId" value={selectedLeadId} onChange={e=>setSelectedLeadId(e.target.value)}
+             required disabled={matches.length===0} className={inputClass}>
+             <option value="">Choose a recruiter</option>
+             {matches.map(lead=><option key={lead.id} value={lead.id}>
+              {lead.name} · {lead.companyName||"Unspecified company"}
+             </option>)}
             </select>
-          </label>
+           </label>
+           {query.trim().length>=2&&matches.length===0?<p role="status" className="text-xs text-muted-foreground">No matching recruiters.</p>:null}
+          </div>
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Due date and time (IST)
             <input name="dueAt" type="datetime-local" required className={inputClass} />
