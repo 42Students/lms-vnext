@@ -4,8 +4,7 @@ import { placementApplications, placementJobs, placementOffers } from "./placeme
 import { users } from "./users";
 
 /**
- * Staged schema for TPO-drive-workspace-47/48. Register
- * docs/proposed-migrations/chat-5-drive-selections.sql before enabling writes.
+ * Registered by migration 0115 for TPO-drive-workspace-47/48.
  * Selection is not an issued offer; only the verified release step sends an offer.
  */
 export const placementDriveSelections = pgTable("placement_drive_selections", {
