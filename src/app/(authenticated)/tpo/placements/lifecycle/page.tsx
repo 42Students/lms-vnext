@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
+import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -150,6 +151,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                     <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
                     <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
                     <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
+                    {job.status==="PUBLISHED"?<TpoRemindNonApplicants jobId={job.id}/>:null}
                   </nav>
                 </details>
               </div>
