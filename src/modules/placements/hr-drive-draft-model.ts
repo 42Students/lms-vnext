@@ -5,8 +5,9 @@ export const hrDriveDraftQuerySchema = z.strictObject({
   from: z.string().uuid().optional(),
   fix: z.string().uuid().optional(),
   edit: z.string().uuid().optional(),
-}).refine((input) => [input.from,input.fix,input.edit].filter(Boolean).length<=1, {
-  message: "Choose only one of Hire Again, Fix and Resend or Edit your request",
+  copy: z.string().uuid().optional(),
+}).refine((input) => [input.from,input.fix,input.edit,input.copy].filter(Boolean).length<=1, {
+  message: "Choose only one of Hire Again, Fix and Resend, Edit your request or Hire again with changes",
 });
 
 const round = z.strictObject({
