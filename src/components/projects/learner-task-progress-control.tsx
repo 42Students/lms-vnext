@@ -41,7 +41,7 @@ export function LearnerTaskProgressControl(props: {
     <div className="flex flex-wrap gap-2">
       {props.status !== "IN_PROGRESS" ? <Button variant="secondary" size="sm" disabled={pending}
         onClick={() => void change({ action: "STATUS", status: "IN_PROGRESS" })}>
-        Start work
+        {props.status === "BLOCKED" ? "Resolve blocker" : "Start work"}
       </Button> : null}
       {props.status !== "TODO" ? <Button variant="secondary" size="sm" disabled={pending}
         onClick={() => void change({ action: "STATUS", status: "TODO" })}>
