@@ -48,14 +48,29 @@ describe.skipIf(!enabled)("TPO-campaigns-public-19/20 disposable PostgreSQL work
     const sent = await requestPublicJoinCode("COMPANY", input, "198.51.100.42",
       async (_email, code) => { delivered = code; return true; });
     expect(sent).toEqual({ sent: true });
+    await expect(requestPublicJoinCode("COLLEGE", input, "198.51.100.42",
+      async () => true)).rejects.toMatchObject({ code: "INVALID_LINK" });
+    await expect(requestPublicJoinCode("COMPANY", {
+      token, email: "person@another-company.example",
+    }, "198.51.100.42", async () => true)).rejects.toMatchObject({ code: "INVALID_LINK" });
     expect(delivered).toMatch(/^[0-9]{6}$/);
     const join = { ...input, name: "Recruiter", designation: "", phone: "",
       companyName: "", code: delivered === "000000" ? "999999" : "000000" };
     await expect(acceptPublicRecruiterJoin("COMPANY", join, "198.51.100.42"))
       .rejects.toMatchObject({ code: "INVALID" });
+    const failures = await pool.query<{ attempts: number }>(
+      "SELECT attempts FROM placement_public_join_challenges " +
+      "WHERE work_email=$1 ORDER BY created_at DESC LIMIT 1", [email],
+    );
+    expect(failures.rows[0]?.attempts).toBe(1);
     const accepted = await acceptPublicRecruiterJoin("COMPANY",
       { ...join, code: delivered }, "198.51.100.42");
     expect(accepted).toEqual({ joined: true, outcome: "JOINED" });
+    const verified = await pool.query<{ total: number }>(
+      "SELECT count(*)::integer AS total FROM placement_public_join_challenges " +
+      "WHERE work_email=$1 AND verified_at IS NOT NULL", [email],
+    );
+    expect(verified.rows[0]?.total).toBe(1);
     await expect(acceptPublicRecruiterJoin("COMPANY",
       { ...join, code: delivered }, "198.51.100.42"))
       .rejects.toMatchObject({ code: "INVALID" });

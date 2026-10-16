@@ -19,8 +19,9 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof PublicJoinCodeError) {
       const unavailable = error.code === "NETWORK_GUARD_NOT_READY";
+      const limited = error.code === "RATE_LIMITED";
       return NextResponse.json({ error: unavailable ? "SERVICE_NOT_READY" : "COULD_NOT_SEND_CODE" },
-        { status: unavailable ? 503 : 400, headers: { "Cache-Control": "no-store" } });
+        { status: unavailable ? 503 : limited ? 429 : 400, headers: { "Cache-Control": "no-store" } });
     }
     throw error;
   }
