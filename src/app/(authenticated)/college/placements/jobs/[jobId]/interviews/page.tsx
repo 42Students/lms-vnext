@@ -41,7 +41,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
-      candidates={appointments.candidates} appointments={appointments.interviews}/>
+      candidates={appointments.candidates} appointments={appointments.interviews}
+      preferredApplicationId={query.applicationId}/>
     <section aria-label="Persisted interview rounds" className="overflow-x-auto rounded-xl border border-border">
       <p className="p-3 text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
       {data.items.length?<table className="w-full min-w-[48rem] text-left text-sm">
