@@ -69,7 +69,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
         collegeId={attendancePolicy.college.id}
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
-        correctionWindowHours={attendancePolicy.policy.correctionWindowHours}/>:null}
+        correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
+        maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <Link href="/admin/settings/auth"
         className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Authentication and privileged access checklist →
