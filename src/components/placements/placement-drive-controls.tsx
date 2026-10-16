@@ -1371,6 +1371,31 @@ export function PlacementDriveControls({
               >
                 Add round
               </Button>
+              {([
+                ["Talk, Test, Interview", [["TALK", "Talk"], ["TEST", "Test"], ["INTERVIEW", "Interview"]]],
+                ["Test, Technical, HR", [["TEST", "Test"], ["INTERVIEW", "Technical"], ["INTERVIEW", "HR"]]],
+                ["Test, GD, Interview", [["TEST", "Test"], ["GD", "Group discussion"], ["INTERVIEW", "Interview"]]],
+              ] as Array<[string, Array<[RoundKind, string]>]>).map(([label, rounds]) => (
+                <Button
+                  key={label}
+                  size="sm"
+                  variant="secondary"
+                  disabled={pendingKey !== null}
+                  onClick={() => {
+                    if (evaluationRounds.length > 0 && !window.confirm(
+                      "Replace your current draft round plan with " + label + "? Unsaved changes will be lost."
+                    )) return;
+                    setEvaluationRounds(rounds.map(([kind, name]) => ({
+                      id: crypto.randomUUID(),
+                      kind, name, whatToBring: null,
+                      platform: null, testUrl: null,
+                      durationMinutes: kind === "INTERVIEW" ? 45 : 60,
+                    })));
+                  }}
+                >
+                  Start with: {label}
+                </Button>
+              ))}
               <Button
                 size="sm"
                 disabled={
