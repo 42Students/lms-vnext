@@ -23,8 +23,17 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  const filters=collegeInterviewFilters.parse(raw);
  const collegeId=await requireCollegePlacementAdmin(ctx);
  if(!await placementTableExists("placement_college_interviews"))
-  return {ready:false,filters,rows:[],total:0,pageCount:1,summary:null,limited:false};
+  return {ready:false,filters,rows:[],total:0,pageCount:1,summary:null,limited:false,companies:[],departments:[]};
  const db=getDb();
+ const [companies,departmentChoices]=await Promise.all([
+  db.select({id:placementCompanies.id,name:placementCompanies.name}).from(placementCompanyRelationships)
+   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+   .where(eq(placementCompanyRelationships.collegeId,collegeId))
+   .orderBy(asc(placementCompanies.name)),
+  db.select({id:departments.id,name:departments.name}).from(departments)
+   .where(eq(departments.collegeId,collegeId)).orderBy(asc(departments.name)),
+ ]);
+
  const conditions=and(eq(placementJobs.collegeId,collegeId),
   filters.status==="ALL"?undefined:eq(interviews.status,filters.status),
   filters.mode==="ALL"?undefined:eq(interviews.mode,filters.mode),
@@ -82,6 +91,7 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  const pages=Math.max(1,Math.ceil(total/25));
  return {ready:true,filters,total,limited,pageCount:pages,
   rows:selected.slice((filters.page-1)*25,filters.page*25).map(row=>({...row,conflict:conflicting.has(row.id)})),
+  companies,departments:departmentChoices,
   summary:{scheduled:selected.filter(row=>row.status==="SCHEDULED").length,
    today:selected.filter(row=>inIndia(row.start)===today).length,
    companies:new Set(selected.map(row=>row.companyId)).size,
