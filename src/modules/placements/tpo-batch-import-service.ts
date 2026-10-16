@@ -7,8 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {eligibilityImportInputSchema,previewEligibilityImport} from "./tpo-eligibility-import-model";
 
-/** A membership UUID is the only accepted import identifier until a unique
- * institutional roll-code mapping exists. No name/email matching. */
+/** Exact roll or membership UUID matching only against active learners in the authorized batch. */
 export async function getBatchEligibilityImportPreview(ctx:RequestContext,rawBatchId:unknown,raw:unknown){
  const {batch,collegeId}=await getTpoBatch(ctx,rawBatchId);
  const {rows}=eligibilityImportInputSchema.parse(raw);

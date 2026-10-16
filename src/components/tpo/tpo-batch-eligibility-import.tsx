@@ -41,7 +41,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     .map(r=>[r.membershipId!,r.expectedVersion!]));
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-commit",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({rows:preview.rows,expectedVersions:versions,confirmed:true}),
+    body:JSON.stringify({rows:preview.rows,expectedVersions:versions,previewMemberIds:preview.preview.map(p=>p.membershipId),confirmed:true}),
    });
    const data=await response.json() as {changedCount?:number;skipped?:number;actionId?:string|null;error?:string};
    if(!response.ok)throw Error(response.status===409?"Preview became stale. Review the latest eligibility decisions and preview again.":data.error??"Import failed.");
@@ -53,7 +53,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
   <h2 className="font-semibold">Import eligibility decisions</h2>
-  <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode must be the exact learner membership UUID; names and email addresses are never used for matching. Up to 200 records.</p>
+  <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 200 records.</p>
   <label className="block text-sm">CSV contents
    <textarea className="mt-1 min-h-32 w-full min-w-0 rounded border border-border bg-surface p-2 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={50000}/>

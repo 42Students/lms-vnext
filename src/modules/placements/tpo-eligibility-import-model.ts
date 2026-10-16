@@ -6,7 +6,7 @@ export const eligibilityImportRowSchema=z.object({
 export const eligibilityImportInputSchema=z.object({
  rows:z.array(eligibilityImportRowSchema).min(1).max(200),
 }).strict();
-/** CSV accepts membership UUID, ELIGIBLE/INELIGIBLE, reason.
+/** CSV accepts exact roll number or membership UUID, ELIGIBLE/INELIGIBLE, reason.
  * Reject quoted/multiline CSV until an audited standards parser is available. */
 export function parseTpoEligibilityCsv(text:string){
  if(text.length>50000)throw Error("File is too large");

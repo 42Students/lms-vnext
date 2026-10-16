@@ -11,6 +11,7 @@ export const runtime="nodejs";
 const inputSchema=z.object({
  rows:z.array(eligibilityImportRowSchema).min(1).max(200),
  expectedVersions:z.record(z.string().uuid(),z.string().min(1)),
+ previewMemberIds:z.array(z.string().uuid().nullable()).min(1).max(200).optional(),
  confirmed:z.literal(true),
 }).strict();
 export async function POST(request:Request,{params}:{params:Promise<{batchId:string}>}){
@@ -21,10 +22,17 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
   const preview=await getBatchEligibilityImportPreview(context,batchId,{rows:body.rows});
   if(!await placementTableExists("placement_eligibility_events"))
    return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
+  // Lock the preview's roll->membership mapping against roster edits and collisions.
+  const rollIdentifiers=body.rows.some(row=>!z.string().uuid().safeParse(row.studentCode).success);
+  if(rollIdentifiers&&!body.previewMemberIds)return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
+  if(body.previewMemberIds&&body.previewMemberIds.length!==body.rows.length)
+   return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
   const changes:{scopeType:"MEMBERSHIP";scopeId:string;status:"ELIGIBLE"|"INELIGIBLE";
    reason:string|null;expectedVersion:string}[]=[];
   for(let index=0;index<preview.preview.length;index++){
    const candidate=preview.preview[index],row=preview.rows[index];
+   if(body.previewMemberIds&&candidate.membershipId!==body.previewMemberIds[index])
+    return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
    if(candidate.status!=="matched"||!candidate.membershipId||!candidate.expectedVersion)continue;
    const version=body.expectedVersions[candidate.membershipId];
    if(!version||version!==candidate.expectedVersion)
