@@ -5,6 +5,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { TpoNewRecruiterConversation } from "@/components/tpo/tpo-new-recruiter-conversation";
+import { listTpoMessageRecruiters } from "@/modules/placements/tpo-recruiter-message-recipients-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 
@@ -116,6 +118,8 @@ export default async function TpoMessagesPage({
 
   const isRecruiterInbox =
     source === "RECRUITER_THREADS";
+  const availableRecruiters = isRecruiterInbox
+    ? await listTpoMessageRecruiters(context) : [];
 
   const sourceLabel = isRecruiterInbox
     ? "Recruiter conversations"
@@ -147,6 +151,7 @@ export default async function TpoMessagesPage({
         description="Recruiter conversations and placement notifications for your college. Times are displayed in IST."
         actions={
           <div className="flex flex-wrap gap-2">
+            {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} /> : null}
             <Link
               href="/tpo/messages/notifications"
               className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
