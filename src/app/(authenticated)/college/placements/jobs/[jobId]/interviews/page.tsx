@@ -5,7 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
-import { getCollegeInterviewAppointments } from "@/modules/placements/college-interview-action-service";
+import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
@@ -20,7 +20,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     description="Round kind, status or page is invalid. No records were loaded." />;
   const [data,appointments]=await Promise.all([
     listCollegeDriveInterviews(context,jobId,query),
-    getCollegeInterviewAppointments(context,jobId),
+    getCollegeRoundSlotAppointments(context,jobId),
   ]);
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Interviews · "+data.job.title}
@@ -40,10 +40,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
-    {!appointments.storageReady?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm">
-      Candidate interview scheduling awaits registration of the proposed college interview migration. The shared round schedule remains available below.
-    </p>:<CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
-      candidates={appointments.candidates} appointments={appointments.interviews}/>}
+    <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
+      candidates={appointments.candidates} appointments={appointments.interviews}/>
     <section aria-label="Persisted interview rounds" className="overflow-x-auto rounded-xl border border-border">
       <p className="p-3 text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
       {data.items.length?<table className="w-full min-w-[48rem] text-left text-sm">
@@ -58,7 +56,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
           <td className="p-3">{item.venue ?? "Not recorded"}</td>
           <td className="p-3">{item.mode ?? "Not recorded"}</td>
           <td className="p-3">{item.status}</td>
-          <td className="p-3">Not available</td>
+          <td className="p-3">See candidate interviews above</td>
         </tr>)}</tbody>
       </table>:<p className="p-6 text-sm text-body">
         {data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."}
@@ -71,7 +69,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">
-      Shared interview rounds are shown below. Candidate-specific appointment details and outcomes are managed above when interview storage is registered.
+      Interview appointments use the registered candidate-slot schedule. Confirmed outcomes are stored as immutable audit events.
     </p>
   </div>;
 }
