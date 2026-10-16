@@ -31,7 +31,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   return <div className="space-y-6">
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
       description="College-owned drafts, live opportunities and closed drives from persisted jobs." />
-    <Link href="/tpo/placements" className="text-sm font-semibold text-primary-text hover:underline">← Placement operations</Link>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <Link href="/tpo/placements" className="text-sm font-semibold text-primary-text hover:underline">← Placement operations</Link>
+      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Create drive</Link>
+    </div>
     <form action="/tpo/placements/lifecycle" method="get"
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
@@ -115,7 +118,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <p role="status" className="text-sm text-body">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
        Counts cover the selected season and search across every page.</p>
       {data.rows.length === 0 ?
-        <EmptyState title="No matching drives" description="No non-archived jobs match the selected season and lifecycle." /> :
+        <div className="space-y-3">
+          <EmptyState title="No matching drives" description="No non-archived jobs match the selected season and lifecycle." />
+          <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Create drive</Link>
+        </div> :
         <section className="grid gap-3" aria-label="Drives">
           {data.rows.map((job) => <article key={job.id} className="rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
