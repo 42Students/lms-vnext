@@ -4,6 +4,7 @@ import {
   desc,
   eq,
   inArray,
+  isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -14,6 +15,11 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { projectDeliveryActivity } from "./delivery-activity-model";
 import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
 import {
+  collegeMemberships,
+  inAppNotifications,
+  membershipRoles,
+  projectMembers,
+  users,
   projectInstances,
   projectSubmissionReviews,
   projectDeliveryEvents,
@@ -511,12 +517,35 @@ export async function reviewProjectSubmission(
       }
 
       if (!review) throw new Error("Project delivery review insert returned no row");
-      await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+      const reviewEvent = await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
         action: "REVIEWED", collegeId: scope.collegeId,
         organizationId: scope.organizationId, projectId: scope.project.id,
         submissionId: updated.id, version: updated.version,
         decision: input.decision,
       }));
+      // Every active learner on this project gets a personal final-delivery decision.
+      // The notification is committed with the review; no private feedback is copied.
+      const projectLearners=await tx.select({userId:collegeMemberships.userId})
+        .from(projectMembers)
+        .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"LEARNER")))
+        .where(and(eq(projectMembers.projectId,scope.project.id),
+          eq(projectMembers.role,"LEARNER"),eq(projectMembers.roleKind,"LEARNER"),
+          eq(collegeMemberships.collegeId,scope.collegeId),
+          eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+          // A past project member must not get a private decision.
+          isNull(projectMembers.endedAt)));
+      const recipients=[...new Set(projectLearners.map(member=>member.userId))]
+        .filter(userId=>userId!==context.user.id);
+      if(recipients.length){
+        const notice=learnerProjectDeliveryReviewNotice(scope.project.id,input.decision);
+        await tx.insert(inAppNotifications).values(recipients.map(userId=>({
+          userId,eventId:reviewEvent.id,title:notice.title,body:notice.body,
+          actionHref:notice.actionHref,
+        }))).onConflictDoNothing();
+      }
       if(input.decision==="APPROVED"){
         // Registered 0091 event row is immutable; supersede no prior review.
         if(context.membership?.id){

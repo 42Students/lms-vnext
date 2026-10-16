@@ -11,3 +11,14 @@ export function learnerProjectTaskReviewNotice(input:{
     "?tab=board&taskId="+encodeURIComponent(input.taskId),
  };
 }
+
+/** Final delivery belongs to the team, not only the member who pressed Submit. */
+export function learnerProjectDeliveryReviewNotice(projectId:string,decision:string){
+ const approved=decision==="APPROVED";
+ return {
+  title:approved?"Final project submission approved":"Changes requested on final submission",
+  body:approved?"The mentor approved your team's final project submission.":
+   "The mentor has requested changes to your team's final submission.",
+  actionHref:"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery",
+ };
+}
