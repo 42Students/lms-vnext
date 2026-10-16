@@ -410,11 +410,6 @@ export async function submitProjectSubmission(
           throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
       }
     }
-    if (false) {
-      throw new ProjectsServiceError(
-        "PROJECT_SUBMISSION_CONTENT_REQUIRED",
-      );
-    }
 
     const now = new Date();
     const [submitted] = await tx
