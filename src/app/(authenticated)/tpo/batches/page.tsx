@@ -6,7 +6,7 @@ import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-dire
 import { batchEligibilityShare } from "@/modules/placements/tpo-batch-eligibility-summary-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
-import { tpoBatchNextAction } from "@/modules/placements/tpo-batch-next-action-model";
+import { tpoBatchNextAction, tpoBatchNextActionLink } from "@/modules/placements/tpo-batch-next-action-model";
 import { tpoBatchDeadlineLabel } from "@/modules/placements/tpo-batch-deadline-label-model";
 import { tpoBatchPageSchema, paginateTpoBatches, tpoBatchPageHref,tpoBatchClearFiltersHref,tpoBatchEmptyReason } from "@/modules/placements/tpo-batch-directory-pagination-model";
 import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/placements/tpo-batch-deadline-filter-model";
@@ -100,7 +100,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
       </div>;
     })()}
-    <Link href={"/tpo/batches/"+b.id} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready)}</Link>
+    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility.get(b.id))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready)}</Link>
    </li>)}</ul>}
  </main>;
 }
