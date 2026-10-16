@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {CollegeLogoError,uploadCollegeLogo,getPublicCollegeLogo} from "@/modules/colleges/admin-branding-logo-service";
+import {CollegeLogoError,uploadCollegeLogo,getPublicCollegeLogo,removeCollegeLogo} from "@/modules/colleges/admin-branding-logo-service";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Params={params:Promise<{collegeId:string}>};
@@ -34,4 +34,12 @@ export async function GET(_request:Request,{params}:Params){
     "Cache-Control":"public, max-age=60",
   }});
  }catch{return new Response(null,{status:503,headers:{"Cache-Control":"no-store"}});}
+}
+
+export async function DELETE(request:Request,{params}:Params){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const result=await removeCollegeLogo(await getCurrentRequestContext(),(await params).collegeId);
+  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){return apiErrorResponse(error);}
 }
