@@ -43,13 +43,13 @@ type Field = {
 
 const collectionLabels: Record<CollectionKey, string> = {
   experiences: "Experience",
-  education: "Education",
+  education: "Education/Qualification",
   skills: "Skills",
   projects: "Projects",
   certifications: "Certifications",
-  achievements: "Achievements",
+  achievements: "Academic Achievements",
   languages: "Languages",
-  extracurriculars: "Extracurricular activities",
+  extracurriculars: "Extra-curricular Activities",
   metadata: "Additional information",
 };
 
@@ -574,7 +574,7 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Permanent address" value={document.address.permanentAddress} />
           </div>
         </Card>
-        <Card id="personal-details" title="Personal details">
+        <Card id="personal-details" title="Personal Details">
           <div className="grid gap-4 sm:grid-cols-3">
             <Value label="Gender" value={document.personalDetails.gender} />
             <Value label="Date of birth" value={document.personalDetails.dateOfBirth} />
