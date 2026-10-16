@@ -1,5 +1,5 @@
 import {placementReportCsv} from "./report-model";
-import {tpoApplicantPipelineParams} from "./tpo-applicant-pipeline-model";
+import {applicantStage,tpoApplicantPipelineParams} from "./tpo-applicant-pipeline-model";
 export const tpoDriveApplicationsExportQuerySchema=tpoApplicantPipelineParams.omit({page:true});
 /** Search text is literal, never an operator-controlled SQL wildcard. */
 export function tpoApplicantExportSearchPattern(search:string){
@@ -23,21 +23,23 @@ export async function collectTpoExportPages<T>(
 }
 export type TpoDriveApplicationExportFact={
  applicationId:string;studentName:string|null;roleTitle:string;
- status:string;screeningStatus:string|null;channel:string;submittedAt:string;rollNumber?:string|null;email?:string|null;phone?:string|null;
+ status:string;screeningStatus:string|null;screeningUpdatedAt:string|null;eligibilityStatus:string;channel:string;submittedAt:string;rollNumber?:string|null;email?:string|null;phone?:string|null;
 };
 export function projectTpoDriveApplicationsExport(rows:readonly TpoDriveApplicationExportFact[],jobTitle:string,options:{exportAll?:boolean}={}){
  const truncated=!options.exportAll&&rows.length>TPO_DRIVE_APPLICATION_EXPORT_LIMIT;
  const displayed=options.exportAll?rows:rows.slice(0,TPO_DRIVE_APPLICATION_EXPORT_LIMIT);
  const data:(string|null)[][]=displayed.map(r=>[
   r.applicationId,r.studentName??"Name unavailable",r.roleTitle,
-  r.status,r.screeningStatus??"Not recorded",r.channel,
+  applicantStage({id:r.applicationId,student:r.studentName,role:r.roleTitle,applicationStatus:r.status,screeningStatus:r.screeningStatus,submittedAt:r.submittedAt}),
+  r.status,r.screeningStatus??"Not recorded",r.eligibilityStatus,r.channel,
   new Date(r.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST",
+  r.screeningUpdatedAt?new Date(r.screeningUpdatedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not recorded",
   r.rollNumber??"Not recorded",r.email??"Not recorded",r.phone??"Not recorded",
  ]);
  if(truncated)data.push(["TRUNCATED",
   "First "+TPO_DRIVE_APPLICATION_EXPORT_LIMIT+" application rows are exported; further matching applications exist.",
-  null,null,null,null,null,null,null,null]);
+  null,null,null,null,null,null,null,null,null,null,null]);
  return {rows:displayed,truncated,jobTitle,csv:placementReportCsv([
-  "Application ID","Student","Role","Application status","Screening status","Channel","Submitted (IST)","Roll number","Email","Phone",
+  "Application ID","Student","Role","Stage","Application status","Screening status","Eligibility evidence","Channel","Submitted (IST)","Screening updated (IST)","Roll number","Email","Phone",
  ],data)};
 }
