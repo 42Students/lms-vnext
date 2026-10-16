@@ -29,6 +29,11 @@ export const placementTpoCampaignDrafts = pgTable(
       .$type<Record<string, number>>()
       .notNull()
       .default({}),
+    /** TPO-campaigns-public-02: saved suppression summary (counts only; never addresses or tokens). */
+    suppressionCounts: jsonb("suppression_counts")
+      .$type<Record<string, number>>()
+      .notNull()
+      .default({}),
     templateKey: varchar("template_key", { length: 160 }).notNull(),
     segment: varchar("segment", { length: 24 }).notNull(),
     createdByUserId: uuid("created_by_user_id")
@@ -50,6 +55,10 @@ export const placementTpoCampaignDrafts = pgTable(
     check(
       "tpo_campaign_draft_segment_ck",
       sql`${t.segment} IN ('ALL_ELIGIBLE','NEW','UNASSIGNED')`,
+    ),
+    check(
+      "tpo_campaign_draft_suppression_counts_ck",
+      sql`jsonb_typeof(${t.suppressionCounts})='object'`,
     ),
     check(
       "tpo_campaign_draft_body_ck",
