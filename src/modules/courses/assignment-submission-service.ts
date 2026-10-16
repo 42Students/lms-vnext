@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
+import {allowedAssignmentSubmissionPart} from "./assignment-method-policy";
 import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
 import {facultyRegradeFeedbackAllowed} from "./faculty-regrade-feedback-model";
 import {facultyGradeHasChanges} from "./faculty-grade-noop-model";
@@ -232,6 +233,15 @@ export async function submitCourseAssignment(
       }
 
       assertAssignmentSubmissionDeadline(currentAssignment.dueAt, new Date());
+      if(process.env.DB06_MULTIPART_SUBMISSIONS_READY==="DB06_VERIFIED"){
+        const [policy]=await tx.select({methods:sql<unknown>`allowed_submission_methods`})
+          .from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
+        if(!policy||!allowedAssignmentSubmissionPart(policy.methods,{
+          kind:input.submissionType,
+          fileMimeTypes:input.submissionType==="FILE"?
+            [preparedFile?.attestation.contentType??""]:[],
+        }))throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
+      }
 
       const [persistedMembership] = await tx
         .select({
