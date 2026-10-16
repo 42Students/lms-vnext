@@ -290,7 +290,7 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     );
     expect(delivered.rows).toHaveLength(1);
     expect(delivered.rows[0].title).toBe("Placement registration is open");
-    expect(delivered.rows[0].action_href).toBe("/learn/placements");
+    expect(delivered.rows[0].action_href).toBe("/learn/my-placements/placement#registration");
   });
 
   it("rejects an invitation if another writer moved its deadline after settings were saved", async () => {

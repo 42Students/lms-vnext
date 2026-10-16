@@ -8,7 +8,7 @@ import {TpoParticipationConflictError,decideTpoLearnerParticipation,
 import {reviewTpoApplicant} from "./tpo-applicant-review-service";
 import {loadTpoBulkCurrent} from "./tpo-bulk-action-preview-service";
 import {tpoBulkStudentVersion} from "./tpo-bulk-decision-model";
-import {tpoBulkConfirmRequestSchema,tpoBulkPreviewRequestSchema,requireTpoBulkRegistered,
+import {tpoBulkConfirmRequestSchema,tpoBulkPreviewRequestSchema,
   safeBulkActionFailure} from "./tpo-bulk-workflow-model";
 import {verifyTpoBulkPreview} from "./tpo-bulk-preview-token";
 import type {BulkOutcome} from "./tpo-bulk-action-model";
@@ -19,7 +19,6 @@ export class TpoBulkPreviewError extends Error {
 /** Only signed, previewed exact rows can be submitted. Existing audited writers own all mutations. */
 export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
  const input=tpoBulkConfirmRequestSchema.parse(raw);
- requireTpoBulkRegistered(input.target,process.env.DB09_TPO_API_READY==="DB09_VERIFIED");
  const plan=tpoBulkPreviewRequestSchema.parse({
    target:input.target,jobId:input.jobId,action:input.action,note:input.note,ids:input.ids,
  });

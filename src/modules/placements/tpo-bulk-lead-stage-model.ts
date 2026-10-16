@@ -44,16 +44,13 @@ export type TpoBulkLeadState = {
   notNowUntil: string | null;
 };
 
-/** One pure, explicit stage decision; joined / unsubscribed are always skipped. */
+/** A manual contact state may be changed even if access has joined or email is unsubscribed. */
 export function decideTpoBulkLeadStage(
   current: TpoBulkLeadState | null,
   selection: TpoBulkLeadSelection,
   decision: ConfirmedTpoBulkLeadStage,
 ): Omit<TpoBulkLeadStageResult, "leadId"> {
   if (!current) return { status: "ineligible", reason: "Lead is unavailable in this college" };
-  if (current.recruiterUserId || current.unsubscribedAt) {
-    return { status: "ineligible", reason: "Joined or unsubscribed contact is protected" };
-  }
   if (current.manualStage !== selection.expectedStage) {
     return { status: "ineligible", reason: "Stage changed; review the lead again" };
   }

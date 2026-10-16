@@ -21,7 +21,9 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
    description="Review persisted application, round and offer counts before an audited closure."/>
   {preview.canClose?<TpoDriveClosePreviewForm preview={preview}/>:
    <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-    Closure is available only for published drives in an active season. To cancel instead, use the Cancel drive preview.
+    {preview.issuedOffers>0?
+      "Release or withdraw outstanding offers before closing this drive.":
+      "Closure is available only for published drives in an active season. To cancel instead, use the Cancel drive preview."}
    </p>}
  </div>;
 }

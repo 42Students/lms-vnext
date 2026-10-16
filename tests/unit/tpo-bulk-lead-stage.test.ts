@@ -52,14 +52,14 @@ describe("TPO bulk lead manual-stage validation", () => {
     }).success).toBe(false);
   });
 
-  it("excludes joined/unsubscribed leads and stale selections", () => {
+  it("allows joined/unsubscribed manual actions but rejects stale selections", () => {
     expect(decideTpoBulkLeadStage(null, selected, contacted).status).toBe("ineligible");
     expect(decideTpoBulkLeadStage({
       ...contact, recruiterUserId: uuid(3),
-    }, selected, contacted).status).toBe("ineligible");
+    }, selected, contacted).status).toBe("updated");
     expect(decideTpoBulkLeadStage({
       ...contact, unsubscribedAt: new Date(),
-    }, selected, contacted).status).toBe("ineligible");
+    }, selected, contacted).status).toBe("updated");
     expect(decideTpoBulkLeadStage({
       ...contact, manualStage: "CONTACTED",
     }, selected, contacted).status).toBe("ineligible");
