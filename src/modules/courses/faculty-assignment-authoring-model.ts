@@ -10,7 +10,7 @@ const common=z.object({
   title:z.string().trim().min(1).max(255),
   description:text.nullable(),
   dueAt:z.iso.datetime({offset:true}).nullable(),
-  maxPoints:z.number().int().min(1).max(10000),
+  maxPoints:z.number().int().min(1).max(1000),
 }).strict();
 const expected=z.iso.datetime({offset:true});
 export const facultyAssignmentCommandSchema=z.discriminatedUnion("action",[
