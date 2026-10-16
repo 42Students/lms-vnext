@@ -2,6 +2,7 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
+import {CollegeAdminLifecycleAction} from "@/components/admin/college-admin-lifecycle-action";
 import {listCollegeAdminSessionTargets} from "@/modules/colleges/admin-session-service";
 
 export const dynamic="force-dynamic";
@@ -24,12 +25,15 @@ export default async function CollegeAdministratorsPage({params}:{
    {data.items.length?<div className="overflow-x-auto"><table className="w-full min-w-[35rem] text-left text-sm">
     <thead className="bg-surface-subtle text-body"><tr>
      <th scope="col" className="p-3">Name</th><th scope="col" className="p-3">Email</th>
-     <th scope="col" className="p-3">Roles</th><th scope="col" className="p-3">Sessions</th>
+     <th scope="col" className="p-3">Roles</th><th scope="col" className="p-3">Status</th><th scope="col" className="p-3">Access</th><th scope="col" className="p-3">Sessions</th>
     </tr></thead>
     <tbody>{data.items.map(item=><tr key={item.userId} className="border-t border-border">
      <td className="p-3 font-semibold">{item.name}</td>
      <td className="break-all p-3">{item.email??"Not recorded"}</td>
      <td className="p-3">{item.roles.join(", ")}</td>
+     <td className="p-3">{item.status==="ACTIVE"?"Enabled":"Suspended"}</td>
+     <td className="p-3"><CollegeAdminLifecycleAction membershipId={item.membershipId}
+      status={item.status} hasMentorRole={item.roles.includes("MENTOR")}/></td>
      <td className="p-3"><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)}
       className="text-primary-text underline">View active devices</Link></td>
     </tr>)}</tbody></table></div>:
