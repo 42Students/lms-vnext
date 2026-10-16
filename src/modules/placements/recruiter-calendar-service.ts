@@ -12,6 +12,7 @@ import { z } from "zod";
 
 import { getDb } from "@/db/client";
 import {
+  hrInterviewSlots,
   placementJobRounds,
 } from "@/db/schema";
 
@@ -210,11 +211,23 @@ export async function listRecruiterCalendarEvents(
             asc(placementJobRounds.id),
           );
 
+  const slots=authorizedJobIds.length===0?[]:await getDb()
+    .select({id:hrInterviewSlots.id,jobId:hrInterviewSlots.jobId,
+      roundId:hrInterviewSlots.roundId,startAt:hrInterviewSlots.startAt,
+      status:hrInterviewSlots.status,timezone:hrInterviewSlots.timezone,
+      meetingLocation:hrInterviewSlots.meetingLocation})
+    .from(hrInterviewSlots)
+    .where(and(inArray(hrInterviewSlots.jobId,authorizedJobIds),
+      inArray(hrInterviewSlots.status,["PROPOSED","OFFERED","BOOKED"]),
+      gte(hrInterviewSlots.startAt,startsAt),lt(hrInterviewSlots.startAt,endsBefore)))
+    .orderBy(asc(hrInterviewSlots.startAt),asc(hrInterviewSlots.id));
+
   const resultsDue = buildRecruiterResultsDueItems({jobs,rounds,startsAt,endsBefore});
 
   const events = buildRecruiterCalendarEvents({
     jobs,
     rounds,
+    slots,
     startsAt,
     endsBefore,
   });

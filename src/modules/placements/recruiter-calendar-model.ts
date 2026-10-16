@@ -25,6 +25,11 @@ export type RecruiterCalendarRound = {
   resultsDueAt?: Date | null;
 };
 
+export type RecruiterCalendarSlot = {
+ id:string; jobId:string; roundId:string; startAt:Date;
+ status:string; timezone:string; meetingLocation:string|null;
+};
+
 /**
  * Project recruiter-visible jobs and their rounds into the shared
  * placement calendar model.
@@ -38,12 +43,12 @@ export type RecruiterCalendarRound = {
  *
  * Only persisted scheduled/completed rounds and application
  * deadlines are represented. TPO follow-ups, candidate details,
- * unpublished jobs, staged results, and invented slot events
- * are deliberately excluded.
+ * unpublished jobs and staged results are excluded. Slots come from persisted rows.
  */
 export function buildRecruiterCalendarEvents(input: {
   jobs: readonly RecruiterCalendarJob[];
   rounds: readonly RecruiterCalendarRound[];
+  slots?: readonly RecruiterCalendarSlot[];
   startsAt: Date;
   endsBefore: Date;
 }): PlacementCalendarEvent[] {
@@ -127,6 +132,18 @@ export function buildRecruiterCalendarEvents(input: {
     });
   }
 
+  for (const slot of input.slots ?? []) {
+    const job = authorizedJobs.get(slot.jobId);
+    if (!job || !insideWindow(slot.startAt) ||
+        !["PROPOSED","OFFERED","BOOKED"].includes(slot.status)) continue;
+    events.push({
+      id:`slot:${slot.id}`,kind:"INTERVIEW_SLOT",startsAt:slot.startAt,
+      title:"Interview slot",companyId:job.companyId,companyName:job.companyName,
+      jobId:job.id,jobTitle:job.title,roundId:slot.roundId,roundKind:"INTERVIEW",
+      leadId:null,followupId:null,status:slot.status,timezone:slot.timezone,
+      venue:slot.meetingLocation,note:null,completedAt:null,
+    });
+  }
   return sortPlacementCalendarEvents(events);
 }
 
