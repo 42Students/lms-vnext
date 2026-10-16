@@ -5,6 +5,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { brandStyleVariables } from "@/modules/colleges/branding";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
+import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
 
 async function isSignedIn() {
   try {
@@ -78,6 +79,7 @@ export default async function HomePage({
     tenant.kind === "college"
       ? await getPublicCollegeBranding(tenant.collegeId)
       : null;
+  const signin = await effectiveCollegeSignInCapabilities(tenant.kind==="college"?tenant.collegeId:null);
   const themeStyle = brandStyleVariables(
     branding?.primaryColor,
   ) as React.CSSProperties;
@@ -169,7 +171,8 @@ export default async function HomePage({
               college&apos;s LMS address.
             </div>
           ) : (
-            <LoginForm collegeName={branding?.collegeName ?? null} />
+            <LoginForm collegeName={branding?.collegeName ?? null} defaultChannel={signin.primary}
+             allowedChannels={signin.email&&signin.phone?["EMAIL","PHONE"]:signin.email?["EMAIL"]:["PHONE"]}/>
           )}
         </div>
 
