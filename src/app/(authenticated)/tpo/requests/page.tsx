@@ -94,6 +94,6 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       {data.page<data.totalPages?<Link href={href({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Next</Link>:null}
     </nav>
     <p className="text-xs text-muted-foreground">CSV exports only the current authorized page (maximum 100), omits private request reasons and decision notes, and neutralizes spreadsheet formulas.</p>
-    <p className="text-xs text-muted-foreground">Pending actions require explicit confirmation. No external messages are sent from this inbox.</p>
+    <p className="text-xs text-muted-foreground">Pending actions require explicit confirmation. The learner receives an in-app notice when a request is approved or rejected; no email is sent from this inbox.</p>
   </main>;
 }
