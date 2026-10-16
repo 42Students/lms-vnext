@@ -17,6 +17,8 @@ import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
 import {TpoMobileFooter} from "./tpo-mobile-footer";
+import {TpoTopbarMessages} from "./tpo-topbar-messages";
+import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
 import {HrRecruiterBell} from "@/components/hr/hr-recruiter-bell";
@@ -125,6 +127,7 @@ export async function AppShell({
             </div>
             <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2 sm:gap-3">
               {learner ? <LearnerTopbarTools /> : null}
+              {hasTpoTooling(context)?<TpoTopbarMessages/>:null}
               {superAdmin && adminScopeChoices ? (
                 <AdminScopeSwitcher
                   choices={adminScopeChoices}
