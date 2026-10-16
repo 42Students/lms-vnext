@@ -1,0 +1,21 @@
+import {it,expect,describe} from "vitest";
+import {readFileSync} from "node:fs";
+const service=readFileSync(new URL("../../src/modules/attendance/admin-service.ts",import.meta.url),"utf8");
+const ui=readFileSync(new URL("../../src/components/attendance/admin-attendance-workspace.tsx",import.meta.url),"utf8");
+describe("COL-attendance-01 / COL-attendance-02",()=>{
+ it("does not apply the Faculty 24-hour window to the admin correction path",()=>{
+  const correction=service.slice(service.indexOf("export async function correctAdminAttendance"));
+  expect(correction).not.toContain("facultyAttendanceMarkingWindow");
+  expect(ui).not.toContain("facultyAttendanceMarkingWindow");
+  expect(ui).toContain("College Admin corrections are not limited");
+ });
+ it("writes a scoped audit event in the same transaction and suppresses no-ops",()=>{
+  const correction=service.slice(service.indexOf("export async function correctAdminAttendance"));
+  expect(correction).toContain("if(priorStatus===input.status)");
+  expect(correction).toContain("tx.insert(activityEvents)");
+  expect(correction).toContain("ADMIN_ATTENDANCE_MARK_PRESENT");
+  expect(correction).toContain("ADMIN_ATTENDANCE_MARK_ABSENT");
+  expect(correction).toContain("organizationId:college.organizationId");
+  expect(correction).toContain("learnerMembershipId:input.membershipId");
+ });
+});

@@ -13,6 +13,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  activityEvents,
   attendancePolicies,
   attendanceRecords,
   attendanceSessions,
@@ -40,7 +41,7 @@ import {
   listActiveDeliveryLearners,
 } from "@/modules/courses/delivery-roster";
 import { indiaAttendanceMonthWindow } from "./month-window";
-import { facultyAttendanceMarkingWindow } from "./faculty-marking-window";
+
 
 const uuid = z.string().uuid();
 const correctionSchema = z.strictObject({
@@ -502,27 +503,9 @@ export async function correctAdminAttendance(
       }
 
       const now = new Date();
-      const [policy] = await tx
-        .select({
-          correctionWindowHours: attendancePolicies.correctionWindowHours,
-        })
-        .from(attendancePolicies)
-        .where(eq(attendancePolicies.collegeId, college.id))
-        .limit(1);
-      const correctionState = facultyAttendanceMarkingWindow({
-        startsAt: event.startsAt,
-        endsAt: event.endsAt,
-        correctionWindowHours: policy?.correctionWindowHours ?? 24,
-        now,
-      });
-      if (correctionState !== "OPEN") {
-        throw new CoursesServiceError(
-          correctionState === "NOT_STARTED"
-            ? "ATTENDANCE_NOT_STARTED"
-            : "ATTENDANCE_CORRECTION_WINDOW_EXPIRED",
-        );
-      }
-
+      // COL-attendance-01: the window is a FACULTY rule. College Admin
+      // corrections deliberately remain available for older sessions and
+      // for pre-session corrections (legacy AdminAttendanceController).
       // Lock and recheck active same-college membership at mutation time.
       const [activeMember] = await tx
         .select({ id: collegeMemberships.id })
@@ -536,6 +519,18 @@ export async function correctAdminAttendance(
         .limit(1);
       if (!activeMember) {
         throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+      }
+
+      const [priorRecord]=await tx.select({
+        id:attendanceRecords.id,status:attendanceRecords.status,
+      }).from(attendanceRecords).where(and(
+        eq(attendanceRecords.scheduleEventId,scheduleEventId),
+        eq(attendanceRecords.membershipId,input.membershipId),
+      )).for("update").limit(1);
+      const priorStatus=priorRecord?.status??"PRESENT";
+      // A repeated correction is a no-op and must not create a false event.
+      if(priorStatus===input.status){
+        return {scheduleEventId,membershipId:input.membershipId,status:input.status,correctedAt:now};
       }
 
       // Preserve Faculty/Learner semantics: PRESENT is an absent
@@ -650,6 +645,27 @@ export async function correctAdminAttendance(
           });
       }
 
+      // COL-attendance-02: persist audit in the same transaction. It also
+      // records corrections to PRESENT, which delete the absence exception row.
+      await tx.insert(activityEvents).values({
+        organizationId:college.organizationId,
+        collegeId:college.id,
+        actorUserId:context.user.id,
+        actorMembershipId:context.membership?.collegeId===college.id
+          ?context.membership.id:null,
+        module:"COURSES",
+        eventType:input.status==="PRESENT"?"ADMIN_ATTENDANCE_MARK_PRESENT":"ADMIN_ATTENDANCE_MARK_ABSENT",
+        subjectType:"attendance_session",
+        subjectId:scheduleEventId,
+        subjectLabel:"Attendance correction",
+        summary:"College Admin corrected attendance",
+        metadata:{
+          deliveryId:delivery.deliveryId,
+          learnerMembershipId:input.membershipId,
+          from:priorStatus,to:input.status,
+        },
+        occurredAt:now,
+      });
       return {
         scheduleEventId,
         membershipId: input.membershipId,
