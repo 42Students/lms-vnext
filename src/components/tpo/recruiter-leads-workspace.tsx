@@ -19,6 +19,7 @@ import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
 import {RecruiterBulkInviteControls} from "./recruiter-bulk-invite-controls";
 import {RecruiterSavedViewControls} from "./recruiter-saved-view-controls";
+import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory-export-model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Lead = {
@@ -258,6 +259,17 @@ export function RecruiterLeadsWorkspace({
     };
   }, [view, loadCompanies]);
 
+  function exportCompanies(){
+   if(!visibleCompanies.length)return;
+   const csv=tpoCompanyDirectoryCsv(visibleCompanies.map(company=>({
+    name:company.name,contacts:company.contacts,drivesRan:company.drivesRan,
+    acceptedOfferDrives:company.acceptedOfferDrives,studentsPlaced:company.studentsPlaced,
+    communication:communication[company.key]??"NOT_CONTACTED",people:company.people??[],
+   })));
+   const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+   const anchor=document.createElement("a");anchor.href=url;anchor.download="companies.csv";
+   document.body.appendChild(anchor);anchor.click();anchor.remove();URL.revokeObjectURL(url);
+  }
   async function changeCompanyCommunication(key:string,status:string){
     if(!communicationReady)return;
     setCommunicationError("");
@@ -536,7 +548,7 @@ export function RecruiterLeadsWorkspace({
                     setView(e.target.value as typeof view);
                   }
                 }}>
-                <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies</option><option value="campaigns">Emails</option>
+                <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies ({companies.length})</option><option value="campaigns">Emails</option>
               </select>
             </label>
           </div>
@@ -729,7 +741,11 @@ export function RecruiterLeadsWorkspace({
                   setCompanySearch("");setCompanyContacts("ALL");setCompanyHistory("ALL");setCompanyAliases(false);setCompanyCommunicationFilter("ALL");
                 }}>Clear company filters</button>
               </div>
-              <p role="status" className="text-xs text-body">{visibleCompanies.length} of {companies.length} companies</p>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p role="status" className="text-xs text-body">{visibleCompanies.length} of {companies.length} companies</p>
+                <button type="button" disabled={visibleCompanies.length===0} onClick={exportCompanies}
+                 className={buttonStyle}>Export companies CSV</button>
+              </div>
               {!communicationReady?<p role="status" className="text-xs text-muted-foreground">Communication changes are unavailable until company status storage is registered.</p>:null}
               {communicationError?<p role="alert" className="text-sm text-warning">{communicationError}</p>:null}
               {companiesPhase !== "ready" ? (
