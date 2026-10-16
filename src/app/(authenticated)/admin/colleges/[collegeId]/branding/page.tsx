@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeBrandingPreview } from "@/components/admin/college-branding-preview";
+import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
+import {getCollegeBranding} from "@/modules/colleges/branding-service";
+import {can} from "@/modules/permissions/policy";
 import { getSuperAdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-service";
 import { collegeIdSchema } from "@/modules/colleges/validation";
 
@@ -18,6 +21,8 @@ export default async function SuperAdminCollegeBrandingPage({
   const context = await getCurrentRequestContext();
   const branding = await getSuperAdminCollegeBrandingPreview(context, collegeId);
   if (!branding) notFound();
+  const persisted=await getCollegeBranding(context,collegeId);
+  const canEdit=can(context,"college.manage",{collegeId,organizationId:branding.organizationId});
 
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-center gap-3">
@@ -32,5 +37,18 @@ export default async function SuperAdminCollegeBrandingPage({
       This preview uses stored brand details. Actual login appearance and tenant-domain routing require separate browser verification.
     </p>
     <CollegeBrandingPreview branding={branding}/>
+    <section aria-label="Edit college branding" className="space-y-3">
+     <h2 className="text-lg font-semibold">Look and feel</h2>
+     <p className="text-sm text-body">Update the stored college logo URL, colours and sign-in appearance. Uploading and cropping image files is not available in this editor.</p>
+     <CollegeBrandingForm collegeId={collegeId} collegeName={persisted.collegeName}
+      canEdit={canEdit} initial={{
+       logoUrl:persisted.logoUrl,faviconUrl:persisted.faviconUrl,
+       loginBackgroundUrl:persisted.loginBackgroundUrl,
+       loginBackgroundUrlMobile:persisted.loginBackgroundUrlMobile,
+       primaryColor:persisted.primaryColor,secondaryColor:persisted.secondaryColor,
+       supportEmail:persisted.supportEmail,supportPhone:persisted.supportPhone,
+       termsUrl:persisted.termsUrl,privacyUrl:persisted.privacyUrl,
+      }}/>
+    </section>
   </div>;
 }
