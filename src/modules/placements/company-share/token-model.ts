@@ -7,6 +7,8 @@ export const companyShareJobSchema = z.string().uuid();
 export const companyShareIssueSchema = z.object({
   jobId: companyShareJobSchema,
   expiresInDays: z.coerce.number().int().min(1).max(7).default(2),
+  selectedApplicationIds:z.array(z.string().uuid()).min(1).max(200)
+   .refine(ids=>new Set(ids).size===ids.length,"Duplicate applicant selection").optional(),
 }).strict();
 export const companyShareRevokeSchema = z.object({
   shareId: z.string().uuid(),
