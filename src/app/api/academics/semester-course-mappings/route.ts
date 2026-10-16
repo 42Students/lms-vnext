@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { addCollegeTermMapping, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
+import { addCollegeTermMapping, addCollegeTermMappings, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
 
 export const runtime = "nodejs";
 
@@ -11,7 +11,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
     const context = await getCurrentRequestContext();
-    const row = await addCollegeTermMapping(context, await request.json());
+    const input = await request.json();
+    const row = input && Array.isArray(input.mappings)
+      ? await addCollegeTermMappings(context, input.mappings)
+      : await addCollegeTermMapping(context, input);
     return NextResponse.json({ mapping: row }, { status: 201 });
   } catch (error) {
     if (error instanceof CollegeTermMappingError)
