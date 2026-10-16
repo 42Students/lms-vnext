@@ -1,0 +1,90 @@
+import "server-only";
+import {createHmac} from "node:crypto";
+import {and,eq,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {placementTpoLeads,placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients}
+ from "@/db/schema";
+import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {requirePlacementManageScope} from "@/modules/placements/scope";
+import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
+import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
+
+export class TpoCampaignDraftError extends Error{
+ constructor(readonly code:"NOT_READY"|"NO_RECIPIENTS"){super(code);}
+}
+async function scope(context:RequestContext){
+ const member=context.membership;
+ if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
+  !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ return requirePlacementManageScope(context,member.collegeId);
+}
+export async function tpoCampaignDraftStorageReady(){
+ if(process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")return false;
+ try{
+  const check=await getDb().execute<{ready:boolean}>(sql`select
+   to_regclass('public.placement_tpo_campaign_drafts') is not null as ready`);
+  return check.rows[0]?.ready===true;
+ }catch{return false;}
+}
+/** An immutable, tenant-scoped audience snapshot. No email dispatch here. */
+export async function createTpoCampaignDraft(context:RequestContext,raw:unknown){
+ const input=tpoCampaignDraftSchema.parse(raw);
+ const college=await scope(context);
+ if(!await tpoCampaignDraftStorageReady())throw new TpoCampaignDraftError("NOT_READY");
+ const key=process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"";
+ if(Buffer.byteLength(key,"utf8")<32)throw new TpoCampaignDraftError("NOT_READY");
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+    collegeId:college.id,organizationId:college.organizationId,
+  });
+  const contacts=await tx.select({
+   id:placementTpoLeads.id,emailNorm:placementTpoLeads.emailNorm,
+   unsubscribedAt:placementTpoLeads.unsubscribedAt,
+   inviteBouncedAt:placementTpoLeads.inviteBouncedAt,
+   manualStage:placementTpoLeads.manualStage,
+   ownerMembershipId:placementTpoLeads.ownerMembershipId,
+  }).from(placementTpoLeads).where(eq(placementTpoLeads.collegeId,college.id));
+  const subset=contacts.filter(row=>
+    input.segment==="NEW"?row.manualStage==="NEW":
+    input.segment==="UNASSIGNED"?row.ownerMembershipId===null:true);
+  const snapshot=planTpoCampaignRecipients(subset);
+  if(!snapshot.recipientIds.length)throw new TpoCampaignDraftError("NO_RECIPIENTS");
+  const [campaign]=await tx.insert(placementTpoEmailCampaigns).values({
+   collegeId:college.id,createdByUserId:context.user.id,status:"DRAFT",
+   totalRecipients:snapshot.recipientIds.length,
+  }).returning({id:placementTpoEmailCampaigns.id});
+  if(!campaign)throw new TpoCampaignDraftError("NOT_READY");
+  await tx.execute(sql`insert into placement_tpo_campaign_drafts
+    (campaign_id,college_id,title,subject,body,template_key,segment,created_by_user_id)
+    values(${campaign.id}::uuid,${college.id}::uuid,${input.title}::varchar,
+     ${input.subject}::varchar,${input.body}::text,${input.templateKey}::varchar,
+     ${input.segment}::varchar,${context.user.id}::uuid)`);
+  const emails=new Map(subset.map(row=>[row.id,row.emailNorm]));
+  await tx.insert(placementTpoEmailCampaignRecipients).values(
+   snapshot.recipientIds.map(leadId=>({
+    collegeId:college.id,campaignId:campaign.id,leadId,
+    recipientKey:createHmac("sha256",key).update("tpo-campaign-email-v1:")
+     .update((emails.get(leadId)??"").trim().toLowerCase()).digest("hex"),
+    status:"PENDING",
+   })),
+  );
+  return {campaignId:campaign.id,recipients:snapshot.recipientIds.length,
+    suppressed:snapshot.suppressed,status:"DRAFT" as const};
+ });
+}
+export async function listTpoCampaignDrafts(context:RequestContext){
+ const college=await scope(context);
+ if(!await tpoCampaignDraftStorageReady())return {ready:false as const,rows:[]};
+ const rows=await getDb().execute<{
+  campaign_id:string;title:string;subject:string;segment:string;status:string;
+  total_recipients:number;created_at:Date;
+ }>(sql`select d.campaign_id,d.title,d.subject,d.segment,c.status,
+    c.total_recipients,d.created_at from placement_tpo_campaign_drafts d
+    join placement_tpo_email_campaigns c on c.id=d.campaign_id
+     and c.college_id=d.college_id
+    where d.college_id=${college.id}::uuid
+    order by d.created_at desc,d.campaign_id desc limit 100`);
+ return {ready:true as const,rows:rows.rows};
+}
