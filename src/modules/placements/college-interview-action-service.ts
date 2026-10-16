@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,eq,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
- placementApplicationScreenings,placementJobRounds,placementJobs,users} from "@/db/schema";
+ placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
 import {placementCollegeInterviews} from "@/db/schema/placement-college-interviews";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
@@ -120,6 +120,14 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
     .for("update").limit(1);
    if(!old||old.version!==input.expectedVersion||old.status!=="SCHEDULED")
     throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
+   if(input.action==="NO_SHOW"){
+    const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
+     .from(placementLearnerRequests).where(and(
+      eq(placementLearnerRequests.applicationId,old.applicationId),
+      eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+      eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+    if(withdrawal)throw new PlacementsServiceError("PLACEMENT_REQUEST_PENDING_WITHDRAWAL");
+   }
    const status=input.action==="CANCEL"?"CANCELLED":input.action;
    const [saved]=await tx.update(placementCollegeInterviews).set({
     status,version:old.version+1,outcomeNote:input.reason,
