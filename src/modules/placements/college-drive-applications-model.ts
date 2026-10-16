@@ -14,6 +14,7 @@ export const driveApplicationsQuerySchema = z.object({
 export type DriveApplicationsQuery = z.infer<typeof driveApplicationsQuerySchema>;
 export const DRIVE_APPLICATIONS_PAGE_SIZE = 25;
 export const DRIVE_APPLICATION_EXPORT_CAP = 1000;
+export const DRIVE_APPLICATION_BULK_CAP = 3000;
 
 export function driveApplicationsParams(raw: Record<string,string|string[]|undefined>) {
   const input: Record<string,string> = {};
