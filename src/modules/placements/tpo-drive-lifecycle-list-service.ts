@@ -39,7 +39,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const common = {seasons,season,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,
-      minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,
+      minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
       asOf:now.toISOString()};
     if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
       rows:[],requestRows:[],requestsAvailable:false as const,...common};
@@ -102,6 +102,13 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       >= ${filters.minOffers}`:undefined,
     filters.payCategory==="DREAM"?eq(placementJobs.isDream,true):
       filters.payCategory==="REGULAR"?eq(placementJobs.isDream,false):undefined,
+    filters.attention==="NO_APPLICANTS"?and(eq(placementJobs.status,"PUBLISHED"),
+      sql`not exists(select 1 from placement_applications a where a.job_id=${placementJobs.id} and a.status='SUBMITTED')`):
+    filters.attention==="NO_DEADLINE"?and(eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.applicationDeadline)):
+    filters.attention==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),
+      gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,new Date(now.getTime()+7*86400000))):
+    filters.attention==="OVERDUE"?and(eq(placementJobs.status,"PUBLISHED"),lt(placementJobs.applicationDeadline,now)):
+    undefined,
     isNull(placementJobs.archivedAt),filters.search?or(
      ilike(placementJobs.title,tpoApplicantExportSearchPattern(filters.search)),
      ilike(placementCompanies.name,tpoApplicantExportSearchPattern(filters.search))):undefined);
@@ -161,7 +168,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    {counts:emptyCounts,...tpoDriveLifecyclePage(0,filters.page),rows:[]};
   return {
     ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
-    minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,
+    minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
