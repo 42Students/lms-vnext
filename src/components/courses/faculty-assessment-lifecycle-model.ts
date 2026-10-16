@@ -26,8 +26,8 @@ export function facultyAssessmentLifecycleWarning(
   if(action==="PUBLISH")return "Publish this "+kind.toLowerCase()+" to the current Section? Check the draft and deadline first.";
   if(action==="CLOSE")return "Close this published quiz? New attempts will be blocked; prior attempts and released results remain.";
   return kind==="QUIZ"?
-    "Archive this quiz? It leaves learner lists. Existing attempts prevent archival, and saved results are never deleted.":
-    "Archive this assignment? It leaves learner lists. Existing submissions prevent archival and are never deleted.";
+    "Delete this quiz? Learners will no longer be able to open it. This cannot be undone.":
+    "Delete this assignment? Learners will no longer be able to open it. This cannot be undone.";
 }
 
 export function facultyAssessmentLifecyclePayload(input:{
