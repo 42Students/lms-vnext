@@ -36,7 +36,7 @@ export class PublicJoinAcceptError extends Error {
  */
 export async function acceptPublicRecruiterJoin(
   scope: Scope, raw: unknown, verifiedClientIp: string | null,
-): Promise<{ joined: true; outcome: "JOINED" | "ALREADY_JOINED" }> {
+): Promise<{ joined: true; outcome: "JOINED" | "ALREADY_JOINED";signInEmail:string }> {
   const input = publicJoinAcceptSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinAcceptError("INVALID");
   const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
@@ -218,5 +218,5 @@ export async function acceptPublicRecruiterJoin(
   if (decision !== "JOINED" && decision !== "ALREADY_JOINED") {
     throw new PublicJoinAcceptError("INVALID");
   }
-  return { joined: true, outcome: decision };
+  return { joined: true, outcome: decision, signInEmail:input.data.email };
 }
