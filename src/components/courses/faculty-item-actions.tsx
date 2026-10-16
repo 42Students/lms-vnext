@@ -35,7 +35,7 @@ export function FacultyItemActions({
     if (
       action === "ARCHIVE" &&
       !window.confirm(
-        "Archive this item? It will leave active Course surfaces while historical records remain.",
+        "Remove this Resource? The lesson entry will be hidden; stored files are retained.",
       )
     ) {
       return;
