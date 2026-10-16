@@ -653,6 +653,7 @@ export function AdminQuizResultsActions({
   quizId,
   status,
   resultsPublished,
+  deadlineReached = false,
 }: {
   quizId: string;
   status:
@@ -661,13 +662,13 @@ export function AdminQuizResultsActions({
     | "CLOSED"
     | "ARCHIVED";
   resultsPublished: boolean;
+  deadlineReached?: boolean;
 }) {
   const { pending, run } =
     useLearningMutation();
 
-  if (status !== "CLOSED") {
+  if(status!=="CLOSED" && !(status==="PUBLISHED" && deadlineReached))
     return null;
-  }
 
   return (
     <Button
