@@ -1,10 +1,8 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ZodError } from "zod";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import {tpoDriveTabs} from "@/modules/placements/tpo-drive-tab-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
 import { hasMembershipRole } from "@/modules/identity/context";
