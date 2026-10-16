@@ -158,9 +158,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               <h2 className="text-lg font-semibold text-foreground">{result.company.name}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
-            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">
-              {result.company.trusted ? "Trusted relationship" : "Standard relationship"}
-            </span>
+            <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">Employer relationship</span>
           </div>
           <dl className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
