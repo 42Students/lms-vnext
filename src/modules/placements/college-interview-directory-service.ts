@@ -19,7 +19,7 @@ export const collegeInterviewFilters=z.object({
  sort:z.enum(["UPCOMING","RECENT","STUDENT"]).default("UPCOMING"),
  page:z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
-export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unknown){
+export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unknown,options:{exportAll?:boolean}={}){
  const filters=collegeInterviewFilters.parse(raw);
  const collegeId=await requireCollegePlacementAdmin(ctx);
  if(!await placementTableExists("placement_college_interviews"))
@@ -90,7 +90,8 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  const total=selected.length;
  const pages=Math.max(1,Math.ceil(total/25));
  return {ready:true,filters,total,limited,pageCount:pages,
-  rows:selected.slice((filters.page-1)*25,filters.page*25).map(row=>({...row,conflict:conflicting.has(row.id)})),
+  rows:(options.exportAll?selected:selected.slice((filters.page-1)*25,filters.page*25))
+   .map(row=>({...row,conflict:conflicting.has(row.id)})),
   companies,departments:departmentChoices,
   summary:{scheduled:selected.filter(row=>row.status==="SCHEDULED").length,
    today:selected.filter(row=>inIndia(row.start)===today).length,
