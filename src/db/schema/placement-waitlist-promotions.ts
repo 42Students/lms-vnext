@@ -2,7 +2,7 @@ import {sql} from "drizzle-orm";
 import {check,index,integer,pgTable,text,timestamp,uniqueIndex,uuid,varchar,foreignKey} from "drizzle-orm/pg-core";
 import {placementApplications,placementJobRounds,placementJobs,placementOffers} from "./placements";
 import {users} from "./users";
-/** Proposed TPO-drive-workspace-53 waitlist seat promotion ledger. */
+/** Registered 0113: durable TPO-drive-workspace-53 waitlist seat promotion ledger. */
 export const placementWaitlistPromotions=pgTable("placement_waitlist_promotions",{
  id:uuid("id").defaultRandom().primaryKey(),
  jobId:uuid("job_id").notNull().references(()=>placementJobs.id),
