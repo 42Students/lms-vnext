@@ -30,6 +30,10 @@ const dateFormatter = new Intl.DateTimeFormat(
   },
 );
 
+const accessExpiryFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric",
+});
+
 /**
  * Pure presentation helper.
  *
@@ -61,7 +65,7 @@ export function buildRecruiterSelfGrantRows(
         dateFormatter.format(fact.grantedAt),
       validUntilIso: fact.validUntil?.toISOString() ?? null,
       accessExpiryLabel: fact.validUntil
-        ? "Access until " + dateFormatter.format(fact.validUntil) +
+        ? "Access until " + accessExpiryFormatter.format(fact.validUntil) +
           ". The placement cell can extend it."
         : "Access has no end date",
     }))
