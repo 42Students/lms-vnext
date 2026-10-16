@@ -1,0 +1,81 @@
+import "server-only";
+import {and,eq,inArray,sql} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import {collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import {getSuperAdminTenantLifecycleDetail} from "./admin-tenant-lifecycle-service";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+
+async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userIdInput:unknown){
+ if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
+ const collegeId=z.uuid().parse(collegeIdInput),userId=z.uuid().parse(userIdInput);
+ const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
+ requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
+ const [member]=await getDb().select({id:collegeMemberships.id,name:users.displayName})
+  .from(collegeMemberships)
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])))
+  .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.userId,userId),
+   eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+ if(!member)throw new AuthorizationError("college.manage");
+ return {college,userId,name:member.name};
+}
+
+/** Only administrators associated with this college may be selected. */
+export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawCollegeId:unknown){
+ if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
+ const collegeId=z.uuid().parse(rawCollegeId);
+ const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
+ requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
+ const rows=await getDb().select({userId:users.id,name:users.displayName,email:users.email,
+  role:membershipRoles.role}).from(collegeMemberships)
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])))
+  .where(and(eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE"))).limit(501);
+ const map=new Map<string,{userId:string;name:string;email:string|null;roles:string[]}>();
+ for(const row of rows.slice(0,500)){
+  const item=map.get(row.userId)??{userId:row.userId,name:row.name,email:row.email,roles:[]};
+  if(!item.roles.includes(row.role))item.roles.push(row.role);
+  map.set(item.userId,item);
+ }
+ return {college,items:[...map.values()],truncated:rows.length>500};
+}
+
+export async function listCollegeAdminSessions(ctx:RequestContext,collegeId:unknown,userId:unknown){
+ const target=await authorizedTarget(ctx,collegeId,userId);
+ const result=await getDb().execute(sql<{
+  id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
+  last_seen_at:Date;created_at:Date;expires_at:Date;
+ }>`SELECT id,device_name,user_agent,ip_address,last_seen_at,created_at,expires_at
+ FROM identity_device_sessions WHERE user_id=${target.userId}::uuid
+ AND revoked_at IS NULL AND expires_at>now()
+ ORDER BY last_seen_at DESC LIMIT 100`);
+ return {target,devices:result.rows};
+}
+
+/** Revocation and audit commit in one database transaction. A compromised
+ * college admin's sessions across colleges are revoked deliberately. */
+export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:unknown,userId:unknown){
+ const target=await authorizedTarget(ctx,collegeId,userId);
+ return getDb().transaction(async tx=>{
+  const rows=await tx.execute(sql<{id:string}>`UPDATE identity_device_sessions
+  SET revoked_at=now(),revoked_by_user_id=${ctx.user.id}::uuid,
+    revocation_reason='SUPER_ADMIN_SIGN_OUT_EVERYWHERE'
+  WHERE user_id=${target.userId}::uuid AND revoked_at IS NULL
+    AND expires_at>now() RETURNING id`);
+  await recordActivityEventInTransaction(tx,ctx,{
+   eventType:ACTIVITY_EVENT_TYPES.PLATFORM_ADMIN_SESSIONS_REVOKED,
+   organizationId:target.college.organizationId,collegeId:target.college.id,
+   subjectType:"user",subjectId:target.userId,subjectLabel:target.name,
+   summary:"Super Admin signed out a college administrator everywhere",
+   metadata:{revoked:rows.rows.length},
+  });
+  return {revoked:rows.rows.length};
+ });
+}
