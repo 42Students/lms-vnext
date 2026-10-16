@@ -1,14 +1,14 @@
 "use client";
 import {useState} from "react";
-export function TpoVerificationSwitch({initialEnabled}:{initialEnabled:boolean}){
+export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled:boolean;collegeId?:string}){
  const [enabled,setEnabled]=useState(initialEnabled);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  async function save(value:boolean){
   setBusy(true);setError("");
   try{
-   const response=await fetch("/api/college/verification/settings",{method:"PATCH",
-    headers:{"Content-Type":"application/json"},body:JSON.stringify({tpoCanVerify:value})});
+   const response=await fetch(collegeId?"/api/admin/verification/settings":"/api/college/verification/settings",{method:"PATCH",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify({tpoCanVerify:value,...(collegeId?{collegeId}:{})})});
    if(!response.ok)throw Error("Could not update the placement-cell setting");
    const result=await response.json() as {tpoCanVerify:boolean};
    setEnabled(result.tpoCanVerify);
@@ -22,7 +22,7 @@ export function TpoVerificationSwitch({initialEnabled}:{initialEnabled:boolean})
     onChange={event=>void save(event.target.checked)} aria-label="Placement cell can verify profiles"
     className="h-5 w-5"/>
   </label>
-  <p className="text-xs text-muted-foreground">Only explicitly granted TPO verifiers may review while enabled.</p>
+  <p className="text-xs text-muted-foreground">Only explicitly granted TPO verifiers may review while enabled. This setting is scoped to the selected college.</p>
   {busy?<p role="status" className="text-xs">Loading or saving setting…</p>:null}
   {error?<div role="alert" className="space-y-1 text-sm"><p>{error}. Refresh to load the persisted setting before trying again.</p>
    <button type="button" onClick={()=>window.location.reload()} className="rounded border px-3 py-1">Refresh setting</button></div>:null}
