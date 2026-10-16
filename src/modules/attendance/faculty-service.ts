@@ -52,9 +52,17 @@ const sessionInputSchema = z
       new Date(value.startsAt).getTime(),
     {
       path: ["endsAt"],
-      message: "Session end must be after start",
+      message: "End time must be after start time",
     },
-  );
+  ).superRefine((value,ctx)=>{
+    const start=Date.parse(value.startsAt),end=Date.parse(value.endsAt);
+    const envMinutes=Number(process.env.FACULTY_SCHEDULE_PAST_GRACE_MINUTES??"5");
+    const grace=Number.isInteger(envMinutes)&&envMinutes>=0&&envMinutes<=60?envMinutes:5;
+    if(start<Date.now()-grace*60000)
+      ctx.addIssue({code:"custom",path:["startsAt"],message:"Cannot schedule a class in the past"});
+    if(end-start>12*60*60*1000)
+      ctx.addIssue({code:"custom",path:["endsAt"],message:"A class can be at most 12 hours. Check AM/PM."});
+  });
 
 const bulkInputSchema = z
   .object({
