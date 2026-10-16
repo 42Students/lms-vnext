@@ -1,0 +1,37 @@
+import {NextResponse} from "next/server";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {isSameOriginRequest} from "@/auth/origin";
+import {apiErrorResponse} from "@/lib/api-error";
+import {CollegeLogoError,uploadCollegeLogo,getPublicCollegeLogo} from "@/modules/colleges/admin-branding-logo-service";
+export const runtime="nodejs";
+export const dynamic="force-dynamic";
+type Params={params:Promise<{collegeId:string}>};
+export async function POST(request:Request,{params}:Params){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const form=await request.formData();
+  const entries=[...form.keys()];
+  if(entries.some(key=>key!=="file")||entries.filter(key=>key==="file").length!==1)
+   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const file=form.get("file");
+  if(!(file instanceof File))return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const result=await uploadCollegeLogo(await getCurrentRequestContext(),(await params).collegeId,file);
+  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){
+  if(error instanceof CollegeLogoError)
+   return NextResponse.json({error:error.code},{status:error.code==="COLLEGE_NOT_FOUND"?404:
+    error.code==="LOGO_TOO_LARGE"?413:error.code==="LOGO_INVALID"?400:503});
+  return apiErrorResponse(error);
+ }
+}
+export async function GET(_request:Request,{params}:Params){
+ try{
+  const file=await getPublicCollegeLogo((await params).collegeId);
+  if(!file)return new Response(null,{status:404,headers:{"Cache-Control":"no-store"}});
+  return new Response(file.body,{headers:{
+    "Content-Type":"image/png","X-Content-Type-Options":"nosniff",
+    "Content-Security-Policy":"default-src 'none'; sandbox",
+    "Cache-Control":"public, max-age=60",
+  }});
+ }catch{return new Response(null,{status:503,headers:{"Cache-Control":"no-store"}});}
+}
