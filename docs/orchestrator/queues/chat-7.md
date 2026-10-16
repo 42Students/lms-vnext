@@ -29,6 +29,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 ## FAST-MODE checkpoint (2026-10-17)
 
 - REC-calendar-messages-profile-22: restored scoped drive-request decision notices and mark-read control on the actual recruiter Conversations/Messages page after the Messages route was repointed there. The existing service/model stays in place.
+- LEARNER-home-courses-R01 (WP-chat-7-02): isolated failures per delivery, invalid/duplicate records show disabled cards and the legacy warning/retry banner; the other courses continue rendering. This is a source implementation, not a runtime-verified acceptance.
 - WP-chat-7-01 remains IN-PROGRESS: private storage, sensitive applicant disclosure, selection-list registration, and trusted-recruiter approval still require completion; do not claim the entire WP DONE.
 
 ## Builder chat-7 checkpoint (after latest main merge, 2026-10-16)

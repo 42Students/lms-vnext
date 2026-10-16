@@ -21,67 +21,90 @@ export default async function LearnerCoursesPage() {
     { includeHistorical: true },
   );
 
+  // Each delivery fails independently; one corrupt or temporarily unavailable
+  // course must never hide the learner's remaining course cards.
+  const seenDeliveries = new Set<string>();
   const rows: LearnerCourseListRow[] = await Promise.all(
-    courses.map(async (course) => {
-      const [workspace, instructors, display] = await Promise.all([
-        getLearnerCourseWorkspace(
-          context,
-          course.deliveryId,
-        ),
-        listLearnerCourseInstructors(
-          context,
-          course.deliveryId,
-        ),
-        loadCourseDisplayContentIfReady(course.courseId),
-      ]);
-
-      const signals=learnerCourseListSignals(workspace.lessons,workspace.summary,
-        new Date(workspace.snapshotNowMs));
-      return {
-        thumbnailUrl: display?.thumbnailUrl ?? null,
-        lastActivity:signals.lastActivity,
-        overdueAssignments: signals.overdueAssignments,
-        firstOverdue: selectLearnerOverdueAssignment(workspace.lessons,workspace.snapshotNowMs),
-        nextDue:signals.nextDue,
-        course: {
-          deliveryId: course.deliveryId,
-          courseId: course.courseId,
-          courseName: course.courseName,
-          courseCode: course.courseCode,
-          courseDescription: course.courseDescription,
-          offeringType: course.offeringType,
-          credits: course.credits,
-          sectionName: course.sectionName,
-          sectionCode: course.sectionCode,
-          academicPeriodId: course.academicPeriodId,
-          academicPeriodName: course.academicPeriodName,
-          programName: course.programName,
-          programCode: course.programCode,
-          periodStartDate: course.periodStartDate,
-          periodEndDate: course.periodEndDate,
-        },
-        instructorNames: learnerCourseInstructorLabels(instructors),
-        summary: {
-          overallPercent: signals.percentage,
-          itemsCompleted: workspace.summary.itemsCompleted,
-          itemsTotal: workspace.summary.itemsTotal,
-        },
-        readOnly:
-          Boolean(course.deliveryEndedAt) ||
-          course.sectionEnrollmentStatus !== "ACTIVE" ||
-          course.programEnrollmentStatus !== "ACTIVE" ||
-          course.periodStatus === "CLOSED",
-        learningPathReady: workspace.learningPath !== null,
-        nextItem: workspace.nextItem
-          ? {
-              lessonId: workspace.nextItem.lessonId,
-              lessonName: workspace.nextItem.lessonName,
-              kind: workspace.nextItem.kind,
-              itemId: workspace.nextItem.itemId,
-              title: workspace.nextItem.title,
-            }
-          : null,
+    courses.map(async (course, index) => {
+      const duplicate = seenDeliveries.has(course.deliveryId);
+      seenDeliveries.add(course.deliveryId);
+      const baseCourse = {
+        deliveryId: duplicate || !course.deliveryId ? "unavailable-" + index : course.deliveryId,
+        courseId: course.courseId,
+        courseName: course.courseName || "Course name unavailable",
+        courseCode: course.courseCode,
+        courseDescription: course.courseDescription,
+        offeringType: course.offeringType,
+        credits: course.credits,
+        sectionName: course.sectionName,
+        sectionCode: course.sectionCode,
+        academicPeriodId: course.academicPeriodId,
+        academicPeriodName: course.academicPeriodName,
+        programName: course.programName,
+        programCode: course.programCode,
+        periodStartDate: course.periodStartDate,
+        periodEndDate: course.periodEndDate,
       };
+      const unavailable = (label: string): LearnerCourseListRow => ({
+        course: baseCourse,
+        thumbnailUrl: null,
+        instructorNames: [],
+        summary: {overallPercent: null, itemsCompleted: 0, itemsTotal: 0},
+        lastActivity: null,
+        nextDue: null,
+        readOnly: true,
+        learningPathReady: false,
+        nextItem: null,
+        unavailable: true,
+        unavailableLabel: label,
+      });
+      if (duplicate) return unavailable("Duplicate course mapping " + (index + 1));
+      if (!course.deliveryId || !course.courseId || !course.academicPeriodId ||
+          typeof course.courseName !== "string" || !course.courseName.trim()) {
+        return unavailable("Invalid course record " + (index + 1));
+      }
+      try {
+        const [workspace, instructors, display] = await Promise.all([
+          getLearnerCourseWorkspace(context, course.deliveryId),
+          listLearnerCourseInstructors(context, course.deliveryId),
+          loadCourseDisplayContentIfReady(course.courseId),
+        ]);
+        const signals = learnerCourseListSignals(
+          workspace.lessons, workspace.summary, new Date(workspace.snapshotNowMs),
+        );
+        return {
+          thumbnailUrl: display?.thumbnailUrl ?? null,
+          lastActivity: signals.lastActivity,
+          overdueAssignments: signals.overdueAssignments,
+          firstOverdue: selectLearnerOverdueAssignment(workspace.lessons,workspace.snapshotNowMs),
+          nextDue: signals.nextDue,
+          course: baseCourse,
+          instructorNames: learnerCourseInstructorLabels(instructors),
+          summary: {
+            overallPercent: signals.percentage,
+            itemsCompleted: workspace.summary.itemsCompleted,
+            itemsTotal: workspace.summary.itemsTotal,
+          },
+          readOnly:
+            Boolean(course.deliveryEndedAt) ||
+            course.sectionEnrollmentStatus !== "ACTIVE" ||
+            course.programEnrollmentStatus !== "ACTIVE" ||
+            course.periodStatus === "CLOSED",
+          learningPathReady: workspace.learningPath !== null,
+          nextItem: workspace.nextItem
+            ? {
+                lessonId: workspace.nextItem.lessonId,
+                lessonName: workspace.nextItem.lessonName,
+                kind: workspace.nextItem.kind,
+                itemId: workspace.nextItem.itemId,
+                title: workspace.nextItem.title,
+              }
+            : null,
+        };
+      } catch {
+        // Never show internal access, database or content-fetch errors to learners.
+        return unavailable("Course temporarily unavailable");
+      }
     }),
   );
 
