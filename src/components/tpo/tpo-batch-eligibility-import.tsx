@@ -13,6 +13,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [preview,setPreview]=useState<Preview|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [lastActionId,setLastActionId]=useState<string|null>(null);
+ const [skippedByUser,setSkippedByUser]=useState<number[]>([]);
  const [chosenName,setChosenName]=useState("");
  async function chooseFile(file:File|null){
   if(!file)return;
@@ -25,7 +26,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   catch{setError("Unable to read the selected CSV file.");}
  }
  async function previewChanges(){
-  if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);
+  if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);setSkippedByUser([]);
   try{
    const rows=parseTpoEligibilitySheetCsv(csv);
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-preview",{
@@ -45,14 +46,18 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  async function commit(){
   if(!preview||preview.ready===0||busy)return;
-  if(!window.confirm("Apply "+preview.ready+" matched eligibility decisions? "+preview.skipped+" rows will be skipped."))return;
+  const selections=preview.preview.map((row,index)=>({row,index}))
+    .filter(item=>!skippedByUser.includes(item.index));
+  const selected=selections.filter(item=>item.row.status==="matched");
+  if(!selected.length){setError("Select at least one matched row to import.");return;}
+  if(!window.confirm("Apply "+selected.length+" matched eligibility decisions? The remaining rows will be skipped."))return;
   setBusy(true);setError("");setNotice("");
   try{
-   const versions=Object.fromEntries(preview.preview.filter(r=>r.status==="matched"&&r.membershipId&&r.expectedVersion)
-    .map(r=>[r.membershipId!,r.expectedVersion!]));
+   const versions=Object.fromEntries(selected.filter(({row})=>row.membershipId&&row.expectedVersion)
+    .map(({row})=>[row.membershipId!,row.expectedVersion!]));
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-commit",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({rows:preview.rows,expectedVersions:versions,previewMemberIds:preview.preview.map(p=>p.membershipId),confirmed:true}),
+    body:JSON.stringify({rows:selections.map(item=>preview.rows[item.index]),expectedVersions:versions,previewMemberIds:selections.map(item=>item.row.membershipId),confirmed:true}),
    });
    const data=await response.json() as {changedCount?:number;skipped?:number;actionId?:string|null;error?:string};
    if(!response.ok)throw Error(response.status===409?"Preview became stale. Review the latest eligibility decisions and preview again.":data.error??"Import failed.");
@@ -82,6 +87,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
    <ul className="max-h-64 space-y-1 overflow-y-auto text-xs">{preview.preview.map((row,i)=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
+    <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy||row.status!=="matched"}/>Include</label>
     Row {i+1}: {row.status==="matched"?"Will update":"Skipped"} {preview.rows[i]?.studentCode}{row.reason?" — "+row.reason:""}
    </li>)}</ul>
    <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
