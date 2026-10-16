@@ -32,11 +32,19 @@ export async function settleDriveWithdrawalRequests(
       eq(placementLearnerRequests.status,"PENDING")))
     .for("update",{of:placementLearnerRequests});
   if(!requests.length)return 0;
+  const accepted=await tx.select({applicationId:placementOffers.applicationId})
+    .from(placementOffers).where(and(
+      inArray(placementOffers.applicationId,requests.map(item=>item.applicationId)),
+      eq(placementOffers.status,"ACCEPTED")));
+  const acceptedIds=new Set(accepted.map(item=>item.applicationId));
   const now=new Date();
   let settled=0;
   const note="Approved (drive "+(mode==="CANCELLED"?"cancelled":"closed")+")";
   const distinctMemberships=new Set<string>();
   for(const entry of requests){
+    // An accepted offer is an active commitment; do not mark its application
+    // withdrawn without a separate, explicit offer-dispute decision.
+    if(acceptedIds.has(entry.applicationId))continue;
     const [saved]=await tx.update(placementLearnerRequests).set({
       status:"APPROVED",decidedByUserId:ctx.user.id,decidedAt:now,
       decisionNote:note,updatedAt:now,
@@ -147,13 +155,20 @@ export async function endDriveApplicants(
     metadata:{mode,reason,rejected,acceptedOffersRetained:accepted.length},
   }).returning({id:activityEvents.id});
   if(!event)throw new Error("PLACEMENT_APPLICANT_STOP_AUDIT_FAILED");
-  const recipients=[...new Set(rows.map(row=>row.userId))];
-  for(let i=0;i<recipients.length;i+=200){
-    await tx.insert(inAppNotifications).values(recipients.slice(i,i+200).map(userId=>({
-      userId,eventId:event.id,
-      title:mode==="CANCELLED"?"This drive was cancelled":"This drive has closed",
-      body:visibleMessage,actionHref:"/learn/my-placements/applications",
-    }))).onConflictDoNothing();
+  const recipients=new Map<string,boolean>();
+  for(const row of rows){
+    recipients.set(row.userId,Boolean(recipients.get(row.userId))||protectedIds.has(row.id));
   }
-  return {rejected,notified:recipients.length,acceptedOffersRetained:accepted.length};
+  const notices=[...recipients].map(([userId,hasAcceptedOffer])=>({
+    userId,eventId:event.id,
+    title:mode==="CANCELLED"?"This drive was cancelled":"This drive has closed",
+    body:hasAcceptedOffer?
+      (mode==="CANCELLED"?"This drive was cancelled. ":"This drive has closed. ")+
+        "Your accepted offer remains valid. "+reason:visibleMessage,
+    actionHref:"/learn/my-placements/applications",
+  }));
+  for(let i=0;i<notices.length;i+=200){
+    await tx.insert(inAppNotifications).values(notices.slice(i,i+200)).onConflictDoNothing();
+  }
+  return {rejected,notified:recipients.size,acceptedOffersRetained:accepted.length};
 }
