@@ -80,6 +80,7 @@ export async function acceptTpoRecruiterInviteOtp(
      .for("share").limit(1);
    if(!relationship || relationship.status!=="ACTIVE" ||
       relationship.companyStatus!=="ACTIVE")return "DENIED";
+   await tx.insert(placementTpoCollegeSettings).values({collegeId:lead.collegeId}).onConflictDoNothing();
    const [duration]=await tx.select({
       months:placementTpoCollegeSettings.recruiterAccessMonths,
    }).from(placementTpoCollegeSettings)
