@@ -51,6 +51,9 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
          placeholder="Share a progress update or note..."
          onChange={e=>setBody(e.target.value)}/>
      </label>:null}
+     {canPost && !body.trim() ? <p className="text-xs text-muted-foreground">
+       Add a note before posting.
+     </p> : null}
      {canPost?<Button size="sm" disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
