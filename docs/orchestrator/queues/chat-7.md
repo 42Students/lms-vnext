@@ -28,6 +28,8 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 ## FAST-MODE checkpoint (2026-10-17)
 
+- REC-home-drives-R04 (WP-chat-7-04): CLOSED hiring workspace preserves readable rounds/results/offers but removes inaccessible round/slot staging links and presents the legacy finished-drive notices.
+- REC-calendar-messages-profile-07 (WP-chat-7-05): calendar deadlines open Overview and rounds/interview slots open the recruiter's Rounds tab using the legacy route.
 - REC-home-drives-R06 (WP-chat-7-05): legacy /recruiter/drives?tab=all|live|waiting|closed links now resolve correctly to the current list, while existing view= links remain accepted.
 - REC-calendar-messages-profile-15 (WP-chat-7-03): restored exact blank/overlong reply validation strings and clearer send-failure message; refresh-specific failure feedback remains unverified.
 - REC-calendar-messages-profile-29 (WP-chat-7-03): grant validity now appears in Profile from the actual tenant-scoped `validUntil` field, using legacy "Access until..." wording.
