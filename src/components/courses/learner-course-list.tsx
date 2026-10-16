@@ -377,7 +377,7 @@ export function LearnerCourseList({
                       </h2>
                       <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-5 text-body">
                         {row.course.courseDescription ??
-                          "Course learning workspace for your class."}
+                          "No course description provided."}
                       </p>
                       <p className="mt-3 text-xs font-semibold text-muted-foreground">
                         Instructor: {row.instructorNames.length > 0
