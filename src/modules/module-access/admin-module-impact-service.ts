@@ -1,4 +1,5 @@
 import "server-only";
+import {moduleDisableImpactSummary} from "./admin-module-impact-model";
 import {and,count,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
@@ -6,11 +7,6 @@ import {colleges,projectInstances,projectMembers,placementJobs,placementApplicat
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 const id=z.uuid();
-export function moduleDisableImpactSummary(module:"projects"|"placements"|"electives",counts:number[]){
- if(module==="projects")return `Projects: ${counts[0]} active primary-mentor assignments may lose access. This is not a safety check.`;
- if(module==="placements")return `Placements: ${counts[0]} active drives, ${counts[1]} in-progress applications and ${counts[2]} pending offers may be affected. Existing data is retained.`;
- return "Electives: access changes may affect learner choices. No deletion is performed.";
-}
 export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:string,moduleRaw:string){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
