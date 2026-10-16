@@ -1086,7 +1086,7 @@ test.describe("Placements browser regression", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Hiring Workspace",
+        name: "Drives",
       }),
     ).toBeVisible();
     await expect(

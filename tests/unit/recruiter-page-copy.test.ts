@@ -3,14 +3,14 @@ import { RECRUITER_PAGE_COPY } from "@/modules/placements/recruiter-page-copy";
 
 import { RECRUITER_REQUEST_DRIVE_HREF } from "@/modules/placements/recruiter-page-copy";
 
-describe("Owner-approved Recruiter page copy", () => {
+describe("Legacy Recruiter page copy", () => {
  it("matches the specified sidebar role, page headings and CTA", () => {
    expect(RECRUITER_PAGE_COPY).toEqual({
      role: "Recruiter",
      drives: "Drives",
-     calendar: "Recruiter Calendar",
-     messages: "Messages & Notifications",
-     profile: "Your Profile",
+     calendar: "Calendar",
+     messages: "Messages",
+     profile: "Profile",
      requestDrive: "Request a drive",
    });
  });

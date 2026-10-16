@@ -173,7 +173,7 @@ export default async function RecruiterCompanyReportsPage({
             Export report CSV
           </Link>
           <Link href="/hr/placements" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-body">
-            Hiring Workspace →
+            Drives →
           </Link>
         </div>}
       />

@@ -204,7 +204,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <div className="flex flex-wrap gap-4 text-sm"><Link className="text-primary-text" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
       <Link className="text-primary-text" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
-      <Link className="text-primary-text" href={"/hr/messages?collegeId="+encodeURIComponent(selectedId)}>Messages & Notifications</Link>
+      <Link className="text-primary-text" href={"/hr/messages?collegeId="+encodeURIComponent(selectedId)}>Messages</Link>
       <Link className="text-primary-text" href={"/hr/activity?collegeId="+encodeURIComponent(selectedId)}>Hiring activity</Link>
       <Link className="text-primary-text" href="/hr/profile">Your profile</Link></div>
   </div>;
