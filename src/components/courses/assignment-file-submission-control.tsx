@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {AssignmentMultipartPartsEditor,type AssignmentLinkPart} from "./assignment-multipart-parts-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   acceptAttributeFor, fileStatusDescriptor, formatFileSize, limitsSummary,
@@ -16,8 +17,9 @@ import {
 } from "./assignment-staged-file-transfer";
 
 export function AssignmentFileSubmissionControl({
-  assignmentId, deliveryId, onBusyChange, onSubmitted,
-}: { assignmentId: string; deliveryId: string; onBusyChange: (busy: boolean) => void; onSubmitted: () => void }) {
+  assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,
+}: { assignmentId: string; deliveryId: string; onBusyChange: (busy: boolean) => void; onSubmitted: () => void;
+ multipartEnabled?:boolean }) {
   const [selected, setSelected] = useState<File[]>([]);
   const [files, setFiles] = useState<SubmissionFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +27,8 @@ export function AssignmentFileSubmissionControl({
   const [progress, setProgress] = useState(0);
   const [activeName, setActiveName] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
+  const [responseText,setResponseText]=useState("");
+  const [links,setLinks]=useState<AssignmentLinkPart[]>([]);
   const [error, setError] = useState<string | null>(null);
   const active = useRef<AbortController | null>(null);
   const locked = useRef(false);
@@ -128,13 +132,27 @@ export function AssignmentFileSubmissionControl({
   }
   function submit() {
     if (!confirmed || !canSubmitStagedFiles(files)) return;
+    if(multipartEnabled){
+      const seen=new Set<string>();
+      for(const part of links){
+        try{
+          const url=new URL(part.url);
+          if(url.protocol!=="https:"||url.username||url.password||seen.has(url.toString().toLowerCase()))
+            throw new Error("Use distinct secure HTTPS links.");
+          seen.add(url.toString().toLowerCase());
+        }catch{setError("Use distinct secure HTTPS repository or website links.");return;}
+      }
+    }
     void run(async signal => {
       const response = await fetch(
         `/api/courses/assignments/${encodeURIComponent(assignmentId)}/submit-files`,
         {
           method: "POST", credentials: "same-origin", cache: "no-store", signal,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ deliveryId, fileIds: readySubmissionFileIds(files) }),
+          body: JSON.stringify({
+            deliveryId,fileIds:readySubmissionFileIds(files),
+            ...(multipartEnabled?{textContent:responseText.trim()||null,links}:{}),
+          }),
         },
       );
       if (!response.ok) throw new Error(await storageApiError(response));
@@ -174,6 +192,10 @@ export function AssignmentFileSubmissionControl({
         </li>;
       })}
     </ul>
+    {multipartEnabled?<AssignmentMultipartPartsEditor text={responseText}
+      onTextChange={value=>{setResponseText(value);setConfirmed(false);}}
+      links={links} onLinksChange={value=>{setLinks(value);setConfirmed(false);}}
+      disabled={busy||loading}/>:null}
     {staged.length ? <div className="space-y-3 rounded-lg border border-border bg-surface p-3">
       {hasPending ? <p role="status" className="text-sm text-muted-foreground">Files must pass security checks before final submission.</p> : null}
       <label className="flex min-h-11 items-start gap-2 text-sm text-body">
