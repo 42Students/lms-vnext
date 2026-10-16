@@ -30,8 +30,10 @@ export function facultyAssignmentCommandReceipt(
  const data=row as Record<string,unknown>;
  if(typeof data.id!=="string"||!data.id||data.deliveryId!==request.deliveryId)return false;
  if(request.action!=="CREATE"&&data.id!==request.assignmentId)return false;
- const status=request.action==="CREATE"?"DRAFT":request.action==="EDIT"?"DRAFT":request.action==="PUBLISH"?"PUBLISHED":"ARCHIVED";
- if(data.status!==status)return false;
+ const allowed=request.action==="ARCHIVE"?["ARCHIVED"]:
+  request.action==="PUBLISH"?["PUBLISHED"]:
+  request.action==="EDIT"?["DRAFT","PUBLISHED"]:["DRAFT"];
+ if(!allowed.includes(String(data.status)))return false;
  if((request.action==="CREATE"||request.action==="EDIT")&&
    (data.title!==request.title||data.maxPoints!==request.maxPoints))return false;
  return typeof data.updatedAt==="string" && Number.isFinite(Date.parse(data.updatedAt));
