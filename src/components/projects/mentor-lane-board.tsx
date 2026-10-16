@@ -12,9 +12,12 @@ type Task={id:string;title:string;status:string;priority:string;sprintId:string|
 type Sprint={id:string;title:string;status:string;releaseId:string};
 type Release={id:string;title:string};
 type Person={membershipId:string;displayName:string|null;role:string};
+type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
+type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null};
 const editable=["TODO","IN_PROGRESS","BLOCKED"] as const;
-export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members,readOnly=false}:{
- projectId:string;initialTasks:Task[];sprints:Sprint[];releases:Release[];members:Person[];readOnly?:boolean;
+export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members,taskSubmissions=[],taskActivity=[],readOnly=false}:{
+ projectId:string;initialTasks:Task[];sprints:Sprint[];releases:Release[];members:Person[];
+ taskSubmissions?:TaskSubmission[];taskActivity?:TaskEvent[];readOnly?:boolean;
 }){
  const router=useRouter(),[tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),
  [sprint,setSprint]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
@@ -107,8 +110,23 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        <p className="mt-2 whitespace-pre-wrap text-xs">{task.description||"No description"}</p>
        <p className="mt-2 text-xs font-semibold">Done when</p>
        <p className="whitespace-pre-wrap text-xs">{task.acceptanceCriteria||"Not recorded"}</p>
+       <p className="mt-2 text-xs">Assigned to: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</p>
        <p className="mt-2 text-xs">Due: {task.dueDate??"No due date"} · Estimate: {task.estimatePoints??"—"}</p>
        <p className="text-xs">Task type: {task.taskType??"Not set"}</p>
+       <h4 className="mt-3 text-xs font-semibold">Submission</h4>
+       {taskSubmissions.filter(s=>s.taskId===task.id).slice(-3).map(item=>
+        <div key={item.id} className="mt-1 text-xs">
+          <span>{item.status} · version {item.version}</span>
+          {/^https?:\/\//i.test(item.submissionUrl)?<a href={item.submissionUrl} target="_blank"
+            rel="noreferrer noopener" className="ml-2 text-primary-text underline">Open submission link</a>:null}
+        </div>
+       )}
+       {!taskSubmissions.some(s=>s.taskId===task.id)?<p className="text-xs text-muted-foreground">No submission yet.</p>:null}
+       <h4 className="mt-3 text-xs font-semibold">Activity</h4>
+       <ul className="space-y-1">{taskActivity.filter(event=>event.subjectId===task.id).slice(0,8).map(event=>
+         <li key={event.id} className="text-xs text-body">{event.summary} · {event.actorDisplayName??"System"} ·
+           {" "+new Date(event.occurredAt).toLocaleDateString("en-IN")}</li>
+       )}</ul>
        <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={new Date(task.updatedAt).toISOString()} canPost={!readOnly}/>
       </details>
