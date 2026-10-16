@@ -688,6 +688,10 @@ export function RecruiterLeadsWorkspace({
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               </div>
               <RecruiterSavedViewControls columns={visibleColumns}/>
+              {selectedIds.length?<button type="button" className={buttonStyle}
+                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(selectedIds.slice(0,100).join(",")))}>
+                Send an email to selected ({Math.min(selectedIds.length,100)})
+              </button>:null}
               <RecruiterBulkInviteControls collegeId={collegeId}
                 rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
