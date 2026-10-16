@@ -1,8 +1,9 @@
 import {describe,it,expect} from "vitest";
 import {shuffleQuizForLearner} from "@/modules/courses/learner-quiz-shuffle-model";
 describe("LEARNER-learning-misc-26 learner-question and option shuffle",()=>{
- const rows=Array.from({length:10},(_,i)=>({id:"q"+i,sequence:i,options:Array.from({length:7},(_,j)=>({
-  id:"o"+i+"-"+j,sequence:j,correct:j===0,
+ const rows=Array.from({length:10},(_,i)=>({id:"q"+i,type:"SINGLE_CHOICE" as const,prompt:"Question "+i,points:1,
+  sequence:i,options:Array.from({length:7},(_,j)=>({
+  id:"o"+i+"-"+j,text:"Choice "+j,sequence:j,correct:j===0,
  }))}));
  it("is deterministic for a given quiz and learner across refreshes",()=>{
   const a=shuffleQuizForLearner(rows,"quiz","student-A",true,true);
