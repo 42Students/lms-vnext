@@ -486,7 +486,7 @@ export function RecruiterLeadDetailWorkspace({
                 <ol className="space-y-3">
                   {activities.map(a => (
                     <li key={a.id} className="border-l-2 border-border pl-3 text-sm">
-                      <span className="font-semibold">{a.type}</span>
+                      <span className="font-semibold">{a.type==="CALL"?"Call":a.type==="EMAIL"?"Email":a.type==="MEETING"?"Meeting":a.type==="NOTE"?"Note":a.type==="SYSTEM"?"System":a.type.replaceAll("_"," ")}</span>
                       {a.outcome ? " · " + a.outcome : ""}
                       <time className="ml-2 text-muted-foreground" dateTime={a.createdAt}>
                         {formatDateTimeIst(a.createdAt)}
