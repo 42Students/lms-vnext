@@ -17,12 +17,13 @@ export function learnerBoardPriorityCounts(tasks:readonly {priority:string}[]):L
  return counts;
 }
 export function learnerBoardPriorityFilterHref(
- projectId:string,filters:{taskSearch:string;priority:string;status:string;sprintId:string;releaseId:string;taskSort?:string},
+ projectId:string,filters:{taskSearch:string;priority:string;status:string;sprintId:string;releaseId:string;taskSort?:string;mine?:boolean},
  priority:Priority,
 ):string {
  const query=new URLSearchParams({tab:"board",priority});
  if(filters.taskSearch)query.set("taskSearch",filters.taskSearch.slice(0,100));
  if(filters.status)query.set("taskStatus",filters.status);
+ if(filters.mine)query.set("assignee","mine");
  if(filters.sprintId)query.set("sprintId",filters.sprintId);
  if(filters.releaseId)query.set("releaseId",filters.releaseId);
  if(filters.taskSort&&filters.taskSort!=="DEFAULT")query.set("taskSort",filters.taskSort);
