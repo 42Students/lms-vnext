@@ -5,7 +5,7 @@ import {getDb} from "@/db/client";
 import {activityEvents,colleges,moduleAccessRules} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-import {academicModuleRuleInput,descendantRuleMatches} from "./admin-descendant-rule-model";
+import {academicModuleRuleInput,descendantRuleMatches,academicScopeStudents} from "./admin-descendant-rule-model";
 import {StudentRuleConflict} from "./admin-student-rule-write";
 
 const uuid=z.uuid();
@@ -37,9 +37,6 @@ async function resolveScope(db:ReturnType<typeof getDb>,collegeId:string,scopeTy
 export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;projectsRule:string;placementsRule:string;electivesRule:string;studentsInScope:number};
 /** Active learners only, deduplicated by membership; completed/withdrawn
  * enrollments and foreign-college sections cannot inflate the tree. */
-export function academicScopeStudents(rows:readonly {scopeType:string;scopeId:string;studentsInScope:number}[]){
- return new Map(rows.map(row=>[row.scopeType+":"+row.scopeId,row.studentsInScope]));
-}
 export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeIdInput:string):Promise<AcademicModuleScope[]>{
  const college=await collegeScope(ctx,collegeIdInput);if(!college)return [];
  const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string}>(sql`
