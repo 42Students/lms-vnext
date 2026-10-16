@@ -388,7 +388,29 @@ export async function submitProjectSubmission(
         "PROJECT_SUBMISSION_INVALID_STATE",
       );
     }
-    if (!submission.sourceUrl && !submission.demoUrl) {
+    const files=Array.isArray(submission.attachments)
+      ? submission.attachments.filter((entry):entry is {kind:"FILE";fileId:string} =>
+          Boolean(entry)&&typeof entry==="object"&&(entry as {kind?:string}).kind==="FILE"&&
+          typeof (entry as {fileId?:unknown}).fileId==="string")
+      : [];
+    if(!submission.sourceUrl&&!submission.demoUrl&&!files.length){
+      throw new ProjectsServiceError("PROJECT_SUBMISSION_CONTENT_REQUIRED");
+    }
+    for(const entry of files){
+      const [file]=await tx.select({id:projectResourceFiles.id,status:projectResourceFiles.status,
+        resourceId:projectResourceFiles.resourceId}).from(projectResourceFiles).where(and(
+        eq(projectResourceFiles.id,entry.fileId),eq(projectResourceFiles.projectId,scope.project.id)
+      )).limit(1);
+      if(file?.status!=="READY")throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
+      if(file.resourceId){
+        const [resource]=await tx.select({visibility:projectResources.visibility,status:projectResources.status})
+          .from(projectResources).where(and(eq(projectResources.id,file.resourceId),
+            eq(projectResources.projectId,scope.project.id))).limit(1);
+        if(resource?.visibility!=="TEAM"||resource.status!=="ACTIVE")
+          throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
+      }
+    }
+    if (false) {
       throw new ProjectsServiceError(
         "PROJECT_SUBMISSION_CONTENT_REQUIRED",
       );
