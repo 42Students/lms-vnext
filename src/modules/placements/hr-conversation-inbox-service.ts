@@ -26,7 +26,25 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
  const recruiterOwned=threads.filter(thread=>thread.recruiterUserId===context.user.id);
- const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles);
+ const authorized=filterRecruiterConversations(recruiterOwned,knownJobIds,"",titles);
+ // Search the last message, not every message from unauthorized or other-company threads.
+ const searchPreviews=query.q&&authorized.length?await getDb().selectDistinctOn(
+  [placementTpoMessages.threadId],{
+   threadId:placementTpoMessages.threadId,
+   body:sql<string>`left(${placementTpoMessages.body},160)`,
+  }).from(placementTpoMessages)
+   .where(inArray(placementTpoMessages.threadId,authorized.map(row=>row.id)))
+   .orderBy(placementTpoMessages.threadId,
+    desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id)):[];
+ const lastMessages=new Map(searchPreviews.map(row=>[row.threadId,row.body]));
+ const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles,lastMessages);
+ const unreadSummary=authorized.length?await getDb().select({
+  unread:sql<number>`count(*)::integer`,
+  threads:sql<number>`count(distinct ${placementTpoMessages.threadId})::integer`,
+ }).from(placementTpoMessages).where(and(
+  inArray(placementTpoMessages.threadId,authorized.map(row=>row.id)),
+  eq(placementTpoMessages.senderType,"TPO"),isNull(placementTpoMessages.readAt),
+ )):[];
  const unreadRows=query.unreadOnly==="true"?await getDb().selectDistinct({
    threadId:placementTpoMessages.threadId,
  }).from(placementTpoMessages)
@@ -70,11 +88,12 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  }]));
  return {status:"READY" as const,choices:grants,collegeId,
   items:visible.map(t=>({
-   id:t.id,jobId:t.jobId,jobTitle:t.jobId?(titles.get(t.jobId)??"Authorized drive"):"General conversation",
+   id:t.id,jobId:t.jobId,jobTitle:t.jobId?((allowed[0]?.companyName??"Company")+" · "+(titles.get(t.jobId)??"Authorized drive")):"General",
    lastMessageAt:t.lastMessageAt,createdAt:t.createdAt,
    unread:byThread.get(t.id)??0,
    preview:byPreview.get(t.id)??null,
   })),pages:pagination.pages,page:pagination.page,total:ordered.length,
   first:pagination.first,last:pagination.last,
-  unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
+  unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0),
+  unreadTotal:Number(unreadSummary[0]?.unread??0),unreadThreads:Number(unreadSummary[0]?.threads??0)};
 }

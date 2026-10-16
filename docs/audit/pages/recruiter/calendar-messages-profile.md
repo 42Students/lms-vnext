@@ -242,3 +242,7 @@ Recruiter Reports now presents the legacy five columns (Applied, Offered, Accept
 ## REC-calendar-messages-profile-14 source parity — 2026-10-17
 
 An unread thread now mounts a one-shot client-side POST to the existing recruiter-authorized read acknowledgement route. Only the confirmed redirect triggers refresh, and the explicit manual button remains available on failures. The server GET remains read-only. Focused success/denial tests authored; browser, accessibility and DB checks remain unrun.
+
+## REC-calendar-messages-profile-09 and -10 inbox source checkpoint (2026-10-17)
+
+Recruiter Messages now shows the legacy heading/unread summary, conversation count and new-message chip, company · job subjects, relative update time, exact search and empty copy, and searches authorized last-message text in addition to drive names. The Notifications link now uses `/hr/notifications` rather than looping back to Messages. Focused unit tests added; browser, auth/DB and performance validation unrun.

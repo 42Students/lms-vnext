@@ -11,11 +11,13 @@ export const hrConversationQuerySchema=z.object({
 export function filterRecruiterConversations<T extends {jobId:string|null;id:string}>(
  threads:readonly T[], jobIds:ReadonlySet<string>, query:string,
  titles:ReadonlyMap<string,string>=new Map(),
+ lastMessages:ReadonlyMap<string,string>=new Map(),
 ):T[]{
  const needle=query.trim().toLowerCase();
  return threads.filter(thread=>!thread.jobId || jobIds.has(thread.jobId))
   .filter(thread=>!needle || thread.jobId?.toLowerCase().includes(needle) || thread.id.toLowerCase().includes(needle) ||
-    (thread.jobId?titles.get(thread.jobId)?.toLowerCase().includes(needle)===true:false));
+    (thread.jobId?titles.get(thread.jobId)?.toLowerCase().includes(needle)===true:false) ||
+    (lastMessages.get(thread.id)?.toLowerCase().includes(needle)===true));
 }
 
 export const HR_CONVERSATION_PAGE_SIZE=20;
@@ -51,4 +53,18 @@ export function scopeRecruiterConversations<T extends {jobId:string|null}>(
 
 export function countScopedConversations<T>(rows:readonly T[]):number{
  return rows.length;
+}
+
+// REC-calendar-messages-profile-10: relative update copy in recruiter inbox.
+export function recruiterMessageRelativeTime(when:Date|null,now:Date):string{
+ if(!when)return "No messages yet";
+ const minutes=Math.max(0,Math.floor((now.getTime()-when.getTime())/60000));
+ if(minutes<1)return "just now";
+ if(minutes===1)return "a minute ago";
+ if(minutes<60)return minutes+" minutes ago";
+ const hours=Math.floor(minutes/60);
+ if(hours===1)return "an hour ago";
+ if(hours<24)return hours+" hours ago";
+ const days=Math.floor(hours/24);
+ return days===1?"a day ago":days+" days ago";
 }
