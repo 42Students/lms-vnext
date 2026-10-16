@@ -109,6 +109,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      });
      screeningStatus="PENDING";
     }
+    // Reinstate is recorded in 0112; immutable legacy screening may stay REJECTED.
     const target=input.action==="REINSTATE"?null:
      next==="SHORTLISTED"?"SHORTLISTED":next==="REJECTED"?"REJECTED":null;
     if(target&&screeningStatus!==target){
