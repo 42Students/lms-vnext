@@ -7,6 +7,7 @@ import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
+import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import type {AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
@@ -43,7 +44,9 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
   {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
   {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
  ];
- return <div className="space-y-3"><TpoGridFilterPanel fields={filters}/>
+ return <div className="space-y-3">
+  <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
+  <TpoGridFilterPanel fields={filters}/>
   <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.membershipId}
    rowActions={row=><div className="flex flex-col items-start gap-1">
     <button type="button" className="min-h-10 text-primary-text underline"
