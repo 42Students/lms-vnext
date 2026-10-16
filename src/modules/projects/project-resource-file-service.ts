@@ -112,17 +112,20 @@ export async function issueProjectFileUploadGrant(
   const declaration = validateStorageDeclaration("project-resource", input);
   if (!declaration.ok) throw new StorageFileError(declaration.code);
 
-  const scope = await authorizeOrNotFound(() => requireProjectLifecycleAccess(context, projectIdInput));
+  const scope = await authorizeOrNotFound(() => requireProjectReadAccess(context, projectIdInput));
+  if(!["LEARNER","MENTOR","ADMIN"].includes(scope.access))throw new StorageFileError("STORAGE_NOT_FOUND");
+  if(scope.access==="LEARNER" && scope.project.status!=="ACTIVE")
+    throw new StorageFileError("STORAGE_PARENT_NOT_AVAILABLE");
   requireOpenProject(scope.project.status);
   const uploader = requireUploaderMembership(context, scope.collegeId);
 
   if (input.resourceId) {
     const [resource] = await getDb()
-      .select({ id: projectResources.id, status: projectResources.status })
+      .select({ id: projectResources.id, status: projectResources.status, visibility:projectResources.visibility })
       .from(projectResources)
       .where(and(eq(projectResources.id, input.resourceId), eq(projectResources.projectId, scope.project.id)))
       .limit(1);
-    if (!resource || resource.status !== "ACTIVE") throw new StorageFileError("STORAGE_NOT_FOUND");
+    if (!resource || resource.status !== "ACTIVE" || (scope.access==="LEARNER"&&resource.visibility!=="TEAM")) throw new StorageFileError("STORAGE_NOT_FOUND");
   }
 
   const grant = await issueObjectUpload({
