@@ -95,6 +95,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
   </section>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}</h2>
+    {tab.data==="yours" && row.scheduledAt && new Date(row.scheduledAt)>new Date()?
+      <p role="status" className="mt-2 text-sm font-semibold text-amber-700">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
+      tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
+      <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground">Ended</p>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{row.message}</p>
     {tab.data==="yours" && row.senderUserId===context.user.id ?
      <details className="mt-4 rounded-lg border border-border p-3">
