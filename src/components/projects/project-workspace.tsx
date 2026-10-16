@@ -167,6 +167,7 @@ export function ProjectWorkspace({
   currentMembershipId,
   activeSection,
   sectionBaseHref,
+  readOnlyOverride = false,
 }: {
   workspace: Workspace;
   backHref: string;
@@ -175,6 +176,7 @@ export function ProjectWorkspace({
   currentMembershipId: string | null;
   activeSection?: ProjectWorkspaceSection;
   sectionBaseHref?: string;
+  readOnlyOverride?: boolean;
 }) {
   const { readiness } = workspace;
   const brief = mentorAuthoredBrief(workspace.templateOverview);
@@ -187,8 +189,8 @@ export function ProjectWorkspace({
     (mode !== "ADMIN" &&
       activeSection === "team" &&
       section === "meetings");
-  const readOnly =
-    workspace.project.status === "ARCHIVED";
+  const archived = workspace.project.status === "ARCHIVED";
+  const readOnly = archived || readOnlyOverride;
   const tasksBySprint = new Map<
     string,
     Workspace["tasks"]
@@ -304,7 +306,7 @@ export function ProjectWorkspace({
           className="rounded-xl border border-border bg-muted p-4"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
-            Archived workspace · read only
+            {archived ? "Archived workspace · read only" : "Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
             Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled.
