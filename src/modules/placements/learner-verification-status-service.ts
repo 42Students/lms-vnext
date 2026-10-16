@@ -23,6 +23,8 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
     version: profileVerifications.rowVersion,
     submittedAt: profileVerifications.submittedAt,
     decidedAt: profileVerifications.decidedAt,
+    decidedByName: profileVerifications.decidedByName,
+    verifiedAt: profileVerifications.verifiedAt,
   }).from(profileVerifications)
     .where(eq(profileVerifications.learnerMembershipId, member.id));
   const receiptRows=await getDb().select().from(profilePrivateDocumentReceipts)
@@ -54,6 +56,8 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
       missing:readiness(section).missing,
       submittedAt:row?.submittedAt?.toISOString()??null,
       decidedAt:row?.decidedAt?.toISOString()??null,
+      decidedByName:row?.decidedByName??null,
+      verifiedAt:row?.verifiedAt?.toISOString()??null,
     };
   };
   return { education: select("EDUCATION"), identity: select("IDENTITY"), evidence };

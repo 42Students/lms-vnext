@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
+import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getOwnLearnerVerificationStatus } from "@/modules/placements/learner-verification-status-service";
 import {LearnerVerificationSubmit} from "@/components/profile/learner-verification-submit";
@@ -14,11 +16,12 @@ export default async function LearnerVerificationPage() {
   const context = await getCurrentRequestContext();
   const status = await getOwnLearnerVerificationStatus(context);
   const label = {
-    NOT_SUBMITTED: "Not submitted", WAITING: "Waiting for review",
-    SENT_BACK: "Sent back", VERIFIED: "Verified", UPDATE_PENDING: "Update waiting for review",
+    NOT_SUBMITTED: "Incomplete", WAITING: "Waiting for the college",
+    SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
   } as const;
   return <main className="min-w-0 space-y-6">
     <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← Profile</Link>
+    <LearnerVerificationLiveRefresh />
     <header><h1 className="text-2xl font-semibold text-foreground">Profile verification</h1>
       <p className="mt-2 text-sm text-body">Your own Education and Identity review status. A saved detail does not mean it is verified.</p>
     </header>
@@ -36,7 +39,13 @@ export default async function LearnerVerificationPage() {
       const row = status[item.key];
       return <section key={item.key} className="min-w-0 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">{item.heading}</h2>
-        <p className="mt-2 text-sm font-semibold text-body">{label[row.status]}</p>
+        <p className="mt-2 text-sm font-semibold text-body">{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
+          "Ready to send":label[row.status]}</p>
+        {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
+          decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,
+          heading:item.heading})?<p role="status" className="mt-2 whitespace-pre-wrap text-sm text-body">
+          {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
+          decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,heading:item.heading})}</p>:null}
         <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
           <div className="flex flex-wrap gap-x-2">
             <dt>Last submitted:</dt>
