@@ -146,6 +146,7 @@ export default async function LearnerPlacementsPage({
       applicationId: row.applicationId,
       jobId: row.job.id,
       jobTitle: row.job.title,
+      driveStatus: row.job.driveStatus,
       companyName: row.company.name,
       applicationStatus:
         row.applicationStatus,
