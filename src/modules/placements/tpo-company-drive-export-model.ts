@@ -1,6 +1,6 @@
 /** Spreadsheet-safe export for the college-scoped company drives already displayed. */
 export type CompanyDriveCsvRow={
-  jobTitle:string;status:string;createdAt:string;
+  jobTitle:string;status:string;createdAt:string;applied:number;offers:number;
 };
 export function companyDriveCsv(rows:readonly CompanyDriveCsvRow[]){
  const cell=(input:string)=>{
@@ -8,9 +8,10 @@ export function companyDriveCsv(rows:readonly CompanyDriveCsvRow[]){
   const literal=/^\s*[=+\-@]/.test(cleaned)?"'"+cleaned:cleaned;
   return '"'+literal.replace(/"/g,'""')+'"';
  };
- const records=[["Role","Status","Year","Created"],...rows.map(row=>[
+ const records=[["Role","Status","Year","Applied","Offers","Created"],...rows.map(row=>[
   row.jobTitle,row.status,
   new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(row.createdAt)),
+  String(row.applied),String(row.offers),
   new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(row.createdAt)),
  ])];
  return "\uFEFF"+records.map(row=>row.map(cell).join(",")).join("\r\n")+"\r\n";
