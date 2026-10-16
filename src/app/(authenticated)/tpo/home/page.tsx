@@ -17,6 +17,7 @@ import {listTpoLeads,listDueTpoFollowups} from "@/modules/placements/tpo-crm-ser
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {getCollegePlacementRules} from "@/modules/placements/tpo-policy-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
+import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
@@ -35,9 +36,10 @@ export default async function TpoHome(){
   countTpoUnreadRecruiterMessages(ctx),
   tpoCrmTablesReady(),
  ]);
- const [collegeRules,placementTeam]=await Promise.all([
+ const [collegeRules,placementTeam,teamThreads]=await Promise.all([
   getCollegePlacementRules(ctx,ctx.membership!.collegeId),
   getTpoPlacementTeam(ctx,ctx.membership!.collegeId),
+  listMyTpoInternalThreads(ctx),
  ]);
  const [recruiters,dueFollowups]=crmReady?await Promise.all([
   listTpoLeads(ctx,ctx.membership!.collegeId),
@@ -87,7 +89,8 @@ export default async function TpoHome(){
   placedUnique:studentStats.summary.placed,recruiterLeads:recruiters?.length??null,
   followUps:dueFollowups?.length??null,recruiterAccess:null,
   pendingRequests:pendingRequestCount,
-  messages:unreadMessages,teamAsks:null,teamMentions:null,teamUnread:null,
+  messages:unreadMessages,teamAsks:null,teamMentions:null,
+  teamUnread:teamThreads.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
   upcoming:operations.upcomingRounds.map(round=>({startsAt:round.scheduledAt,title:round.name})),
  });
  const next=buildTpoLegacyNextUp({
@@ -98,6 +101,8 @@ export default async function TpoHome(){
    ...deadlineTpoHomeNeeds(operations.jobs.map(item=>item.job)),
    ...operationalHomeNeeds(operations.workQueue),
    ...(unreadMessages>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages,link:"/tpo/messages"}]:[]),
+   ...(teamThreads.status==="READY"&&teamThreads.items.some(item=>item.unreadCount>0)?[
+    {type:"TEAM_ASKS",priority:4,title:"Your team has new messages",count:teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0),link:"/tpo/team"}]:[]),
    ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
       count:pendingRequestCount,link:"/tpo/requests"}]:[]),
   ],
