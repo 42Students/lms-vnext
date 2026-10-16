@@ -63,6 +63,7 @@ export const grantSuperAdminHrCollegeInputSchema = z
   .object({
     companyRelationshipId:
       superAdminHrRelationshipIdSchema,
+    validUntil: z.iso.datetime({offset:true}).optional(),
   })
   .strict();
 
