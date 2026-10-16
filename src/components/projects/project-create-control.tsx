@@ -301,6 +301,25 @@ export function CreateProjectControl({
             </select>
           </label>
           {!mentorMembershipId?<p className="text-xs text-warning">This workspace has no mentor.</p>:null}
+          {sectionId?<section className="rounded-lg border border-border p-3">
+            <p className="mb-2 text-sm font-semibold">Students · {learnerMembershipIds.length} selected</p>
+            <div className="flex gap-3 text-xs">
+              <button type="button" className="text-primary-text underline"
+                onClick={()=>setLearnerMembershipIds(roster.map(x=>x.membershipId))}>Whole class</button>
+              <button type="button" className="text-primary-text underline"
+                onClick={()=>setLearnerMembershipIds([])}>Clear</button>
+            </div>
+            <div className="mt-3 max-h-40 space-y-2 overflow-y-auto">
+              {roster.map(student=><label key={student.membershipId} className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={learnerMembershipIds.includes(student.membershipId)}
+                  onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
+                    [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>
+                {student.displayName} · {student.rollNumber}
+              </label>)}
+              {!roster.length?<p className="text-xs text-muted-foreground">No learners available.</p>:null}
+            </div>
+          </section>:null}
+
           {mentorsError ? (
             <p role="alert" className="m-0 text-xs font-semibold text-warning">
               {mentorsError} You can create the planned workspace and assign a Mentor from Team later.
