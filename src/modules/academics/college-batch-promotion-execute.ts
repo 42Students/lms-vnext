@@ -11,8 +11,9 @@ import {
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { collegePromotionExecuteSchema, promotionPreviewMatches, promotionReady } from "./college-batch-promotion-model";
 import { previewCollegeBatchPromotionInTransaction } from "./college-batch-promotion-service";
 
@@ -36,16 +37,7 @@ export async function executeCollegeBatchPromotion(
   transaction: TxRunner = (work) => getDb().transaction(work),
 ) {
   const input = collegePromotionExecuteSchema.parse(raw);
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.manage", {
-      collegeId: member.collegeId,
-      organizationId: member.organizationId,
-    })) throw new AuthorizationError("academics.manage");
-  requirePermission(context, "academics.manage", {
-    collegeId: member.collegeId,
-    organizationId: member.organizationId,
-  });
+  const member = await resolveActingCollege(context, "academics.manage");
 
   try {
     return await transaction(async (tx: Tx) => {

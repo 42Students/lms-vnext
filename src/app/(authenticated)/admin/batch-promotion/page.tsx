@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -38,8 +39,8 @@ export default async function SuperAdminBatchPromotionPage({
   }
   const summary = preview ? summarizeAdminPromotion(preview) : null;
   return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion Preview"
-      description="Read-only persisted cohort progression and blocker preview. This page cannot execute, graduate or move any learners." />
+    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion"
+      description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Graduation and class moves remain unavailable." />
     <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Program
         <select name="programId" defaultValue={input.data.programId ?? ""}
@@ -81,7 +82,19 @@ export default async function SuperAdminBatchPromotionPage({
           </div>)}
         </dl>
         {!summary.completePreview ? <p role="alert" className="text-sm text-error">Preview is truncated at 2,000 enrollments and cannot prove readiness.</p> : null}
-        <p className="text-xs text-muted-foreground">This is a simulation, not approval to execute a promotion. Graduation is unavailable.</p>
+        <p className="text-xs text-muted-foreground">This is a preview, not a committed promotion. Confirmation independently rechecks every learner and the recorded version. Graduation is unavailable.</p>
+        {preview.simulatedReadiness && preview.plan.action === "PROMOTE" &&
+          preview.batch.version !== null && preview.plan.targetTermNumber !== null &&
+          preview.plan.academicYearStart !== null ? (
+            <CollegePromotionConfirmation
+              cohortId={preview.batch.id}
+              programId={preview.batch.programId}
+              expectedVersion={preview.batch.version}
+              yearStart={input.data.yearStart}
+              targetTerm={preview.plan.targetTermNumber}
+              learnerCount={preview.checkedLearners}
+              academicYearStart={preview.plan.academicYearStart} />
+          ) : null}
       </section>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="font-semibold text-foreground">Known batch blockers ({summary.knownBlockers})</h2>
