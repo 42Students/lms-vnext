@@ -184,6 +184,10 @@ const mentorItems: ShellNavItem[] = [
 ];
 
 /** Exact legacy sidebar order from docs/audit/legacy-copy-B.md section A. */
+export function filterTpoVerificationNav(items:readonly ShellNavItem[],enabled:boolean){
+ return enabled?[...items]:items.filter(item=>item.href!=="/tpo/verification");
+}
+
 const tpoItems: ShellNavItem[] = [
   { label: "Home", href: "/tpo/home", shortLabel: "H", group: "operate" },
   { label: "Placement eligibility", href: "/tpo/batches", shortLabel: "P", group: "operate" },
@@ -263,6 +267,7 @@ function getLearnerItems(
 function getMembershipWorkspaces(
   context: RequestContext,
   learnerAccess?: LearnerNavigationAccess | null,
+  tpoVerificationEnabled = false,
 ) {
   const items: ShellNavItem[] = [];
 
@@ -286,7 +291,7 @@ function getMembershipWorkspaces(
   }
 
   if (hasMembershipRole(context, "TPO")) {
-    pushUnique(items, tpoItems);
+    pushUnique(items, filterTpoVerificationNav(tpoItems,tpoVerificationEnabled));
   }
 
   return items;
@@ -295,6 +300,7 @@ function getMembershipWorkspaces(
 export function getShellNavigation(
   context: RequestContext,
   learnerAccess?: LearnerNavigationAccess | null,
+  tpoVerificationEnabled = false,
 ) {
   if (isSuperAdmin(context)) {
     return superAdminItems;
@@ -349,7 +355,7 @@ export function getShellNavigation(
   // sidebar, rather than a generic Dashboard plus role-specific links.
   if (context.membership && context.membership.roles.length === 1 &&
       hasMembershipRole(context, "TPO") && !hasActiveRecruiter(context)) {
-    return tpoItems;
+    return filterTpoVerificationNav(tpoItems,tpoVerificationEnabled);
   }
   if (!context.membership && hasActiveRecruiter(context)) {
     return recruiterItems;
@@ -368,7 +374,7 @@ export function getShellNavigation(
   // because the membership also carries COLLEGE_ADMIN.
   pushUnique(
     items,
-    getMembershipWorkspaces(context, learnerAccess),
+    getMembershipWorkspaces(context, learnerAccess, tpoVerificationEnabled),
   );
 
   if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
