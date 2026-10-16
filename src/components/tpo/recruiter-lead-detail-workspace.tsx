@@ -234,6 +234,10 @@ export function RecruiterLeadDetailWorkspace({
 
   async function markNotNow(event: React.FormEvent) {
     event.preventDefault();
+    if (!notNowReason.trim()) {
+      setActionError("Please tell us why this recruiter is not available now.");
+      return;
+    }
     if (!window.confirm(
       "Mark this recruiter Not Now? The stage and reason/revisit date will be " +
       "saved with an auditable change record. No invitation will be sent.",
