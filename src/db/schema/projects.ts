@@ -388,11 +388,15 @@ export const projectTasks = pgTable(
       .references(() => projectInstances.id, {
         onDelete: "restrict",
       }),
-    sprintId: uuid("sprint_id")
-      .notNull()
-      .references(() => projectSprints.id, {
-        onDelete: "restrict",
-      }),
+    /** NULL = product backlog task (MEN-projects-meetings-36/39). */
+    sprintId: uuid("sprint_id").references(() => projectSprints.id, {
+      onDelete: "restrict",
+    }),
+    carriedFromSprintId: uuid("carried_from_sprint_id").references(
+      () => projectSprints.id,
+      { onDelete: "restrict" },
+    ),
+    carriedOverAt: timestamp("carried_over_at", { withTimezone: true }),
     templateKey: varchar("template_key", {
       length: 64,
     }).notNull(),
@@ -440,6 +444,9 @@ export const projectTasks = pgTable(
       table.sprintId,
       table.sequence,
     ),
+    index("project_tasks_backlog_project_idx")
+      .on(table.projectId, table.sequence)
+      .where(sql`${table.sprintId} is null`),
     index("project_tasks_project_status_idx").on(
       table.projectId,
       table.status,
