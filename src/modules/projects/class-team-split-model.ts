@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const teamSplitInputSchema = z.object({
-  mode: z.enum(["TEAMS", "WHOLE_CLASS"]),
+  mode: z.enum(["TEAMS", "WHOLE_CLASS", "INDIVIDUAL"]),
   teamSize: z.number().int().min(1).max(100).default(5),
   order: z.enum(["ROLL", "SHUFFLE"]).default("ROLL"),
   seed: z.string().max(128).default(""),
@@ -31,6 +31,9 @@ export function previewClassTeams(raw: TeamSplitInput): ProjectTeam[] {
   const students = [...input.students].sort((a, b) =>
     a.rollNumber.localeCompare(b.rollNumber, undefined, { numeric: true }) ||
     a.membershipId.localeCompare(b.membershipId));
+  if (input.mode === "INDIVIDUAL") {
+    return students.map((student,index)=>({name:"Learner "+(index+1),membershipIds:[student.membershipId]}));
+  }
   if (input.mode === "WHOLE_CLASS") {
     return [{ name: "Whole class", membershipIds: students.map(s => s.membershipId) }];
   }
