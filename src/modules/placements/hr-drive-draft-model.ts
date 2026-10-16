@@ -19,6 +19,7 @@ export const hrDriveDraftSchema = z.strictObject({
   location: z.string().trim().min(2).max(180),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
+  driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
   minimumAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
   maximumAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
   minimumCgpa: z.string().regex(/^(?:|(?:10(?:\.0{1,2})?|[0-9](?:\.[0-9]{1,2})?))$/),
@@ -67,7 +68,7 @@ export type HrDriveDraft = z.input<typeof hrDriveDraftSchema>;
 export function emptyHrDriveDraft(): HrDriveDraft {
   return {
     title: "", description: "", location: "",
-    employmentType: "FULL_TIME", workMode: "ONSITE",
+    employmentType: "FULL_TIME", workMode: "ONSITE", driveMode:"ON_CAMPUS",
     minimumAnnualCtcInr: "", maximumAnnualCtcInr: "", minimumCgpa: "",
     fixedAnnualCtcInr: "", variableAnnualCtcInr: "", bondMonths: "",
     bondAmountInr: "", maximumActiveBacklogs: "", branches: [], passingYear: "",
