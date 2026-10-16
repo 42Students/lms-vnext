@@ -150,6 +150,17 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
      {preview?.skipped.map(item=><li key={item.key} className="break-words">{item.name} · {item.section}: skipped ({item.reason})</li>)}
      {missingProof.map(item=><li key={verificationSelectionKey(item)} className="break-words">{item.learnerName} · {item.section}: left out: a document is missing</li>)}
     </ul>
+    {bulkAction==="SEND_BACK"&&<div className="flex flex-wrap gap-2">
+      {(selectedRows.every(row=>row.section==="IDENTITY")
+        ? ["Identity document is missing or unclear","Submitted details do not match the document"]
+        : selectedRows.every(row=>row.section==="EDUCATION")
+        ? ["Marksheet is missing or unreadable","Submitted details do not match the document"]
+        : ["Submitted details do not match the document"]).map(reason=>
+          <button key={reason} type="button" disabled={bulkBusy}
+            onClick={()=>setBulkReason(reason)} className="rounded-md border px-3 py-2 text-xs">
+            {reason}
+          </button>)}
+    </div>}
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
      <textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" placeholder="Describe the correction required"/>
