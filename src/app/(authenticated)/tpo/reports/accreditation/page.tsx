@@ -3,13 +3,14 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
-import {
-  getPlacementAccreditationReport,
-} from "@/modules/placements/report-accreditation-service";
+import {getPlacementAccreditationReport} from "@/modules/placements/report-accreditation-service";
+import {getTpoAccreditationStudentExport} from "@/modules/placements/tpo-accreditation-students-service";
+import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
+  batchId?: string | string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -32,7 +33,15 @@ export default async function TpoAccreditationReportPage({
     jobId: first(params.jobId) || undefined,
   });
 
-  const query = new URLSearchParams({ kind: "accreditation" });
+  const batches=await listTpoBatches(context);
+  const batchId=first(params.batchId)||undefined;
+  const selectedBatch=batchId&&batches.batches.find(b=>b.id===batchId);
+  const studentReport=selectedBatch?await getTpoAccreditationStudentExport(context,{
+   collegeId:context.membership.collegeId,seasonId:report.selectedSeasonId??undefined,
+   jobId:report.selectedJobId??undefined,batchId:selectedBatch.id,
+  }):null;
+  const query=new URLSearchParams({kind:"accreditation-students"});
+  if(selectedBatch)query.set("batchId",selectedBatch.id);
   if (report.selectedSeasonId) {
     query.set("seasonId", report.selectedSeasonId);
   }
@@ -51,10 +60,11 @@ export default async function TpoAccreditationReportPage({
         description="Download a college-scoped working CSV of recorded placement outcomes. This is not a NAAC/NIRF-approved submission template."
         actions={
           <a
-            href={"/api/placements/reports?" + query.toString()}
+            href={selectedBatch?"/api/placements/reports?"+query.toString():"#accreditation-batch"}
+            aria-disabled={!selectedBatch}
             className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:border-primary-hover"
           >
-            Export evidence CSV
+            Export student list CSV
           </a>
         }
       />
@@ -64,6 +74,37 @@ export default async function TpoAccreditationReportPage({
       >
         ← All reports
       </Link>
+      <section id="accreditation-batch" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+       <h2 className="font-semibold">NAAC 5.2.1 · Placed students</h2>
+       <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
+       <form method="get" className="flex flex-wrap items-end gap-3">
+        <label className="text-sm">Batch
+         <select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-1 block min-h-10 rounded border bg-background px-3">
+          <option value="">Pick a batch</option>
+          {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
+         </select>
+        </label>
+        {report.selectedSeasonId&&<input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
+        {report.selectedJobId&&<input type="hidden" name="jobId" value={report.selectedJobId}/>}
+        <button type="submit" className="min-h-10 rounded border px-4 text-sm">Show students</button>
+       </form>
+       {batchId&&!selectedBatch&&<p role="alert" className="text-sm">Choose a batch from this college.</p>}
+       {studentReport&&<>
+        <p className="text-sm">{studentReport.rows.length} placed students in this batch.</p>
+        <p className="text-sm text-muted-foreground">{studentReport.warning}</p>
+        <div className="overflow-x-auto">
+         <table className="min-w-[52rem] w-full text-left text-sm">
+          <thead><tr>{["Name","Roll no.","Programme","Branch","Batch","Employer","Package (best offer)","Offers held","Offer status","Joining"].map(h=>
+           <th key={h} scope="col" className="border-b px-3 py-2">{h}</th>)}</tr></thead>
+          <tbody>{studentReport.rows.slice(0,50).map(student=><tr key={student.membershipId} className="border-b">
+           {[student.name,student.rollNumber,student.programme,student.branch,student.batch,
+            student.employer,student.packageInr,student.offersHeld,student.offerStatus,student.joining].map((value,index)=>
+            <td key={index} className="px-3 py-2">{value??"—"}</td>)}
+          </tr>)}</tbody>
+         </table>
+        </div>
+       </>}
+      </section>
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">
           Reporting scope
