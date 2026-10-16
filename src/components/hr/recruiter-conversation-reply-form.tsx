@@ -11,8 +11,12 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   event.preventDefault();
   if(sending)return;
   const message=body.trim();
-  if(message.length<1||message.length>4000){
-   setNotice("Enter a message between 1 and 4,000 characters.");
+  if(message.length===0){
+   setNotice("Write a message first");
+   return;
+  }
+  if(message.length>4000){
+   setNotice("Keep a message under 4000 characters");
    return;
   }
   setSending(true);
@@ -34,9 +38,9 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   }
   if(confirmed){
    setBody("");
-   setNotice("Message accepted. Refreshing the conversation.");
+   setNotice("Message sent");
    router.refresh();
-  }else setNotice(feedback);
+  }else setNotice("Could not send. "+feedback);
   setSending(false);
  }
  return <form onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-surface p-4">
