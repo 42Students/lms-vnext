@@ -1169,6 +1169,7 @@ export function ProjectWorkspace({
                           url: resource.url,
                           required:
                             resource.required,
+                          visibility: resource.visibility,
                         }}
                       />
                     ) : null}
