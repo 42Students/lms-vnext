@@ -113,12 +113,14 @@ export function PlacementJobCreateForm({
   companies,
   academicOptions,
   basePath,
+  initialCompanyName = "",
 }: {
   collegeId: string;
   activeSeason: PlacementSeasonChoice | null;
   companies: readonly PlacementCompanyChoice[];
   academicOptions: PlacementAcademicTargetingChoice;
   basePath: string;
+  initialCompanyName?: string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -132,7 +134,7 @@ export function PlacementJobCreateForm({
     companyRelationshipId,
     setCompanyRelationshipId,
   ] = useState(
-    companies[0]?.relationshipId ?? "",
+    companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [pending, setPending] =
     useState(false);
