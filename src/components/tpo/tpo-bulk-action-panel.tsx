@@ -126,7 +126,9 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
     <input type="checkbox" disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
-     onChange={e=>{setSelected(e.target.checked?selectTpoBulkPage(rows.map(row=>row.id)):[]);invalidate();}}/>
+     onChange={e=>{const pageIds=rows.map(row=>row.id);setSelected(current=>e.target.checked?
+      selectTpoBulkPage([...current.filter(id=>permitted.has(id)),...pageIds]):
+      current.filter(id=>!pageIds.includes(id)));invalidate();}}/>
     Select current-page rows
    </label>
    {rows.map(row=><label key={row.id} className="flex min-h-10 items-center gap-2 rounded p-2 text-sm hover:bg-muted">
