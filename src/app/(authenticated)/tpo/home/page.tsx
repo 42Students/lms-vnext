@@ -21,30 +21,42 @@ export default async function TpoHome(){
  </main>;
  const batches=await listTpoBatches(ctx);
  const operations=await getPlacementTpoOperations(ctx,ctx.membership!.collegeId);
- const pendingRequests=pendingTpoRequestsAction(await getPendingTpoRequestsCount(ctx));
+ const pendingRequestCount=await getPendingTpoRequestsCount(ctx);
+ const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
  const firstBatch=batches.batches[0];
- const [eligibility,registration]=firstBatch?await Promise.all([
-  getTpoBatchEligibilitySummary(ctx,firstBatch.id),
-  getTpoBatchRegistrationSummary(ctx,firstBatch.id),
+ const uninvitedBatch=batches.ready?batches.batches.find(b=>!b.invitedAt&&!b.finishedAt):undefined;
+ const attentionBatch=uninvitedBatch??firstBatch;
+ const [eligibility,registration]=attentionBatch?await Promise.all([
+  getTpoBatchEligibilitySummary(ctx,attentionBatch.id),
+  getTpoBatchRegistrationSummary(ctx,attentionBatch.id),
  ]):[null,null];
+ const batchEligible=eligibility?.summary.complete?eligibility.summary.eligible:null;
+ const batchRegistered=registration?.available?registration.registered:null;
+ const inviteReady=!!uninvitedBatch&&uninvitedBatch.id===attentionBatch?.id&&
+  batchEligible!==null&&batchRegistered!==null&&batchEligible>batchRegistered;
  const rows=buildTpoLegacyHomeRows({
   batch:firstBatch?{name:firstBatch.name,invited:!!firstBatch.invitedAt,
-   eligible:eligibility?.summary.complete?eligibility.summary.eligible:null,
-   registered:registration?.registered??null,placed:null}:null,
+   eligible:firstBatch.id===attentionBatch?.id?batchEligible:null,
+   registered:firstBatch.id===attentionBatch?.id?batchRegistered:null,placed:null}:null,
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
   registered:null,placedUnique:null,recruiterLeads:null,followUps:null,recruiterAccess:null,
-  pendingRequests:pendingRequests?Number.parseInt(pendingRequests.label,10):0,
+  pendingRequests:pendingRequestCount,
   messages:null,teamAsks:null,teamMentions:null,teamUnread:null,
   upcoming:operations.upcomingRounds.map(round=>({startsAt:round.scheduledAt,title:round.name})),
  });
  const next=buildTpoLegacyNextUp({
   needsYou:[
+   ...(inviteReady?[{type:"REGISTRATION_CLOSED",priority:0,
+      title:"Invite the batch to register",count:batchEligible!,
+      link:"/tpo/batches/"+uninvitedBatch!.id}]:[]),
    ...operationalHomeNeeds(operations.workQueue),
    ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
-      count:Number.parseInt(pendingRequests.label,10),link:"/tpo/requests"}]:[]),
+      count:pendingRequestCount,link:"/tpo/requests"}]:[]),
   ],
-  batches:[],checklist:[],
+  batches:inviteReady?[{batchId:uninvitedBatch!.id,name:uninvitedBatch!.name,
+   eligible:batchEligible!,registered:batchRegistered!,invitedAt:null}]:[],
+  checklist:[],
  });
  return <main className="min-w-0 space-y-5">
  <PageHeader eyebrow="TPO" title="Home" description="One next action and a quiet overview of the placement cell."/>
