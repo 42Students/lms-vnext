@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
+import { CollegeLessonCreateControl } from "@/components/courses/college-lesson-create-control";
+import { getCollegeLessonAuthoringOptions } from "@/modules/courses/college-content-authoring-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeLessonQuerySchema } from "@/modules/courses/college-learning-directory-model";
@@ -58,6 +60,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     </div>
   );
   return <div className="space-y-4">
+    <CollegeLessonCreateControl options={await getCollegeLessonAuthoringOptions(context)} />
     <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered lessons CSV
