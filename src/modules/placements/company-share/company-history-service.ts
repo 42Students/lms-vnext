@@ -1,5 +1,6 @@
 import "server-only";
-import {and,desc,eq,inArray} from "drizzle-orm";
+import {and,desc,eq,inArray,sql} from "drizzle-orm";
+import {placementCompanyShareSelections} from "@/db/schema/placement-company-share-selection";
 import {getDb} from "@/db/client";
 import {placementCompanyApplicantShares} from "@/db/schema/placement-company-shares";
 import {placementJobs} from "@/db/schema";
@@ -14,6 +15,8 @@ export async function listCompanyShareHistory(collegeId:string,jobIds:readonly s
   jobTitle:placementJobs.title,
   createdAt:placementCompanyApplicantShares.createdAt,
   revokedAt:placementCompanyApplicantShares.revokedAt,
+  selectedCount:sql<number>`(select count(*)::integer from placement_company_share_selections sel
+    where sel.share_id = ${placementCompanyApplicantShares.id})`,
  }).from(placementCompanyApplicantShares)
  .innerJoin(placementJobs,and(eq(placementJobs.id,placementCompanyApplicantShares.jobId),
   eq(placementJobs.collegeId,placementCompanyApplicantShares.collegeId)))
