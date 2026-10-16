@@ -63,7 +63,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     <select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}
     </select></label>
-   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Student or role
+   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Search
     <input name="search" defaultValue={data.search} maxLength={100}
      className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Application channel
@@ -88,7 +88,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
   </form>
   <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
-   Stage counts cover all matching student/role records across every page.</p>
+   Stage counts cover matching applicants across every page.</p>
   {data.rows.length > 0 && context.membership &&
     can(context, "placements.manage", {collegeId: context.membership.collegeId}) ?
     <TpoBulkActionPanel
@@ -99,7 +99,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
       }))}
     /> : null}
   {!data.rows.length?<div className="space-y-3">
-    <EmptyState title="No matching applicants" description="No stored applications match the selected stage, channel, eligibility, date and name filters."/>
+    <EmptyState title="No matching applicants" description="No stored applications match the selected stage, channel, eligibility, date and search filters."/>
     <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear applicant filters</Link>
    </div>:
    <Suspense fallback={<p role="status">Loading applicant grid…</p>}>
