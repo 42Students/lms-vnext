@@ -14,4 +14,4 @@ export const collegeStageCommandSchema=z.object({
  if(v.action==="MOVE"&&!v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Choose a new application stage"});
  if(v.action==="REINSTATE"&&v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Reinstate uses the previous stage"});
 });
-export type CollegeStage=v.infer<typeof collegeStageCommandSchema>;
+export type CollegeStageCommand=z.infer<typeof collegeStageCommandSchema>;
