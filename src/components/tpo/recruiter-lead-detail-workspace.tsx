@@ -503,6 +503,15 @@ export function RecruiterLeadDetailWorkspace({
             <h2 className="text-lg font-semibold">Follow-ups</h2>
             <form className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-end"
               onSubmit={e => void addFollowup(e)}>
+              <div className="flex flex-wrap gap-2 md:col-span-3">
+                {[["Tomorrow",1],["In 3 days",3],["In a week",7]] as const).map(([label,days])=>
+                  <button type="button" key={label} className={button} onClick={()=>{
+                    const dt=new Date();dt.setDate(dt.getDate()+days);
+                    dt.setHours(10,0,0,0);
+                    const pad=(n:number)=>String(n).padStart(2,"0");
+                    setFollowAt(dt.getFullYear()+"-"+pad(dt.getMonth()+1)+"-"+pad(dt.getDate())+"T"+pad(dt.getHours())+":"+pad(dt.getMinutes()));
+                  }}>{label}</button>)}
+              </div>
               <label className="block text-sm">Due date and time
                 <input className={input + " mt-1"} type="datetime-local" required
                   value={followAt} onChange={e => setFollowAt(e.target.value)} />
