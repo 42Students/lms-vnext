@@ -38,7 +38,9 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
     const common = {seasons,season,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
-      employmentType:filters.employmentType,sort:filters.sort,asOf:now.toISOString()};
+      employmentType:filters.employmentType,sort:filters.sort,
+      minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,
+      asOf:now.toISOString()};
     if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
       rows:[],requestRows:[],requestsAvailable:false as const,...common};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
@@ -92,6 +94,14 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     deadlineCondition,
     filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
     filters.employmentType!=="ALL"?eq(placementJobs.employmentType,filters.employmentType):undefined,
+    filters.minApplied!==undefined?sql`(select count(*) from placement_applications ap
+      where ap.job_id=${placementJobs.id} and ap.status <> 'WITHDRAWN') >= ${filters.minApplied}`:undefined,
+    filters.minOffers!==undefined?sql`(select count(*) from placement_offers ofr
+      join placement_applications ap on ap.id=ofr.application_id
+      where ap.job_id=${placementJobs.id} and ofr.status in ('ISSUED','ACCEPTED'))
+      >= ${filters.minOffers}`:undefined,
+    filters.payCategory==="DREAM"?eq(placementJobs.isDream,true):
+      filters.payCategory==="REGULAR"?eq(placementJobs.isDream,false):undefined,
     isNull(placementJobs.archivedAt),filters.search?or(
      ilike(placementJobs.title,tpoApplicantExportSearchPattern(filters.search)),
      ilike(placementCompanies.name,tpoApplicantExportSearchPattern(filters.search))):undefined);
@@ -151,6 +161,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    {counts:emptyCounts,...tpoDriveLifecyclePage(0,filters.page),rows:[]};
   return {
     ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
+    minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
