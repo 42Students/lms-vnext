@@ -228,6 +228,30 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
     busy={busy||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
+  {outcomes.length>0?<div className="space-y-2 rounded-lg border border-border p-3">
+    <p role="status" className="text-sm font-semibold">
+     {outcomes.filter(item=>item.status==="updated").length} updated ·
+     {" "}{outcomes.filter(item=>item.status!=="updated").length} not applied
+    </p>
+    {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2">
+     <button type="button" disabled={busy} onClick={()=>{
+       const ids=outcomes.filter(item=>item.status!=="updated").map(item=>item.id);
+       setSelected(ids);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");
+     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Retry skipped/failed (preview again)
+     </button>
+     <button type="button" disabled={busy} onClick={()=>{
+       const lines=outcomes.filter(item=>item.status!=="updated").map(item=>
+        (labelsById.get(item.id)??item.id)+" — "+(item.reason??item.status));
+       void navigator.clipboard.writeText(lines.join("\\n")).then(
+        ()=>setError("Failed-row details copied."),
+        ()=>setError("Could not copy failed-row details."),
+       );
+     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      Copy failed
+     </button>
+    </div>:null}
+   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
 }
