@@ -78,5 +78,11 @@ export type CollegeAssessmentAggregateItem = {
   deliverySpecific: boolean;
   points: number;
   activityCount: number;
+  /** Distinct active learners currently eligible for this assessment audience. */
+  eligibleLearners: number;
+  /** Distinct currently eligible learners with at least one recorded submission/attempt. */
+  submittedLearners: number;
+  /** Currently eligible learners with a graded assignment submission. */
+  gradedLearners: number;
   resultsPublished: boolean | null;
 };
