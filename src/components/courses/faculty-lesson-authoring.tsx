@@ -346,10 +346,10 @@ export function FacultyLessonAuthoring({
         if (
           !Number.isInteger(points) ||
           points < 1 ||
-          points > 10000
+          points > 1000
         ) {
           throw new Error(
-            "Maximum points must be between 1 and 10000.",
+            "Enter a whole number from 1 to 1000",
           );
         }
 
@@ -694,7 +694,7 @@ export function FacultyLessonAuthoring({
                   <Input
                     type="number"
                     min={1}
-                    max={10000}
+                    max={1000}
                     value={maxPoints}
                     onChange={(event) =>
                       setMaxPoints(
