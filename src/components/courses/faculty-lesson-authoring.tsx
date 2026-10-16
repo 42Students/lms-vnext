@@ -418,12 +418,11 @@ export function FacultyLessonAuthoring({
         }
       }
       setSuccess(
-        createdContentId?(publishNow?"Lesson content published successfully.":"Lesson content draft created."):
-        mode === "ASSIGNMENT"
-          ? "Assignment draft created."
-          : mode === "QUIZ"
-            ? "Quiz draft created."
-            : "Lesson content draft created.",
+        mode==="RESOURCE"?"Resource saved":
+        mode==="LIVE_CLASS"?"Live class created successfully":
+        mode==="YOUTUBE"?"YouTube video created successfully":
+        mode==="ASSIGNMENT"?"Assignment draft created.":
+        mode==="QUIZ"?"Quiz draft created.":"Server Notification: Successfully Saved",
       );
       reset();
       router.refresh();
