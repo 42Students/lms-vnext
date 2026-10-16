@@ -147,6 +147,10 @@ const DEPT = "(select id from department where college_id = 6)";
 const NEW_PROGRAM = `(select id from new_program where dept_id in ${DEPT})`;
 const BATCH = `(select id from batch where program_id in ${NEW_PROGRAM})`;
 const LEARNERS = "(select id from learner where college_id = 6)";
+const CLASSES = `(select id from class where program_id in ${NEW_PROGRAM} or batch_id in ${BATCH})`;
+const FACULTY_IDS = "(select id from faculty where college_id = 6 or organization_id = 6)";
+const COURSES = `(select id from course where dept_id in ${DEPT} or created_by_org_id = 6)`;
+const LESSONS = `(select id from lesson where course_id in ${COURSES})`;
 const RECRUITERS =
   "(select recruiter_id from recruiter_college_access where college_id = 6 or organization_id = 6)";
 
@@ -204,4 +208,104 @@ export const TABLE_SPECS: TableSpec[] = [
     scope: "industry companies of NSRIT recruiters (name/site only)",
     only: ["id", "name", "website", "industry", "is_deleted", "created_at", "updated_at"],
   },
+
+  // ------------------------------------------------------------- stage 2b-i
+  {
+    table: "semester_course",
+    where: `semester_id in (select id from semester where program_id in ${NEW_PROGRAM})`,
+    scope: "semester_id in NSRIT semesters",
+  },
+  { table: "course", where: `dept_id in ${DEPT} or created_by_org_id = 6`, scope: "dept_id in NSRIT departments or created_by_org_id = 6" },
+  { table: "lesson", where: `course_id in ${COURSES}`, scope: "course_id in NSRIT courses" },
+  {
+    table: "lesson_contents",
+    where: `course_id in ${COURSES} or lesson_id in ${LESSONS} or class_id in ${CLASSES}`,
+    scope: "course, lesson or class in NSRIT",
+  },
+  {
+    table: "lesson_content_class_sequence",
+    where: `class_id in ${CLASSES}`,
+    scope: "class_id in NSRIT classes",
+  },
+  {
+    table: "faculty_course_mapping",
+    where: `faculty_id in ${FACULTY_IDS} or class_id in ${CLASSES}`,
+    scope: "NSRIT faculty or class",
+  },
+  {
+    table: "faculty_teaching_assignment",
+    where: `faculty_id in ${FACULTY_IDS} or class_id in ${CLASSES}`,
+    scope: "NSRIT faculty or class",
+  },
+  {
+    table: "faculty_course_associations",
+    where: `faculty_id in ${FACULTY_IDS} or course_id in ${COURSES}`,
+    scope: "NSRIT faculty or course",
+  },
+  {
+    table: "learner_content_progress",
+    where: `learner_id in ${LEARNERS} or lesson_content_id in (select id from lesson_contents where course_id in ${COURSES} or class_id in ${CLASSES})`,
+    scope: "NSRIT learners or NSRIT lesson contents",
+  },
+  {
+    table: "student_assignment",
+    where: `student_id in ${LEARNERS} or lesson_content_id in (select id from lesson_contents where course_id in ${COURSES} or class_id in ${CLASSES})`,
+    scope: "NSRIT learners or NSRIT lesson contents",
+  },
+  {
+    table: "class_schedule",
+    where: `class_id in ${CLASSES}`,
+    scope: "class_id in NSRIT classes",
+  },
+  {
+    table: "attend",
+    where: `class_schedule_id in (select id from class_schedule where class_id in ${CLASSES})`,
+    scope: "schedule of NSRIT classes (absentee rows)",
+  },
+  {
+    table: "quizzes",
+    where: `course_id in ${COURSES} or class_id in ${CLASSES}`,
+    scope: "NSRIT course or class",
+  },
+  {
+    table: "quiz_questions",
+    where: `quiz_id in (select id from quizzes where course_id in ${COURSES} or class_id in ${CLASSES})`,
+    scope: "quizzes of NSRIT",
+  },
+  {
+    table: "quiz_options",
+    where: `question_id in (select id from quiz_questions where quiz_id in (select id from quizzes where course_id in ${COURSES} or class_id in ${CLASSES}))`,
+    scope: "questions of NSRIT quizzes",
+  },
+  {
+    table: "quiz_attempts",
+    where: `learner_id in ${LEARNERS} or quiz_id in (select id from quizzes where course_id in ${COURSES} or class_id in ${CLASSES})`,
+    scope: "NSRIT learners or NSRIT quizzes",
+  },
+  {
+    table: "quiz_answers",
+    where: `attempt_id in (select id from quiz_attempts where learner_id in ${LEARNERS} or quiz_id in (select id from quizzes where course_id in ${COURSES} or class_id in ${CLASSES}))`,
+    scope: "attempts of NSRIT",
+  },
+  {
+    table: "classroom_messages",
+    where: `course_id in ${COURSES} or class_id in ${CLASSES}`,
+    scope: "NSRIT course or class",
+  },
+  {
+    table: "announcements",
+    where: `(receiver_type = 'COLLEGE' and receiver_value = 6) or (receiver_type = 'DEPARTMENT' and receiver_value in ${DEPT}) or (receiver_type = 'PROGRAM' and receiver_value in ${NEW_PROGRAM}) or (receiver_type = 'CLASS' and receiver_value in ${CLASSES}) or (receiver_type = 'LEARNER' and receiver_value in ${LEARNERS}) or (receiver_type = 'FACULTY' and receiver_value in ${FACULTY_IDS})`,
+    scope: "receiver is NSRIT college, department, program, class, learner or faculty",
+  },
+  { table: "lms_group", where: "college_id = 6", scope: "college_id = 6" },
+  { table: "lms_group_member", where: "group_id in (select id from lms_group where college_id = 6)", scope: "groups of NSRIT" },
+  { table: "lms_group_member_event", where: "group_id in (select id from lms_group where college_id = 6)", scope: "groups of NSRIT" },
+  { table: "lms_group_rule", where: "group_id in (select id from lms_group where college_id = 6)", scope: "groups of NSRIT" },
+  { table: "elective_slot", where: "college_id = 6", scope: "college_id = 6" },
+  { table: "elective_offering", where: "slot_id in (select id from elective_slot where college_id = 6)", scope: "slots of NSRIT" },
 ];
+
+/** Tables first needed by stage 2b-i (optional when reading a 2a-only snapshot). */
+export const STAGE_2B_TABLES: string[] = TABLE_SPECS.slice(
+  TABLE_SPECS.findIndex((s) => s.table === "semester_course"),
+).map((s) => s.table);
