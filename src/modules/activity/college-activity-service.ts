@@ -25,8 +25,19 @@ function requireCollegeActivity(context: RequestContext) {
 export async function listCollegeActivity(context: RequestContext, raw: unknown) {
   const query = collegeActivityQuerySchema.parse(raw);
   requireCollegeActivity(context);
-  const { pageSize, ...filter } = query;
-  const result = await listActivityEvents(context, { ...filter, limit: Number(pageSize ?? "25") });
+  const { pageSize, view, category, ...filter } = query;
+  const categories = {
+    ACADEMIC_SETUP: "ACADEMICS",
+    PEOPLE_ACCESS: "IDENTITY",
+    TEACHING: "COURSES",
+    PROJECTS: "PROJECTS",
+  } as const;
+  const module = category ? categories[category] : filter.module;
+  const result = await listActivityEvents(context, {
+    ...filter, module,
+    importantOnly: (view ?? "IMPORTANT") === "IMPORTANT" && !filter.importance,
+    limit: Number(pageSize ?? "25"),
+  });
   return { ...result, query };
 }
 
