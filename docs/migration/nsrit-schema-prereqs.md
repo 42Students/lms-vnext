@@ -65,5 +65,28 @@ Re-verified against `drizzle/0000-0095`: the plan (written when migrations ended
 2. Placement fields without a column (recruiter capabilities, job evaluation config/important dates, application refs, company contact notes, announcements fan-out, team asks/mentions): preserved only through `legacy_id_map.metadata.unmapped`.
 3. `points_awarded` is integer (legacy is decimal): ETL guard needed.
 4. `OUTBOUND_ALLOWLIST_ONLY` code switch must exist before the real-PII load.
-5. Owner/ETL decision: confirm `job_offer.bond_amount` unit.
+5. `job_offer.bond_amount` unit: RESOLVED in section 4.1 (never populated, bond removed 8 Oct 2026; the import maps it to null).
 6. Migrations must still be run on the dev DB through the normal migrate Job (not done here).
+
+## 4. Resolved questions (Stage 2a, 2026-10-16)
+
+### 4.1 `job_offer.bond_amount` unit
+
+Read from the legacy source (`42LMS-BACKEND/lms/src/main/java/com/_42students/lms/model/tpo/JobOffer.java`, `JobRoleOption.java`, migration `V161__tpo_v1_drives.sql`) and the local dev copy:
+
+* The column is `DECIMAL(10,2)` and, unlike its siblings `ctc_lpa`, `fixed_lpa`, `variable_lpa` and `joining_bonus_lpa`, carries no `_lpa` suffix and no comment. No Java code, controller mapping or frontend file reads or writes it (the only mentions are the entity comment and the role-option JSON key `bondAmount`).
+* `JobOffer.java` states: "bond_months / bond_amount: the columns stay (never filled); the bond was removed on 8 Oct 2026." `JobRoleOption.java` says older role options "may still carry bondNone/bondMonths/bondAmount, which are ignored".
+* Data check on the legacy dev copy: 118 `job_offer` rows in total, 0 with `bond_amount` set and 0 with `bond_months` set; 0 drives whose `role_options_json` carries a non-null `bondAmount`.
+
+Decision: the unit is **undefined in legacy** (the feature never shipped and was removed), so the offer loader (stage 2b) must NOT convert it. It maps `bond_months` and `bond_amount` to null and counts non-null source values in the reconciliation; if a non-null value ever appears the load stops and asks the owner, because guessing a unit (lakh per annum versus rupees) would silently change money. The vNext columns (`placement_offers.bond_amount`, `placement_job_role_options.bond_amount`, `numeric(12, 2)`, no unit suffix) stay as added in 0096 and are unused by the import.
+
+### 4.2 Rounding rule for decimal points to integer columns
+
+Legacy stores some quantities as decimals (`points_obtained`, `total_credits` read as decimals by some drivers, `duration_years`, class limits) where vNext uses integer columns. Rule, implemented in `scripts/migrate/nsrit/mappers.ts` (`toIntRoundHalfUp`) and unit tested:
+
+* round half up (2.5 -> 3, 2.4 -> 2; for the non-negative values in scope this equals `Math.round`);
+* a value that actually changes by rounding is counted in the reconciliation note `roundedToInteger`; an unchanged integer is not counted;
+* null, empty or non-numeric input maps to null (never to 0);
+* a value that violates the target CHECK after rounding (negative credits, capacity out of range) rejects the row with `INVALID_VALUE`, it is never clamped silently.
+
+Stage 2a rounded 0 values on the NSRIT snapshot (all source values are already integers). Stage 2b applies the same helper to assignment points and quiz scores; `points_awarded` and `previous_points` are integer in vNext, so a fractional legacy score is rounded half up and counted rather than rejected.
