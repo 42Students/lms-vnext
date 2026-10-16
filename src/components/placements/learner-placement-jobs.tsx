@@ -171,6 +171,7 @@ function JobActions({
   const [confirmation, setConfirmation] =
     useState<"WITHDRAW" | "EXTERNAL" | "INTERNAL" | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
+  const [showSharedDetails, setShowSharedDetails] = useState(false);
   const { job, roleOption, application } = item;
   const reason = withdrawReason.trim();
   const validWithdrawalReason = reason.length >= 3 && reason.length <= 2000;
@@ -408,19 +409,38 @@ function JobActions({
       <Dialog
         open={confirmation === "INTERNAL"}
         onOpenChange={(open) => {if(!open && pendingAction===null)setConfirmation(null);}}
-        title="Confirm placement drive application"
-        description={"Apply for "+roleOption.title+" at "+item.company.name+" through the college placement team."}
+        title="Ready to apply?"
+        description="We'll send your profile to the recruiter. You can withdraw later from Applications."
         footer={<>
-          <Button variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Cancel</Button>
+          <Button variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
           <Button disabled={pendingAction!==null} onClick={()=>void apply("INTERNAL")}>
-            {pendingAction==="INTERNAL"?"Applying…":"Confirm application"}
+            {pendingAction==="INTERNAL"?"Submitting…":"Confirm & apply"}
           </Button>
         </>}
       >
-        <p className="text-sm leading-6 text-body">
-          Eligibility and deadline are checked again when you confirm. A successful submission is recorded once.
-          The migrated screening records are placement-team decisions, not a learner screening questionnaire.
-        </p>
+        <div className="space-y-4">
+          <dl className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-surface-subtle p-3 text-sm sm:grid-cols-3">
+            <div><dt className="font-semibold text-muted-foreground">Role</dt>
+              <dd className="mt-1 text-foreground">{roleOption.title}</dd></div>
+            <div><dt className="font-semibold text-muted-foreground">Company</dt>
+              <dd className="mt-1 text-foreground">{item.company.name}</dd></div>
+            <div><dt className="font-semibold text-muted-foreground">Resume</dt>
+              <dd className="mt-1 text-foreground">Not attached</dd></div>
+          </dl>
+          <button type="button" aria-expanded={showSharedDetails}
+            onClick={()=>setShowSharedDetails(open=>!open)}
+            className="min-h-10 font-semibold text-primary-text underline">
+            {showSharedDetails?"Hide what gets shared":"What exactly gets shared?"}
+          </button>
+          {showSharedDetails?<ul className="list-disc space-y-2 pl-5 text-sm text-body">
+            <li>Your contact details may be shared with the company by the placement cell. No resume is attached by this form.</li>
+            <li>Your academic record is checked for eligibility; the record itself is not sent with this application.</li>
+            <li>The placement cell can see your application and review your eligibility.</li>
+          </ul>:null}
+          <p className="text-xs text-muted-foreground">
+            Eligibility and the application deadline are checked again when you confirm.
+          </p>
+        </div>
       </Dialog>
       <Dialog
         open={confirmation === "EXTERNAL"}
