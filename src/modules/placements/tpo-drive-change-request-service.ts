@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,desc,eq,gt,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,
+import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
  placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,users} from "@/db/schema";
 import {placementDriveChangeRequests,placementDriveChangeRequestMessages} from "@/db/schema/placement-drive-change-requests";
 import type {RequestContext} from "@/modules/identity/context";
@@ -20,8 +20,9 @@ async function scoped(context:RequestContext,rawJobId:unknown){
   const collegeId=await requireTpoJobCollege(context);
   const [job]=await getDb().select({
    id:placementJobs.id,collegeId:placementJobs.collegeId,title:placementJobs.title,
+   organizationId:colleges.organizationId,
    status:placementJobs.status,companyRelationshipId:placementJobs.companyRelationshipId,
-  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
+  }).from(placementJobs).innerJoin(colleges,eq(colleges.id,placementJobs.collegeId)).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
   if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   return {job,party:"TPO" as Party};
  }
@@ -30,7 +31,7 @@ async function scoped(context:RequestContext,rawJobId:unknown){
  const [job]=await getDb().select({
   id:placementJobs.id,collegeId:placementJobs.collegeId,title:placementJobs.title,
   status:placementJobs.status,companyRelationshipId:placementJobs.companyRelationshipId,
- }).from(placementJobs).where(and(eq(placementJobs.id,existing.job.id),
+ }).from(placementJobs).innerJoin(colleges,eq(colleges.id,placementJobs.collegeId)).where(and(eq(placementJobs.id,existing.job.id),
   eq(placementJobs.collegeId,existing.college.id))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return {job,party:"COMPANY" as Party};
@@ -55,10 +56,10 @@ async function recipients(tx:Parameters<Parameters<ReturnType<typeof getDb>["tra
  return [...new Set(grants.map(r=>r.userId))];
 }
 async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0],
- context:RequestContext,job:{id:string;collegeId:string;companyRelationshipId:string;title:string},
+ context:RequestContext,job:{id:string;collegeId:string;companyRelationshipId:string;organizationId:string;title:string},
  target:Party,kind:string,requestId:string,body:string){
  const [event]=await tx.insert(activityEvents).values({
-  organizationId:context.membership?.organizationId??null,collegeId:job.collegeId,
+  organizationId:job.organizationId,collegeId:job.collegeId,
   actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
   module:"PLACEMENTS",eventType:kind,subjectType:"placement_drive_change",
   subjectId:requestId,summary:body,metadata:{jobId:job.id,requestId},
