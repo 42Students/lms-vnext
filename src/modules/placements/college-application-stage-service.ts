@@ -10,7 +10,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {listCollegeDriveApplications} from "./college-drive-applications-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
-import {collegeStageCommandSchema} from "./college-stage-action-model";
+import {collegeStageCommandSchema,COLLEGE_APPLICATION_TRANSITIONS} from "./college-stage-action-model";
 import {PlacementsServiceError} from "./errors";
 
 export async function getCollegeApplicationPipeline(context:RequestContext,rawJobId:unknown,raw:unknown){
@@ -65,6 +65,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     if(input.action==="REINSTATE"&&from!=="REJECTED")
      throw Error("Only a rejected application can be reinstated.");
     if(next===from)return from;
+    if(input.action==="MOVE" && !(COLLEGE_APPLICATION_TRANSITIONS[from]??[]).includes(next))
+     throw Error(`Invalid transition: ${from} to ${next}`);
     if(["OFFERED","HIRED"].includes(next)){
      const offers=await tx.select({
       status:placementOffers.status,joining:placementJoiningOutcomes.status,
@@ -97,7 +99,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      });
      screeningStatus="PENDING";
     }
-    const target=next==="SHORTLISTED"?"SHORTLISTED":next==="REJECTED"?"REJECTED":null;
+    const target=input.action==="REINSTATE"?null:
+     next==="SHORTLISTED"?"SHORTLISTED":next==="REJECTED"?"REJECTED":null;
     if(target&&screeningStatus!==target){
      const allowed=(screeningStatus==="PENDING"||screeningStatus==="HOLD")&&
       (target==="SHORTLISTED"||target==="REJECTED");
