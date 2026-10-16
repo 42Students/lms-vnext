@@ -173,3 +173,30 @@ export function TpoCalendarMoveFollowup({
     </form>
   );
 }
+
+/** TPO-calendar-reports-06: complete an open follow-up from its calendar card. */
+export function TpoCalendarDoneFollowup({followupId}:{followupId:string}){
+ const router=useRouter();
+ const [busy,setBusy]=useState(false);
+ const [message,setMessage]=useState("");
+ async function finish(){
+  if(busy)return;
+  setBusy(true);setMessage("");
+  try{
+   await submitFollowup(
+    "/api/placements/tpo/calendar/follow-ups/"+encodeURIComponent(followupId)+"/done",
+    "POST",{},
+   );
+   setMessage("Follow-up marked done.");
+   router.refresh();
+  }catch{setMessage("Could not mark follow-up done. Try again.");}
+  finally{setBusy(false);}
+ }
+ return <div className="mt-2 flex flex-wrap items-center gap-3">
+  <button type="button" disabled={busy} onClick={()=>void finish()}
+   className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   {busy?"Saving…":"Done"}
+  </button>
+  {message?<p role="status" className="text-xs text-body">{message}</p>:null}
+ </div>;
+}
