@@ -17,10 +17,19 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({action,...(action==="REMOVE"?{}:{label:host}),expectedHost:state.currentHost}),
    });
-   if(!res.ok){const problem=await res.json().catch(()=>({error:"Request failed"}));throw Error(problem.error??"Request failed");}
+   if(!res.ok){
+    const problem=await res.json().catch(()=>({error:"Request failed"})) as {error?:string};
+    const messages:Record<string,string>={
+     MANAGED_WILDCARD_NOT_READY:"Managed web addresses are not available on this deployment.",
+     SUBDOMAIN_STALE:"The college web address changed. Refresh and try again.",
+     SUBDOMAIN_CONFLICT:"This web address is already assigned.",
+     HOST_CONFLICT:"This web address is already taken by another college.",
+    };
+    throw Error(messages[problem.error??""]??problem.error??"Request failed");
+   }
    const data=await res.json() as {host:string|null};
    setState({...state,currentHost:data.host});
-   setMessage(data.host?data.host+" is allotted on the managed platform domain.":"Managed web address removed.");
+   setMessage(data.host?data.host+" is live":"Managed web address removed.");
    router.refresh();
   }catch(err){setMessage(err instanceof Error?err.message:"Unable to update address");}
   finally{setBusy(false);}

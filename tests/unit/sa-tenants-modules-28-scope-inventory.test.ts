@@ -8,5 +8,6 @@ it("SA-tenants-modules-28 lists inheriting academic nodes without hiding nodes l
  expect(service).toContain(':"Inherit"');
  expect(ui).toContain("Expand all");
  expect(ui).toContain("Collapse all");
- expect(ui).toContain("Student-in-scope counts are not yet available.");
+ expect(ui).toContain("scope.studentsInScope");
+ expect(service).toContain("count(DISTINCT member_id)::int");
 });

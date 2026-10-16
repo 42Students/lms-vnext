@@ -97,6 +97,10 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
       rows={data.rows.map((row) => ({
         id:row.id,label:(row.student ?? "Applicant") + " · " + row.role,
       }))}
+      viewCount={data.totalMatching}
+      allRows={data.allFiltered?.map(row=>({
+        id:row.id,label:(row.student??"Applicant")+" · "+row.role,
+      }))??undefined}
     /> : null}
   {!data.rows.length?<div className="space-y-3">
     <EmptyState title="No matching applicants" description="No stored applications match the selected stage, channel, eligibility, date and name filters."/>

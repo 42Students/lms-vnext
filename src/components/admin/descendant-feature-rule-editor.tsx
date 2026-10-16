@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
 type Observed={enabled:boolean;locked:boolean}|null;
 export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string;scopes:readonly AcademicModuleScope[]}){
- const router=useRouter(),[scopeKey,setScopeKey]=useState(""),[module,setModule]=useState<"projects"|"electives">("projects");
+ const router=useRouter(),[scopeKey,setScopeKey]=useState(""),[module,setModule]=useState<"projects"|"placements"|"electives">("projects");
  const [stored,setStored]=useState<Observed|undefined>(undefined),[choice,setChoice]=useState("INHERIT"),
   [locked,setLocked]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const scope=scopes.find(x=>x.scopeType+":"+x.scopeId===scopeKey);
@@ -47,8 +47,8 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
   </label>
   <label className="grid gap-1 text-sm">Module
    <select className="min-h-11 rounded border border-border bg-surface px-3" value={module}
-    onChange={e=>{setModule(e.target.value as "projects"|"electives");setStored(undefined);}}>
-    <option value="projects">Projects</option><option value="electives">Electives</option>
+    onChange={e=>{setModule(e.target.value as "projects"|"placements"|"electives");setStored(undefined);}}>
+    <option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
    </select>
   </label>
   <button className="min-h-11 rounded border border-border px-3 text-sm" disabled={!scope||busy} onClick={()=>void recheck()}>Recheck</button>

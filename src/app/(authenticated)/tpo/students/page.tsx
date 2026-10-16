@@ -178,7 +178,7 @@ export default async function TpoStudentsPage({
     await requirePlacementManageScope(context, collegeId);
   }
   const [data, managedJobs, batchDirectory] = await Promise.all([
-    getTpoStudentsIntelligence(context, query),
+    getTpoStudentsIntelligence(context, query, {includeExportRows:true}),
     manageAllowed ? listPlacementJobs(context, collegeId) : Promise.resolve([]),
     listTpoBatches(context),
   ]);
@@ -620,7 +620,11 @@ export default async function TpoStudentsPage({
         <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
           target="STUDENTS"
           rows={roster.items.map(student=>({id:student.membershipId,
-            label:student.displayName+" · "+student.branchName}))}/>
+            label:student.displayName+" · "+student.branchName}))}
+          viewCount={roster.total}
+          allRows={roster.total<=200?data.exportRows?.map(student=>({
+            id:student.membershipId,label:student.displayName+" · "+student.branchName
+          }))??undefined:undefined}/>
 
         {manageAllowed ? (
           <TpoStudentsBulkAdd

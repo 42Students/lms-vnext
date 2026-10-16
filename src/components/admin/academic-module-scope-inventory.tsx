@@ -14,19 +14,23 @@ export function AcademicModuleScopeInventory({scopes}:{scopes:readonly AcademicM
     <button type="button" className="underline" onClick={()=>setExpanded(false)}>Collapse all</button>
    </div>
   </div>
-  <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Stored rules are not guaranteed to be the effective learner decision. Student-in-scope counts are not yet available.</p>
+  <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>
   <div className="max-h-96 overflow-auto rounded border border-border">
    <table className="w-full min-w-[44rem] text-left text-sm">
     <thead className="sticky top-0 bg-surface-subtle text-muted-foreground">
      <tr><th className="p-3">Level</th><th className="p-3">Academic path</th>
-      <th className="p-3">Projects</th><th className="p-3">Electives</th><th className="p-3">Students in scope</th></tr>
+      <th className="p-3">Projects</th><th className="p-3">Placements</th><th className="p-3">Electives</th><th className="p-3">Students in scope</th></tr>
     </thead>
     <tbody>{visible.map(scope=><tr key={scope.scopeType+":"+scope.scopeId} className="border-t border-border">
      <td className="p-3">{scope.scopeType==="COHORT"?"Batch":scope.scopeType}</td>
      <td className="p-3">{scope.label}</td>
-     <td className="p-3">{scope.projectsRule}</td>
-     <td className="p-3">{scope.electivesRule}</td>
-     <td className="p-3">—</td>
+     <td className="p-3"><span className={scope.projectsShadowed?"line-through text-muted-foreground":""}>{scope.projectsRule}</span>
+      <p className="text-xs text-body">Effective: {scope.projectsEffective}</p></td>
+     <td className="p-3"><span className={scope.placementsShadowed?"line-through text-muted-foreground":""}>{scope.placementsRule}</span>
+      <p className="text-xs text-body">Effective: {scope.placementsEffective}</p></td>
+     <td className="p-3"><span className={scope.electivesShadowed?"line-through text-muted-foreground":""}>{scope.electivesRule}</span>
+      <p className="text-xs text-body">Effective: {scope.electivesEffective}</p></td>
+     <td className="p-3 tabular-nums">{scope.studentsInScope}</td>
     </tr>)}</tbody>
    </table>
   </div>

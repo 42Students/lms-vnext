@@ -35,17 +35,23 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
      applicationStatus:placementApplications.status,
      screeningStatus:placementApplicationScreenings.status,
      updatedAt:placementApplicationScreenings.updatedAt,
+     applicationUpdatedAt:placementApplications.updatedAt,
    }).from(placementApplications)
      .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
      .leftJoin(placementApplicationScreenings,
        eq(placementApplicationScreenings.applicationId,placementApplications.id))
      .where(and(eq(placementJobs.collegeId,collegeId),
        eq(placementJobs.id,plan.jobId!),inArray(placementApplications.id,plan.ids)));
-   for(const row of records)current.set(row.id,{
-     version:row.updatedAt?.toISOString()??"unavailable",
-     ready:tpoBulkApplicationReady(plan.action,row.jobStatus,row.applicationStatus,
-       row.screeningStatus,row.updatedAt),
-   });
+   for(const row of records){
+     const ready=tpoBulkApplicationReady(plan.action,row.jobStatus,row.applicationStatus,
+       row.screeningStatus,row.updatedAt);
+     const version=plan.action==="ADD_NOTE"&&ready
+       ?(await listTpoApplicantNotes(context,plan.jobId!,row.id)).latestNoteId??"none"
+       :plan.action==="SEND_MESSAGE"
+         ?row.applicationUpdatedAt.toISOString()
+         :row.updatedAt?.toISOString()??"unavailable";
+     current.set(row.id,{version,ready});
+   }
  }
  return current;
 }
