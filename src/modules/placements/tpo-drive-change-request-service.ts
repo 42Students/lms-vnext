@@ -7,7 +7,6 @@ import {placementDriveChangeRequests,placementDriveChangeRequestMessages} from "
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
-import {placementTableExists} from "./staged-tables";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
 import {placementJobIdSchema} from "./validation";
@@ -76,8 +75,7 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
 }
 export async function getDriveChangeRequests(context:RequestContext,jobId:unknown){
  const {job,party}=await scoped(context,jobId);
- const storageReady=await placementTableExists("placement_drive_change_requests")&&
-  await placementTableExists("placement_drive_change_request_messages");
+ const storageReady=true; // registered in 0114
  if(!storageReady)return {job,party,storageReady,requests:[],
   pendingMessage:"Company change requests are pending database migration registration."};
  const requests=await getDb().select().from(placementDriveChangeRequests)
@@ -98,9 +96,6 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
 }
 export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:unknown,raw:unknown){
  const {job,party}=await scoped(context,rawJobId);
- if(!await placementTableExists("placement_drive_change_requests")||
-  !await placementTableExists("placement_drive_change_request_messages"))
-  throw Error("Company change request storage has not been registered.");
  const input=driveChangeCommandSchema.parse(raw);
  return getDb().transaction(async tx=>{
   const [lockedJob]=await tx.select({status:placementJobs.status})
