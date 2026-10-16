@@ -162,6 +162,7 @@ function ContentItem({
           <FacultyItemActions
             transitionUrl={`/api/courses/lesson-contents/${item.id}/transition`}
             actions={available}
+            contentType={item.contentType}
           />
         </div>
       ) : null}
