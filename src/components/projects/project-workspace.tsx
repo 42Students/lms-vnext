@@ -1096,9 +1096,10 @@ export function ProjectWorkspace({
               </h2>
 
             </div>
-            {mode !== "LEARNER" && !readOnly ? (
+            {!readOnly && (mode !== "LEARNER" || workspace.project.status === "ACTIVE") ? (
               <CreateProjectResourceControl
                 projectId={workspace.project.id}
+                isLearner={mode === "LEARNER"}
               />
             ) : null}
           </div>
