@@ -23,6 +23,8 @@ type Lead = {
   notNowUntil: string | null;
   inviteSentAt: string | null;
   recruiterUserId: string | null;
+  unsubscribedAt:string|null;
+  createdAt:string;
 };
 type Activity = {
   id: string;
@@ -245,6 +247,7 @@ export function RecruiterLeadDetailWorkspace({
 
   async function createInviteLink() {
     if (!window.confirm("Create an invitation valid for 7 days? Any previous link will stop working.")) return;
+    if(lead?.unsubscribedAt){setActionError("Asked not to be contacted.");return;}
     if(!lead?.emailNorm||!lead.companyRelationshipId){
       setActionError("Add a work email and link a company before inviting.");
       return;
@@ -360,7 +363,7 @@ export function RecruiterLeadDetailWorkspace({
                   <button
                     type="button"
                     className={button}
-                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId}
+                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
                     onClick={() => void createInviteLink()}
                   >
                     {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}
