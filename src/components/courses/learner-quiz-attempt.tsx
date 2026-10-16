@@ -375,7 +375,11 @@ export function LearnerQuizAttempt() {
           <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">← Back</button>
         </div>
         {learnerQuizSubmissionReceiptVisible(confirmedSubmissionQuizId,quiz.quiz.id) ? (
-          <p role="status" className="mt-4 rounded-lg border border-success p-3 text-sm font-semibold text-body">Your quiz submission was received. Results may remain hidden until published.</p>
+          <p role="status" className="mt-4 rounded-lg border border-success p-3 text-sm font-semibold text-body">
+            {latestAttempt?.resultsVisible&&latestAttempt.score!==null&&latestAttempt.maxScore!==null
+              ?"Quiz submitted! Score: "+latestAttempt.score+"/"+latestAttempt.maxScore
+              :"Quiz submitted. Results will be visible after faculty review."}
+          </p>
         ) : null}
         {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
         {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt)) ? (
