@@ -13,6 +13,8 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
   const [action, setAction] = useState<Action | null>(null);
   const [reason, setReason] = useState("");
   const [pending, setPending] = useState(false);
+  const [notifyByEmail,setNotifyByEmail]=useState(false);
+  const [success,setSuccess]=useState("");
   const [error, setError] = useState<string | null>(null);
   const available = [
     { action: "PUBLISH" as const, decision: readiness.publish },
@@ -29,6 +31,7 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
     )) return;
     setPending(true);
     setError(null);
+    setSuccess("");
     try {
       const response = await fetch(
         "/api/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/tpo-lifecycle",
@@ -41,10 +44,20 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
             expectedStatus: readiness.status,
             confirmed: true,
             reason: reason.trim(),
+            notifyByEmail,
           }),
         },
       );
-      if (!response.ok) throw new Error("Readiness or job state changed. Refresh before retrying.");
+      if (!response.ok) {
+        const body=await response.json() as {error?:string};
+        throw new Error(body.error==="EMAIL_DELIVERY_UNAVAILABLE"?
+          "Email delivery is not configured. Choose app notifications only.":
+          "Readiness or job state changed. Refresh before retrying.");
+      }
+      const result=await response.json() as {notifiedCount?:number;debarmentCounted?:number;emailSent?:boolean};
+      setSuccess(selected.action==="PUBLISH"?
+        "Published. "+(result.notifiedCount??0)+" eligible learners notified in the app. No email sent.":
+        "Drive updated.");
       setAction(null);
       setReason("");
       router.refresh();
@@ -106,6 +119,20 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
               className="mt-2 block w-full rounded-md border border-border bg-surface p-3 text-sm font-normal"
             />
           </label>
+          {selected.action==="PUBLISH"?<div role="status" className="rounded border border-border p-3 text-sm">
+            <p>{readiness.reach.eligible} students are eligible and will be told in the app.</p>
+            <p>{readiness.reach.excluded} registered students are excluded or have turned off matching-job notices.</p>
+            <p>Counts reflect a preview. Eligibility is checked again before publishing.</p>
+          </div>:null}
+          {selected.action==="PUBLISH"?<fieldset className="space-y-1 text-sm">
+            <legend>Tell students</legend>
+            <label className="flex gap-2"><input type="radio" name="publish-delivery"
+              checked={!notifyByEmail} onChange={()=>setNotifyByEmail(false)}/>
+              App only</label>
+            <label className="flex gap-2"><input type="radio" name="publish-delivery"
+              checked={notifyByEmail} onChange={()=>setNotifyByEmail(true)}/>
+              App and email (email delivery not configured)</label>
+          </fieldset>:null}
           <div className="flex gap-3">
             <button
               type="button"
@@ -126,6 +153,7 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
           </div>
         </div>
       ) : null}
+      {success?<p role="status" className="mt-3 text-sm">{success}</p>:null}
       {error ? <p role="alert" className="mt-3 text-sm text-error">{error}</p> : null}
     </section>
   );

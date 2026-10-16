@@ -58,6 +58,7 @@ import {
   filterTpoStudentRoster,
   summarizeTpoStudentBranches,
   summarizeTpoStudents,
+  selectTpoStudentWorkingSet,
   type TpoStudentApplicationSignal,
   type TpoStudentOfferSignal,
   type TpoStudentRoundSignal,
@@ -826,25 +827,23 @@ export async function getTpoStudentsIntelligence(
     return deriveTpoStudent(source, now);
   });
 
+  // Legacy working set: placement-eligible learners only; a completed
+  // academic enrollment reappears only when its finished cohort is selected.
+  const workingRows=selectTpoStudentWorkingSet(studentRows,Boolean(input.batchId));
   return {
     collegeId: college.id,
     season: activeSeason ?? null,
-    summary: summarizeTpoStudents(studentRows),
-    branches: summarizeTpoStudentBranches(
-      studentRows,
-    ),
-    roster: filterTpoStudentRoster(
-      studentRows,
-      input,
-    ),
+    summary: summarizeTpoStudents(workingRows),
+    branches: summarizeTpoStudentBranches(workingRows),
+    roster: filterTpoStudentRoster(workingRows,input),
     // Filtering here uses the same pure derivation as the visible roster.
     // Page size is deliberately unrestricted only inside this trusted,
     // authorized service operation; public input remains Zod-bounded.
     exportRows: options.includeExportRows
-      ? filterTpoStudentRoster(studentRows, {
+      ? filterTpoStudentRoster(workingRows, {
           ...input,
           page: 1,
-          pageSize: Math.max(1, studentRows.length),
+          pageSize: Math.max(1, workingRows.length),
         }).items
       : null,
     definitions: {
