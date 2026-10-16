@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,isNull} from "drizzle-orm";
+import {and,asc,eq,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,courseLearningPaths,courseLessons,courseOfferings,courses,departments,lessonContents} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -40,8 +40,11 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
   eq(departments.collegeId,collegeId)))
  .where(and(eq(lessonContents.contentType,kind),
-  eq(lessonContents.status,"DRAFT")))
+  ne(lessonContents.status,"ARCHIVED")))
  .orderBy(asc(lessonContents.title)).limit(250);
  return {lessons,existing:existing.map(row=>({...row,
+  // Published playback and meeting links remain private to their authorized flows.
+  // The editor can update metadata without replacing a hidden URL.
+  externalUrl:row.status==="DRAFT"?row.externalUrl:null,
   startsAt:row.startsAt?.toISOString()??null,endsAt:row.endsAt?.toISOString()??null}))};
 }
