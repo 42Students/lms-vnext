@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,learnerProfiles,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,users} from "@/db/schema";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
+import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {placementTableExists} from "./staged-tables";
@@ -45,8 +46,17 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
   .where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
    ne(placementRoundCandidateSlots.status,"CANCELLED")))
   .orderBy(asc(placementRoundCandidateSlots.startsAt),asc(placementRoundCandidateSlots.room)):[];
+ const recruiterProposals=await placementTableExists("placement_hr_interview_slots")?
+  await getDb().select({
+   id:hrInterviewSlots.id,startsAt:hrInterviewSlots.startAt,endsAt:hrInterviewSlots.endAt,
+   mode:hrInterviewSlots.mode,meetingLocation:hrInterviewSlots.meetingLocation,
+   panelLabel:hrInterviewSlots.panelLabel,version:hrInterviewSlots.version,
+  }).from(hrInterviewSlots).where(and(
+   eq(hrInterviewSlots.collegeId,info.collegeId),
+   eq(hrInterviewSlots.roundId,info.round.id),eq(hrInterviewSlots.status,"PROPOSED"))):[];
  const booked=new Set(slots.map(s=>s.applicationId).filter(Boolean));
  return {...info,storageReady,roster,unassigned:roster.filter(r=>!booked.has(r.applicationId)),
+  recruiterProposals:recruiterProposals.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString()})),
   slots:slots.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
    createdAt:row.createdAt.toISOString(),updatedAt:row.updatedAt.toISOString(),
    confirmedAt:row.confirmedAt?.toISOString()??null}))};
