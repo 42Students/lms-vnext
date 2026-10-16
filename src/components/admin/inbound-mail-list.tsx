@@ -1,20 +1,43 @@
 "use client";
 import {useState} from "react";
+import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
 import {StatusBadge} from "@/components/ui/status-badge";
 export type InboundMailRow={
  id:string;receivedAt:string;fromAddress:string;toAddress:string;
- subject:string;bodyPlain:string;status:string;
+ subject:string;bodyPlain:string;status:string;version:number;
 };
 export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
+ const router=useRouter();
  const [selected,setSelected]=useState<InboundMailRow|null>(null);
+ const [overrides,setOverrides]=useState<Record<string,{status:string;version:number}>>({});
+ const [busy,setBusy]=useState(false);
+ const [message,setMessage]=useState("");
+ async function change(row:InboundMailRow,status:"NEW"|"RESOLVED"){
+  if(busy)return;
+  const current=overrides[row.id]??row;
+  setBusy(true);setMessage("");
+  try{
+   const response=await fetch("/api/admin/inbound-mail/status",{
+    method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({id:row.id,expectedStatus:current.status,expectedVersion:current.version,status}),
+   });
+   if(!response.ok)throw Error(response.status===409?"Message was changed elsewhere. Refresh before retrying.":"Could not update message status.");
+   const saved=await response.json() as {status:string;version:number};
+   setOverrides(previous=>({...previous,[row.id]:{status:saved.status,version:saved.version}}));
+   setMessage(status==="RESOLVED"?"Message marked done.":"Message moved back to To read.");
+   router.refresh();
+  }catch(error){setMessage(error instanceof Error?error.message:"Could not update message status.");}
+  finally{setBusy(false);}
+ }
+
  return <div className="min-w-0 space-y-3">
   {rows.length===0?<p role="status" className="rounded-xl border border-border p-5">No inbound messages match these filters.</p>:
    <div className="grid min-w-0 gap-3">
     {rows.map(row=><article key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
        <h2 className="min-w-0 break-words text-base font-semibold">{row.subject||"(No subject)"}</h2>
-       <StatusBadge>{row.status}</StatusBadge>
+       <StatusBadge>{overrides[row.id]?.status??row.status}</StatusBadge>
       </div>
       <p className="mt-1 break-all text-sm text-body">{row.fromAddress}</p>
       <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
@@ -29,6 +52,18 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
      <div><dt className="font-semibold">To</dt><dd className="m-0 break-all">{selected.toAddress}</dd></div>
      <div><dt className="font-semibold">Received</dt><dd className="m-0">{new Date(selected.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
     </dl>
+    <div className="mt-4 flex flex-wrap gap-2">
+     {(overrides[selected.id]?.status??selected.status)!=="RESOLVED"?
+      <button type="button" disabled={busy} onClick={()=>void change(selected,"RESOLVED")}
+       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+       {busy?"Saving…":"Mark done"}
+      </button>:
+      <button type="button" disabled={busy} onClick={()=>void change(selected,"NEW")}
+       className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+       {busy?"Saving…":"Move back to To read"}
+      </button>}
+    </div>
+    {message?<p role="status" className="mt-3 text-sm text-body">{message}</p>:null}
     <section className="mt-5 min-w-0 rounded-md border border-border p-4">
       <h3 className="text-sm font-semibold">Plain text message</h3>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{selected.bodyPlain.slice(0,15000)}</p>
