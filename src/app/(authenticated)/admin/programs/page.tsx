@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -32,6 +33,10 @@ export default async function SuperAdminProgramsPage() {
         title="Programs"
         description="Manage programs within the selected college safety scope."
       />
+      <Link href="/admin/academics"
+        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle">
+        Open Academic Setup overview →
+      </Link>
       <AdminProgramDirectory
         programs={programs.map((program) => ({
           id: program.id,
