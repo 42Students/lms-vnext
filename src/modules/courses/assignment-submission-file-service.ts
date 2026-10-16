@@ -34,7 +34,8 @@ import { loadCourseAssignmentScope, loadAssignmentSubmissionScope } from "./assi
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
 import { multipartAssignmentRuntimeEnabled } from "./assignment-file-readiness";
 import {assignmentSubmissionLinks} from "@/db/schema/assignment-submission-links-staged";
-import { postgresConstraintName } from "./errors";
+import { postgresConstraintName,CoursesServiceError } from "./errors";
+import {allowedAssignmentMixedParts} from "./assignment-method-policy";
 import {
   requireDeliveryContentMutation,
   requireLearningReadAccess,
@@ -475,6 +476,16 @@ export async function submitAssignmentWithFiles(
       }
       if (files.some((file) => file.status !== "READY" || file.submissionId !== null)) {
         throw new StorageFileError("STORAGE_FILE_NOT_READY");
+      }
+      if(process.env.DB06_MULTIPART_SUBMISSIONS_READY==="DB06_VERIFIED"){
+        const [policy]=await tx.select({
+          methods:sql<unknown>`allowed_submission_methods`,
+        }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
+        if(!policy||!allowedAssignmentMixedParts(policy.methods,{
+          hasWrittenResponse:Boolean(input.textContent?.trim()),
+          links:input.links,
+          fileMimeTypes:files.map(file=>file.verifiedContentType??file.declaredContentType),
+        }))throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
       }
       const byId = new Map(files.map((file) => [file.id, file]));
 
