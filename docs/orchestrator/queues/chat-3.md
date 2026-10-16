@@ -36,6 +36,18 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
 
+## 2026-10-17 02:00 IST continuation — source implementations only
+
+- COL-people-03: Faculty bulk 500-row CSV with the legacy First Name / Last Name / Mobile Number / Email / Faculty Type headers, preview, canonical onboarding, member-scoped employment type, row report, and download template; backend/UI added.
+- COL-people-04: Register students form and same-origin API using program, batch, class, roll, gender, date of birth and address; partial-result receipt for independently committed identity/enrollment/profile writes.
+- COL-people-05: Student CSV now accepts up to 500 rows and 1MB, supports legacy headers and optional roll, uses server-derived academic pickers, creates bounded college/batch/capacity-scoped class placements, and reports partial results. Exact legacy all-field CSV parity is still source-partial.
+- COL-people-02 and COL-people-07: Edit Faculty / Edit Student dialogs and tenant-scoped service added for academic/profile/contact fields; canonical login name/phone/email remain read-only pending a verified identity-editing flow; thus these gaps remain PARTIAL.
+- COL-placements-08: Drives list shows Type, Location, Deadline, Posted, Applicants with mobile cards, default published and deadline/applicant-count filters; bulk lifecycle/Edit/Delete actions remain open.
+- COL-placements-05: Application email search and Source / Department / Program / Batch filters added; pipeline-stage tabs/counts remain open.
+- WP-chat-3-01 remains IN-PROGRESS: COL-academic-setup-27 exact legacy date/year/status model requires staged schema/proposal and registration.
+- WP-chat-3-02 remains IN-PROGRESS. WP-chat-3-03/04 and all reassigned chat-5 WPs still TODO. Do not mark DONE based on unexecuted source writes.
+- No checks/tests/typecheck/lint/build were run under FAST MODE.
+
 ## WP-chat-3-02 source-implemented gap IDs (FAST MODE, unverified)
 
 - COL-people-08: Student Suspend/Reactivate and Faculty Suspend Faculty/Reactivate Faculty on role directories.
