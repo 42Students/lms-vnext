@@ -17,7 +17,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   const raw = await searchParams;
   const selected = context.adminScope?.collegeId;
   const controls = collegeBatchDirectorySchema.safeParse({
-    q: raw.q, status: raw.status, page: raw.page,
+    q: raw.q, programId: raw.programId || undefined, status: raw.status, page: raw.page,
   });
   const data = selected && controls.success
     ? await listCollegeBatches(context, controls.data)
@@ -31,6 +31,32 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
       <AcademicSetupSteps step={5} />
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
+      <section aria-label="Filter managed batches" className="rounded-xl border border-border bg-surface p-4">
+        <form action="/admin/batches" method="get" className="flex flex-wrap items-end gap-3">
+          <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">
+            Program
+            <select name="programId" defaultValue={data.query.programId ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All programs</option>
+              {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
+            </select>
+          </label>
+          <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
+            Search batches
+            <input type="search" name="q" defaultValue={data.query.q}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+          </label>
+          <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
+            Status
+            <select name="status" defaultValue={data.query.status}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              {statuses.map(status => <option key={status} value={status}>{status}</option>)}
+            </select>
+          </label>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+          <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
+        </form>
+      </section>
       <section aria-label="Manage batches" className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="text-lg font-semibold">Manage batches</h2>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
