@@ -1,6 +1,5 @@
-import HrDrivesPage from "@/app/(authenticated)/hr/drives/page";
+import { RecruiterDrivesPageView } from "@/components/hr/recruiter-drives-page";
 
-/** Preserve the legacy recruiter namespace for list filters and pagination. */
-export default function RecruiterDrivesPage(props: Parameters<typeof HrDrivesPage>[0]) {
-  return <HrDrivesPage {...props} basePath="/recruiter/drives" />;
+export default function RecruiterDrivesPage({ searchParams }: {searchParams: Parameters<typeof RecruiterDrivesPageView>[0]["searchParams"]}) {
+  return <RecruiterDrivesPageView searchParams={searchParams} basePath="/recruiter/drives" />;
 }
