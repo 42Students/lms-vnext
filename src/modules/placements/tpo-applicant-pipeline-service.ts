@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, desc, eq, gte, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
+import { collegeMemberships, learnerProfiles, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
   placementJobs, users } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -9,7 +9,7 @@ import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
 import { tpoApplicantPipelinePage, tpoApplicantPipelineParams,tpoApplicantSubmittedSince } from "./tpo-applicant-pipeline-model";
-import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
+import {tpoApplicantSearchCondition} from "./tpo-applicant-search";
 export async function getTpoApplicantPipeline(context: RequestContext, raw: unknown) {
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context,"TPO") ||
@@ -34,9 +34,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     since?gte(placementApplications.submittedAt,since):undefined,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
-    input.search?or(
-    ilike(users.displayName,tpoApplicantExportSearchPattern(input.search)),
-    ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(input.search))):undefined);
+    input.search?tpoApplicantSearchCondition(input.search,collegeId):undefined);
    const stage=sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
     when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
     then ${placementApplicationScreenings.status}::text else 'PENDING' end`;
@@ -51,6 +49,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
      eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
      eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
@@ -64,6 +63,9 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
    const records=await tx.select({
     id:placementApplications.id,
     student:users.displayName,
+    rollNumber:learnerProfiles.rollNumber,
+    email:users.email,
+    phone:users.phoneE164,
     role:placementJobRoleOptions.title,
     applicationStatus:placementApplications.status,
     screeningStatus:placementApplicationScreenings.status,
@@ -75,6 +77,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
       eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
       eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,
