@@ -4,6 +4,8 @@ import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoRoundReorderReadiness,reorderPlacementRounds} from "@/modules/placements/round-service";
+import {getPlacementDriveDay} from "@/modules/placements/drive-day-service";
+import {projectTpoRoundFacts} from "@/modules/placements/tpo-round-facts-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=process.env.DB09_ISOLATED_TEST_DATABASE==="1"&&Boolean(process.env.TEST_DATABASE_URL);
@@ -44,6 +46,14 @@ describe.skipIf(!enabled)("TPO-drive-workspace-37 persisted round reorder",()=>{
   if(!pool||!ids.job)throw Error("PG fixture required");
   const ready=await getTpoRoundReorderReadiness(tpo,ids.job);
   expect(ready.allowed).toBe(true);
+  const day=await getPlacementDriveDay(tpo,ids.job);
+  expect(day.rounds).toHaveLength(2);
+  const facts=projectTpoRoundFacts({
+    ...day.rounds[0]!, scheduledAt:day.rounds[0]!.scheduledAt?.toISOString()??null,
+    resultsDueAt:day.rounds[0]!.resultsDueAt?.toISOString()??null,
+    participants:day.rounds[0]!.participants,
+  });
+  expect(facts).toMatchObject({status:"Not run yet",results:"None yet",when:"Date to be decided"});
   await reorderPlacementRounds(tpo,ids.job,{roundIds:[ids.rounds[1]!,ids.rounds[0]!]});
   const reordered=await getTpoRoundReorderReadiness(tpo,ids.job);
   expect(reordered.rounds.map(row=>row.id)).toEqual([ids.rounds[1],ids.rounds[0]]);
