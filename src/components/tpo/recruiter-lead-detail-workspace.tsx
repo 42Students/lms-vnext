@@ -343,7 +343,11 @@ export function RecruiterLeadDetailWorkspace({
               <button type="button" className={button} onClick={() => setNotNowOpen(true)}>Not now…</button>
             </div>
           </header>
-          {lead.manualStage === "NOT_NOW" ? (
+          {lead.unsubscribedAt?<div role="alert"
+             className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
+             Asked not to be contacted. Invitations and outreach are unavailable.
+           </div>:null}
+           {lead.manualStage === "NOT_NOW" ? (
             <div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
               Not now: {lead.notNowReason || "No reason recorded"}.
               {lead.notNowUntil ? " Revisit on " + lead.notNowUntil : ""}
