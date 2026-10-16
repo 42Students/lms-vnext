@@ -18,7 +18,7 @@ export default async function HrMessagesPage({searchParams}:{
   collegeId:first(raw.collegeId),unreadOnly:first(raw.unreadOnly),page:first(raw.page),q:first(raw.q),
  });
  if(!query.success)return <div className="space-y-4">
-  <PageHeader eyebrow="Recruiter" title="Messages & Notifications"/>
+  <PageHeader eyebrow="Recruiter" title="Messages"/>
   <Link href="/hr/conversations" className="text-primary-text">Recruiter conversations</Link>
   <p role="alert">Invalid inbox filter.</p><Link href="/hr/messages" className="text-primary-text">Reset</Link>
  </div>;
@@ -27,7 +27,7 @@ export default async function HrMessagesPage({searchParams}:{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(d);
  return <div className="space-y-6">
-  <PageHeader eyebrow="Recruiter" title="Messages & Notifications"
+  <PageHeader eyebrow="Recruiter" title="Messages"
    description="In-app drive notifications for your authorized employer and college. Conversations with the placement cell are separate."/>
   <Link href="/hr/conversations" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
    Open recruiter conversations
