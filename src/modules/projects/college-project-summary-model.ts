@@ -1,15 +1,32 @@
-import {z} from "zod";
-export const collegeProjectSummaryPatch=z.strictObject({
- title:z.string().trim().min(1).max(200),
- summary:z.string().trim().max(4000).nullable(),
- status:z.enum(["PLANNED","ACTIVE","COMPLETED"]),
- expectedTitle:z.string(),
- expectedSummary:z.string().nullable(),
- expectedStatus:z.enum(["PLANNED","ACTIVE","COMPLETED"]),
+import { z } from "zod";
+const nullable = (max: number) => z.string().trim().max(max).nullable();
+const dateOrNull = z.iso.date().nullable();
+export const collegeProjectSummaryPatch = z.strictObject({
+  title: z.string().trim().min(1).max(200),
+  summary: nullable(4000),
+  status: z.enum(["PLANNED","ACTIVE","COMPLETED"]),
+  progressPercent: z.number().int().min(0).max(100),
+  phase: nullable(120),
+  dueLabel: nullable(160),
+  courseLabel: nullable(160),
+  sectionId: z.string().uuid().nullable(),
+  blocker: nullable(4000),
+  nextAction: nullable(4000),
+  startDate: dateOrNull,
+  endDate: dateOrNull,
+  sprintLengthWeeks: z.number().int().min(1).max(104).nullable(),
+  estimationUnit: z.enum(["POINTS","HOURS","TASKS"]).nullable(),
+  expectedTitle: z.string(),
+  expectedSummary: z.string().nullable(),
+  expectedStatus: z.enum(["PLANNED","ACTIVE","COMPLETED"]),
+  expectedUpdatedAt: z.iso.datetime({offset:true}),
+}).superRefine((value,ctx) => {
+  if(value.startDate && value.endDate && value.endDate < value.startDate)
+    ctx.addIssue({code:"custom",path:["endDate"],message:"End date must be after start date."});
 });
-export function collegeProjectStatusChangeAllowed(from:string,to:string,hasMentor:boolean,approvedDelivery:boolean){
- if(from===to)return true;
- if(from==="PLANNED"&&to==="ACTIVE")return hasMentor;
- if(from==="ACTIVE"&&to==="COMPLETED")return approvedDelivery;
- return false;
+export function collegeProjectStatusChangeAllowed(from:string,to:string,hasMentor:boolean,approvedDelivery:boolean) {
+  if(from===to)return true;
+  if(from==="PLANNED"&&to==="ACTIVE")return hasMentor;
+  if(from==="ACTIVE"&&to==="COMPLETED")return approvedDelivery;
+  return false;
 }
