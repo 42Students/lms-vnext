@@ -20,7 +20,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  taskSubmissions?:TaskSubmission[];taskActivity?:TaskEvent[];readOnly?:boolean;
 }){
  const router=useRouter(),[tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),
- [sprint,setSprint]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
+ [sprint,setSprint]=useState(""),[priority,setPriority]=useState(""),
+ [assignee,setAssignee]=useState(""),[statusFilter,setStatusFilter]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
  [undo,setUndo]=useState<{id:string;status:string}|null>(null);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
@@ -75,6 +76,31 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
+   <label className="text-sm font-semibold">Priority
+    <select value={priority} onChange={e=>setPriority(e.target.value)}
+     className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+     <option value="">All priorities</option>
+     {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
+    </select>
+   </label>
+   <label className="text-sm font-semibold">Assignee
+    <select value={assignee} onChange={e=>setAssignee(e.target.value)}
+     className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+     <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
+     {members.filter(m=>m.role==="LEARNER").map(m=>
+      <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
+    </select>
+   </label>
+   <label className="text-sm font-semibold">Lane
+    <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}
+      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+      <option value="">All lanes</option>
+      {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
+      <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
+    </select>
+   </label>
+   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");}}
+    className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
