@@ -280,6 +280,10 @@ export default async function HrPlacementJobPage({
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Messages
         </Link>
+        <Link href={"/recruiter/drives/"+workspace.job.id+"/change-requests"}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Change requests
+        </Link>
       </nav>
       {filters.tab === "applicants" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
