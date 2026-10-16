@@ -7,6 +7,7 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {academicModuleRuleInput,descendantRuleMatches,academicScopeStudents} from "./admin-descendant-rule-model";
 import {StudentRuleConflict} from "./admin-student-rule-write";
+import {resolveModuleAccessFromRules,type ModuleAccessRule,type ModuleAccessScope} from "./service";
 
 const uuid=z.uuid();
 type ScopeType="DEPARTMENT"|"PROGRAM"|"COHORT"|"SECTION";
@@ -34,28 +35,36 @@ async function resolveScope(db:ReturnType<typeof getDb>,collegeId:string,scopeTy
  `);
  return rows.rows[0]??null;
 }
-export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;projectsRule:string;placementsRule:string;electivesRule:string;studentsInScope:number};
+export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;
+ projectsRule:string;placementsRule:string;electivesRule:string;studentsInScope:number;
+ projectsEffective:string;placementsEffective:string;electivesEffective:string;
+ projectsShadowed:boolean;placementsShadowed:boolean;electivesShadowed:boolean;
+};
 /** Active learners only, deduplicated by membership; completed/withdrawn
  * enrollments and foreign-college sections cannot inflate the tree. */
 export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeIdInput:string):Promise<AcademicModuleScope[]>{
  const college=await collegeScope(ctx,collegeIdInput);if(!college)return [];
- const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string}>(sql`
- select 'DEPARTMENT'::text as "scopeType", d.id::text as "scopeId",d.name::text as label
+ const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string;departmentId:string|null;programId:string|null;cohortId:string|null}>(sql`
+ select 'DEPARTMENT'::text as "scopeType", d.id::text as "scopeId",d.name::text as label,
+  d.id::text as "departmentId",null::text as "programId",null::text as "cohortId"
  from departments d where d.college_id=${college.id}::uuid
- union all select 'PROGRAM',p.id::text,(d.name||' / '||p.name)::text
+ union all select 'PROGRAM',p.id::text,(d.name||' / '||p.name)::text,d.id::text,p.id::text,null::text
  from programs p join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
- union all select 'COHORT',c.id::text,(d.name||' / '||p.name||' / '||c.name)::text
+ union all select 'COHORT',c.id::text,(d.name||' / '||p.name||' / '||c.name)::text,d.id::text,p.id::text,c.id::text
  from cohorts c join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
- union all select 'SECTION',s.id::text,(d.name||' / '||p.name||' / '||c.name||' / '||s.name)::text
+ union all select 'SECTION',s.id::text,(d.name||' / '||p.name||' / '||c.name||' / '||s.name)::text,d.id::text,p.id::text,c.id::text
  from sections s join cohorts c on c.id=s.cohort_id join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
  order by "scopeType",label limit 500
  `);
  if(result.rows.length===0)return [];
- const ids=result.rows.map(row=>row.scopeId);
+ const ids=[...new Set([
+  college.id,college.organizationId,...result.rows.flatMap(row=>
+   [row.scopeId,row.departmentId,row.programId,row.cohortId].filter((x):x is string=>x!==null)),
+ ])];
  const stored=await getDb().select({
   scopeType:moduleAccessRules.scopeType,scopeId:moduleAccessRules.scopeId,
   module:moduleAccessRules.module,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked,
- }).from(moduleAccessRules).where(and(inArray(moduleAccessRules.scopeId,ids),
+ }).from(moduleAccessRules).where(and(or(isNull(moduleAccessRules.scopeId),inArray(moduleAccessRules.scopeId,ids)),
   inArray(moduleAccessRules.module,["projects","placements","electives"])));
  const studentRows=await getDb().execute<{scopeType:ScopeType;scopeId:string;studentsInScope:number}>(sql`
  WITH active AS (
@@ -91,11 +100,34 @@ export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeId
   const entry=stored.find(row=>row.scopeType===scopeType&&row.scopeId===scopeId&&row.module===module);
   return entry?(entry.enabled?"On":"Off")+(entry.locked?" · Locked":""):"Inherit";
  };
- return result.rows.map(row=>({...row,projectsRule:describe(row.scopeType,row.scopeId,"projects"),
-  placementsRule:describe(row.scopeType,row.scopeId,"placements"),electivesRule:describe(row.scopeType,row.scopeId,"electives"),
-  studentsInScope:students.get(row.scopeType+":"+row.scopeId)??0}));
+ return result.rows.map(row=>{
+  const chain:ModuleAccessScope[]=[
+   {scopeType:row.scopeType,scopeId:row.scopeId},
+   ...(row.scopeType==="SECTION"&&row.cohortId?[{scopeType:"COHORT" as const,scopeId:row.cohortId}]:[]),
+   ...((row.scopeType==="SECTION"||row.scopeType==="COHORT")&&row.programId?
+     [{scopeType:"PROGRAM" as const,scopeId:row.programId}]:[]),
+   ...(row.scopeType!=="DEPARTMENT"&&row.departmentId?
+     [{scopeType:"DEPARTMENT" as const,scopeId:row.departmentId}]:[]),
+   {scopeType:"COLLEGE",scopeId:college.id},
+   {scopeType:"ORGANIZATION",scopeId:college.organizationId},
+   {scopeType:"GLOBAL",scopeId:null},
+  ];
+  const decision=resolveModuleAccessFromRules(chain,stored as ModuleAccessRule[]);
+  const effective=(module:"projects"|"placements"|"electives")=>
+   (decision[module].enabled?"On":"Off")+" · "+decision[module].level;
+  const shadowed=(module:"projects"|"placements"|"electives")=>
+   describe(row.scopeType,row.scopeId,module)!=="Inherit"&&decision[module].scopeId!==row.scopeId;
+  return {...row,projectsRule:describe(row.scopeType,row.scopeId,"projects"),
+   placementsRule:describe(row.scopeType,row.scopeId,"placements"),
+   electivesRule:describe(row.scopeType,row.scopeId,"electives"),
+   projectsEffective:effective("projects"),placementsEffective:effective("placements"),
+   electivesEffective:effective("electives"),
+   projectsShadowed:shadowed("projects"),placementsShadowed:shadowed("placements"),
+   electivesShadowed:shadowed("electives"),
+   studentsInScope:students.get(row.scopeType+":"+row.scopeId)??0};
+ });
 }
-export async function readDescendantRule(ctx:RequestContext,collegeInput:string,scopeType:ScopeType,scopeIdInput:string,module:"projects"|"electives"){
+export async function readDescendantRule(ctx:RequestContext,collegeInput:string,scopeType:ScopeType,scopeIdInput:string,module:"projects"|"placements"|"electives"){
  const college=await collegeScope(ctx,collegeInput);if(!college)return null;
  const scopeId=uuid.parse(scopeIdInput);
  if(!await resolveScope(getDb(),college.id,scopeType,scopeId))return null;
