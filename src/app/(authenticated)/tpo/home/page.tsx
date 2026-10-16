@@ -104,10 +104,15 @@ export default async function TpoHome(){
  {pendingRequests?<section aria-label="Pending placement requests" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface p-4"><p className="text-sm font-semibold">{pendingRequests.label}</p><Link href={pendingRequests.href} className="inline-flex min-h-11 items-center text-primary-text underline">Open decision inbox</Link></section>:null}
  {!batches.ready?<p className="text-xs text-muted-foreground">Batch attention is unavailable until its lifecycle migration is registered.</p>:null}
  <section className="space-y-2"><h2 className="font-semibold">Your placement work</h2>
-  <ul className="divide-y divide-border rounded-xl border border-border bg-surface">{rows.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center justify-between gap-3 p-4">
-    <div className="min-w-0 flex items-center gap-3"><span aria-hidden="true" className={row.needsAttention?"h-2.5 w-2.5 shrink-0 rounded-full bg-warning":"h-2.5 w-2.5 shrink-0 rounded-full bg-muted"}/>
-    <span className="break-words text-sm font-medium">{row.title}<span className="block text-xs font-normal text-muted-foreground">{row.status}</span></span></div>
-    <Link href={row.href} className="min-h-10 inline-flex items-center text-sm text-primary-text underline">Open</Link>
+  <ul className="divide-y divide-border rounded-xl border border-border bg-surface">{rows.map(row=><li key={row.key}>
+    <Link href={row.href} data-testid={"home.row."+row.key}
+     className="flex min-h-16 min-w-0 items-center gap-3 p-4 text-body hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+     <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-surface-subtle text-sm font-semibold">{row.title.slice(0,1)}</span>
+     <span className="min-w-0 flex-1"><strong className="block text-sm text-foreground">{row.title}</strong>
+      <span className="block break-words text-xs text-muted-foreground">{row.status}</span></span>
+     {row.needsAttention?<span aria-label="Needs you" className="shrink-0 rounded-full bg-warning-subtle px-2 py-1 text-xs font-semibold text-warning-text">Needs you</span>:null}
+     <span aria-hidden="true" className="shrink-0 text-primary-text">›</span>
+    </Link>
    </li>)}</ul>
  </section>
  </main>;
