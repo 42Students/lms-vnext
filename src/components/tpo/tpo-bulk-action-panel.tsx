@@ -27,6 +27,8 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
  const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
+ const [companyShareUrl,setCompanyShareUrl]=useState<string|null>(null);
+ const [shareDays,setShareDays]=useState(2);
  const [acknowledged,setAcknowledged]=useState(false);
  const [error,setError]=useState("");
  const availableRows=allRows??rows;
@@ -90,6 +92,27 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    }));
    setActionCounts(checks);
   }catch(cause){setError(cause instanceof Error?cause.message:"Action counts unavailable. Try again.");}
+  finally{setBusy(false);}
+ }
+ async function shareSelected(){
+  if(busy||target!=="APPLICATIONS"||!jobId||safeSelected.length===0)return;
+  if(!window.confirm("Share exactly "+safeSelected.length+" selected, currently shortlisted applications with the company? The link can be viewed by anyone holding it."))return;
+  setBusy(true);setError("");setCompanyShareUrl(null);
+  try{
+   const response=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares",{
+    method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+    body:JSON.stringify({expiresInDays:shareDays,selectedApplicationIds:safeSelected}),
+   });
+   if(!response.ok){
+    const error=await response.json().catch(()=>({error:"SHARE_FAILED"})) as {error?:string};
+    throw new Error(error.error==="MIGRATION_PENDING"?"Selected-applicant share storage is awaiting migration.":
+      error.error==="NOT_SHAREABLE"?"One or more selected applicants are no longer shortlisted. Refresh and select again.":
+      "Cannot issue selected-applicant share. Try again.");
+   }
+   const data=await response.json() as {token:string};
+   setCompanyShareUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
+   router.refresh();
+  }catch(error){setError(error instanceof Error?error.message:"Could not share selected candidates.");}
   finally{setBusy(false);}
  }
  async function confirm(){
@@ -179,15 +202,30 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    </button>
    {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="space-y-2 rounded-lg border border-border bg-surface p-3">
      <h4 className="font-semibold">Other actions</h4>
-     <p className="text-xs text-muted-foreground">Review one by one opens each applicant's authorized detail. Share with the company uses the separate shortlist review and does not silently share the current selection.</p>
+     <p className="text-xs text-muted-foreground">Share only this selection using an expiring link. Every selected application is rechecked for a current shortlist before issuance. Review one by one opens each candidate's authorized detail.</p>
+     <label className="flex flex-wrap items-center gap-2 text-sm">Link expires in
+      <select value={shareDays} onChange={event=>setShareDays(Number(event.target.value))}
+        disabled={busy} className="min-h-10 rounded border border-border px-3">
+       {[1,2,3,4,5,6,7].map(day=><option key={day} value={day}>{day} day{day===1?"":"s"}</option>)}
+      </select>
+     </label>
      <div className="flex flex-wrap gap-2">
-       <Link href={tpoShareWithCompanyHref(jobId)} className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
-         Share with the company
-       </Link>
+       <button type="button" disabled={busy||safeSelected.length===0} onClick={()=>void shareSelected()}
+        className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
+         Share {safeSelected.length} selected with the company
+       </button>
        <Link href={tpoReviewOneByOneHref(jobId,safeSelected[0])} className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
          Review one by one
        </Link>
      </div>
+     {companyShareUrl?<div className="space-y-2 rounded-md border border-border p-3">
+      <p className="text-xs font-semibold">Copy this URL now. The secret cannot be recovered later.</p>
+      <input aria-label="Selected applicant share URL" readOnly value={companyShareUrl}
+       onFocus={e=>e.currentTarget.select()} className="w-full rounded border border-border bg-surface p-2 text-xs"/>
+      <button type="button" className="min-h-10 text-sm font-semibold text-primary-text underline"
+       onClick={()=>void navigator.clipboard.writeText(companyShareUrl).then(
+        ()=>setError("Link copied."),()=>setError("Select the link field and copy it manually."))}>Copy link</button>
+     </div>:null}
      {safeSelected.length>1?<details className="text-sm">
        <summary>Review selected applicants individually ({safeSelected.length})</summary>
        <ol className="mt-2 max-h-40 space-y-2 overflow-y-auto">
