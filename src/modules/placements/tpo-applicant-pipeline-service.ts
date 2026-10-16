@@ -100,7 +100,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       input.sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
       placementApplications.id)
     .limit(pagination.pageSize).offset(pagination.offset);
-   const allFiltered=totalMatching>0&&totalMatching<=200?await tx.select({
+   const allFiltered=totalMatching>0&&totalMatching<=5000?await tx.select({
     id:placementApplications.id,student:users.displayName,role:placementJobRoleOptions.title,
    }).from(placementApplications)
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
@@ -112,7 +112,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
     .where(and(scope,input.stage==="ALL"?undefined:input.stage==="SUBMITTED"?
       eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
-    .orderBy(placementApplications.id).limit(200):null;
+    .orderBy(placementApplications.id).limit(5000):null;
    return {counts:totals,...pagination,allFiltered,rows:records.map(row=>({
     ...row,submittedAt:row.submittedAt.toISOString(),
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
