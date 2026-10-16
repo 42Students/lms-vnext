@@ -1,3 +1,4 @@
+import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {CollegeTermMappingManager} from "@/components/academics/college-term-mapping-manager";
 import {listCollegeTermMappings} from "@/modules/academics/college-term-mapping-service";
@@ -10,6 +11,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
  const context=await getCurrentRequestContext();
  const curriculum=context.adminScope?.collegeId?await listCollegeTermMappings(context):null;
  return <div className="space-y-6">
+      <AcademicSetupSteps step={4} />
  {curriculum?<CollegeTermMappingManager data={curriculum}/>:null}
  <AdminScopedReadPage title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}
   exportPath="/api/admin/semester-courses/export" exportFilename="super-admin-semester-courses-ist.csv"
