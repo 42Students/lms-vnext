@@ -91,6 +91,11 @@ Evidence abbreviations (real file lines): `LFE/` = `C:\Users\LENOVO\Desktop\42LM
 
 Counts for this file: 24 rows (100 to 123). Severity: S1 1, S2 6, S3 12, S4 5. By type: MISSING-ACTION 10, MISSING-PAGE 3, COPY 4, MISSING-FIELD 2, PERMISSION 2, STATE 1, MISSING-EXPORT 1, MISSING-FILTER 1. Group totals across the three files: 117 rows (50 + 43 + 24); S1 4, S2 47, S3 58, S4 8.
 
+### Chat-11 implementation evidence (2026-10-17)
+
+- **SA-placements-projects-100 — source implemented, runtime verification pending.** `/tracker` now renders the legacy form for an active authenticated Super Admin, with the complete production legacy location/issue taxonomy, exact field/validation wording, origin-checked `POST /api/tracker/issues`, a DB10 runtime gate, transactionally persisted issue and immutable `CREATED` activity. Source commits: `b5b1f56` through `5c77903`. Unit and isolated-PostgreSQL tests were authored but not run by the connector-only builder; do not mark parity verified until those tests and a browser check pass.
+- **SA-placements-projects-101 — SKIP, owner decision OD-27.** Anonymous reporting and reporter sessions remain disabled by design. The legacy phrase “No login needed” is intentionally not shown until authorized reporter authentication exists. The row remains separate from the authenticated intake scope.
+
 ## 4. Intentional differences (vNext improvements or approved deviations)
 
 - Issues are read and triaged only by authenticated Super Admins; engineering notes and attachment keys are never exposed through a public list, and screenshot metadata does not leak private object keys. The disabled "Report issue · pending reporter auth" item records the owner-facing blocker (reporter-session migration).
