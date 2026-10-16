@@ -58,11 +58,20 @@ export async function commandLessonResourceMaterial(
  ensureReady();
  const input=resourceMaterialCommandSchema.parse(rawInput);
  const content=await authorizeMaterial(context,contentId,deliveryId,true);
- const result=await getDb().transaction(async tx=>{
+ return getDb().transaction(async tx=>{
   const [locked]=await tx.select({id:lessonContents.id,status:lessonContents.status})
    .from(lessonContents).where(and(eq(lessonContents.id,contentId),eq(lessonContents.contentType,"RESOURCE")))
    .for("update").limit(1);
   if(!locked||locked.status==="ARCHIVED")throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
+  async function recordAudit(id:string,action:string){
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_MATERIAL_UPDATED,
+    collegeId:content.collegeId,organizationId:content.organizationId,
+    subjectType:"lesson_content",subjectId:contentId,
+    summary:"Resource material "+action.toLowerCase(),
+    metadata:{materialId:id,kind:"LINK",deliveryId},
+   });
+  }
   const rows=await tx.select({id:lessonContentMaterials.id,kind:lessonContentMaterials.kind,
     externalUrl:lessonContentMaterials.externalUrl,sequence:lessonContentMaterials.sequence})
    .from(lessonContentMaterials).where(eq(lessonContentMaterials.lessonContentId,contentId))
@@ -76,6 +85,7 @@ export async function commandLessonResourceMaterial(
     externalUrl:input.externalUrl,sequence:rows.length?Math.max(...rows.map(x=>x.sequence))+1:0,
     createdByUserId:context.user.id,uploadStatus:"READY",
    }).returning({id:lessonContentMaterials.id});
+   await recordAudit(created!.id,input.action);
    return {id:created!.id,action:input.action};
   }
   const old=rows.find(row=>row.id===input.materialId);
@@ -90,17 +100,7 @@ export async function commandLessonResourceMaterial(
    await tx.delete(lessonContentMaterials).where(and(
     eq(lessonContentMaterials.id,old.id),eq(lessonContentMaterials.lessonContentId,contentId)));
   }
+  await recordAudit(old.id,input.action);
   return {id:old.id,action:input.action};
  });
- // Activity history uses established event taxonomy, with URLs excluded.
- await getDb().transaction(async tx=>{
-  await recordActivityEventInTransaction(tx,context,{
-   eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_MATERIAL_UPDATED,
-   collegeId:content.collegeId,organizationId:content.organizationId,
-   subjectType:"lesson_content",subjectId:contentId,
-   summary:"Resource material "+result.action.toLowerCase(),
-   metadata:{materialId:result.id,kind:"LINK",deliveryId},
-  });
- });
- return result;
 }
