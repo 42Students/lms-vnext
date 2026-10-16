@@ -516,9 +516,21 @@ export function LearnerProfileWorkspace(props: {
           <Link href="/learn/profile/completeness" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
             Review full checklist
           </Link>
-          <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>
-            {coverage.completed} of {coverage.total} career sections filled
-          </StatusBadge>
+          <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
+            <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label={percent+"% complete"}>
+              <circle cx="32" cy="32" r="26" fill="none" strokeWidth="7"
+                className="stroke-border"/>
+              <circle cx="32" cy="32" r="26" fill="none" strokeWidth="7" strokeLinecap="round"
+                className="stroke-primary" pathLength="100"
+                strokeDasharray={String(percent)+" 100"} transform="rotate(-90 32 32)"/>
+              <text x="32" y="36" textAnchor="middle" className="fill-foreground"
+                fontSize="15" fontWeight="700">{percent}%</text>
+            </svg>
+            <div className="flex flex-wrap gap-2">
+              <StatusBadge tone="success">{coverage.completed} Completed</StatusBadge>
+              <StatusBadge tone="neutral">{coverage.total-coverage.completed} Remaining</StatusBadge>
+            </div>
+          </div>
         </div>
         <p className="mt-2 text-sm text-body">
           This reflects fields saved in your profile, not verification or placement eligibility.
