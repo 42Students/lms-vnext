@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
@@ -189,6 +190,7 @@ export function ProjectWorkspace({
     (mode !== "ADMIN" &&
       activeSection === "team" &&
       section === "meetings");
+  const renderTime = new Date();
   const archived = workspace.project.status === "ARCHIVED";
   const readOnly = archived || readOnlyOverride;
   const tasksBySprint = new Map<
@@ -1252,9 +1254,9 @@ export function ProjectWorkspace({
                         </p>
                       </div>
                       <StatusBadge
-                        tone={tone(meeting.status)}
+                        tone={tone(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
                       >
-                        {label(meeting.status)}
+                        {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
                       </StatusBadge>
                     </div>
                     {meeting.agenda ? (
