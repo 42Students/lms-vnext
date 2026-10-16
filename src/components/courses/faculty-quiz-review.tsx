@@ -96,6 +96,7 @@ export function FacultyQuizReview({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [notice,setNotice]=useState<string|null>(null);
 
   if (!actions.canReviewAttempts) {
     return null;
@@ -140,13 +141,13 @@ export function FacultyQuizReview({
     published: boolean,
   ) {
     if (!window.confirm(published
-      ? "Publish these quiz scores and answers to eligible learners?"
-      : "Hide published Quiz results from learners?"
+      ? "Release results? Learners can view their scores and correct answers."
+      : "Withhold results? Learners will no longer see scores or answers."
     )) {
       return;
     }
 
-    setError(null);
+    setError(null);setNotice(null);
     setSavingResults(true);
 
     try {
@@ -174,6 +175,7 @@ export function FacultyQuizReview({
         return;
       }
 
+      setNotice(published?"Results released successfully.":"Results withheld successfully.");
       router.refresh();
     } catch {
       setError(
@@ -186,6 +188,7 @@ export function FacultyQuizReview({
 
   return (
     <>
+      {notice?<p role="status" className="mt-2 text-sm text-success">{notice}</p>:null}
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Button
           size="sm"
@@ -205,7 +208,7 @@ export function FacultyQuizReview({
           >
             {savingResults
               ? "Publishing…"
-              : "Publish results"}
+               : "Release results"}
           </Button>
         ) : null}
 
@@ -220,7 +223,7 @@ export function FacultyQuizReview({
           >
             {savingResults
               ? "Saving…"
-              : "Hide results"}
+              : "Withhold results"}
           </Button>
         ) : null}
 
@@ -260,7 +263,7 @@ export function FacultyQuizReview({
             >
               {savingResults
                 ? "Publishing…"
-                : "Publish results"}
+                 : "Release results"}
             </Button>
           ) : null}
           {actions.canHideResults ? (
@@ -274,7 +277,7 @@ export function FacultyQuizReview({
             >
               {savingResults
                 ? "Saving…"
-                : "Hide results"}
+                : "Withhold results"}
             </Button>
           ) : null}
           <Button
