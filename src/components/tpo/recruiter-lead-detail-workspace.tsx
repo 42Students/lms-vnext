@@ -222,6 +222,10 @@ export function RecruiterLeadDetailWorkspace({
       setActionError("Provide a valid follow-up date and time.");
       return;
     }
+    if (time.getTime() <= Date.now()) {
+      setActionError("Pick a future date and time for this follow-up.");
+      return;
+    }
     const ok = await mutate(base + "/follow-ups", "POST", {
       collegeId, dueAt: time.toISOString(), note: followNote.trim() || null,
     });
