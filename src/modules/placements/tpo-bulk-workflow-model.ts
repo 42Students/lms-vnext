@@ -2,7 +2,7 @@ import { z } from "zod";
 import { bulkActionCommandSchema, previewBulkAction } from "./tpo-bulk-action-model";
 
 export const tpoBulkTargetSchema = z.enum(["STUDENTS", "APPLICATIONS"]);
-export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED", "ADD_NOTE"]);
+export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED", "ADD_NOTE", "SEND_MESSAGE"]);
 const ids = z.array(z.string().uuid()).min(1).max(200)
   .refine(items => new Set(items).size === items.length, "Duplicate selected rows");
 
@@ -18,7 +18,7 @@ export const tpoBulkPreviewRequestSchema = z.object({
        !["ELIGIBLE","CLEAR_OVERRIDE"].includes(value.action))
       ctx.addIssue({code:"custom",message:"Invalid student action"});
   } else {
-    if(!value.jobId||!["SHORTLISTED","REJECTED","ADD_NOTE"].includes(value.action))
+    if(!value.jobId||!["SHORTLISTED","REJECTED","ADD_NOTE","SEND_MESSAGE"].includes(value.action))
       ctx.addIssue({code:"custom",message:"Invalid application action"});
     if(value.note.length<10)
       ctx.addIssue({code:"custom",message:"Screening decisions require at least ten characters of review context"});
@@ -32,6 +32,7 @@ export function tpoBulkActionLabel(action:z.infer<typeof tpoBulkActionSchema>):s
     case "SHORTLISTED":return "Shortlist applicants";
     case "REJECTED":return "Reject applicants";
     case "ADD_NOTE":return "Add a note";
+    case "SEND_MESSAGE":return "Send a message";
   }
 }
 export type TpoBulkPreviewRequest=z.output<typeof tpoBulkPreviewRequestSchema>;

@@ -7,6 +7,7 @@ import {TpoParticipationConflictError,decideTpoLearnerParticipation,
   getTpoLearnerParticipation} from "./tpo-participation-service";
 import {reviewTpoApplicant} from "./tpo-applicant-review-service";
 import {addTpoApplicantNote} from "./applicant-notes-service";
+import {sendTpoBulkApplicationMessage} from "./tpo-bulk-applicant-message-service";
 import {loadTpoBulkCurrent} from "./tpo-bulk-action-preview-service";
 import {tpoBulkStudentVersion} from "./tpo-bulk-decision-model";
 import {tpoBulkConfirmRequestSchema,tpoBulkPreviewRequestSchema,
@@ -52,6 +53,11 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
        if(plan.action==="ADD_NOTE"){
          await addTpoApplicantNote(context,plan.jobId!,selected.id,{
            body:plan.note,expectedLatestNoteId:selected.version==="none"?null:selected.version,
+         });
+       }else if(plan.action==="SEND_MESSAGE"){
+         await sendTpoBulkApplicationMessage(context,{
+           jobId:plan.jobId!,applicationId:selected.id,
+           expectedVersion:selected.version,body:plan.note,
          });
        }else{
          if(plan.action!=="SHORTLISTED"&&plan.action!=="REJECTED")throw new TpoBulkPreviewError();
