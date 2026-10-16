@@ -24,6 +24,7 @@ export function legacySidebarItemActive(
  const descendant=href!=="/dashboard"&&href!=="/college"&&
    pathname.startsWith(href+"/")&&!(href==="/admin/features"&&featureDetail);
  return exact||descendant||utilityOwner||
+   (href==="/tpo/recruiters"&&(pathname==="/tpo/companies"||pathname.startsWith("/tpo/companies/")))||
    (admin&&superAdminGroup!==null&&superAdminGroup===item.label)||
    (college&&collegeGroup!==null&&collegeGroup===item.label)||
    (href==="/admin/module-access"&&featureDetail)||
