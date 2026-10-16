@@ -384,6 +384,9 @@ export default async function HrPlacementJobPage({
           </div>
           <section className="space-y-2 rounded-lg border border-border bg-surface-secondary p-4">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
+            {driveOverview.readOnly ? <p role="status" className="text-sm text-body">
+              This drive is finished, so a selection list can no longer be sent.
+            </p> : null}
             <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, letter-of-intent and offer issue workflows remain with the placement team.</p>
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <span key={applicant.id} className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground">{applicant.name || "Candidate"}</span>)}</div> : null}
@@ -435,7 +438,11 @@ export default async function HrPlacementJobPage({
           <h2 className="m-0 text-base font-semibold text-foreground">
             Hiring rounds
           </h2>
-          <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
+          {driveOverview.readOnly
+            ? <p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-body">
+                This drive is finished, so slots and results can no longer be sent.
+              </p>
+            : <div className="flex flex-wrap gap-2">          <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
             className="mt-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Add, change or remove rounds
           </Link>
@@ -443,6 +450,7 @@ export default async function HrPlacementJobPage({
             className="ml-2 mt-2 inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Interview slots
           </Link>
+</div>}
           <p className="mt-1 text-sm text-body">
             Stage employer outcomes here. The college placement team retains final apply authority.
           </p>
@@ -470,6 +478,7 @@ export default async function HrPlacementJobPage({
             </article>)}
           </div>:<p className="text-sm text-muted-foreground">No scheduled rounds recorded.</p>}
         </section>:null}
+        {!driveOverview.readOnly ? (
         <RecruiterResultControls
           rounds={workspace.rounds.map(
             (round) => ({
@@ -537,6 +546,8 @@ export default async function HrPlacementJobPage({
             }),
           )}
         />
+        ) : null}
+
         {filters.tab === "rounds" ? <section className="mt-6 space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div>
             <h3 className="text-lg font-semibold text-foreground">Results from table</h3>
