@@ -154,6 +154,11 @@ export function FacultyAttendanceWorkspace({
   );
   const [selectedSessionId, setSelectedSessionId] =
     useState(selection);
+  const [selectedDate,setSelectedDate]=useState(
+    () => workspace.sessions.find(session=>session.id===selection)?
+      indiaAttendanceDayKey(workspace.sessions.find(session=>session.id===selection)!.startsAt):
+      indiaAttendanceDayKey(new Date()),
+  );
   const [search, setSearch] = useState("");
   const [absent, setAbsent] = useState<Set<string>>(() =>
     initialAbsencesForSession(
@@ -216,6 +221,17 @@ export function FacultyAttendanceWorkspace({
     );
   }, [workspace.records, workspace.roster]);
 
+  const dateSessions=workspace.sessions.filter(session=>
+    indiaAttendanceDayKey(session.startsAt)===selectedDate);
+  function chooseDate(day:string){
+    if(day===selectedDate)return;
+    if(!confirmDiscardMarks())return;
+    setSelectedDate(day);
+    const first=workspace.sessions.find(session=>indiaAttendanceDayKey(session.startsAt)===day);
+    setSelectedSessionId(first?.id??"");
+    setAbsent(initialAbsencesForSession(workspace.roster,workspace.records,first?.id??""));
+    setCorrectionReason("");setError(null);
+  }
   const selectedSession =
     workspace.sessions.find(
       (session) => session.id === selectedSessionId,
@@ -781,7 +797,12 @@ export function FacultyAttendanceWorkspace({
             <section className="rounded-xl border border-border bg-surface p-5">
               <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
-                  <label htmlFor={sessionSelectId} className="block text-xs font-semibold text-body">
+                  <label className="block text-xs font-semibold text-body">
+                    Date
+                    <Input type="date" className="mt-1.5" value={selectedDate}
+                      onChange={event=>chooseDate(event.target.value)}/>
+                  </label>
+                  <label htmlFor={sessionSelectId} className="mt-3 block text-xs font-semibold text-body">
                     Class session
                   </label>
                   <Select
@@ -792,7 +813,8 @@ export function FacultyAttendanceWorkspace({
                       chooseSession(event.target.value)
                     }
                   >
-                    {workspace.sessions.map(
+                    {!dateSessions.length?<option value="">No classes scheduled</option>:null}
+                    {dateSessions.map(
                       (session) => (
                         <option
                           key={session.id}
@@ -806,6 +828,9 @@ export function FacultyAttendanceWorkspace({
                       ),
                     )}
                   </Select>
+                  {!dateSessions.length?<p role="status" className="mt-2 text-sm text-muted-foreground">
+                    No class scheduled for this date. Use Schedule Class to add one.
+                  </p>:null}
                 </div>
                 {selectedSession ? (
                   <div className="rounded-lg bg-surface-subtle p-3 text-sm text-body">
