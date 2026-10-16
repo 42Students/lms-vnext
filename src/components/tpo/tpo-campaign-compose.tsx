@@ -79,7 +79,7 @@ export function TpoCampaignCompose(){
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
     Preview audience
    </Link>
-   <p role="status" className="rounded-md border border-border p-3 text-sm text-body">{CAMPAIGN_DELIVERY_UNAVAILABLE}</p>
+   <p role="alert" className="rounded-md border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>
    <button type="submit" disabled={busy} className="block min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save draft"}
    </button>
