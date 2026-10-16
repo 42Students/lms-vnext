@@ -11,6 +11,7 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterCompanyTeam } from "@/modules/placements/recruiter-company-team-service";
 import { hrTeamSearchSchema, searchHrTeam } from "@/modules/placements/hr-team-search-model";
 import {hrTeamRosterMessage} from "@/modules/placements/hr-team-roster-message-model";
+import {hrTeamAvatarInitial} from "@/modules/placements/recruiter-team-drive-count-model";
 import {hrTeamPageSchema,hrTeamPage} from "@/modules/placements/hr-team-pagination-model";
 
 type PageProps = {
@@ -205,6 +206,9 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               Export authorized team CSV
             </Link>
           </div>
+          <p className="mt-2 text-sm text-body">
+            Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
+          </p>
           <form action="/hr/company" method="get" className="mt-3 flex flex-wrap gap-2">
             <input type="hidden" name="collegeId" value={result.grant.collegeId}/>
             <input type="hidden" name="tab" value="team"/>
@@ -225,14 +229,20 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <div className="mt-4 divide-y divide-border">
               {teamPageResult.rows.map((member) => (
                 <div key={member.userId} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
-                  <div>
+                  <div className="flex items-start gap-3">
+                    <div aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle font-semibold text-primary-text">
+                      {hrTeamAvatarInitial(member.displayName,member.email)}
+                    </div>
+                    <div>
                     <div className="font-medium text-foreground">
                       {member.displayName || member.email || "Recruiter"}
                       {member.isYou ? <span className="ml-2 text-xs text-primary">You</span> : null}
                     </div>
                     <div className="mt-1 text-sm text-muted-foreground">{member.email ?? "Email not available"}</div>
+                    <div className="mt-1 text-xs text-muted-foreground">{member.driveCount} drive(s) here</div>
+                    </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">{member.title ?? "Recruiter"}</div>
+                  {member.title ? <div className="text-sm text-muted-foreground">{member.title}</div> : null}
                 </div>
               ))}
             </div>

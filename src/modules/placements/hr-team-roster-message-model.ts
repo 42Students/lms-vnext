@@ -7,6 +7,6 @@ export function hrTeamRosterMessage(
   "No teammates are available in this view.";
  if(pageItems===0)return "No teammates on this page. Return to an earlier page.";
  if(all.length===1&&all[0]?.isYou&&!query.trim())
-  return "Only you so far. Additional colleagues will appear when they have active recruiter access.";
+  return "Only you so far";
  return null;
 }

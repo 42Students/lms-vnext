@@ -230,3 +230,7 @@ Recruiter conversations inbox and detail mount a visible-tab-only four-second pu
 ## REC-calendar-messages-profile-36 source implementation — 2026-10-17
 
 Company & Team header now uses the legacy `Recruiter` eyebrow, `Your profile` action, and `Your work with {college}` description, with focused exact-copy unit coverage. Browser/typecheck verification remains required.
+
+## REC-calendar-messages-profile-34 source implementation — 2026-10-17
+
+Team rows now show a name/email avatar initial, a recorded drive/request count for each active member scoped to the authenticated employer-college relationship, and optional designation without the invented `Recruiter` fallback. Intro and `Only you so far` copy match legacy. Approved requests referencing a recorded job are deduplicated. The query does not disclose underlying requests or job details to team viewers. Integration/browser checks remain unrun; legacy's historical owner attribution may differ for migrated TPO-created jobs.

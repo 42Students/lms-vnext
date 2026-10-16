@@ -1,7 +1,9 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementCompanies,
+  placementJobs,
+  placementRecruiterDriveRequests,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
@@ -13,6 +15,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {recruiterTeamDriveCounts} from "./recruiter-team-drive-count-model";
 
 export type RecruiterCompanyScope =
   | { status: "NO_ACCESS"; choices: readonly RecruiterGrant[] }
@@ -97,6 +100,26 @@ export async function getRecruiterCompanyTeam(
     ))
     .orderBy(asc(users.displayName), asc(users.email));
 
+  // Only this company's visible jobs and this employer-college relationship's
+  // formal requests may contribute counts; never tally another tenant's rows.
+  const [ownJobs,ownRequests]=await Promise.all([
+    db.select({id:placementJobs.id,createdByUserId:placementJobs.createdByUserId})
+     .from(placementJobs).where(and(
+      eq(placementJobs.collegeId,scope.grant.collegeId),
+      eq(placementJobs.companyRelationshipId,company.relationshipId),
+      inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
+      isNull(placementJobs.archivedAt),
+     )),
+    db.select({
+      id:placementRecruiterDriveRequests.id,
+      recruiterUserId:placementRecruiterDriveRequests.recruiterUserId,
+      approvedJobId:placementRecruiterDriveRequests.approvedJobId,
+    }).from(placementRecruiterDriveRequests).where(and(
+      eq(placementRecruiterDriveRequests.collegeId,scope.grant.collegeId),
+      eq(placementRecruiterDriveRequests.companyRelationshipId,company.relationshipId),
+    )),
+  ]);
+  const counts=recruiterTeamDriveCounts(team,ownJobs,ownRequests);
   return {
     status: "READY" as const,
     grant: scope.grant,
@@ -105,6 +128,7 @@ export async function getRecruiterCompanyTeam(
     team: team.map((member) => ({
       ...member,
       isYou: member.userId === context.user.id,
+      driveCount:counts.get(member.userId)??0,
     })),
   };
 }
