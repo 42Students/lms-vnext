@@ -4,6 +4,7 @@ import {
   placementCompanies,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
+  activityEvents, inAppNotifications, collegeMemberships, membershipRoles, colleges,
   users,
 } from "@/db/schema";
 import { hasActiveRecruiter, type RequestContext } from "@/modules/identity/context";
@@ -64,27 +65,51 @@ export async function leaveOwnRecruiterCollegeAccess(
   now = new Date(),
 ) {
   const grantId = placementRecruiterGrantIdSchema.parse(rawGrantId);
-  ownRecruiterGrant(context, grantId);
+  const grant = ownRecruiterGrant(context, grantId);
   if (!(now instanceof Date) || !Number.isFinite(now.getTime())) {
     throw new AuthorizationError("placements.recruiter.read");
   }
 
-  const [revoked] = await getDb()
-    .update(placementRecruiterCollegeGrants)
-    .set({
-      status: "REVOKED",
-      revokedByUserId: context.user.id,
-      revokedAt: now,
-      updatedAt: now,
-    })
-    .where(and(
-      eq(placementRecruiterCollegeGrants.id, grantId),
-      eq(placementRecruiterCollegeGrants.recruiterUserId, context.user.id),
-      eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
-    ))
-    .returning({ id: placementRecruiterCollegeGrants.id });
+  return getDb().transaction(async tx=>{
+    const [revoked] = await tx
+      .update(placementRecruiterCollegeGrants)
+      .set({
+        status: "REVOKED",
+        revokedByUserId: context.user.id,
+        revokedAt: now,
+        updatedAt: now,
+      })
+      .where(and(
+        eq(placementRecruiterCollegeGrants.id, grantId),
+        eq(placementRecruiterCollegeGrants.recruiterUserId, context.user.id),
+        eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+        eq(placementRecruiterCollegeGrants.collegeId, grant.collegeId),
+      ))
+      .returning({ id: placementRecruiterCollegeGrants.id });
+    if (!revoked) throw new AuthorizationError("placements.recruiter.read");
 
-  // A stale/revoked/forged grant is indistinguishable to the caller.
-  if (!revoked) throw new AuthorizationError("placements.recruiter.read");
-  return { grantId: revoked.id, status: "REVOKED" as const };
+    const [college] = await tx.select({organizationId:colleges.organizationId})
+      .from(colleges).where(and(eq(colleges.id,grant.collegeId),eq(colleges.status,"ACTIVE"))).limit(1);
+    if(college){
+      const [event]=await tx.insert(activityEvents).values({
+        organizationId:college.organizationId,collegeId:grant.collegeId,
+        actorUserId:context.user.id,module:"PLACEMENTS",
+        eventType:"placements.recruiter.access.left",
+        subjectType:"placement_recruiter_college_grant",subjectId:revoked.id,
+        summary:"Recruiter left college access",occurredAt:now,
+        metadata:{grantId:revoked.id},
+      }).returning({id:activityEvents.id});
+      const recipients=await tx.selectDistinct({userId:collegeMemberships.userId})
+        .from(collegeMemberships)
+        .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+        .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+        .where(and(eq(collegeMemberships.collegeId,grant.collegeId),eq(collegeMemberships.status,"ACTIVE")));
+      if(event&&recipients.length)await tx.insert(inAppNotifications).values(recipients.map(recipient=>({
+        userId:recipient.userId,eventId:event.id,title:"Recruiter left college access",
+        body:"A recruiter has left this college. Review active recruiter grants and access.",
+        actionHref:"/tpo/settings/recruiters",createdAt:now,
+      }))).onConflictDoNothing();
+    }
+    return { grantId: revoked.id, status: "REVOKED" as const };
+  });
 }
