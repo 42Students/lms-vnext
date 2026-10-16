@@ -3,6 +3,7 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
  return [
   {label:"Overview",href:root},
+  {label:"About",href:root+"/about"},
   {label:"Applicants",href:root+"/applicants"},
   {label:"Pipeline",href:root+"/applicants-pipeline"},
   {label:"Candidate schedule",href:root+"/candidate-schedule"},
