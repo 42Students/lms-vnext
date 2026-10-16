@@ -96,3 +96,7 @@ Evidence abbreviations (all line numbers are real file lines):
 
 - Exist: `tests/unit/college-dashboard-cards-model.test.ts`, `tests/integration/college-dashboard-cards-scope.test.ts` (scope and counts), `tests/unit/shell-page-titles*`.
 - Needed: unit tests for the new attention-board queries (seven-day pending attendance, thirty-day threshold with marked sessions only, ungraded submissions, unstaffed current-term sections, setup gaps, quizzes due in 7 days) mirroring the legacy SQL; integration tests with seeded NSRIT-style data for scope isolation; browser script `scripts/verify/pages/college-dashboard.mjs`: load /college at 1280px and 375px, assert 4 stat cards, Today strip, 6 attention cards, 11 quick actions (Enter/Space), setup collapse text, force one section to fail (mock) and assert per-card `Couldn't load this. Refresh to try again.`, `Refresh` click re-queries, console free of errors.
+
+## Implementation progress (not a live acceptance verdict)
+
+- **COL-dashboard-01**: the `/college` landing now displays the shared 11-item `Quick Actions` section; Hiring Dashboard, Attendance and People Directory link to existing College Admin routes. The route contract and landing-page mounting are covered by `tests/unit/admin-dashboard-navigation.test.ts`; runtime browser and test execution still need verification.

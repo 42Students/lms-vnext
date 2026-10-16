@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   COLLEGE_ADMIN_QUICK_ACTIONS,
@@ -10,6 +11,19 @@ import {
 type SetupStep = { key: string; label: string; href: string | null };
 
 describe("W06 legacy admin Dashboard navigation fidelity", () => {
+  it("COL-dashboard-01 renders all 11 live Quick Actions on the primary College Admin landing", () => {
+    const routes = new Map(COLLEGE_ADMIN_QUICK_ACTIONS.map(action => [action.key, action.href]));
+    expect(routes.size).toBe(11);
+    expect([...routes.values()].every(href => href?.startsWith("/college/"))).toBe(true);
+    expect(routes.get("hiring-dashboard")).toBe("/college/hiring-dashboard");
+    expect(routes.get("attendance")).toBe("/college/attendance");
+    expect(routes.get("people")).toBe("/college/people");
+    const collegePage = readFileSync("src/app/(authenticated)/college/page.tsx", "utf8");
+    expect(collegePage).toMatch(/<CollegeAdminQuickActions\s*\/>/);
+    const dashboardActions = readFileSync("src/components/admin/admin-dashboard-actions.tsx", "utf8");
+    expect(dashboardActions).toContain("export function CollegeAdminQuickActions()");
+  });
+
   it("preserves the complete 11-card College Admin Quick Actions roster", () => {
     expect(COLLEGE_ADMIN_QUICK_ACTIONS.map((item) => item.label)).toEqual([
       "Departments", "Courses", "Programs", "Faculty", "Students",
