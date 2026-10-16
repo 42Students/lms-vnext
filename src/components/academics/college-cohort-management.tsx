@@ -105,7 +105,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
-          <select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
+          <select disabled={endDateLocked} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">Not specified</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
@@ -137,8 +137,8 @@ export function CollegeCohortRowActions({ row, periods }: {
     expectedEndPeriodId: row.expectedEndPeriodId,
   };
   const draft = { name, code, expectedEndPeriodId: expectedEndPeriodId || null };
-  const blocked = row.status !== "PLANNED" || row.activeSections > 0 ||
-    row.activeEnrolledLearners > 0;
+  const blocked = row.status === "ARCHIVED";
+  const endDateLocked = row.activeSections > 0 || row.activeEnrolledLearners > 0;
 
   function graduate() {
     if (!window.confirm(`Mark "${row.name}" graduated? This completes the batch after its final registered semester.`)) return;
@@ -192,7 +192,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       setNotice(parsed.error.issues[0]?.message ?? "Invalid batch changes.");
       return;
     }
-    if (!window.confirm("Save batch changes? The server will reject edits when dependent records exist.")) return;
+    if (!window.confirm("Save batch changes? Academic identity and existing enrollment links are preserved.")) return;
     startTransition(async () => {
       try {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
@@ -224,7 +224,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     </button>
     </div>
     {blocked ? <p className="mt-1 text-xs text-muted-foreground">
-      {row.status !== "PLANNED" ? "Only planned batches can be edited." : "Batch has active dependents."}
+      "Archived batches cannot be edited."
     </p> : null}
     {editing ? <div role="dialog" aria-modal="true" aria-label={"Edit batch " + row.name}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -248,6 +248,9 @@ export function CollegeCohortRowActions({ row, periods }: {
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </select>
         </label>
+        {endDateLocked && <p className="text-xs text-muted-foreground">
+          End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
+        </p>}
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
         <div className="flex flex-wrap justify-end gap-3">
           <button disabled={pending} type="button" onClick={close}
