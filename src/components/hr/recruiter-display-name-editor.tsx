@@ -1,23 +1,27 @@
 "use client";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {splitHrRecruiterName,hrRecruiterNameFieldsSchema,joinHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
  initialName:string|null;updatedAt:string;
 }) {
  const router=useRouter();
- const [name,setName]=useState(initialName??"");
+ const [firstName,setFirstName]=useState(()=>splitHrRecruiterName(initialName).firstName);
+ const [lastName,setLastName]=useState(()=>splitHrRecruiterName(initialName).lastName);
  const [version,setVersion]=useState(updatedAt);
  const [saving,setSaving]=useState(false);
  const [message,setMessage]=useState("");
  async function save(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(saving)return;
+  const valid=hrRecruiterNameFieldsSchema.safeParse({firstName,lastName});
+  if(!valid.success){setMessage(valid.error.issues[0]?.message??"Check your name.");return;}
   setSaving(true);setMessage("");
   try{
    const res=await fetch("/api/placements/recruiter/profile/name",{
     method:"PATCH",credentials:"same-origin",
     headers:{"content-type":"application/json"},
-    body:JSON.stringify({displayName:name,expectedUpdatedAt:version}),
+    body:JSON.stringify({displayName:joinHrRecruiterName(firstName,lastName),expectedUpdatedAt:version}),
    });
    const body=await res.json().catch(()=>null) as {
     profile?:{displayName:string|null;updatedAt:string};
@@ -26,20 +30,23 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
     setMessage(res.status===409?"Your name changed. Refresh to retry.":"Name could not be saved.");
     return;
    }
-   setName(body.profile.displayName??"");setVersion(body.profile.updatedAt);
+   const parts=splitHrRecruiterName(body.profile.displayName);
+   setFirstName(parts.firstName);setLastName(parts.lastName);setVersion(body.profile.updatedAt);
    setMessage("Display name saved.");router.refresh();
   }catch{setMessage("Network error while saving name.");}
   finally{setSaving(false);}
  }
  return <div>
   <form onSubmit={event=>void save(event)} className="grid gap-2">
-   <label htmlFor="hr-display-name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-    Display name
-   </label>
-   <input id="hr-display-name" value={name} maxLength={160}
-    onChange={event=>setName(event.target.value)}
-    className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
-   <button type="submit" disabled={saving||name.trim().length<2}
+   <label htmlFor="hr-first-name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">First name</label>
+   <input id="hr-first-name" value={firstName} maxLength={100} required
+    onChange={event=>setFirstName(event.target.value)}
+    className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+   <label htmlFor="hr-last-name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Last name</label>
+   <input id="hr-last-name" value={lastName} maxLength={100}
+    onChange={event=>setLastName(event.target.value)}
+    className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+   <button type="submit" disabled={saving||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
     {saving?"Saving…":"Save name"}
    </button>
