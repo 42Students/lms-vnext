@@ -7,10 +7,10 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
-  terms: readonly { id: string; name: string; termNumber: number; programName: string; isActive: boolean }[];
+  terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; isActive: boolean }[];
   courses: readonly { id: string; name: string; code: string }[];
   mapped: readonly {
-    id: string; termName: string; termNumber: number; programName: string;
+    id: string; termId: string; courseId: string; termName: string; termNumber: number; programName: string;
     courseName: string; courseCode: string; type: string; credits: number | null; displayOrder: number;
   }[];
 };
@@ -18,10 +18,9 @@ type MappingRead = {
 export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const [programId, setProgramId] = useState("");
   const [termId, setTermId] = useState("");
-  const [courseId, setCourseId] = useState("");
-  const [kind, setKind] = useState<"CORE" | "ELECTIVE">("CORE");
-  const [credits, setCredits] = useState("");
+  const [draftByTerm, setDraftByTerm] = useState<Record<string, string[]>>({});
   const [confirm, setConfirm] = useState<{ type: "ADD"; body: unknown } | { type: "REMOVE"; id: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -45,11 +44,13 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         }
         const removedCourse = confirm.type === "REMOVE"
           ? data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course" : null;
+        const addedCount = confirm.type === "ADD"
+          ? ((confirm.body as { mappings?: unknown[] }).mappings?.length ?? 1) : 0;
         setNotice(removedCourse === null
-          ? TERM_MAPPING_COPY.addedMessage(1) : TERM_MAPPING_COPY.removedMessage(removedCourse));
+          ? TERM_MAPPING_COPY.addedMessage(addedCount) : TERM_MAPPING_COPY.removedMessage(removedCourse));
         setConfirm(null);
         setError(null);
-        setCredits("");
+        if (confirm.type === "ADD") setDraftByTerm(current => ({ ...current, [termId]: [] }));
         router.refresh();
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Unable to change mapping");
@@ -57,21 +58,24 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     });
   }
 
+  const termChoices = data.terms.filter(term => term.isActive && term.programId === programId);
+  const selectedIds = draftByTerm[termId] ?? [];
+  const mappedIds = new Set(data.mapped.filter(item => item.termId === termId).map(item => item.courseId));
+  const availableCourses = data.courses.filter(course => !mappedIds.has(course.id));
+  const currentMappings = data.mapped.filter(item => item.termId === termId);
+
   function prepare(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const input = collegeTermCourseAddSchema.safeParse({
-      programTermId: termId, courseId, type: kind,
-      credits: credits === "" ? null : Number(credits),
-    });
-    if (!input.success) {
-      setError(input.error.issues[0]?.message ?? "Check mapping details");
+    const inputs = selectedIds.map(courseId => collegeTermCourseAddSchema.safeParse({
+      programTermId: termId, courseId, type: "CORE", credits: 3,
+    }));
+    if (!inputs.length || inputs.some(item => !item.success)) {
+      setError("Select one or more eligible courses for the semester.");
       return;
     }
-    setError(null);
-    setNotice(null);
-    setConfirm({ type: "ADD", body: input.data });
+    setError(null); setNotice(null);
+    setConfirm({ type: "ADD", body: { mappings: inputs.map(item => item.data) } });
   }
-
 
   function updateMapping(id: string, creditsValue: string, position: number) {
     const parsed = collegeTermCourseUpdateSchema.safeParse({
@@ -110,37 +114,45 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
     <p className="text-sm text-body">These are actual numbered program terms, separate from offering-to-period deliveries below.</p>
-    <form onSubmit={prepare} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <form onSubmit={prepare} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <label className="grid gap-1 text-sm font-semibold text-body">Program
+        <select required value={programId} onChange={event => {
+          if (selectedIds.length && !window.confirm("Switch program? Unsaved course choices are retained for this semester.")) return;
+          setProgramId(event.target.value); setTermId("");
+        }} className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
+          <option value="">Choose program</option>
+          {Array.from(new Map(data.terms.map(t => [t.programId, t.programName])).entries()).map(
+            ([id, name]) => <option key={id} value={id}>{name}</option>)}
+        </select>
+      </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Semester
-        <select required value={termId} onChange={event => setTermId(event.target.value)}
-          className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
+        <select required value={termId} onChange={event => {
+          if (selectedIds.length && !window.confirm("Switch semester? Unsaved course choices are retained.")) return;
+          setTermId(event.target.value);
+        }} className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
           <option value="">Choose semester</option>
-          {data.terms.filter(t => t.isActive).map(t => <option key={t.id} value={t.id}>
-            {t.programName} · {t.name} ({t.termNumber})
-          </option>)}
+          {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
         </select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Course
-        <select required value={courseId} onChange={event => setCourseId(event.target.value)}
-          className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
-          <option value="">Choose course</option>
-          {data.courses.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
+      <label className="grid gap-1 text-sm font-semibold text-body">Courses to Add
+        <select multiple size={8} value={selectedIds}
+          disabled={!termId} onChange={event => setDraftByTerm(current => ({
+            ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
+          }))} className="min-h-40 rounded-md border border-border bg-surface px-2 text-foreground">
+          {availableCourses.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </select>
+        <span className="text-xs font-normal text-muted-foreground">
+          Choose multiple courses; already-mapped courses are excluded. Selection is retained per semester.
+        </span>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">{TERM_MAPPING_COPY.courseTypeLabel}
-        <select value={kind} onChange={event => setKind(event.target.value as "CORE" | "ELECTIVE")}
-          className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
-          <option value="CORE">{TERM_MAPPING_COPY.core}</option><option value="ELECTIVE">{TERM_MAPPING_COPY.elective}</option>
-        </select>
-      </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Credits (optional)
-        <input type="number" min={0} max={30} step={1} value={credits}
-          onChange={event => setCredits(event.target.value)}
-          className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground" />
-      </label>
-      <div className="flex items-end"><Button type="submit" disabled={pending || !termId || !courseId}>{TERM_MAPPING_COPY.addButton}</Button></div>
+      <div className="flex items-end">
+        <Button type="submit" disabled={pending || !termId || !selectedIds.length}>
+          {TERM_MAPPING_COPY.addButton}
+        </Button>
+      </div>
     </form>
-    {data.mapped.length === 0 ? <p className="text-sm text-body">No curriculum mappings have been saved.</p> :
+    {!termId ? <p className="text-sm text-body">Select a program and semester to view mapped courses.</p> :
+    currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
       <div className="overflow-x-auto"><table className="w-full min-w-[40rem] text-left text-sm">
         <thead><tr>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.semester}</th>
@@ -150,7 +162,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.credits}</th>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.actions}</th>
         </tr></thead>
-        <tbody>{data.mapped.map(row => <tr key={row.id} className="border-t border-border">
+        <tbody>{currentMappings.map(row => <tr key={row.id} className="border-t border-border">
           <td className="px-2 py-2">{row.programName} · {row.termName} ({row.termNumber})</td>
           <td className="px-2 py-2">{row.courseName}</td>
           <td className="px-2 py-2">{row.courseCode}</td>
