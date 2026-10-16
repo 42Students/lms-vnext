@@ -20,7 +20,7 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
    "Content-Disposition":'attachment; filename="tpo-batch-decision-history.csv"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
-   "X-Export-Scope":"latest-100-cohort-events",
+   "X-Export-Scope":"latest-100-batch-class-learner-events",
    "Vary":"Cookie"
   }});
  }catch(error){
