@@ -59,6 +59,14 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
 
   return (
     <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
+        <span className="rounded-full border border-border bg-surface px-3 py-2 font-semibold">
+          {scopeCount} Teaching assignment(s)
+        </span>
+        <span className="rounded-full border border-border bg-surface px-3 py-2 font-semibold">
+          {new Set(rows.map(row=>row.course.sectionName)).size} Section(s) on this page
+        </span>
+      </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
         className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <div className="grid gap-3 md:grid-cols-3">
