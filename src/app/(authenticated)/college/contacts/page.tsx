@@ -28,7 +28,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="College Admin · People" title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
-   actions={<Link href="/college/people" className="rounded-md border px-3 py-2 text-sm font-semibold">Manage memberships</Link>}/>
+   actions={<Link href="/college/people/manage" className="rounded-md border px-3 py-2 text-sm font-semibold">Manage memberships</Link>}/>
   <nav aria-label="Contacts categories" className="flex flex-wrap gap-2">
    <Link href={collegeContactsTabHref(filter,"ALL")} aria-current={filter.tab==="ALL"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">All contacts</Link>
