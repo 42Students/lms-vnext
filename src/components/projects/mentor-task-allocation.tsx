@@ -4,7 +4,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
- updatedAt:Date;status:string;priority:string};
+ updatedAt:Date;status:string;priority:string;estimatePoints:number|null};
 type Member={membershipId:string;displayName:string|null;role:string};
 type Sprint={id:string;title:string;releaseId:string};
 type Release={id:string;title:string};
@@ -80,6 +80,27 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  <section className="overflow-x-auto rounded-xl border border-border p-3">
+    <h2 className="mb-2 text-sm font-semibold">Workload by learner</h2>
+    <table className="min-w-full text-left text-xs">
+      <thead><tr className="border-b border-border text-body">
+        <th className="p-2">Learner</th><th className="p-2">Tasks</th>
+        <th className="p-2">Done</th><th className="p-2">Blocked</th>
+        <th className="p-2">Points</th><th className="p-2">Unsized</th>
+      </tr></thead>
+      <tbody>{groups.map(group=>{
+        const assigned=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
+        return <tr key={group.membershipId??"unassigned"} className="border-b border-border">
+          <td className="p-2 font-semibold">{group.displayName}</td>
+          <td className="p-2">{assigned.length}</td>
+          <td className="p-2">{assigned.filter(task=>task.status==="DONE").length}</td>
+          <td className="p-2">{assigned.filter(task=>task.status==="BLOCKED").length}</td>
+          <td className="p-2">{assigned.reduce((sum,task)=>sum+(task.estimatePoints??0),0)}</td>
+          <td className="p-2">{assigned.filter(task=>task.estimatePoints===null).length}</td>
+        </tr>;
+      })}</tbody>
+    </table>
+  </section>
   <div className="overflow-x-auto pb-3"><div className="flex min-w-max gap-3">
    {groups.map(group=>{
     const cards=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
