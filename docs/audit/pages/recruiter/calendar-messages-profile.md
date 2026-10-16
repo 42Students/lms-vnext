@@ -250,3 +250,7 @@ Recruiter Messages now shows the legacy heading/unread summary, conversation cou
 ## REC-calendar-messages-profile-03 round times source — 2026-10-17
 
 The recruiter Calendar now selects existing `placement_job_rounds.duration_minutes` and shows known positive durations as start-to-end ranges in agenda/event cards and compact week/month entries. Rounds without a persisted duration retain start-only display rather than inventing an end time. Source unit tests authored; browser and real PostgreSQL verification remain open.
+
+## REC-calendar-messages-profile-05 source parity — 2026-10-17
+
+Recruiter calendar week-range display now uses `D MMM to D MMM YYYY` and the empty-state title/description match the legacy strings; previous/next use accessible arrow controls with existing Previous week/Next week labels. The legacy header description was already present. Unit tests added; visual and DB checks have not run.

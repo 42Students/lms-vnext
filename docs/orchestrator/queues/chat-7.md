@@ -21,7 +21,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 1. WP-chat-7-01-profile-misc-home-drives-s1 | IN-PROGRESS | 16 gaps: S1 6, S2 10; live recruiter requests and learner profile fixes pending test runs; private-evidence uploads, selection-list migration and applicant data-sharing still unresolved
 2. WP-chat-7-02-home-drives-home-courses-s2 | IN-PROGRESS | 20 gaps: S2 15, S3 5
 3. WP-chat-7-03-calendar-messages-prof-profile-misc-s3 | IN-PROGRESS | 16 gaps: S3 16
-4. WP-chat-7-04-home-drives-s3 | TODO | 19 gaps: S3 19
+4. WP-chat-7-04-home-drives-s3 | IN-PROGRESS | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
 ## Builder chat-7 checkpoint (after latest main merge, 2026-10-16)
@@ -41,3 +41,13 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - REC-calendar-messages-profile-29: active recruiter grant expiry is projected to Profile; exact legacy copy unit-tested, runtime verification outstanding.
 
 - LEARNER-home-courses-R01: per-delivery Promise.allSettled isolation, unavailable cards and exact warning text; unit tests authored, full browser/DB validation pending.
+
+## Chat-7 20-commit round checkpoint (2026-10-17)
+
+- Source implementations in this round (tests authored but **not executed**): REC-home-drives-R06; REC-home-drives-29; REC-calendar-messages-profile-03, -05, -09, -10, -13, -14, -15, -29, -34, -35, -36, -R02; LEARNER-home-courses-R01. Several additional commits corrected route structure, request-scoped draft keys, type correctness and query authorization. These remain acceptance-unverified pending build, real Postgres integration and browser testing.
+- WP01 remains IN-PROGRESS: private scanned evidence/profile uploads (LEARNER-profile-misc-01/-03), selection table registration (REC-home-drives-51), data sharing (REC-home-drives-38), recruiter request autoapproval (REC-home-drives-21) and integration checks for REC-home-drives-12/22 remain.
+- WP02 remains IN-PROGRESS; healthy learner course cards now survive failures in other deliveries. More S2 gaps remain.
+- WP03 remains IN-PROGRESS; calendar and messaging parity source improved, but S3 browser and DB acceptance not confirmed.
+- WP04 remains IN-PROGRESS for recruiter unsent draft autosave; other home/drives S3 work remains.
+- WP05 remains IN-PROGRESS for tab links and profile access expiry; S3/S4 work remains.
+- Do not mark any WP DONE solely from unrun unit tests. No shared shell or protected paths were edited. No migrations were registered. Owner-disclosure/security decisions remain SKIP/BLOCKED as directed.

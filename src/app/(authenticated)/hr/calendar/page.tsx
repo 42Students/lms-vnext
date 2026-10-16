@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {hrRecruiterLegacyWeekRange,HR_RECRUITER_CALENDAR_EMPTY_TITLE,HR_RECRUITER_CALENDAR_EMPTY_HELP} from "@/modules/placements/hr-calendar-legacy-copy-model";
 import { redirect } from "next/navigation";
 
 import {
@@ -287,13 +288,12 @@ export default async function HrCalendarPage({
 
   const heading =
     view === "week"
-      ? `${dateLabel(window.from)} – ${dateLabel(window.to)}`
+      ? hrRecruiterLegacyWeekRange(window.from,window.to)
       : monthLabel(anchor);
 
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Recruiter"
         title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={
@@ -395,8 +395,7 @@ export default async function HrCalendarPage({
                   Calendar controls
                 </h2>
                 <p className="mt-1 text-sm text-body">
-                  {dateLabel(window.from)} –{" "}
-                  {dateLabel(window.to)} · IST
+                  {hrRecruiterLegacyWeekRange(window.from,window.to)} · IST
                 </p>
               </div>
 
@@ -452,7 +451,7 @@ export default async function HrCalendarPage({
                 }
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
-                ← Previous
+                ←
               </Link>
 
               <Link
@@ -471,7 +470,7 @@ export default async function HrCalendarPage({
                 }
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
               >
-                Next →
+                →
               </Link>
 
               <span className="ml-2 text-sm font-semibold text-foreground">
@@ -538,11 +537,11 @@ export default async function HrCalendarPage({
               className="rounded-xl border border-border bg-surface p-8 text-center"
             >
               <h2 className="text-lg font-semibold text-foreground">
-                Nothing scheduled in this period
+                {HR_RECRUITER_CALENDAR_EMPTY_TITLE}
               </h2>
 
               <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-                No matching authorized events are recorded in this period for the selected category. Try another week, month, or event type.
+                {HR_RECRUITER_CALENDAR_EMPTY_HELP}
               </p>
             </section>
           ) : null}
