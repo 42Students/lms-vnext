@@ -66,7 +66,7 @@ export async function updateLearnerProjectTaskProgress(
       )) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
       const [updated] = await tx.update(projectTasks).set({
         status: input.status, updatedAt: now,
-        ...(input.status === "BLOCKED" ? { blockerReason: input.blockerNote!.trim() } : {}),
+        ...(input.status === "BLOCKED" ? { blockerReason: input.blockerNote!.trim() } : { blockerReason: null }),
       }).where(and(eq(projectTasks.id, task.id), eq(projectTasks.projectId, scope.project.id))).returning();
       if (!updated) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
       await recordActivityEventInTransaction(tx, context, {

@@ -8,6 +8,7 @@ describe("LEARNER-projects-25 own task status, blocker and order contracts", () 
     expect(learnerTaskTransitionAllowed("TODO", "IN_PROGRESS")).toBe(true);
     expect(learnerTaskTransitionAllowed("IN_PROGRESS", "BLOCKED", "Need review")).toBe(true);
     expect(learnerTaskTransitionAllowed("TODO", "BLOCKED", "")).toBe(false);
+    expect(learnerTaskTransitionAllowed("BLOCKED", "IN_PROGRESS")).toBe(true);
     expect(learnerTaskTransitionAllowed("DONE", "TODO")).toBe(false);
     expect(learnerTaskTransitionAllowed("IN_REVIEW", "TODO")).toBe(false);
     expect(learnerTaskTransitionAllowed("TODO", "DONE")).toBe(false);

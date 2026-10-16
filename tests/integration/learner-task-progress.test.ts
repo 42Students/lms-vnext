@@ -112,10 +112,16 @@ describe.skipIf(!enabled)("LEARNER-projects-25 authorized persisted task progres
       expectedUpdatedAt: started.updatedAt.toISOString(),
     });
     expect(blocked.blockerReason).toBe("Dependency unavailable");
+    const resolved = await updateLearnerProjectTaskProgress(learner, {
+      projectId: project.id, taskId: first.id,
+    }, {
+      action: "STATUS", status: "IN_PROGRESS", expectedUpdatedAt: blocked.updatedAt.toISOString(),
+    });
+    expect(resolved.blockerReason).toBeNull();
     const moved = await updateLearnerProjectTaskProgress(learner, {
       projectId: project.id, taskId: first.id,
     }, {
-      action: "MOVE_DOWN", expectedUpdatedAt: blocked.updatedAt.toISOString(),
+      action: "MOVE_DOWN", expectedUpdatedAt: resolved.updatedAt.toISOString(),
     });
     expect(moved.sequence).toBe(1);
     const after = await getProjectInstanceWorkspace(mentor, project.id);
