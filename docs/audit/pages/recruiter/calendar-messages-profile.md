@@ -234,3 +234,7 @@ Company & Team header now uses the legacy `Recruiter` eyebrow, `Your profile` ac
 ## REC-calendar-messages-profile-34 source implementation — 2026-10-17
 
 Team rows now show a name/email avatar initial, a recorded drive/request count for each active member scoped to the authenticated employer-college relationship, and optional designation without the invented `Recruiter` fallback. Intro and `Only you so far` copy match legacy. Approved requests referencing a recorded job are deduplicated. The query does not disclose underlying requests or job details to team viewers. Integration/browser checks remain unrun; legacy's historical owner attribution may differ for migrated TPO-created jobs.
+
+## REC-calendar-messages-profile-35 report parity source — 2026-10-17
+
+Recruiter Reports now presents the legacy five columns (Applied, Offered, Accepted, Declined, Joined), with drive link/status combined and the legacy no-reports empty wording. Offered projects issued+accepted+declined rather than only outstanding offers; missing values show Unavailable. The former Withdrawn/Submitted rows remain available in aggregate analytics but no longer distort the legacy drive table. Unit tests authored; full browser/DB verification not yet executed.

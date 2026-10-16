@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {recruiterCompanyReportLegacyFields,reportLegacyValue} from "@/modules/placements/recruiter-company-report-legacy-model";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -67,8 +68,8 @@ export default async function RecruiterCompanyReportsPage({
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="Employer Recruiter"
-          title="Company Reports"
+          eyebrow="Recruiter"
+          title="Reports"
           description="Read-only, college-scoped employer hiring metrics."
         />
 
@@ -97,8 +98,8 @@ export default async function RecruiterCompanyReportsPage({
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="Employer Recruiter"
-          title="Company Reports"
+          eyebrow="Recruiter"
+          title="Reports"
           description="Choose one college to view your employer's authorized hiring reports. Reports from different college relationships are never combined."
         />
 
@@ -165,8 +166,8 @@ export default async function RecruiterCompanyReportsPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Employer Recruiter"
-        title="Company Reports"
+        eyebrow="Recruiter"
+        title="Reports"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex flex-wrap gap-2">
           <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
@@ -384,124 +385,53 @@ export default async function RecruiterCompanyReportsPage({
 
         {jobs.length === 0 ? (
           <EmptyState
-            title="No matching drives"
-            description="There are no recruiter-visible published or closed hiring drives matching these filters for this company and college."
+            title="Reports appear once you have a drive with applicants."
+            description="Select another status or return after hiring activity is recorded for this college."
           />
         ) : (
           <>
-          <div className="grid gap-3 md:hidden">
-            {jobs.map(job=><article key={job.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
-              <Link href={"/hr/placements/jobs/"+job.id} className="break-words font-semibold text-primary-text">{job.title}</Link>
-              <p className="mt-1 text-xs text-muted-foreground">{job.status}</p>
-              <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                {[
-                  ["Applied",job.applications],["Offered (issued)",job.outstandingOffers],
-                  ["Accepted",job.acceptedOffers],["Declined",job.declinedOffers],
-                  ["Joined",job.joinedOffers],["Withdrawn",job.withdrawnApplications],
-                ].map(([label,value])=><div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
-                  <dd className="font-semibold tabular-nums text-foreground">{value}</dd></div>)}
-              </dl>
-            </article>)}
-          </div>
-          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
-            <table className="w-full min-w-[72rem] text-left text-sm">
-              <thead className="bg-muted text-muted-foreground">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    Drive
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Status
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Published
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Applications
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Submitted
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Withdrawn
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Outstanding offers
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">
-                    Accepted offers
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right">Declined</th>
-                  <th scope="col" className="px-4 py-3 text-right">Joined</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {jobs.map((job) => (
-                  <tr
-                    key={job.id}
-                    className="border-t border-border align-top"
-                  >
-                    <td className="px-4 py-4">
-                      <Link
-                        href={`/hr/placements/jobs/${encodeURIComponent(
-                          job.id,
-                        )}`}
-                        className="font-semibold text-primary-text hover:underline"
-                      >
-                        {job.title}
-                      </Link>
-
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {job.employmentType.replaceAll(
-                          "_",
-                          " ",
-                        )}
-                      </p>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusBadge
-                        tone={
-                          job.status === "PUBLISHED"
-                            ? "success"
-                            : "neutral"
-                        }
-                      >
-                        {job.status}
-                      </StatusBadge>
-                    </td>
-
-                    <td className="px-4 py-4 text-body">
-                      {formatDate(job.publishedAt)}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.applications}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.submittedApplications}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.withdrawnApplications}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.outstandingOffers}
-                    </td>
-
-                    <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.acceptedOffers}
-                    </td>
-                    <td className="px-4 py-4 text-right tabular-nums text-body">{job.declinedOffers}</td>
-                    <td className="px-4 py-4 text-right tabular-nums text-body">{job.joinedOffers}</td>
+            <div className="grid gap-3 md:hidden">
+              {jobs.map(job=><article key={job.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
+                <Link href={"/hr/placements/jobs/"+encodeURIComponent(job.id)}
+                  className="break-words font-semibold text-primary-text">{job.title}</Link>
+                <p className="mt-2"><StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge></p>
+                <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                  {recruiterCompanyReportLegacyFields(job).map(([label,value])=>(
+                    <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
+                      <dd className="font-semibold tabular-nums text-foreground">{reportLegacyValue(value)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>)}
+            </div>
+            <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
+              <table className="w-full min-w-[42rem] text-left text-sm">
+                <thead className="bg-muted text-muted-foreground">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">Drive</th>
+                    {(["Applied","Offered","Accepted","Declined","Joined"] as const).map(label=>(
+                      <th key={label} scope="col" className="px-4 py-3 text-right">{label}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {jobs.map(job=>(
+                    <tr key={job.id} className="border-t border-border align-top">
+                      <td className="px-4 py-4">
+                        <Link href={"/hr/placements/jobs/"+encodeURIComponent(job.id)}
+                          className="font-semibold text-primary-text hover:underline">{job.title}</Link>
+                        <p className="mt-2"><StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge></p>
+                      </td>
+                      {recruiterCompanyReportLegacyFields(job).map(([label,value])=>(
+                        <td key={label} className="px-4 py-4 text-right tabular-nums text-body">
+                          {reportLegacyValue(value)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
 
