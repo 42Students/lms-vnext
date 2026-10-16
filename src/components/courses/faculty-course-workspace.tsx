@@ -11,6 +11,7 @@ import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
+import {FacultyQuizLearnerPreview} from "./faculty-quiz-learner-preview";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
@@ -341,6 +342,7 @@ function QuizItem({
       >
         Quiz Report
       </Link>
+      <FacultyQuizLearnerPreview quizId={item.id} deliveryId={deliveryId}/>
       <FacultyQuizReview
         quizId={item.id}
         deliveryId={deliveryId}
