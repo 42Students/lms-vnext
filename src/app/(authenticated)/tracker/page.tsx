@@ -1,6 +1,25 @@
 import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
+import { TrackerReportForm } from "@/components/tracker/tracker-report-form";
+import { PageHeader } from "@/components/ui/page-header";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 
-/** The tracker landing is the issues list; its own page enforces the Super Admin and runtime gates. */
-export default function TrackerIndexPage() {
-  redirect("/tracker/issues");
+/** SA-placements-projects-100: authenticated reporter intake until OD-27 is resolved. */
+export default async function TrackerReportPage() {
+  const context = await getCurrentRequestContext();
+  if (!isSuperAdmin(context)) redirect("/dashboard");
+  const ready = trackerAdminRuntimeEnabled();
+  return <div className="space-y-6">
+    <PageHeader eyebrow="Report an LMS issue" title="What went wrong?"
+      description="Pick the context, describe the problem, and submit." />
+    <TrackerAdminNav />
+    {!ready ? <div role="status" className="rounded-xl border border-border bg-surface p-5">
+      <p className="font-semibold">Tracker database is not enabled.</p>
+      <p className="mt-2 text-sm text-body">
+        Migration 0076 must be verified and DB10_TRACKER_READY=DB10_VERIFIED set before reports can be saved.
+      </p>
+    </div> : <TrackerReportForm />}
+  </div>;
 }
