@@ -168,6 +168,10 @@ export async function PlacementDriveWorkspace({
       meetingUrl: round.meetingUrl,
       resultsDueAt:
         round.resultsDueAt?.toISOString() ?? null,
+      platform: round.platform,
+      testUrl: round.testUrl,
+      durationMinutes: round.durationMinutes,
+      whatToBring: round.whatToBring,
       participants: round.participants.map(
         (participant) => ({
           applicationId:
