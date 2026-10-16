@@ -12,8 +12,6 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const header=<PageHeader eyebrow="Super Admin" title="Inbound mail" description="Private incoming messages. No automatic replies or outbound sends are performed."/>;
- if(context.adminScope?.organizationId||context.adminScope?.collegeId) return <div className="space-y-6">{header}
-  <div role="status" className="rounded-xl border border-border bg-surface p-5">Switch to global Super Admin scope to inspect inbound messages. Incoming mail is not mapped to a verified college yet.</div></div>;
  const params=await searchParams;
  const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status),q:one(params.q),recipient:params.recipient,page:one(params.page)});
  if(!parsed.success)return <div className="space-y-6">{header}
