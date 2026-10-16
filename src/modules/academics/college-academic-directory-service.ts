@@ -4,6 +4,8 @@ import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, s
 import { exists, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
+import { alias } from "drizzle-orm/pg-core";
+const expectedBatchEndPeriod = alias(academicPeriods, "expected_batch_end_period");
 import {
   academicPeriods,
   cohortProgressionState,
@@ -146,6 +148,7 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     status: aliasedColumn(cohorts.status, "batch_status"),
     updatedAt: aliasedColumn(cohorts.updatedAt, "batch_updated_at"),
     expectedEndPeriodId: aliasedColumn(cohorts.expectedEndPeriodId, "batch_expected_end_period_id"),
+    expectedEndDate: aliasedColumn(expectedBatchEndPeriod.endDate, "batch_expected_end_date"),
     programId: aliasedColumn(programs.id, "batch_program_id"),
     programName: aliasedColumn(programs.name, "batch_program_name"),
     programCode: aliasedColumn(programs.code, "batch_program_code"),
@@ -167,6 +170,7 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
       eq(academicPeriods.collegeId, collegeId),
     ))
     .leftJoin(cohortProgressionState, eq(cohortProgressionState.cohortId, cohorts.id))
+    .leftJoin(expectedBatchEndPeriod, and(eq(expectedBatchEndPeriod.id, cohorts.expectedEndPeriodId), eq(expectedBatchEndPeriod.collegeId, collegeId)))
     .where(and(
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.programStatus && query.programStatus !== "ALL" ? eq(programs.status,query.programStatus) : undefined,
