@@ -1,0 +1,28 @@
+export const LEARNER_EDUCATION_TYPES=["10th","12th","Diploma","UG","PG"] as const;
+export const LEARNER_QUALIFYING_EXAMS=[
+ "SSC","CBSE 10th","ICSE","Intermediate","CBSE 12th","Diploma",
+ "B.Tech","B.E.","B.Sc.","B.Com.","B.A.","M.Tech","M.E.","MBA","M.Sc.",
+] as const;
+/** Keep historical free-text institutions/exams, but validate numeric grade range
+ * and impossible year order both in UI and server Zod writes. */
+export function learnerEducationValidationProblem(input:{
+ educationType?:string;gradingType?:string;gradeObtained?:string;
+ maxGrade?:string;startYear?:string;endYear?:string;
+}):{field:string;message:string}|null{
+ const start=input.startYear?.trim(),end=input.endYear?.trim();
+ if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
+  return {field:"endYear",message:"End year cannot be before start year"};
+ const grade=input.gradeObtained?.trim()??"";
+ if(!grade)return null;
+ if(input.gradingType!=="CGPA"&&input.gradingType!=="Percentage")return null;
+ const num=Number(grade);
+ const max=input.gradingType==="CGPA"?10:100;
+ if(!Number.isFinite(num)||num<0||num>max)
+  return {field:"gradeObtained",message:"Enter a "+input.gradingType+" between 0 and "+max};
+ if(input.maxGrade?.trim()){
+  const top=Number(input.maxGrade);
+  if(!Number.isFinite(top)||top<=0||top>max||num>top)
+   return {field:"maxGrade",message:"Maximum grade must include the obtained grade and be at most "+max};
+ }
+ return null;
+}
