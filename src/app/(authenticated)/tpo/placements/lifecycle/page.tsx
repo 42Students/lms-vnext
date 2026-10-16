@@ -161,7 +161,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
        Counts cover the selected season and search across every page.</p>
       {data.rows.length === 0 ?
         <div className="space-y-3">
-          <EmptyState title="No matching drives" description="No non-archived jobs match the selected season and lifecycle." />
+          <EmptyState
+            title={data.view==="LIVE"?"No live drives yet":
+             data.view==="DRAFT"?"No draft drives yet":
+             data.view==="CLOSED"?"No closed drives match these filters":"No matching drives"}
+            description={data.view==="LIVE"?"Published opportunities appear here once ready.":
+             data.view==="DRAFT"?"Create a drive to start planning the next hiring opportunity.":
+             data.view==="CLOSED"?"Completed and cancelled opportunities appear here.":
+              "No non-archived jobs match the selected season and filters."} />
           <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Create drive</Link>
         </div> :
         <section className="grid gap-3" aria-label="Drives">
