@@ -74,7 +74,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
                 <Link href={`/admin/classes?cohortCode=${encodeURIComponent(row.code)}`} className="mt-1 block text-xs font-semibold text-primary-text">Manage students →</Link></td>
               <td className="p-2">{row.programName}</td>
               <td className="p-2">{row.startDate ?? "—"}</td>
-              <td className="p-2">{row.expectedEndDate ?? "—"}</td>
+              <td className="p-2">{row.endDate ?? "—"}</td>
               <td className="p-2">{row.currentAcademicYearStart ? `${row.currentAcademicYearStart}–${row.currentAcademicYearStart+1}` : "Not recorded"}</td>
               <td className="p-2">{row.currentTermNumber ?? "—"}</td>
               <td className="p-2">{row.activeEnrolledLearners}</td>
