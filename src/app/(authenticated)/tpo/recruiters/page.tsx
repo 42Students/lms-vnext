@@ -2,12 +2,15 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { RecruiterLeadsWorkspace } from "@/components/tpo/recruiter-leads-workspace";
+import CampaignHistory from "./campaigns/page";
 
 type PageProps = {
   searchParams: Promise<{
     view?: string | string[];
     add?: string | string[];
     company?: string | string[];
+    page?: string | string[];
+    purpose?: string | string[];
   }>;
 };
 
@@ -22,6 +25,11 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
   }
   const query = await searchParams;
   const requested = first(query.view);
+  if (requested === "campaigns") {
+    return <CampaignHistory searchParams={Promise.resolve({
+      page:first(query.page),purpose:first(query.purpose),
+    })} />;
+  }
   const initialView =
     requested === "board" || requested === "companies" ? requested : "table";
   return (
