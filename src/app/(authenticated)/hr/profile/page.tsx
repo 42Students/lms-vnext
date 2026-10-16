@@ -143,6 +143,7 @@ export default async function HrProfilePage() {
                   >
                     Granted on (IST)
                   </th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-foreground">Access validity</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,6 +172,11 @@ export default async function HrProfilePage() {
                       <time dateTime={grant.grantedAtIso}>
                         {grant.grantedAtLabel}
                       </time>
+                    </td>
+                    <td className="px-4 py-4 text-body">
+                      {grant.accessUntilIso
+                        ? <time dateTime={grant.accessUntilIso}>{grant.accessUntilLabel}</time>
+                        : grant.accessUntilLabel}
                     </td>
                   </tr>
                 ))}
