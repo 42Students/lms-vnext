@@ -15,6 +15,8 @@ export type ProjectListItem = {
   progressDetail?: string;
   readOnlyLabel?: string | null;
   attention?: readonly string[];
+  actionLine?: string;
+  blockedHref?: string;
   href?: string;
 };
 
@@ -140,6 +142,14 @@ export function ProjectList({
             </div>
           ) : null}
 
+          {item.blockedHref ? (
+            <span className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-warning-text">
+              Blocked · Open blocked work →
+            </span>
+          ) : null}
+          {item.actionLine ? (
+            <p className="mt-3 text-sm font-semibold text-primary-text">{item.actionLine} →</p>
+          ) : null}
           <div className="mt-auto flex items-end justify-between gap-3 pt-5">
             <p className="m-0 text-xs text-muted-foreground">
               Updated{" "}
