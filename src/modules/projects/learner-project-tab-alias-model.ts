@@ -1,6 +1,6 @@
 /** Legacy Project tab links continue to the same authorized Board section. */
 export function canonicalLearnerProjectTab(tab: string | null | undefined): string {
-  return tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab ?? "overview";
+  return tab === "tasks" || tab === "performance" ? "board" : tab === "meetings" ? "team" : tab ?? "overview";
 }
 
 export const LEARNER_PROJECT_DETAIL_TABS = [
