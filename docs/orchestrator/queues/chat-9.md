@@ -20,7 +20,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 1. WP-chat-9-01-tenants-modules-placements-s1 | IN-PROGRESS | 24 gaps: S1 5, S2 19; 2026-10-17 reconcile: SA-tenants-modules-27 and TPO-campaigns-public-32 already implemented on main; TPO-students-03 full-view preview fixed on chat-9; SA-tenants-modules-20 wildcard deployment remains unverified; TPO-drive-workspace-25 Move to test/interview and other full workflow transitions remain partial; S2 backlog not fully verified
 2. WP-chat-9-02-calendar-reports-tenants-modules-s2 | TODO | 18 gaps: S2 18
-3. WP-chat-9-03-home-inbox-team-s2 | IN-PROGRESS | 21 gaps: S2 21; chat-9 completed TPO-home-02, TPO-home-31 and TPO-home-35 / TPO-inbox-team-61; TPO-home-R02 already uses all batches on main; remaining gaps still open, tests authored but not executed
+3. WP-chat-9-03-home-inbox-team-s2 | IN-PROGRESS | 21 gaps: S2 21; chat-9 completed TPO-home-02, TPO-home-31, TPO-home-33, TPO-home-35 / TPO-inbox-team-61 and TPO-inbox-team-62; TPO-home-R02 already uses all batches on main; remaining gaps still open, tests authored but not executed
 4. WP-chat-9-04-settings-audit-requests-verification-s2 | TODO | 24 gaps: S2 24
 5. WP-chat-9-05-tenants-modules-placements-s2 | TODO | 24 gaps: S2 3, S3 21
 6. WP-chat-9-06-calendar-reports-tenants-modules-s3 | TODO | 25 gaps: S3 25
@@ -33,5 +33,5 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - Main already integrated the 20 earlier chat-9 commits before this round. Chat-9 was fast-forwarded to the integrated main tip without overwriting other lanes.
 - Existing S1 implementation: SA-tenants-modules-27 academic scope editor with service and tests; TPO-campaigns-public-32 persisted first-toggle publication with live consented cohort and audit. TPO-students-03 already had the 200-record action window; this round repaired its cross-page confirmation preview.
 - Still partial S1: SA-tenants-modules-20 depends on proving live wildcard/HTTPS without a manual DNS step; TPO-drive-workspace-25 is still missing round-stage transitions and other full parity behavior. Do not mark WP-01 DONE.
-- New commits: TPO-drive-workspace-25 / TPO-students-03 preview repairs; TPO-home-02 exact need-line; TPO-home-35 / TPO-inbox-team-61 audited bell acknowledgement-and-open; TPO-home-31 new quick-create recruiter follow-up modal using already authorized CRM/calendar APIs.
+- New commits: TPO-drive-workspace-25 / TPO-students-03 preview repairs; TPO-home-02 exact need-line; TPO-home-35 / TPO-inbox-team-61 audited bell acknowledgement-and-open; TPO-home-31 new quick-create recruiter follow-up modal using already authorized CRM/calendar APIs. TPO-home-33 / TPO-inbox-team-62 now have a scoped live Messages + bell snapshot API, 30-second refresh and visibility-triggered refresh.
 - Tests for these new commits were added but not run from this GitHub-only builder environment. No full build/typecheck or deployed live acceptance was performed; closure claims should wait for passing CI and necessary live checks.
