@@ -7,8 +7,8 @@ import { publicJoinFormSchema } from "@/modules/placements/public-join/form-mode
 import { joinErrorMessage } from "@/modules/placements/public-join/error-copy";
 
 export function PublicRecruiterJoinForm({
-  token, scope, preview,
-}: { token: string; scope: "COLLEGE" | "COMPANY"; preview: PublicJoinPreview }) {
+  token, scope, preview, blockedReason,
+}: { token: string; scope: "COLLEGE" | "COMPANY"; preview: PublicJoinPreview; blockedReason?:string|null }) {
   const hasRecordedOpen=useRef(false);
   useEffect(()=>{
     if(preview.kind!=="READY"||hasRecordedOpen.current)return;
@@ -86,6 +86,11 @@ export function PublicRecruiterJoinForm({
             <h1 className="text-2xl font-semibold text-foreground">This link is no longer valid</h1>
             <p className="mt-3 text-sm text-body">Ask the placement cell for a new one.</p>
           </>
+        ) : blockedReason ? (
+          <div role="alert" className="space-y-3">
+           <h1 className="text-xl font-semibold">Recruiter verification unavailable</h1>
+           <p className="text-sm text-body">{blockedReason}</p>
+          </div>
         ) : joined ? (
           <>
             <h1 className="text-2xl font-semibold text-foreground">You now have access to {college}</h1>
