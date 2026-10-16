@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { issueTpoRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
+import {deliverTpoRecruiterInviteEmail} from "@/modules/placements/tpo-recruiter-invite-email-delivery";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
@@ -18,12 +19,9 @@ export async function POST(request: Request, { params }: RouteContext) {
 
   try {
     const body = await request.json().catch(() => ({}));
-    if (body.sendEmail === true) {
-      return NextResponse.json(
-        { error: "TPO_RECRUITER_INVITE_DELIVERY_PENDING" },
-        { status: 503 },
-      );
-    }
+    if(body.sendEmail===true &&
+       process.env.TPO_RECRUITER_INVITE_EMAIL_READY!=="VERIFIED")
+      return NextResponse.json({error:"TPO_RECRUITER_INVITE_DELIVERY_PENDING"},{status:503});
     const context = await getCurrentRequestContext();
     const { leadId } = await params;
     const collegeId = typeof body.collegeId === "string" ? body.collegeId : "";
@@ -32,7 +30,17 @@ export async function POST(request: Request, { params }: RouteContext) {
       collegeId,
       leadId,
     );
-    return NextResponse.json({ invite });
+    if(body.sendEmail===true){
+      const emailed=await deliverTpoRecruiterInviteEmail(collegeId,leadId,invite.token);
+      if(!emailed)
+        return NextResponse.json({error:"INVITE_EMAIL_NOT_ACCEPTED",emailed:false},{
+          status:503,headers:{"Cache-Control":"no-store"},
+        });
+      return NextResponse.json({invite:{leadId:invite.leadId,
+       expiresAt:invite.expiresAt,emailed:true}},
+       {headers:{"Cache-Control":"no-store"}});
+    }
+    return NextResponse.json({ invite },{headers:{"Cache-Control":"no-store"}});
   } catch (error) {
     return tpoRecruiterInviteApiErrorResponse(error);
   }
