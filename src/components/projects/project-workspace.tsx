@@ -196,7 +196,7 @@ export function ProjectWorkspace({
   const archived = workspace.project.status === "ARCHIVED";
   const readOnly = archived || readOnlyOverride;
   const tasksBySprint = new Map<
-    string,
+    string | null,
     Workspace["tasks"]
   >();
   for (const task of workspace.tasks) {
@@ -1363,11 +1363,11 @@ export function ProjectWorkspace({
                               label: sprint.title,
                             }),
                           )}
-                          tasks={workspace.tasks.map(
+                          tasks={workspace.tasks.filter(task=>task.sprintId!==null).map(
                             (task) => ({
                               id: task.id,
                               label: task.title,
-                              sprintId: task.sprintId,
+                              sprintId: task.sprintId!,
                             }),
                           )}
                         />
