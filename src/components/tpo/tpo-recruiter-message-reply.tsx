@@ -53,9 +53,10 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
     <textarea className="mt-1 min-h-28 w-full rounded-md border border-border bg-surface p-3 text-foreground"
       maxLength={4000} required aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
-      onKeyDown={e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();if(body.trim()&&!busy)void post("messages");}}}/>
+      onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent.isComposing){
+       e.preventDefault();if(body.trim()&&!busy)void post("messages");}}}/>
    </label>
-   <p className="text-xs text-muted-foreground">Ctrl/Cmd + Enter to send</p>
+   <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy||!body.trim()} onClick={discardDraft}
      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard draft</button>
