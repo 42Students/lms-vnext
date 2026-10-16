@@ -813,7 +813,15 @@ export function RecruiterLeadsWorkspace({
               Contact already exists: <Link className="underline" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
             <label className="block text-sm">Company *<input className={inputStyle + " mt-1"} required maxLength={150}
-              value={form.companyName} onChange={e => field("companyName", e.target.value)} /></label>
+              value={form.companyName} onChange={e => field("companyName", e.target.value)}
+              list="known-engage-companies" placeholder="Company name" />
+              <datalist id="known-engage-companies">
+                {companies.map(company=><option key={company.key} value={company.name}/>)}
+              </datalist>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Choose a company you've worked with, or type a new company name.
+              </span>
+            </label>
             <label className="block text-sm">Designation<input className={inputStyle + " mt-1"} maxLength={100}
               value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
             <label className="block text-sm">Where did you find them?
