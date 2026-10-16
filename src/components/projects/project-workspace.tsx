@@ -309,7 +309,7 @@ export function ProjectWorkspace({
           className="rounded-xl border border-border bg-muted p-4"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
-            {archived ? "Archived workspace · read only" : "Read-only project access"}
+            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace · read only":"Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
             Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled.
