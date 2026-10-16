@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
@@ -40,7 +41,7 @@ function FunnelMetric({
     <p className="mt-1 text-xs text-body">{previous === undefined ? "Season total" : `${conversion(value, previous)} from previous stage`}</p>
   </div>;
 }
-export function PlacementOperationsOverview({ operations, basePath }: { operations: Operations; basePath: string }) {
+export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false }: { operations: Operations; basePath: string; showDriveSearch?: boolean }) {
   return <div className="space-y-6">
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
@@ -86,6 +87,11 @@ export function PlacementOperationsOverview({ operations, basePath }: { operatio
             <Link href={basePath + "/jobs/" + round.jobId} className="text-sm font-semibold text-primary-text hover:text-primary-hover">Open drive →</Link>
           </div>)}</div>}
     </section>
+    {showDriveSearch ? <SuperAdminDriveQuickSearch basePath={basePath}
+      jobs={operations.jobs.map(item=>({
+        id:item.job.id,title:item.job.title,companyName:item.job.company.name,
+        status:item.job.status,applicants:item.metrics.submittedApplications,
+      }))} /> : null}
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4"><h2 className="m-0 text-base font-semibold text-foreground">Job portfolio</h2><p className="mt-1 text-sm text-body">Operational state for every non-archived placement job in this college.</p></div>
       <div className="divide-y divide-border">{operations.jobs.map(item =>
