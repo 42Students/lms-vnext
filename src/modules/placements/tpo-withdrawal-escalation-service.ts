@@ -1,0 +1,88 @@
+import "server-only";
+import {and,asc,eq,gt,lte,inArray} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
+ placementApplications,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
+
+/**
+ * TPO-requests-verification-05: cron-safe, one-time escalation before the
+ * next scheduled round. No read endpoint or user-facing GET performs writes.
+ * activity_events.dedupe_key is a durable per-request idempotency guard.
+ */
+export async function escalatePendingWithdrawalRequests(now:Date=new Date()){
+ const until=new Date(now.getTime()+24*60*60*1000);
+ const db=getDb();
+ const candidates=await db.select({
+  requestId:placementLearnerRequests.id,
+  applicationId:placementApplications.id,
+  student:users.displayName,
+  roundAt:placementJobRounds.scheduledAt,
+  roundName:placementJobRounds.name,
+  jobId:placementJobs.id,jobTitle:placementJobs.title,
+  collegeId:placementJobs.collegeId,organizationId:colleges.organizationId,
+ }).from(placementLearnerRequests)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementLearnerRequests.applicationId))
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(placementJobRounds,eq(placementJobRounds.jobId,placementJobs.id))
+  .where(and(eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+   eq(placementLearnerRequests.status,"PENDING"),eq(placementApplications.status,"SUBMITTED"),
+   eq(placementJobRounds.status,"SCHEDULED"),gt(placementJobRounds.scheduledAt,now),
+   lte(placementJobRounds.scheduledAt,until),eq(collegeMemberships.collegeId,placementJobs.collegeId)))
+  .orderBy(asc(placementJobRounds.scheduledAt)).limit(4000);
+ const earliest=new Map<string,(typeof candidates)[number]>();
+ for(const row of candidates){if(!earliest.has(row.requestId))earliest.set(row.requestId,row);}
+ let escalated=0,alreadyEscalated=0,noRecipients=0;
+ const errors:Array<{requestId:string;reason:string}>=[];
+ const audience=new Map<string,string[]>();
+ for(const candidate of earliest.values()){
+  try{
+   let people=audience.get(candidate.collegeId);
+   if(!people){
+    const rows=await db.select({id:users.id}).from(collegeMemberships)
+     .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+     .where(and(eq(collegeMemberships.collegeId,candidate.collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO"),
+      eq(users.platformStatus,"ACTIVE")));
+    people=[...new Set(rows.map(x=>x.id))];audience.set(candidate.collegeId,people);
+   }
+   if(!people.length){noRecipients++;continue;}
+   const outcome=await db.transaction(async tx=>{
+    const [locked]=await tx.select({id:placementLearnerRequests.id})
+     .from(placementLearnerRequests).where(and(
+      eq(placementLearnerRequests.id,candidate.requestId),
+      eq(placementLearnerRequests.status,"PENDING"))).for("update").limit(1);
+    if(!locked)return "decided";
+    const [event]=await tx.insert(activityEvents).values({
+     organizationId:candidate.organizationId,collegeId:candidate.collegeId,
+     actorUserId:null,actorMembershipId:null,module:"PLACEMENTS",
+     eventType:"PLACEMENTS_TPO_WITHDRAWAL_ESCALATED",
+     subjectType:"placement_learner_request",subjectId:candidate.requestId,
+     summary:"Withdrawal needs a decision before "+candidate.roundName+
+      " for "+candidate.jobTitle,
+     metadata:{requestId:candidate.requestId,applicationId:candidate.applicationId,
+      jobId:candidate.jobId,roundAt:candidate.roundAt?.toISOString()},
+     importance:"HIGH",dedupeKey:"tpo-withdrawal-escalation:"+candidate.requestId,
+    }).onConflictDoNothing().returning({id:activityEvents.id});
+    if(!event)return "already";
+    for(let i=0;i<people.length;i+=100){
+     await tx.insert(inAppNotifications).values(people.slice(i,i+100).map(userId=>({
+      userId,eventId:event.id,title:"Decide "+(candidate.student??"the learner")+"'s withdrawal before the round",
+      body:(candidate.student??"A learner")+" has requested withdrawal from "+candidate.jobTitle+
+       ". The next round is within 24 hours. Decide the request.",
+      actionHref:"/tpo/requests",
+     }))).onConflictDoNothing();
+    }
+    return "escalated";
+   });
+   if(outcome==="escalated")escalated++;
+   else if(outcome==="already")alreadyEscalated++;
+  }catch(e){errors.push({requestId:candidate.requestId,
+   reason:e instanceof Error?e.message:"Escalation failed"});}
+ }
+ return {examined:earliest.size,escalated,alreadyEscalated,
+  noRecipients,errors:errors.slice(0,100),truncated:candidates.length===4000};
+}
