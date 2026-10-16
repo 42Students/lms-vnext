@@ -119,6 +119,11 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
               className="mt-2 block w-full rounded-md border border-border bg-surface p-3 text-sm font-normal"
             />
           </label>
+          {selected.action==="PUBLISH"?<div role="status" className="rounded border border-border p-3 text-sm">
+            <p>{readiness.reach.eligible} students are eligible and will be told in the app.</p>
+            <p>{readiness.reach.excluded} registered students are excluded or have turned off matching-job notices.</p>
+            <p>Counts reflect a preview. Eligibility is checked again before publishing.</p>
+          </div>:null}
           {selected.action==="PUBLISH"?<fieldset className="space-y-1 text-sm">
             <legend>Tell students</legend>
             <label className="flex gap-2"><input type="radio" name="publish-delivery"
