@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
+import {driveRequestStatusLabel,TPO_REQUESTS_COPY} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -42,7 +43,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Lifecycle
         <select name="view" defaultValue={data.view}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
-          <option value="ALL">All jobs</option><option value="DRAFT">Drafts</option>
+          <option value="ALL">All jobs</option><option value="REQUESTS">Requests</option><option value="DRAFT">Drafts</option>
           <option value="LIVE">Live</option><option value="CLOSED">Closed</option>
         </select>
       </label>
@@ -76,7 +77,28 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </label>
       <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
     </form>
-    {!data.season ? <EmptyState title="No season available" description="Create a season before reading its drive lifecycle." /> : <>
+    <nav aria-label="Drive status tabs" className="flex flex-wrap gap-2">
+      {([["REQUESTS","Requests"],["LIVE","Live"],["DRAFT","Drafts"],["CLOSED","Closed"],["ALL","All jobs"]] as const).map(([view,label])=>
+        <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
+          aria-current={data.view===view?"page":undefined}
+          className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">{label}</Link>)}
+    </nav>
+    {data.view==="REQUESTS" ? (!data.requestsAvailable ?
+      <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}/> :
+      <section aria-label="Recruiter drive requests" className="space-y-3">
+        <p role="status" className="text-sm">{data.totalMatching} requests awaiting review</p>
+        {data.requestRows.length===0?<EmptyState title="No requests" description="No recruiter drive requests need review."/>:
+          data.requestRows.map(item=><article key={item.id} className="rounded border border-border bg-surface p-4">
+            <h2 className="font-semibold">{item.company} · {item.title}</h2>
+            <p className="text-sm">{driveRequestStatusLabel(item.status)}</p>
+            <p className="text-xs text-muted-foreground">Request ID: {item.id}</p>
+          </article>)}
+        <nav className="flex justify-between">
+          {data.page>1?<Link href={pageHref(data.page-1)}>Previous</Link>:<span/>}
+          {data.page<data.totalPages?<Link href={pageHref(data.page+1)}>Next</Link>:null}
+        </nav>
+      </section>
+    ) : !data.season ? <EmptyState title="No season available" description="Create a season before reading its drive lifecycle." /> : <>
       <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {metrics.map(([name,n]) =>
           <div key={name} className="rounded-xl border border-border bg-surface p-4">
@@ -84,8 +106,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">{n}</p>
           </div>)}
       </section>
-      <p className="text-sm text-body">Requests are not included: this view counts persisted job lifecycle states only.
-        A submitted request is not the same as a draft.</p>
+      <p className="text-sm text-body">Requests are tracked separately from drafts and published drives.</p>
       <p role="status" className="text-sm text-body">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
        Counts cover the selected season and search across every page.</p>
       {data.rows.length === 0 ?

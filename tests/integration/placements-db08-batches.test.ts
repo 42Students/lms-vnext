@@ -11,6 +11,7 @@ import {
   upsertPlacementBatchSettings,
 } from "@/modules/placements/batch-participation-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {registerOwnPlacementChoice} from "@/modules/placements/batch-registration-service";
 
 const url = process.env.TEST_DATABASE_URL;
 if (!url ||
@@ -100,6 +101,7 @@ beforeEach(() => {
 afterEach(async () => {
   // TRUNCATE the immutable audit log only on this EXPLICIT isolated test database.
   await pool.query("TRUNCATE TABLE placement_eligibility_events");
+  await pool.query("TRUNCATE TABLE placement_batch_registration_events");
   if (f.memberships.length) {
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='MEMBERSHIP' AND scope_id = ANY($1::uuid[])", [f.memberships]);
   }
@@ -107,6 +109,7 @@ afterEach(async () => {
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='SECTION' AND scope_id = ANY($1::uuid[])", [f.sections]);
   }
   if (f.cohorts.length) {
+    await pool.query("DELETE FROM placement_batch_registrations WHERE cohort_id = ANY($1::uuid[])",[f.cohorts]);
     await pool.query(
       "DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE event_type IN ('BATCH_INVITED','BATCH_REGISTRATION_REOPENED') AND subject_id = ANY($1::text[]))",
       [f.cohorts],
@@ -312,6 +315,86 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     expect(row.rows[0].invited_at).toBeNull();
   });
 
+  it("LEARNER-placements-50 registers, records consent and refuses after closure", async () => {
+    const a=await makeAcademicFixture(SEED_IDS.collegeA);
+    const membershipId=await makeLearner(SEED_IDS.collegeA,a);
+    const learner:RequestContext={
+      user:{id:f.users[f.users.length-1],identityUid:"test-learner",
+        platformStatus:"ACTIVE",systemRoles:[]},
+      membership:{id:membershipId,collegeId:SEED_IDS.collegeA,
+        organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+    };
+    await decidePlacementParticipation(admin,{
+      collegeId:SEED_IDS.collegeA,
+      changes:[{scopeType:"MEMBERSHIP",scopeId:membershipId,status:"ELIGIBLE"}],
+    });
+    await markPlacementBatchInvited(admin,{
+      collegeId:SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:new Date(Date.now()+86400000*3),expectedVersion:"none",
+    });
+    await expect(registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:false,
+    })).rejects.toThrow("DB08_REGISTRATION_CONSENT_REQUIRED");
+    const registered=await registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:true,
+    });
+    expect(registered.choice).toBe("PLACEMENTS");
+    expect(registered.consentAt).not.toBeNull();
+    await registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:true,
+    });
+    const updated=await registerOwnPlacementChoice(learner,{
+      choice:"HIGHER_STUDIES",acceptedConsent:false,
+    });
+    expect(updated.choice).toBe("HIGHER_STUDIES");
+    expect(updated.consentAt).toBeNull();
+    const history=await pool.query(
+      "SELECT next_choice FROM placement_batch_registration_events WHERE registration_id=$1 ORDER BY occurred_at",
+      [updated.id],
+    );
+    expect(history.rows.map(row=>row.next_choice)).toEqual(["PLACEMENTS","HIGHER_STUDIES"]);
+    await pool.query(
+      "UPDATE placement_batch_lifecycles SET registration_deadline=now()-interval '1 day' WHERE cohort_id=$1",
+      [a.cohortId],
+    );
+    await expect(registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:true,
+    })).rejects.toMatchObject({code:"DB08_REGISTRATION_WINDOW_CLOSED"});
+  });
+
+  it("TPO-batches-R01 opens registration when all eligible students have chosen", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const learner = await makeLearner(SEED_IDS.collegeA, a);
+    await decidePlacementParticipation(admin, {
+      collegeId: SEED_IDS.collegeA,
+      changes: [{scopeType:"MEMBERSHIP",scopeId:learner,status:"ELIGIBLE"}],
+    });
+    await pool.query(
+      "INSERT INTO placement_batch_registrations (college_id,cohort_id,membership_id,choice,source,recorded_by_user_id) VALUES ($1,$2,$3,'HIGHER_STUDIES','TPO',$4)",
+      [SEED_IDS.collegeA,a.cohortId,learner,admin.user.id],
+    );
+    const deadline = new Date(Date.now()+86400000*3);
+    const result = await markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:deadline,expectedVersion:"none",
+    });
+    expect(result.invitedAt).toBeTruthy();
+    expect(result.registrationDeadline?.toISOString()).toBe(deadline.toISOString());
+    expect(result.notifiedCount).toBe(0);
+  });
+
+  it("TPO-batches-R02 rolls back deadline and invitation together when none is eligible", async () => {
+    const a=await makeAcademicFixture(SEED_IDS.collegeA);
+    await expect(markPlacementBatchInvited(admin, {
+      collegeId:SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:new Date(Date.now()+86400000*3),expectedVersion:"none",
+    })).rejects.toMatchObject({code:"DB08_NO_ELIGIBLE_STUDENTS"});
+    const record=await pool.query(
+      "SELECT cohort_id FROM placement_batch_lifecycles WHERE cohort_id=$1",[a.cohortId],
+    );
+    expect(record.rows).toHaveLength(0);
+  });
+
   it("tells unregistered eligible students when reopening an expired invitation", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
     const learner = await makeLearner(SEED_IDS.collegeA, a);
@@ -377,6 +460,11 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
 
   it("keeps batch settings and finish state separate for each cohort", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const learner = await makeLearner(SEED_IDS.collegeA,a);
+    await decidePlacementParticipation(admin,{
+      collegeId:SEED_IDS.collegeA,
+      changes:[{scopeType:"MEMBERSHIP",scopeId:learner,status:"ELIGIBLE"}],
+    });
     const b = await makeAcademicFixture(SEED_IDS.collegeA);
     await upsertPlacementBatchSettings(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,

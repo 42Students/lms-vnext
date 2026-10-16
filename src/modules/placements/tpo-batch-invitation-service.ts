@@ -29,19 +29,9 @@ export async function inviteTpoBatch(
   if (!ready) throw new TpoBatchInvitationError("ELIGIBILITY_INCOMPLETE");
   if (lifecycle?.finishedAt) throw new TpoBatchInvitationError("BATCH_FINISHED");
   if (lifecycle?.invitedAt) throw new TpoBatchInvitationError("BATCH_ALREADY_INVITED");
-  const preview = await getTpoBatchInvitationPreview(ctx, batchId);
-  if (preview.invitable === 0)
-    throw new TpoBatchInvitationError("NO_ELIGIBLE_STUDENTS");
-
-  const settings = await upsertPlacementBatchSettings(ctx, {
-    collegeId, cohortId: batchId, registrationDeadline: deadline,
-    rulesOverride: lifecycle?.rulesOverride ?? null,
-    expectedVersion: input.expectedVersion,
-  });
-  // Detect any other writer changing the deadline between these separate transactions.
   const invited = await markPlacementBatchInvited(ctx, {
-    collegeId, cohortId: batchId,
-    expectedVersion: settings.updatedAt.toISOString(),
+    collegeId, cohortId: batchId, registrationDeadline: deadline,
+    expectedVersion: input.expectedVersion,
   });
   return { invitedAt: invited.invitedAt?.toISOString() ?? null,
     deadline: invited.registrationDeadline?.toISOString() ?? null,
@@ -89,5 +79,9 @@ export async function getTpoBatchInvitationPreview(ctx: RequestContext, batchId:
     (await findUnchosenEligibleBatchStudents(tx, collegeId, batchId)).length,
     { accessMode: "read only" },
   );
-  return { invitable: count };
+  const eligible = await getDb().transaction(async tx =>
+    (await findUnchosenEligibleBatchStudents(tx, collegeId, batchId, true)).length,
+    { accessMode: "read only" },
+  );
+  return { invitable: count, eligible };
 }

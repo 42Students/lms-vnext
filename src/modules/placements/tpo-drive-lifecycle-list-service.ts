@@ -1,7 +1,7 @@
 import "server-only";
-import { and, desc, eq, gte, ilike, isNull, lt, lte, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, ilike, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
+import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -9,6 +9,7 @@ import { tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema } from "./tpo-drive
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
+import { placementTableExists } from "./staged-tables";
 
 /** Tenant comes only from the authenticated TPO membership. Requests need their own persisted workflow. */
 export async function getTpoDriveLifecycleList(context: RequestContext, raw: unknown, now = new Date()) {
@@ -32,6 +33,52 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     ? seasons.find((s) => s.id === filters.seasonId)
     : seasons.find((s) => s.status === "ACTIVE") ?? seasons[0] ?? null;
   if (filters.seasonId && !season) throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
+  if (filters.view === "REQUESTS") {
+    const available = await placementTableExists("placement_recruiter_drive_requests");
+    const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
+    const common = {seasons,season,view:filters.view,search:filters.search,
+      deadline:filters.deadline,workMode:filters.workMode,
+      employmentType:filters.employmentType,sort:filters.sort,asOf:now.toISOString()};
+    if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
+      rows:[],requestRows:[],requestsAvailable:false as const,...common};
+    const pattern=tpoApplicantExportSearchPattern(filters.search);
+    const requestScope=and(
+      eq(placementRecruiterDriveRequests.collegeId,collegeId),
+      inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK"]),
+      filters.search?or(
+        ilike(placementCompanies.name,pattern),
+        sql`${placementRecruiterDriveRequests.draft}->>'title' ilike ${pattern}`,
+      ):undefined,
+    );
+    const [tally]=await db.select({total:count()})
+      .from(placementRecruiterDriveRequests)
+      .innerJoin(placementCompanyRelationships,and(
+        eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
+        eq(placementCompanyRelationships.collegeId,placementRecruiterDriveRequests.collegeId)))
+      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+      .where(requestScope);
+    const pagination=tpoDriveLifecyclePage(tally?.total??0,filters.page);
+    const requestRecords=await db.select({
+      id:placementRecruiterDriveRequests.id,
+      status:placementRecruiterDriveRequests.status,
+      draft:placementRecruiterDriveRequests.draft,
+      company:placementCompanies.name,
+      createdAt:placementRecruiterDriveRequests.createdAt,
+    }).from(placementRecruiterDriveRequests)
+      .innerJoin(placementCompanyRelationships,and(
+        eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
+        eq(placementCompanyRelationships.collegeId,placementRecruiterDriveRequests.collegeId)))
+      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+      .where(requestScope)
+      .orderBy(desc(placementRecruiterDriveRequests.createdAt),desc(placementRecruiterDriveRequests.id))
+      .limit(pagination.pageSize).offset(pagination.offset);
+    const requestRows=requestRecords.map(row=>({
+      id:row.id,status:row.status,
+      title:typeof row.draft.title==="string"?row.draft.title:"Untitled drive request",
+      company:row.company,createdAt:row.createdAt.toISOString(),
+    }));
+    return {...pagination,counts,rows:[],requestRows,requestsAvailable:true as const,...common};
+  }
   const target=filters.view==="DRAFT"?"DRAFT":filters.view==="LIVE"?"PUBLISHED":filters.view==="CLOSED"?"CLOSED":null;
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
   const projection=season?await db.transaction(async tx=>{
@@ -87,5 +134,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
+    requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string}[],
   };
 }
