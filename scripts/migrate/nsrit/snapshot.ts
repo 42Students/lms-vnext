@@ -6,7 +6,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { sha256Hex } from "./common";
-import { STAGE_2B_TABLES, snapshotDigest, type Manifest } from "./export-lib";
+import { STAGE_2B_TABLES, STAGE_2BII_TABLES, snapshotDigest, type Manifest } from "./export-lib";
 import type { Row } from "./mappers";
 
 export class SnapshotIntegrityError extends Error {
@@ -63,7 +63,7 @@ export function readSnapshot(dir: string): Snapshot {
   // the academics planner refuses to run without them.
   const wanted = [
     ...REQUIRED_TABLES,
-    ...STAGE_2B_TABLES.filter((name) => manifest.tables[name] !== undefined),
+    ...[...STAGE_2B_TABLES, ...STAGE_2BII_TABLES].filter((name) => manifest.tables[name] !== undefined),
   ];
   for (const name of wanted) {
     const entry = manifest.tables[name];

@@ -62,7 +62,18 @@ export type Reason =
   | "NO_MARKER"
   | "DUPLICATE_SOURCE"
   | "NO_VNEXT_TARGET"
-  | "SESSION_NOT_HELD";
+  | "SESSION_NOT_HELD"
+  // Stage 2b-ii reasons
+  | "ARCHIVED_WORKSPACE"
+  | "NO_RECIPIENT"
+  | "NO_ROLE_OPTION"
+  | "NO_SEASON"
+  | "AUDIT_HISTORY_SKIPPED"
+  | "NOT_IN_SCOPE_CONTRACT"
+  | "NO_CONSENT"
+  | "ACTOR_NOT_AVAILABLE"
+  | "MERGED_COMPANY"
+  | "SUPERSEDED";
 
 export type Rejection = { entity: string; legacyId: string; reason: Reason };
 export type Deferral = { entity: string; legacyId: string; reason: string };

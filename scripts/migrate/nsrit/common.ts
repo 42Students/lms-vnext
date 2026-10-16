@@ -9,6 +9,8 @@ import { createHash } from "node:crypto";
 export const LOADER_VERSION = "nsrit-2a-1";
 /** Stage 2b-i (academics) rows hash with their own version, so 2a rows stay no-ops. */
 export const LOADER_VERSION_2B = "nsrit-2b-1";
+/** Stage 2b-ii (placements, projects, notifications) rows hash with their own version. */
+export const LOADER_VERSION_2BII = "nsrit-2b-2";
 export const SOURCE_SYSTEM = "LMS_LEGACY";
 
 /** Fixed v5 namespace for every NSRIT legacy id. Never change. */
