@@ -168,6 +168,9 @@ export function AdminProgramDirectory({
             <Button variant="secondary" onClick={() => router.refresh()}>Refresh</Button>
           </div>
         </div>
+        <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
+          {result.total} of {programs.length} {programs.length === 1 ? "result" : "results"}
+        </p>
         <DataTable columns={columns} rows={result.items}
           getRowKey={(item) => item.id}
           empty={<p className="m-0 text-sm text-muted-foreground">
