@@ -6,6 +6,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { listTpoMessagingHistory } from "@/modules/messaging/receipt-history-service";
 import { messagingHistoryQuerySchema } from "@/modules/messaging/receipt-history-model";
 import {listTpoCampaignDrafts} from "@/modules/messaging/tpo-campaign-draft-service";
+import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE,CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 
 type PageProps = {searchParams:Promise<{page?:string|string[];purpose?:string|string[]}>};
@@ -18,6 +19,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
  if(!query.success)return <main className="space-y-4"><PageHeader eyebrow="Engage" title="Emails"/><p role="alert">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></p></main>;
  const result=await listTpoMessagingHistory(context,query.data);
  const drafts=await listTpoCampaignDrafts(context);
+ const deliveryReady=await tpoCampaignDispatchReady();
  return <main className="space-y-6">
   <PageHeader eyebrow="Engage" title="Emails"
    description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."/>
@@ -74,7 +76,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
       <p className="mt-1 text-xs text-muted-foreground">Segment: {item.segment.replaceAll("_"," ")}</p>
      </li>)}
     </ul>}
-   <p role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>
+   {!deliveryReady?<p role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:null}
   </section>
   <h2 className="text-lg font-semibold text-foreground">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
