@@ -1,6 +1,6 @@
 /** Public recruiter join links and their email-code challenges. */
 import { sql } from "drizzle-orm";
-import { check, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, check, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 
 export const placementPublicJoinLinks = pgTable(
@@ -17,8 +17,14 @@ export const placementPublicJoinLinks = pgTable(
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    enabled: boolean("enabled").notNull().default(true),
+    postWithoutApproval: boolean("post_without_approval").notNull().default(false),
+    opensCount: integer("opens_count").notNull().default(0),
+    joinsCount: integer("joins_count").notNull().default(0),
   },
   (table) => [
+    check("placement_public_join_links_opens_count_ck", sql`${table.opensCount} >= 0`),
+    check("placement_public_join_links_joins_count_ck", sql`${table.joinsCount} >= 0`),
     uniqueIndex("public_join_links_hash_uq").on(table.tokenHash),
     index("public_join_links_college_idx").on(table.collegeId, table.scope),
     check("placement_public_join_links_token_ck", sql`${table.tokenHash} ~ '^[a-f0-9]{64}$'`),
