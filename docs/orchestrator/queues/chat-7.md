@@ -28,6 +28,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 ## FAST-MODE checkpoint (2026-10-17)
 
+- REC-home-drives-20 (WP-chat-7-04): list cards now target canonical recruiter drive detail, and the authorized Back to Drives link preserves validated list filter/sort/page state through the main tabs.
 - REC-home-drives-R04 (WP-chat-7-04): CLOSED hiring workspace preserves readable rounds/results/offers but removes inaccessible round/slot staging links and presents the legacy finished-drive notices.
 - REC-calendar-messages-profile-07 (WP-chat-7-05): calendar deadlines open Overview and rounds/interview slots open the recruiter's Rounds tab using the legacy route.
 - REC-home-drives-R06 (WP-chat-7-05): legacy /recruiter/drives?tab=all|live|waiting|closed links now resolve correctly to the current list, while existing view= links remain accepted.
