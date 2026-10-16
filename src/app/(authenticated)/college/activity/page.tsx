@@ -37,12 +37,35 @@ export default async function CollegeActivityPage({
   }
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
-      description="College-scoped immutable event history, with severity, module, action, actor, entity and date filters. Newest events first."
+      description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
       actions={<a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Export filtered CSV (max 1,000)
       </a>} />
+    <nav aria-label="Activity feed categories" className="flex flex-wrap gap-2">
+      {([
+        ["IMPORTANT", "Important"], ["ACADEMIC_SETUP", "Academic setup"],
+        ["PEOPLE_ACCESS", "People & access"], ["TEACHING", "Teaching"],
+        ["PROJECTS", "Projects"], ["EVERYTHING", "Everything"],
+      ] as const).map(([key, label]) => {
+        const category = key==="IMPORTANT"||key==="EVERYTHING" ? undefined : key;
+        const view = key==="EVERYTHING" ? "EVERYTHING" : "IMPORTANT";
+        const active = key==="EVERYTHING"
+          ? data.query.view==="EVERYTHING" && !data.query.category
+          : key==="IMPORTANT" ? !data.query.category && data.query.view!=="EVERYTHING"
+          : data.query.category===category;
+        return <Link key={key} aria-current={active?"page":undefined}
+          href={collegeActivityHref({...data.query,category,view,module:undefined,importance:undefined})}
+          className={"inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold " +
+            (active ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body")}>
+          {label}
+        </Link>;
+      })}
+    </nav>
+    <p className="text-xs text-muted-foreground">
+      Important shows high- and critical-importance events. Category views remain college-scoped; Everything includes all importance levels.
+    </p>
     <p className="text-xs text-muted-foreground">
       The export uses severity, module, action, actor, entity type, entity identifier and IST date filters from the newest event,
       with a 1,000-row cap and an explicit CSV footer if truncated.
