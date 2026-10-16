@@ -4,7 +4,8 @@ import {getDb} from "@/db/client";
 import {
   activityEvents,collegeMemberships,inAppNotifications,placementApplications,
   placementApplicationScreenings,placementApplicationScreeningHistory,placementOffers,
-  placementApplicationStatusHistory,placementLearnerRequests,users,
+  placementApplicationStatusHistory,placementLearnerRequests,
+  placementRecruiterDriveRequests,users,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
@@ -171,4 +172,34 @@ export async function endDriveApplicants(
     await tx.insert(inAppNotifications).values(notices.slice(i,i+200)).onConflictDoNothing();
   }
   return {rejected,notified:recipients.size,acceptedOffersRetained:accepted.length};
+}
+
+/** Notify the source recruiter when a TPO-managed drive is ended. */
+export async function tellRecruiterDriveStopped(
+  tx:Tx,ctx:RequestContext,jobId:string,collegeId:string,
+  mode:"CLOSED"|"CANCELLED",reason:string,
+){
+  const requests=await tx.select({
+    userId:placementRecruiterDriveRequests.recruiterUserId,
+  }).from(placementRecruiterDriveRequests)
+    .where(and(eq(placementRecruiterDriveRequests.collegeId,collegeId),
+      eq(placementRecruiterDriveRequests.approvedJobId,jobId)));
+  if(!requests.length)return 0;
+  const userIds=[...new Set(requests.map(row=>row.userId))];
+  const [event]=await tx.insert(activityEvents).values({
+    organizationId:ctx.membership!.organizationId,collegeId,
+    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+    module:"PLACEMENTS",eventType:"RECRUITER_DRIVE_STOPPED",
+    subjectType:"placement_job",subjectId:jobId,
+    summary:"TPO "+mode.toLowerCase()+" recruiter drive",
+    metadata:{mode,reason},
+  }).returning({id:activityEvents.id});
+  if(!event)throw new Error("RECRUITER_STOP_AUDIT_FAILED");
+  await tx.insert(inAppNotifications).values(userIds.map(userId=>({
+    userId,eventId:event.id,
+    title:mode==="CANCELLED"?"Your drive was cancelled":"Your drive has closed",
+    body:reason,
+    actionHref:"/recruiter/drives",
+  }))).onConflictDoNothing();
+  return userIds.length;
 }
