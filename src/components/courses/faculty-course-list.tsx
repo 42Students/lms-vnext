@@ -136,12 +136,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
             <span className="rounded-full bg-muted px-2.5 py-1">
               {course.academicPeriodName}
             </span>
-            <span className="rounded-full bg-muted px-2.5 py-1">
-              {course.teachingRole.replaceAll(
-                "_",
-                " ",
-              )}
-            </span>
+            {course.teachingRole!=="PRIMARY"?<span className="rounded-full bg-muted px-2.5 py-1">
+              Your role: {course.teachingRole.replaceAll("_"," ").toLowerCase()}
+            </span>:null}
           </div>
 
           <div className="mt-auto pt-5">
