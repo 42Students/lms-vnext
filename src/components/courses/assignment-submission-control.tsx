@@ -15,6 +15,7 @@ import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
 import { isLearnerAssignmentHttpsLink } from "@/modules/courses/learner-assignment-link-model";
 import { learnerAssignmentFinalConfirmation } from "@/modules/courses/learner-assignment-confirmation-model";
+import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 
 type SubmissionType = "TEXT" | "LINK" | "FILE";
 
@@ -23,11 +24,13 @@ export function AssignmentSubmissionControl({
   deliveryId,
   fileUploadsEnabled = false,
   multipartEnabled=false,
+  methodsEnabled=false,
 }: {
   assignmentId: string;
   deliveryId: string;
   fileUploadsEnabled?: boolean;
   multipartEnabled?:boolean;
+  methodsEnabled?:boolean;
 }) {
   const router = useRouter();
   const [submissionType, setSubmissionType] =
@@ -36,6 +39,13 @@ export function AssignmentSubmissionControl({
     useState("");
   const [submissionUrl, setSubmissionUrl] =
     useState("");
+  const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
+  const [methodsLoaded,setMethodsLoaded]=useState(!methodsEnabled);
+  const [methodsError,setMethodsError]=useState<string|null>(null);
+  const [linkKind,setLinkKind]=useState<"REPOSITORY_LINK"|"EXTERNAL_LINK">("EXTERNAL_LINK");
+  const mayWrite=allowedMethods.includes("WRITTEN_RESPONSE");
+  const mayLink=allowedMethods.includes("REPOSITORY_LINK")||allowedMethods.includes("EXTERNAL_LINK");
+  const mayUpload=allowedMethods.includes("PDF_UPLOAD")||allowedMethods.includes("FILE_UPLOAD");
   const [submitting, setSubmitting] =
     useState(false);
   const [error, setError] =
@@ -43,6 +53,29 @@ export function AssignmentSubmissionControl({
   const [success, setSuccess] =
     useState(false);
   const flight = useRef(createSubmissionFlightGuard());
+  useEffect(()=>{
+    if(!methodsEnabled)return;
+    const controller=new AbortController();
+    setMethodsLoaded(false);setMethodsError(null);
+    void fetch("/api/courses/assignments/"+encodeURIComponent(assignmentId)+
+      "/methods?deliveryId="+encodeURIComponent(deliveryId),{
+      cache:"no-store",signal:controller.signal,
+    }).then(async response=>{
+      if(!response.ok)throw new Error("Unable to load allowed submission methods.");
+      return response.json();
+    }).then(body=>{
+      if(controller.signal.aborted)return;
+      const methods=normalizeAssignmentMethods(body?.methods);
+      setAllowedMethods(methods);
+      setLinkKind(methods.includes("EXTERNAL_LINK")?"EXTERNAL_LINK":"REPOSITORY_LINK");
+      setSubmissionType(methods.includes("WRITTEN_RESPONSE")?"TEXT":
+        methods.includes("EXTERNAL_LINK")||methods.includes("REPOSITORY_LINK")?"LINK":"FILE");
+      setMethodsLoaded(true);
+    }).catch(()=>{
+      if(!controller.signal.aborted)setMethodsError("Submission methods could not be loaded. Refresh before submitting.");
+    });
+    return ()=>controller.abort();
+  },[assignmentId,deliveryId,methodsEnabled]);
   const unsent=(!success)&&(textContent.trim().length>0||submissionUrl.trim().length>0);
   useEffect(()=>{
     if(!unsent&&!submitting)return;
@@ -58,6 +91,9 @@ export function AssignmentSubmissionControl({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    if(!methodsLoaded||methodsError)return;
+    if(submissionType==="TEXT"&&!mayWrite || submissionType==="LINK"&&!mayLink ||
+       submissionType==="FILE"&&!mayUpload){setError("This submission method is not allowed.");return;}
     if (submissionType === "FILE" || !flight.current.begin()) return;
     setError(null);
     setSuccess(false);
@@ -111,6 +147,7 @@ export function AssignmentSubmissionControl({
                   submissionType,
                   submissionUrl:
                     submissionUrl.trim(),
+                  ...(methodsEnabled?{linkKind}:{}),
                 },
           ),
         },
@@ -167,7 +204,7 @@ export function AssignmentSubmissionControl({
           <Button
             type="button"
             size="sm"
-            disabled={submitting}
+            disabled={submitting||!methodsLoaded||!mayWrite}
             variant={
               submissionType === "TEXT"
                 ? "primary"
@@ -185,7 +222,7 @@ export function AssignmentSubmissionControl({
           <Button
             type="button"
             size="sm"
-            disabled={submitting}
+            disabled={submitting||!methodsLoaded||!mayLink}
             variant={
               submissionType === "LINK"
                 ? "primary"
@@ -200,14 +237,25 @@ export function AssignmentSubmissionControl({
           >
             External Link
           </Button>
-          <Button type="button" size="sm" disabled={!fileUploadsEnabled || submitting}
+          <Button type="button" size="sm" disabled={!fileUploadsEnabled || !methodsLoaded || !mayUpload || submitting}
             variant={submissionType === "FILE" ? "primary" : "secondary"}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
             File Upload
           </Button>
         </div>
 
+        {methodsError?<p role="alert" className="mt-2 text-sm text-error">{methodsError}</p>:null}
+        {methodsEnabled&&!methodsLoaded&&!methodsError?<p role="status" className="mt-2 text-xs">Loading allowed submission methods…</p>:null}
         {!fileUploadsEnabled ? <p className="mt-2 text-xs text-muted-foreground">File uploads are currently unavailable. You can submit a written response or an HTTPS link.</p> : null}
+        {submissionType==="LINK"&&methodsEnabled&&mayLink?
+          <label className="mt-3 grid gap-1 text-sm">Link type
+            <select value={linkKind} disabled={submitting}
+              className="min-h-10 rounded border border-border bg-surface p-2"
+              onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
+              {allowedMethods.includes("REPOSITORY_LINK")?<option value="REPOSITORY_LINK">Repository Link</option>:null}
+              {allowedMethods.includes("EXTERNAL_LINK")?<option value="EXTERNAL_LINK">Website / External Link</option>:null}
+            </select>
+          </label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled}
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
@@ -258,7 +306,7 @@ export function AssignmentSubmissionControl({
         ) : null}
 
         {submissionType !== "FILE" ? <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Button type="submit">
+          <Button type="submit" disabled={!methodsLoaded||Boolean(methodsError)}>
             {submitting
               ? "Submitting…"
               : error?"Retry":"Submit"}
