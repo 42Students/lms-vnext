@@ -4,7 +4,8 @@ import { createHash } from "node:crypto";
 import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, colleges, organizations, placementCompanies,
+  activityEvents, collegeMemberships, membershipRoles, inAppNotifications,
+  colleges, organizations, placementCompanies,
   placementCompanyRelationships, placementPublicJoinLinks,
   placementPublicJoinChallenges, placementRecruiterProfiles,
   placementRecruiterCollegeGrants, placementTpoCollegeSettings, users,
@@ -14,6 +15,7 @@ import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
 import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
 import { publicJoinTablesReady } from "./readiness";
+import { publicRecruiterJoinedNotification } from "./join-notification-model";
 import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruiter-grant-expiry-policy";
 
 type Scope = "COLLEGE" | "COMPANY";
@@ -165,14 +167,34 @@ export async function acceptPublicRecruiterJoin(
         validUntil: recruiterGrantValidUntil(now, settings.months),
         capabilities: ["DRIVES"], verificationStatus: "VERIFIED",
       });
-      await tx.insert(activityEvents).values({
+      const [event] = await tx.insert(activityEvents).values({
         organizationId: link.organizationId, collegeId: link.collegeId,
         actorUserId: user.id, module: "PLACEMENTS",
         eventType: "PLACEMENTS_RECRUITER_PUBLIC_JOIN",
         subjectType: "placement_company_relationship", subjectId: relationship.id,
         subjectLabel: "Recruiter joined", summary: "Recruiter joined through public link",
         metadata: { scope, companyId, recruiterUserId: user.id },
+      }).returning({ id: activityEvents.id });
+      if (!event) throw new PublicJoinAcceptError("INVALID");
+      const [employer] = await tx.select({ name: placementCompanies.name })
+        .from(placementCompanies).where(eq(placementCompanies.id, companyId)).limit(1);
+      if (!employer) throw new PublicJoinAcceptError("INVALID");
+      const notice = publicRecruiterJoinedNotification({
+        name, companyName: employer.name, scope,
       });
+      const tpoUsers = await tx.selectDistinct({ userId: collegeMemberships.userId })
+        .from(collegeMemberships)
+        .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
+        .innerJoin(users, eq(users.id, collegeMemberships.userId))
+        .where(and(eq(collegeMemberships.collegeId, link.collegeId),
+          eq(collegeMemberships.status, "ACTIVE"),
+          eq(membershipRoles.role, "TPO"),
+          eq(users.platformStatus, "ACTIVE")));
+      if (tpoUsers.length) await tx.insert(inAppNotifications).values(
+        tpoUsers.map(item => ({
+          eventId: event.id, userId: item.userId, ...notice,
+        })),
+      ).onConflictDoNothing();
     }
     await tx.update(placementPublicJoinChallenges)
       .set({ verifiedAt: now })
