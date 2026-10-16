@@ -104,7 +104,13 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
    .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
    .where(and(eq(placementApplications.jobId,preview.job.id),
     inArray(placementOffers.status,["ISSUED","ACCEPTED"])));
-  if(locked.openings!==null&&active.length+used.length>=locked.openings)
+  // Physical capacity is occupied by active offers and pending reservations,
+  // not every historic promotion: a declined offer frees one opening.
+  const reserved=await tx.select({id:placementWaitlistPromotions.id})
+   .from(placementWaitlistPromotions).where(and(
+    eq(placementWaitlistPromotions.jobId,preview.job.id),
+    eq(placementWaitlistPromotions.status,"PENDING")));
+  if(locked.openings!==null&&active.length+reserved.length>=locked.openings)
    throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
   const seats=new Set(used.map(x=>x.number));
   let seat=1;while(seats.has(seat))seat++;
