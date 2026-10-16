@@ -1,6 +1,8 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {getCollegeAttendancePolicy} from "@/modules/attendance/policy-service";
 import {SuperAdminAttendanceSettingsEditor} from "@/components/admin/super-admin-attendance-settings-editor";
+import {TenantSettingsEditor} from "@/components/admin/tenant-settings-editor";
+import {listAdminTenantSettings} from "@/modules/platform-settings/admin-editor-service";
 import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
 import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
@@ -27,6 +29,9 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   const { selectedCollegeName, sections: allSections } =
     await getSuperAdminPlatformSettings(context);
   const sections=filterPlatformInventory(allSections,parsed);
+  const editorScope=context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
+  const editorData=context.adminScope?.organizationId&&!context.adminScope.collegeId
+   ?null:await listAdminTenantSettings(context,editorScope,context.adminScope?.collegeId??undefined);
   const attendancePolicy=context.adminScope?.collegeId
     ?await getCollegeAttendancePolicy(context,context.adminScope.collegeId):null;
 
@@ -55,6 +60,12 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         </p>
       </section>
 
+      {editorData?<TenantSettingsEditor scopeType={editorScope}
+       collegeId={context.adminScope?.collegeId??undefined}
+       ready={editorData.ready} entries={editorData.entries}/>:(
+       <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
+        Choose a college in the Super Admin scope selector or clear the organization selection to edit global settings.
+       </p>)}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
         collegeId={attendancePolicy.college.id}
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
@@ -247,7 +258,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         Environment variables, credentials, API keys,
         tokens, connection details and custom
         configuration blobs are neither read nor
-        displayed. This is not a global settings editor.
+        displayed. The editor above stores typed, audited overrides; deployment-managed auth controls require separate activation.
       </p>
     </div>
   );
