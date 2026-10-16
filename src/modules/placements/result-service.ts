@@ -15,6 +15,7 @@ import {
   placementApplicationScreenings,
   placementJobRounds,
   placementJobs,
+  placementLearnerRequests,
   placementRoundResults,
 } from "@/db/schema";
 import {
@@ -344,6 +345,17 @@ export async function stagePlacementRoundResult(
       throw new PlacementsServiceError(
         "PLACEMENT_RESULT_APPLICATION_INACTIVE",
       );
+    }
+
+    if(input.outcome==="ABSENT"){
+      // TPO-requests-verification-05: a learner awaiting withdrawal is excused
+      // from an upcoming round, not deemed absent or a no-show.
+      const [pendingWithdrawal]=await tx.select({id:placementLearnerRequests.id})
+        .from(placementLearnerRequests)
+        .where(and(eq(placementLearnerRequests.applicationId,input.applicationId),
+          eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+          eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+      if(pendingWithdrawal)throw new PlacementsServiceError("PLACEMENT_REQUEST_PENDING_WITHDRAWAL");
     }
 
     const [current] = await tx
