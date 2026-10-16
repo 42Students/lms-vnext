@@ -84,6 +84,12 @@ export async function CollegeRoleDirectoryWorkspace({
               <PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />
             ) : null}
             {kind === "LEARNER" ? (
+              <Link href="/college/students/register"
+                className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+                Register students
+              </Link>
+            ) : null}
+            {kind === "LEARNER" ? (
               <Link href="/college/students/import"
                 className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
                 Import CSV
