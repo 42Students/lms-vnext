@@ -1,4 +1,4 @@
-/** Staged selected-applicant scope for a short-lived employer share. */
+/** Registered in 0121: selected-applicant scope for short-lived employer shares. */
 import {index,primaryKey,pgTable,uuid} from "drizzle-orm/pg-core";
 import {placementCompanyApplicantShares} from "./placement-company-shares";
 import {placementApplications} from "./placements";
