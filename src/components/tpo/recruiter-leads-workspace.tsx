@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
+import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
 import {recruiterLeadsCsv} from "@/modules/placements/tpo-recruiter-export-model";
 import { RECRUITER_STAGE_LEGACY_LABELS, type TpoRecruiterLeadStage } from "@/modules/placements/tpo-recruiter-lead-policy";
 import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
@@ -105,6 +106,11 @@ export function RecruiterLeadsWorkspace({
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [filterOpen,setFilterOpen]=useState(false);
+  const [ownerFilter,setOwnerFilter]=useState("ALL");
+  const [inviteFilter,setInviteFilter]=useState("ALL");
+  const [statusFilter,setStatusFilter]=useState("ALL");
+  const [sourceFilter,setSourceFilter]=useState("ALL");
   const [stage, setStage] = useState<(typeof STAGES)[number]>("ALL");
   const [need, setNeed] = useState<EngageNeed>("ALL");
   const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
@@ -201,32 +207,24 @@ export function RecruiterLeadsWorkspace({
   }, [view, loadCompanies]);
 
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
-  const visible = useMemo(() => rows.filter(lead => {
-    if (!matchesEngageNeed(lead,need)) return false;
-    if (attention !== "ALL" && !lead.chips?.includes(attention)) return false;
-    if (stage !== "ALL" && lead.stage !== stage) return false;
-    const terms = [lead.name, lead.emailNorm, lead.phoneNorm, lead.companyName]
-      .filter(Boolean).join(" ").toLowerCase();
-    return terms.includes(query.trim().toLowerCase());
-  }), [rows, stage, query, need, attention]);
+  const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
+    source:sourceFilter};
+  const visible=useMemo(()=>filterEngageRoster(rows,filters,lead=>
+    matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
+    [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter]);
 
-  function exportRows(selection:"shown"|"selected"){
-    const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
-    if(chosen.length===0){setExportFeedback("Select recruiters first.");return;}
-    const blob=new Blob([recruiterLeadsCsv(chosen)],{type:"text/csv;charset=utf-8"});
-    const url=URL.createObjectURL(blob);
-    const link=document.createElement("a");
-    link.href=url;link.download="recruiter-leads.csv";link.click();
-    URL.revokeObjectURL(url);
-    setExportFeedback(chosen.length+" recruiter leads exported");
+  function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query",value:string){
+   const params=new URLSearchParams(window.location.search);
+   if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
+   else params.delete(kind==="query"?"q":kind);
+   window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
+   if(kind==="owner")setOwnerFilter(value);
+   else if(kind==="invite")setInviteFilter(value);
+   else if(kind==="status")setStatusFilter(value);
+   else if(kind==="source")setSourceFilter(value);
+   else setQuery(value);
   }
-  async function copyRows(){
-    const chosen=selectedIds.length?visible.filter(row=>selectedIds.includes(row.id)):visible;
-    if(!chosen.length){setExportFeedback("No recruiters to copy.");return;}
-    try{await navigator.clipboard.writeText(recruiterLeadsCsv(chosen));
-      setExportFeedback(chosen.length+" recruiter leads copied");
-    }catch{setExportFeedback("Couldn't copy rows. Use Export CSV.");}
-  }
+
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
     setDuplicate(null);
@@ -364,7 +362,7 @@ export function RecruiterLeadsWorkspace({
           <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
             <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
-              <input className={inputStyle + " mt-1"} value={query} onChange={e => setQuery(e.target.value)}
+              <input className={inputStyle + " mt-1"} value={query} onChange={e => updateFilter("query",e.target.value)}
                 placeholder="Search recruiter leads" />
             </label>
             <label className="min-w-40 text-sm">
@@ -381,6 +379,47 @@ export function RecruiterLeadsWorkspace({
                 <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies</option>
               </select>
             </label>
+          </div>
+          <div className="space-y-3">
+            <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
+              aria-expanded={filterOpen} aria-controls="engage-filter-panel">Filters</button>
+            {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
+              className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4">
+              <label className="text-sm">Status
+                <select className={inputStyle+" mt-1"} value={statusFilter}
+                  onChange={e=>updateFilter("status",e.target.value)}>
+                  {["ALL","JOINED","UNSUBSCRIBED","NOT_JOINED"].map(item=>
+                   <option key={item} value={item}>{item==="ALL"?"All statuses":item.replaceAll("_"," ")}</option>)}
+                </select>
+              </label>
+              <label className="text-sm">Owner
+                <select className={inputStyle+" mt-1"} value={ownerFilter}
+                  onChange={e=>updateFilter("owner",e.target.value)}>
+                  <option value="ALL">All owners</option>
+                  <option value="UNASSIGNED">Unassigned</option>
+                  {[...new Set(rows.map(r=>r.ownerName).filter((name):name is string=>Boolean(name)))]
+                   .sort().map(name=><option key={name} value={name}>{name}</option>)}
+                </select>
+              </label>
+              <label className="text-sm">Invite
+                <select className={inputStyle+" mt-1"} value={inviteFilter}
+                  onChange={e=>updateFilter("invite",e.target.value)}>
+                  {["ALL","NOT_INVITED","SENT","OPENED","JOINED"].map(item=>
+                   <option key={item} value={item}>{item==="ALL"?"All invites":item.replaceAll("_"," ")}</option>)}
+                </select>
+              </label>
+              <label className="text-sm">Source
+                <select className={inputStyle+" mt-1"} value={sourceFilter}
+                  onChange={e=>updateFilter("source",e.target.value)}>
+                  <option value="ALL">All sources</option>
+                  {[...new Set(rows.map(r=>r.source).filter((name):name is string=>Boolean(name)))]
+                   .sort().map(name=><option key={name} value={name}>{name.replaceAll("_"," ")}</option>)}
+                </select>
+              </label>
+              <button type="button" className={buttonStyle} onClick={()=>{
+                for(const key of ["owner","invite","status","source","query"] as const)updateFilter(key,"ALL");
+              }}>Clear filters</button>
+            </div>:null}
           </div>
           <p className="text-sm text-muted-foreground" aria-live="polite">
             Showing {visible.length} of {rows.length} recruiter leads
