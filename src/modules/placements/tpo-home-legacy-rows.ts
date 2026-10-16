@@ -29,7 +29,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  const batchStatus=batch?(batch.eligible!==null&&batch.registered!==null
   ? `${batch.name} · ${batch.registered} of ${batch.eligible} registered${batch.placed===null?"":`, ${batch.placed} placed`}${d.moreBatches?` · +${d.moreBatches} more`:""}`
   :batch.name+" · Registration summary unavailable"):"No batch in placements yet";
- const drives=(d.liveDrives?plural(d.liveDrives,"live drive"):"No live drives")+
+ const drives=(d.liveDrives?d.liveDrives+" live":"No live drives")+
   (d.driveDetail?" · "+d.driveDetail:"");
  const requests=d.pendingRequests,messages=d.messages;
  const inboxStatus=requests||messages
