@@ -3,6 +3,13 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { TpoDriveCancelImpact } from "@/modules/placements/tpo-drive-cancel-model";
 
+const CANCEL_REASONS = [
+  "Company withdrew",
+  "Hiring freeze",
+  "Moving it to a new date",
+  "Not enough eligible students",
+] as const;
+
 type Preview = {
   id: string;
   expectedUpdatedAt: string;
@@ -14,6 +21,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reason, setReason] = useState("");
   const rows = [
     ["Submitted applications (informed)", preview.impact.submittedApplications],
     ["Open rounds that will be cancelled", preview.impact.openRounds],
@@ -24,7 +32,10 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return;
-    const reason = String(new FormData(event.currentTarget).get("reason") ?? "");
+    if (reason.trim().length < 10) {
+      setError("Please explain the cancellation in at least 10 characters.");
+      return;
+    }
     if (!window.confirm("Cancel this drive? New applications stop, pending rounds are cancelled, and issued offers are withdrawn. Accepted offers are kept.")) return;
     setPending(true);
     setError(null);
@@ -70,10 +81,40 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
           </div>
         ))}
       </dl>
-          <label className="block text-sm font-semibold text-body">
-            Reason for cancellation (audited)
-            <textarea required name="reason" minLength={10} maxLength={1000} rows={3} className="mt-2 w-full rounded-md border border-border bg-surface p-3 text-foreground" />
-          </label>
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-body">Reason for cancellation (audited)</p>
+            <div className="flex flex-wrap gap-2" aria-label="Common cancellation reasons">
+              {CANCEL_REASONS.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  disabled={pending}
+                  aria-pressed={reason === preset}
+                  onClick={() => setReason(preset)}
+                  className={`min-h-10 rounded-full border px-3 text-sm font-medium ${reason === preset
+                    ? "border-primary bg-primary-soft text-primary-text"
+                    : "border-border bg-surface text-body hover:border-primary"}`}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+            <label className="block text-sm font-semibold text-body">
+              Reason shown to students
+              <textarea
+                required
+                name="reason"
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                minLength={10}
+                maxLength={1000}
+                rows={3}
+                disabled={pending}
+                className="mt-2 w-full rounded-md border border-border bg-surface p-3 text-foreground"
+              />
+            </label>
+            <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
+          </div>
           <p className="text-xs text-body">If the drive or counts change after this preview, the cancellation is rejected.</p>
           {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
           <button type="submit" disabled={pending} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
