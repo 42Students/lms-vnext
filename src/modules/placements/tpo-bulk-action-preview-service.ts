@@ -15,7 +15,7 @@ import {tpoBulkApplicationReady,tpoBulkStudentReady,tpoBulkStudentVersion} from 
 import {listTpoApplicantNotes} from "./applicant-notes-service";
 import {listTpoApplicantNotes} from "./applicant-notes-service";
 
-export type TpoBulkCurrent={version:string;ready:boolean};
+export type TpoBulkCurrent={version:string;ready:boolean;reason?:string};
 /** Read only; only current college-scoped records are projected, never person names. */
 export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPreviewRequest){
  const collegeId=await requireTpoJobCollege(context);
@@ -26,7 +26,11 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
      try {
        const record=await getTpoLearnerParticipation(context,id);
        current.set(id,{version:tpoBulkStudentVersion(record.direct),
-         ready:tpoBulkStudentReady(plan.action,record.direct.status)});
+         ready:tpoBulkStudentReady(plan.action,record.direct.status),
+         reason:plan.action==="ELIGIBLE"&&record.direct.status==="ELIGIBLE"?
+          "Already eligible":plan.action==="INELIGIBLE"&&record.direct.status==="INELIGIBLE"?
+          "Already ineligible":plan.action==="CLEAR_OVERRIDE"&&record.direct.status===null?
+          "No direct override to clear":undefined});
      } catch(error) {
        if(!(error instanceof AuthorizationError))throw error;
      }
@@ -53,7 +57,11 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
        :plan.action==="SEND_MESSAGE"
          ?row.applicationUpdatedAt.toISOString()
          :row.updatedAt?.toISOString()??"unavailable";
-     current.set(row.id,{version,ready});
+     current.set(row.id,{version,ready,reason:ready?undefined:
+       row.jobStatus!=="PUBLISHED"&&row.jobStatus!=="CLOSED"?"Drive is not active":
+       row.applicationStatus!=="SUBMITTED"?"Application is no longer submitted":
+       plan.action==="SHORTLISTED"||plan.action==="REJECTED"?
+        "Applicant is not awaiting a screening decision":"Action is unavailable for this applicant"});
    }
  }
  return current;
