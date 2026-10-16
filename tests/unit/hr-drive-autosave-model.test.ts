@@ -1,7 +1,18 @@
 import {describe,expect,it} from "vitest";
 import {emptyHrDriveDraft,hrDriveDraftSchema} from "@/modules/placements/hr-drive-draft-model";
 import {saveHrAutoDraft,restoreHrAutoDraft} from "@/modules/placements/hr-drive-autosave-model";
+import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 describe("REC-home-drives-29 local draft autosave",()=>{
+ it("keeps separate unsent edits from distinct pending requests",()=>{
+  const user="550e8400-e29b-41d4-a716-446655440000";
+  const college="550e8400-e29b-41d4-a716-446655440001";
+  const first="550e8400-e29b-41d4-a716-446655440002";
+  const second="550e8400-e29b-41d4-a716-446655440003";
+  expect(hrDriveSessionStorageKey(user,college,first))
+   .not.toBe(hrDriveSessionStorageKey(user,college,second));
+  expect(hrDriveSessionStorageKey(user,college,null))
+   .not.toBe(hrDriveSessionStorageKey(user,college,first));
+ });
  it("restores even a partially entered role without formally submitting it",()=>{
   const incomplete={...emptyHrDriveDraft(),title:"In-progress role"};
   expect(hrDriveDraftSchema.safeParse(incomplete).success).toBe(false);

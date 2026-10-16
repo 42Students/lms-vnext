@@ -108,7 +108,7 @@ export default async function RecruiterRequestDrivePage({
       Record an outside-platform drive
     </Link>
     <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
-      storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
+      storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id??request?.id)}
       collegeId={collegeId} sourceJobId={fromJob?.job.id??null}
       fixRequestId={request?.id??null} fixUpdatedAt={request?.updatedAt.toISOString()??null}
       editMode={query.edit?"EDIT":"RESUBMIT"} />
