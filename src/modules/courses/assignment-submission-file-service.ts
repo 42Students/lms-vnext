@@ -32,6 +32,7 @@ import {
 } from "@/modules/storage/file-policy";
 import { loadCourseAssignmentScope, loadAssignmentSubmissionScope } from "./assignment-scope";
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
+import { multipartAssignmentRuntimeEnabled } from "./assignment-file-readiness";
 import { postgresConstraintName } from "./errors";
 import {
   requireDeliveryContentMutation,
@@ -57,10 +58,21 @@ export const submitSubmissionFilesInputSchema = z
   .object({
     deliveryId: courseSectionDeliveryIdSchema,
     fileIds: z.array(idSchema).min(1).max(MAX_ASSIGNMENT_FILES_PER_SUBMISSION),
+    textContent:z.string().trim().max(50000).nullable().optional(),
+    links:z.array(z.object({
+      kind:z.enum(["REPOSITORY_LINK","EXTERNAL_LINK"]),
+      url:z.string().url().max(2048).refine(value=>{
+        const parsed=new URL(value);
+        return parsed.protocol==="https:"&&!parsed.username&&!parsed.password;
+      },"Use a secure HTTPS link."),
+      caption:z.string().trim().max(255).default(""),
+    }).strict()).max(20).optional().default([]),
   })
   .strict()
   .refine((value) => new Set(value.fileIds).size === value.fileIds.length, {
     message: "fileIds must be distinct",
+  }).refine(value=>new Set(value.links.map(link=>link.url.toLowerCase())).size===value.links.length,{
+    message:"Duplicate submission links are not allowed",
   });
 export type SubmitSubmissionFilesInput = z.infer<typeof submitSubmissionFilesInputSchema>;
 
@@ -394,6 +406,9 @@ export async function submitAssignmentWithFiles(
 ) {
   const assignmentId = idSchema.parse(assignmentIdInput);
   const input = submitSubmissionFilesInputSchema.parse(rawInput);
+  const multipart=Boolean(input.textContent?.trim()||input.links.length);
+  if(multipart&&!multipartAssignmentRuntimeEnabled())
+    throw new StorageFileError("STORAGE_PARENT_NOT_AVAILABLE");
   const { assignment, membership } = await authorizeOrNotFound(() =>
     requireLearnerScope(context, assignmentId, input.deliveryId),
   );
@@ -468,11 +483,20 @@ export async function submitAssignmentWithFiles(
           deliveryId: input.deliveryId,
           membershipId: membership.id,
           submissionType: "FILE",
-          textContent: null,
-          submissionUrl: null,
+          textContent:multipart?(input.textContent?.trim()||null):null,
+          submissionUrl:multipart?(input.links[0]?.url??null):null,
         })
         .returning();
 
+      // Only execute against registered DB06. Persist all link parts in the
+      // same transaction as the one-shot submission and bound READY files.
+      if(multipart){
+        for(const [sequence,link] of input.links.entries()){
+          await tx.execute(sql`insert into assignment_submission_links
+            (submission_id,sequence,kind,url,caption)
+            values (${submission!.id},${sequence},${link.kind},${link.url},${link.caption})`);
+        }
+      }
       const bound: FileRow[] = [];
       for (const [index, fileId] of input.fileIds.entries()) {
         const [updated] = await tx
@@ -503,6 +527,7 @@ export async function submitAssignmentWithFiles(
           deliveryId: input.deliveryId,
           submissionType: "FILE",
           fileCount: bound.length,
+          ...(multipart?{hasText:Boolean(input.textContent?.trim()),linkCount:input.links.length}:{}),
         },
         dedupeKey: `assignment-submission:${submission!.id}:submitted`,
       });
