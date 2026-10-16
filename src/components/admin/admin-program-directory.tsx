@@ -30,6 +30,15 @@ const columns: DataTableColumn<AdminProgramRow>[] = [
   { key: "department", header: "Department", cell: (item) => item.departmentName },
   { key: "duration", header: "Duration", cell: (item) => programDurationYearsLabel(item.durationTerms) },
   {
+    key: "contents",
+    header: "Contents",
+    cell: (item) => item.contents
+      ? <span title="Archived records are also counted because they may block deletion">
+          {item.contents.semesters} semesters · {item.contents.batches} batches · {item.contents.classes} classes
+        </span>
+      : <span className="text-muted-foreground">—</span>,
+  },
+  {
     key: "actions",
     header: <span className="sr-only">Actions</span>,
     className: "text-right",
@@ -38,7 +47,7 @@ const columns: DataTableColumn<AdminProgramRow>[] = [
       name: item.name,
       code: item.code,
       durationTerms: item.durationTerms,
-    }} />,
+    }} contents={item.contents ?? null} />,
   },
 ];
 
