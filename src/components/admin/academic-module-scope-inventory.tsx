@@ -14,7 +14,7 @@ export function AcademicModuleScopeInventory({scopes}:{scopes:readonly AcademicM
     <button type="button" className="underline" onClick={()=>setExpanded(false)}>Collapse all</button>
    </div>
   </div>
-  <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Stored rules are not guaranteed to be the effective learner decision. Student-in-scope counts are not yet available.</p>
+  <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Stored rules are not guaranteed to be the effective learner decision. Student counts include active learners with current enrollment in this college.</p>
   <div className="max-h-96 overflow-auto rounded border border-border">
    <table className="w-full min-w-[44rem] text-left text-sm">
     <thead className="sticky top-0 bg-surface-subtle text-muted-foreground">
@@ -27,7 +27,7 @@ export function AcademicModuleScopeInventory({scopes}:{scopes:readonly AcademicM
      <td className="p-3">{scope.projectsRule}</td>
      <td className="p-3">{scope.placementsRule}</td>
      <td className="p-3">{scope.electivesRule}</td>
-     <td className="p-3">—</td>
+     <td className="p-3 tabular-nums">{scope.studentsInScope}</td>
     </tr>)}</tbody>
    </table>
   </div>

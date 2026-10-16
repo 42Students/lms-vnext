@@ -34,7 +34,12 @@ async function resolveScope(db:ReturnType<typeof getDb>,collegeId:string,scopeTy
  `);
  return rows.rows[0]??null;
 }
-export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;projectsRule:string;placementsRule:string;electivesRule:string};
+export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;projectsRule:string;placementsRule:string;electivesRule:string;studentsInScope:number};
+/** Active learners only, deduplicated by membership; completed/withdrawn
+ * enrollments and foreign-college sections cannot inflate the tree. */
+export function academicScopeStudents(rows:readonly {scopeType:string;scopeId:string;studentsInScope:number}[]){
+ return new Map(rows.map(row=>[row.scopeType+":"+row.scopeId,row.studentsInScope]));
+}
 export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeIdInput:string):Promise<AcademicModuleScope[]>{
  const college=await collegeScope(ctx,collegeIdInput);if(!college)return [];
  const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string}>(sql`
@@ -55,12 +60,43 @@ export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeId
   module:moduleAccessRules.module,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked,
  }).from(moduleAccessRules).where(and(inArray(moduleAccessRules.scopeId,ids),
   inArray(moduleAccessRules.module,["projects","placements","electives"])));
+ const studentRows=await getDb().execute<{scopeType:ScopeType;scopeId:string;studentsInScope:number}>(sql`
+ WITH active AS (
+  SELECT enrollment.id AS enrollment_id,enrollment.membership_id AS member_id,
+   enrollment.program_id,enrollment.cohort_id,program.department_id
+  FROM learner_program_enrollments enrollment
+  JOIN college_memberships membership ON membership.id=enrollment.membership_id
+  JOIN users person ON person.id=membership.user_id
+  JOIN membership_roles role ON role.membership_id=membership.id AND role.role='LEARNER'
+  JOIN programs program ON program.id=enrollment.program_id
+  JOIN departments department ON department.id=program.department_id
+  WHERE enrollment.status='ACTIVE' AND membership.status='ACTIVE'
+   AND person.platform_status='ACTIVE' AND membership.college_id=${college.id}::uuid
+   AND department.college_id=${college.id}::uuid
+ ), scoped AS (
+  SELECT 'DEPARTMENT'::text AS scope_type,department_id AS scope_id,member_id FROM active
+  UNION ALL SELECT 'PROGRAM',program_id,member_id FROM active
+  UNION ALL SELECT 'COHORT',cohort_id,member_id FROM active
+  UNION ALL SELECT 'SECTION',section_enrollment.section_id,active.member_id
+   FROM active
+   JOIN section_enrollments section_enrollment
+     ON section_enrollment.learner_enrollment_id=active.enrollment_id
+     AND section_enrollment.status='ACTIVE'
+   JOIN sections section ON section.id=section_enrollment.section_id
+     AND section.cohort_id=active.cohort_id AND section.status='ACTIVE'
+ )
+ SELECT scope_type AS "scopeType",scope_id::text AS "scopeId",
+  count(DISTINCT member_id)::int AS "studentsInScope"
+ FROM scoped GROUP BY scope_type,scope_id
+ `);
+ const students=academicScopeStudents(studentRows.rows);
  const describe=(scopeType:string,scopeId:string,module:string)=>{
   const entry=stored.find(row=>row.scopeType===scopeType&&row.scopeId===scopeId&&row.module===module);
   return entry?(entry.enabled?"On":"Off")+(entry.locked?" · Locked":""):"Inherit";
  };
  return result.rows.map(row=>({...row,projectsRule:describe(row.scopeType,row.scopeId,"projects"),
-  placementsRule:describe(row.scopeType,row.scopeId,"placements"),electivesRule:describe(row.scopeType,row.scopeId,"electives")}));
+  placementsRule:describe(row.scopeType,row.scopeId,"placements"),electivesRule:describe(row.scopeType,row.scopeId,"electives"),
+  studentsInScope:students.get(row.scopeType+":"+row.scopeId)??0}));
 }
 export async function readDescendantRule(ctx:RequestContext,collegeInput:string,scopeType:ScopeType,scopeIdInput:string,module:"projects"|"electives"){
  const college=await collegeScope(ctx,collegeInput);if(!college)return null;
