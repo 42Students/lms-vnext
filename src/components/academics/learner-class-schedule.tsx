@@ -326,8 +326,8 @@ export function LearnerClassSchedule({
   ) {
     return (
       <EmptyState
-        title="No class assignment yet"
-        description="Your schedule will appear here once your College places you in an active Section."
+        title="You are not assigned to a class yet"
+        description="Your schedule will appear here once your class assignment is complete."
       />
     );
   }
