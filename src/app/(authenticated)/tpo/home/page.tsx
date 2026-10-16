@@ -51,6 +51,8 @@ export default async function TpoHome(){
   hasUninvitedBatch:batches.batches.some(batch=>!batch.invitedAt),
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
+  driveDetail:operations.workQueue.find(item=>item.count>0)?.jobTitle??null,
+  driveHref:"/tpo/placements",
   registered:null,placedUnique:null,recruiterLeads:null,followUps:null,recruiterAccess:null,
   pendingRequests:pendingRequestCount,
   messages:null,teamAsks:null,teamMentions:null,teamUnread:null,
