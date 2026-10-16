@@ -392,6 +392,11 @@ export function ProjectWorkspace({
                 readiness.finalSubmission.canSubmitDraft
               }
               review={workspace.finalDelivery.reviews.at(-1)??null}
+              readinessDetail={{
+                tasksRemaining:Math.max(0,readiness.execution.tasks.total-readiness.execution.tasks.done),
+                sprintsRemaining:Math.max(0,readiness.execution.sprints.total-readiness.execution.sprints.completed),
+                releasesRemaining:Math.max(0,readiness.execution.releases.total-readiness.execution.releases.shipped),
+              }}
             /> : null}
           </div>
         </section>
