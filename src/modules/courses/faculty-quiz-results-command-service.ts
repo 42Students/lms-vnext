@@ -29,13 +29,14 @@ export async function commandFacultyQuizResults(context:RequestContext,rawQuizId
   if(!quiz)throw new CoursesServiceError("QUIZ_NOT_FOUND");
   if(quiz.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
     throw new CoursesServiceError("QUIZ_RESULTS_STALE_VERSION");
-  if(!facultyQuizResultsTransition(quiz.status,quiz.resultsPublished,input.action))
+  if(!facultyQuizResultsTransition(quiz.status,quiz.resultsPublished,input.action,quiz.dueAt))
     throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
   const [updated]=await tx.update(courseQuizzes).set({
    resultsPublished:input.action==="PUBLISH",
+   status:quiz.status==="PUBLISHED"?"CLOSED":quiz.status,
    updatedAt:new Date(Math.max(Date.now(),quiz.updatedAt.getTime()+1)),
   }).where(and(eq(courseQuizzes.id,quiz.id),eq(courseQuizzes.deliveryId,input.deliveryId),
-    eq(courseQuizzes.status,"CLOSED"),
+    eq(courseQuizzes.status,quiz.status),
     sql`date_trunc('milliseconds', ${courseQuizzes.updatedAt}) =
       ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
    )).returning();
