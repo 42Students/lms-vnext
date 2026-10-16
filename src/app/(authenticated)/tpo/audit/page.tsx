@@ -129,6 +129,22 @@ export default async function TpoAuditPage({
     pageSize,
   };
 
+  const toIstDate=(value:Date)=>new Intl.DateTimeFormat("en-CA",{
+   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).format(value);
+  const today=toIstDate(new Date());
+  const quickLooks=[{label:"Today",from:today,to:today},
+   {label:"7 days",from:toIstDate(new Date(Date.now()-6*86400000)),to:today},
+   {label:"30 days",from:toIstDate(new Date(Date.now()-29*86400000)),to:today},
+   {label:"Older",from:"",to:toIstDate(new Date(Date.now()-30*86400000))},
+  ];
+  const quickHref=(from:string,to:string)=>{
+   const params=new URLSearchParams({
+    ...(query.kind!=="ALL"?{kind:query.kind}:{}),...(query.q?{q:query.q}:{}),
+    ...(from?{from}:{}),...(to?{to}:{}),
+   });
+   return "/tpo/audit?"+params.toString();
+  };
   return (
     <div className="space-y-6">
       <PageHeader
@@ -184,6 +200,14 @@ export default async function TpoAuditPage({
         ))}
       </section>
 
+      <nav aria-label="Quick looks" className="flex flex-wrap gap-2">
+       <span className="self-center text-sm font-semibold">Quick looks</span>
+       {quickLooks.map(look=><Link key={look.label} href={quickHref(look.from,look.to)}
+        aria-current={query.from===look.from&&query.to===look.to?"page":undefined}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+        {look.label}
+       </Link>)}
+      </nav>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Audit filters
