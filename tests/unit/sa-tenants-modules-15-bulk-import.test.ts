@@ -1,4 +1,5 @@
 import {describe,it,expect} from "vitest";
+import {readFileSync} from "node:fs";
 import {parseCollegeImportCsv,MAX_COLLEGE_IMPORT_ROWS} from "@/modules/colleges/bulk-import-model";
 describe("SA-tenants-modules-15 bulk college CSV",()=>{
  it("parses header, quoted commas and escaped quotes",()=>{
@@ -14,5 +15,10 @@ describe("SA-tenants-modules-15 bulk college CSV",()=>{
   expect(()=>parseCollegeImportCsv('A,ABC\nB,abc')).toThrow(/Duplicate/);
   expect(MAX_COLLEGE_IMPORT_ROWS).toBe(200);
   expect(()=>parseCollegeImportCsv(Array.from({length:201},(_,i)=>"Name"+i+",C"+i).join("\n"))).toThrow(/200/);
+ });
+ it("preflights globally existing codes without case-sensitive mismatch",()=>{
+  const service=readFileSync(new URL("../../src/modules/colleges/bulk-import-service.ts",import.meta.url),"utf8");
+  expect(service).toContain("lower(${colleges.code})");
+  expect(service).toContain("rows.map(r=>r.code.toLowerCase())");
  });
 });

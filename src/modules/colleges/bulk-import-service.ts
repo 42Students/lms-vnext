@@ -1,5 +1,5 @@
 import "server-only";
-import {inArray} from "drizzle-orm";
+import {inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -11,7 +11,7 @@ export async function bulkImportColleges(ctx:RequestContext,raw:unknown){
  requirePermission(ctx,"college.manage",{organizationId});
  const rows=parseCollegeImportCsv(csv);
  const present=rows.length?await getDb().select({code:colleges.code}).from(colleges)
-  .where(inArray(colleges.code,rows.map(r=>r.code))):[];
+  .where(inArray(sql<string>`lower(${colleges.code})`,rows.map(r=>r.code.toLowerCase()))):[];
  const taken=new Set(present.map(r=>r.code.toLowerCase()));
  const results:{line:number;code:string;status:"CREATED"|"SKIPPED"|"FAILED";message:string}[]=[];
  for(const row of rows){
