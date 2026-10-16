@@ -12,9 +12,10 @@ export async function GET(){
    getTpoPersonalInbox(context,{view:"all"}),
    countTpoUnreadRecruiterMessages(context),
   ]);
-  const items=inbox.page.items.slice(0,10).map(({notification})=>({
+  const items=inbox.page.items.slice(0,20).map(({notification})=>({
    id:notification.id,title:notification.title,body:notification.body,
    actionHref:notification.actionHref,readAt:notification.readAt?.toISOString()??null,
+   createdAt:notification.createdAt.toISOString(),
   }));
   return NextResponse.json({messages,unread:inbox.unreadCount,items},{
    headers:{"Cache-Control":"private, no-store"},
