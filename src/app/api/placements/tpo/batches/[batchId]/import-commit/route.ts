@@ -4,14 +4,14 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getBatchEligibilityImportPreview} from "@/modules/placements/tpo-batch-import-service";
-import {eligibilityImportRowSchema} from "@/modules/placements/tpo-eligibility-import-model";
+import {tpoSheetRowSchema} from "@/modules/placements/tpo-eligibility-sheet-model";
 import {decidePlacementParticipation,PlacementBatchError} from "@/modules/placements/batch-participation-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 export const runtime="nodejs";
 const inputSchema=z.object({
- rows:z.array(eligibilityImportRowSchema).min(1).max(200),
+ rows:z.array(tpoSheetRowSchema).min(1).max(5000),
  expectedVersions:z.record(z.string().uuid(),z.string().min(1)),
- previewMemberIds:z.array(z.string().uuid().nullable()).min(1).max(200).optional(),
+ previewMemberIds:z.array(z.string().uuid().nullable()).min(1).max(5000).optional(),
  confirmed:z.literal(true),
 }).strict();
 export async function POST(request:Request,{params}:{params:Promise<{batchId:string}>}){
@@ -27,7 +27,7 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
   if(rollIdentifiers&&!body.previewMemberIds)return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
   if(body.previewMemberIds&&body.previewMemberIds.length!==body.rows.length)
    return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
-  const changes:{scopeType:"MEMBERSHIP";scopeId:string;status:"ELIGIBLE"|"INELIGIBLE";
+  const changes:{scopeType:"MEMBERSHIP";scopeId:string;status:"ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
    reason:string|null;expectedVersion:string}[]=[];
   for(let index=0;index<preview.preview.length;index++){
    const candidate=preview.preview[index],row=preview.rows[index];
