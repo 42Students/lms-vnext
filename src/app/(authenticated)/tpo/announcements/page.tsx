@@ -5,6 +5,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hasMembershipRole} from "@/modules/identity/context";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placement-read-service";
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
@@ -18,6 +19,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const tab=tpoAnnouncementTabSchema.safeParse(t??"yours");
  if(!tab.success)return <main role="alert" className="p-5">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></main>;
  const result=await listTpoPlacementAnnouncements(context,tab.data);
+ const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
+  await placementTableExists("placement_tpo_notice_recipients");
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const query=tpoAudiencePreviewQuery.safeParse({
   audience:first(raw.audience)??"COLLEGE",
@@ -61,12 +64,14 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <p className="mt-1 text-sm text-body">{audience.potentiallyVisibleMemberships} active memberships with active platform accounts.</p>
      <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. Publishing is still college-wide; this preview does not change recipients.</p>
    </div>:null}
-   {query.success&&!canPublishTpoNoticeWithCurrentStorage(query.data.audience)?
+   {query.success&&!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)?
     <p role="alert" className="mt-4 rounded-md border border-border p-3 text-sm">
       Targeted announcement publishing is not ready. This audience preview cannot be published
       until fixed recipient storage is registered. Choose COLLEGE only to publish to the whole college.
     </p>:null}
    <form action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
+    <input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
+    {query.success&&query.data.targetId?<input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     <label className="grid gap-1 text-sm font-semibold">Title
      <input name="title" required maxLength={255} className="min-h-11 rounded-md border border-border bg-surface px-3" />
     </label>
@@ -80,7 +85,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
       <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
-    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Publish college notice</button>
+    <button type="submit" disabled={!query.success||!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)}
+      className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+      {query.success&&query.data.audience!=="COLLEGE"?"Publish to selected audience":"Publish college notice"}
+    </button>
    </form>
   </section>:null}
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
