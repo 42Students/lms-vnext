@@ -17,6 +17,9 @@ export type ProjectListItem = {
   attention?: readonly string[];
   actionLine?: string;
   dueState?: string;
+  courseLabel?: string | null;
+  phase?: string | null;
+  dueLabel?: string | null;
   dueDate?: string | null;
   blockedHref?: string;
   href?: string;
@@ -111,6 +114,13 @@ export function ProjectList({
             </div>
           </div>
 
+          {item.courseLabel || item.phase || item.dueLabel ? (
+            <p className="mt-2 text-xs font-semibold text-body">
+              {item.courseLabel ?? "Project"} · {item.mentorName ?? "Mentor not assigned"}
+              {item.phase ? " · " + item.phase : ""}
+              {item.dueLabel ? " · " + item.dueLabel : ""}
+            </p>
+          ) : null}
           <p className="mt-3 line-clamp-3 text-sm leading-6 text-body">
             {item.summary ??
               "Project workspace."}
