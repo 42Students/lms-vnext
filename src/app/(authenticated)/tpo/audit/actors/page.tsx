@@ -68,7 +68,7 @@ export default async function TpoActorAuditPage({
       </a>} />
     <p className="text-sm leading-6 text-body">
       Only the canonical PLACEMENTS activity stream has consistent actor/entity attribution.
-      Domain-history and share events remain on the original Audit Log. An empty result
+      Domain-history and share events remain on the original Audit log. An empty result
       does not prove no action occurred in a domain without an activity writer.
     </p>
     <form action="/tpo/audit/actors" method="get"

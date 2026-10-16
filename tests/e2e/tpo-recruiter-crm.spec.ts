@@ -36,7 +36,7 @@ test.describe("W05 recruiter CRM source-parity browser contract", () => {
   test("never renders a false empty list while DB09 migration gate is closed", async ({ page, context }) => {
     await tpoLogin(context);
     await page.goto("/tpo/recruiters");
-    await expect(page.getByRole("heading", { name: "Recruiter Leads" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Engage" })).toBeVisible();
     await expect(page.getByRole("alert")).toContainText(/awaiting database verification/i);
     await expect(page.getByRole("button", { name: "Add recruiter lead" })).toBeDisabled();
     await expect(page.getByText("No recruiter leads yet")).toHaveCount(0);

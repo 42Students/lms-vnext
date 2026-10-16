@@ -457,7 +457,7 @@ export function PlacementJobCreateForm({
             </>
           ) : (
             <p className="m-0 text-sm font-semibold text-danger">
-              No active placement season. Start one from Placement Operations before creating a drive.
+              No active placement season. Start one from Drives before creating a drive.
             </p>
           )}
         </div>

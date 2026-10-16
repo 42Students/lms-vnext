@@ -6,7 +6,7 @@ export default function TpoAuditLoading() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Oversight"
-        title="Audit Log"
+        title="Audit log"
         description="Loading persisted college placement history…"
       />
       <LoadingState label="Loading audit events and summary…" />
