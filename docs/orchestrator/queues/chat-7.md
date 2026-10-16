@@ -26,6 +26,13 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-7-04-home-drives-s3 | IN-PROGRESS | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
+## FAST-MODE checkpoint — continuation B (2026-10-17)
+
+- REC-calendar-messages-profile-09 / -10 (WP-03): Messages inbox now uses legacy title and per-page unread summary, team-plus-drive conversation subject, new badge and relative time. Full-text message search is still missing.
+- REC-home-drives-18 / -13 / -14 (WP-02/04): first-drive/filter/stage empty states include recovery links; visible drive cards use Live/Completed labels, CTC, application deadline and a next-step hint. Applied/offer counts and open change-request details remain open.
+- REC-home-drives-02 (WP-04): typed Soon/When you can urgency and recorded time appear on Next-up action cards. An actual overdue-results state still requires persisted result-completion evidence.
+- Never claim an entire WP DONE from these partial parity patches; S1 private uploads, consent-gated applicant fields, registered selection workflow and trusted auto-approval remain open.
+
 ## FAST-MODE checkpoint — continuation (2026-10-17)
 
 - REC-home-drives-24 / -25 / -26 (WP-02): formal request draft now persists branch/passing-year, campus mode and stipend/LPA compensation with legacy validation; college branch suggestions and end-to-end TPO approval still require parity.
