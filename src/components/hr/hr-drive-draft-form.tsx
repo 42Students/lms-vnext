@@ -172,6 +172,14 @@ export function HrDriveDraftForm({
             </select>
           </label>
           <label className="grid gap-1 text-sm text-body">
+            Mode
+            <select className={inputClass} value={draft.driveMode??"ON_CAMPUS"}
+              onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS"}))}>
+              <option value="ON_CAMPUS">On campus</option>
+              <option value="OFF_CAMPUS">Off campus (students apply on your site)</option>
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm text-body">
             Work mode
             <select className={inputClass} value={draft.workMode}
               onChange={(event) => setDraft((current) => ({ ...current, workMode: event.target.value as HrDriveDraft["workMode"] }))}>
@@ -331,7 +339,7 @@ export function HrDriveDraftForm({
           <div className="mt-4 space-y-2 rounded-md bg-surface-secondary p-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{result.data.title}</h3>
             <p className="whitespace-pre-wrap">{result.data.description}</p>
-            <p>{result.data.location} · {result.data.employmentType.replaceAll("_", " ")} · {result.data.workMode}</p>
+            <p>{result.data.location} · {result.data.employmentType.replaceAll("_", " ")} · {result.data.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {result.data.workMode}</p>
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">
               {hrDraftPreviewRounds(result.data).map(step=>(
