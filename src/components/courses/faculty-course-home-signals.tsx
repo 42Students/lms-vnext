@@ -66,17 +66,17 @@ export function FacultyCourseHomeSignals({
                   : "All clear"}
               </StatusBadge>
               <span className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                Faculty command
+                Teaching overview
               </span>
             </div>
             <h2 className="mt-2 text-xl font-semibold text-foreground">
               {firstPending
                 ? firstPending.assignmentTitle
-                : "Course work is up to date"}
+                : "Nothing waiting on you"}
             </h2>
             <p className="mt-1 text-sm text-body">
               {firstPending
-                ? `${signals.pendingSubmissions.length} submission${signals.pendingSubmissions.length === 1 ? "" : "s"} still need grading.`
+                ? `${signals.pendingSubmissions.length} submission(s) waiting.`
                 : "No submitted assignments currently need grading. Continue with course content or review class health."}
             </p>
           </div>
@@ -147,7 +147,7 @@ export function FacultyCourseHomeSignals({
                 Needs attention
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {signals.atRiskTotal} student{signals.atRiskTotal === 1 ? "" : "s"} currently match the legacy risk rules.
+                {signals.atRiskTotal} student{signals.atRiskTotal === 1 ? "" : "s"} need attention.
               </p>
             </div>
             <Link
