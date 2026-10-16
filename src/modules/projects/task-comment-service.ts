@@ -9,7 +9,7 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {projectTaskCommentInputSchema} from "./pr-s2-04-task-fields-model";
 import {projectTaskIdSchema} from "./validation";
-import {notifyProjectMemberships} from "./project-notification-service";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 
 export async function listProjectTaskComments(context:RequestContext,projectId:string,taskIdInput:string){
  const scope=await requireProjectReadAccess(context,projectId);
@@ -65,16 +65,15 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
     summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id},
     groupKey:"project:"+scope.project.id,
   });
-  if(task.assigneeMembershipId){
-    await notifyProjectMemberships(tx,event.id,{
-      projectId:scope.project.id,collegeId:scope.collegeId,
-      membershipIds:[task.assigneeMembershipId],
-      exceptUserId:context.user.id,
-      title:"New comment on "+task.title,
-      body:"There is a new comment on your task.",
-      actionHref:"/learn/projects/"+scope.project.id,
-    });
-  }
+  await notifyActiveProjectMembers(tx,event.id,{
+    projectId:scope.project.id,collegeId:scope.collegeId,
+    roles:["LEARNER","MENTOR"],
+    exceptUserId:context.user.id,
+    title:"New comment on "+task.title,
+    body:"A team member commented on a project task.",
+    actionHref:scope.access==="MENTOR" ? "/mentor/projects/"+scope.project.id+"?tab=board"
+      : "/learn/projects/"+scope.project.id+"?tab=board",
+  });
   return comment;
  });
 }
