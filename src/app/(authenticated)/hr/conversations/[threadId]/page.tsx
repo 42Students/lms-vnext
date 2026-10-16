@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 import {RecruiterConversationReadControl} from "@/components/hr/recruiter-conversation-read-control";
+import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -36,6 +37,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
  return <main className="space-y-5">
+  <RecruiterConversationLiveRefresh collegeId={result.thread.collegeId} threadId={result.thread.id}/>
   <PageHeader eyebrow="Recruiter · Conversations" title={"Placement cell · "+topic}
    description="Only messages shared with your currently authorized recruiter account and college are visible."/>
   <section aria-label="Conversation subject" className="rounded-xl border border-border bg-surface p-4">

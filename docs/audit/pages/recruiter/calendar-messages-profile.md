@@ -222,3 +222,7 @@ Browser script needed (`scripts/verify/pages/recruiter-calendar-messages-profile
 ## REC-calendar-messages-profile-15 implementation note (2026-10-17)
 
 The recruiter thread composer now validates empty/over-limit messages with the legacy strings "Write a message first" and "Keep a message under 4000 characters" before sending. The failure notice uses "Could not send"; the refresh-failure branch uses "Message sent, but the conversation could not refresh. Retry to load the latest messages." HTTP permission errors continue to explain access denial. Exact-string unit tests were authored. Final closure requires real POST/refresh/browser verification.
+
+## REC-calendar-messages-profile-13 source implementation (2026-10-17)
+
+Recruiter conversations inbox and detail mount a visible-tab-only four-second pulse. A dedicated read-only GET endpoint validates active recruiter+college grants and, for a thread, exact recruiter ownership; it returns only a digest of message update instants and thread identities. Changed digests trigger server refresh; no read receipt is written by polling. The message rows are not repeatedly sent every four seconds. Auth/database/browser integration still requires the orchestrator's test environment; source is not VERIFIED.

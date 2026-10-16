@@ -2,6 +2,7 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrConversationQuerySchema} from "@/modules/placements/hr-conversation-inbox-model";
 import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-service";
@@ -20,6 +21,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
  const result=await listHrConversations(context,parsed.data);
  return <main className="space-y-5">
+  {result.status==="READY"?<RecruiterConversationLiveRefresh collegeId={result.collegeId}/>:null}
   <PageHeader eyebrow="Recruiter · Messages" title="Conversations"
    description="Private employer conversations with the placement cell. Notifications remain a separate inbox."/>
   <Link href="/hr/messages" className="inline-flex min-h-11 items-center text-primary-text">Notification inbox</Link>
