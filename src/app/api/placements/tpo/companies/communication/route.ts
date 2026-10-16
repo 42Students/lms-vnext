@@ -18,6 +18,8 @@ export async function POST(request:Request){
   await getCurrentRequestContext(),await request.json()));}
  catch(e){
   if(e instanceof CompanyCommunicationUnavailable)return NextResponse.json({error:"STORAGE_PENDING"},{status:503});
+  if(e instanceof Error&&e.message==="COMPANY_NOT_IN_COLLEGE")
+   return NextResponse.json({error:"COMPANY_NOT_FOUND"},{status:404});
   if(e instanceof ZodError)return NextResponse.json({error:"INVALID_COMPANY_STATE"},{status:422});
   return apiErrorResponse(e);
  }
