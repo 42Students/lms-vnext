@@ -11,6 +11,7 @@ describe("TPO-requests-verification-34/35 decision validation",()=>{
     expect(tpoDriveRequestDecisionSchema.safeParse({...input,reason:"x"}).success).toBe(false);
     expect(tpoDriveRequestDecisionSchema.safeParse({...input,collegeId:id}).success).toBe(false);
     expect(tpoDriveRequestDecisionSchema.safeParse({...input,action:"APPROVE_AND_PUBLISH"}).success).toBe(false);
+    expect(tpoDriveRequestDecisionSchema.safeParse({...input,action:"SEND_BACK"}).success).toBe(true);
   });
   it("uses legacy decision labels",()=>{
     expect(TPO_DRIVE_REQUEST_DECISION_COPY.decline).toBe("Decline this request");
