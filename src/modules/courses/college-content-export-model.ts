@@ -11,7 +11,7 @@ export const collegeContentCsvSchema=collegeContentQuerySchema.omit({page:true})
 export {exportParams};
 export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  q:string;courseCode?:string;programCode?:string;cohortCode?:string;periodCode?:string;pathStatus?:string;departmentName?:string;offeringType?:string;lessonStatus?:string;status:string;format:string;scope:string;visibility?:string;
- view?: "ALL"|"UPCOMING"|"PAST";from?:string;to?:string;offeringStatus?:string;
+ view?: "ALL"|"UPCOMING"|"PAST";from?:string;to?:string;offeringStatus?:string;deliveryId?:string;
 }){
  const p=new URLSearchParams();
  if(q.q)p.set("q",q.q);
@@ -25,6 +25,7 @@ export function collegeContentCsvHref(kind:CollegeContentKind,q:{
  if(kind!=="LIVE_CLASS"&&q.pathStatus&&q.pathStatus!=="ALL")p.set("pathStatus",q.pathStatus);
  if(q.status!=="ALL")p.set("status",q.status);
  if(q.scope!=="ALL")p.set("scope",q.scope);
+ if(q.deliveryId)p.set("deliveryId",q.deliveryId);
  if(kind!=="LIVE_CLASS"&&q.visibility&&q.visibility!=="ALL")p.set("visibility",q.visibility);
  if(kind!=="LIVE_CLASS"&&q.offeringStatus&&q.offeringStatus!=="ALL")p.set("offeringStatus",q.offeringStatus);
  if(q.format!=="ALL"&&kind==="VIDEO")p.set("format",q.format);
