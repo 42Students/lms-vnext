@@ -1,7 +1,7 @@
 "use client";
 import {useState} from "react";
 type Event={from:string|null;to:string;reason:string|null;when:string};
-type Detail={
+export type CollegeApplicationDetail={
  application:{id:string;name:string|null;email:string|null;phone:string|null;
   rollNumber:string|null;role:string;source:string;status:string;submittedAt:string;
   withdrawnAt:string|null;eligibilityStatus:string;eligibilitySnapshot:unknown};
@@ -15,10 +15,10 @@ type Detail={
 };
 const when=(v:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
  timeZone:"Asia/Kolkata"}).format(new Date(v));
-export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose}:{
- jobId:string;applicationId:string;onClose:()=>void;
+export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,initialDetail}:{
+ jobId:string;applicationId:string;onClose:()=>void;initialDetail?:CollegeApplicationDetail;
 }){
- const [detail,setDetail]=useState<Detail|null>(null);
+ const [detail,setDetail]=useState<CollegeApplicationDetail|null>(initialDetail??null);
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
  const [note,setNote]=useState("");
@@ -31,7 +31,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose}:{
    const response=await fetch(url,{cache:"no-store"});
    const body=await response.json().catch(()=>null);
    if(!response.ok||!body?.application)throw Error(body?.error??"Unable to load application");
-   setDetail(body as Detail);
+   setDetail(body as CollegeApplicationDetail);
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to load application");}
   finally{setLoading(false);}
  }
