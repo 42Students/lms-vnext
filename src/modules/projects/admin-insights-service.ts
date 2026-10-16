@@ -489,6 +489,20 @@ export async function listProjectAdminRiskQueue(
     order by latest.version desc
     limit 1
   ), false)`;
+  const blockedTask = sql<boolean>`exists (
+    select 1 from project_tasks blocked
+    where blocked.project_id = ${projectInstances.id}
+      and blocked.status = 'BLOCKED'
+      and nullif(trim(blocked.blocker_reason), '') is not null
+  )`;
+  const blockerSummary = sql<string | null>`(
+    select nullif(trim(blocked.blocker_reason), '')
+    from project_tasks blocked
+    where blocked.project_id = ${projectInstances.id}
+      and blocked.status = 'BLOCKED'
+      and nullif(trim(blocked.blocker_reason), '') is not null
+    order by blocked.updated_at desc, blocked.id desc limit 1
+  )`;
   const staleCutoff =
     new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000,
@@ -504,6 +518,7 @@ export async function listProjectAdminRiskQueue(
     or(
       sql`${lastActivityAt} <= ${staleCutoff}`,
       pendingReview,
+      blockedTask,
     ),
   );
   const db = getDb();
@@ -524,6 +539,8 @@ export async function listProjectAdminRiskQueue(
           updatedAt: projectInstances.updatedAt,
           lastActivityAt,
           pendingReview,
+          blockedTask,
+          blockerSummary,
         })
         .from(projectInstances)
         .where(where)
@@ -598,6 +615,7 @@ export async function listProjectAdminRiskQueue(
             project.pendingReview
               ? "SUBMITTED"
               : null,
+          hasBlockedTask: project.blockedTask,
         });
       const projectMentors =
         mentors.filter(
@@ -616,6 +634,7 @@ export async function listProjectAdminRiskQueue(
         ...project,
         inactiveDays: inactivityDays,
         riskReasons: reasons,
+        blockerReason: project.blockerSummary,
         mentorName:
           mentor?.displayName ?? null,
       };
