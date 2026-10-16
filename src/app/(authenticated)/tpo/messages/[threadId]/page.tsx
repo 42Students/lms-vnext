@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-thread-detail-service";
 
@@ -28,6 +29,7 @@ export default async function TpoRecruiterConversationPage({params}:{
      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground">{item.body}</p>
     </article>)}
   </section>
-  <p className="text-xs text-muted-foreground">Opening this page does not mark messages as read.</p>
+  <TpoRecruiterMessageReply threadId={threadId} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />
+  <p className="text-xs text-muted-foreground">Reading and sending require explicit confirmation.</p>
  </main>;
 }
