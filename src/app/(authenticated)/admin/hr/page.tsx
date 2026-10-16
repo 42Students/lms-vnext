@@ -97,6 +97,8 @@ export default async function SuperAdminHrPage({
             organizationId:
               grant.organizationId,
             status: grant.status,
+            validUntil: grant.validUntil?.toISOString()??null,
+            verificationStatus: grant.verificationStatus,
           }),
         ),
       }));
