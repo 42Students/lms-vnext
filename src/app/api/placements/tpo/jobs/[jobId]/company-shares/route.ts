@@ -30,7 +30,9 @@ export async function POST(request:Request,{params}:RouteContext) {
     const body=await request.json() as unknown;
     if(!body||typeof body!=="object"||Array.isArray(body)) return NextResponse.json({error:"INVALID_INPUT"},{status:400});
     const expiresInDays=(body as Record<string,unknown>).expiresInDays;
-    const result=await issueTpoCompanyApplicantShare(await getCurrentRequestContext(),{jobId,expiresInDays});
+    const selectedApplicationIds=(body as Record<string,unknown>).selectedApplicationIds;
+    const result=await issueTpoCompanyApplicantShare(await getCurrentRequestContext(),{jobId,expiresInDays,
+      ...(selectedApplicationIds!==undefined?{selectedApplicationIds}:{})});
     return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"}});
   }catch(error){return errorResponse(error);}
 }
