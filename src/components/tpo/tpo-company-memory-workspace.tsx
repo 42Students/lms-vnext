@@ -250,6 +250,11 @@ export function TpoCompanyMemoryWorkspace({
         <div className="space-y-5">
           <section className="rounded-lg border border-border bg-surface p-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
+            <label className="mt-3 block text-sm text-body">Search drives
+              <input className="mt-1 min-h-10 w-full rounded-md border border-border bg-surface px-3"
+                type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
+                placeholder="Search role, status or year"/>
+            </label>
             {company.drives.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">No drives yet.</p>
             ) : (
@@ -259,7 +264,7 @@ export function TpoCompanyMemoryWorkspace({
                     <tr><th className="py-2">Role</th><th>Status</th><th>Created</th></tr>
                   </thead>
                   <tbody>
-                    {company.drives.map(drive => (
+                    {visibleDrives.map(drive => (
                       <tr className="border-b border-border last:border-0" key={drive.id}>
                         <td className="py-3">
                           <Link className="text-primary-text hover:underline"
