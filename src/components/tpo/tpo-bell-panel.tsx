@@ -34,7 +34,7 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
   else router.refresh();
  }
  async function markAll(){
-  if(pending||!window.confirm("Mark all your TPO notifications in this college as read?"))return;
+  if(pending||unread===0)return;
   setPending(true);setError("");
   try{
    const response=await fetch("/api/tpo/notifications/read-all",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:"{}"});
