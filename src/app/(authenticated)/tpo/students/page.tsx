@@ -624,7 +624,7 @@ export default async function TpoStudentsPage({
           rows={roster.items.map(student=>({id:student.membershipId,
             label:student.displayName+" · "+student.branchName}))}
           viewCount={roster.total}
-          allRows={roster.total<=200?data.exportRows?.map(student=>({
+          allRows={roster.total<=5000?data.exportRows?.map(student=>({
             id:student.membershipId,label:student.displayName+" · "+student.branchName
           }))??undefined:undefined}/>
 
