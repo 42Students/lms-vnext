@@ -15,6 +15,7 @@ export async function listCompanyShareHistory(collegeId:string,jobIds:readonly s
   jobTitle:placementJobs.title,
   createdAt:placementCompanyApplicantShares.createdAt,
   revokedAt:placementCompanyApplicantShares.revokedAt,
+  expiresAt:placementCompanyApplicantShares.expiresAt,
   selectedCount:sql<number>`(select count(*)::integer from placement_company_share_selections sel
     where sel.share_id = ${placementCompanyApplicantShares.id})`,
  }).from(placementCompanyApplicantShares)
