@@ -15,16 +15,15 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
  let result:Awaited<ReturnType<typeof getTpoDriveApplicationsExport>>;
  try{result=await getTpoDriveApplicationsExport(context,{...filters,jobId});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error;}
- const ready=process.env.DB09_TPO_API_READY==="DB09_VERIFIED";
  const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel,eligibility:result.eligibility,sort:result.sort,submittedWithin:result.submittedWithin}).toString();
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  return <div className="space-y-6">
   <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="text-sm font-semibold text-primary-text hover:underline">← Applicants</Link>
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
-   actions={ready?<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
+   actions={<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
     className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
-     Download capped CSV</a>:null}/>
+     Download capped CSV</a>}/>
   <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="min-w-40 flex-1 text-sm text-body">Stage
     <select name="stage" defaultValue={result.stage} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
@@ -54,8 +53,6 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     </select></label>
    <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Preview filters</button>
   </form>
-  {!ready?<p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
-   CSV download requires the DB09 verification gate.</p>:null}
   <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
    {result.rows.length} application records shown.
    {result.truncated?" More records exist; only the first 500 are shown and exported.":""}

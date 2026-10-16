@@ -82,7 +82,7 @@ export async function importTpoLeadsCsv(
         phoneNorm,
         designation: value.designation ?? null,
         companyName: value.companyName ?? inferLegacyRecruiterCompanyName(emailNorm),
-        source: value.source ?? "MANUAL",
+        source: value.source ?? "IMPORT",
         ownerMembershipId,
       }).onConflictDoNothing().returning({ id: placementTpoLeads.id });
 

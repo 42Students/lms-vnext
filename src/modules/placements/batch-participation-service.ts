@@ -522,7 +522,7 @@ export async function upsertPlacementBatchSettings(
             userId, eventId: event.id,
             title: notice.title,
             body: notice.body,
-            actionHref: "/learn/placements",
+            actionHref: "/learn/my-placements/placement#registration",
           })),
         ).onConflictDoNothing();
       }
@@ -686,7 +686,7 @@ export async function markPlacementBatchInvited(
           userId, eventId: invitationEvent.id,
           title: notice.title,
           body: notice.body,
-          actionHref: "/learn/placements",
+          actionHref: "/learn/my-placements/placement#registration",
         })),
       ).onConflictDoNothing();
     }

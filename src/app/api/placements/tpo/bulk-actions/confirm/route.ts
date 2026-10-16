@@ -15,9 +15,6 @@ export async function POST(request:Request){
    const body=await readTpoBulkRequestBody(request);
    const context=await getCurrentRequestContext();
    await requireTpoJobCollege(context);
-   if(body?.target==="APPLICATIONS"&&process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")
-     return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
-       headers:{"Cache-Control":"private, no-store"}});
    const result=await confirmTpoBulkAction(
      context,body);
    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});

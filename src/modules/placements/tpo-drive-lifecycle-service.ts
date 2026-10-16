@@ -26,6 +26,10 @@ import {
 } from "./tpo-drive-lifecycle-model";
 import { requirePlacementManageScope } from "./scope";
 import { placementJobIdSchema } from "./validation";
+import {
+  countPublishedDriveDebarments,notifyEligiblePublishedDrive,
+  previewEligiblePublishedDrive,
+} from "./tpo-drive-publish-effects";
 
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
@@ -117,15 +121,25 @@ export async function getTpoDriveLifecycleReadiness(
   )).limit(1);
   if (!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   await requirePlacementManageScope(context, job.collegeId);
-  const facts = await getDb().transaction((tx) => loadFacts(tx, job, new Date()));
+  const [facts,reach] = await getDb().transaction(async tx=>Promise.all([
+    loadFacts(tx,job,new Date()),
+    job.status==="DRAFT"?previewEligiblePublishedDrive(tx,context,job):
+      Promise.resolve({eligible:0,excluded:0,candidateCount:0,recipientUserIds:[]}),
+  ]),{accessMode:"read only"});
   return {
     jobId,
     status: job.status,
     facts,
+    reach:{eligible:reach.eligible,excluded:reach.excluded,
+      considered:reach.candidateCount},
     publish: evaluateTpoDriveLifecycle("PUBLISH", facts),
     close: evaluateTpoDriveLifecycle("CLOSE", facts),
     reopen: evaluateTpoDriveLifecycle("REOPEN", facts),
   };
+}
+
+export class TpoPublishEmailUnavailable extends Error {
+  constructor(){super("EMAIL_DELIVERY_UNAVAILABLE");this.name="TpoPublishEmailUnavailable";}
 }
 
 export async function changeTpoDriveLifecycle(
@@ -136,6 +150,8 @@ export async function changeTpoDriveLifecycle(
   const collegeId = requireTpo(context);
   const jobId = placementJobIdSchema.parse(rawJobId);
   const input = tpoDriveLifecycleSchema.parse(raw);
+  if(input.action==="PUBLISH"&&input.notifyByEmail)
+    throw new TpoPublishEmailUnavailable();
   const [owned] = await getDb().select({
     id: placementJobs.id, collegeId: placementJobs.collegeId,
   }).from(placementJobs).where(and(
@@ -170,7 +186,7 @@ export async function changeTpoDriveLifecycle(
       eq(placementJobs.status, input.expectedStatus),
     )).returning();
     if (!updated) throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
-    await recordActivityEventInTransaction(tx, context, {
+    const event = await recordActivityEventInTransaction(tx, context, {
       eventType: input.action === "CLOSE"
         ? ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_CLOSED
         : ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
@@ -188,10 +204,21 @@ export async function changeTpoDriveLifecycle(
       },
       groupKey: "placement-job:" + jobId,
     });
+    let notifiedCount=0;
+    let debarmentCounted=0;
+    if(input.action==="PUBLISH"){
+      // Reach is decided before a drive-count ban is advanced. The last
+      // barred drive must not notify its own excluded learner prematurely.
+      notifiedCount=await notifyEligiblePublishedDrive(tx,context,updated,event.id);
+      debarmentCounted=await countPublishedDriveDebarments(
+        tx,context,updated.id,collegeId,now,
+      );
+    }
     return {
       id: updated.id,
       status: updated.status,
       blockers: [] as string[],
+      notifiedCount,debarmentCounted,emailSent:false,
     };
   });
 }

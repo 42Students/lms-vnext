@@ -35,9 +35,7 @@ export function RecruiterBulkOwnerControls({
   const [error, setError] = useState("");
   const [results, setResults] = useState<Result[]>([]);
 
-  const assignable = rows.filter((lead) =>
-    !lead.recruiterUserId && !lead.unsubscribedAt,
-  );
+  const assignable = rows;
   const selections = assignable
     .filter((lead) => chosen.includes(lead.id))
     .map((lead) => ({
@@ -127,7 +125,7 @@ export function RecruiterBulkOwnerControls({
         <h2 className="font-semibold text-foreground">Bulk assign lead owner</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Select up to 100 filtered leads and one active college placement staff member.
-          Joined and unsubscribed contacts are excluded. Each reassignment is audited.
+          Joined and unsubscribed contacts can be assigned a placement-cell owner. Each reassignment is audited.
         </p>
       </div>
       {ownersState === "idle" ? (

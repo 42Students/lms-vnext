@@ -42,7 +42,7 @@ describe("confirmed TPO bulk lead owner contract", () => {
     }).success).toBe(false);
   });
 
-  it("distinguishes eligible, unchanged, stale, unknown and protected leads", () => {
+  it("distinguishes eligible, unchanged, stale and unknown leads", () => {
     const selection = { id: first, expectedOwnerMembershipId: first };
     const current = {
       ownerMembershipId: first,
@@ -61,10 +61,10 @@ describe("confirmed TPO bulk lead owner contract", () => {
       .toBe("ineligible");
     expect(decideTpoLeadOwnerChange({
       ...current, recruiterUserId: third,
-    }, selection, second).status).toBe("ineligible");
+    }, selection, second).status).toBe("updated");
     expect(decideTpoLeadOwnerChange({
       ...current, unsubscribedAt: new Date("2026-10-14T00:00:00Z"),
-    }, selection, second).status).toBe("ineligible");
+    }, selection, second).status).toBe("updated");
   });
 
   it("renders stable audit meaning and truthful per-lead counts", () => {

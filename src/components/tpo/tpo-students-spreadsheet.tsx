@@ -37,8 +37,10 @@ export function TpoStudentsSpreadsheet({rows,branches}:{rows:readonly TpoStudent
  return <div className="space-y-3"><TpoGridFilterPanel fields={filters}/>
   <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.membershipId}
    rowActions={row=><div className="flex flex-col items-start gap-1">
-    <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"} className="min-h-10 text-primary-text underline">Placement history</Link>
-    <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"} className="min-h-10 text-primary-text underline">Change participation</Link>
+    <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
+      aria-label={"Placement history for "+row.displayName} className="min-h-10 text-primary-text underline">Placement history</Link>
+    <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
+      aria-label={"Change participation for "+row.displayName} className="min-h-10 text-primary-text underline">Change participation</Link>
    </div>}/>
  </div>;
 }

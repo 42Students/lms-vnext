@@ -5,6 +5,7 @@ export const tpoDriveLifecycleSchema = z.object({
   expectedStatus: z.enum(["DRAFT", "PUBLISHED", "CLOSED"]),
   confirmed: z.literal(true),
   reason: z.string().trim().min(10).max(1000),
+  notifyByEmail:z.boolean().optional().default(false),
 }).strict();
 
 export type TpoDriveReadinessFacts = {
