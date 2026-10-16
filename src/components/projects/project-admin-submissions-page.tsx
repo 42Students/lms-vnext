@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evidence-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -11,6 +12,7 @@ import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   listProjectAdminSubmissionQueue,
+  getProjectAdminSubmissionSummary,
 } from "@/modules/projects/admin-insights-service";
 
 function one(
@@ -71,12 +73,10 @@ export async function ProjectAdminSubmissionsPage({
       one(searchParams.pageSize) ?? 25,
     ),
   };
-  const result =
-    await listProjectAdminSubmissionQueue(
-      context,
-      collegeId,
-      query,
-    );
+  const [result, summary] = await Promise.all([
+    listProjectAdminSubmissionQueue(context, collegeId, query),
+    getProjectAdminSubmissionSummary(context, collegeId),
+  ]);
   const queuePath =
     basePath + "/submissions";
 
@@ -92,6 +92,22 @@ export async function ProjectAdminSubmissionsPage({
         description="Final-delivery versions across project workspaces, newest activity first."
       />
 
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {([
+          ["Active workspaces", summary.activeWorkspaces, "status", "ACTIVE"],
+          ["Pending review", summary.pendingReview, "submissionStatus", "SUBMITTED"],
+          ["Needs student action", summary.needsStudentAction, "submissionStatus", "CHANGES_REQUESTED"],
+          ["Reviewed", summary.reviewed, "submissionStatus", "APPROVED"],
+        ] as const).map(([name, value, key, filter]) => {
+          const params = new URLSearchParams();
+          params.set(key, filter);
+          return <Link key={name} href={queuePath + "?" + params.toString()}
+            className="rounded-xl border border-border bg-surface p-4 hover:border-primary">
+            <p className="text-xs font-semibold text-muted-foreground">{name}</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
+          </Link>;
+        })}
+      </div>
       <ProjectAdminFilters
         query={query}
         includeSubmissionStatus
@@ -134,9 +150,36 @@ export async function ProjectAdminSubmissionsPage({
                   {submission.lockedAt?"Locked":submission.status}
                 </StatusBadge>
               </div>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
-                {submission.summary}
-              </p>
+              <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3">
+                <div><dt className="font-semibold">Pending</dt><dd>{
+                  submission.status === "SUBMITTED" && submission.submittedAt
+                    ? Math.max(0, Math.floor((Date.now() - submission.submittedAt.getTime()) / 86400000)) + " days"
+                    : "—"
+                }</dd></div>
+                <div><dt className="font-semibold">Revisions</dt>
+                  <dd>{Math.max(0, submission.version - 1)}</dd></div>
+                <div><dt className="font-semibold">Reviewed by</dt>
+                  <dd>{submission.reviewedBy ?? "—"}</dd></div>
+              </dl>
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">{submission.summary}</p>
+              <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                {([submission.sourceUrl, submission.demoUrl] as const).map((candidate, i) => {
+                  const href = safeProjectExternalHref(candidate);
+                  return href ? <a href={href} key={i} target="_blank" rel="noopener noreferrer"
+                    className="font-semibold text-primary-text hover:underline">Open link</a> : null;
+                })}
+                {submission.attachments.map((item, index) => {
+                  if (!item || typeof item !== "object") return null;
+                  const entry = item as Record<string, unknown>;
+                  const href = typeof entry.url === "string" ? safeProjectExternalHref(entry.url) : null;
+                  return href ? <a key={"evidence-" + index} href={href} target="_blank"
+                    rel="noopener noreferrer" className="font-semibold text-primary-text hover:underline">
+                    Open {entry.kind === "FILE" ? "file" : "link"}
+                  </a> : <span key={"evidence-" + index} className="text-muted-foreground">
+                    File · {typeof entry.name === "string" ? entry.name : "Evidence"}
+                  </span>;
+                })}
+              </div>
               <ProjectAdminSubmissionReview
                 projectId={submission.projectId} submissionId={submission.id}
                 status={submission.status} locked={!!submission.lockedAt}
