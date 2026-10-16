@@ -5,6 +5,11 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import {getDb} from "@/db/client";
+import {and,eq,inArray,sql} from "drizzle-orm";
+import {placementLearnerRequests} from "@/db/schema";
+import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 
 export default async function TpoDriveRoundsPage({
   params,
@@ -15,6 +20,22 @@ export default async function TpoDriveRoundsPage({
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const { jobId } = await params;
   const drive = await getPlacementDriveDay(context, jobId);
+  const ids=drive.rounds.filter(r=>r.kind==="INTERVIEW").map(r=>r.id);
+  const [requests,proposals,bookings]=ids.length?await Promise.all([
+   getDb().select({roundId:placementLearnerRequests.roundId,n:sql<number>`count(*)::int`})
+    .from(placementLearnerRequests).where(and(inArray(placementLearnerRequests.roundId,ids),
+     eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
+     eq(placementLearnerRequests.status,"PENDING")))
+    .groupBy(placementLearnerRequests.roundId),
+   getDb().select({roundId:hrInterviewSlots.roundId,n:sql<number>`count(*)::int`})
+    .from(hrInterviewSlots).where(and(inArray(hrInterviewSlots.roundId,ids),
+     eq(hrInterviewSlots.status,"PROPOSED"))).groupBy(hrInterviewSlots.roundId),
+   getDb().select({roundId:placementRoundCandidateSlots.roundId,n:sql<number>`count(*)::int`})
+    .from(placementRoundCandidateSlots).where(and(inArray(placementRoundCandidateSlots.roundId,ids),
+     eq(placementRoundCandidateSlots.status,"BOOKED"))).groupBy(placementRoundCandidateSlots.roundId),
+  ]):[[],[],[]];
+  const countFor=(rows:readonly {roundId:string|null;n:number}[],id:string)=>
+    rows.find(r=>r.roundId===id)?.n??0;
   const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
   const date = (value: Date | null) =>
     value ? new Intl.DateTimeFormat("en-IN", {
