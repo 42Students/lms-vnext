@@ -6,5 +6,6 @@ it("validates CSV format, denies unrecognized/duplicate learners and missing rea
  const rows=parseTpoEligibilityCsv("studentCode,decision,reason\n"+a+",ELIGIBLE,\n"+a+",ELIGIBLE,\n"+b+",INELIGIBLE,");
  expect(previewEligibilityImport(rows,[{studentCode:a,membershipId:a,expectedVersion:"none"}]).map(r=>r.status)).toEqual(["matched","unusable","unusable"]);
  expect(()=>parseTpoEligibilityCsv('"'+a+'",ELIGIBLE,')).toThrow();
- expect(()=>parseTpoEligibilityCsv("wrong,ELIGIBLE,")).toThrow();
+ const unknown=parseTpoEligibilityCsv("wrong,ELIGIBLE,");
+ expect(previewEligibilityImport(unknown,[{studentCode:a,membershipId:a,expectedVersion:"none"}])[0].status).toBe("unusable");
 });
