@@ -224,21 +224,15 @@ async function assertApplicationOfferReady(
 
   const missing = rounds.filter(round=>!passed.has(round.id));
   if(missing.length===1){
-    // TPO-drive-workspace-53: a recorded one-seat promotion may replace one
-    // applied HOLD, never a FAIL/ABSENT or an unrecorded round. This branch
-    // leaves normal offer issuance untouched until the proposal is registered.
-    const existence=await tx.execute(sql`select to_regclass('public.placement_waitlist_promotions') is not null as ready`);
-    const rows=Array.isArray(existence)?existence:
-      ((existence as {rows?:unknown[]}).rows??[]);
-    if((rows[0] as {ready?:boolean}|undefined)?.ready){
-      const [promotion]=await tx.select().from(placementWaitlistPromotions)
-        .where(and(eq(placementWaitlistPromotions.applicationId,applicationId),
-         eq(placementWaitlistPromotions.jobId,jobId))).limit(1);
-      const waitlist=results.find(result=>result.roundId===missing[0]!.id&&
-       result.outcome==="HOLD"&&result.waitlistRank===promotion?.waitlistRank);
-      if(promotion&&promotion.roundId===missing[0]!.id&&waitlist&&
-       ["PENDING","RELEASED"].includes(promotion.status))passed.add(promotion.roundId);
-    }
+    // TPO-drive-workspace-53: registered 0113 allows one audited promotion
+    // of an applied HOLD, never FAIL/ABSENT or an unrecorded round.
+    const [promotion]=await tx.select().from(placementWaitlistPromotions)
+      .where(and(eq(placementWaitlistPromotions.applicationId,applicationId),
+       eq(placementWaitlistPromotions.jobId,jobId))).limit(1);
+    const waitlist=results.find(result=>result.roundId===missing[0]!.id&&
+     result.outcome==="HOLD"&&result.waitlistRank===promotion?.waitlistRank);
+    if(promotion&&promotion.roundId===missing[0]!.id&&waitlist&&
+     ["PENDING","RELEASED"].includes(promotion.status))passed.add(promotion.roundId);
   }
   if(rounds.some(round=>!passed.has(round.id))){
     throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
