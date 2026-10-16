@@ -491,20 +491,23 @@ export async function listProjectAdminRiskQueue(
     order by latest.version desc
     limit 1
   ), false)`;
-  const blockedTask = sql<boolean>`exists (
-    select 1 from project_tasks blocked
-    where blocked.project_id = ${projectInstances.id}
-      and blocked.status = 'BLOCKED'
-      and nullif(trim(blocked.blocker_reason), '') is not null
+  const blockedTask = sql<boolean>`(
+    nullif(trim(${projectInstances.blocker}), '') is not null
+    or exists (
+      select 1 from project_tasks blocked
+      where blocked.project_id = ${projectInstances.id}
+        and blocked.status = 'BLOCKED'
+        and nullif(trim(blocked.blocker_reason), '') is not null
+    )
   )`;
-  const blockerSummary = sql<string | null>`(
+  const blockerSummary = sql<string | null>`coalesce(nullif(trim(${projectInstances.blocker}), ''), (
     select nullif(trim(blocked.blocker_reason), '')
     from project_tasks blocked
     where blocked.project_id = ${projectInstances.id}
       and blocked.status = 'BLOCKED'
       and nullif(trim(blocked.blocker_reason), '') is not null
     order by blocked.updated_at desc, blocked.id desc limit 1
-  )`;
+  ))`;
   const staleCutoff =
     new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000,
@@ -586,7 +589,7 @@ export async function listProjectAdminRiskQueue(
         1,
         Math.ceil(total / query.pageSize),
       ),
-      blockerSignalSupported: false,
+      blockerSignalSupported: true,
       buckets,
     };
   }
@@ -669,10 +672,7 @@ export async function listProjectAdminRiskQueue(
       1,
       Math.ceil(total / query.pageSize),
     ),
-    // Legacy also has a free-text workspace blocker signal.
-    // DB07 vNext has no persisted blocker column yet; never
-    // claim that dimension is covered until W01 promotes it.
-    blockerSignalSupported: false,
+    blockerSignalSupported: true,
     buckets,
   };
 }
