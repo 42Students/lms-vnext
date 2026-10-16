@@ -1,0 +1,139 @@
+import "server-only";
+import {and,asc,desc,eq,inArray,ne,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {collegeMemberships,placementApplications,placementApplicationScreenings,placementJobRoleOptions,
+ placementJobRounds,placementJobs,placementOffers,placementRoundResults,users} from "@/db/schema";
+import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
+import type {RequestContext} from "@/modules/identity/context";
+import {PlacementsServiceError} from "./errors";
+import {issuePlacementOffer} from "./offer-service";
+import {placementTableExists} from "./staged-tables";
+import {requireTpoJobCollege,requireTpoJobActor,auditTpoJobChange} from "./tpo-job-write-base";
+import {placementJobIdSchema} from "./validation";
+import {tpoWaitlistPromotionSchema,waitlistPreviewToken} from "./tpo-waitlist-promotion-model";
+
+export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unknown){
+ const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
+ const [job]=await getDb().select({
+  id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
+  openings:placementJobs.openings,updatedAt:placementJobs.updatedAt,
+ }).from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
+ if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ const storageReady=await placementTableExists("placement_waitlist_promotions");
+ const rounds=await getDb().select({
+  id:placementJobRounds.id,sequence:placementJobRounds.sequence,status:placementJobRounds.status,
+ }).from(placementJobRounds).where(and(eq(placementJobRounds.jobId,jobId),
+  ne(placementJobRounds.kind,"TALK"),ne(placementJobRounds.status,"CANCELLED")))
+ .orderBy(asc(placementJobRounds.sequence));
+ const last=rounds.at(-1);
+ const waitlist=last?await getDb().select({
+  applicationId:placementApplications.id,rank:placementRoundResults.waitlistRank,
+  name:users.displayName,roleTitle:placementJobRoleOptions.title,
+  annualCtcInr:placementJobRoleOptions.maximumAnnualCtcInr,
+  applicationStatus:placementApplications.status,screeningStatus:placementApplicationScreenings.status,
+ }).from(placementRoundResults)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementRoundResults.applicationId))
+  .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+  .innerJoin(placementJobRoleOptions,eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+  .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+    eq(collegeMemberships.collegeId,collegeId)))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(eq(placementRoundResults.roundId,last.id),
+   eq(placementRoundResults.status,"APPLIED"),eq(placementRoundResults.outcome,"HOLD"),
+   eq(placementApplications.jobId,jobId)))
+  .orderBy(asc(placementRoundResults.waitlistRank),asc(placementApplications.id)):[];
+ const prior=rounds.length>1&&waitlist.length?await getDb().select({
+  applicationId:placementRoundResults.applicationId,roundId:placementRoundResults.roundId,
+  outcome:placementRoundResults.outcome,
+ }).from(placementRoundResults).where(and(
+  inArray(placementRoundResults.applicationId,waitlist.map(w=>w.applicationId)),
+  inArray(placementRoundResults.roundId,rounds.slice(0,-1).map(r=>r.id)),
+  eq(placementRoundResults.status,"APPLIED"))):[];
+ const activeOffers=await getDb().select({applicationId:placementOffers.applicationId})
+  .from(placementOffers).innerJoin(placementApplications,
+   eq(placementApplications.id,placementOffers.applicationId))
+  .where(and(eq(placementApplications.jobId,jobId),
+   inArray(placementOffers.status,["ISSUED","ACCEPTED"])));
+ const promotions=storageReady?await getDb().select().from(placementWaitlistPromotions)
+  .where(eq(placementWaitlistPromotions.jobId,jobId)):[];
+ const held=new Set(activeOffers.map(x=>x.applicationId));
+ const promoByApplication=new Map(promotions.map(x=>[x.applicationId,x]));
+ const reservedCount=promotions.filter(p=>p.status==="PENDING").length;
+ const freeSeats=job.openings==null?null:Math.max(0,job.openings-activeOffers.length-reservedCount);
+ const rows=waitlist.map(w=>{
+  const reasons:string[]=[];
+  const existing=promoByApplication.get(w.applicationId);
+  if(w.applicationStatus!=="SUBMITTED"||w.screeningStatus!=="SHORTLISTED")
+   reasons.push("Application is no longer shortlisted");
+  if(held.has(w.applicationId)&&!existing)reasons.push("Already holds an active offer");
+  if(rounds.some(r=>r.status!=="COMPLETED"))reasons.push("Round results are not complete");
+  if(!last||rounds.slice(0,-1).some(r=>!prior.some(p=>p.applicationId===w.applicationId&&p.roundId===r.id&&p.outcome==="PASS")))
+   reasons.push("An earlier round was not cleared");
+  if(!existing&&freeSeats!==null&&freeSeats<1)reasons.push("No open offer seat");
+  if(!existing&&promotions.some(p=>p.applicationId===w.applicationId))reasons.push("Already promoted");
+  if(job.status!=="PUBLISHED")reasons.push("Drive is not live");
+  if(!storageReady)reasons.push("Waitlist promotion storage is not registered");
+  return {applicationId:w.applicationId,name:w.name??"Learner",roleTitle:w.roleTitle,
+   annualCtcInr:w.annualCtcInr,rank:w.rank??0,reason:existing?.reason??null,
+   promotionStatus:existing?.status??null,reasons,canPromote:reasons.length===0};
+ });
+ const next=rows.find(row=>row.canPromote)??null;
+ const token=waitlistPreviewToken(jobId,{
+  updatedAt:job.updatedAt.toISOString(),rounds,promotions:promotions.map(p=>[p.id,p.status,p.applicationId,p.seatNumber]),
+  activeOffers,rows,freeSeats,
+ });
+ return {job:{...job,updatedAt:job.updatedAt.toISOString()},lastRoundId:last?.id??null,
+  storageReady,freeSeats,activeOffers:activeOffers.length,rows,next,previewToken:token};
+}
+export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unknown,raw:unknown){
+ const input=tpoWaitlistPromotionSchema.parse(raw);
+ const preview=await getTpoWaitlistPreview(context,rawJobId);
+ if(!preview.storageReady)throw Error("Waitlist promotion migration has not been registered.");
+ if(input.expectedPreviewToken!==preview.previewToken)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+ const next=preview.next;
+ if(!next||!preview.lastRoundId)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+ const existing=await getDb().transaction(async tx=>{
+  await requireTpoJobActor(tx,context);
+  const [locked]=await tx.select({status:placementJobs.status,openings:placementJobs.openings})
+   .from(placementJobs).where(eq(placementJobs.id,preview.job.id)).for("update").limit(1);
+  if(locked?.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+  const [prior]=await tx.select().from(placementWaitlistPromotions).where(and(
+   eq(placementWaitlistPromotions.jobId,preview.job.id),
+   eq(placementWaitlistPromotions.applicationId,next.applicationId))).limit(1);
+  if(prior)return prior;
+  const used=await tx.select({number:placementWaitlistPromotions.seatNumber})
+   .from(placementWaitlistPromotions).where(eq(placementWaitlistPromotions.jobId,preview.job.id));
+  const active=await tx.select({id:placementOffers.id}).from(placementOffers)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .where(and(eq(placementApplications.jobId,preview.job.id),
+    inArray(placementOffers.status,["ISSUED","ACCEPTED"])));
+  if(locked.openings!==null&&active.length+used.length>=locked.openings)
+   throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+  const seats=new Set(used.map(x=>x.number));
+  let seat=1;while(seats.has(seat))seat++;
+  const [saved]=await tx.insert(placementWaitlistPromotions).values({
+   jobId:preview.job.id,roundId:preview.lastRoundId!,applicationId:next.applicationId,
+   seatNumber:seat,waitlistRank:next.rank,reason:input.reason,
+   promotedByUserId:context.user.id,
+  }).returning();
+  await auditTpoJobChange(tx,context,{id:preview.job.id,title:preview.job.title},
+   "PLACEMENTS_TPO_WAITLIST_PROMOTED","promoted waitlisted applicant for",{
+    applicationId:next.applicationId,roundId:preview.lastRoundId,rank:next.rank,seatNumber:seat,
+   });
+  return saved;
+ });
+ if(existing.status==="RELEASED"&&existing.offerId)
+  return {promoted:1,offerId:existing.offerId,seatNumber:existing.seatNumber};
+ const offer=await issuePlacementOffer(context,next.applicationId,{
+  kind:"OFFER",roleTitle:next.roleTitle,annualCtcInr:next.annualCtcInr,
+ });
+ await getDb().transaction(async tx=>{
+  await requireTpoJobActor(tx,context);
+  const [saved]=await tx.update(placementWaitlistPromotions).set({
+   status:"RELEASED",offerId:offer.id,releasedAt:new Date(),
+  }).where(and(eq(placementWaitlistPromotions.id,existing.id),
+   eq(placementWaitlistPromotions.status,"PENDING"))).returning({id:placementWaitlistPromotions.id});
+  if(!saved)throw Error("Offer was issued; reload the waitlist to reconcile release.");
+ });
+ return {promoted:1,offerId:offer.id,seatNumber:existing.seatNumber};
+}
