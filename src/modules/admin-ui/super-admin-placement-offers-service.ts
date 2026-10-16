@@ -30,11 +30,11 @@ export async function listSuperAdminOffers(context:RequestContext,raw:unknown):P
  const [totals,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.issuedAt),asc(source.id))
-  .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+  .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=totals[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(r=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(r=>({
   id:r.id,title:r.learnerName||"Unnamed applicant",subtitle:r.jobTitle+" · "+r.roleTitle,
   status:r.status,details:["Offer revision: "+r.version,
    "Annual CTC: "+(r.annualCtcInr===null?"Not recorded":new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(r.annualCtcInr)),
