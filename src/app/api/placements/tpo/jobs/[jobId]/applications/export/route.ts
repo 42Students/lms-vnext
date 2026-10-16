@@ -10,7 +10,7 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   const {jobId}=await params;
   const filters=tpoDriveApplicationsExportQuerySchema.omit({jobId:true})
    .parse(Object.fromEntries(new URL(request.url).searchParams));
-  const result=await getTpoDriveApplicationsExport(await getCurrentRequestContext(),{jobId,...filters});
+  const result=await getTpoDriveApplicationsExport(await getCurrentRequestContext(),{jobId,...filters},{exportAll:true});
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="tpo-drive-applications.csv"',

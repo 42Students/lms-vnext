@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
-import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
+import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,tpoNextRoundCue,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 
 export const dynamic = "force-dynamic";
@@ -61,7 +61,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         </select>
       </label>
       <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
-      <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
+      <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search and age filters</Link>
     </form>
@@ -79,6 +79,8 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <div className="min-w-0">
             <h2 className="font-semibold">{request.studentName} · {request.requestType.replaceAll("_"," ")}</h2>
             <p className="mt-1 text-sm text-body">{request.companyName} · {request.jobTitle}</p>
+            {request.nextRoundAt?<p className="mt-1 text-sm text-body">{tpoNextRoundCue(request,asOf)}</p>:null}
+            {request.urgent?<strong className="mt-2 inline-flex rounded border border-danger px-2 py-1 text-xs text-error">Urgent</strong>:null}
             <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time> · {tpoRequestAgeLabel(request.requestedAt,asOf)}</p>
             <p className="mt-2 whitespace-pre-wrap break-words text-sm">{request.reason}</p>
             {request.decisionNote?<p className="mt-2 whitespace-pre-wrap break-words text-sm">Decision note: {request.decisionNote}</p>:null}
