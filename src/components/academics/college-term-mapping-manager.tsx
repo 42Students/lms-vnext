@@ -74,7 +74,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       return;
     }
     setError(null); setNotice(null);
-    setConfirm({ type: "ADD", body: { mappings: inputs.map(item => item.data) } });
+    setConfirm({ type: "ADD", body: { mappings: inputs.flatMap(item => item.success ? [item.data] : []) } });
   }
 
   function updateMapping(id: string, creditsValue: string, position: number) {
