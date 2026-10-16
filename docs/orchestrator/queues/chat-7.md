@@ -40,6 +40,7 @@ Owner extended chat-7 into Learner placements, projects, courses and learning-mi
 - LEARNER-placements-14 / -15 / -17 / -22 / -26 / -32 / -34 / -48: search, sorting, availability, empty-state, apply, company-preview and notification labels aligned incrementally.
 - LEARNER-learning-misc-09 / -10 / -17 / -18 / -33 / -36 / -38: assignment submit unload warning and retry error, quiz action and empty copy, class-schedule and attendance presentation.
 - LEARNER-home-courses-05 / -09 / -21: remove invented list fallback, distinguish course-list error, and guard unsent discussion on browser unload.
+- LEARNER-profile-misc-07: updated Profile section headings (Personal Details, Education/Qualification, Academic Achievements, Extra-curricular Activities).
 - LEARNER-projects-10 / -12 / -14 / -16: archived notice, definition of done, personas, authoritative task lane counts, and overview heading.
 
 **Still unresolved:** privacy/consent and private file storage, saved jobs table registration/UI, learner round attendance confirmation, project task creation/reordering, final submission uploads, full instructor-material multipart parity, quiz shuffle/missed-review policy, additional learner placement workflows and notifications. Every existing chat-7 WP stays **IN-PROGRESS**, not DONE; no acceptance or test results asserted under FAST MODE. This work spans audit pages that are not currently assigned as separate WP entries; future orchestrator split may be needed.
