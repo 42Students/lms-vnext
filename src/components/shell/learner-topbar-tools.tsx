@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {LearnerNotificationBell} from "@/components/shell/learner-notification-bell";
 import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-course-copy-model";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -14,25 +15,16 @@ type LearnerCourse = {
 export function LearnerTopbarTools() {
   const [query, setQuery] = useState("");
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
-  const [unreadCount, setUnreadCount] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([
-      fetch("/api/courses/learner", { cache: "no-store" })
-        .then(async (response) => response.ok ? response.json() : { courses: [] })
-        .catch(() => ({ courses: [] })),
-      fetch("/api/notifications?unreadOnly=true&limit=20", { cache: "no-store" })
-        .then(async (response) => response.ok ? response.json() : { notifications: [] })
-        .catch(() => ({ notifications: [] })),
-    ]).then(([coursePayload, notificationPayload]) => {
-      if (cancelled) return;
-      setCourses(Array.isArray(coursePayload?.courses) ? coursePayload.courses : []);
-      setUnreadCount(Array.isArray(notificationPayload?.notifications) ? notificationPayload.notifications.length : 0);
-    });
+    fetch("/api/courses/learner",{cache:"no-store"})
+      .then(async response=>response.ok?response.json():{courses:[]})
+      .catch(()=>({courses:[]}))
+      .then(payload=>{if(!cancelled)setCourses(Array.isArray(payload?.courses)?payload.courses:[]);});
 
     return () => {
       cancelled = true;
@@ -117,21 +109,7 @@ export function LearnerTopbarTools() {
         ) : null}
       </div>
 
-      <Link
-        href="/learn/notifications"
-        aria-label={unreadCount && unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
-        className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-base text-foreground transition hover:bg-primary-subtle hover:text-primary-text"
-      >
-        <span aria-hidden="true">🔔</span>
-        {unreadCount && unreadCount > 0 ? (
-          <span
-            aria-hidden="true"
-            className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-on-primary"
-          >
-            {unreadCount > 99 ? "99+" : unreadCount}
-          </span>
-        ) : null}
-      </Link>
+      <LearnerNotificationBell />
     </div>
   );
 }
