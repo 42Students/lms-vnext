@@ -576,13 +576,16 @@ export function FacultyAttendanceWorkspace({
           <section aria-label="Monthly class health" className="rounded-xl border border-border bg-surface p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h2 className="text-sm font-semibold text-body">Monthly class health</h2>
+                <h2 className="text-sm font-semibold text-body">Monthly Attendance</h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  See each student's attendance day by day for this month.
+                </p>
                 <p className="mt-2 text-3xl font-semibold text-foreground">
                   {monthSummary.averagePercent === null ? "—" : monthSummary.averagePercent + "%"}
                 </p>
                 <p className="mt-2 max-w-xl text-xs leading-5 text-muted-foreground">
-                  {monthSummary.markedMarks} recorded learner-session marks for active Section learners.
-                  Unmarked and upcoming sessions are excluded, never assumed present.
+                  {monthSummary.presentMarks} present marks across {monthSummary.sessionCount} scheduled sessions.
+                  {" "}{monthSummary.unmarkedSessions} session(s) not yet marked, excluded from this percentage.
                 </p>
               </div>
               {monthSummary.learnerCount > 0 && monthSummary.sessionCount > 0 ? (
@@ -628,9 +631,9 @@ export function FacultyAttendanceWorkspace({
               {[
                 ["Students", monthSummary.learnerCount],
                 ["Sessions", monthSummary.sessionCount],
-                ["Present", monthSummary.presentMarks],
-                ["Absent", monthSummary.absentMarks],
-                ["Unmarked", monthSummary.unmarkedMarks],
+                ["Absences", monthSummary.absentMarks],
+                ["Not marked", monthSummary.unmarkedMarks],
+                ["Active days", monthDays.filter(day=>day.sessions.length>0).length],
                 ["Upcoming", monthSummary.upcomingSessions],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-lg bg-surface-subtle p-3">
