@@ -40,3 +40,6 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - The authoritative reassignments move nine WPs to chat-3/chat-6; chat-5 retains only 01/03/06/07/08/12/13.
 - Existing chat-5 commits implemented TPO-drive-workspace-03, -16, -35, -37 and TPO-requests-verification-08, but acceptance and browser checks are still outstanding; do not call any affected WP DONE.
 - TPO-drive-workspace-R02 (WP-07) search across learner name, role, roll, registration, branch, batch, email and phone is implemented in applicant pipeline and export, with unit and PG tests authored. Test execution and browser acceptance remain unverified.
+
+- TPO-requests-verification-02/-03 (WP-08): accessible confirmation dialogs, exact legacy reason chips and approval/rejection consequences are implemented. New unit test added; runtime/browser acceptance outstanding.
+- TPO-requests-verification-04 (WP-08): learner in-app notice now delivered transactionally with decision audit; approval/rejection PostgreSQL assertions authored, not run. Other WP-08 IDs remain open.

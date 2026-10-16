@@ -4,7 +4,8 @@ export function learnerPlacementRequestDecisionNotice(
   reason: string | null | undefined,
 ) {
   const status = action === "APPROVE" ? "approved" : "rejected";
-  const detail = reason?.trim();
+  // The delivery boundary accepts 2,000 characters total, including status copy.
+  const detail = reason?.trim().slice(0, 1900);
   return {
     title: "Your request was answered",
     body: "Your request was " + status + "." + (detail ? " " + detail : ""),

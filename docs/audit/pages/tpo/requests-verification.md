@@ -178,3 +178,8 @@ UNCONFIRMED items and how to confirm: (a) whether verification drawer documents 
 
 - **TPO-requests-verification-08**: `8a290dcd`, `4fb61c20`, `d2988928`, `6c1561d4` — default TPO request order now prioritizes pending urgency (round within 24 hours or withdrawal unanswered for at least 24 hours), then soonest scheduled round, then oldest request. The UI shows the upcoming persisted scheduled round, India-local time and an Urgent badge. Existing newest/oldest sort options remain. Tests: `tests/unit/tpo-global-requests-model.test.ts` and `tests/integration/tpo-requests-urgency-postgres.test.ts` written, not executed.
 - Remaining request/verification IDs and browser copy/notification parity require further work and testing. Do not mark this whole WP DONE.
+
+### Chat-5 decision workflow implementation (2026-10-17)
+
+- **TPO-requests-verification-02/-03**: replaced native prompts/confirmations with a decision dialog, kind-specific consequences, exact legacy rejection-reason choices and confirmation/success copy. Server still validates note length and optimistic request version.
+- **TPO-requests-verification-04**: approved/rejected decisions now enqueue a college-scoped in-app learner notification with the same transaction and an internal learner support-history deep link. Existing activity event is reused. Unit and PostgreSQL tests authored for both outcomes and the no-application-mutation rejection path. **Pending runtime and browser acceptance**; this is not final verified closure.

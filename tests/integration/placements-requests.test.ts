@@ -399,7 +399,7 @@ describe("Placement learner requests and exceptions", () => {
       select n.title,n.body,n.action_href from in_app_notifications n
       join activity_events e on e.id=n.event_id
       where n.user_id=$1 and e.subject_id=$2 and e.event_type=$3
-    `,[SEED_IDS.learnerUser,request.id,"PLACEMENTS_REQUEST_DECIDED"]);
+    `,[SEED_IDS.learnerUser,request.id,"placements.request.decided"]);
     expect(notification.rows).toEqual([{
       title:"Your request was answered",
       body:"Your request was rejected. Proof missing or unclear",
