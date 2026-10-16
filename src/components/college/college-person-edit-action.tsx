@@ -1,0 +1,160 @@
+"use client";
+
+import {useState,useTransition,type FormEvent} from "react";
+import {useRouter} from "next/navigation";
+
+type Kind="FACULTY"|"LEARNER";
+type Department={id:string;name:string};
+type Person={
+  id:string;kind:Kind;name:string;canonicalPhone:string;canonicalEmail:string;
+  gender:string;dateOfBirth:string;address:string;contactPhone:string;contactEmail:string;
+  bio:string;primaryDepartmentId:string|null;employmentType:string|null;academicTitle:string|null;
+  rollNumber:string|null;registrationNumber:string|null;
+};
+export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
+  membershipId:string;kind:Kind;departments?:Department[];
+}){
+  const router=useRouter();
+  const [open,setOpen]=useState(false);
+  const [loading,setLoading]=useState(false);
+  const [pending,start]=useTransition();
+  const [person,setPerson]=useState<Person|null>(null);
+  const [error,setError]=useState("");
+  const [success,setSuccess]=useState("");
+  const base="/api/college/people/"+encodeURIComponent(membershipId)+"/edit";
+  const field="min-h-10 w-full rounded border border-border bg-surface px-3 text-foreground";
+  async function load(){
+    setLoading(true);setError("");setSuccess("");setPerson(null);setOpen(true);
+    try{
+      const response=await fetch(base+"?kind="+kind,{cache:"no-store"});
+      const result=await response.json().catch(()=>null);
+      if(!response.ok||!result?.person)throw Error("Profile details unavailable");
+      setPerson(result.person as Person);
+    }catch(reason){setError(reason instanceof Error?reason.message:"Unable to load profile");}
+    finally{setLoading(false);}
+  }
+  function patch(key:keyof Person,value:string){
+    setPerson(current=>current?{...current,[key]:value}:current);
+  }
+  function submit(event:FormEvent<HTMLFormElement>){
+    event.preventDefault();if(!person)return;
+    if(!window.confirm("Save these changes to this college profile?"))return;
+    start(async()=>{
+      setError("");setSuccess("");
+      try{
+        const response=await fetch(base,{method:"PATCH",headers:{"content-type":"application/json"},
+          body:JSON.stringify({
+            kind,gender:person.gender,dateOfBirth:person.dateOfBirth,
+            address:person.address,bio:person.bio,
+            contactPhone:person.contactPhone,contactEmail:person.contactEmail,
+            ...(kind==="FACULTY"?{
+              primaryDepartmentId:person.primaryDepartmentId||null,
+              employmentType:person.employmentType??"",
+              academicTitle:person.academicTitle??"",
+            }:{
+              rollNumber:person.rollNumber??"",
+              registrationNumber:person.registrationNumber??"",
+            }),
+          })});
+        const result=await response.json().catch(()=>null);
+        if(!response.ok)throw Error(result?.error??"Profile update failed");
+        setSuccess(kind==="FACULTY"?"Faculty details saved.":"Student details saved.");
+        router.refresh();setOpen(false);
+      }catch(reason){setError(reason instanceof Error?reason.message:"Profile update failed");}
+    });
+  }
+  return <div className="inline-block">
+    <button type="button" onClick={()=>void load()}
+      className="min-h-9 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+      {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
+    </button>
+    {success&&<span role="status" className="ml-2 text-xs text-body">{success}</span>}
+    {open&&<div role="presentation" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <section role="dialog" aria-modal="true" aria-label={kind==="FACULTY"?"Edit Faculty":"Edit Student"}
+        className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-xl bg-surface p-5 shadow-xl">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="text-lg font-semibold">{kind==="FACULTY"?"Edit Faculty":"Edit Student"}</h2>
+          <button type="button" disabled={pending} onClick={()=>setOpen(false)}
+            className="min-h-10 rounded border border-border px-3">Close</button>
+        </div>
+        {loading&&<p role="status" className="mt-4 text-sm">Loading profile…</p>}
+        {error&&<p role="alert" className="my-2 text-sm text-error">{error}</p>}
+        {person&&<form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-2">
+          <p className="sm:col-span-2 text-xs text-muted-foreground">
+            Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
+          </p>
+          <label className="grid gap-1 text-sm">Name
+            <input value={person.name} readOnly className={field+" opacity-70"}/>
+          </label>
+          <label className="grid gap-1 text-sm">Login Mobile
+            <input value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
+          </label>
+          <label className="grid gap-1 text-sm">Login Email
+            <input value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
+          </label>
+          {kind==="FACULTY"?<>
+            <label className="grid gap-1 text-sm">Department
+              <select className={field} value={person.primaryDepartmentId??""}
+                onChange={e=>patch("primaryDepartmentId",e.target.value)}>
+                <option value="">No department</option>
+                {person.primaryDepartmentId&&!departments.some(d=>d.id===person.primaryDepartmentId)&&
+                  <option value={person.primaryDepartmentId}>Current department</option>}
+                {departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
+              </select>
+            </label>
+            <label className="grid gap-1 text-sm">Faculty Type
+              <input className={field} maxLength={128} value={person.employmentType??""}
+                onChange={e=>patch("employmentType",e.target.value)}/>
+            </label>
+            <label className="grid gap-1 text-sm">Academic title
+              <input className={field} maxLength={128} value={person.academicTitle??""}
+                onChange={e=>patch("academicTitle",e.target.value)}/>
+            </label>
+          </>:<>
+            <label className="grid gap-1 text-sm">Roll Number
+              <input className={field} maxLength={128} value={person.rollNumber??""}
+                onChange={e=>patch("rollNumber",e.target.value)}/>
+            </label>
+            <label className="grid gap-1 text-sm">Registration Number
+              <input className={field} maxLength={128} value={person.registrationNumber??""}
+                onChange={e=>patch("registrationNumber",e.target.value)}/>
+            </label>
+          </>}
+          <label className="grid gap-1 text-sm">Gender
+            <select className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
+              {["","Male","Female","Other","Prefer not to say"].map(value=>
+                <option key={value} value={value}>{value||"Not specified"}</option>)}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm">Date of Birth
+            <input className={field} type="date" value={person.dateOfBirth}
+              onChange={e=>patch("dateOfBirth",e.target.value)}/>
+          </label>
+          <label className="grid gap-1 text-sm">Contact mobile
+            <input className={field} maxLength={32} value={person.contactPhone}
+              onChange={e=>patch("contactPhone",e.target.value)}/>
+          </label>
+          <label className="grid gap-1 text-sm">Contact email
+            <input className={field} type="email" value={person.contactEmail}
+              onChange={e=>patch("contactEmail",e.target.value)}/>
+          </label>
+          <label className="grid gap-1 text-sm sm:col-span-2">Address
+            <textarea className="rounded border border-border bg-surface p-3" rows={2} maxLength={1000}
+              value={person.address} onChange={e=>patch("address",e.target.value)}/>
+          </label>
+          <label className="grid gap-1 text-sm sm:col-span-2">Bio
+            <textarea className="rounded border border-border bg-surface p-3" rows={3} maxLength={3000}
+              value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
+          </label>
+          <div className="flex gap-2 sm:col-span-2">
+            <button type="submit" disabled={pending} className="min-h-10 rounded bg-primary px-4 text-on-primary disabled:opacity-50">
+              {pending?"Saving…":"Save changes"}
+            </button>
+            <button type="button" disabled={pending} onClick={()=>setOpen(false)}
+              className="min-h-10 rounded border border-border px-4">Cancel</button>
+          </div>
+        </form>}
+      </section>
+    </div>}
+  </div>;
+}
