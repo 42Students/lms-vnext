@@ -31,6 +31,13 @@ function configuration(){
    throw new TpoCampaignDispatchError("NOT_READY");
  return {provider,key,origin:url.origin};
 }
+export async function tpoCampaignDispatchReady(){
+ try{
+  configuration();
+  return await tpoCampaignDraftStorageReady();
+ }catch{return false;}
+}
+
 /**
  * At most one actor can claim DRAFT. Individual recipients transition
  * PENDING -> QUEUED before a network request. A crash leaves QUEUED unknown;
