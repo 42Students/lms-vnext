@@ -107,6 +107,7 @@ async function requireLearnerScope(
   if (assignment.deliveryId && assignment.deliveryId !== deliveryId) {
     throw new StorageFileError("STORAGE_NOT_FOUND");
   }
+  assertAssignmentSubmissionDeadline(assignment.dueAt,new Date());
   const access = await requireLearningReadAccess(context, assignment.offeringId, deliveryId);
   const membership = context.membership;
   if (
