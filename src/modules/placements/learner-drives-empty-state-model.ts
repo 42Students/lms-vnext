@@ -8,8 +8,8 @@ export function learnerDrivesEmptyState(
   publishedCount:number,matchedCount:number,filters:LearnerJobBrowseFilters,
 ):LearnerDrivesEmptyState{
   if(publishedCount===0)return {
-    kind:"NO_PUBLISHED",title:"No published drives yet",
-    description:"Your placement team has not published any opportunities for your college yet. Check back or review your placement profile.",
+    kind:"NO_PUBLISHED",title:"No open jobs right now",
+    description:"New opportunities are added regularly. Check back soon or contact your placement cell.",
     showReset:false,
   };
   if(matchedCount>0)return {
