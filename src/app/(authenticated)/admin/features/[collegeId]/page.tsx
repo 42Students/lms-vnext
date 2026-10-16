@@ -185,7 +185,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
             <p>Effective policy in {college.name}: <strong>{decision.enabled?"On":"Off"}</strong></p>
             <p>{placementFeatureEffects(decision.enabled).impact}</p>
-            <p className="text-xs text-muted-foreground">Placements ignores Department, Program, Cohort, Section and Membership overrides. This preview describes the policy result, not runtime proof of every downstream route.</p>
+            <p className="text-xs text-muted-foreground">Learner academic Placements overrides can change individual access. This college-level preview does not claim every learner has the same effective policy.</p>
             <p className="text-xs text-muted-foreground">Turning access off does not delete historical jobs, applications or learner placement records.</p>
           </div>
         ))}
@@ -354,7 +354,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <section aria-label="Academic module rules" className="rounded-xl border border-border bg-surface p-5">
         <h2 className="font-semibold">Department, Program, Batch and Class access</h2>
-        <p className="mt-2 text-sm text-body">Select an academic scope, set Projects or Electives On, Off, or Inherit, and apply an optional lock. Placements is configured at college scope until its runtime resolver supports academic overrides.</p>
+        <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
         <AcademicModuleScopeInventory scopes={academicScopes}/>
       </section>
@@ -373,7 +373,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             cohorts, sections and memberships belonging
             to this college. These are configured values,
             not independently evaluated learner access.
-            Placements ignores rules below college scope.
+            Placements follows the active learner academic scope, higher-level locks and individual policy.
           </p>
         </div>
 
