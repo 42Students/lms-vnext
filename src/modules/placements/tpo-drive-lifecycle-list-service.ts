@@ -115,6 +115,11 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     id: placementJobs.id, title: placementJobs.title,
     company: placementCompanies.name, status: placementJobs.status,
     workMode: placementJobs.workMode, employmentType: placementJobs.employmentType,
+    minimumAnnualCtcInr: placementJobs.minimumAnnualCtcInr,
+    maximumAnnualCtcInr: placementJobs.maximumAnnualCtcInr,
+    isDream: placementJobs.isDream,
+    appliedCount: sql<number>`(select count(*)::int from placement_applications a
+      where a.job_id = ${placementJobs.id} and a.status <> 'WITHDRAWN')`,
     applicationDeadline: placementJobs.applicationDeadline,
   }).from(placementJobs)
     .innerJoin(placementCompanyRelationships, and(
