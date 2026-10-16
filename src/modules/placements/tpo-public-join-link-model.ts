@@ -1,0 +1,38 @@
+import { z } from "zod";
+
+const change = z.object({
+  action: z.enum(["CREATE", "REPLACE"]),
+  confirmed: z.literal(true),
+});
+
+export const tpoPublicJoinLinkChangeSchema = z.discriminatedUnion("scope", [
+  change.extend({ scope: z.literal("COLLEGE") }).strict(),
+  change.extend({
+    scope: z.literal("COMPANY"),
+    companyId: z.string().uuid(),
+  }).strict(),
+]);
+
+export type TpoPublicJoinLinkStatus = {
+  ready: boolean;
+  domain: string | null;
+  link: { createdAt: string } | null;
+};
+
+export function publicJoinLinkPath(scope: "COLLEGE" | "COMPANY", token: string) {
+  return (scope === "COMPANY" ? "/company-join/" : "/college-join/") + encodeURIComponent(token);
+}
+
+export const PUBLIC_JOIN_LINK_COPY = {
+  company: "Company link",
+  college: "Public link for recruiters",
+  initial: "Make a link",
+  publicInitial: "Make the link",
+  replace: "New link",
+  replaceTitle: "Make a new link?",
+  replaceExplanation: "The old link stops working.",
+  replaceConfirm: "Make a new link",
+  once: "Copy it now: for safety it is shown only once.",
+  copied: "Link copied",
+  copyError: "Couldn't copy. Select the link and copy it.",
+} as const;
