@@ -3,8 +3,9 @@ import {and,eq,isNull,inArray,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {academicPeriods,departments,electiveOfferings,electiveSlots,lmsGroupMembers,programs} from "@/db/schema";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
-import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
+import type {RequestContext} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
+
 import {assertPersistedGroupActor} from "@/modules/groups/actor-access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -22,11 +23,7 @@ type TxRunner=<T>(cb:(tx:Tx)=>Promise<T>)=>Promise<T>;
 export async function changeCollegeElectiveLifecycle(context:RequestContext,rawId:unknown,raw:unknown,
   transaction:TxRunner=(fn)=>getDb().transaction(fn)) {
   const id=z.string().uuid().parse(rawId),input=electiveLifecycleSchema.parse(raw);
-  const actor=context.membership;
-  if(!actor||actor.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
-    !can(context,"academics.manage",{collegeId:actor.collegeId,organizationId:actor.organizationId}))
-    throw new AuthorizationError("academics.manage");
-  requirePermission(context,"academics.manage",{collegeId:actor.collegeId,organizationId:actor.organizationId});
+  const actor=await resolveActingCollege(context,"academics.manage");
   return transaction(async tx=>{
     const [slot]=await tx.select().from(electiveSlots)
       .where(and(eq(electiveSlots.id,id),eq(electiveSlots.collegeId,actor.collegeId),
