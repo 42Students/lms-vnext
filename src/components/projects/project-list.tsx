@@ -16,6 +16,8 @@ export type ProjectListItem = {
   readOnlyLabel?: string | null;
   attention?: readonly string[];
   actionLine?: string;
+  dueState?: string;
+  dueDate?: string | null;
   blockedHref?: string;
   href?: string;
 };
@@ -142,6 +144,7 @@ export function ProjectList({
             </div>
           ) : null}
 
+          {item.dueState ? <div className="mt-3 text-xs font-semibold text-body">Due: {item.dueState}{item.dueDate ? " · " + item.dueDate : ""}</div> : null}
           {item.blockedHref ? (
             <span className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-warning-text">
               Blocked · Open blocked work →
