@@ -7,9 +7,9 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectMentorReassignment } from "@/components/projects/project-mentor-reassignment";
 import { PageHeader } from "@/components/ui/page-header";
-import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
+import { z } from "zod";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
-import { listCollegeProjectMentorWorkload } from "@/modules/projects/mentor-reassignment-workload-service";
+import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
 import Link from "next/link";
 
 function one(
@@ -35,7 +35,9 @@ export async function ProjectAdminReassignMentorPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
+  const fromMentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]).safeParse(one(searchParams.fromMentorId)).data;
   const query: ProjectAdminCollectionQuery = {
+    fromMentorId,
     q: one(searchParams.q),
     status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
     page: Number(one(searchParams.page) ?? 1),
@@ -46,7 +48,7 @@ export async function ProjectAdminReassignMentorPage({
 
   const [projects, mentors, workload] =
     await Promise.all([
-      listProjectAdminSnapshots(
+      listCollegeReassignmentWorkspaces(
         context,
         collegeId,
         query,
@@ -89,6 +91,25 @@ export async function ProjectAdminReassignMentorPage({
         </div>
       </section>
       <ProjectAdminFilters query={query} />
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        {query.q ? <input type="hidden" name="q" value={query.q} /> : null}
+        {query.status ? <input type="hidden" name="status" value={query.status} /> : null}
+        {query.pageSize ? <input type="hidden" name="pageSize" value={query.pageSize} /> : null}
+        <label className="grid gap-1 text-sm font-semibold">
+          Filter by current mentor
+          <select name="fromMentorId" defaultValue={fromMentorId ?? ""}
+            className="min-h-10 rounded-lg border border-border bg-background px-3 py-2">
+            <option value="">All mentors</option>
+            <option value="UNASSIGNED">Unassigned</option>
+            {mentors.map(mentor => <option key={mentor.membershipId} value={mentor.membershipId}>
+              {mentor.displayName ?? mentor.email ?? "Mentor"}
+            </option>)}
+          </select>
+        </label>
+        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">
+          Apply mentor filter
+        </button>
+      </form>
       <ProjectMentorReassignment
         collegeId={collegeId}
         workspaces={projects.items
@@ -100,8 +121,8 @@ export async function ProjectAdminReassignMentorPage({
             id: project.id,
             title: project.title,
             status: project.status,
-            mentorName:
-              project.mentorName,
+            mentorName: project.mentorName,
+            mentorMembershipId: project.mentorMembershipId,
           }))}
         mentors={mentors}
       />
