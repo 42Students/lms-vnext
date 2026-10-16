@@ -4,6 +4,7 @@ import {useState} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
+import {TpoSelectedReviewQueue} from "@/components/tpo/tpo-selected-review-queue";
 import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
 import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
 import {tpoReviewOneByOneHref,tpoShareWithCompanyHref} from "@/modules/placements/tpo-bulk-follow-up-model";
@@ -219,9 +220,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
         className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
          Share {safeSelected.length} selected with the company
        </button>
-       <Link href={tpoReviewOneByOneHref(jobId,safeSelected[0])} className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
-         Review one by one
-       </Link>
+       <TpoSelectedReviewQueue jobId={jobId} rows={safeSelected.map(id=>({id,label:labelsById.get(id)??"Selected applicant"}))}/>
      </div>
      {companyShareUrl?<div className="space-y-2 rounded-md border border-border p-3">
       <p className="text-xs font-semibold">Copy this URL now. The secret cannot be recovered later.</p>
