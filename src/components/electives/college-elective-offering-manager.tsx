@@ -8,7 +8,7 @@ type Group = { id: string; name: string; capacity: number | null };
 type Offering = {
   offeringId: string; courseId: string; courseName: string; courseCode: string;
   backedDeliveryId: string; groupId: string; capacity: number | null;
-  activeMembers: number; version: number;
+  activeMembers: number; waitlistedCount: number; status: string; version: number;
 };
 type Load = { deliveries: Delivery[]; groups: Group[]; offerings: Offering[] };
 
@@ -86,7 +86,24 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     } finally { setBusy(false); }
   }
 
-  const offered = new Set(data?.offerings.map(row => row.courseId) ?? []);
+  async function archive(offering: Offering) {
+    if (!window.confirm("Archive this elective offering? Existing members are retained read-only.")) return;
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const res = await fetch(api + "/" + encodeURIComponent(offering.offeringId), {
+        method: "DELETE", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ expectedVersion: offering.version }),
+      });
+      const result = await res.json().catch(() => null);
+      if (!res.ok) throw Error(result?.error ?? "Unable to archive offering");
+      setMessage("Offering archived.");
+      await load(); router.refresh();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to archive offering");
+    } finally { setBusy(false); }
+  }
+
+  const offered = new Set(data?.offerings.filter(row => row.status === "ACTIVE").map(row => row.courseId) ?? []);
   const selectable = (data?.deliveries ?? []).filter(row =>
     (editing && row.courseId === editing.courseId) || !offered.has(row.courseId));
   return <div className="min-w-0">
@@ -103,15 +120,19 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           No courses added yet.</p>}
         {data.offerings.map(offering => <div key={offering.offeringId}
           className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-2 text-sm">
-          <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers}</span>
+          <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers} · Waitlist: {offering.waitlistedCount} · {offering.status}</span>
           <div className="flex flex-wrap items-center gap-2">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
               encodeURIComponent(offering.offeringId) + "/roster"}
               className="rounded border border-border px-2 py-1 font-semibold text-primary-text">
               Roster
             </Link>
-            <button type="button" onClick={() => startEdit(offering)}
-              className="rounded border border-border px-2 py-1 text-primary-text">Edit</button>
+            {offering.status === "ACTIVE" && <>
+              <button type="button" onClick={() => startEdit(offering)}
+                className="rounded border border-border px-2 py-1 text-primary-text">Edit</button>
+              <button type="button" disabled={busy} onClick={() => void archive(offering)}
+                className="rounded border border-border px-2 py-1 text-error">Archive</button>
+            </>}
           </div>
         </div>)}
         <div className="border-t border-border pt-3">
