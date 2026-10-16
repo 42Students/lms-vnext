@@ -140,8 +140,8 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      if(!edited)throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
      result=edited;eventType=ACTIVITY_EVENT_TYPES.COURSES_QUIZ_UPDATED;
     }else{
-     if(input.action==="PUBLISH" && current.dueAt &&
-      current.dueAt.getTime()<=Date.now())
+     if(input.action==="PUBLISH" && (!current.dueAt ||
+      current.dueAt.getTime()<=Date.now()))
        throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
      const isArchive=input.action==="ARCHIVE";
      const isClose=input.action==="CLOSE";
