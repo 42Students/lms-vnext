@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,isNull,lte,inArray,or} from "drizzle-orm";
+import {and,eq,gt,isNull,lte,inArray,or,sql,asc} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents,collegeMemberships,users} from "@/db/schema";
@@ -28,7 +28,13 @@ export async function deliverDueTpoNotices(now=new Date()){
   lte(db10Announcements.createdAt,cutoff),
   or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
   or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
- )).limit(100);
+  sql`not exists(select 1 from in_app_notifications n
+   join activity_events e on e.id=n.event_id
+   where e.college_id=${db10Announcements.collegeId}
+     and e.subject_type='announcement'
+     and e.subject_id=${db10Announcements.id}
+     and e.event_type='placements.tpo_notice.created')`,
+ )).orderBy(asc(db10Announcements.createdAt),asc(db10Announcements.id)).limit(100);
  let delivered=0,scanned=0;
  for(const notice of new Map(due.map(row=>[row.id,row])).values()){
   scanned++;
