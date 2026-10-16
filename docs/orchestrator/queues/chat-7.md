@@ -26,6 +26,16 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-7-04-home-drives-s3 | IN-PROGRESS | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
+## FAST-MODE checkpoint — continuation (2026-10-17)
+
+- REC-home-drives-24 / -25 / -26 (WP-02): formal request draft now persists branch/passing-year, campus mode and stipend/LPA compensation with legacy validation; college branch suggestions and end-to-end TPO approval still require parity.
+- LEARNER-profile-misc-R04 (WP-02): alternate-number duplicate and 10–15 digit validation enforced by both learner form and locked server identity. Login primary-phone edit intentionally not introduced.
+- REC-calendar-messages-profile-33 / -34 / -32 (WP-03/05): internal relationship trust badge removed; recruiter team initials/intro and company identity/site/industry fallback added. Verified-company badge and per-teammate drive counts are still open.
+- REC-home-drives-10 / -15 / -56 (WP-04/05): legacy drive tab aliases, canonical recruiter workspace links, closed-job Hire again and own rejected/cancelled request clone/resend draft.
+- REC-home-drives-17 / -29 (WP-04): scoped browser draft autosave/restore + Drives continuation notice; only schema-valid drafts autosave and the persisted draft is cleared after successful send.
+- REC-calendar-messages-profile-13 / -14 / -18 (WP-03): visible inbox/thread auto-refresh, explicit POST read acknowledgement on thread open, "You" sender label and IST short timestamps. Change-request event cards remain outstanding.
+- All five WPs remain IN-PROGRESS; no WP is claimed DONE. Private evidence uploads, selection schema registration, sensitive applicant visibility and trusted auto-approval are unresolved.
+
 ## FAST-MODE checkpoint (2026-10-17)
 
 - REC-home-drives-20 (WP-chat-7-04): list cards now target canonical recruiter drive detail, and the authorized Back to Drives link preserves validated list filter/sort/page state through the main tabs.
