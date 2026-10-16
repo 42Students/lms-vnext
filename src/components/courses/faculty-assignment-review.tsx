@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultySubmissionFileReview } from "./faculty-submission-file-review";
+import {AssignmentSubmissionLinks} from "./assignment-submission-links";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
 import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
@@ -317,7 +318,14 @@ function SubmissionGradeCard({
 
       <div className="mt-3 rounded-md bg-[var(--lms-neutral-50)] p-3">
         {submission.submissionType === "FILE" && filesEnabled ? (
-          <FacultySubmissionFileReview submissionId={submission.id} />
+          <div className="space-y-3">
+            {submission.textContent?<div>
+              <p className="mb-1 text-xs font-semibold">Written Response</p>
+              <p className="whitespace-pre-wrap break-words text-sm text-body">{submission.textContent}</p>
+            </div>:null}
+            <FacultySubmissionFileReview submissionId={submission.id}/>
+            <AssignmentSubmissionLinks submissionId={submission.id}/>
+          </div>
         ) : content.kind === "TEXT" ? (
           <div><p className="mb-2 text-xs font-semibold text-body">Written Response</p><p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p></div>
         ) : content.kind === "FILE" || content.kind === "LINK" ? (
