@@ -10,6 +10,7 @@ import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
+import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { z } from "zod";
 import {parseBatchStudentSearchParams,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
 export const dynamic="force-dynamic";
@@ -20,7 +21,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  if(!parsed.success)return <p role="alert">Invalid page number. <Link href={"/tpo/batches/"+batchId+"/students"}>Start again</Link></p>;
  const view=parseBatchStudentSearchParams(raw);
  if(!view.success)return <p role="alert">Invalid student search. <Link href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
- const result=await getTpoBatchStudentRegistrations(await getCurrentRequestContext(),batchId,parsed.data);
+ const ctx=await getCurrentRequestContext();
+ const [result,batchScope]=await Promise.all([getTpoBatchStudentRegistrations(ctx,batchId,parsed.data),getTpoBatch(ctx,batchId)]);
+ const finished=Boolean(batchScope.lifecycle?.finishedAt);
  const visible=selectTpoBatchStudentView(result.students,view.data,result.registrationAvailable);
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
@@ -32,11 +35,11 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">Export current page CSV</a>
  </div>
  <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Download blank eligibility import CSV (this page)</a>
- <TpoBatchEligibilityImport batchId={batchId}/>
- <TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
+ {finished?<p role="status" className="rounded border border-border bg-muted p-3 text-sm">This batch is finished. Eligibility decisions and import actions are read-only.</p>:<TpoBatchEligibilityImport batchId={batchId}/>}
+ {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
    target="STUDENTS" rows={visible.map(student=>({
     id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),
-   }))} />
+   }))} />:null}
  <p className="text-xs text-muted-foreground">Bulk changes apply only to selected learners on this page.
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
@@ -57,7 +60,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <p className="text-xs text-muted-foreground">Roll number: {s.rollNumber??"Not recorded"}</p>
   <p className="text-xs text-muted-foreground">Registration: {s.registration?s.registration.choice?.replaceAll("_"," ")??"Not recorded":"Unavailable"}{s.registration?.source?" · via "+s.registration.source.toLowerCase():""}</p>
   <p className="text-xs text-muted-foreground">Source: {s.source.toLowerCase()}{s.reason?" · "+s.reason:""}</p>
-  {!s.ambiguous?<TpoBatchInlineDecision key={s.membershipId+":"+(s.direct.updatedAt??"none")} membershipId={s.membershipId} expected={s.direct}/>:null}
+  {!finished&&!s.ambiguous?<TpoBatchInlineDecision key={s.membershipId+":"+(s.direct.updatedAt??"none")} membershipId={s.membershipId} expected={s.direct}/>:null}
   <Link className="mt-2 inline-flex min-h-10 items-center text-primary-text underline" href={"/tpo/students/"+s.membershipId+"/participation"}>Open learner participation</Link>
  </li>)}</ul>}
  <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="rounded border px-3 py-2">Previous</Link>:null}
