@@ -2,12 +2,13 @@ import "server-only";
 
 import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { cohorts, departments, programs } from "@/db/schema";
+import { cohorts, departments, programs, sections } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
-import { onboardPersonWithRuntime } from "./runtime";
+import { onboardPersonWithRuntime, upsertLearnerProfileWithRuntime } from "./runtime";
+import { placeImportedLearnerInSection } from "./college-student-import-placement";
 import {
   parseStudentCsv, studentCsvRequestSchema,
   type StudentCsvResult, type StudentCsvRow,
@@ -35,7 +36,7 @@ export function requireCollegeStudentImporter(context: RequestContext) {
 export async function runCollegeStudentCsv(context: RequestContext, raw: unknown) {
   const request = studentCsvRequestSchema.parse(raw);
   const member = requireCollegeStudentImporter(context);
-  const parsed = parseStudentCsv(request.csv);
+  const parsed = parseStudentCsv(request.csv, request);
   if (parsed.structuralErrors.length) {
     return { preview: true, structuralErrors: parsed.structuralErrors,
       results: [] as StudentCsvResult[], valid: 0, invalid: 0 };
@@ -56,6 +57,16 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     ))
     .where(inArray(cohorts.id, uniqueCohorts)) : [];
   const validCohorts = new Map(available.map(c => [c.cohortId, c]));
+  const sectionIds = [...new Set(parsed.entries.flatMap(entry =>
+    entry.data?.sectionId ? [entry.data.sectionId] : []))];
+  const rows = sectionIds.length ? await getDb().select({
+    id: sections.id, cohortId: sections.cohortId, status: sections.status,
+  }).from(sections).innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(departments, eq(departments.id, programs.departmentId))
+    .where(and(eq(departments.collegeId, member.collegeId),
+      inArray(sections.id, sectionIds))) : [];
+  const validSections = new Map(rows.map(row => [row.id, row]));
   const checked = parsed.entries.map(entry => {
     const errors = [...entry.errors];
     const cohort = entry.data ? validCohorts.get(entry.data.cohortId) : undefined;
@@ -63,6 +74,11 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
       cohort.programStatus !== "ACTIVE" ||
       !["ACTIVE", "PLANNED"].includes(cohort.cohortStatus))) {
       errors.push("PROGRAM_COHORT_UNAVAILABLE");
+    }
+    if (entry.data?.sectionId) {
+      const section = validSections.get(entry.data.sectionId);
+      if (!section || section.status !== "ACTIVE" || section.cohortId !== entry.data.cohortId)
+        errors.push("CLASS_BATCH_MISMATCH");
     }
     return { ...entry, errors };
   });
@@ -109,7 +125,21 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
         programId: data.programId,
         cohortId: data.cohortId,
       });
-      results.push({ row: entry.row, status: "IMPORTED", detail: "Learner onboarded and enrolled",
+      const partial: string[] = [];
+      if (data.rollNumber) {
+        try { await upsertLearnerProfileWithRuntime(context, membershipId, {
+          rollNumber: data.rollNumber, registrationNumber: null,
+        }); } catch { partial.push("Roll number update failed"); }
+      }
+      if (data.sectionId) {
+        try { await placeImportedLearnerInSection(context, enrollment.id, data.sectionId); }
+        catch (reason) {
+          partial.push(reason instanceof Error ? "Class placement failed: " + reason.message : "Class placement failed");
+        }
+      }
+      results.push({ row: entry.row, status: partial.length ? "PARTIAL" : "IMPORTED",
+        detail: partial.length ? "Onboarded and enrolled; " + partial.join("; ") :
+          "Learner onboarded, enrolled" + (data.sectionId ? " and placed in class" : ""),
         membershipId, enrollmentId: enrollment.id });
     } catch {
       results.push({ row: entry.row, status: "PARTIAL",
