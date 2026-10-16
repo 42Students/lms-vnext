@@ -199,7 +199,10 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                   <div><dt className="font-semibold text-muted-foreground">Audience</dt><dd>{collegeAudienceLabel(item.deliverySpecific)}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">Maximum points</dt><dd>{item.points}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">Due</dt><dd>{formatDue(item.dueAt)}</dd></div>
-                  <div><dt className="font-semibold text-muted-foreground">{isAssignment?"Submissions":"Attempts"}</dt><dd>{item.activityCount}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">Submitted</dt>
+                    <dd>{item.submittedLearners}/{item.eligibleLearners}</dd></div>
+                  {isAssignment?<div><dt className="font-semibold text-muted-foreground">Graded</dt>
+                    <dd>{item.gradedLearners} graded</dd></div>:null}
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
                 </dl>
                 {!isAssignment?<QuizListActions item={item}/>:null}
@@ -215,7 +218,8 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                 <th scope="col" className="px-4 py-3">Status</th>
                 {!isAssignment ? <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.results}</th> : null}
                 <th scope="col" className="px-4 py-3">Due (IST)</th>
-                <th scope="col" className="px-4 py-3">{isAssignment ? "Submissions" : "Attempts"}</th>
+                <th scope="col" className="px-4 py-3">Submitted / eligible</th>
+                {isAssignment?<th scope="col" className="px-4 py-3">Graded</th>:null}
                 {!isAssignment?<th scope="col" className="px-4 py-3">Actions</th>:null}
               </tr>
             </thead>
@@ -243,7 +247,10 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                   </td>
                   {!isAssignment ? <td className="px-4 py-4 text-body">{collegeResultsLabel(Boolean(item.resultsPublished))}</td> : null}
                   <td className="px-4 py-4 text-body">{formatDue(item.dueAt)}</td>
-                  <td className="px-4 py-4 tabular-nums text-body">{item.activityCount}</td>
+                  <td className="px-4 py-4 tabular-nums text-body">
+                    {item.submittedLearners}/{item.eligibleLearners} submitted
+                  </td>
+                  {isAssignment?<td className="px-4 py-4 tabular-nums text-body">{item.gradedLearners} graded</td>:null}
                   {!isAssignment?<td className="px-4 py-4"><QuizListActions item={item}/></td>:null}
                 </tr>
               ))}
@@ -276,8 +283,10 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
       </nav>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        Counts represent persisted {isAssignment ? "submission rows" : "attempt rows"},
-        not distinct eligible learners or submission-completion rates.
+        Submitted means distinct active enrolled learners with a submission or attempt.
+        Denominators count active eligible learners across this assessment’s Section audience.
+        Graded counts active learners with graded submissions. The activity summary above
+        separately counts all recorded rows, including historical attempts.
         Draft and archived items remain visible to authorized College Admins.
         No answers, submission content, contact information or file keys are read.
         Exact legacy authoring actions, report drill-ins, browser parity and runtime
