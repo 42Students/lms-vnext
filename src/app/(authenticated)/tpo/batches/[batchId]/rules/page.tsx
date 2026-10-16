@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import { TpoBatchDecisionControl } from "@/components/tpo/tpo-batch-decision-control";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -7,7 +8,7 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
  const {batchId}=await params;
  const {batch,lifecycle,ready,decision}=await getTpoBatch(await getCurrentRequestContext(),batchId);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{batch.name} — Rules</h1>
- <Link href={"/tpo/batches/"+batchId} className="text-primary-text underline">Batch overview</Link>
+ <TpoBatchWorkspaceTabs batchId={batchId} active="rules" />
  {!ready?<p role="status" className="rounded border border-border p-4">Batch lifecycle table is not registered. Rules are not editable until migration.</p>:
  <section className="rounded border border-border p-4"><h2 className="font-semibold">Participation policy</h2>
  <dl className="mt-3 space-y-2 text-sm"><div><dt className="font-semibold">Registration deadline</dt><dd>{lifecycle?.registrationDeadline?.toISOString()??"Not set"}</dd></div>
