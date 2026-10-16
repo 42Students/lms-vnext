@@ -7,6 +7,7 @@ import {TpoHeaderIndicators} from "@/components/tpo/tpo-header-indicators";
 import { countTpoUnreadRecruiterMessages } from "@/modules/placements/tpo-recruiter-unread-count-service";
 import { TPO_TOPBAR_QUICK_LINKS } from "@/modules/placements/tpo-topbar-links";
 import { TpoFindShortcut } from "@/components/tpo/tpo-find-shortcut";
+import {TpoKeyboardShortcuts} from "@/components/tpo/tpo-keyboard-shortcuts";
 import {TpoMobileFooter} from "@/components/tpo/tpo-mobile-footer";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 export default async function TpoLayout({children}:Readonly<{children:React.ReactNode}>){
@@ -23,6 +24,7 @@ export default async function TpoLayout({children}:Readonly<{children:React.Reac
  return <div className="min-w-0 space-y-4">
   <div className="flex min-w-0 flex-wrap items-center justify-end gap-3" aria-label="TPO quick access">
    <TpoFindShortcut/>
+   <TpoKeyboardShortcuts/>
    <details className="relative">
      <summary className="min-h-11 cursor-pointer rounded-md border border-border px-3 py-2 text-sm text-primary-text">+ New</summary>
      <nav aria-label="Create placement work" className="absolute right-0 z-20 min-w-44 rounded-md border border-border bg-surface p-2 shadow-lg">
