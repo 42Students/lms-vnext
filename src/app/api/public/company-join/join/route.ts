@@ -14,9 +14,9 @@ export async function POST(request: Request) {
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof PublicJoinAcceptError) {
-      const unready = error.code === "NETWORK_GUARD_NOT_READY" || error.code === "NOT_CONFIGURED";
+      const unready = error.code === "NETWORK_GUARD_NOT_READY" || error.code === "NOT_CONFIGURED" || error.code === "PHONE_STORAGE_NOT_READY";
       return NextResponse.json({
-        error: unready ? "SERVICE_NOT_READY" :
+        error: error.code==="PHONE_STORAGE_NOT_READY"?"PHONE_STORAGE_NOT_READY":unready ? "SERVICE_NOT_READY" :
           error.code === "REMOVED" ? "ACCESS_REMOVED" :
           ["WRONG_CODE","CODE_EXPIRED","CODE_LOCKED","CODE_REQUIRED",
           "OTHER_COMPANY_EMAIL","COMPANY_EXISTS","ACCOUNT_UNAVAILABLE"].includes(error.code)

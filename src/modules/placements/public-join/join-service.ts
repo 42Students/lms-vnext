@@ -24,7 +24,7 @@ export class PublicJoinAcceptError extends Error {
   constructor(readonly code: "INVALID" | "REMOVED" | "NOT_CONFIGURED" |
     "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY" | "WRONG_CODE" |
     "CODE_EXPIRED" | "CODE_LOCKED" | "CODE_REQUIRED" |
-    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "ACCOUNT_UNAVAILABLE") {
+    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "ACCOUNT_UNAVAILABLE" | "PHONE_STORAGE_NOT_READY") {
     super("PUBLIC_JOIN_" + code);
     this.name = "PublicJoinAcceptError";
   }
@@ -49,7 +49,13 @@ export async function acceptPublicRecruiterJoin(
     select to_regclass('public.placement_public_join_rate_events') is not null as ready
   `);
   if (ready.rows[0]?.ready !== true) throw new PublicJoinAcceptError("NETWORK_GUARD_NOT_READY");
-  const { token, code, email, name, companyName, designation } = input.data;
+  const { token, code, email, name, companyName, designation,phone } = input.data;
+  if(phone){
+    const contactReady=await getDb().execute<{ready:boolean}>(sql`
+      select to_regclass('public.placement_recruiter_public_contacts') is not null as ready
+    `);
+    if(contactReady.rows[0]?.ready!==true)throw new PublicJoinAcceptError("PHONE_STORAGE_NOT_READY");
+  }
   const tokenHash = createHash("sha256").update(token).digest("hex");
   const decision = await getDb().transaction(async tx => {
     const now = new Date();
@@ -154,6 +160,12 @@ export async function acceptPublicRecruiterJoin(
     const [profile] = await tx.select().from(placementRecruiterProfiles)
       .where(eq(placementRecruiterProfiles.userId, user.id)).for("update").limit(1);
     if (!profile || profile.companyId !== companyId || profile.status !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
+    if(phone)await tx.execute(sql`
+      insert into placement_recruiter_public_contacts(recruiter_user_id,phone_digits)
+      values (${user.id}::uuid,${phone}::varchar)
+      on conflict (recruiter_user_id)
+      do update set phone_digits=excluded.phone_digits,updated_at=now()
+    `);
     const [grant] = await tx.select().from(placementRecruiterCollegeGrants)
       .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId, user.id),
         eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.id)))
