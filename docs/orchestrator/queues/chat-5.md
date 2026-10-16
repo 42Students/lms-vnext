@@ -23,9 +23,9 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 3. WP-chat-5-03-placements-s2 | TODO | 21 gaps: S2 21
 4. WP-chat-5-04-batches-placements-s2 | TODO | 20 gaps: S2 20
 5. WP-chat-5-05-batches-calendar-reports-s2 | TODO | 15 gaps: S2 15
-6. WP-chat-5-06-drive-workspace-s2 | TODO | 20 gaps: S2 20
+6. WP-chat-5-06-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — implemented TPO-drive-workspace-03/16/35/37 with unit + PostgreSQL integration tests authored; execution/browser acceptance not yet verified; other gaps TODO
 7. WP-chat-5-07-drives-drive-workspace-s2 | TODO | 20 gaps: S2 20
-8. WP-chat-5-08-drives-requests-verification-s2 | IN-PROGRESS | 20 gaps: S2 20 — TPO-requests-verification-07 previously implemented; remaining IDs unverified
+8. WP-chat-5-08-drives-requests-verification-s2 | IN-PROGRESS | 20 gaps: S2 20 — earlier TPO-requests-verification-07 plus new urgency-first queue TPO-requests-verification-08 implemented and tested in source; PostgreSQL runtime and browser verification outstanding; other IDs TODO
 9. WP-chat-5-09-students-requests-verification-s2 | TODO | 20 gaps: S2 20
 10. WP-chat-5-10-students-placements-s2 | TODO | 23 gaps: S2 12, S3 11
 11. WP-chat-5-11-batches-placements-s3 | TODO | 20 gaps: S3 20
