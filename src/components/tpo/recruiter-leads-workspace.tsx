@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
+import {recruiterLeadsCsv} from "@/modules/placements/tpo-recruiter-export-model";
 import { RECRUITER_STAGE_LEGACY_LABELS, type TpoRecruiterLeadStage } from "@/modules/placements/tpo-recruiter-lead-policy";
 import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
 import {
@@ -98,6 +99,8 @@ export function RecruiterLeadsWorkspace({
   initialCompany?: string;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
+  const [selectedIds,setSelectedIds]=useState<string[]>([]);
+  const [exportFeedback,setExportFeedback]=useState("");
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -206,6 +209,23 @@ export function RecruiterLeadsWorkspace({
     return terms.includes(query.trim().toLowerCase());
   }), [rows, stage, query, need, attention]);
 
+  function exportRows(selection:"shown"|"selected"){
+    const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
+    if(chosen.length===0){setExportFeedback("Select recruiters first.");return;}
+    const blob=new Blob([recruiterLeadsCsv(chosen)],{type:"text/csv;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;link.download="recruiter-leads.csv";link.click();
+    URL.revokeObjectURL(url);
+    setExportFeedback(chosen.length+" recruiter leads exported");
+  }
+  async function copyRows(){
+    const chosen=selectedIds.length?visible.filter(row=>selectedIds.includes(row.id)):visible;
+    if(!chosen.length){setExportFeedback("No recruiters to copy.");return;}
+    try{await navigator.clipboard.writeText(recruiterLeadsCsv(chosen));
+      setExportFeedback(chosen.length+" recruiter leads copied");
+    }catch{setExportFeedback("Couldn't copy rows. Use Export CSV.");}
+  }
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
     setDuplicate(null);
@@ -364,6 +384,13 @@ export function RecruiterLeadsWorkspace({
           </p>
           {view !== "companies" ? (
             <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown")}>Export CSV</button>
+                <button type="button" className={buttonStyle} disabled={selectedIds.length===0}
+                  onClick={()=>exportRows("selected")}>Export selected ({selectedIds.length})</button>
+                <button type="button" className={buttonStyle} onClick={()=>void copyRows()}>Copy rows</button>
+                {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
+              </div>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
               <RecruiterBulkOwnerControls rows={visible} onUpdated={() => void load()} />
             </div>
@@ -436,7 +463,7 @@ export function RecruiterLeadsWorkspace({
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                  <tr>{["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone"].map(x =>
+                  <tr>{["Select", "Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone"].map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
