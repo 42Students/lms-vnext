@@ -1,20 +1,23 @@
 "use client";
 
 import {useState} from "react";
+import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
+import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
+import {tpoReviewOneByOneHref,tpoShareWithCompanyHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
-import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,TPO_BULK_UI_LIMIT,
+import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
-type Action="ELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED";
+type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE";
 type PreviewPlan={
  target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;ids:string[];
 };
 type PreviewResponse={rows:BulkPreviewRow[];previewToken:string;counts:{ready:number;skipped:number}};
-export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLICATIONS";
- jobId?:string;rows:readonly TpoBulkUiRow[]}){
+export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.length}:{target:"STUDENTS"|"APPLICATIONS";
+ jobId?:string;rows:readonly TpoBulkUiRow[];allRows?:readonly TpoBulkUiRow[];viewCount?:number}){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
  const [action,setAction]=useState<Action>(target==="STUDENTS"?"ELIGIBLE":"SHORTLISTED");
@@ -22,11 +25,12 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
  const [preview,setPreview]=useState<PreviewResponse|null>(null);
  const [plan,setPlan]=useState<PreviewPlan|null>(null);
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
+ const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
- const permitted=new Set(rows.map(row=>row.id));
+ const permitted=new Set((allRows??rows).map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
- function invalidate(){setPreview(null);setPlan(null);setOutcomes([]);setError("");}
+ function invalidate(){setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
  async function post(path:string,payload:unknown){
   const response=await fetch("/api/placements/tpo/bulk-actions/"+path,{
     method:"POST",credentials:"same-origin",cache:"no-store",
@@ -41,26 +45,50 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
   );
   return response.json() as Promise<unknown>;
  }
- async function startPreview(){
+ async function startPreview(choice:Action=action){
   if(busy||safeSelected.length===0||safeSelected.length>TPO_BULK_UI_LIMIT)return;
   if(target==="APPLICATIONS"&&note.trim().length<10){
    setError("Provide at least 10 characters of screening context.");return;
   }
+  if(target==="STUDENTS"&&choice==="INELIGIBLE"&&note.trim().length<3){
+   setError("Give a reason of at least 3 characters for ineligibility.");return;
+  }
   const next:PreviewPlan={
     target,...(target==="APPLICATIONS"?{jobId}:{}),
-    action,note:target==="APPLICATIONS"?note.trim():"",ids:safeSelected,
+    action:choice,note:target==="APPLICATIONS"||choice==="INELIGIBLE"?note.trim():"",ids:safeSelected,
   };
   setBusy(true);invalidate();
   try{
    const result=await post("preview",next) as PreviewResponse;
    if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Invalid preview");
-   setPreview(result);setPlan(next);
+   setAction(choice);setPreview(result);setPlan(next);
   }catch(cause){setError(cause instanceof Error?cause.message:"Preview unavailable. Refresh the roster and try again.");}
+  finally{setBusy(false);}
+ }
+ async function compareActions(){
+  if(busy||safeSelected.length===0||safeSelected.length>TPO_BULK_UI_LIMIT)return;
+  if(target==="APPLICATIONS"&&note.trim().length<10){
+   setError("Provide at least 10 characters of screening context.");return;
+  }
+  setBusy(true);invalidate();
+  try{
+   const checks=await Promise.all(options.filter(option=>option.value!=="INELIGIBLE").map(async option=>{
+    const result=await post("preview",{
+     target,...(target==="APPLICATIONS"?{jobId}:{}),
+     action:option.value,note:target==="APPLICATIONS"?note.trim():"",ids:safeSelected,
+    }) as PreviewResponse;
+    if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Could not verify action counts.");
+    return {action:option.value,label:option.label,ready:result.counts.ready,
+     skipped:result.counts.skipped,reasonSamples:[...new Set(result.rows.filter(row=>row.status==="skipped")
+      .map(row=>row.reason).filter((v):v is string=>Boolean(v)))].slice(0,3)};
+   }));
+   setActionCounts(checks);
+  }catch(cause){setError(cause instanceof Error?cause.message:"Action counts unavailable. Try again.");}
   finally{setBusy(false);}
  }
  async function confirm(){
   if(busy||!plan||!preview||preview.counts.ready===0||
-     !isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id)))return;
+     !isTpoBulkPreviewCurrent(plan.ids,[...permitted]))return;
   setBusy(true);setError("");
   try{
    const response=await post("confirm",{
@@ -75,22 +103,31 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
   finally{setBusy(false);}
  }
  const options=target==="STUDENTS"
-  ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
-  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"}] as const);
+  ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"INELIGIBLE",label:"Make ineligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
+  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"}] as const);
+ const suggested=suggestTpoBulkAction(actionCounts);
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
-  <div><h2 className="font-semibold text-foreground">Bulk actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
+  <div><h2 className="font-semibold text-foreground">Actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
    <p className="mt-1 text-sm text-body">
-    Select up to 25 rows on this page. Preview shows only numbered rows and eligibility.
+    Select eligible rows or act on all matching records in this filtered view (up to 200 per preview).
     Confirmation rechecks permission and versions; existing decisions are audited.
    </p></div>
-  <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {TPO_BULK_UI_LIMIT} allowed rows on this page.</p>
+  <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {viewCount} matching records (200 maximum per operation).</p>
+  <button type="button" disabled={busy||!canActOnEntireTpoView(viewCount,allRows)}
+   onClick={()=>{setSelected(allRows!.map(row=>row.id));invalidate();}}
+   className="min-h-11 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   Act on all {viewCount} in this view
+  </button>
+  {viewCount>TPO_BULK_UI_LIMIT?<p role="status" className="text-sm text-warning-text">
+    This view has more than 200 records. Narrow the filters before acting on all; no unpreviewed rows will be changed.
+   </p>:null}
   <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
     <input type="checkbox" disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
      onChange={e=>{setSelected(e.target.checked?selectTpoBulkPage(rows.map(row=>row.id)):[]);invalidate();}}/>
-    Select first {Math.min(rows.length,TPO_BULK_UI_LIMIT)} current-page rows
+    Select current-page rows
    </label>
    {rows.map(row=><label key={row.id} className="flex min-h-10 items-center gap-2 rounded p-2 text-sm hover:bg-muted">
     <input type="checkbox" disabled={busy||!canSelectTpoBulkRow(safeSelected,row.id)} checked={safeSelected.includes(row.id)}
@@ -117,18 +154,61 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
      {options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
     </select>
    </label>
-   {target==="APPLICATIONS"?<label className="text-sm font-semibold text-body">Review context
-    <textarea value={note} disabled={busy} maxLength={1000} rows={2}
+   {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="text-sm font-semibold text-body">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context / private note / message"}
+    <textarea value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       className="mt-1 w-full rounded border border-border bg-background p-3"/>
    </label>:null}
   </div>
+  <section aria-label="Actions window" className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
+   <h3 className="font-semibold">Actions</h3>
+   <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
+   <button type="button" disabled={busy||safeSelected.length===0}
+     onClick={()=>void compareActions()}
+     className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+     Check action counts
+   </button>
+   {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="space-y-2 rounded-lg border border-border bg-surface p-3">
+     <h4 className="font-semibold">Other actions</h4>
+     <p className="text-xs text-muted-foreground">Review one by one opens each applicant's authorized detail. Share with the company uses the separate shortlist review and does not silently share the current selection.</p>
+     <div className="flex flex-wrap gap-2">
+       <Link href={tpoShareWithCompanyHref(jobId)} className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+         Share with the company
+       </Link>
+       <Link href={tpoReviewOneByOneHref(jobId,safeSelected[0])} className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+         Review one by one
+       </Link>
+     </div>
+     {safeSelected.length>1?<details className="text-sm">
+       <summary>Review selected applicants individually ({safeSelected.length})</summary>
+       <ol className="mt-2 max-h-40 space-y-2 overflow-y-auto">
+         {safeSelected.map((id,index)=><li key={id}>
+           <Link href={tpoReviewOneByOneHref(jobId,id)} className="text-primary-text underline">
+             Applicant {index+1}
+           </Link>
+         </li>)}
+       </ol>
+     </details>:null}
+   </div>:null}
+   {actionCounts.length>0?<div className="grid gap-2 sm:grid-cols-2">
+     {actionCounts.map(count=><div key={count.action} className="rounded-md border border-border bg-surface p-3 text-sm">
+       <p className="font-semibold">{count.label}</p>
+       <p>{count.ready} ready · {count.skipped} left out</p>
+       {count.reasonSamples.map(reason=><p key={reason} className="mt-1 text-xs text-muted-foreground">{reason}</p>)}
+     </div>)}
+   </div>:null}
+   {suggested?<div className="flex flex-wrap items-center gap-3">
+     <p className="text-sm font-semibold">Suggested: {suggested.label}</p>
+     <button type="button" disabled={busy} onClick={()=>void startPreview(suggested.action as Action)}
+       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Do it</button>
+   </div>:null}
+  </section>
   <button type="button" disabled={busy||safeSelected.length===0}
     onClick={()=>void startPreview()}
     className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Checking…":"Preview "+safeSelected.length+" selected"}
   </button>
-  {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?
+  {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
     busy={busy||outcomes.length>0} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}

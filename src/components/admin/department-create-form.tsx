@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 
 export function DepartmentCreateForm({
   collegeId,
@@ -28,8 +29,7 @@ export function DepartmentCreateForm({
       });
 
       if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        setError(payload?.error ?? "Could not create department");
+        setError(DEPARTMENT_COPY.createFailed);
         return;
       }
 
@@ -41,14 +41,16 @@ export function DepartmentCreateForm({
   return (
     <form
       onSubmit={submit}
-      className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-end"
+      aria-label={DEPARTMENT_COPY.createCardTitle}
+      className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
     >
-      <div className="min-w-0 flex-1">
+      <h2 className="m-0 w-full text-base font-semibold text-foreground">{DEPARTMENT_COPY.createCardTitle}</h2>
+      <div className="min-w-48 flex-1">
         <label
           htmlFor="department-name"
           className="mb-1.5 block text-xs font-semibold text-body"
         >
-          Department name
+          {DEPARTMENT_COPY.nameLabel}
         </label>
         <Input
           id="department-name"
@@ -56,11 +58,11 @@ export function DepartmentCreateForm({
           onChange={(event) => setName(event.target.value)}
           required
           maxLength={255}
-          placeholder="e.g. Computer Science"
+          placeholder={DEPARTMENT_COPY.namePlaceholder}
         />
       </div>
       <Button type="submit" disabled={pending || !name.trim()}>
-        {pending ? "Creating…" : "Create department"}
+        {pending ? "Creating…" : DEPARTMENT_COPY.createButton}
       </Button>
       {error ? (
         <p role="alert" className="m-0 text-xs font-semibold text-error sm:w-full">

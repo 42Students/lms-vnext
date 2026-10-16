@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { hasUnsavedCollegeProgramEdit, updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 async function mutate(
   path: string,
@@ -67,10 +68,7 @@ function useAcademicMutation() {
         showToast({
           tone: "error",
           title: "Academic update failed",
-          description:
-            error instanceof Error
-              ? error.message
-              : "The request could not be completed.",
+          description: academicSetupErrorMessage(error),
         });
       }
     });

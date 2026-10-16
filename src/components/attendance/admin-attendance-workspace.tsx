@@ -1,5 +1,6 @@
 "use client";
 
+import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
 import {
   useMemo,
   useState,
@@ -496,8 +497,10 @@ export function AdminAttendanceWorkspace({
                       ) : null}
                     </th>
                   ))}
-                  <th className="px-4 py-3 text-center">
-                    %
+                  <th className="px-4 py-3 text-center"
+                    aria-label={ADMIN_ATTENDANCE_COPY.monthPercentAria}
+                    title={ADMIN_ATTENDANCE_COPY.monthPercentTooltip}>
+                    {ADMIN_ATTENDANCE_COPY.monthPercentHeader}
                   </th>
                 </tr>
               </thead>

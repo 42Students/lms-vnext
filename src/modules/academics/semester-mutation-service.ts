@@ -5,8 +5,9 @@ import { getDb } from "@/db/client";
 import { cohortProgressionState, cohorts, departments, programTermCourses, programTerms, programs } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   canCreateSemesterTerm,
   createCollegeSemesterSchema,
@@ -29,20 +30,8 @@ export class SemesterMutationError extends Error {
   }
 }
 
-function scopedCollege(context: RequestContext) {
-  const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.manage", {
-      organizationId: membership.organizationId,
-      collegeId: membership.collegeId,
-    })) {
-    throw new AuthorizationError("academics.manage");
-  }
-  requirePermission(context, "academics.manage", {
-    organizationId: membership.organizationId,
-    collegeId: membership.collegeId,
-  });
-  return membership;
+async function scopedCollege(context: RequestContext) {
+  return resolveActingCollege(context, "academics.manage");
 }
 
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
@@ -116,7 +105,7 @@ function mapConstraint(error: unknown): never {
 
 export async function createCollegeSemester(context: RequestContext, rawInput: unknown) {
   const input = createCollegeSemesterSchema.parse(rawInput);
-  const member = scopedCollege(context);
+  const member = await scopedCollege(context);
   try {
     return await getDb().transaction(async tx => {
       const program = await lockProgram(tx, input.programId, member.collegeId);
@@ -151,7 +140,7 @@ export async function updateCollegeSemester(
 ) {
   const termId = semesterIdSchema.parse(termIdInput);
   const input = updateCollegeSemesterSchema.parse(rawInput);
-  const member = scopedCollege(context);
+  const member = await scopedCollege(context);
   try {
     return await getDb().transaction(async tx => {
       const current = await lockedTerm(tx, termId, member.collegeId);
@@ -206,7 +195,7 @@ export async function deleteCollegeSemester(
 ) {
   const termId = semesterIdSchema.parse(termIdInput);
   deleteCollegeSemesterSchema.parse(rawInput);
-  const member = scopedCollege(context);
+  const member = await scopedCollege(context);
   try {
     return await getDb().transaction(async tx => {
       const current = await lockedTerm(tx, termId, member.collegeId);

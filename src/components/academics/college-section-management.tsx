@@ -6,6 +6,7 @@ import {
   createCollegeSectionSchema, sectionIdentityChanged,
   updateCollegeSectionSchema,
 } from "@/modules/academics/college-section-mutation-model";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 type Cohort = { id: string; name: string; code: string; programName: string };
 type Period = { id: string; name: string; code: string };
@@ -60,7 +61,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         setNotice("Class created.");
         router.refresh();
       } catch (error) {
-        setNotice(error instanceof Error ? error.message : "Class creation failed.");
+        setNotice(academicSetupErrorMessage(error, "Class creation failed."));
       }
     });
   }
@@ -153,7 +154,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         setEditing(false); setNotice("Class updated.");
         router.refresh();
       } catch (error) {
-        setNotice(error instanceof Error ? error.message : "Class update failed.");
+        setNotice(academicSetupErrorMessage(error, "Class update failed."));
       }
     });
   }

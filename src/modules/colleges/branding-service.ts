@@ -2,6 +2,8 @@ import { eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeBranding, colleges } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
   collegeBrandingInputSchema,
@@ -115,7 +117,8 @@ export async function saveCollegeBranding(
     collegeId: college.id,
   });
 
-  const [row] = await getDb()
+  return getDb().transaction(async tx=>{
+   const [row] = await tx
     .insert(collegeBranding)
     .values({ collegeId, ...input })
     .onConflictDoUpdate({
@@ -128,5 +131,17 @@ export async function saveCollegeBranding(
     })
     .returning();
 
-  return { collegeName: college.name, ...toView(row) };
+   if (!row) throw new Error("BRANDING_SAVE_FAILED");
+   await recordActivityEventInTransaction(tx, context, {
+    eventType: ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_BRANDING_UPDATED,
+    collegeId: college.id,
+    organizationId: college.organizationId,
+    subjectType: "college",
+    subjectId: college.id,
+    subjectLabel: college.name,
+    summary: "College branding updated",
+    metadata: { version: row.version },
+   });
+   return { collegeName: college.name, ...toView(row) };
+  });
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDateTimeIst } from "@/lib/format-date";
+import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter-invite-message-model";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -11,8 +12,13 @@ type Lead = {
   emailNorm: string | null;
   phoneNorm: string | null;
   companyName: string | null;
+  companyRelationshipId:string|null;
   source: string | null;
   manualStage: string;
+  stage: string;
+  ownerName: string|null;
+  inviteStatus: string;
+  recruiterLastLoginAt: string|null;
   notNowReason: string | null;
   notNowUntil: string | null;
   inviteSentAt: string | null;
@@ -97,6 +103,9 @@ export function RecruiterLeadDetailWorkspace({
   const [revisitDate, setRevisitDate] = useState("");
   const [inviteLink, setInviteLink] = useState("");
   const [inviteNotice, setInviteNotice] = useState("");
+  const [invitePersonalNote,setInvitePersonalNote]=useState("");
+  const [inviteMessage,setInviteMessage]=useState("");
+  const [inviteExpiresAt,setInviteExpiresAt]=useState("");
 
   const base = "/api/placements/tpo/leads/" + encodeURIComponent(leadId);
   const params = "?collegeId=" + encodeURIComponent(collegeId);
@@ -235,6 +244,11 @@ export function RecruiterLeadDetailWorkspace({
   }
 
   async function createInviteLink() {
+    if (!window.confirm("Create an invitation valid for 7 days? Any previous link will stop working.")) return;
+    if(!lead?.emailNorm||!lead.companyRelationshipId){
+      setActionError("Add a work email and link a company before inviting.");
+      return;
+    }
     setSaving(true);
     setActionError("");
     setInviteNotice("");
@@ -253,11 +267,20 @@ export function RecruiterLeadDetailWorkspace({
         "/recruiter-invite/" +
         encodeURIComponent(payload.invite.token);
       setInviteLink(link);
+      setInviteExpiresAt(payload.invite.expiresAt);
+      const prepared=buildTpoRecruiterInviteMessage({
+        recruiterName:lead?.name??"Recruiter",
+        companyName:lead?.companyName??null,
+        inviteUrl:link,
+        expiresAt:payload.invite.expiresAt,
+        personalNote:invitePersonalNote,
+      });
+      setInviteMessage(prepared);
       try {
-        await navigator.clipboard.writeText(link);
-        setInviteNotice("A new invite link was created and copied. Any older link is now invalid.");
+        await navigator.clipboard.writeText(prepared);
+        setInviteNotice("Invitation message copied. Older links are now invalid.");
       } catch {
-        setInviteNotice("A new invite link was created. Copy it below. Any older link is now invalid.");
+        setInviteNotice("Invitation created. Copy the message below before closing.");
       }
       await load();
     } catch (cause) {
@@ -290,7 +313,11 @@ export function RecruiterLeadDetailWorkspace({
                 {lead.companyName || "Company not provided"}
                 {lead.designation ? " · " + lead.designation : ""}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.manualStage.replace("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.stage.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Invite: {lead.inviteStatus.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
+                formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button type="button" className={button} onClick={openEdit}>Edit details</button>
@@ -323,19 +350,26 @@ export function RecruiterLeadDetailWorkspace({
                     : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add phone</button>}</dd></div>
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
-              {!lead.recruiterUserId && lead.manualStage !== "NOT_NOW" ? (
+              {!lead.recruiterUserId ? (
                 <div className="space-y-2 border-t border-border pt-3">
+                  <label className="block text-xs">Personal note (optional)
+                    <textarea className={input + " mt-1"} rows={2}
+                      maxLength={500} value={invitePersonalNote} disabled={saving}
+                      onChange={event=>setInvitePersonalNote(event.target.value)}/>
+                  </label>
                   <button
                     type="button"
                     className={button}
-                    disabled={saving}
+                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId}
                     onClick={() => void createInviteLink()}
                   >
                     {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}
                   </button>
                   <p className="text-xs text-muted-foreground">
-                    Creating a new link immediately invalidates the previous one. Email delivery is not claimed until the shared outbox is verified.
+                    The link expires after seven days. Creating a new link invalidates the previous one.
+                    Automatic email delivery is not available; use the email draft or copy the message.
                   </p>
+                  {lead.manualStage==="NOT_NOW"?<p className="text-xs text-warning">This lead is marked Not now. Confirm that outreach is appropriate before inviting.</p>:null}
                   {inviteLink ? (
                     <label className="block text-xs">
                       Invite link
@@ -347,6 +381,35 @@ export function RecruiterLeadDetailWorkspace({
                       />
                     </label>
                   ) : null}
+                  {inviteMessage ? <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      Valid until {formatDateTimeIst(inviteExpiresAt)}.
+                    </p>
+                    <label className="block text-xs">Invitation preview
+                      <textarea rows={8} readOnly value={inviteMessage} onFocus={event=>event.currentTarget.select()}
+                        className={input+" mt-1 whitespace-pre-wrap"} />
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      <button type="button" className={button}
+                        onClick={()=>void navigator.clipboard.writeText(inviteMessage).then(
+                          ()=>setInviteNotice("Invitation message copied."),
+                          ()=>setInviteNotice("Copy the message from the preview.")
+                        )}>Copy message</button>
+                      <button type="button" className={button}
+                        onClick={()=>void navigator.clipboard.writeText(inviteLink).then(
+                          ()=>setInviteNotice("Invite link copied."),
+                          ()=>setInviteNotice("Copy the link from its input.")
+                        )}>Copy link</button>
+                      {lead.emailNorm?<a className={button}
+                        href={"mailto:"+lead.emailNorm+"?subject="+encodeURIComponent("Placement Cell recruiter invitation")+
+                          "&body="+encodeURIComponent(inviteMessage)}>
+                        Also email it (open draft)</a>:null}
+                      <button type="button" className={button} onClick={()=>{
+                        if(!window.confirm("Close invitation preview? The one-time token and message will not be shown again."))return;
+                        setInviteLink("");setInviteMessage("");setInviteNotice("");setInviteExpiresAt("");
+                      }}>Close preview</button>
+                    </div>
+                  </div>:null}
                   {inviteNotice ? (
                     <p role="status" className="text-xs text-muted-foreground">{inviteNotice}</p>
                   ) : null}
@@ -355,7 +418,7 @@ export function RecruiterLeadDetailWorkspace({
                 <p className="text-xs text-muted-foreground">
                   {lead.recruiterUserId
                     ? "This contact is already linked to a recruiter account."
-                    : "Invites are paused while this lead is marked Not now."}
+                    : "Invitation not available."}
                 </p>
               )}
             </section>

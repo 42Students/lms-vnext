@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { PlacementCandidateEvidenceEditor } from "./placement-candidate-evidence-editor";
 import type { TpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
+import {projectTpoRoundFacts} from "@/modules/placements/tpo-round-facts-model";
 
 type RoundKind =
   | "TALK"
@@ -82,6 +83,10 @@ type DriveRound = {
   venue: string | null;
   meetingUrl: string | null;
   resultsDueAt: string | null;
+  platform: string | null;
+  testUrl: string | null;
+  durationMinutes: number | null;
+  whatToBring: string | null;
   participants: Array<{
     applicationId: string;
     roleTitle: string;
@@ -1424,6 +1429,7 @@ export function PlacementDriveControls({
         {data.rounds.map((round) => {
           const schedule =
             scheduleDrafts[round.id];
+          const facts = projectTpoRoundFacts(round);
           return (
             <article
               key={round.id}
@@ -1453,6 +1459,27 @@ export function PlacementDriveControls({
                   {humanize(round.status)}
                 </StatusBadge>
               </div>
+
+              <dl aria-label={round.name+" round facts"} className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                <div><dt className="text-xs text-body">Status</dt><dd className="font-semibold">{facts.status}</dd></div>
+                <div><dt className="text-xs text-body">Mode</dt><dd>{facts.mode}</dd></div>
+                <div><dt className="text-xs text-body">When</dt><dd>{facts.when}</dd></div>
+                <div><dt className="text-xs text-body">Venue or meeting link</dt><dd className="break-words">{round.mode==="VIRTUAL"&&round.meetingUrl?
+                  <a href={round.meetingUrl} target="_blank" rel="noopener noreferrer" className="text-primary-text underline">Open meeting link</a>:facts.place}</dd></div>
+                <div><dt className="text-xs text-body">Students in this round</dt>
+                  <dd><a className="font-semibold text-primary-text underline"
+                    href={"/tpo/placements/jobs/"+encodeURIComponent(data.jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}>
+                    {facts.students} · see who</a></dd>
+                </div>
+                <div><dt className="text-xs text-body">Results</dt><dd>{facts.results}</dd></div>
+                <div><dt className="text-xs text-body">Results expected by</dt><dd>{facts.due}</dd></div>
+                {facts.duration!=null?<div><dt className="text-xs text-body">Duration</dt><dd>{facts.duration} minutes</dd></div>:null}
+                {facts.platform?<div><dt className="text-xs text-body">Test platform</dt><dd>{facts.platform}</dd></div>:null}
+                {facts.testUrl?<div><dt className="text-xs text-body">Test link</dt><dd>
+                  <a className="text-primary-text underline" target="_blank" rel="noopener noreferrer" href={facts.testUrl}>Open test</a>
+                </dd></div>:null}
+                {facts.bring?<div className="sm:col-span-2"><dt className="text-xs text-body">What to bring</dt><dd>{facts.bring}</dd></div>:null}
+              </dl>
 
               {scheduleWarnings?.warnings
                 .find((entry) => entry.roundId === round.id)?.messages.map((message) => (

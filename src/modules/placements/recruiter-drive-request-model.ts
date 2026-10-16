@@ -29,3 +29,12 @@ export function recruiterRequestStage(status:RecruiterRequestStatus):"WAITING"|"
 export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus){
  return status==="REJECTED"||status==="CANCELLED"?"Cancelled":"Sent for review";
 }
+
+/** Optimistic request edit token and real 0101 REQUEST/SENT_BACK transitions. */
+export const recruiterRequestUpdateSchema=z.strictObject({
+ requestId:z.string().uuid(),
+ collegeId:z.string().uuid(),
+ action:z.enum(["EDIT","RESUBMIT","CANCEL"]),
+ expectedUpdatedAt:z.iso.datetime({offset:true}),
+ draft:hrDriveDraftSchema.optional(),
+});

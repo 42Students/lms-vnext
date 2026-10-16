@@ -17,8 +17,9 @@ import {
   programs,
   sections,
 } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+
 import {
   academicDirectoryPageCount,
   COLLEGE_ACADEMIC_PAGE_SIZE,
@@ -26,20 +27,9 @@ import {
   collegeSemesterDirectorySchema,
 } from "./college-academic-directory-model";
 
-function requireAdminCollege(context: RequestContext) {
-  const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.read", {
-      organizationId: membership.organizationId,
-      collegeId: membership.collegeId,
-    })) {
-    throw new AuthorizationError("academics.read");
-  }
-  requirePermission(context, "academics.read", {
-    organizationId: membership.organizationId,
-    collegeId: membership.collegeId,
-  });
-  return membership.collegeId;
+async function requireAdminCollege(context: RequestContext) {
+  const selected = await resolveActingCollege(context, "academics.read");
+  return selected.collegeId;
 }
 
 function likePattern(text: string): string {
@@ -63,7 +53,7 @@ function availablePrograms(collegeId: string) {
 /** Registered DB-0050 program_terms, not a fabricated academic period ordinal. */
 export async function listCollegeSemesters(context: RequestContext, raw: unknown) {
   const query = collegeSemesterDirectorySchema.parse(raw);
-  const collegeId = requireAdminCollege(context);
+  const collegeId = await requireAdminCollege(context);
   const db = getDb();
   const source = db.select({
     id: aliasedColumn(programTerms.id, "sem_id"),
@@ -147,7 +137,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
 /** Registered cohorts, DB-0051 progression, and active membership-scoped learner counts. */
 export async function listCollegeBatches(context: RequestContext, raw: unknown) {
   const query = collegeBatchDirectorySchema.parse(raw);
-  const collegeId = requireAdminCollege(context);
+  const collegeId = await requireAdminCollege(context);
   const db = getDb();
   const source = db.select({
     id: aliasedColumn(cohorts.id, "batch_id"),

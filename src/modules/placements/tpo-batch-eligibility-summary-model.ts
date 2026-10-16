@@ -45,3 +45,8 @@ export function batchEligibilityNextAction(summary: ReturnType<typeof summarizeB
   if (summary.undecided > 0) return "DECIDE" as const;
   return "INVITE" as const;
 }
+
+/** Percentages are conditional on a complete, scoped batch summary. */
+export function batchEligibilityShare(count: number, assessed: number): number {
+  return assessed > 0 ? Math.round((count / assessed) * 10000) / 100 : 0;
+}

@@ -77,27 +77,14 @@ export function getOptionalModuleSourceDefault(
   return DEFAULTS[module];
 }
 
-const BELOW_COLLEGE = new Set<ModuleAccessScopeType>([
-  "MEMBERSHIP",
-  "SECTION",
-  "COHORT",
-  "PROGRAM",
-  "DEPARTMENT",
-]);
-
-function levelIgnored(
-  module: OptionalModuleKey,
-  scopeType: ModuleAccessScopeType,
-) {
-  return module === "placements" && BELOW_COLLEGE.has(scopeType);
-}
-
-/** Share the resolver's scope applicability with trace presentation. */
+/** Academic placement policies are now resolved through the same learner
+ * hierarchy as Projects and Electives, including locked ancestors.
+ * Keep the public trace helper for callers that render ignored levels. */
 export function isModuleScopeIgnored(
-  module: OptionalModuleKey,
-  scopeType: ModuleAccessScopeType,
+  _module: OptionalModuleKey,
+  _scopeType: ModuleAccessScopeType,
 ): boolean {
-  return levelIgnored(module, scopeType);
+  return false;
 }
 
 function pairKey(
@@ -124,7 +111,6 @@ export function resolveModuleAccessFromRules(
   ): ModuleAccessResolution => {
     for (let index = chain.length - 1; index >= 0; index -= 1) {
       const scope = chain[index];
-      if (levelIgnored(module, scope.scopeType)) continue;
       const rule = byPair.get(
         pairKey(scope.scopeType, scope.scopeId, module),
       );
@@ -139,7 +125,6 @@ export function resolveModuleAccessFromRules(
     }
 
     for (const scope of chain) {
-      if (levelIgnored(module, scope.scopeType)) continue;
       const rule = byPair.get(
         pairKey(scope.scopeType, scope.scopeId, module),
       );

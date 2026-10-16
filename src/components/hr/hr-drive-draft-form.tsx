@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
-import {isHrDriveProposalResponse} from "@/modules/placements/hr-drive-proposal-response-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
 import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
@@ -30,12 +29,18 @@ export function HrDriveDraftForm({
   storageKey,
   collegeId,
   sourceJobId,
+  fixRequestId=null,
+  fixUpdatedAt=null,
+  editMode="RESUBMIT",
 }: {
   initial: HrDriveDraft;
   sourceJobTitle: string | null;
   storageKey:string;
   collegeId:string;
   sourceJobId:string|null;
+  fixRequestId?:string|null;
+  fixUpdatedAt?:string|null;
+  editMode?:"EDIT"|"RESUBMIT";
 }) {
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
   const [showPreview, setShowPreview] = useState(false);
@@ -83,47 +88,51 @@ export function HrDriveDraftForm({
     }
   }
 
-  async function sendProposalForDiscussion(){
+  async function sendFormalDriveRequest(){
     if(submitting)return;
     const valid=hrDriveDraftSchema.safeParse(draft);
     if(!valid.success){
       setShowPreview(true);
-      setNotice("Complete the draft requirements before sending a proposal message.");
+      setNotice("Complete the draft requirements before sending for review.");
       return;
     }
-    const signature=JSON.stringify([collegeId,sourceJobId,valid.data]);
+    const signature=JSON.stringify([collegeId,sourceJobId,valid.data,fixRequestId]);
     const next=nextHrProposalAttempt(attempted.current,signature,()=>crypto.randomUUID());
     attempted.current=next;
     setSubmitting(true);
-    setNotice("Submitting this proposal as a private placement-cell message...");
-    try {
-      const response=await fetch("/api/placements/recruiter/drives/proposal",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
+    setNotice(fixRequestId?(editMode==="EDIT"?"Saving changes...":"Resubmitting your updated request..."):"Sending to the placement cell for review...");
+    try{
+      const response=await fetch("/api/placements/recruiter/drives/requests",{
+        method:fixRequestId?"PATCH":"POST",
         credentials:"same-origin",
-        body:JSON.stringify({
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(fixRequestId?{
+          requestId:fixRequestId,collegeId,action:editMode,
+          expectedUpdatedAt:fixUpdatedAt,draft:valid.data,
+        }:{
           collegeId,sourceJobId:sourceJobId??undefined,
           submissionId:next.submissionId,draft:valid.data,
         }),
       });
-      const body:unknown=await response.json().catch(()=>null);
+      const raw:unknown=await response.json().catch(()=>null);
       if(!response.ok){
-        const error=body&&typeof body==="object"&&"error" in body?
-          String((body as {error:unknown}).error):"UNKNOWN_ERROR";
-        setNotice(error==="PROPOSAL_TOO_LONG"
-          ?"The proposal exceeds the 4,000-character message limit. Shorten the description or round names."
-          :error==="STALE_SUBMISSION"
-            ?"This proposal reference was already used with different content. Edit and retry your draft."
-            :"The placement cell did not receive the proposal. Check college access and try again. ("+error+")");
+        const code=raw&&typeof raw==="object"&&"error" in raw
+          ? String((raw as {error:unknown}).error):"REQUEST_FAILED";
+        setNotice(code==="FORBIDDEN"?"Your access to this college has ended. Ask the placement cell to restore it.":
+          code==="STALE"||code==="INVALID_STATE"?
+          "This request has changed. Refresh Drives before trying again.":
+          code==="STORAGE_NOT_READY"?"Requests are temporarily unavailable. Your draft was not sent.":
+          "Your request was not sent. Please try again. ("+code+")");
         return;
       }
-      if(!isHrDriveProposalResponse(body)){
-        setNotice("Submission returned no valid persisted-message receipt. Check conversations before retrying.");
+      if(!raw||typeof raw!=="object"||!("request" in raw)||
+         typeof (raw as {request?:{id?:unknown}}).request?.id!=="string"){
+        setNotice("Could not verify the saved request. Check Drives before retrying.");
         return;
       }
-      window.location.assign("/hr/conversations/"+body.threadId);
+      window.location.assign("/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING");
     }catch{
-      setNotice("Could not confirm the message. Your draft remains here; retrying the same draft is safe.");
+      setNotice("Request status could not be confirmed. Your draft is preserved; check Drives before resending.");
     }finally{
       setSubmitting(false);
     }
@@ -195,7 +204,7 @@ export function HrDriveDraftForm({
           ))}
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          All compensation, bond and eligibility fields are local preview values. They are not submitted or saved.
+          Compensation and eligibility values are submitted as part of the formal request; the placement cell decides whether to approve.
         </p>
       </section>
 
@@ -265,7 +274,7 @@ export function HrDriveDraftForm({
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="font-semibold text-foreground">What students will see · local preview</h2>
         <p className="mt-1 text-sm text-body">
-          This draft is local until you explicitly send a private proposal message. Messaging is not an approval or publication.
+          Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <button type="button" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
@@ -273,8 +282,8 @@ export function HrDriveDraftForm({
           <button type="button" disabled={!result.success||submitting}
             aria-busy={submitting}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
-            onClick={() => void sendProposalForDiscussion()}>
-            {submitting?"Sending proposal message...":"Send proposal to placement cell (message only)"}
+            onClick={() => void sendFormalDriveRequest()}>
+            {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </button>
           <button type="button" disabled={!result.success}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
@@ -339,7 +348,7 @@ export function HrDriveDraftForm({
         ) : null}
         {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
         <p className="mt-3 text-xs text-muted-foreground">
-          Formal Send for Approval, Fix and Resend, file attachments, and tracked request decisions remain unavailable. A proposal message creates a discussion only.
+          Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
         </p>
       </section>
     </div>

@@ -8,10 +8,11 @@ type Invite = {
   collegeName: string;
   companyName: string | null;
   contactName: string;
+  contactEmail:string|null;
   designation: string | null;
   expiresAt: string;
 };
-type State = "loading" | "ready" | "invalid" | "load_error" | "declined";
+type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
 
 const button =
   "inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
@@ -24,6 +25,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const [invite, setInvite] = useState<Invite | null>(null);
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState("");
+  const [codeSent,setCodeSent]=useState(false);
+  const [code,setCode]=useState("");
+  const [name,setName]=useState("");
+  const [designation,setDesignation]=useState("");
+  const [mobile,setMobile]=useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -42,6 +48,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
           return;
         }
         setInvite(data.invite ?? null);
+        setName(data.invite?.contactName??"");
+        setDesignation(data.invite?.designation??"");
         setState("ready");
         // T-S2-03: GET is read-only. A same-origin POST records first open.
         // Best-effort telemetry must not block the visitor's invitation.
@@ -80,6 +88,44 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function acceptCode(){
+    if(busy||!/^[0-9]{6}$/.test(code))return;
+    if(!name.trim()){setActionError("Enter your name");return;}
+    setBusy(true);setActionError("");
+    try{
+      const response=await fetch("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
+        method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({code,name,designation,mobile}),
+      });
+      if(!response.ok){
+        if(response.status===404){setState("invalid");return;}
+        if(response.status===503)throw new Error("Joining is temporarily unavailable. Ask the placement cell to check verification settings.");
+        throw new Error("That code did not work. Check the latest email or send a new code.");
+      }
+      setState("joined");
+    }catch(error){setActionError(error instanceof Error?error.message:"Couldn't join. Please try again.");}
+    finally{setBusy(false);}
+  }
+  async function sendCode(){
+    if(busy)return;
+    setBusy(true);setActionError("");
+    try{
+      const response=await fetch("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
+        method:"POST",credentials:"same-origin",
+      });
+      if(!response.ok){
+        if(response.status===404){setState("invalid");return;}
+        if(response.status===503)throw new Error("Verification is temporarily unavailable. Ask the placement cell to check email delivery.");
+        if(response.status===429)throw new Error("Too many codes. Please try again later.");
+        throw new Error("We couldn't send the code. Please try again.");
+      }
+      setCodeSent(true);
+      setCode("");
+    }catch(error){
+      setActionError(error instanceof Error?error.message:"We couldn't send the code. Please try again.");
+    }finally{setBusy(false);}
   }
 
   const shell = (children: React.ReactNode) => (
@@ -121,6 +167,13 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     );
   }
 
+  if(state==="joined"){
+    return shell(<div className="text-center space-y-3">
+      <h1 className="text-xl font-semibold text-foreground">You now have access to {invite.collegeName}</h1>
+      <p className="text-sm text-muted-foreground">Sign in with your work email. We'll email you a code each time.</p>
+      <Link className={primary} href="/login">Sign in</Link>
+    </div>);
+  }
   if (state === "declined") {
     return shell(
       <div className="text-center">
@@ -148,14 +201,49 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         {invite.designation ? <p><strong>Designation:</strong> {invite.designation}</p> : null}
       </div>
 
-      <div className="mt-5">
-        <button className={primary} disabled aria-disabled="true">
-          Join
-        </button>
-        <p className="mt-2 text-xs text-muted-foreground">
-          Account activation is temporarily unavailable until the shared Identity Platform
-          and pending-college-consent migration are verified. Opening this page does not
-          consume your invitation.
+      <div className="mt-5 space-y-3">
+        <label className="block text-sm font-semibold text-foreground">
+          Work email
+          <input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
+            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-body"/>
+          <span className="mt-1 block text-xs font-normal text-muted-foreground">
+            From your invitation. You'll sign in with it.
+          </span>
+        </label>
+        <label className="block text-sm font-semibold text-foreground">Your name
+         <input required maxLength={150} autoComplete="name" value={name}
+           onChange={event=>setName(event.target.value)}
+           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+        </label>
+        <label className="block text-sm font-semibold text-foreground">Designation (optional)
+         <input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
+           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+        </label>
+        <label className="block text-sm font-semibold text-foreground">Mobile (optional)
+         <input type="tel" autoComplete="tel" maxLength={30} value={mobile}
+           onChange={event=>setMobile(event.target.value)}
+           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+         <span className="mt-1 block text-xs font-normal text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</span>
+        </label>
+        {!codeSent?(
+          <button type="button" className={primary} disabled={busy} onClick={()=>void sendCode()}>
+            {busy?"Sending…":"Send me a code"}
+          </button>
+        ):(
+          <>
+            <label className="block text-sm font-semibold text-foreground">
+              Enter the 6-digit code
+              <input type="text" inputMode="numeric" autoComplete="one-time-code"
+                pattern="[0-9]{6}" maxLength={6} value={code} onChange={event=>setCode(event.target.value)}
+                className="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+            </label>
+            <button className={primary} type="button" disabled={busy||!/^[0-9]{6}$/.test(code)}
+              onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</button>
+            <button className={secondary} type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</button>
+          </>
+        )}
+        <p className="text-xs text-muted-foreground">
+          We'll send a code to the work email on your invitation. The code proves the email is yours.
         </p>
       </div>
 

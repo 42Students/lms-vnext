@@ -82,7 +82,7 @@ export function buildRecruiterCalendarEvents(input: {
       id: `deadline:${job.id}`,
       kind: "APPLICATION_DEADLINE",
       startsAt: job.applicationDeadline!,
-      title: `Application deadline: ${job.title}`,
+      title: `Applications close`,
       companyId: job.companyId,
       companyName: job.companyName,
       jobId: job.id,
@@ -104,8 +104,7 @@ export function buildRecruiterCalendarEvents(input: {
 
     if (
       !job ||
-      (round.status !== "SCHEDULED" &&
-        round.status !== "COMPLETED") ||
+      (round.status === "CANCELLED") ||
       !insideWindow(round.scheduledAt)
     ) {
       continue;

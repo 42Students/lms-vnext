@@ -33,6 +33,11 @@ describe("W03 project lifecycle concurrency contract", () => {
     expect(source).toContain('status !== "ARCHIVED" && status !== "COMPLETED"');
     expect(source).toContain("projectAllowsExecution(project.status)");
     expect(source).toContain('.for("update")');
-    expect(source).not.toContain('status: "COMPLETED",\n        updatedAt: new Date(),');
+    // Only sprints may be set COMPLETED here; the project row itself is never
+    // updated (so never reopened/completed) by the lifecycle service.
+    expect(source).not.toMatch(/\.update\(projects\)/);
+    expect(source.match(/status: "COMPLETED"/g)?.length ?? 0).toBe(
+      source.match(/\.update\(projectSprints\)[\s\S]{0,80}status: "COMPLETED"/g)?.length ?? 0,
+    );
   });
 });

@@ -25,14 +25,17 @@ const journal = JSON.parse(
   fs.readFileSync("drizzle/meta/_journal.json", "utf8"),
 );
 
-test("DB041 remains source-only until migration integration", () => {
+test("DB041 staged SQL stays source-only; the columns were registered by 0098", () => {
   assert.match(sql, /SOURCE-ONLY CANDIDATE/);
   assert.equal(
     journal.entries.some((entry) => /quiz.*shuffle|db041|db41/i.test(entry.tag)),
     false,
   );
-  assert.doesNotMatch(schema, /shuffleQuestions|shuffle_questions/);
-  assert.doesNotMatch(schema, /shuffleOptions|shuffle_options/);
+  // Migration 0098_academics_legacy_fidelity_columns registered both columns
+  // (false default, NOT NULL) in the runtime schema; the staged SQL above
+  // remains a non-journaled candidate.
+  assert.match(schema, /shuffleQuestions:\s*boolean\("shuffle_questions"\)[\s\S]*?\.default\(false\)/);
+  assert.match(schema, /shuffleOptions:\s*boolean\("shuffle_options"\)[\s\S]*?\.default\(false\)/);
 });
 
 test("DB041 stages only the two presentation columns and performs no data rewrite", () => {

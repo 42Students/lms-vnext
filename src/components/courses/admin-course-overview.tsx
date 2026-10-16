@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { COLLEGE_COURSES_COPY, courseVisibleToStudentsLabel, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
 import { CollegeOfferingLifecycleAction } from "@/components/college/college-offering-lifecycle-action";
 import { CollegeOfferingMetadataAction } from "@/components/college/college-offering-metadata-action";
 import {
@@ -38,9 +39,9 @@ function Metric({
       <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
         {value}
       </p>
-      <p className="mt-1 text-xs leading-5 text-body">
+      {detail ? <p className="mt-1 text-xs leading-5 text-body">
         {detail}
-      </p>
+      </p> : null}
     </section>
   );
 }
@@ -111,7 +112,7 @@ export function AdminCourseOverview({
     },
     {
       key: "status",
-      header: "Status",
+      header: COLLEGE_COURSES_COPY.studentsSeeIt,
       cell: (course) => (
         <StatusBadge
           tone={
@@ -120,7 +121,7 @@ export function AdminCourseOverview({
               : "neutral"
           }
         >
-          {course.status}
+          {courseVisibleToStudentsLabel(course.status)}
         </StatusBadge>
       ),
     },
@@ -360,10 +361,7 @@ export function AdminCourseOverview({
               : "info"
           }
         >
-          {assignment.role.replaceAll(
-            "_",
-            " ",
-          )}
+          {facultyAssignmentRoleLabel(assignment.role)}
         </StatusBadge>
       ),
     },
@@ -406,17 +404,17 @@ export function AdminCourseOverview({
         <Metric
           label="Courses"
           value={workspace.summary.courses}
-          detail="Active Department-owned catalog entries."
+          detail=""
         />
         <Metric
           label="Offerings"
           value={workspace.summary.offerings}
-          detail="Active Cohort and Academic Period placements."
+          detail=""
         />
         <Metric
           label="Deliveries"
           value={workspace.summary.deliveries}
-          detail="Exact Section teaching boundaries."
+          detail=""
         />
         <Metric
           label="Teaching assignments"
@@ -424,7 +422,7 @@ export function AdminCourseOverview({
             workspace.summary
               .teachingAssignments
           }
-          detail="Active Faculty responsibilities across deliveries."
+          detail=""
         />
       </div>
 
@@ -442,12 +440,8 @@ export function AdminCourseOverview({
       <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Course catalog
+            {COLLEGE_COURSES_COPY.existingTitle}
           </h2>
-          <p className="mt-1 text-sm text-body">
-            Reusable Department-owned Courses.
-            Archive is dependency-safe.
-          </p>
         </div>
         <DataTable
           columns={courseColumns}

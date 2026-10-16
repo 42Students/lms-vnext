@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
- TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "@/modules/placements/tpo-drive-applications-export-model";
+ TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern,collectTpoExportPages} from "@/modules/placements/tpo-drive-applications-export-model";
 describe("TPO applicant CSV cap and injection safety",()=>{
  it("validates filters, escapes SQL wildcard characters and displays IST dates",()=>{
   const id="550e8400-e29b-41d4-a716-446655440000";
@@ -41,5 +41,30 @@ describe("TPO applicant CSV cap and injection safety",()=>{
   expect(report.truncated).toBe(true);
   expect(report.csv).toContain("TRUNCATED");
   expect(report.csv).toContain("further matching applications exist");
+ });
+});
+
+describe("TPO-drive-workspace-33 complete export",()=>{
+ it("exports more than 500 matching rows and formula-neutralizes contact columns",()=>{
+  const rows=Array.from({length:503},(_,i)=>({
+   applicationId:String(i),studentName:"Candidate "+i,roleTitle:"Engineer",
+   status:"SUBMITTED",screeningStatus:null,channel:"INTERNAL",
+   submittedAt:"2026-10-14T14:00:00Z",rollNumber:"CS"+i,email:"c"+i+"@example.test",phone:"+910000000000",
+  }));
+  const report=projectTpoDriveApplicationsExport(rows,"Drive",{exportAll:true});
+  expect(report.truncated).toBe(false);
+  expect(report.rows).toHaveLength(503);
+  expect(report.csv).toContain("CS502");
+  expect(report.csv).toContain("c502@example.test");
+  expect(report.csv).not.toContain("TRUNCATED");
+ });
+ it("pages all matching rows deterministically without dropping the 500-row boundary",async()=>{
+  const rows=Array.from({length:1001},(_,i)=>i);
+  const calls:number[]=[];
+  const all=await collectTpoExportPages(async(offset,limit)=>{
+   calls.push(offset);return rows.slice(offset,offset+limit);
+  });
+  expect(all).toEqual(rows);
+  expect(calls).toEqual([0,500,1000]);
  });
 });

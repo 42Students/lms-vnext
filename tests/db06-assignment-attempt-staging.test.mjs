@@ -47,7 +47,9 @@ test("DB044 preserves vNext one-submission uniqueness", () => {
     schema,
     /\.on\([\s\S]*table\.assignmentId,[\s\S]*table\.membershipId[\s\S]*\)/,
   );
-  assert.doesNotMatch(schema, /attemptNumber|attempt_number/);
+  // Migration 0098 registered attempt_number/previous_points (legacy fidelity)
+  // as non-key columns; the one-submission unique index above is unchanged.
+  assert.match(schema, /attemptNumber:\s*integer\("attempt_number"\)\.notNull\(\)\.default\(1\)/);
   assert.doesNotMatch(schema, /semesterNumber|semester_number/);
 
   assert.match(

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCreateForm } from "@/components/admin/college-create-form";
+import {CollegeBulkImport} from "@/components/admin/college-bulk-import";
 import { CollegeArchiveButton } from "@/components/admin/college-archive-button";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import {
@@ -114,6 +115,7 @@ export default async function CollegesPage() {
           description="Every college belongs to an organization, so the organization is the required first tenant boundary."
         />
       ) : null}
+      {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
       <Link href="/admin/tenants" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Search tenant directory →
       </Link>

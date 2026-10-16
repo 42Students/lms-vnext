@@ -63,13 +63,12 @@ describe("W05 recruiter invite token and privacy policy", () => {
     expect(isRecruiterInviteUsable(c.token, { ...stored, inviteSentAt: new Date(NaN) }, start)).toBe(false);
   });
 
-  it("rejects joined, unsubscribed and Not Now state before issuing or previewing", () => {
+  it("rejects joined and unsubscribed states before issuing or previewing", () => {
     const credential = createRecruiterInviteCredential(base, start);
     const live = { ...base, inviteTokenHash: credential.hash, inviteSentAt: start };
     for (const blocked of [
       { ...live, recruiterUserId: "recruiter-joined" },
       { ...live, unsubscribedAt: new Date(start) },
-      { ...live, manualStage: "NOT_NOW" },
     ]) {
       expect(canIssueRecruiterInvite(blocked)).toBe(false);
       expect(isRecruiterInviteUsable(
@@ -80,6 +79,15 @@ describe("W05 recruiter invite token and privacy policy", () => {
     }
   });
 
+  it("TPO-recruiters-12 permits explicit invites for Not Now without bypassing unsubscribe",()=>{
+    const deferred={...base,manualStage:"NOT_NOW"};
+    expect(canIssueRecruiterInvite(deferred)).toBe(true);
+    const created=createRecruiterInviteCredential(deferred,start);
+    expect(isRecruiterInviteUsable(created.token,{
+      ...deferred,inviteTokenHash:created.hash,inviteSentAt:start,
+    },new Date(start.getTime()+100))).toBe(true);
+    expect(canIssueRecruiterInvite({...deferred,unsubscribedAt:start})).toBe(false);
+  });
   it("returns one indistinguishable INVALID error for malformed, wrong or missing tokens", () => {
     const c = createRecruiterInviteCredential(base, start);
     const stored = { ...base, inviteTokenHash: c.hash, inviteSentAt: start };

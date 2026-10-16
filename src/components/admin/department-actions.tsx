@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 
 export function DepartmentActions({
   departmentId,
@@ -40,11 +41,11 @@ export function DepartmentActions({
       if (!response.ok) {
         showToast({
           tone: "error",
-          title: "Rename failed",
+          title: DEPARTMENT_COPY.updateFailed,
           description:
             payload?.error === "DEPARTMENT_NAME_CONFLICT"
               ? "That department name is already active in this college."
-              : "The department could not be renamed.",
+              : undefined,
         });
         return;
       }
@@ -52,7 +53,7 @@ export function DepartmentActions({
       setOpen(false);
       showToast({
         tone: "success",
-        title: "Department renamed",
+        title: DEPARTMENT_COPY.updatedMessage,
       });
       router.refresh();
     });
@@ -125,7 +126,7 @@ export function DepartmentActions({
           setOpen(true);
         }}
       >
-        Rename
+        {DEPARTMENT_COPY.editButton}
       </Button>
       <Button
         variant="danger"
@@ -138,7 +139,7 @@ export function DepartmentActions({
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Rename department"
+        title={DEPARTMENT_COPY.editTitle}
         description="Department names stay unique within the active college."
         footer={
           <>
@@ -157,7 +158,7 @@ export function DepartmentActions({
               }
               onClick={rename}
             >
-              {pending ? "Saving…" : "Save name"}
+              {pending ? "Saving…" : DEPARTMENT_COPY.saveButton}
             </Button>
           </>
         }
@@ -166,7 +167,7 @@ export function DepartmentActions({
           htmlFor={`department-name-${departmentId}`}
           className="mb-1.5 block text-xs font-semibold text-body"
         >
-          Department name
+          {DEPARTMENT_COPY.nameLabel}
         </label>
         <Input
           id={`department-name-${departmentId}`}

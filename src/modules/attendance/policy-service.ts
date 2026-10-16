@@ -2,7 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { attendancePolicies } from "@/db/schema";
+import { activityEvents, attendancePolicies } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireAttendanceCollege } from "./admin-service";
 import {
@@ -75,7 +75,20 @@ export async function updateCollegeAttendancePolicy(
 
   const now = new Date();
 
-  const [saved] = await getDb()
+  return getDb().transaction(async (tx) => {
+  const [prior] = await tx
+    .select({
+      eligibilityThresholdPercent:
+        attendancePolicies.eligibilityThresholdPercent,
+      correctionWindowHours:
+        attendancePolicies.correctionWindowHours,
+    })
+    .from(attendancePolicies)
+    .where(eq(attendancePolicies.collegeId, college.id))
+    .limit(1);
+  const before = prior ?? DEFAULT_ATTENDANCE_POLICY;
+
+  const [saved] = await tx
     .insert(attendancePolicies)
     .values({
       collegeId: college.id,
@@ -106,5 +119,29 @@ export async function updateCollegeAttendancePolicy(
       updatedAt: attendancePolicies.updatedAt,
     });
 
+  // COL-attendance-02: audit every policy change in the same transaction.
+  await tx.insert(activityEvents).values({
+    organizationId: college.organizationId,
+    collegeId: college.id,
+    actorUserId: context.user.id,
+    actorMembershipId:
+      context.membership?.collegeId === college.id
+        ? context.membership.id
+        : null,
+    module: "COURSES",
+    eventType: "ATTENDANCE_POLICY_UPDATED",
+    subjectType: "attendance_policy",
+    subjectId: college.id,
+    subjectLabel: "Attendance policy",
+    summary: "Attendance policy updated",
+    metadata: {
+      fromEligibilityThresholdPercent: before.eligibilityThresholdPercent,
+      toEligibilityThresholdPercent: input.eligibilityThresholdPercent,
+      fromCorrectionWindowHours: before.correctionWindowHours,
+      toCorrectionWindowHours: input.correctionWindowHours,
+    },
+    occurredAt: now,
+  });
   return saved;
+  });
 }

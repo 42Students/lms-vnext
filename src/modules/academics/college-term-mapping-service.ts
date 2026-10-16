@@ -7,13 +7,14 @@ import {
   cohortProgressionState, cohorts, courseOfferings, courses, departments,
   programTermCourses, programTerms, programs,
 } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeTermCourseAddSchema, collegeTermCourseIdSchema,
-  collegeTermCourseUnmapSchema, nextTermCourseOrder,
+  collegeTermCourseUnmapSchema, collegeTermCourseUpdateSchema, reorderTermCourseIds, nextTermCourseOrder,
 } from "./college-term-mapping-model";
 
 const courseDepartment = alias(departments, "college_term_course_department");
@@ -22,16 +23,8 @@ export class CollegeTermMappingError extends Error {
   constructor(public readonly code: string) { super(code); this.name = "CollegeTermMappingError"; }
 }
 
-function ownCollege(context: RequestContext) {
-  const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-      !can(context, "academics.manage", {
-        collegeId: membership.collegeId, organizationId: membership.organizationId,
-      })) throw new AuthorizationError("academics.manage");
-  requirePermission(context, "academics.manage", {
-    collegeId: membership.collegeId, organizationId: membership.organizationId,
-  });
-  return membership;
+async function ownCollege(context: RequestContext) {
+  return resolveActingCollege(context, "academics.manage");
 }
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
@@ -63,7 +56,7 @@ function mapConflict(error: unknown): never {
 }
 
 export async function listCollegeTermMappings(context: RequestContext) {
-  const membership = ownCollege(context);
+  const membership = await ownCollege(context);
   const db = getDb();
   const [terms, courseChoices, mapped] = await Promise.all([
     db.select({
@@ -102,7 +95,7 @@ export async function listCollegeTermMappings(context: RequestContext) {
 
 export async function addCollegeTermMapping(context: RequestContext, raw: unknown) {
   const input = collegeTermCourseAddSchema.parse(raw);
-  const membership = ownCollege(context);
+  const membership = await ownCollege(context);
   try {
     return await getDb().transaction(async tx => {
       const term = await lockTerm(tx, input.programTermId, membership.collegeId);
@@ -135,12 +128,79 @@ export async function addCollegeTermMapping(context: RequestContext, raw: unknow
   } catch(error) { return mapConflict(error); }
 }
 
+
+/** Edit mapped credits/order with a single tenant-authorized, term-locked transaction.
+ * Every existing mapping on the term is renumbered deterministically; other terms
+ * and colleges cannot be moved or changed via caller-supplied IDs. */
+export async function updateCollegeTermMapping(
+  context: RequestContext, mappingIdRaw: unknown, raw: unknown,
+) {
+  const mappingId = collegeTermCourseIdSchema.parse(mappingIdRaw);
+  const input = collegeTermCourseUpdateSchema.parse(raw);
+  const member = await ownCollege(context);
+  try {
+    return await getDb().transaction(async tx => {
+      const [subject] = await tx.select({
+        id: programTermCourses.id, termId: programTermCourses.programTermId,
+      }).from(programTermCourses)
+        .innerJoin(programTerms, eq(programTerms.id, programTermCourses.programTermId))
+        .innerJoin(programs, eq(programs.id, programTerms.programId))
+        .innerJoin(departments, and(
+          eq(departments.id, programs.departmentId),
+          eq(departments.collegeId, member.collegeId),
+        )).where(eq(programTermCourses.id, mappingId)).limit(1);
+      if (!subject) throw new CollegeTermMappingError("TERM_COURSE_NOT_FOUND");
+      await lockTerm(tx, subject.termId, member.collegeId);
+      const before = await tx.select({
+        id: programTermCourses.id,
+        displayOrder: programTermCourses.displayOrder,
+        credits: programTermCourses.credits,
+      }).from(programTermCourses)
+        .where(eq(programTermCourses.programTermId, subject.termId))
+        .orderBy(asc(programTermCourses.displayOrder), asc(programTermCourses.id))
+        .for("update");
+      const current = before.find(row => row.id === mappingId);
+      if (!current) throw new CollegeTermMappingError("TERM_COURSE_NOT_FOUND");
+      if (input.position > before.length)
+        throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
+      const order = reorderTermCourseIds(before.map(row => row.id), mappingId, input.position);
+      for (const [index, id] of order.entries()) {
+        const row = before.find(item => item.id === id)!;
+        if (row.displayOrder !== index + 1 || (id === mappingId && row.credits !== input.credits)) {
+          await tx.update(programTermCourses)
+            .set({
+              displayOrder: index + 1,
+              ...(id === mappingId ? { credits: input.credits } : {}),
+              updatedAt: new Date(),
+            })
+            .where(and(eq(programTermCourses.id, id),
+              eq(programTermCourses.programTermId, subject.termId)));
+        }
+      }
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
+        collegeId: member.collegeId, organizationId: member.organizationId,
+        subjectType: "program_term_course", subjectId: mappingId,
+        summary: "Semester course mapping updated",
+        metadata: {
+          termId: subject.termId,
+          fromCredits: current.credits,
+          toCredits: input.credits,
+          fromOrder: current.displayOrder,
+          toOrder: input.position,
+        },
+      });
+      return { id: mappingId, credits: input.credits, displayOrder: input.position };
+    });
+  } catch (error) { return mapConflict(error); }
+}
+
 export async function removeCollegeTermMapping(
   context: RequestContext, mappingIdRaw: unknown, raw: unknown,
 ) {
   const mappingId = collegeTermCourseIdSchema.parse(mappingIdRaw);
   collegeTermCourseUnmapSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   try {
     return await getDb().transaction(async tx => {
       const [subject] = await tx.select({

@@ -1,3 +1,4 @@
+import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
@@ -10,7 +11,7 @@ export const runtime = "nodejs";
  * authenticated college, with invitation secrets stripped.
  */
 export async function GET(request: Request) {
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") {
+  if (!await tpoCrmTablesReady()) {
     return NextResponse.json(
       { error: "DB09_MIGRATIONS_PENDING" },
       { status: 503 },
