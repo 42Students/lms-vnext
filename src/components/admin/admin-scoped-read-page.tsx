@@ -29,6 +29,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <PageHeader eyebrow="Super Admin · Read-only" title={title} description={description}/>
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+   {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 min-w-0 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
@@ -44,6 +45,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <form method="get" action={path} aria-label="Refresh directory">
     {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
     <input type="hidden" name="status" value={data.query.status} />
+    {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
   </form>
