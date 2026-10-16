@@ -21,6 +21,7 @@ type Lead = {
   emailNorm: string | null;
   phoneNorm: string | null;
   companyName: string | null;
+  companyRelationshipId:string|null;
   designation: string | null;
   source: string | null;
   manualStage: string;
@@ -246,7 +247,8 @@ export function RecruiterLeadsWorkspace({
   }
 
   async function createInviteLink(lead:Lead){
-    if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||lead.manualStage==="NOT_NOW")return;
+    if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||lead.manualStage==="NOT_NOW"||
+      !lead.emailNorm||!lead.companyRelationshipId)return;
     if(lead.inviteSentAt&&!window.confirm("Make a new link? The old link stops working."))return;
     setInvitingId(lead.id);setFreshInvite(null);setActionToast("");
     try{
@@ -610,7 +612,7 @@ export function RecruiterLeadsWorkspace({
                         </Link>
                         {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
                          <button type="button" className={buttonStyle+" mt-2"}
-                          disabled={Boolean(invitingId)} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
+                          disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
                       </div>
                     ))}
                   </div>
