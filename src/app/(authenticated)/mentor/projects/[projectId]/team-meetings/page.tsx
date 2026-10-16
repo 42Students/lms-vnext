@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {EmptyState} from "@/components/ui/empty-state";
 import {PageHeader} from "@/components/ui/page-header";
@@ -28,6 +29,7 @@ export default async function MentorTeamMeetingsPage({
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
   const board="/mentor/projects/"+encodeURIComponent(projectId)+"?tab=team";
+  const renderedAt = new Date();
   return <div className="space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Team &amp; meeting log"
       description={data.projectTitle}
@@ -107,7 +109,7 @@ export default async function MentorTeamMeetingsPage({
           <li key={meeting.id} className="rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-foreground">{meeting.title}</h2>
-              <span className="text-xs font-semibold text-body">{meeting.status}</span>
+              <span className="text-xs font-semibold text-body">{mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderedAt)}</span>
             </div>
             <p className="mt-2 text-sm text-body">
               {meeting.type} · {new Intl.DateTimeFormat("en-IN",{
