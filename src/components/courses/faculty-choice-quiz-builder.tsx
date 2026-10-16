@@ -8,7 +8,8 @@ import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChang
 type Option={text:string;correct:boolean;sequence:number};
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
 type Quiz={id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
- maxAttempts:number;sequence:number;status:string;updatedAt:string;};
+ maxAttempts:number;sequence:number;status:string;updatedAt:string;
+ shuffleQuestions?:boolean;shuffleOptions?:boolean;};
 const fresh=():Question=>({
  type:"SINGLE_CHOICE",prompt:"",points:1,sequence:0,
  options:[{text:"",correct:true,sequence:0},{text:"",correct:false,sequence:1}],
@@ -30,6 +31,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState("");
  const [maxAttempts,setMaxAttempts]=useState(1);
+ const [shuffleQuestions,setShuffleQuestions]=useState(false);
+ const [shuffleOptions,setShuffleOptions]=useState(false);
  const [questions,setQuestions]=useState<Question[]>([fresh()]);
  const [confirmed,setConfirmed]=useState(false);
  const [dirtyDraft,setDirtyDraft]=useState(false);
@@ -49,10 +52,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   const token=++choiceRequest.current;
   setSelected(id);setConfirmed(false);setDirtyDraft(false);setError(null);setSuccess(null);setDetailsFailed(false);
   const q=availableQuizzes.find(x=>x.id===id);
-  if(!q){setTitle("");setDescription("");setDueAt("");setMaxAttempts(1);
+  if(!q){setTitle("");setDescription("");setDueAt("");setMaxAttempts(1);setShuffleQuestions(false);setShuffleOptions(false);
     setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");setPending(false);return;}
   setTitle(q.title);setDescription(q.description??"");setDueAt(authoringLocalDateTime(q.dueAt));
-  setMaxAttempts(q.maxAttempts);setLessonId(q.lessonId);setPending(true);
+  setMaxAttempts(q.maxAttempts);setShuffleQuestions(Boolean(q.shuffleQuestions));setShuffleOptions(Boolean(q.shuffleOptions));setLessonId(q.lessonId);setPending(true);
   try{
    const res=await fetch("/api/courses/quizzes/"+encodeURIComponent(q.id)+
      "?deliveryId="+encodeURIComponent(deliveryId),{cache:"no-store"});
@@ -134,7 +137,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
        sequence:Math.max(0,...availableQuizzes.filter(x=>x.lessonId===lessonId).map(x=>x.sequence+1))}
        :{quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt}),
      title,description:description||null,dueAt:authoringDueInstant(dueAt),
-     maxAttempts,
+     maxAttempts,shuffleQuestions,shuffleOptions,
      ...(action==="CREATE" || chosen?.status==="DRAFT" ? {questions:facultyQuizNormalizeQuestions(questions)} : {}),
    };
    const res=await fetch("/api/courses/faculty/quizzes/"+encodeURIComponent(deliveryId)+"/command",{
@@ -153,7 +156,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    if(action==="ARCHIVE"){
      ++choiceRequest.current;
      setSelected("");setTitle("");setDescription("");setDueAt("");
-     setMaxAttempts(1);setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");
+     setMaxAttempts(1);setShuffleQuestions(false);setShuffleOptions(false);setQuestions([fresh()]);setLessonId(lessons[0]?.id??"");
    }
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}
@@ -194,6 +197,19 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
+  <fieldset disabled={!editable} className="space-y-2 rounded-md border border-border p-3">
+    <legend className="text-sm font-semibold">Quiz order</legend>
+    <label className="flex items-center gap-2 text-sm">
+      <input type="checkbox" checked={shuffleQuestions}
+        onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleQuestions(e.target.checked);}}/>
+      Shuffle question order per learner
+    </label>
+    <label className="flex items-center gap-2 text-sm">
+      <input type="checkbox" checked={shuffleOptions}
+        onChange={e=>{setConfirmed(false);setDirtyDraft(true);setShuffleOptions(e.target.checked);}}/>
+      Shuffle answer options per learner
+    </label>
+  </fieldset>
   <label className="grid min-w-0 gap-1 text-sm">Find a question
    <input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
     placeholder="Question number, prompt, or option" className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/>
