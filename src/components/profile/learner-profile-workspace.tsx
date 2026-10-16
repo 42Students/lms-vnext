@@ -284,6 +284,16 @@ export function LearnerProfileWorkspace(props: {
 
   async function saveContacts() {
     if (contactPending) return;
+    const alternate=contactDraft.alternatePhone.replace(/\D/g,"");
+    const primary=(props.primaryPhone??"").replace(/\D/g,"").slice(-10);
+    if(alternate&&(alternate.length<10||alternate.length>15)){
+      setContactError("Alternate phone number must be 10 to 15 digits");
+      return;
+    }
+    if(primary&&alternate.slice(-10)===primary){
+      setContactError("Alternate phone number cannot be the same as primary mobile number");
+      return;
+    }
     const parsed = learnerContactEditSchema.safeParse({
       confirmed: true, contacts: contactDraft, expectedContacts: document.contacts,
     });
@@ -304,6 +314,10 @@ export function LearnerProfileWorkspace(props: {
         router.refresh();
         throw new Error("These contact details were updated in another tab. Review the latest saved values before retrying.");
       }
+      if(!response.ok && payload?.error==="ALTERNATE_PHONE_SAME_AS_PRIMARY")
+        throw new Error("Alternate phone number cannot be the same as primary mobile number");
+      if(!response.ok && payload?.error==="ALTERNATE_PHONE_INVALID")
+        throw new Error("Alternate phone number must be 10 to 15 digits");
       if (!response.ok || !payload?.contacts) {
         throw new Error("Contact details could not be saved. Your existing details are unchanged.");
       }
