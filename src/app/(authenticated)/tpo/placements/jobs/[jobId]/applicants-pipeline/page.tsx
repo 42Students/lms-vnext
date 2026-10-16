@@ -47,7 +47,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <Link href={"/tpo/placements/jobs/"+jobId} className="text-sm font-semibold text-primary-text hover:underline">← Drive</Link>
   <Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}
    className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-   Preview capped applications CSV
+   Review and export all matching applicants
   </Link>
   <section className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>

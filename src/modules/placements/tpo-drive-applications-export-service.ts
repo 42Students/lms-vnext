@@ -24,6 +24,8 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   applicationId:placementApplications.id,studentName:users.displayName,
   roleTitle:placementJobRoleOptions.title,status:placementApplications.status,
   screeningStatus:placementApplicationScreenings.status,
+  screeningUpdatedAt:placementApplicationScreenings.updatedAt,
+  eligibilityStatus:placementApplications.eligibilityStatus,
   channel:placementApplications.channel,submittedAt:placementApplications.submittedAt,
   rollNumber:learnerProfiles.rollNumber,email:users.email,phone:users.phoneE164,
  }).from(placementApplications)
@@ -55,6 +57,6 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   : await readPage(0,TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
  },{isolationLevel:"repeatable read",accessMode:"read only"});
  return {job,stage,search,channel,eligibility,sort,submittedWithin,...projectTpoDriveApplicationsExport(records.map(r=>({
-  ...r,submittedAt:r.submittedAt.toISOString(),
+  ...r,submittedAt:r.submittedAt.toISOString(),screeningUpdatedAt:r.screeningUpdatedAt?.toISOString()??null,
  })),job.title,options)};
 }
