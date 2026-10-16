@@ -5,3 +5,10 @@ export function collegeDriveCloseAction(status:CollegeLegacyDriveStatus) {
       confirmation:"Are you sure you want to close this drive?"}
     : null;
 }
+
+export function collegeDriveReopenAction(status:CollegeLegacyDriveStatus){
+ return status==="CLOSED"
+  ? {action:"REOPEN" as const,label:"Open drive",
+    confirmation:"Reopen this drive? Previously withdrawn offers will not be restored."}
+  : null;
+}
