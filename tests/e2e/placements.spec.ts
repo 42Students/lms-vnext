@@ -66,7 +66,7 @@ async function createPublishedOpportunity(
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Placement Operations",
+      name: "Drives",
     }),
   ).toBeVisible();
 

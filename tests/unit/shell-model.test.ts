@@ -311,8 +311,8 @@ describe("authenticated shell model", () => {
       "Dashboard",
       "Courses",
       "Placement eligibility",
-      "Recruiter Leads",
-      "Placement Operations",
+      "Engage",
+      "Drives",
       "Students",
       "Calendar",
     ]);

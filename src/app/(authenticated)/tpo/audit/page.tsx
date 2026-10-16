@@ -78,7 +78,7 @@ export default async function TpoAuditPage({
       <div className="space-y-6">
         <PageHeader
           eyebrow="TPO · Oversight"
-          title="Audit Log"
+          title="Audit log"
           description="College-scoped history of persisted placement activity."
         />
         <ErrorState
@@ -133,7 +133,7 @@ export default async function TpoAuditPage({
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Oversight"
-        title="Audit Log"
+        title="Audit log"
         description="Read-only college-wide placement event history. Times are shown in IST. Duplicate canonical and domain-history records may describe the same underlying action."
         actions={
           <Link href="/tpo/audit/actors" className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

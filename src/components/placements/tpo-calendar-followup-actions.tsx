@@ -84,7 +84,7 @@ export function TpoCalendarCreateFollowup({
       ) : null}
       {leads.length === 0 ? (
         <p className="mt-3 text-sm text-muted-foreground">
-          No recruiter leads found. Create a lead in Recruiter Leads first.
+          No recruiter leads found. Create a lead in Engage first.
         </p>
       ) : (
         <form onSubmit={onSubmit} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

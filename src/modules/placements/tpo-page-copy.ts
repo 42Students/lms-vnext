@@ -1,7 +1,7 @@
-/** Owner's explicit 2026-10-16 naming overrides older legacy-copy-B snapshots. */
+/** Exact legacy (dev) labels from tpoNavigationMenu in _hr-tpo-fe lists.js; sidebar and headings must match. */
 export const TPO_OWNER_PAGE_COPY = {
- recruiterLeads:"Recruiter Leads",
- placementOperations:"Placement Operations",
+ recruiterLeads:"Engage",
+ placementOperations:"Drives",
  placementEligibility:"Placement eligibility",
  team:"Team",
  students:"Students",

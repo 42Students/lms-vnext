@@ -42,7 +42,7 @@ export const TPO_MORE_GROUPS = [
           "Read, filter and acknowledge your own notifications.",
       },
       {
-        label: "Audit Log",
+        label: "Audit log",
         href: "/tpo/audit",
         description:
           "Review recorded placement decisions and activity.",
