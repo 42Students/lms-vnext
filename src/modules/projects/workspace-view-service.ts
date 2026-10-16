@@ -1,4 +1,7 @@
 import type { RequestContext } from "@/modules/identity/context";
+import { eq } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { projectTemplateVersions } from "@/db/schema/projects";
 import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model";
 import {
   getProjectInstanceWorkspace,
@@ -61,7 +64,15 @@ export async function getProjectWorkspaceView(
     ),
   ]);
 
+  // MEN-projects-meetings-17: use the version actually materialized into
+  // this workspace, not the template's potentially newer live version.
+  const [templateVersion] = await getDb().select({ blueprint: projectTemplateVersions.blueprint })
+    .from(projectTemplateVersions)
+    .where(eq(projectTemplateVersions.id, workspace.project.templateVersionId))
+    .limit(1);
+
   return {
+    templateOverview: templateVersion?.blueprint.overview ?? null,
     ...workspace,
     members,
     readiness,

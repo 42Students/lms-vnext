@@ -243,3 +243,10 @@ Severity: S1 blocks a real workflow, S2 degrades one, S3 cosmetic or rare, S4 ni
 | MEN-projects-meetings-50 | No allocation view: columns per member plus Unassigned, drag-to-reassign, per-card reassign select, "Needs assigning" flag, release/sprint filter drawer. | MISSING-TAB | S2 | PDC:8315-8722,5909-6056 | `MD:23-37`; `project-task-assignee-control.tsx` |
 | MEN-projects-meetings-51 | No "Auto-assign" (fewest-tasks-first distribution of unassigned tasks). | MISSING-ACTION | S3 | PDC:6062-6105,8523-8532 | absent |
 | MEN-projects-meetings-52 | No per-member workload summary (tasks, done, blocked, points, unsized) to base reassignment on. | MISSING-FIELD | S3 | PDC:8574-8598 | absent |
+
+### Chat-11 implementation checkpoint (2026-10-17)
+
+- **MEN-projects-meetings-16** — Mentor Overview now surfaces the existing Tasks, Sprints, Releases and Final submission metrics from the workspace readiness service. Source implemented; awaiting executable/browser verification and the legacy signed-off semantics cross-check.
+- **MEN-projects-meetings-17** — The authored Goal, Description and Deliverables now render from the *materialized template version*, not the template's mutable current version. Service loads version-pinned data, shared workspace UI displays it, and focused tests cover missing/recorded briefs. Source implemented; tests not run.
+- **MEN-projects-meetings-22** — Mentor Overview and the Board/Execution heading display **Review submission** when a final delivery is SUBMITTED, linked to `?tab=delivery`. Hidden for drafts and accepted deliveries; focused regression tests authored but not run.
+
