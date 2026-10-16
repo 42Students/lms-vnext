@@ -4,6 +4,9 @@ import {
   collegeDashboardCardsProjection,
   collegeDashboardEmptyRecordPrompts,
   collegeDashboardCardsQuerySchema,
+  COLLEGE_AT_A_GLANCE_HEADING,
+  COLLEGE_AT_A_GLANCE_KEYS,
+  formatCollegeHeaderDate,
 } from "@/modules/admin-ui/college-dashboard-cards-model";
 
 describe("College dashboard count-card projection", () => {
@@ -34,5 +37,15 @@ describe("College dashboard count-card projection", () => {
     expect(cards).toHaveLength(COLLEGE_DASHBOARD_CARD_DEFINITIONS.length);
     expect(new Set(cards.map(x=>x.key)).size).toBe(cards.length);
     for(const card of cards) expect(card.href).toMatch(/^\/college\//);
+  });
+  it("COL-dashboard-02 shows the four legacy At a glance stats with legacy labels", () => {
+    expect(COLLEGE_AT_A_GLANCE_HEADING).toBe("At a glance");
+    const cards = collegeDashboardCardsProjection({});
+    expect(COLLEGE_AT_A_GLANCE_KEYS.map(key => cards.find(c => c.key === key)?.label))
+      .toEqual(["Students", "Faculty", "Courses", "Active drives"]);
+  });
+  it("COL-dashboard-11 formats the header date as dddd, D MMMM YYYY", () => {
+    expect(formatCollegeHeaderDate(new Date(2026, 9, 16))).toBe("Friday, 16 October 2026");
+    expect(formatCollegeHeaderDate(new Date(2026, 0, 4))).toBe("Sunday, 4 January 2026");
   });
 });
