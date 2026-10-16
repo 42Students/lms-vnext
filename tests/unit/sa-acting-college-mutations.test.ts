@@ -32,7 +32,7 @@ describe("SA-academics-people-05 SA-academics-people-R01 scoped academic mutatio
 
   it("rejects suspended Super Admins and refuses non-admin impersonation", () => {
     expect(() => requireActingCollege({
-      ...superAdmin, user: { ...superAdmin.user, platformStatus: "SUSPENDED" },
+      ...superAdmin, user: { ...superAdmin.user, platformStatus: "DISABLED" },
     }, "department.manage", { collegeId: "college-a", organizationId: "org-a" })).toThrow();
     expect(() => requireActingCollege({
       ...collegeAdmin, membership: { ...collegeAdmin.membership!, roles: ["FACULTY"] },
