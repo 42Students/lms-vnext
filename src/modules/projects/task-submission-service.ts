@@ -130,7 +130,7 @@ export async function submitProjectTask(
         .from(projectSprints)
         .where(
           and(
-            eq(projectSprints.id, task.sprintId),
+            eq(projectSprints.id, task.sprintId!),
             eq(projectSprints.projectId, scope.project.id),
           ),
         )
