@@ -3,7 +3,7 @@ import { phoneE164Schema, personDisplayNameSchema, personEmailSchema } from "./v
 
 export const studentCsvRequestSchema = z.object({
   action: z.enum(["PREVIEW", "IMPORT"]),
-  csv: z.string().min(1).max(100000),
+  csv: z.string().min(1).max(1000000),
   confirm: z.boolean().optional(),
 }).strict().superRefine((v, ctx) => {
   if (v.action === "IMPORT" && v.confirm !== true) {
@@ -22,7 +22,7 @@ const csvRowSchema = z.object({
 export type StudentCsvRow = z.infer<typeof csvRowSchema>;
 export type StudentCsvResult = { row: number; status: "VALID" | "INVALID" | "IMPORTED" | "FAILED" | "PARTIAL"; detail: string; membershipId?: string; enrollmentId?: string };
 export const STUDENT_CSV_COLUMNS = ["displayName","phoneE164","email","programId","cohortId"] as const;
-export const MAX_STUDENT_CSV_ROWS = 100;
+export const MAX_STUDENT_CSV_ROWS = 500;
 
 /** Strict CSV tokenizer: quoted commas, escaped double quotes and CRLF only. */
 export function tokenizeStudentCsv(input: string): string[][] {
