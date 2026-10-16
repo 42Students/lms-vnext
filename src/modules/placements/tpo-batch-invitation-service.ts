@@ -1,12 +1,12 @@
 import "server-only";
 import type { RequestContext } from "@/modules/identity/context";
 import {
+  findUnchosenEligibleBatchStudents,
   markPlacementBatchInvited,
   upsertPlacementBatchSettings,
 } from "./batch-participation-service";
+import { getDb } from "@/db/client";
 import { getTpoBatch } from "./tpo-batch-workspace-read-service";
-import { getTpoBatchEligibilitySummary } from "./tpo-batch-eligibility-summary-service";
-import { getTpoBatchRegistrationSummary } from "./tpo-batch-registration-summary-service";
 import {
   registrationDeadlineAtEndOfDay,
   TpoBatchInvitationError,
@@ -25,22 +25,13 @@ export async function inviteTpoBatch(
 ) {
   const input = tpoBatchInvitationSchema.parse(raw);
   const deadline = registrationDeadlineAtEndOfDay(input.deadline, new Date());
-  const [{ collegeId, lifecycle, ready }, eligibility, registrations] = await Promise.all([
-    getTpoBatch(ctx, batchId),
-    getTpoBatchEligibilitySummary(ctx, batchId),
-    getTpoBatchRegistrationSummary(ctx, batchId),
-  ]);
+  const { collegeId, lifecycle, ready } = await getTpoBatch(ctx, batchId);
   if (!ready) throw new TpoBatchInvitationError("ELIGIBILITY_INCOMPLETE");
   if (lifecycle?.finishedAt) throw new TpoBatchInvitationError("BATCH_FINISHED");
   if (lifecycle?.invitedAt) throw new TpoBatchInvitationError("BATCH_ALREADY_INVITED");
-  if (!eligibility.summary.complete || eligibility.summary.needsReview > 0)
-    throw new TpoBatchInvitationError("ELIGIBILITY_INCOMPLETE");
-  if (eligibility.summary.eligible === 0)
+  const preview = await getTpoBatchInvitationPreview(ctx, batchId);
+  if (preview.invitable === 0)
     throw new TpoBatchInvitationError("NO_ELIGIBLE_STUDENTS");
-  if (!registrations.available)
-    throw new TpoBatchInvitationError("ELIGIBILITY_INCOMPLETE");
-  if (registrations.unrecorded === 0)
-    throw new TpoBatchInvitationError("EVERYONE_REGISTERED");
 
   await upsertPlacementBatchSettings(ctx, {
     collegeId, cohortId: batchId, registrationDeadline: deadline,
@@ -78,4 +69,20 @@ export async function saveTpoBatchRegistrationDeadline(
     delivery: "NOT_SENT" as const,
     version: saved.updatedAt.toISOString(),
   };
+}
+
+/**
+ * Exact full-cohort preview, including learner > class > batch overrides,
+ * multiple-class ambiguity and existing outcome/application exclusions.
+ * Unlike the dashboard's intentionally capped snapshot, this does not
+ * silently declare cohorts over 500 learners ineligible for invitations.
+ */
+export async function getTpoBatchInvitationPreview(ctx: RequestContext, batchId: string) {
+  const { collegeId, ready } = await getTpoBatch(ctx, batchId);
+  if (!ready) throw new TpoBatchInvitationError("ELIGIBILITY_INCOMPLETE");
+  const count = await getDb().transaction(async tx =>
+    (await findUnchosenEligibleBatchStudents(tx, collegeId, batchId)).length,
+    { accessMode: "read only" },
+  );
+  return { invitable: count };
 }
