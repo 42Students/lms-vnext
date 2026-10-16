@@ -124,7 +124,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   <label className="grid gap-1 text-sm">Text instructions
    <textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}
     maxLength={10000} rows={4} className="rounded border border-border p-2" /></label>
-  <label className="grid gap-1 text-sm">Due date (IST, optional)
+  <label className="grid gap-1 text-sm">Due date (IST, required before publishing)
    <input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Maximum points
