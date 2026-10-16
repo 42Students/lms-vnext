@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect,useRef,useState } from "react";
 import type { PublicJoinPreview } from "@/modules/placements/public-join/preview-model";
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
+import { joinErrorMessage } from "@/modules/placements/public-join/error-copy";
 
 export function PublicRecruiterJoinForm({
   token, scope, preview,
@@ -42,11 +43,12 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, email: parsed.data.email }) },
       );
-      if (!response.ok) throw new Error("SEND_FAILED");
+      if(!response.ok){const payload=await response.json() as {error?:string};
+        throw new Error(joinErrorMessage(payload.error,response.status===429?"SEND":"SEND"));}
       setSentTo(parsed.data.email);
       setCode("");
-    } catch {
-      setError("We couldn't send the code. Please try again.");
+    } catch (cause) {
+      setError(cause instanceof Error?cause.message:joinErrorMessage(null,"SEND"));
     } finally {
       setPending(false);
     }
@@ -66,10 +68,11 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, ...parsed.data, code }) },
       );
-      if (!response.ok) throw new Error("JOIN_FAILED");
+      if(!response.ok){const payload=await response.json() as {error?:string};
+        throw new Error(joinErrorMessage(payload.error));}
       setJoined(true);
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (cause) {
+      setError(cause instanceof Error?cause.message:joinErrorMessage(null));
     } finally {
       setPending(false);
     }

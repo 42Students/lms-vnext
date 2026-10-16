@@ -17,7 +17,10 @@ export async function POST(request: Request) {
       const unready = error.code === "NETWORK_GUARD_NOT_READY" || error.code === "NOT_CONFIGURED";
       return NextResponse.json({
         error: unready ? "SERVICE_NOT_READY" :
-          error.code === "REMOVED" ? "ACCESS_REMOVED" : "COULD_NOT_JOIN",
+          error.code === "REMOVED" ? "ACCESS_REMOVED" :
+          ["WRONG_CODE","CODE_EXPIRED","CODE_LOCKED","CODE_REQUIRED",
+          "OTHER_COMPANY_EMAIL","COMPANY_EXISTS","ACCOUNT_UNAVAILABLE"].includes(error.code)
+            ? error.code : "COULD_NOT_JOIN",
       }, { status: unready ? 503 : error.code === "RATE_LIMITED" ? 429 : 400,
         headers: { "Cache-Control": "no-store" } });
     }
