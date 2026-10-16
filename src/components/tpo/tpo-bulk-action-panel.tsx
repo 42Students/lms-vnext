@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
+import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
@@ -22,11 +23,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [preview,setPreview]=useState<PreviewResponse|null>(null);
  const [plan,setPlan]=useState<PreviewPlan|null>(null);
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
+ const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const permitted=new Set((allRows??rows).map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
- function invalidate(){setPreview(null);setPlan(null);setOutcomes([]);setError("");}
+ function invalidate(){setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
  async function post(path:string,payload:unknown){
   const response=await fetch("/api/placements/tpo/bulk-actions/"+path,{
     method:"POST",credentials:"same-origin",cache:"no-store",
@@ -41,21 +43,42 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   );
   return response.json() as Promise<unknown>;
  }
- async function startPreview(){
+ async function startPreview(choice:Action=action){
   if(busy||safeSelected.length===0||safeSelected.length>TPO_BULK_UI_LIMIT)return;
   if(target==="APPLICATIONS"&&note.trim().length<10){
    setError("Provide at least 10 characters of screening context.");return;
   }
   const next:PreviewPlan={
     target,...(target==="APPLICATIONS"?{jobId}:{}),
-    action,note:target==="APPLICATIONS"?note.trim():"",ids:safeSelected,
+    action:choice,note:target==="APPLICATIONS"?note.trim():"",ids:safeSelected,
   };
   setBusy(true);invalidate();
   try{
    const result=await post("preview",next) as PreviewResponse;
    if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Invalid preview");
-   setPreview(result);setPlan(next);
+   setAction(choice);setPreview(result);setPlan(next);
   }catch(cause){setError(cause instanceof Error?cause.message:"Preview unavailable. Refresh the roster and try again.");}
+  finally{setBusy(false);}
+ }
+ async function compareActions(){
+  if(busy||safeSelected.length===0||safeSelected.length>TPO_BULK_UI_LIMIT)return;
+  if(target==="APPLICATIONS"&&note.trim().length<10){
+   setError("Provide at least 10 characters of screening context.");return;
+  }
+  setBusy(true);invalidate();
+  try{
+   const checks=await Promise.all(options.map(async option=>{
+    const result=await post("preview",{
+     target,...(target==="APPLICATIONS"?{jobId}:{}),
+     action:option.value,note:target==="APPLICATIONS"?note.trim():"",ids:safeSelected,
+    }) as PreviewResponse;
+    if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Could not verify action counts.");
+    return {action:option.value,label:option.label,ready:result.counts.ready,
+     skipped:result.counts.skipped,reasonSamples:[...new Set(result.rows.filter(row=>row.status==="skipped")
+      .map(row=>row.reason).filter((v):v is string=>Boolean(v)))].slice(0,3)};
+   }));
+   setActionCounts(checks);
+  }catch(cause){setError(cause instanceof Error?cause.message:"Action counts unavailable. Try again.");}
   finally{setBusy(false);}
  }
  async function confirm(){
@@ -77,10 +100,11 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const options=target==="STUDENTS"
   ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
   :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"}] as const);
+ const suggested=suggestTpoBulkAction(actionCounts);
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
-  <div><h2 className="font-semibold text-foreground">Bulk actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
+  <div><h2 className="font-semibold text-foreground">Actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
    <p className="mt-1 text-sm text-body">
     Select eligible rows or act on all matching records in this filtered view (up to 200 per preview).
     Confirmation rechecks permission and versions; existing decisions are audited.
@@ -131,6 +155,27 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       className="mt-1 w-full rounded border border-border bg-background p-3"/>
    </label>:null}
   </div>
+  <section aria-label="Actions window" className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
+   <h3 className="font-semibold">Actions</h3>
+   <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
+   <button type="button" disabled={busy||safeSelected.length===0}
+     onClick={()=>void compareActions()}
+     className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+     Check action counts
+   </button>
+   {actionCounts.length>0?<div className="grid gap-2 sm:grid-cols-2">
+     {actionCounts.map(count=><div key={count.action} className="rounded-md border border-border bg-surface p-3 text-sm">
+       <p className="font-semibold">{count.label}</p>
+       <p>{count.ready} ready · {count.skipped} left out</p>
+       {count.reasonSamples.map(reason=><p key={reason} className="mt-1 text-xs text-muted-foreground">{reason}</p>)}
+     </div>)}
+   </div>:null}
+   {suggested?<div className="flex flex-wrap items-center gap-3">
+     <p className="text-sm font-semibold">Suggested: {suggested.label}</p>
+     <button type="button" disabled={busy} onClick={()=>void startPreview(suggested.action as Action)}
+       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Do it</button>
+   </div>:null}
+  </section>
   <button type="button" disabled={busy||safeSelected.length===0}
     onClick={()=>void startPreview()}
     className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50">
