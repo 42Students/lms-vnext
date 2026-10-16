@@ -35,6 +35,7 @@ import {
   placementRoundResults,
   placementBatchRegistrations,
   placementJobRoleOptions,
+  placementJobRounds,
   programs,
   sectionEnrollments,
   sections,
@@ -46,6 +47,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { learnerWithdrawalReasonSchema } from "./learner-withdrawal-model";
+import {learnerWithdrawalMode} from "./learner-withdrawal-mode-model";
 import { evaluatePlacementEligibility, isPlacementJobTargetCohort, placementApplyEligibilityDenial } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
@@ -1162,6 +1164,24 @@ export async function withdrawPlacementApplication(
         .for("share")
         .limit(1);
       if (!liveRole) throw new AuthorizationError("placements.read");
+
+      // A shortlisted application with scheduled rounds needs a placement
+      // cell withdrawal request, not a direct learner status update.
+      const [liveScreening]=await tx.select({status:placementApplicationScreenings.status})
+        .from(placementApplicationScreenings)
+        .where(eq(placementApplicationScreenings.applicationId,applicationId))
+        .limit(1);
+      const scheduled=liveScreening?.status==="SHORTLISTED"
+        ? await tx.select({id:placementJobRounds.id}).from(placementJobRounds)
+          .where(and(eq(placementJobRounds.jobId,row.job.id),
+            eq(placementJobRounds.status,"SCHEDULED"))).limit(1)
+        : [];
+      if(learnerWithdrawalMode({
+        applicationStatus:row.application.status,
+        screeningStatus:liveScreening?.status??"UNDER_REVIEW",
+        scheduledRoundCount:scheduled.length,
+      })==="REQUEST")
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
 
       // P-S2-11: a live official offer belongs to the TPO response flow;
       // a learner may not remove its application while ISSUED or ACCEPTED.
