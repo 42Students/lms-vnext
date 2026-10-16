@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {TpoBatchLifecycleControl} from "@/components/tpo/tpo-batch-lifecycle-control";
 import {TpoBatchInvitationControl} from "@/components/tpo/tpo-batch-invitation-control";
@@ -12,8 +13,12 @@ import {getTpoBatchInvitationPreview} from "@/modules/placements/tpo-batch-invit
 import {indianCalendarDate} from "@/modules/placements/tpo-batch-notification-model";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
-export default async function BatchPage({params}:{params:Promise<{batchId:string}>}){
- const {batchId}=await params;const context=await getCurrentRequestContext();
+export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{tab?:string|string[]}>}){
+ const {batchId}=await params;
+ const rawTab=(await searchParams).tab;
+ const selected=Array.isArray(rawTab)?rawTab[0]:rawTab;
+ const aliases:Record<string,string>={classes:"students",registration:"registrations",students:"students",registrations:"registrations",rules:"rules",history:"history"};
+ if(selected && aliases[selected])redirect("/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected]);const context=await getCurrentRequestContext();
  const [{batch,lifecycle,ready},eligibility,history,registrations,invitePreview]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId),getTpoBatchInvitationPreview(context,batchId)]);
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
