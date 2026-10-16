@@ -103,3 +103,12 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - TPO-companies-15: unknown company keys rejected even when caller has a valid TPO session; durable statuses are on 0120.
 - TPO-recruiters-14/37: bulk result UI shows recruiter names rather than raw UUIDs.
 - Work packages 01–05 (and 06–08) **remain IN-PROGRESS**, not DONE: outstanding audit acceptance and feature families, owner-decision SKIPs, real provider/worker configuration, full live parity. FAST instruction followed: no tests, typecheck, lint, build or CI waiting.
+
+### Integration follow-ups after registered migration checkpoint
+
+- `TPO-recruiters-16` now has row-level Stage and Owner controls reusing the audited one-lead bulk endpoints; Not now requires a reason, and an eligible staff owner is selected from the server. Legacy New reset and drag/drop still remain.
+- `TPO-companies-11` now shows current/expired/revoked share status using persisted expiry, and exact-selection counts from 0121. Epoch comparison avoids server/client Date relational typing differences.
+- `TPO-companies-15` status write checks a canonical company key against the college's persisted company memory before the 0120 upsert; invalid company keys cannot become arbitrary rows.
+- `TPO-campaigns-public-05` accepted-send side effects insert EMAILED outreach when missing and only advance NOT_CONTACTED, leaving Replied/Meeting set/Not interested unchanged.
+- `TPO-recruiters-14/37` returned bulk status lines show names, not raw UUIDs.
+- All work packages stay IN-PROGRESS pending the listed acceptance gaps; no tests, build, lint or typecheck performed under FAST MODE.
