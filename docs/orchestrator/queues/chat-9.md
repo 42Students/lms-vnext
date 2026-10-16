@@ -22,10 +22,10 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 1. WP-chat-9-01-tenants-modules-placements-s1 | IN-PROGRESS | 24 gaps: S1 5, S2 19; round 2026-10-16: remaining S1 bulk-action transitions, wildcard deployment verification, and S2 parity acceptance
 2. WP-chat-9-02-calendar-reports-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 18; TPO-calendar-reports-05/06 and SA-tenants-modules-51 implemented (runtime parity acceptance pending)
-3. WP-chat-9-03-home-inbox-team-s2 | TODO | 21 gaps: S2 21
-4. WP-chat-9-04-settings-audit-requests-verification-s2 | TODO | 24 gaps: S2 24
-5. WP-chat-9-05-tenants-modules-placements-s2 | TODO | 24 gaps: S2 3, S3 21
-6. WP-chat-9-06-calendar-reports-tenants-modules-s3 | TODO | 25 gaps: S3 25
-7. WP-chat-9-07-home-settings-audit-s3 | TODO | 17 gaps: S3 17
-8. WP-chat-9-08-tenants-modules-students-s3 | TODO | 15 gaps: S3 5, S4 10
-9. WP-chat-9-09-calendar-reports-settings-audit-s4 | TODO | 15 gaps: S4 15
+3. WP-chat-9-03-home-inbox-team-s2 | IN-PROGRESS | 21 gaps: S2 21; TPO-home-05/06/07/08/13/17/36/39/41/43 implementation ongoing
+4. WP-chat-9-04-settings-audit-requests-verification-s2 | IN-PROGRESS | 24 gaps: S2 24; TPO-settings-audit-04/82 navigation updated; other gaps open
+5. WP-chat-9-05-tenants-modules-placements-s2 | IN-PROGRESS | 24 gaps: S2 3, S3 21; SA-tenants-modules-03/08/13 source work; other gaps open
+6. WP-chat-9-06-calendar-reports-tenants-modules-s3 | IN-PROGRESS | 25 gaps: S3 25; SA-tenants-modules-55 and TPO-calendar-reports-09/10 source work; other gaps open
+7. WP-chat-9-07-home-settings-audit-s3 | IN-PROGRESS | 17 gaps: S3 17; TPO-companies-24, TPO-home-17/36/39/41/R04 source work; other gaps open
+8. WP-chat-9-08-tenants-modules-students-s3 | IN-PROGRESS | 15 gaps: S3 5, S4 10; SA-tenants-modules-05 picker work; other gaps open
+9. WP-chat-9-09-calendar-reports-settings-audit-s4 | IN-PROGRESS | 15 gaps: S4 15; TPO-calendar-reports-12 and TPO-inbox-team-66 source work; other gaps open
