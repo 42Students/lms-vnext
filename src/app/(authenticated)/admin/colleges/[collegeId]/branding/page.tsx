@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeBrandingPreview } from "@/components/admin/college-branding-preview";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
 import {getCollegeBranding} from "@/modules/colleges/branding-service";
+import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {can} from "@/modules/permissions/policy";
 import { getSuperAdminCollegeBrandingPreview } from "@/modules/colleges/admin-branding-preview-service";
 import { collegeIdSchema } from "@/modules/colleges/validation";
@@ -21,8 +22,8 @@ export default async function SuperAdminCollegeBrandingPage({
   const context = await getCurrentRequestContext();
   const branding = await getSuperAdminCollegeBrandingPreview(context, collegeId);
   if (!branding) notFound();
-  const persisted=await getCollegeBranding(context,collegeId);
-  const canEdit=can(context,"college.manage",{collegeId,organizationId:branding.organizationId});
+  const [persisted,tenant]=await Promise.all([getCollegeBranding(context,collegeId),getSuperAdminTenantLifecycleDetail(context,collegeId)]);
+  const canEdit=can(context,"college.manage",{collegeId,organizationId:tenant.organizationId});
 
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-center gap-3">
