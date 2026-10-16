@@ -6,6 +6,7 @@ import {
   index,
   integer,
   jsonb,
+  numeric,
   pgTable,
   text,
   timestamp,
@@ -586,6 +587,15 @@ export const placementJobRoleOptions = pgTable(
     maximumAnnualCtcInr: integer(
       "maximum_annual_ctc_inr",
     ),
+    // Pay breakdown in lakh per annum (legacy precision, migration 0096).
+    fixedLpa: numeric("fixed_lpa", { precision: 10, scale: 2 }),
+    variableLpa: numeric("variable_lpa", { precision: 10, scale: 2 }),
+    joiningBonusLpa: numeric("joining_bonus_lpa", {
+      precision: 10,
+      scale: 2,
+    }),
+    bondMonths: integer("bond_months"),
+    bondAmount: numeric("bond_amount", { precision: 12, scale: 2 }),
     isPrimary: boolean("is_primary")
       .notNull()
       .default(false),
@@ -645,6 +655,14 @@ export const placementJobRoleOptions = pgTable(
       sql`(${table.minimumAnnualCtcInr} is null or ${table.minimumAnnualCtcInr} >= 0)
         and (${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= 0)
         and (${table.minimumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= ${table.minimumAnnualCtcInr})`,
+    ),
+    check(
+      "placement_job_role_options_pay_breakdown_ck",
+      sql`(${table.fixedLpa} is null or ${table.fixedLpa} >= 0)
+        and (${table.variableLpa} is null or ${table.variableLpa} >= 0)
+        and (${table.joiningBonusLpa} is null or ${table.joiningBonusLpa} >= 0)
+        and (${table.bondMonths} is null or ${table.bondMonths} between 0 and 120)
+        and (${table.bondAmount} is null or ${table.bondAmount} >= 0)`,
     ),
     check(
       "placement_job_role_options_archive_shape_ck",
@@ -1440,6 +1458,22 @@ export const placementOffers = pgTable(
       .default("ISSUED"),
     roleTitle: text("role_title").notNull(),
     annualCtcInr: integer("annual_ctc_inr"),
+    // Pay breakdown (migration 0096). All nullable: annual_ctc_inr stays the
+    // single headline figure; these keep legacy fixed/variable/bonus/bond detail.
+    fixedLpa: numeric("fixed_lpa", { precision: 10, scale: 2 }),
+    variableLpa: numeric("variable_lpa", { precision: 10, scale: 2 }),
+    joiningBonusLpa: numeric("joining_bonus_lpa", {
+      precision: 10,
+      scale: 2,
+    }),
+    bondMonths: integer("bond_months"),
+    bondAmount: numeric("bond_amount", { precision: 12, scale: 2 }),
+    acceptanceChannel: varchar("acceptance_channel", { length: 24 }),
+    acceptedDisputableUntil: timestamp("accepted_disputable_until", {
+      withTimezone: true,
+    }),
+    cascadeId: uuid("cascade_id"),
+    revokeReason: varchar("revoke_reason", { length: 500 }),
     joiningDate: date("joining_date", {
       mode: "string",
     }),
@@ -1508,6 +1542,25 @@ export const placementOffers = pgTable(
       "placement_offers_role_title_ck",
       sql`length(trim(${table.roleTitle})) > 0`,
     ),
+    check(
+      "placement_offers_pay_breakdown_ck",
+      sql`(${table.fixedLpa} is null or ${table.fixedLpa} >= 0)
+        and (${table.variableLpa} is null or ${table.variableLpa} >= 0)
+        and (${table.joiningBonusLpa} is null or ${table.joiningBonusLpa} >= 0)
+        and (${table.bondMonths} is null or ${table.bondMonths} between 0 and 120)
+        and (${table.bondAmount} is null or ${table.bondAmount} >= 0)`,
+    ),
+    check(
+      "placement_offers_acceptance_channel_ck",
+      sql`${table.acceptanceChannel} is null or ${table.acceptanceChannel} in ('IN_APP', 'EXTERNAL_IMPORT')`,
+    ),
+    check(
+      "placement_offers_revoke_reason_ck",
+      sql`${table.revokeReason} is null or length(trim(${table.revokeReason})) > 0`,
+    ),
+    index("placement_offers_cascade_id_idx")
+      .on(table.cascadeId)
+      .where(sql`${table.cascadeId} is not null`),
     check(
       "placement_offers_ctc_ck",
       sql`${table.annualCtcInr} is null or ${table.annualCtcInr} >= 0`,

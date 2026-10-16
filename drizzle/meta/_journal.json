@@ -673,6 +673,13 @@
       "when": 1792108217322,
       "tag": "0095_tpo_email_campaigns",
       "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1792122649761,
+      "tag": "0096_placement_offer_pay_breakdown",
+      "breakpoints": true
     }
   ]
 }
