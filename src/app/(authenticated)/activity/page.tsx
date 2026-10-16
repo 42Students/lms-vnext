@@ -63,6 +63,30 @@ export default async function ActivityPage({
     params.importance,
   );
   const collegeOptions = isSuperAdmin(context) ? await listColleges(context) : [];
+  const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
+   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).format(date);
+  const today=istDay(new Date());
+  const ago=(days:number)=>istDay(new Date(Date.now()-days*86400000));
+  const range=one(params.range);
+  const defaultFrom=!one(params.from)&&!one(params.to)&&range!=="ALL"?ago(29):one(params.from);
+  const quick=(from?:string,to?:string,module?:string,importance?:string)=>{
+   const q=new URLSearchParams({
+    ...(from?{from}:{}),...(to?{to}:{}),
+    ...(!from&&!to?{range:"ALL"}:{}),
+    ...(module?{module}:{}),...(importance?{importance}:{}),
+    ...(one(params.collegeId)?{collegeId:one(params.collegeId)!}:{}),
+   });
+   return "/activity?"+q.toString();
+  };
+  const presetLinks=[
+   {name:"Important",href:quick(defaultFrom,one(params.to),"","HIGH")},
+   {name:"Academic setup",href:quick(defaultFrom,one(params.to),"ACADEMICS")},
+   {name:"People & access",href:quick(defaultFrom,one(params.to),"IDENTITY")},
+   {name:"Teaching",href:quick(defaultFrom,one(params.to),"COURSES")},
+   {name:"Projects",href:quick(defaultFrom,one(params.to),"PROJECTS")},
+   {name:"Everything",href:quick(defaultFrom,one(params.to))},
+  ];
   const result =
     await listActivityEvents(
       context,
@@ -86,7 +110,7 @@ export default async function ActivityPage({
         subjectId: one(params.subjectId),
         actorName: isSuperAdmin(context) ? one(params.actorName)?.trim() || undefined : undefined,
         q: isSuperAdmin(context) ? one(params.q)?.trim() || undefined : undefined,
-        from: one(params.from),
+        from: defaultFrom,
         to: one(params.to),
         beforeOccurredAt: one(
           params.beforeOccurredAt,
@@ -157,6 +181,7 @@ export default async function ActivityPage({
       nextParams.set(name, value);
     }
   }
+  if(defaultFrom)nextParams.set("from",defaultFrom);
   // Export starts from the newest matching activity, without an older-page cursor.
   const exportParams = new URLSearchParams(nextParams);
   if (result.nextCursor) {
@@ -189,6 +214,18 @@ export default async function ActivityPage({
         className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Open audit findings board →
       </Link> : null}
+      {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="space-y-2">
+       <div className="flex flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">{link.name}</Link>)}</div>
+       <p className="text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
+       <div className="flex flex-wrap gap-2">{[
+        {label:"Today",href:quick(today,today)},
+        {label:"7 days",href:quick(ago(6),today)},
+        {label:"30 days",href:quick(ago(29),today)},
+        {label:"All time",href:quick()},
+       ].map(link=><Link key={link.label} href={link.href}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">{link.label}</Link>)}</div>
+      </nav>:null}
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label>
@@ -261,7 +298,7 @@ export default async function ActivityPage({
             className={inputClass}
             name="from"
             type="date"
-            defaultValue={one(params.from)}
+            defaultValue={defaultFrom}
           />
         </label>
         <label>
