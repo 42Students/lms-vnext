@@ -203,6 +203,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                       href={"/tpo/placements/jobs/"+job.id+"/extend-deadline"}>
                       Set or extend deadline
                     </Link>:null}
+                    {job.status==="PUBLISHED"?<Link
+                      className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle"
+                      href={"/tpo/placements/jobs/"+job.id+"/close-preview"}>
+                      Review and close drive
+                    </Link>:null}
                     {job.status==="PUBLISHED"?<TpoRemindNonApplicants jobId={job.id}/>:null}
                   </nav>
                 </details>
