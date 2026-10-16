@@ -14,11 +14,11 @@ export const COLLEGE_ADMIN_QUICK_ACTIONS = [
   { key: "faculty", label: "Faculty", href: "/college/faculty" },
   { key: "students", label: "Students", href: "/college/students" },
   { key: "jobs", label: "Jobs", href: "/college/placements" },
-  { key: "hiring-dashboard", label: "Hiring Dashboard", href: null },
-  { key: "attendance", label: "Attendance", href: null },
+  { key: "hiring-dashboard", label: "Hiring Dashboard", href: "/college/hiring-dashboard" },
+  { key: "attendance", label: "Attendance", href: "/college/attendance" },
   { key: "assignments", label: "Assignments", href: "/college/assignments" },
   { key: "quizzes", label: "Quizzes", href: "/college/quizzes" },
-  { key: "people", label: "People Directory", href: null },
+  { key: "people", label: "People Directory", href: "/college/people" },
 ] as const;
 
 /** Exact legacy copy of SetupGuide.js and AdminDashboardView.js (lms-dev-2026). */
