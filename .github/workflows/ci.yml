@@ -11,7 +11,7 @@ permissions:
 
 # Nine independent required jobs: failing lint must not suppress DB acceptance.
 concurrency:
-  group: lms-vnext-ci-main
+  group: lms-vnext-ci-${{ github.sha }}
   cancel-in-progress: false
 
 jobs:
