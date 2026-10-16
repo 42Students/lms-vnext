@@ -91,8 +91,14 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   async function acceptCode(){
-    if(busy||!/^[0-9]{6}$/.test(code))return;
+    if(busy)return;
     if(!name.trim()){setActionError("Enter your name");return;}
+    if(!code.trim()){setActionError("Enter the 6-digit code");return;}
+    if(!/^[0-9]{6}$/.test(code)){setActionError("The code has 6 digits");return;}
+    const digits=mobile.replace(/\D/g,"");
+    if(digits && digits.length!==10 && !(digits.length===12&&digits.startsWith("91"))){
+      setActionError("Enter a valid 10-digit mobile number, or leave it blank.");return;
+    }
     setBusy(true);setActionError("");
     try{
       const response=await fetch("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
@@ -237,7 +243,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
                 pattern="[0-9]{6}" maxLength={6} value={code} onChange={event=>setCode(event.target.value)}
                 className="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
             </label>
-            <button className={primary} type="button" disabled={busy||!/^[0-9]{6}$/.test(code)}
+            <button className={primary} type="button" disabled={busy}
               onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</button>
             <button className={secondary} type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</button>
           </>
