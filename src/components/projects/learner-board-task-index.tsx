@@ -1,34 +1,39 @@
 import Link from "next/link";
 import {learnerBoardCardMetadata} from "@/modules/projects/learner-board-card-model";
 import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
+import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 
-export function LearnerBoardTaskIndex({
-  projectId, tasks, filters, sprints,
-}: {
-  projectId:string;
-  tasks:readonly {id:string;title:string;status:string;priority:string;sprintId:string}[];
-  sprints:readonly {id:string;title:string}[];
-  filters:LearnerTaskBoardUrlFilters;
-}) {
-  if(!tasks.length)return null;
-  return (
-    <details className="rounded-xl border border-border bg-surface px-4 py-3">
-      <summary className="min-h-11 cursor-pointer text-sm font-semibold text-foreground">
-        Open task details · {tasks.length} matching
-      </summary>
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-        {tasks.map(task=>{
-          const meta=learnerBoardCardMetadata(task,sprints);
-          return <li key={task.id}>
-            <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
-              className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-sm text-primary-text hover:bg-muted">
-              <span className="min-w-0 truncate">{task.title}</span>
-              <span className="shrink-0 text-xs text-muted-foreground">{meta.status} · {meta.priority} · {meta.sprintTitle}</span>
-            </Link>
-          </li>;
-        })}
+export function LearnerBoardTaskIndex({projectId,tasks,filters,sprints}:{
+ projectId:string;
+ tasks:readonly {id:string;title:string;status:string;priority:string;sprintId:string}[];
+ sprints:readonly {id:string;title:string;status:string}[];
+ filters:LearnerTaskBoardUrlFilters;
+}){
+ const lanes=groupLearnerBoardLanes(tasks,sprints);
+ return <section aria-label="Project Board lanes" className="space-y-3">
+  <p className="text-sm text-body">Tasks are grouped by their saved status. Open a task to work on it.</p>
+  <div className="overflow-x-auto pb-3">
+   <div className="flex min-w-max gap-3">
+    {lanes.map(lane=><section key={lane.id} aria-label={lane.label}
+      className="w-64 shrink-0 rounded-xl border border-border bg-surface-subtle p-3">
+      <h2 className="flex items-center justify-between font-semibold text-foreground">
+       <span>{lane.label}</span><span className="rounded-full border border-border px-2 text-sm tabular-nums">{lane.tasks.length}</span>
+      </h2>
+      <ul className="mt-3 space-y-2">
+       {lane.tasks.map(task=>{
+        const info=learnerBoardCardMetadata(task,sprints);
+        return <li key={task.id}>
+         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
+          className="block min-h-11 rounded-lg border border-border bg-surface p-3 text-sm text-primary-text hover:bg-muted">
+          <span className="block break-words font-semibold">{task.title}</span>
+          <span className="mt-2 block text-xs text-muted-foreground">{info.priority} · {info.sprintTitle}</span>
+         </Link>
+        </li>;
+       })}
+       {lane.tasks.length===0?<li className="py-5 text-center text-xs text-muted-foreground">No tasks</li>:null}
       </ul>
-      <p className="mt-2 text-xs text-muted-foreground">Task type and story points are not recorded in the current Project schema.</p>
-    </details>
-  );
+    </section>)}
+   </div>
+  </div>
+ </section>;
 }
