@@ -14,6 +14,18 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   setFile(value);setPreview(value?URL.createObjectURL(value):null);
   setPositionX(50);setPositionY(50);setZoom(1);setMessage("");
  }
+ async function remove(){
+  if(!canEdit||busy||!window.confirm("Remove this college's uploaded logo?"))return;
+  setBusy(true);setMessage("");
+  try{
+   const response=await fetch("/api/colleges/"+encodeURIComponent(collegeId)+"/branding/logo",{
+    method:"DELETE",credentials:"same-origin",
+   });
+   if(!response.ok)throw Error("Could not remove the logo.");
+   setSavedUrl(null);setMessage("Uploaded logo removed.");router.refresh();
+  }catch(error){setMessage(error instanceof Error?error.message:"Could not remove logo.");}
+  finally{setBusy(false);}
+ }
  async function upload(){
   if(!file||!canEdit||busy)return;
   setBusy(true);setMessage("");
@@ -80,6 +92,10 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
       {busy?"Uploading…":"Crop and upload logo"}
     </button>
    </div>:null}</>:<p className="text-sm text-muted-foreground">View-only access.</p>}
+  {canEdit&&(savedUrl||currentUrl)?<button type="button" disabled={busy} onClick={()=>void remove()}
+   className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+   Remove uploaded logo
+  </button>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;
 }
