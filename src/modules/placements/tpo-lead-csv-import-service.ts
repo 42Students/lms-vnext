@@ -44,7 +44,12 @@ export async function importTpoLeadsCsv(
     const rows: TpoLeadImportRowResult[] = [];
     const fileEmails = new Set<string>();
     const filePhones = new Set<string>();
+    const skippedRows=new Set(payload.skipRows??[]);
     for (const item of preview.rows) {
+      if(skippedRows.has(item.row)){
+        rows.push({row:item.row,status:"skipped",reason:"Skipped by placement cell",leadId:null});
+        continue;
+      }
       if (!item.lead) {
         rows.push({
           row: item.row, status: "invalid", reason: item.error ?? "Invalid CSV row", leadId: null,
