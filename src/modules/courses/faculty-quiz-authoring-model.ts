@@ -7,6 +7,8 @@ const fields=z.object({
  description:z.string().trim().max(10000).nullable(),
  dueAt:z.iso.datetime({offset:true}).nullable(),
  maxAttempts:z.number().int().min(1).max(20),
+ shuffleQuestions:z.boolean().optional(),
+ shuffleOptions:z.boolean().optional(),
  questions:createCourseQuizInputSchema.shape.questions,
 }).strict();
 export const facultyQuizCommandSchema=z.discriminatedUnion("action",[
@@ -48,6 +50,8 @@ export function facultyQuizLegacyEdit(current: {
   description:input.description===undefined?current.description:input.description,
   dueAt:input.dueAt===undefined?current.dueAt?.toISOString()??null:input.dueAt,
   maxAttempts:input.maxAttempts??current.maxAttempts,
+  ...(input.shuffleQuestions!==undefined?{shuffleQuestions:input.shuffleQuestions}:{}),
+  ...(input.shuffleOptions!==undefined?{shuffleOptions:input.shuffleOptions}:{}),
   ...(input.questions?{questions:input.questions}:{}),
   expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,
  });
