@@ -2,6 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { FACULTY_CSV_COLUMNS } from "@/modules/people/college-faculty-csv-columns";
+import { neutralStudentCsvCell } from "@/modules/people/college-student-csv-model";
 
 type Row={row:number;status:string;detail:string;membershipId?:string};
 type Report={preview:boolean;valid:number;invalid:number;structuralErrors:string[];results:Row[]};
@@ -30,7 +31,7 @@ export function CollegeFacultyCsvImport(){
     }
   });
   const csvResult=report?.results.map(item=>[item.row,item.status,item.detail,item.membershipId??""]
-    .map(value=>'"'+String(value).replaceAll('"','""')+'"').join(",")).join("\r\n")??"";
+    .map(neutralStudentCsvCell).join(",")).join("\r\n")??"";
   return <div className="space-y-5">
     <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold">Bulk register faculty</h2>
