@@ -1,3 +1,4 @@
+import {projectBacklogSchemaReady} from "./mentor-backlog-service";
 import { randomUUID } from "node:crypto";
 import {
   and,
@@ -333,10 +334,15 @@ export async function completeProjectSprint(
       .for("update")
       .limit(1);
 
-    if (!mayCloseProjectSprint(openTask ? 1 : 0)) {
-      throw new ProjectsServiceError(
-        "PROJECT_SPRINT_HAS_OPEN_TASKS",
-      );
+    if(openTask && projectBacklogSchemaReady()){
+      // Carry unfinished work back into the real backlog atomically before sign-off.
+      await tx.execute(sql`update project_tasks
+        set sprint_id=null,carried_from_sprint_id=${sprint.id}::uuid,
+          carried_over_at=now(),updated_at=now()
+        where project_id=${scope.project.id}::uuid and sprint_id=${sprint.id}::uuid
+          and status <> 'DONE'`);
+    } else if (!mayCloseProjectSprint(openTask ? 1 : 0)) {
+      throw new ProjectsServiceError("PROJECT_SPRINT_HAS_OPEN_TASKS");
     }
 
     const [completed] = await tx
