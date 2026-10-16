@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ProgramActions } from "@/components/academics/academics-actions";
 import { createCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
@@ -16,6 +16,23 @@ import {
   type AdminProgramRow,
   programDurationYearsLabel, legacyDurationYearsToTerms,
 } from "@/modules/admin-ui/program-directory";
+
+const PROGRAM_SIZE_KEY = "42lms-program-page-size";
+function listenSize(fn: () => void) {
+  window.addEventListener("storage", fn);
+  window.addEventListener("lms-program-size", fn);
+  return () => { window.removeEventListener("storage", fn); window.removeEventListener("lms-program-size", fn); };
+}
+function storedSize(): number {
+  try {
+    const size = Number(localStorage.getItem(PROGRAM_SIZE_KEY));
+    return [10,25,50,100].includes(size) ? size : 10;
+  } catch { return 10; }
+}
+function rememberSize(size: number) {
+  try { localStorage.setItem(PROGRAM_SIZE_KEY, String(size)); } catch { return; }
+  window.dispatchEvent(new Event("lms-program-size"));
+}
 
 const columns: DataTableColumn<AdminProgramRow>[] = [
   {
@@ -67,7 +84,7 @@ export function AdminProgramDirectory({
   const [durationYears, setDurationYears] = useState("4");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 10);
 
   const filtered = filterAdminPrograms(programs, search);
   const result = paginateAdminPrograms(filtered, page, pageSize);
@@ -172,7 +189,7 @@ export function AdminProgramDirectory({
             <label htmlFor="admin-program-page-size" className="grid gap-1 text-xs font-semibold text-body">
               Rows per page
               <select id="admin-program-page-size" value={pageSize}
-                onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
+                onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
                 className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
                 {[10, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
               </select>
