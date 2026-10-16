@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -12,16 +13,13 @@ type Data = Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 
 export function CollegeContentAggregate({ data }: { data: Data }) {
   const videos = data.kind === "VIDEO";
-  const title = videos ? "Video Content" : "Resources";
+  const title = videos ? COLLEGE_COURSE_TAB_COPY.videosTitle : "Resources";
   const path = videos ? "/college/videos" : "/college/resources";
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="College Admin · Courses & Content"
         title={title}
-        description={videos
-          ? "Read-only catalogue of registered VIDEO and YOUTUBE lesson records. Playback and stored file access are not provided here."
-          : "Read-only catalogue of registered lesson RESOURCE records. Private attachments and external links are not exposed here."}
         actions={
           <Link href="/college/lessons"
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
