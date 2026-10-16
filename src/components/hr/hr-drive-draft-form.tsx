@@ -1,16 +1,23 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SetStateAction } from "react";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
 import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
+import {saveHrAutoDraft,restoreHrAutoDraft} from "@/modules/placements/hr-drive-autosave-model";
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
 import {duplicateHrDraftRound} from "@/modules/placements/hr-draft-round-duplicate-model";
 import {hrDraftContainsWork} from "@/modules/placements/hr-draft-reset-model";
 import {hrDraftPreviewRounds} from "@/modules/placements/hr-draft-preview-model";
 import {hrDraftCompensationWarnings} from "@/modules/placements/hr-draft-compensation-review-model";
+
+const onStorageChange = (notify:()=>void) => {
+  window.addEventListener("storage",notify);
+  return () => window.removeEventListener("storage",notify);
+};
+const absentStorageSnapshot=()=>null;
 
 const HR_DRAFT_PREVIEW_FIELDS=[
  ["minimumAnnualCtcInr","Minimum CTC"],
@@ -42,7 +49,30 @@ export function HrDriveDraftForm({
   fixUpdatedAt?:string|null;
   editMode?:"EDIT"|"RESUBMIT";
 }) {
-  const [draft, setDraft] = useState<HrDriveDraft>(initial);
+  // Hydration-safe restoration: no setState inside effects and no localStorage
+  // read on the server. An incomplete unsent draft is still recoverable.
+  const storageSnapshot=useCallback(()=>{
+    try{return window.localStorage.getItem(storageKey);}catch{return null;}
+  },[storageKey]);
+  const rawStored=useSyncExternalStore(onStorageChange,storageSnapshot,absentStorageSnapshot);
+  const restored=useMemo(()=>restoreHrAutoDraft(rawStored),[rawStored]);
+  const [edited,setEdited]=useState<HrDriveDraft|null>(null);
+  const draft=edited??restored??initial;
+  function setDraft(next:SetStateAction<HrDriveDraft>){
+    setEdited(previous=>typeof next==="function"
+      ?(next as (before:HrDriveDraft)=>HrDriveDraft)(previous??restored??initial):next);
+  }
+  useEffect(()=>{
+    if(!edited)return;
+    const persist=()=>{
+      const raw=saveHrAutoDraft(edited);
+      if(!raw)return;
+      try{window.localStorage.setItem(storageKey,raw);}catch{/* Private mode may forbid storage. */}
+    };
+    const timer=window.setTimeout(persist,600);
+    window.addEventListener("pagehide",persist);
+    return()=>{window.clearTimeout(timer);window.removeEventListener("pagehide",persist);};
+  },[edited,storageKey]);
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
   const [submitting,setSubmitting] = useState(false);
@@ -140,6 +170,12 @@ export function HrDriveDraftForm({
 
   return (
     <div className="space-y-6">
+      {restored&&!edited?<p role="status" className="rounded-md border border-border bg-surface p-3 text-sm text-body">
+        We restored your unsent draft
+      </p>:null}
+      <p className="text-xs text-muted-foreground">
+        Unsent changes are saved automatically in this browser for this account and college. They are not submitted.
+      </p>
       {sourceJobTitle ? (
         <p className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-body">
           Hire Again preview copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
@@ -297,7 +333,8 @@ export function HrDriveDraftForm({
             onClick={() => {
               if(hrDraftContainsWork(draft)&&!window.confirm("Discard all unsent draft changes and clear this tab's saved copy?"))return;
               try{window.sessionStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
-              setDraft(emptyHrDriveDraft());setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
+              try{window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled. */}
+              setDraft(emptyHrDriveDraft());setShowPreview(false);setNotice("Started over. The previous unsent draft was cleared.");
             }}>Start over</button>
         </div>
         {showPreview && !result.success ? (

@@ -296,3 +296,7 @@ UNCONFIRMED items and how to confirm:
 - REC-home-drives-44 (legacy CSV format): read `src/components/tpo/tpoFiles.js` `downloadCsv` in `_hr-tpo-fe`; or run the legacy stack and download.
 - REC-home-drives-49 (auto-apply of results): check `/api/placements/rounds/[roundId]/results` for a drive-level auto-apply setting.
 - Actual rendering/responsive behaviour of both apps was not run (code-only audit).
+
+## REC-home-drives-29 source implementation note (2026-10-17)
+
+The recruiter drive form now restores a per-user/college/job unsent browser draft without hydration mismatch, persists edits to localStorage after 600ms and on pagehide, and clears both old per-tab and new local drafts on Start over. It accepts incomplete drafts during composition; no autosave invokes the formal drive request API. Unit tests cover incomplete restoration and malformed/oversize records. Browser refresh, multi-tab and pagehide end-to-end checks are still required before final VERIFIED closure.
