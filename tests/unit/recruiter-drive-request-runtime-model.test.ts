@@ -1,6 +1,6 @@
 import {describe,it,expect} from "vitest";
 import {recruiterDriveRequestInputSchema,canRecruiterResubmit} from "@/modules/placements/recruiter-drive-request-model";
-import {recruiterRequestUpdateSchema} from "@/modules/placements/recruiter-drive-request-service";
+import {recruiterRequestUpdateSchema} from "@/modules/placements/recruiter-drive-request-model";
 import {emptyHrDriveDraft} from "@/modules/placements/hr-drive-draft-model";
 describe("REC-home-drives-21 registered formal recruiter request contract",()=>{
  it("accepts a typed request with idempotency token",()=>{
