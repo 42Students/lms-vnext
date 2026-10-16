@@ -29,6 +29,15 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
         <option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option>
       </select>
     </label>
+    <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">Section
+      <select name="deliveryId" defaultValue={data.query.deliveryId??""}
+        className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+        <option value="">All classes</option>
+        {data.sectionOptions.map(option=><option key={option.deliveryId} value={option.deliveryId}>
+          {option.courseCode} · {option.sectionName} ({option.sectionCode})
+        </option>)}
+      </select>
+    </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Session audience
       <select name="scope" defaultValue={data.query.scope}
         className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
