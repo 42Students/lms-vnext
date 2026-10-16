@@ -41,8 +41,10 @@ export function LearnerFinalDeliveryControl({
   latest,
   canCreateDraft,
   canSubmitDraft,
+  review,
 }: {
   projectId: string;
+  review?:{status:string;feedback:string|null}|null;
   latest: Submission | null;
   canCreateDraft: boolean;
   canSubmitDraft: boolean;
@@ -194,6 +196,14 @@ export function LearnerFinalDeliveryControl({
         </p>
       ) : null}
 
+      <div className="w-full space-y-2 text-sm text-body">
+        <p>Team submission · The final delivery is shared with your project team.</p>
+        <p>Mentor review: <strong>{review?.status?.replaceAll("_"," ")??"Waiting for review"}</strong></p>
+        {review?.feedback?<p className="whitespace-pre-wrap rounded-lg border border-border p-3">
+          Mentor feedback: {review.feedback}
+        </p>:null}
+        {latest?.status==="APPROVED"?<p role="status">Accepted · Your final delivery is locked after approval.</p>:null}
+      </div>
       <Dialog
         open={open}
         onOpenChange={setOpen}
@@ -204,6 +214,8 @@ export function LearnerFinalDeliveryControl({
         }
         description="Drafts can be prepared early. Final submission unlocks after Project execution is complete."
       >
+        <p className="mb-3 text-sm text-body">What’s left before you can submit: {canSubmitDraft?"Ready to submit after saving this draft.":"Complete the remaining release, sprint and task work."}</p>
+        {review?.feedback?<p className="mb-3 text-sm text-body">Mentor review: {review.status}. {review.feedback}</p>:null}
         <form
           onSubmit={save}
           className="grid gap-4"
