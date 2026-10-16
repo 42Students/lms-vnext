@@ -8,6 +8,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {getSuperAdminTenantLifecycleDetail} from "./admin-tenant-lifecycle-service";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
 async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userIdInput:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
@@ -75,6 +76,9 @@ export async function listCollegeAdminSessions(ctx:RequestContext,collegeId:unkn
 export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:unknown,userId:unknown){
  const target=await authorizedTarget(ctx,collegeId,userId);
  return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:target.college.organizationId,collegeId:target.college.id,
+  });
   const rows=await tx.execute(sql<{id:string}>`UPDATE identity_device_sessions
   SET revoked_at=now(),revoked_by_user_id=${ctx.user.id}::uuid,
     revocation_reason='SUPER_ADMIN_SIGN_OUT_EVERYWHERE'
