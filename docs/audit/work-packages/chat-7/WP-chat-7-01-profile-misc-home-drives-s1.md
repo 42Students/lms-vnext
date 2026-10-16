@@ -81,3 +81,14 @@ These gap rows mention a table, column, migration or stored value. Confirm; if r
 
 None known. If you hit a policy question, skip that gap and list it in your final summary.
 
+
+## Implementation checkpoint: chat-7 (2026-10-16, branch chatgpt/chat-7)
+
+- **S1 runtime implemented, not yet verified:** REC-home-drives-21 formal create/list/edit/resubmit in the registered migration 0101 table; REC-home-drives-12 saved request history and waiting counts. TPO Requests already reads the same table. Rec-home-drives-21 **still lacks trusted-recruiter automatic approval** and complete legacy drive request parity.
+- **S1 staged, not implemented runtime:** REC-home-drives-51 selection-list input contract, tests, staged schema and proposed migration `docs/proposed-migrations/rec-home-drives-51-selection-lists.sql`. Await orchestrator schema registration and TPO-side verification; no fake send.
+- **S1 blocked/needs owner decision:** LEARNER-profile-misc-01 and LEARNER-profile-misc-03 private files require scanner-attested, owning-member validated storage completion and safe retrieval; REC-home-drives-38 requires owner confirmation of detailed academic/contact/resume disclosure. Do not expose these columns without consent.
+- **S2 source implemented, unverified:** LEARNER-profile-misc-R03 mandatory education validation on writes with historical read compatibility; LEARNER-profile-misc-06 canonical education picker; LEARNER-profile-misc-15 actual server verification missing-items list; REC-calendar-messages-profile-31 aggregated six-stage funnel.
+- **S2 partial:** LEARNER-learning-misc-26 deterministic learner quiz display shuffle respects persisted 0098 flags but existing authoring must expose/configure flags; LEARNER-profile-misc-05 inline Add/Edit for learner-entered awards and publications through existing profile records (not full structured legacy fields); REC-calendar-messages-profile-22 request decision notifications with read action, not all legacy event types.
+- **S2 remaining/blocked:** LEARNER-profile-misc-02 scanned profile-photo upload not wired; REC-calendar-messages-profile-25 editable login phone needs verified-identity owner/security decision; REC-calendar-messages-profile-46 pending invite acceptance needs identity consent flow.
+- **Related recruiter extra:** REC-home-drives-22 now distinguishes in-review `EDIT` from sent-back `RESUBMIT`; both own-tenant, optimistic and logged, with PostgreSQL tests authored.
+- **Tests not run:** TypeScript, ESLint, unit Vitest, PostgreSQL integration and E2E. No GitHub Actions runs were available for the builder branch. Do not mark any code path tested/closed on this evidence alone.
