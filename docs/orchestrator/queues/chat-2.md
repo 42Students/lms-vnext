@@ -23,7 +23,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 1. WP-chat-2-01-recruiters-public-links-marketing-s1 | IN-PROGRESS | 20 gaps: S1 20 (recruiter export/filters/row invite implemented in earlier round; bulk invitation/campaign delivery/targeted notices/import parity remain)
 2. WP-chat-2-02-public-links-marketing-campaigns-public-s2 | IN-PROGRESS | 20 gaps: S2 20 (PUB-auth-public-45 joined email, PUB-auth-public-44 validation, TPO-campaigns-public-14 bell/timeline; unsubscribe and secure share paths retain remaining policy gates)
 3. WP-chat-2-03-companies-campaigns-public-s2 | IN-PROGRESS | 20 gaps: S2 20 (TPO-companies-10 fixed URL, -12 invite context, -13 company drive prefill, -16/-17 filters and People, -08 filtered drives CSV, -11 documents)
-4. WP-chat-2-04-inbox-team-home-s2 | IN-PROGRESS | 24 gaps: S2 24 (TPO-inbox-team-48 authors can retrieve scheduled/ended notice records; scheduled tag/model still pending)
+4. WP-chat-2-04-inbox-team-home-s2 | IN-PROGRESS | 24 gaps: S2 24 (TPO-inbox-team-48 scheduled/ended author notices projected and labelled; edit/cancel/reschedule and other inbox parity remain)
 5. WP-chat-2-05-recruiters-settings-audit-s2 | IN-PROGRESS | 20 gaps: S2 17, S3 3 (recruiter detail S2 validations, actions and follow-ups improved; saved views, inline ownership, bulk parity outstanding)
 6. WP-chat-2-06-campaigns-public-calendar-messages-prof-s3 | TODO | 15 gaps: S3 15
 7. WP-chat-2-07-inbox-team-companies-s3 | TODO | 15 gaps: S3 15
