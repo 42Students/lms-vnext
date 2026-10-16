@@ -423,6 +423,8 @@ export async function createCourseQuiz(
               ? new Date(input.dueAt)
               : null,
             maxAttempts: input.maxAttempts,
+            shuffleQuestions:input.shuffleQuestions,
+            shuffleOptions:input.shuffleOptions,
             totalPoints: totalPoints(
               input.questions,
             ),
@@ -484,6 +486,11 @@ export async function updateCourseQuiz(
       (current.dueAt?.getTime() ?? null);
   if(changesDeadline && (attemptCount>0 || current.status==="CLOSED"))
     throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+
+  if(current.status!=="DRAFT" && (
+    (input.shuffleQuestions!==undefined&&input.shuffleQuestions!==current.shuffleQuestions)||
+    (input.shuffleOptions!==undefined&&input.shuffleOptions!==current.shuffleOptions)
+  ))throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
 
   if (
     input.questions &&
@@ -595,6 +602,8 @@ export async function updateCourseQuiz(
             ...(input.sequence !== undefined
               ? { sequence: input.sequence }
               : {}),
+            ...(input.shuffleQuestions!==undefined?{shuffleQuestions:input.shuffleQuestions}:{}),
+            ...(input.shuffleOptions!==undefined?{shuffleOptions:input.shuffleOptions}:{}),
             ...(input.questions
               ? {
                   totalPoints: totalPoints(
