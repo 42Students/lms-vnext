@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull,or,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,moduleAccessRules} from "@/db/schema";
@@ -34,7 +34,7 @@ async function resolveScope(db:ReturnType<typeof getDb>,collegeId:string,scopeTy
  `);
  return rows.rows[0]??null;
 }
-export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string};
+export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;projectsRule:string;electivesRule:string};
 export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeIdInput:string):Promise<AcademicModuleScope[]>{
  const college=await collegeScope(ctx,collegeIdInput);if(!college)return [];
  const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string}>(sql`
@@ -48,7 +48,19 @@ export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeId
  from sections s join cohorts c on c.id=s.cohort_id join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
  order by "scopeType",label limit 500
  `);
- return result.rows;
+ if(result.rows.length===0)return [];
+ const ids=result.rows.map(row=>row.scopeId);
+ const stored=await getDb().select({
+  scopeType:moduleAccessRules.scopeType,scopeId:moduleAccessRules.scopeId,
+  module:moduleAccessRules.module,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked,
+ }).from(moduleAccessRules).where(and(inArray(moduleAccessRules.scopeId,ids),
+  inArray(moduleAccessRules.module,["projects","electives"])));
+ const describe=(scopeType:string,scopeId:string,module:string)=>{
+  const entry=stored.find(row=>row.scopeType===scopeType&&row.scopeId===scopeId&&row.module===module);
+  return entry?(entry.enabled?"On":"Off")+(entry.locked?" · Locked":""):"Inherit";
+ };
+ return result.rows.map(row=>({...row,projectsRule:describe(row.scopeType,row.scopeId,"projects"),
+  electivesRule:describe(row.scopeType,row.scopeId,"electives")}));
 }
 export async function readDescendantRule(ctx:RequestContext,collegeInput:string,scopeType:ScopeType,scopeIdInput:string,module:"projects"|"electives"){
  const college=await collegeScope(ctx,collegeInput);if(!college)return null;
