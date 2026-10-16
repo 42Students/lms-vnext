@@ -38,7 +38,12 @@ export default async function SuperAdminElectivesPage({
         </label>
         <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
       </form>
-      <p className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
+      <form method="get" action="/admin/electives" aria-label="Refresh elective directory">
+        {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
+        <input type="hidden" name="status" value={data.query.status} />
+        <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
+      </form>
+      <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
       {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
         {data.items.map(item => <article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
