@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import { PublicRecruitFromUs } from "@/components/placements/public-recruit-from-us";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import { publicPlacementDisclosure } from "@/modules/placements/public-placement-disclosure-model";
@@ -75,13 +76,9 @@ export default async function PublicPlacementsPage() {
               <p className="mt-2 text-lg font-semibold text-foreground">{money(value)}</p>
             </article>)}
         </section> : null}
-      <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6">
-        <h2 className="text-xl font-semibold text-foreground">Recruit from us</h2>
-        <p className="mt-2 text-sm leading-6 text-body">
-          Verified employer enquiries are not yet enabled for this college.
-          We cannot accept your work email or send a verification code until that service is ready.
-        </p>
-      </section>
+      <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
+        enabled={Boolean(published) && process.env.DB09_TPO_API_READY === "DB09_VERIFIED" &&
+          process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED"} />
       <footer className="mt-8 text-sm"><Link href="/" className="text-primary-text underline">Back to college home</Link></footer>
     </main>
   );
