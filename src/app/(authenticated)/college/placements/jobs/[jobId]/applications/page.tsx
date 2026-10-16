@@ -18,7 +18,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   const query = driveApplicationsParams(await searchParams);
   if (!query) return <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid." />;
   const [data,filters] = await Promise.all([
-    listCollegeDriveApplications(context,jobId,query),
+    getCollegeApplicationPipeline(context,jobId,query),
     listCollegeDriveApplicationFilters(context),
   ]);
   return <div className="space-y-6">
