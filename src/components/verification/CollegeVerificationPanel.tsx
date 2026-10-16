@@ -193,20 +193,16 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    {page>1&&<button type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous page</button>}
    {hasMore&&<button type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next page</button>}
   </nav>
-  {selected&&<div className="space-y-2">
-    {sequential&&<nav aria-label="Sequential verification progress"
-      className="flex flex-wrap items-center gap-3 rounded-md border p-3 text-sm">
-      <span role="status">{sequenceLabel}</span>
-      <button type="button" onClick={()=>nextInSequence()} className="rounded border px-3 py-2">Next</button>
-      <button type="button" onClick={()=>{setSelected(null);setSequential(null);
-        setReviewFeedback(`Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);}}
-        className="rounded border px-3 py-2">Finish</button>
-    </nav>}
-    <VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
-      row={selected} onClose={()=>{if(sequential)setReviewFeedback(
-        `Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);
-        setSelected(null);setSequential(null);}}
-      onSaved={savedReview}/>
-  </div>}
+  {selected&&<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
+    row={selected}
+    sequenceProgress={sequential?sequenceLabel:undefined}
+    onNext={sequential?()=>nextInSequence():undefined}
+    onFinish={sequential?()=>{setSelected(null);setSequential(null);
+      setReviewFeedback(`Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);}:undefined}
+    onClose={()=>{if(sequential)setReviewFeedback(
+      `Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);
+      setSelected(null);setSequential(null);}}
+    onSaved={savedReview}/>}
+
  </div>;
 }
