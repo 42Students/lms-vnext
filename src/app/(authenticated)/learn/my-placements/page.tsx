@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {LearnerPlacementRegistration} from "@/components/placements/learner-placement-registration";
 import {getOwnLearnerRegistration} from "@/modules/placements/learner-registration-read-service";
+import {getOwnLearnerDebarmentNotice} from "@/modules/placements/learner-own-debarment-service";
 import { LearnerPlacementAcademicEvidence } from "@/components/placements/learner-placement-academic-evidence";
 import {
   LearnerPlacementJobs,
@@ -60,15 +61,15 @@ export default async function LearnerPlacementsPage({
   requirePermission(context,"placements.read",{
     collegeId:ownMembership.collegeId,organizationId:ownMembership.organizationId,
   });
-  const [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead,registrationRead] =
+  const [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead,registrationRead,debarRead] =
     await Promise.allSettled([
       listLearnerPlacementJobs(context),getCandidatePreferences(context),
       getLearnerPlacementJourneyWithActivity(context),getOwnAcademicEvidence(context),
-      listOwnPlacementOffers(context),getLearnerPlacementRequestWorkspace(context),getOwnLearnerRegistration(context),
+      listOwnPlacementOffers(context),getLearnerPlacementRequestWorkspace(context),getOwnLearnerRegistration(context),getOwnLearnerDebarmentNotice(context),
     ]);
   // Never turn a post-preflight authorization revocation into a partial read:
   // the entire page must deny access, even when other source calls succeeded.
-  for(const outcome of [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead,registrationRead]){
+  for(const outcome of [jobsRead,preferencesRead,journeyRead,academicRead,offersRead,requestsRead,registrationRead,debarRead]){
     if(outcome.status==="rejected" && outcome.reason instanceof AuthorizationError)
       throw outcome.reason;
   }
@@ -236,6 +237,17 @@ export default async function LearnerPlacementsPage({
         </Link>
       </div>
 
+      {debarRead.status==="fulfilled"&&debarRead.value?<section role="alert" className="rounded-xl border border-warning bg-surface p-5">
+        <h2 className="font-semibold text-foreground">You are barred from drives for now</h2>
+        <p className="mt-2 text-sm text-body">
+          The placement cell has recorded a temporary participation restriction.
+          {debarRead.value.untilDate?" Until "+debarRead.value.untilDate+" (college local date).":""}
+          {debarRead.value.remainingDrives!==null?" "+debarRead.value.remainingDrives+" drive(s) remain in the recorded count.":""}
+        </p>
+        <Link href="/learn/my-placements/support" className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+          Think this is wrong? Tell the placement cell
+        </Link>
+      </section>:null}
       {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
         <section role="alert" aria-label="Placement registration" className="rounded-xl border border-border bg-surface p-4">
           <h2 className="font-semibold text-foreground">Registration</h2>
