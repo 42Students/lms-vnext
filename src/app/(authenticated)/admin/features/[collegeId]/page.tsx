@@ -20,6 +20,7 @@ import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import {placementFeatureEffects} from "@/modules/platform-settings/placement-feature-controls-model";
 import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 import {DescendantFeatureRuleEditor} from "@/components/admin/descendant-feature-rule-editor";
+import {AcademicModuleScopeInventory} from "@/components/admin/academic-module-scope-inventory";
 import {listCollegeModuleScopeChoices} from "@/modules/module-access/admin-descendant-rule-write";
 
 type SearchParams = {
@@ -355,6 +356,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <h2 className="font-semibold">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects or Electives On, Off, or Inherit, and apply an optional lock. Placements is configured at college scope until its runtime resolver supports academic overrides.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
+        <AcademicModuleScopeInventory scopes={academicScopes}/>
       </section>
       <section className="space-y-3">
         <div>
