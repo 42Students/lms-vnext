@@ -1,4 +1,4 @@
-import { and, count, eq, inArray, isNull } from "drizzle-orm";
+import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -213,6 +213,8 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
     courseCode: courses.code,
     status: electiveOfferings.status,
     activeMembers: lmsGroups.activeCount,
+    waitlistedCount: sql<number>`(select count(*)::int from lms_group_members gm
+      where gm.group_id = "lms_groups"."id" and gm.state = 'WAITLISTED')`,
   }).from(electiveOfferings)
     .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
     .innerJoin(courses, eq(courses.id, electiveOfferings.courseId))
