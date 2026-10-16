@@ -36,7 +36,7 @@ export default async function LearnerProjectPage({
   if (!projectInstanceIdSchema.safeParse(projectId).success) notFound();
   const { tab, taskSearch, priority: priorityInput, taskStatus: taskStatusInput, taskSort: taskSortInput, sprintId: sprintInput, releaseId: releaseInput, assignee: assigneeInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
   const activeSection =
-    tab === "board" || tab === "tasks"
+    tab === "board" || tab === "tasks" || tab === "performance"
       ? "tasks"
       : tab === "activity"
         ? "audit"
