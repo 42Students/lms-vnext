@@ -2,6 +2,7 @@ import {batchStudentViewExportHref} from "@/modules/placements/tpo-batch-student
 import {selectTpoBatchStudentView} from "@/modules/placements/tpo-batch-student-selection-model";
 import {summarizeBatchStudentEvidence} from "@/modules/placements/tpo-batch-student-evidence-summary-model";
 import Link from "next/link";
+import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {tpoEligibilityImportScaffoldHref} from "@/modules/placements/tpo-eligibility-import-scaffold-model";
 import {TpoAcademicImportPreview} from "@/components/tpo/tpo-academic-import-preview";
 import {TpoBatchEligibilityImport} from "@/components/tpo/tpo-batch-eligibility-import";
@@ -24,7 +25,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
- <Link href={"/tpo/batches/"+batchId} className="text-sm text-primary-text underline">Batch overview</Link>
+ <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
  <div className="flex flex-wrap items-center justify-between gap-2">
   <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
   <a href={"/api/placements/tpo/batches/"+batchId+"/students/export?page="+result.page}
