@@ -14,6 +14,7 @@ import { listPlacementScreeningQueue } from "@/modules/placements/screening-serv
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
 import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
+import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
@@ -202,6 +203,22 @@ export async function PlacementDriveWorkspace({
     })),
   };
 
+  const nextStep = isTpo && lifecycleReadiness
+    ? projectTpoDriveNextStep({
+        jobId,
+        status: job.status,
+        publishAllowed: lifecycleReadiness.publish.allowed,
+        closeAllowed: lifecycleReadiness.close.allowed,
+        shortlistCount: shortlist?.total ?? null,
+        pendingRequests: placementRequests.filter(row => row.request.status === "PENDING").length,
+        stagedRounds: driveDay.rounds.map(round => ({
+          id: round.id,
+          name: round.name,
+          pendingCount: round.participants.filter(p => p.result?.status === "STAGED").length,
+        })),
+      })
+    : null;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -213,6 +230,12 @@ export async function PlacementDriveWorkspace({
         }
         actions={
           <div className="flex flex-wrap gap-2">
+            {nextStep ? (
+              <Link href={nextStep.primary.href}
+                className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+                {nextStep.primary.label}
+              </Link>
+            ) : null}
             {hasMembershipRole(context, "TPO") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
@@ -294,6 +317,27 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      {nextStep ? (
+        <section aria-label="Next step" className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="text-base font-semibold text-foreground">Next step</h2>
+          <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
+          <Link href={nextStep.primary.href}
+            className="mt-3 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            {nextStep.primary.label}
+          </Link>
+          {nextStep.more.length > 0 ? (
+            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+              {nextStep.more.map(step => (
+                <Link key={step.href} href={step.href}
+                  className="rounded-md border border-border bg-surface p-3 text-sm text-primary-text hover:underline">
+                  <span className="block font-semibold">{step.label}</span>
+                  <span className="mt-1 block text-xs text-body">{step.description}</span>
+                </Link>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
       {isTpo && driveDay.rounds.length>0 ? (
         <section aria-label="Round result entry" className="rounded-xl border border-border bg-surface p-5">
           <h2 className="font-semibold text-foreground">Enter round results</h2>
@@ -460,6 +504,7 @@ export async function PlacementDriveWorkspace({
           }))}
         />
       ) : null}
+      <section id="drive-request-actions">
       <PlacementRequestQueue
         requests={placementRequests.map(
           (row) => ({
@@ -505,6 +550,7 @@ export async function PlacementDriveWorkspace({
           }),
         )}
       />
+      </section>
       {lifecycleReadiness ? (
         <TpoDriveLifecycleControls readiness={lifecycleReadiness} />
       ) : (
@@ -517,10 +563,12 @@ export async function PlacementDriveWorkspace({
       <PlacementDriveDayOverview
         driveDay={driveDay}
       />
+      <section id="drive-round-actions">
       <PlacementDriveControls
         data={controlData}
         scheduleWarnings={scheduleWarnings}
       />
+      </section>
       <PlacementOfferControls
         jobId={jobId}
         isTpo={hasMembershipRole(context, "TPO")}
