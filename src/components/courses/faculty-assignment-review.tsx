@@ -308,11 +308,10 @@ function SubmissionGradeCard({
           }
         >
           {submission.gradePublished
-            ? "Grade published"
-            : submission.gradingStatus ===
-                "GRADED"
-              ? "Graded · unpublished"
-              : "Pending"}
+            ? "Graded: "+(submission.pointsAwarded??0)+" pts"
+            : submission.gradingStatus==="GRADED"
+              ? "Graded: "+(submission.pointsAwarded??0)+" pts · not published"
+              : "Grade pending"}
         </StatusBadge>
       </div>
 
