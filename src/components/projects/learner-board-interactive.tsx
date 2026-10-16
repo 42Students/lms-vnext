@@ -46,6 +46,25 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   }catch(cause){setError(cause instanceof Error?cause.message:"Task update failed.");}
   finally{setBusy(false);}
  }
+ async function pull(task:Task,sprintId:string){
+  if(busy||!membershipId||task.assigneeMembershipId!==membershipId||task.sprintId!==null||
+    !window.confirm('Pull "'+task.title+'" into the active sprint?'))return;
+  setBusy(true);setError("");
+  try{
+   const response=await fetch("/api/projects/"+encodeURIComponent(projectId)+"/backlog/pull",{
+    method:"PATCH",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({taskId:task.id,sprintId,
+      expectedUpdatedAt:new Date(task.updatedAt).toISOString()}),
+   });
+   if(!response.ok)throw Error("The task or sprint changed. Refresh before trying again.");
+   const payload=await response.json() as {task:Task};
+   setTasks(rows=>rows.map(row=>row.id===task.id?{
+     ...row,...payload.task,updatedAt:new Date(payload.task.updatedAt),
+   }:row));
+   router.refresh();
+  }catch(cause){setError(cause instanceof Error?cause.message:"Could not pull task");}
+  finally{setBusy(false);}
+ }
  function drop(event:React.DragEvent<HTMLElement>,lane:string){
   event.preventDefault();
   const id=event.dataTransfer.getData("text/plain");
@@ -79,6 +98,18 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
         {editable && task.status==="TODO" &&
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?
           <LearnerDeleteOwnTask projectId={projectId} taskId={task.id}/>:null}
+        {task.sprintId===null && own ?
+          <label className="mt-2 block text-xs font-semibold text-body">
+            Pull into sprint
+            <select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
+              onChange={event=>{if(event.target.value)void pull(task,event.target.value);}}
+              className="mt-1 min-h-10 w-full rounded border border-border bg-background px-2">
+              <option value="">Choose active sprint</option>
+              {sprints.filter(s=>s.status==="ACTIVE").map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
+            </select>
+            {!sprints.some(s=>s.status==="ACTIVE")?
+              <span className="mt-1 block text-xs font-normal">Start a sprint before moving backlog tasks onto the board.</span>:null}
+          </label> : null}
         {editable?<label className="mt-2 block text-xs font-semibold text-body">
           Move {task.title}
           <select aria-label={"Move "+task.title} value={task.status} disabled={busy}
