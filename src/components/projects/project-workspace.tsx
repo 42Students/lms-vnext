@@ -2,6 +2,7 @@ import Link from "next/link";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
+import {CollegeProjectSummaryEditor} from "./college-project-summary-editor";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -303,6 +304,9 @@ export function ProjectWorkspace({
         </section>
       ) : null}
 
+      {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditor
+        project={{id:workspace.project.id,title:workspace.project.title,
+         summary:workspace.project.summary,status:workspace.project.status}}/>:null}
       {show("summary") || show("readiness") ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Metric
