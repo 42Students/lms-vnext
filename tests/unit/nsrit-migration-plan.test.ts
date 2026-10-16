@@ -342,9 +342,10 @@ describe("snapshot integrity", () => {
 });
 
 describe("messaging safety (static)", () => {
-  it("the loader sources never reference outbox, notification, sms or mail tables or providers", () => {
+  it("the loader sources never reference outbound messages, sms or mail providers (outbox writes are checked in nsrit-migration-2bii.test.ts)", () => {
     const dir = path.resolve(__dirname, "../../scripts/migrate/nsrit");
-    const forbidden = /outbox|in_app_notifications|outbound_messages|notification_|\bsms\b|zeptomail|exotel|sendgrid|nodemailer|messaging\/providers/i;
+    // Stage 2b-ii owner decision: learner in-app notifications (with their activity events) are loaded; the outbox, delivery and messaging side never is.
+    const forbidden = /outbound_messages|\bsms\b|zeptomail|exotel|sendgrid|nodemailer|messaging\/providers/i;
     const offenders: string[] = [];
     for (const file of readdirSync(dir).filter((f) => f.endsWith(".ts"))) {
       const lines = readFileSync(path.join(dir, file), "utf8").split("\n");
@@ -364,6 +365,11 @@ describe("messaging safety (static)", () => {
     const guard = readFileSync(path.join(dir, "guards.ts"), "utf8");
     for (const table of new Set(tables)) {
       if (["SET", "set"].includes(table)) continue;
+      // The registration audit trail is cleaned up only through the exact rollback statements in ROLLBACK_ONLY_STATEMENTS.
+      if (table === "placement_batch_registration_events") {
+        expect(guard).toContain("ROLLBACK_ONLY_STATEMENTS");
+        continue;
+      }
       expect(guard).toContain(`"${table}"`);
     }
   });
