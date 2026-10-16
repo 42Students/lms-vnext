@@ -743,6 +743,13 @@
       "when": 1792176334326,
       "tag": "0105_tpo_campaign_draft_composer_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 106,
+      "version": "7",
+      "when": 1792176387669,
+      "tag": "0106_tpo_notice_audiences",
+      "breakpoints": true
     }
   ]
 }

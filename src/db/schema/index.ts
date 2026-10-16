@@ -65,6 +65,7 @@ export * from "./placement-public-page";
 export * from "./placement-public-joins";
 export * from "./placement-public-enquiries";
 export * from "./db10-announcements";
+export * from "./placement-tpo-notice-audiences";
 export * from "./db10-bug-tracker";
 export * from "./placement-company-shares";
 export * from "./placement-hr-interview-slots";
