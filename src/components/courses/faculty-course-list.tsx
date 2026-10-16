@@ -41,12 +41,13 @@ function pathTone(
   return "neutral" as const;
 }
 
-export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
+export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sections}: {
   rows: readonly FacultyCourseListRow[];
   query: FacultyCourseListQuery;
   pagination: {page:number;totalPages:number;total:number};
   scopeCount: number;
   periods: readonly {id:string;name:string}[];
+  sections:readonly {id:string;name:string;count:number}[];
 }) {
   if (scopeCount === 0) {
     return (
@@ -69,7 +70,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
         className="space-y-3 rounded-xl border border-border bg-surface p-4">
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Search courses
             <input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Search courses…"
@@ -80,6 +81,15 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-body">Section
+            <select name="section" defaultValue={query.section}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="">All sections ({sections.length})</option>
+              {sections.map(section=><option key={section.id} value={section.id}>
+                {section.name} ({section.count})
+              </option>)}
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Teaching role
