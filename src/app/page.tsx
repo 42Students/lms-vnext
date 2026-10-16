@@ -162,13 +162,8 @@ export default async function HomePage({
           )}
         </div>
 
-        {branding &&
-        (branding.supportEmail ||
-          branding.supportPhone ||
-          branding.termsUrl ||
-          branding.privacyUrl) ? (
-          <footer className="mt-8 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-4 text-xs text-muted-foreground">
-            {branding.supportEmail ? (
+        <footer className="mt-8 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-4 text-xs text-muted-foreground">
+            {branding?.supportEmail ? (
               <a
                 className="hover:text-primary-text"
                 href={`mailto:${branding.supportEmail}`}
@@ -176,7 +171,7 @@ export default async function HomePage({
                 {branding.supportEmail}
               </a>
             ) : null}
-            {branding.supportPhone ? (
+            {branding?.supportPhone ? (
               <a
                 className="hover:text-primary-text"
                 href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}
@@ -184,26 +179,21 @@ export default async function HomePage({
                 {branding.supportPhone}
               </a>
             ) : null}
-            {branding.termsUrl ? (
-              <a
-                className="hover:text-primary-text"
-                href={branding.termsUrl}
-                rel="noopener noreferrer"
-              >
-                Terms
-              </a>
-            ) : null}
-            {branding.privacyUrl ? (
-              <a
-                className="hover:text-primary-text"
-                href={branding.privacyUrl}
-                rel="noopener noreferrer"
-              >
-                Privacy
-              </a>
-            ) : null}
+            <a
+              className="hover:text-primary-text"
+              href={branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"}
+              rel="noopener noreferrer"
+            >
+              Terms
+            </a>
+            <a
+              className="hover:text-primary-text"
+              href={branding?.privacyUrl ?? "/assets/static/privacy-policy-view.html"}
+              rel="noopener noreferrer"
+            >
+              Privacy
+            </a>
           </footer>
-        ) : null}
       </section>
     </main>
   );
