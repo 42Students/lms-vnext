@@ -3,7 +3,7 @@ import {useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
 import {COLLEGE_APPLICATION_STAGES} from "@/modules/placements/college-stage-action-model";
 import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
-import {CollegeApplicationDetailDrawer} from "./college-application-detail-drawer";
+import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
 type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
  source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
  status:string;screening:string|null;stage:string;previousStage:string|null;stageVersion:number|null};
@@ -19,6 +19,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
  const [selected,setSelected]=useState<string[]>([]);
  const [allMatching,setAllMatching]=useState(false);
  const [detailId,setDetailId]=useState<string|null>(null);
+ const [detailPayload,setDetailPayload]=useState<CollegeApplicationDetail|null>(null);
  const [target,setTarget]=useState<string>("SHORTLISTED");
  const [reason,setReason]=useState("");
  const [action,setAction]=useState<"MOVE"|"REINSTATE">("MOVE");
@@ -33,6 +34,17 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
  const selectedCount=allMatching?total:selected.length;
  const rowMap=useMemo(()=>new Map(rows.map(r=>[r.id,r])),[rows]);
  function toggle(id:string){setAllMatching(false);setSelected(current=>current.includes(id)?current.filter(x=>x!==id):[...current,id]);}
+ async function openDetail(id:string){
+  setError("");
+  try{
+   const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+
+    "/applications/"+encodeURIComponent(id),{cache:"no-store"});
+   const body=await response.json().catch(()=>null);
+   if(!response.ok||!body?.application)throw Error(body?.error??"Unable to load application");
+   setDetailPayload(body as CollegeApplicationDetail);
+   setDetailId(id);
+  }catch(reason){setError(reason instanceof Error?reason.message:"Unable to open application");}
+ }
  function selectRow(row:Row,next:string){
   setAllMatching(false);setSelected([row.id]);setTarget(next);setAction(next==="REINSTATE"?"REINSTATE":"MOVE");
   setReason("");setOutcome(null);setError("");setDialog(true);
@@ -106,7 +118,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
      <td className="p-3">{row.stage}</td>
      <td className="p-3">{row.screening??"Not recorded"}</td>
      <td className="p-3"><div className="flex flex-wrap gap-2">
-      <button type="button" onClick={()=>setDetailId(row.id)}
+      <button type="button" onClick={()=>void openDetail(row.id)}
        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Details</button>
       {row.stage==="REJECTED"?
        <button type="button" disabled={busy||row.status!=="SUBMITTED"} onClick={()=>selectRow(row,"REINSTATE")}
@@ -122,7 +134,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
    </table>
   </div>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
-    applicationId={detailId} onClose={()=>setDetailId(null)}/>:null}
+    applicationId={detailId} initialDetail={detailPayload??undefined}
+    onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
   {dialog?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div role="dialog" aria-modal="true" aria-label="Application status update"
     className="max-h-[90vh] w-full max-w-xl space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
