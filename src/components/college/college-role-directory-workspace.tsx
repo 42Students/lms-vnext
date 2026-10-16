@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
+import { CollegeStudentLifecycleAction } from "@/components/college/college-student-lifecycle-action";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
   collegeRoleDirectoryHref,
@@ -344,6 +345,8 @@ export async function CollegeRoleDirectoryWorkspace({
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
                 {kind==="FACULTY"?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
                   name={item.name} status={item.membershipStatus}/>:null}
+                {kind==="LEARNER"?<CollegeStudentLifecycleAction membershipId={item.membershipId}
+                  name={item.name} status={item.membershipStatus}/>:null}
               </li>
             ))}
           </ul>
@@ -389,6 +392,9 @@ export async function CollegeRoleDirectoryWorkspace({
                         name={item.name}
                         status={item.membershipStatus}
                       /> : null}
+                    {kind === "LEARNER" ?
+                      <CollegeStudentLifecycleAction membershipId={item.membershipId}
+                        name={item.name} status={item.membershipStatus} /> : null}
                   </td>
                   <td className="px-4 py-4 text-body">
                     {joinedLabel(item.joinedAt)}
