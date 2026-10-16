@@ -1,3 +1,4 @@
+import {randomUUID} from "node:crypto";
 import "server-only";
 import {and,eq,ne,sql} from "drizzle-orm";
 import {z} from "zod";
@@ -63,5 +64,41 @@ export async function moveMentorBacklogTask(context:RequestContext,projectIdInpu
     targetSprintId:input.targetSprintId},groupKey:"project:"+scope.project.id,
   });
   return {taskId:task.id,targetSprintId:input.targetSprintId};
+ });
+}
+
+const createBacklogSchema=z.strictObject({
+ title:z.string().trim().min(1).max(200),
+ description:z.string().trim().max(4000).nullable().default(null),
+ acceptanceCriteria:z.string().trim().max(4000).nullable().default(null),
+ priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),
+ estimatePoints:z.number().int().min(0).max(1000).nullable().default(null),
+});
+export async function createMentorBacklogTask(context:RequestContext,projectIdInput:string,raw:unknown){
+ if(!projectBacklogSchemaReady())throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+ const input=createBacklogSchema.parse(raw),scope=await requireProjectLifecycleMutationAccess(context,projectIdInput);
+ return getDb().transaction(async tx=>{
+  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .for("update").limit(1);
+  if(!project||!["PLANNED","ACTIVE"].includes(project.status))
+    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  const next=await tx.execute(sql`select coalesce(max(sequence),-1)+1 as seq
+    from project_tasks where project_id=${scope.project.id}::uuid and sprint_id is null`);
+  const sequence=Number((next as unknown as {rows:{seq:number}[]}).rows?.[0]?.seq??0);
+  const taskId=randomUUID(),key="backlog-"+randomUUID().replaceAll("-","");
+  await tx.execute(sql`insert into project_tasks
+    (id,project_id,sprint_id,template_key,sequence,title,description,
+    acceptance_criteria,priority,status,estimate_points)
+    values (${taskId}::uuid,${scope.project.id}::uuid,null,${key},${sequence},${input.title},
+    ${input.description},${input.acceptanceCriteria},${input.priority},'TODO',${input.estimatePoints})`);
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,
+   collegeId:scope.collegeId,organizationId:scope.organizationId,
+   subjectType:"project_task",subjectId:taskId,subjectLabel:input.title,
+   summary:"Product backlog task created",
+   metadata:{projectId:scope.project.id,taskId,backlog:true},groupKey:"project:"+scope.project.id,
+  });
+  return {id:taskId,title:input.title,sequence};
  });
 }
