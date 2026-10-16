@@ -112,6 +112,7 @@ export async function ProjectAdminReassignMentorPage({
       </form>
       <ProjectMentorReassignment
         collegeId={collegeId}
+        matchingWorkspaces={projects.matchingWorkspaces}
         workspaces={projects.items
           .filter(
             (project) =>
