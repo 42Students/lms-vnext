@@ -29,7 +29,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Read-only" title={title} description={description}/>
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
-  <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+  <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
    {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -41,6 +41,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      {statuses.map(status=><option key={status} value={status}>{status}</option>)}
     </select>
    </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
+    <select name="pageSize" defaultValue={data.query.pageSize}
+     className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+     {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
+    </select>
+   </label>
    <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
   </form>
   <form method="get" action={path} aria-label="Refresh directory">
@@ -48,9 +54,10 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <input type="hidden" name="status" value={data.query.status} />
     {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
     <input type="hidden" name="page" value={String(data.query.page)} />
+    <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
     <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
   </form>
-  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · 25 per page</p>
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
   {data.items.length?<div className="grid min-w-0 gap-3 md:grid-cols-2">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
@@ -63,6 +70,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {row.href?<Link href={row.href} className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open details →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
+  <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
+    className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">Clear search</Link>
   <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
    <div className="flex flex-wrap gap-3">
