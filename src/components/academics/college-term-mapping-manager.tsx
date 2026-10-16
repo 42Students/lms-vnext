@@ -7,8 +7,8 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
-  terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; isActive: boolean }[];
-  courses: readonly { id: string; name: string; code: string }[];
+  terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; departmentId: string; isActive: boolean }[];
+  courses: readonly { id: string; name: string; code: string; departmentId: string }[];
   mapped: readonly {
     id: string; termId: string; courseId: string; termName: string; termNumber: number; programName: string;
     courseName: string; courseCode: string; type: string; credits: number | null; displayOrder: number;
@@ -61,7 +61,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const termChoices = data.terms.filter(term => term.isActive && term.programId === programId);
   const selectedIds = draftByTerm[termId] ?? [];
   const mappedIds = new Set(data.mapped.filter(item => item.termId === termId).map(item => item.courseId));
-  const availableCourses = data.courses.filter(course => !mappedIds.has(course.id));
+  const selectedTerm = data.terms.find(term => term.id === termId);
+  const availableCourses = data.courses.filter(course =>
+    selectedTerm && course.departmentId === selectedTerm.departmentId && !mappedIds.has(course.id));
   const currentMappings = data.mapped.filter(item => item.termId === termId);
 
   function prepare(event: FormEvent<HTMLFormElement>) {
