@@ -11,7 +11,7 @@ type MappingRead = {
   courses: readonly { id: string; name: string; code: string; departmentId: string }[];
   mapped: readonly {
     id: string; termId: string; courseId: string; termName: string; termNumber: number; programName: string;
-    courseName: string; courseCode: string; type: string; credits: number | null; displayOrder: number;
+    courseName: string; courseCode: string; type: string; credits: number | null; displayOrder: number; staffingWarning: string | null;
   }[];
 };
 
@@ -166,7 +166,12 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.actions}</th>
         </tr></thead>
         <tbody>{currentMappings.map(row => <tr key={row.id} className="border-t border-border">
-          <td className="px-2 py-2">{row.courseName}</td>
+          <td className="px-2 py-2">
+            <span className="font-semibold">{row.courseName}</span>
+            {row.staffingWarning && <p role="status" className="mt-1 text-xs font-semibold text-amber-700">
+              {row.staffingWarning}
+            </p>}
+          </td>
           <td className="px-2 py-2">{row.courseCode}</td>
           <td className="px-2 py-2">{row.credits ?? "—"}</td>
           <td className="px-2 py-2">{orderedPeers(row).findIndex(peer => peer.id === row.id) + 1}</td>
