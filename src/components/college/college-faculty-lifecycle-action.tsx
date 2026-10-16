@@ -48,7 +48,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       className="mr-2 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text hover:underline">Audit history</Link>
     <button type="button" onClick={() => setEditing(value => !value)} disabled={busy}
       className="rounded-md border border-border px-3 py-2 text-xs font-semibold text-primary-text">
-      {action === "DEACTIVATE" ? "Deactivate" : "Reactivate"}
+      {action === "DEACTIVATE" ? "Suspend Faculty" : "Reactivate Faculty"}
     </button>
     {editing ? <div className="mt-2 space-y-2 rounded-md border border-border bg-surface p-3">
       {action === "DEACTIVATE" ? <label className="block text-xs text-body">
@@ -58,7 +58,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       </label> : <p className="text-xs text-body">Restore access for this faculty membership?</p>}
       {error ? <p role="alert" className="text-xs text-red-700">{error}</p> : null}
       <button type="button" onClick={submit} disabled={busy}
-        className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-on-primary">Confirm {action.toLowerCase()}</button>
+        className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-on-primary">Confirm {action === "DEACTIVATE" ? "suspension" : "reactivation"}</button>
       <button type="button" onClick={() => setEditing(false)}
         className="ml-2 rounded-md border border-border px-3 py-2 text-xs">Cancel</button>
     </div> : null}
