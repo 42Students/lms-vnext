@@ -7,6 +7,7 @@ import {
 } from "@/components/projects/project-admin-collection-controls";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
+import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   listProjectAdminSubmissionQueue,
@@ -90,14 +91,7 @@ export async function ProjectAdminSubmissionsPage({
         title="Project submissions"
         description="Final-delivery versions across project workspaces, newest activity first."
       />
-      <section className="break-words rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
-        Legacy delivery supports Under Review, Locked and
-        Reopen states. DB07 vNext cannot represent those
-        states yet, so this queue reports only persisted
-        DRAFT, SUBMITTED, CHANGES_REQUESTED or APPROVED values
-        until the staged delivery-event/state work is
-        promoted.
-      </section>
+
       <ProjectAdminFilters
         query={query}
         includeSubmissionStatus
@@ -137,12 +131,16 @@ export async function ProjectAdminSubmissionsPage({
                 <StatusBadge
                   tone={tone(submission.status)}
                 >
-                  {submission.status}
+                  {submission.lockedAt?"Locked":submission.status}
                 </StatusBadge>
               </div>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
                 {submission.summary}
               </p>
+              <ProjectAdminSubmissionReview
+                projectId={submission.projectId} submissionId={submission.id}
+                status={submission.status} locked={!!submission.lockedAt}
+                projectStatus={submission.projectStatus} />
               <Link
                 href={
                   basePath +

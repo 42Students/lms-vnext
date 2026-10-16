@@ -1,0 +1,42 @@
+import "server-only";
+import {and,eq,isNull} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import {projectInstances,projectSubmissions,projectDeliveryEvents} from "@/db/schema";
+import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {ProjectsServiceError} from "./errors";
+import {requireProjectManageAccess} from "./access";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {projectDeliveryActivity} from "./delivery-activity-model";
+import {canAdminSettleDelivery} from "./admin-submission-review-model";
+const id=z.string().uuid();
+const body=z.strictObject({reason:z.string().trim().min(1).max(4000)});
+export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw:string,submissionIdRaw:string,raw:unknown){
+ if(!hasMembershipRole(ctx,"COLLEGE_ADMIN")||!ctx.membership)
+  throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
+ const scope=await requireProjectManageAccess(ctx,id.parse(projectIdRaw));
+ const submissionId=id.parse(submissionIdRaw),input=body.parse(raw);
+ return getDb().transaction(async tx=>{
+  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .for("update").limit(1);
+  const [submission]=await tx.select().from(projectSubmissions)
+   .where(and(eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id)))
+   .for("update").limit(1);
+  if(!project||!submission||!canAdminSettleDelivery(submission.status,!!submission.lockedAt,project.status,"LOCK"))
+   throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  const now=new Date();
+  const [saved]=await tx.update(projectSubmissions).set({lockedAt:now,updatedAt:now})
+   .where(and(eq(projectSubmissions.id,submissionId),
+    eq(projectSubmissions.projectId,scope.project.id),isNull(projectSubmissions.lockedAt)))
+   .returning();
+  if(!saved)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
+  await tx.insert(projectDeliveryEvents).values({projectId:scope.project.id,
+   submissionId,actorMembershipId:ctx.membership.id,eventType:"LOCKED",reason:input.reason,occurredAt:now});
+  await recordActivityEventInTransaction(tx,ctx,projectDeliveryActivity({
+   action:"LOCKED",collegeId:scope.collegeId,organizationId:scope.organizationId,
+   projectId:scope.project.id,submissionId,version:saved.version,
+  }));
+  return saved;
+ });
+}
