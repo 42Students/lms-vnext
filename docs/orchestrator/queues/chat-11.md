@@ -44,3 +44,5 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - `COL-people-22`: DB-scoped `fromMentorId` query before pagination, same-mentor skipping, full matching selection, 100-item chunks (`bd09d88`, `45332f8`, `e61c199`, `f4f461f`, `8541534`, `4cd64ee`).
 - `COL-people-23`: outgoing mentor task assignment clearing in same reassign transaction; existing outgoing/incoming mentor and learner notifications retained (`7173b6e`, `a90dcb7`).
 - First S1 `COL-projects-02` remains partial because registered project_instances lacks metadata columns. Do not mark WP-01 DONE based on the original three summary fields.
+
+- COL-projects-02/10/11: staged project summary columns in `src/db/schema/project-summary-staged.ts`; proposal `docs/proposed-migrations/chat-11-col-projects-02-summary.sql`. Pending migration registration; status PARTIAL.
