@@ -598,25 +598,27 @@ export function LearnerAssessmentOverview({
               </section>
             ) : (
               <>
-                {selectedAssignment.dueAt &&
-                new Date(selectedAssignment.dueAt).getTime() <
-                  currentNowMs ? (
+                {(!selectedAssignment.dueAt ||
+                new Date(selectedAssignment.dueAt).getTime() <=
+                  currentNowMs) ? (
                   <div
                     role="status"
                     className="rounded-lg border border-warning bg-[var(--lms-warning-subtle)] p-4 text-sm text-body"
                   >
                     <strong className="text-foreground">
-                      This assignment is past due.
+                      {selectedAssignment.dueAt ? "Submissions are closed" : "Submission unavailable"}
                     </strong>{" "}
-                    You can still submit it; the submission will be recorded as late.
+                    {selectedAssignment.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}
                   </div>
                 ) : null}
 
-                <AssignmentSubmissionControl
-                  fileUploadsEnabled={fileUploadsEnabled}
-                  assignmentId={selectedAssignment.id}
-                  deliveryId={selectedAssignment.deliveryId}
-                />
+                {selectedAssignment.dueAt && new Date(selectedAssignment.dueAt).getTime() > currentNowMs ? (
+                  <AssignmentSubmissionControl
+                    fileUploadsEnabled={fileUploadsEnabled}
+                    assignmentId={selectedAssignment.id}
+                    deliveryId={selectedAssignment.deliveryId}
+                  />
+                ) : null}
               </>
             )}
           </div>

@@ -26,8 +26,11 @@ export function assignmentOverviewState(item: AssignmentDisplayInput, nowMs: num
     };
   }
   const due = item.dueAt ? new Date(item.dueAt).getTime() : null;
-  if (due && due < nowMs) {
-    return { label: "Overdue · late submission allowed", tone: "warning" as const, action: "Submit" as const };
+  if (due === null || !Number.isFinite(due)) {
+    return { label: "Submission unavailable · deadline missing", tone: "warning" as const, action: "View" as const };
+  }
+  if (due <= nowMs) {
+    return { label: "Closed · not submitted", tone: "warning" as const, action: "View" as const };
   }
   if (due && due - nowMs < 48 * 60 * 60 * 1000) {
     return { label: "Due soon", tone: "warning" as const, action: "Submit" as const };
