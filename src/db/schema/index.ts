@@ -83,3 +83,4 @@ export * from "./placement-drive-change-requests";
 export * from "./placement-drive-selections";
 export * from "./placement-round-candidate-slots";
 export * from "./platform-setting-overrides";
+export * from "./placement-tpo-company-communication";
