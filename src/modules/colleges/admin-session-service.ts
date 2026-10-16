@@ -20,7 +20,7 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])))
   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.userId,userId),
-   eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+   inArray(collegeMemberships.status,["ACTIVE","SUSPENDED"]))).limit(1);
  if(!member)throw new AuthorizationError("college.manage");
  return {college,userId,name:member.name};
 }
