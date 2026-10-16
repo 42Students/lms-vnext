@@ -70,8 +70,19 @@ export default async function TpoHome(){
   hasUninvitedBatch:batches.batches.some(batch=>!batch.invitedAt),
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
-  driveDetail:operations.workQueue.find(item=>item.count>0)?.jobTitle??null,
-  driveHref:"/tpo/placements",
+  driveDetail:(()=>{
+   const attention=operations.workQueue.find(item=>item.count>0);
+   if(!attention)return null;
+   const label:Record<string,string>={
+    RESULTS_AWAITING_APPLY:"results waiting",SCREENING_PENDING:"applications to review",
+    OFFERS_AWAITING_RESPONSE:"offers waiting",JOINING_OUTCOME_PENDING:"joining outcomes waiting",
+    DRIVE_NOT_SCHEDULED:"rounds to schedule",EVALUATION_PLAN_MISSING:"evaluation plan needed",
+    DRIVE_REQUESTS:"requests",SELECTIONS_TO_VERIFY:"selections to verify",
+   };
+   return label[attention.code]?(attention.count+" "+label[attention.code]):attention.jobTitle;
+  })(),
+  driveHref:operations.workQueue.some(item=>item.code==="DRIVE_REQUESTS"&&item.count>0)
+   ?"/tpo/placements?tab=requests":"/tpo/placements",
   registered:studentStats.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
   placedUnique:studentStats.summary.placed,recruiterLeads:recruiters?.length??null,
   followUps:dueFollowups?.length??null,recruiterAccess:null,
