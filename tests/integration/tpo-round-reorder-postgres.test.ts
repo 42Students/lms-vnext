@@ -6,6 +6,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getTpoRoundReorderReadiness,reorderPlacementRounds} from "@/modules/placements/round-service";
 import {getPlacementDriveDay} from "@/modules/placements/drive-day-service";
 import {projectTpoRoundFacts} from "@/modules/placements/tpo-round-facts-model";
+import {getPlacementJob} from "@/modules/placements/job-service";
+import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=process.env.DB09_ISOLATED_TEST_DATABASE==="1"&&Boolean(process.env.TEST_DATABASE_URL);
@@ -46,6 +48,14 @@ describe.skipIf(!enabled)("TPO-drive-workspace-37 persisted round reorder",()=>{
   if(!pool||!ids.job)throw Error("PG fixture required");
   const ready=await getTpoRoundReorderReadiness(tpo,ids.job);
   expect(ready.allowed).toBe(true);
+  const job=await getPlacementJob(tpo,ids.job);
+  const header=projectTpoDriveHeader({
+    status:job.status,applicationMode:job.applicationMode,workMode:job.workMode,
+    employmentType:job.employmentType,minimumAnnualCtcInr:job.minimumAnnualCtcInr,
+    maximumAnnualCtcInr:job.maximumAnnualCtcInr,applicationDeadline:job.applicationDeadline,
+  });
+  expect(header.status).toBe("Published");
+  expect(header.applicationMode).toBe("Apply here");
   const day=await getPlacementDriveDay(tpo,ids.job);
   expect(day.rounds).toHaveLength(2);
   const facts=projectTpoRoundFacts({
