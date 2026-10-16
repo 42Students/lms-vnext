@@ -685,8 +685,7 @@ export async function transitionCourseQuiz(
 
   if (
     input.action === "PUBLISH" &&
-    current.dueAt &&
-    current.dueAt.getTime() <= Date.now()
+    (!current.dueAt || current.dueAt.getTime() <= Date.now())
   ) {
     throw new CoursesServiceError(
       "QUIZ_DEADLINE_PASSED",
