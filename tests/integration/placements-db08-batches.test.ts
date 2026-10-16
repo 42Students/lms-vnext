@@ -11,6 +11,7 @@ import {
   upsertPlacementBatchSettings,
 } from "@/modules/placements/batch-participation-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {registerOwnPlacementChoice} from "@/modules/placements/batch-registration-service";
 
 const url = process.env.TEST_DATABASE_URL;
 if (!url ||
@@ -312,6 +313,53 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
       "SELECT invited_at FROM placement_batch_lifecycles WHERE cohort_id=$1", [a.cohortId],
     );
     expect(row.rows[0].invited_at).toBeNull();
+  });
+
+  it("LEARNER-placements-50 registers, records consent and refuses after closure", async () => {
+    const a=await makeAcademicFixture(SEED_IDS.collegeA);
+    const membershipId=await makeLearner(SEED_IDS.collegeA,a);
+    const learner:RequestContext={
+      user:{id:f.users[f.users.length-1],identityUid:"test-learner",
+        platformStatus:"ACTIVE",systemRoles:[]},
+      membership:{id:membershipId,collegeId:SEED_IDS.collegeA,
+        organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+    };
+    await decidePlacementParticipation(admin,{
+      collegeId:SEED_IDS.collegeA,
+      changes:[{scopeType:"MEMBERSHIP",scopeId:membershipId,status:"ELIGIBLE"}],
+    });
+    await markPlacementBatchInvited(admin,{
+      collegeId:SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:new Date(Date.now()+86400000*3),expectedVersion:"none",
+    });
+    await expect(registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:false,
+    })).rejects.toThrow("DB08_REGISTRATION_CONSENT_REQUIRED");
+    const registered=await registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:true,
+    });
+    expect(registered.choice).toBe("PLACEMENTS");
+    expect(registered.consentAt).not.toBeNull();
+    await registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:true,
+    });
+    const updated=await registerOwnPlacementChoice(learner,{
+      choice:"HIGHER_STUDIES",acceptedConsent:false,
+    });
+    expect(updated.choice).toBe("HIGHER_STUDIES");
+    expect(updated.consentAt).toBeNull();
+    const history=await pool.query(
+      "SELECT next_choice FROM placement_batch_registration_events WHERE registration_id=$1 ORDER BY occurred_at",
+      [updated.id],
+    );
+    expect(history.rows.map(row=>row.next_choice)).toEqual(["PLACEMENTS","HIGHER_STUDIES"]);
+    await pool.query(
+      "UPDATE placement_batch_lifecycles SET registration_deadline=now()-interval '1 day' WHERE cohort_id=$1",
+      [a.cohortId],
+    );
+    await expect(registerOwnPlacementChoice(learner,{
+      choice:"PLACEMENTS",acceptedConsent:true,
+    })).rejects.toMatchObject({code:"DB08_REGISTRATION_WINDOW_CLOSED"});
   });
 
   it("TPO-batches-R01 opens registration when all eligible students have chosen", async () => {

@@ -48,8 +48,10 @@ export class PlacementRegistrationError extends Error {
  * batch setting/finish operations. No caller-supplied learner or college ID is
  * trusted. The registration and its append-only event are one DB transaction.
  *
- * This is NOT yet wired to HTTP: paid-module disable races must be revisited
- * when module writes adopt the same college lock protocol.
+ * HTTP registration uses the central learner placement gate before this write;
+ * the persisted account, program enrollment, eligibility and college deadline
+ * are rechecked under the college lock. A module disable transaction must
+ * coordinate with the same lock before global phase acceptance.
  */
 export async function registerOwnPlacementChoice(
   context: RequestContext,
