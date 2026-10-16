@@ -16,6 +16,13 @@ export function recruiterTodayWeek(now: Date) {
   return {from: date(0), to: date(6)};
 }
 
+/** Covers current India calendar day through eight following dates for the
+ * combined recruiter week event feed (REC-home-drives-06). */
+export function recruiterTodayEightDayWindow(now:Date){
+ const base=recruiterTodayWeek(now);
+ return {from:base.from,to:new Date(Date.parse(base.from+"T00:00:00Z")+8*DAY).toISOString().slice(0,10)};
+}
+
 export function buildRecruiterToday<T extends RecruiterTodayJob>(
   jobs: readonly T[], events: readonly PlacementCalendarEvent[],
   collegeId: string, now: Date,
