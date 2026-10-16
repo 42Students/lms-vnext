@@ -10,8 +10,8 @@ import {
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { assertPersistedGroupActor } from "@/modules/groups/actor-access";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import {
   createCollegeElectiveSlotSchema, editCollegeElectiveSlotSchema,
   normalizeSlotYear, slotSelectionChanged,
@@ -30,16 +30,8 @@ export class CollegeElectiveSlotMutationError extends Error {
   }
 }
 
-function currentCollege(context: RequestContext) {
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-      !can(context, "academics.manage", {
-        collegeId: member.collegeId, organizationId: member.organizationId,
-      })) throw new AuthorizationError("academics.manage");
-  requirePermission(context, "academics.manage", {
-    collegeId: member.collegeId, organizationId: member.organizationId,
-  });
-  return member;
+async function currentCollege(context: RequestContext) {
+  return resolveActingCollege(context, "academics.manage");
 }
 
 function academicYear(value: string | null) {
@@ -48,7 +40,7 @@ function academicYear(value: string | null) {
 }
 
 export async function listCollegeElectiveSlotOptions(context: RequestContext) {
-  const member = currentCollege(context);
+  const member = await currentCollege(context);
   const db = getDb();
   const [programRows, periodRows] = await Promise.all([
     db.select({ id: programs.id, name: programs.name, durationTerms: programs.durationTerms })
@@ -72,7 +64,7 @@ export async function createCollegeElectiveSlot(
   transaction: TxRunner = (fn) => getDb().transaction(fn),
 ) {
   const input = createCollegeElectiveSlotSchema.parse(raw);
-  const member = currentCollege(context);
+  const member = await currentCollege(context);
   return transaction(async tx => {
     const [program] = await tx.select({
       id: programs.id, durationTerms: programs.durationTerms,
@@ -124,7 +116,7 @@ export async function updateCollegeElectiveSlot(
 ) {
   const slotId = z.string().uuid().parse(slotIdInput);
   const input = editCollegeElectiveSlotSchema.parse(raw);
-  const member = currentCollege(context);
+  const member = await currentCollege(context);
   return transaction(async tx => {
     const [slot] = await tx.select().from(electiveSlots)
       .where(and(eq(electiveSlots.id, slotId),
