@@ -81,3 +81,4 @@ export * from "./placement-college-application-stages";
 export * from "./placement-waitlist-promotions";
 export * from "./placement-drive-change-requests";
 export * from "./placement-drive-selections";
+export * from "./placement-round-candidate-slots";
