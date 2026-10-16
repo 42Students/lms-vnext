@@ -88,6 +88,7 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_LESSON_CREATED: "courses.lesson.created",
   COURSES_LESSON_UPDATED: "courses.lesson.updated",
   COURSES_LESSON_CONTENT_VISIBILITY_CHANGED: "courses.lesson_content.visibility_changed",
+  COURSES_LESSON_MATERIAL_UPDATED: "courses.lesson_content.material_updated",
   COURSES_LESSON_REORDERED: "courses.lesson.reordered",
   COURSES_TEACHING_ASSIGNED:
     "courses.teaching_assignment.assigned",
