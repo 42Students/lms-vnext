@@ -23,9 +23,9 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 1. WP-chat-6-01-academics-academic-set-public-login-session-s1 | IN-PROGRESS (closed on main: SA-academics-people-05/14/16/24/38/47, PUB-auth-public-06/19/67, COL-academic-setup-22; remaining S1 global company merge and other S2 features) | 23 gaps: S1 6, S2 17
 2. WP-chat-6-02-academics-people-recru-placements-s2 | TODO | 20 gaps: S2 20
 3. WP-chat-6-03-placements-public-login-session-s2 | IN-PROGRESS (PUB-auth-public-02/07/33 delivered; remaining S2/S3 including OTP refresh) | 17 gaps: S2 8, S3 9
-4. WP-chat-6-04-academics-academic-set-academics-people-recru-s3 | IN-PROGRESS (SA-academics-people-01/11 delivered; -21/-23 partially improved, other S3 pending) | 20 gaps: S3 20
+4. WP-chat-6-04-academics-academic-set-academics-people-recru-s3 | IN-PROGRESS (SA-academics-people-01/11/21/23 implemented; other S3 pending) | 20 gaps: S3 20
 5. WP-chat-6-05-placements-academics-people-recru-s3 | IN-PROGRESS (SA-academics-people-107 export action delivered; remaining roster/placements work) | 21 gaps: S3 16, S4 5
-6. WP-chat-6-06-public-links-marketing-academics-academic-set-s4 | IN-PROGRESS (PUB-auth-public-16/34 and SA-academics-people-40/42 delivered; SA-academics-people-10 partly delivered for Departments/Programs) | 15 gaps: S4 15
+6. WP-chat-6-06-public-links-marketing-academics-academic-set-s4 | IN-PROGRESS (PUB-auth-public-16/34 and SA-academics-people-10/40/42 implemented; other S4 pending) | 15 gaps: S4 15
 
 ## Moved in from chat-5
 
@@ -43,3 +43,16 @@ Direct-to-main commits have restored or enhanced: SA-academics-people-01, -11, -
 No tests, typecheck, lint or build run in FAST MODE. Existing S1 scoped Super Admin authorization was already on main; do not duplicate it or impersonate a College Admin membership.
 
 Additional S1/S2 audit review: SA-academics-people-R02 completed on main (period CLOSE/REOPEN now uses the persisted selected college via resolveActingCollege). SA-academics-people-58 remains open: Super Admin Video/Live Class/Resource authoring is still absent from the directory surface. SA-academics-people-59 remains open: the existing video storage grant requires a persisted ownerMembershipId and must not be bypassed using a fake college membership. SA-placements-projects-25 global company merge remains open.
+
+## Chat-6 continuation (2026-10-17, FAST MODE)
+
+- SA-academics-people-10: Departments now sort asc/desc and can choose page size; Programs retain 10/25/50/100 in localStorage; Semesters/Batches/Classes honor 10/25/50/100 on server; Lecture Halls had a page size already. Implemented, pending validation pass.
+- SA-academics-people-21: Batches now filter by persisted Program ID, including legacy Inactive as PLANNED/ARCHIVED, with working pagination. Implemented, pending validation pass.
+- SA-academics-people-23: Classes search matches class, program, batch, description and capacity; Program, batch-code and page-size filters; Description, student count and capacity columns. Description create/edit persistence added. Implemented, pending validation pass.
+- SA-academics-people-17: mapped courses show missing-faculty warning and tooltip listing uncovered classes. Implemented.
+- SA-academics-people-20/22: batch-to-class roster and class-to-section schedule links added. Partial: legacy direct move/schedule modals still absent from tabs.
+- SA-academics-people-58: selected-college lesson authoring for YouTube videos, live classes, and resources mounted on the Super Admin tabs using existing APIs. Partial: binary upload/replace/files and tab-specific full editing still need completion.
+- SA-academics-people-59: still open. Upload receipts currently require uploaderMembershipId; never fake a College Admin membership. Proposed user-actor ownership migration at docs/proposed-migrations/chat-6-sa-video-actor-ownership.sql must be registered with corresponding R2 attestation changes before a genuine Super Admin file-video upload can be enabled.
+- SA-placements-projects-25: scoped merge API, transactional company/jobs/recruiter grants/profiles remapping, confirmation UI and audit archive implemented. Partial: only company identities exclusively linked to the explicitly selected college can be merged; cross-college identity merging and domain aliases require a separate safely authorized global merge protocol.
+- PUB-auth-public-12: authenticated fetch session recovery installed for 401 and SESSION_EXPIRED/REVOKED 403; first-party fixed sessions have no silent refresh token.
+- No work package marked DONE: remaining WP gaps are not all closed, and FAST MODE defers execution validation.
