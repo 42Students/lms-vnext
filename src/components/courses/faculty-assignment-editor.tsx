@@ -90,7 +90,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
     {assignments.map(x=><option key={x.id} value={x.id}>{x.title} ({x.status})</option>)}
    </select>
   </label>
-  {existing?<p className="text-xs text-body">Current state: {existing.status}. Published assignments cannot be edited; archived assignments are read-only. A submitted assignment cannot be archived.</p>:null}
+  {existing?<p className="text-xs text-body">Current state: {existing.status}. Published assignments can be edited until the first learner submission; archived assignments are read-only. An assignment with submissions cannot be archived.</p>:null}
   {!existing?<label className="grid gap-1 text-sm">Lesson
    <select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}
     className="min-h-10 rounded border border-border p-2">
@@ -119,7 +119,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
    {!existing?<button type="button" disabled={pending||!lessonId||!confirmed}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>
    : <>
-    <button type="button" disabled={existing.status!=="DRAFT"||!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,confirmed)}
+    <button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,confirmed)}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
     <button type="button" disabled={pending||!confirmed||existing.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
