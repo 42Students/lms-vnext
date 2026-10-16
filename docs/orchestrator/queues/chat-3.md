@@ -48,6 +48,18 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 - WP-chat-3-02 remains IN-PROGRESS. WP-chat-3-03/04 and all reassigned chat-5 WPs still TODO. Do not mark DONE based on unexecuted source writes.
 - No checks/tests/typecheck/lint/build were run under FAST MODE.
 
+## 2026-10-17 College Admin pipeline / registered migration continuation
+
+- COL-placements-01: registered migration 0112 `placement_college_application_stages` and its history are now used by the College Admin pipeline GET/POST, source-of-truth stage transitions, rejected-stage reinstate, activity and in-app notices; rejects invalid/terminal fact-free OFFERED/HIRED transitions. The legacy email path remains unavailable until approved template and messaging wiring; do not mark full parity DONE.
+- COL-placements-04: per-drive College Admin interview GET/POST and UI now use the REAL migration 0116 `placement_round_candidate_slots` (book, reschedule, cancel; Completed/No Show are immutable activity decisions with optimistic slot versioning). Learner in-app notifications, audit and .ics download added. Removed the obsolete unregistered `placement_college_interviews` gate from active per-drive routes. Global interview calendar integration remains incomplete.
+- COL-placements-05/07: registered-stage filters, per-stage counts, email search, source, academic dimensions, full College/Email/Applied Date/Age columns and expanded CSV. No fictitious match score is shown.
+- COL-placements-06: explicit page selection OR validated all-matching filtered selection up to 3,000 applicants; server applies bounded, per-row stage transactions and reports each skipped result. Email channel remains disabled pending messaging support.
+- COL-placements-02: protected application details and append-only college-placement internal notes, application/screening/pipeline status timelines, assessment links and offer facts; private resume receipt and computed match score still missing pending approved integration.
+- COL-placements-08/13: College Admin can reopen a closed drive through a same-origin route with active season/employer validation, audited confirmation and no unsafe re-issue of withdrawn offers. Full drive edit/delete with impact preview is still pending.
+- COL-placements-20: booked candidate interview .ics download is available on per-drive interview listing. Wider interview filters/global parity remain open.
+- These are implementation/source outcomes only: FAST MODE explicitly skipped tests, typecheck, lint and build. Do NOT mark WP-chat-3-02 DONE; other gaps within the WP remain and some above are still partial.
+- Existing reassigned chat-5 WPs remain TODO and no changes were made to their ownership.
+
 ## WP-chat-3-02 source-implemented gap IDs (FAST MODE, unverified)
 
 - COL-people-08: Student Suspend/Reactivate and Faculty Suspend Faculty/Reactivate Faculty on role directories.
