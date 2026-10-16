@@ -178,7 +178,7 @@ export async function updateCollegeCohort(
         .where(and(eq(cohorts.id, cohortId), eq(cohorts.programId, reference.programId)))
         .for("update").limit(1);
       if (!current) throw new CollegeCohortMutationError("BATCH_NOT_FOUND");
-      if (current.status !== "PLANNED") {
+      if (current.status === "ARCHIVED") {
         throw new CollegeCohortMutationError("BATCH_NOT_EDITABLE");
       }
       // A planned cohort may be edited only before any child/history exists.
@@ -193,7 +193,10 @@ export async function updateCollegeCohort(
         tx.select({ id: cohortProgressionEvents.id }).from(cohortProgressionEvents)
           .where(eq(cohortProgressionEvents.cohortId, cohortId)).limit(1),
       ]);
-      if (section || enrollment || offering || history) {
+      // Labels may be corrected while a batch is in use. Changing a recorded
+      // end period still requires an untouched batch to preserve academic history.
+      if ((section || enrollment || offering || history) &&
+          input.expectedEndPeriodId !== current.expectedEndPeriodId) {
         throw new CollegeCohortMutationError("BATCH_HAS_DEPENDENCIES");
       }
       const start = await periodInCollege(tx, current.startPeriodId, member.collegeId);
@@ -209,7 +212,7 @@ export async function updateCollegeCohort(
         expectedEndPeriodId: input.expectedEndPeriodId,
         updatedAt: new Date(),
       }).where(and(eq(cohorts.id, cohortId), eq(cohorts.programId, current.programId),
-        eq(cohorts.status, "PLANNED"))).returning();
+        eq(cohorts.status, current.status))).returning();
       if (!updated) throw new CollegeCohortMutationError("BATCH_NOT_FOUND");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_BATCH_UPDATED,
