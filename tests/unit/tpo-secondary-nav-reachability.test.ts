@@ -13,7 +13,7 @@ describe("TPO exact sidebar groups and secondary route reachability", () => {
   expect(Object.values(TPO_SECTION_LABELS)).toEqual([
     "Operate", "Coordinate", "Insights", "Administration",
   ]);
-  const links = getShellNavigation(ctx);
+  const links = getShellNavigation(ctx, null, true);
   expect(links.map(x => x.group)).toEqual([
     ...Array(5).fill("operate"),...Array(5).fill("coordinate"),
     "insights",...Array(4).fill("administration"),
@@ -22,12 +22,13 @@ describe("TPO exact sidebar groups and secondary route reachability", () => {
     expect(links.some(x => x.label === absent)).toBe(false);
   }
  });
- it("preserves companies as an Engage tab and More as a Settings tab", () => {
+ it("preserves companies as an Engage tab and keeps the ten legacy Settings sections", () => {
   expect(TPO_MORE_GROUPS.flatMap(group => [...group.links] as { label: string; href: string }[]).some(item =>
     item.label === "Companies" && item.href === "/tpo/recruiters?view=companies",
   )).toBe(true);
+  // chat-9 restored the ten legacy Settings sections, which have no "More" tab.
   expect(TPO_SETTINGS_NAV_GROUPS.flatMap(group=>[...group.items] as { label: string; href: string }[]).some(item =>
-    item.label === "More" && item.href === "/tpo/more",
-  )).toBe(true);
+    item.label === "More",
+  )).toBe(false);
  });
 });

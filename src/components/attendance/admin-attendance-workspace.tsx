@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
+
 import {
   adminAttendanceCellState,
   adminAttendancePercent,
@@ -228,18 +228,6 @@ export function AdminAttendanceWorkspace({
     ) {
       return;
     }
-    const state = facultyAttendanceMarkingWindow({
-      startsAt: new Date(target.session.startsAt),
-      endsAt: new Date(target.session.endsAt),
-      correctionWindowHours: data.policy.correctionWindowHours,
-      now: new Date(),
-    });
-    if (state !== "OPEN") {
-      setError(state === "NOT_STARTED"
-        ? "The session has not started."
-        : "The correction window has expired.");
-      return;
-    }
     if (!window.confirm(
       "Mark " + learnerName(target.learner) + " " + status.toLowerCase() +
       " for " + target.session.title + "? This change is recorded."
@@ -346,7 +334,7 @@ export function AdminAttendanceWorkspace({
             {data.policy.correctionWindowHours} hours
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Read-only policy. Corrections are allowed from session start until this many hours after session end.
+            Read-only Faculty marking window. College Admin corrections may also be made outside this window.
           </p>
         </div>
         <div className="rounded-xl border border-border bg-surface p-4">
@@ -597,7 +585,7 @@ export function AdminAttendanceWorkspace({
           </section>
 
           <p className="text-xs leading-5 text-muted-foreground">
-            P = Present · A = Absent · E = Excused · M = Medical · L = Late · — = not marked · S = future. Multiple sessions on a day open a session chooser. Only corrections inside the policy window are accepted.
+            P = Present · A = Absent · E = Excused · M = Medical · L = Late · — = not marked · S = future. Multiple sessions on a day open a session chooser. College Admin may correct sessions after the Faculty window closes.
           </p>
         </>
       )}
@@ -646,12 +634,7 @@ export function AdminAttendanceWorkspace({
                         ? "danger"
                         : "secondary"
                   }
-                  disabled={correcting || facultyAttendanceMarkingWindow({
-                    startsAt: new Date(target.session.startsAt),
-                    endsAt: new Date(target.session.endsAt),
-                    correctionWindowHours: data.policy.correctionWindowHours,
-                    now: new Date(),
-                  }) !== "OPEN"}
+                  disabled={correcting}
                   onClick={() =>
                     void correct(status)
                   }
@@ -684,8 +667,7 @@ export function AdminAttendanceWorkspace({
               </p>
             </div>
             <p className="text-xs text-muted-foreground">
-              Corrections are accepted from session start through {data.policy.correctionWindowHours}
-              {" "}hours after session end. Present corrections remove the absence exception.
+              The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception.
             </p>
             {target.record?.note ? (
               <p className="text-sm text-body">Note: {target.record.note}</p>
