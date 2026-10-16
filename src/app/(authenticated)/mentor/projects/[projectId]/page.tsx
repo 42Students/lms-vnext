@@ -7,7 +7,6 @@ import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import {MentorTaskAllocation} from "@/components/projects/mentor-task-allocation";
 import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
 import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
-import {projectBacklogSchemaReady} from "@/modules/projects/mentor-backlog-service";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -112,7 +111,7 @@ export default async function MentorProjectPage({
       </div> : null}
       {tab==="board"?<div className="space-y-5">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
-          sprints={workspace.sprints} ready={projectBacklogSchemaReady()}
+          sprints={workspace.sprints} ready={true}
           readOnly={access.access==="OBSERVER"}/>
         <MentorLaneBoard projectId={projectId}
           initialTasks={workspace.tasks} sprints={workspace.sprints} releases={workspace.releases}
