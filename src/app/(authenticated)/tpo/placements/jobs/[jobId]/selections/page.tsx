@@ -1,0 +1,33 @@
+import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {TpoDriveSelectionManager} from "@/components/placements/tpo-drive-selection-manager";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {PlacementsServiceError} from "@/modules/placements/errors";
+import {getTpoSelectionWorkspace} from "@/modules/placements/tpo-drive-selection-service";
+
+export const dynamic="force-dynamic";
+export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:string}>}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const {jobId}=await params;
+ let data:Awaited<ReturnType<typeof getTpoSelectionWorkspace>>;
+ try{data=await getTpoSelectionWorkspace(context,jobId);}
+ catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e;}
+ const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
+ return <div className="space-y-5">
+  <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Selections"}
+   description="Record the company's selections, verify placement rules, and release the offers."/>
+  <div className="flex flex-wrap gap-4 text-sm font-semibold">
+   <Link className="text-primary-text underline" href={root+"/rounds"}>Review completed rounds</Link>
+   <Link className="text-primary-text underline" href={root+"/offers"}>Open offer register</Link>
+  </div>
+  {!data.storageReady?<div role="status" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">
+    <strong>Selections are not available yet.</strong> {data.pendingMessage}
+    No selections can be recorded or released until the migration is registered.
+  </div>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded border border-border p-5 text-sm">
+    Selections can be recorded and released only on a published drive.
+  </p>:<TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections}/>}
+ </div>;
+}
