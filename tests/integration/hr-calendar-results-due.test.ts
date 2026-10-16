@@ -1,6 +1,7 @@
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection} from "@/db/client";
+import {closeDatabaseConnection,getDb} from "@/db/client";
+import {hrInterviewSlots} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {createPlacementRound,actOnPlacementRound} from "@/modules/placements/round-service";
@@ -25,6 +26,13 @@ describe.skipIf(!enabled)("HR results due calendar PostgreSQL",()=>{
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-20T08:00:00Z"),
    resultsDueAt:new Date("2026-10-22T08:00:00Z"),timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet"});
   await publishPlacementJob(tpo,job.id);
+  const [slot]=await getDb().insert(hrInterviewSlots).values({
+    collegeId:SEED_IDS.collegeA,jobId:job.id,roundId:round.id,
+    startAt:new Date("2026-10-21T09:00:00Z"),endAt:new Date("2026-10-21T09:30:00Z"),
+    timezone:"Asia/Kolkata",mode:"VIRTUAL",capacity:3,
+    status:"PROPOSED",createdByUserId:tpo.user.id,
+  }).returning({id:hrInterviewSlots.id});
+  expect(slot).toBeDefined();
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
     user:{id:uid,identityUid:"hr-due-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
@@ -33,11 +41,13 @@ describe.skipIf(!enabled)("HR results due calendar PostgreSQL",()=>{
   const query={from:"2026-10-21",to:"2026-10-23"};
   const own=await listRecruiterCalendarEvents(hr(a.company.id,a.relationship.id,SEED_IDS.collegeA),query);
   expect(own.resultsDue.some(item=>item.id===round.id)).toBe(true);
+  expect(own.events.some(item=>item.id==="slot:"+slot!.id && item.kind==="INTERVIEW_SLOT")).toBe(true);
   expect(combineHrCalendarDays(own.days, own.resultsDue).some(day=>day.resultsDue.some(item=>item.id===round.id))).toBe(true);
   expect(selectHrMobileCalendarDays(combineHrCalendarDays(own.days, own.resultsDue),
     ["2026-10-22"]).some(day=>day.resultsDue.some(item=>item.id===round.id))).toBe(true);
   const foreign=await listRecruiterCalendarEvents(hr(b.company.id,b.relationship.id,SEED_IDS.collegeA),query);
   expect(foreign.resultsDue.some(item=>item.id===round.id)).toBe(false);
+  expect(foreign.events.some(item=>item.id==="slot:"+slot!.id)).toBe(false);
   const otherCollege=await listRecruiterCalendarEvents(hr(a.company.id,a.relationship.id,SEED_IDS.collegeB),query);
   expect(otherCollege.resultsDue.some(item=>item.id===round.id)).toBe(false);
   await expect(listRecruiterCalendarEvents(tpo,query)).rejects.toBeDefined();

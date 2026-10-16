@@ -8,6 +8,7 @@ import {
   buildRecruiterCalendarEvents,
   type RecruiterCalendarJob,
   type RecruiterCalendarRound,
+  type RecruiterCalendarSlot,
 } from "@/modules/placements/recruiter-calendar-model";
 import {
   groupPlacementCalendarEvents,
@@ -51,16 +52,30 @@ const round: RecruiterCalendarRound = {
 function project(
   jobs: readonly RecruiterCalendarJob[],
   rounds: readonly RecruiterCalendarRound[],
+  slots: readonly RecruiterCalendarSlot[] = [],
 ) {
   return buildRecruiterCalendarEvents({
     jobs,
     rounds,
+    slots,
     startsAt,
     endsBefore,
   });
 }
 
 describe("recruiter calendar projection", () => {
+  it("REC-calendar-messages-profile-01 includes only authorized persisted slots",()=>{
+    const base:RecruiterCalendarSlot={id:"slot-1",jobId:job.id,roundId:round.id,
+      startAt:new Date("2026-10-15T08:00:00Z"),status:"PROPOSED",timezone:"Asia/Kolkata",meetingLocation:"Campus Hall"};
+    const result=project([{...job,applicationDeadline:null}],[],[
+      base,{...base,id:"foreign",jobId:"foreign-job"},
+      {...base,id:"cancelled",status:"CANCELLED"},
+      {...base,id:"outside",startAt:endsBefore},
+    ]);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({id:"slot:slot-1",kind:"INTERVIEW_SLOT",title:"Interview slot",
+      jobId:job.id,roundId:round.id,status:"PROPOSED",venue:"Campus Hall"});
+  });
   it("builds authorized rounds and deadlines in chronological order", () => {
     const events = project([job], [round]);
 
