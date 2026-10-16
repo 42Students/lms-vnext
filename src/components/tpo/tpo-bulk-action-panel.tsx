@@ -210,7 +210,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   </button>
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
-  {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
+  {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
     busy={busy||outcomes.length>0} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
