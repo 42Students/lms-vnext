@@ -11,6 +11,8 @@ import {ProjectsServiceError} from "./errors";
 import {projectSubmissionIdSchema} from "./validation";
 import {mentorFinalDeliveryCanReview,mentorFinalDeliveryDecisionSchema} from "./mentor-final-delivery-decision-model";
 import {projectDeliveryActivity} from "./delivery-activity-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
+import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
 
 export async function decideMentorFinalDelivery(context:RequestContext,projectId:string,
  submissionIdInput:string,raw:unknown){
@@ -49,7 +51,7 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
    feedback:input.feedback??null,reviewedByUserId:context.user.id,
    reviewedByMembershipId:membership.id,
   }).returning();
-  await recordActivityEventInTransaction(tx,context,{
+  const reviewedEvent = await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REVIEWED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project_submission",subjectId:submission.id,
@@ -57,6 +59,12 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
    metadata:{projectId:scope.project.id,version:submission.version,decision:input.decision,
     reviewId:review!.id},
    groupKey:"project:"+scope.project.id+":final-review",
+  });
+  // LEARNER-projects-R01: project reviews reach active learners through the same transaction.
+  const notice=learnerProjectDeliveryReviewNotice(scope.project.id,input.decision);
+  await notifyActiveProjectMembers(tx,reviewedEvent.id,{
+    projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
+    exceptUserId:context.user.id,title:notice.title,body:notice.body,actionHref:notice.actionHref,
   });
   if(input.decision==="APPROVED"){
    // MEN-projects-meetings-R01: reopening an accepted delivery requires a
