@@ -1,3 +1,4 @@
+import { recruiterAccessMonthsOrDefault } from "@/modules/placements/recruiter-access-defaults";
 import "server-only";
 
 import { createHash } from "node:crypto";
@@ -10,7 +11,7 @@ import {
   placementPublicJoinChallenges, placementRecruiterProfiles,
   placementRecruiterCollegeGrants, placementTpoCollegeSettings, users,
 } from "@/db/schema";
-import { workEmailDomain } from "../public-college-join-model";
+import { registrableWorkDomain,matchesCompanyDomain } from "./domain-model";
 import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
 import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
@@ -21,7 +22,9 @@ import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruite
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinAcceptError extends Error {
   constructor(readonly code: "INVALID" | "REMOVED" | "NOT_CONFIGURED" |
-    "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY") {
+    "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY" | "WRONG_CODE" |
+    "CODE_EXPIRED" | "CODE_LOCKED" | "CODE_REQUIRED" |
+    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "ACCOUNT_UNAVAILABLE" | "PHONE_STORAGE_NOT_READY") {
     super("PUBLIC_JOIN_" + code);
     this.name = "PublicJoinAcceptError";
   }
@@ -33,7 +36,7 @@ export class PublicJoinAcceptError extends Error {
  */
 export async function acceptPublicRecruiterJoin(
   scope: Scope, raw: unknown, verifiedClientIp: string | null,
-): Promise<{ joined: true; outcome: "JOINED" | "ALREADY_JOINED" }> {
+): Promise<{ joined: true; outcome: "JOINED" | "ALREADY_JOINED";signInEmail:string }> {
   const input = publicJoinAcceptSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinAcceptError("INVALID");
   const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
@@ -46,7 +49,13 @@ export async function acceptPublicRecruiterJoin(
     select to_regclass('public.placement_public_join_rate_events') is not null as ready
   `);
   if (ready.rows[0]?.ready !== true) throw new PublicJoinAcceptError("NETWORK_GUARD_NOT_READY");
-  const { token, code, email, name, companyName, designation } = input.data;
+  const { token, code, email, name, companyName, designation,phone } = input.data;
+  if(phone){
+    const contactReady=await getDb().execute<{ready:boolean}>(sql`
+      select to_regclass('public.placement_recruiter_public_contacts') is not null as ready
+    `);
+    if(contactReady.rows[0]?.ready!==true)throw new PublicJoinAcceptError("PHONE_STORAGE_NOT_READY");
+  }
   const tokenHash = createHash("sha256").update(token).digest("hex");
   const decision = await getDb().transaction(async tx => {
     const now = new Date();
@@ -61,13 +70,15 @@ export async function acceptPublicRecruiterJoin(
       .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
       .where(and(eq(placementPublicJoinLinks.tokenHash, tokenHash),
         eq(placementPublicJoinLinks.scope, scope),
+        eq(placementPublicJoinLinks.enabled,true),
         isNull(placementPublicJoinLinks.revokedAt),
         gt(placementPublicJoinLinks.expiresAt, now),
         eq(colleges.status, "ACTIVE"), eq(organizations.status, "ACTIVE")))
       .for("update").limit(1);
     if (!link) return "DENIED";
-    const emailDomain = workEmailDomain(email);
-    if (!emailDomain || (scope === "COMPANY" && emailDomain !== link.companyDomain)) return "DENIED";
+    const emailDomain = registrableWorkDomain(email);
+    if(!emailDomain)return "OTHER_COMPANY_EMAIL";
+    if(scope==="COMPANY"&&!matchesCompanyDomain(email,link.companyDomain??""))return "OTHER_COMPANY_EMAIL";
     const hourAgo = new Date(now.getTime() - 60 * 60_000);
     const counts = await tx.execute<{ n: number }>(sql`
       select count(*)::integer as n from placement_public_join_rate_events
@@ -85,21 +96,22 @@ export async function acceptPublicRecruiterJoin(
       .orderBy(desc(placementPublicJoinChallenges.createdAt),
         desc(placementPublicJoinChallenges.id))
       .for("update").limit(1);
-    if (!challenge || challenge.verifiedAt ||
-        challenge.expiresAt.getTime() <= now.getTime() ||
-        challenge.attempts >= PUBLIC_JOIN_MAX_FAILURES) return "DENIED";
+    if(!challenge || challenge.verifiedAt)return "CODE_REQUIRED";
+    if(challenge.expiresAt.getTime()<=now.getTime())return "CODE_EXPIRED";
+    if(challenge.attempts>=PUBLIC_JOIN_MAX_FAILURES)return "CODE_LOCKED";
     if (!matchesPublicJoinCode(challenge.codeHash, link.id, email, code, secret)) {
       await tx.update(placementPublicJoinChallenges)
         .set({ attempts: challenge.attempts + 1 })
         .where(eq(placementPublicJoinChallenges.id, challenge.id));
-      return "DENIED";
+      return challenge.attempts+1>=PUBLIC_JOIN_MAX_FAILURES?"CODE_LOCKED":"WRONG_CODE";
     }
     const [settings] = await tx.select({
       months: placementTpoCollegeSettings.recruiterAccessMonths,
     }).from(placementTpoCollegeSettings)
       .where(eq(placementTpoCollegeSettings.collegeId, link.collegeId))
       .for("share").limit(1);
-    if (!settings || settings.months < 1 || settings.months > 60) return "NOT_CONFIGURED";
+    const accessMonths = recruiterAccessMonthsOrDefault(settings?.months);
+    if (accessMonths < 1 || accessMonths > 60) return "NOT_CONFIGURED";
     // Reuse a real user for this verified work email. Never relabel an existing identity.
     await tx.insert(users).values({
       identityUid: "public-recruiter-email:" + createHash("sha256").update(email).digest("hex"),
@@ -107,7 +119,7 @@ export async function acceptPublicRecruiterJoin(
     }).onConflictDoNothing();
     const [user] = await tx.select().from(users)
       .where(sql`lower(${users.email}) = ${email}`).for("update").limit(1);
-    if (!user || user.platformStatus !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
+    if (!user || user.platformStatus !== "ACTIVE") throw new PublicJoinAcceptError("ACCOUNT_UNAVAILABLE");
     let companyId = link.companyId;
     if (companyId) {
       const [company] = await tx.select({ id: placementCompanies.id })
@@ -127,7 +139,7 @@ export async function acceptPublicRecruiterJoin(
         if (companyName.trim().length < 2) throw new PublicJoinAcceptError("INVALID");
         const [sameName] = await tx.select({ id: placementCompanies.id }).from(placementCompanies)
           .where(sql`lower(${placementCompanies.name}) = lower(${companyName})`).limit(1);
-        if (sameName) throw new PublicJoinAcceptError("INVALID");
+        if (sameName) throw new PublicJoinAcceptError("COMPANY_EXISTS");
         const [created] = await tx.insert(placementCompanies).values({
           name: companyName, primaryDomain: emailDomain, createdByUserId: user.id,
         }).returning({ id: placementCompanies.id });
@@ -149,6 +161,12 @@ export async function acceptPublicRecruiterJoin(
     const [profile] = await tx.select().from(placementRecruiterProfiles)
       .where(eq(placementRecruiterProfiles.userId, user.id)).for("update").limit(1);
     if (!profile || profile.companyId !== companyId || profile.status !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
+    if(phone)await tx.execute(sql`
+      insert into placement_recruiter_public_contacts(recruiter_user_id,phone_digits)
+      values (${user.id}::uuid,${phone}::varchar)
+      on conflict (recruiter_user_id)
+      do update set phone_digits=excluded.phone_digits,updated_at=now()
+    `);
     const [grant] = await tx.select().from(placementRecruiterCollegeGrants)
       .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId, user.id),
         eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.id)))
@@ -164,7 +182,7 @@ export async function acceptPublicRecruiterJoin(
         recruiterUserId: user.id,
         companyRelationshipId: relationship.id,
         grantedByUserId: user.id,
-        validUntil: recruiterGrantValidUntil(now, settings.months),
+        validUntil: recruiterGrantValidUntil(now, accessMonths),
         capabilities: ["DRIVES"], verificationStatus: "VERIFIED",
       });
       const [event] = await tx.insert(activityEvents).values({
@@ -196,16 +214,22 @@ export async function acceptPublicRecruiterJoin(
         })),
       ).onConflictDoNothing();
     }
+    if(outcome==="JOINED")await tx.update(placementPublicJoinLinks)
+      .set({joinsCount:sql`${placementPublicJoinLinks.joinsCount} + 1`})
+      .where(eq(placementPublicJoinLinks.id,link.id));
     await tx.update(placementPublicJoinChallenges)
       .set({ verifiedAt: now })
       .where(and(eq(placementPublicJoinChallenges.id, challenge.id),
         isNull(placementPublicJoinChallenges.verifiedAt)));
     return outcome;
   });
-  if (decision === "RATE_LIMITED") throw new PublicJoinAcceptError("RATE_LIMITED");
+  for(const code of ["RATE_LIMITED","WRONG_CODE","CODE_EXPIRED","CODE_LOCKED",
+    "CODE_REQUIRED","OTHER_COMPANY_EMAIL"] as const){
+    if(decision===code)throw new PublicJoinAcceptError(code);
+  }
   if (decision === "NOT_CONFIGURED") throw new PublicJoinAcceptError("NOT_CONFIGURED");
   if (decision !== "JOINED" && decision !== "ALREADY_JOINED") {
     throw new PublicJoinAcceptError("INVALID");
   }
-  return { joined: true, outcome: decision };
+  return { joined: true, outcome: decision, signInEmail:input.data.email };
 }

@@ -31,6 +31,7 @@ type TimelineItem = {
 };
 type CompanyMemory = {
   key: string;
+  canonicalCompanyId: string | null;
   name: string;
   alsoTypedAs: string[];
   people: Person[];
@@ -166,6 +167,10 @@ export function TpoCompanyMemoryWorkspace({
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
+          {company.canonicalCompanyId?<Link className={buttonStyle}
+            href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
+            Company link and trusted settings
+          </Link>:null}
           <Link className={buttonStyle} href={"/tpo/recruiters?add=1&company=" + encodeURIComponent(company.name)}>
             Add contact
           </Link>

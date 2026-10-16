@@ -21,7 +21,7 @@ export async function getPublicJoinPreview(token:string,scope:"COLLEGE"|"COMPANY
   .innerJoin(colleges,eq(colleges.id,publicJoinLinks.collegeId))
   .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
   .where(and(eq(publicJoinLinks.tokenHash,digest),eq(publicJoinLinks.scope,scope),
-    isNull(publicJoinLinks.revokedAt),gt(publicJoinLinks.expiresAt,now),
+    isNull(publicJoinLinks.revokedAt),eq(publicJoinLinks.enabled,true),gt(publicJoinLinks.expiresAt,now),
     eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"))).limit(1);
  return publicJoinPreviewForDisplay({
   token,expectedScope:scope,persistedScope:row?.scope==="COLLEGE"||row?.scope==="COMPANY"?row.scope:null,

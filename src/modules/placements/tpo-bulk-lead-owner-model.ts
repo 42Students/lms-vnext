@@ -39,10 +39,6 @@ export function decideTpoLeadOwnerChange(
     status: "ineligible",
     reason: "Lead is unavailable in this college",
   };
-  if (current.recruiterUserId || current.unsubscribedAt) return {
-    status: "ineligible",
-    reason: "Joined or unsubscribed lead is protected",
-  };
   if (current.ownerMembershipId !== selection.expectedOwnerMembershipId) return {
     status: "ineligible",
     reason: "Owner changed; review the lead again",
