@@ -8,7 +8,7 @@ import { learnerRoadmapDialogKey } from "@/modules/courses/learner-roadmap-dialo
 import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
 import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
 import { learnerSafeExternalContentHref } from "@/modules/courses/learner-external-content-link-model";
-import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
+import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -478,6 +478,7 @@ function AssignmentCard({
       {!readOnly && !submissionClosed && interaction.canSubmit ? (
         <AssignmentSubmissionControl
           fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
+          multipartEnabled={multipartAssignmentRuntimeEnabled()}
           assignmentId={assignment.id}
           deliveryId={deliveryId}
         />
