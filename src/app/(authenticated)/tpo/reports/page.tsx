@@ -180,6 +180,26 @@ export default async function TpoReportsPage({
       <ReportFilters workspace={workspace} path="/tpo/reports" />
       <ReportMetrics metrics={workspace.report.metrics} />
       <ReportScopeNote note={workspace.registrationScopeNote} />
+      <nav aria-label="Placement journey" className="space-y-2 rounded-xl border border-border bg-surface p-5">
+       <h2 className="font-semibold">Placement journey</h2>
+       <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
+       <div className="grid gap-3 sm:grid-cols-3">
+        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="rounded-md border border-border p-3">
+         <strong className="block">Looking for a job</strong>
+         <span className="text-sm">{workspace.report.metrics.registered} registered · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)} not placed</span>
+        </Link>
+        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="rounded-md border border-border p-3">
+         <strong className="block">Placed</strong>
+         <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college's placement rule</span>
+        </Link>
+        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="rounded-md border border-border p-3">
+         <strong className="block">Accepted</strong>
+         <span className="text-sm">{workspace.report.metrics.acceptedOffers} accepted offers · {Math.max(0,workspace.report.metrics.offers-workspace.report.metrics.acceptedOffers)} not yet accepted</span>
+        </Link>
+       </div>
+       <p className="text-xs text-muted-foreground">These are different populations: registered learners, placement-rule students, and offer records. Do not interpret their counts as a single conversion funnel.</p>
+      </nav>
+
 
       {workspace.noSeason ? (
         <EmptyState
