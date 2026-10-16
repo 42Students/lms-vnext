@@ -108,11 +108,11 @@ afterEach(async () => {
   }
   if (f.cohorts.length) {
     await pool.query(
-      "DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE event_type='BATCH_INVITED' AND subject_id = ANY($1::text[]))",
+      "DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE event_type IN ('BATCH_INVITED','BATCH_REGISTRATION_REOPENED') AND subject_id = ANY($1::text[]))",
       [f.cohorts],
     );
     await pool.query(
-      "DELETE FROM activity_events WHERE event_type='BATCH_INVITED' AND subject_id = ANY($1::text[])",
+      "DELETE FROM activity_events WHERE event_type IN ('BATCH_INVITED','BATCH_REGISTRATION_REOPENED') AND subject_id = ANY($1::text[])",
       [f.cohorts],
     );
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='COHORT' AND scope_id = ANY($1::uuid[])", [f.cohorts]);
@@ -287,6 +287,38 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     );
     expect(delivered.rows).toHaveLength(1);
     expect(delivered.rows[0].title).toBe("Placement registration is open");
+  });
+
+  it("tells unregistered eligible students when reopening an expired invitation", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const learner = await makeLearner(SEED_IDS.collegeA, a);
+    await decidePlacementParticipation(admin, {
+      collegeId: SEED_IDS.collegeA,
+      changes: [{ scopeType: "MEMBERSHIP", scopeId: learner, status: "ELIGIBLE" }],
+    });
+    const future = new Date(Date.now() + 86400000 * 2);
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: future, rulesOverride: null,
+    });
+    await markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+    });
+    await pool.query(
+      "UPDATE placement_batch_lifecycles SET registration_deadline=now()-interval '1 day' WHERE cohort_id=$1",
+      [a.cohortId],
+    );
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: future, rulesOverride: null,
+    });
+    const event = await pool.query(
+      "SELECT a.metadata,count(n.id)::int AS deliveries FROM activity_events a LEFT JOIN in_app_notifications n ON n.event_id=a.id WHERE a.event_type='BATCH_REGISTRATION_REOPENED' AND a.subject_id=$1 GROUP BY a.id",
+      [a.cohortId],
+    );
+    expect(event.rows).toHaveLength(1);
+    expect(event.rows[0].metadata.appRecipients).toBe(1);
+    expect(event.rows[0].deliveries).toBe(1);
   });
 
   it("enforces optimistic deadline changes, preserves rules, and can clear the deadline", async () => {

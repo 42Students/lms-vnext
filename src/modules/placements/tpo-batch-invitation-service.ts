@@ -66,7 +66,7 @@ export async function saveTpoBatchRegistrationDeadline(
   return {
     deadline: saved.registrationDeadline?.toISOString() ?? null,
     invitedAt: saved.invitedAt?.toISOString() ?? null,
-    delivery: "NOT_SENT" as const,
+    delivery: "APP_ON_REOPEN_EMAIL_NOT_SENT" as const,
     version: saved.updatedAt.toISOString(),
   };
 }

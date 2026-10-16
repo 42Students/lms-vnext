@@ -27,7 +27,7 @@ export function registrationDeadlineAtEndOfDay(value: string, now: Date): Date {
   const date = new Date(value + "T23:59:59.999+05:30");
   if (Number.isNaN(date.valueOf()) || date.toISOString().slice(0, 10) !== value)
     throw new TpoBatchInvitationError("DEADLINE_REQUIRED");
-  if (date <= now) throw new TpoBatchInvitationError("DEADLINE_PASSED");
+  if (date.getTime() <= now.getTime()) throw new TpoBatchInvitationError("DEADLINE_PASSED");
   return date;
 }
 

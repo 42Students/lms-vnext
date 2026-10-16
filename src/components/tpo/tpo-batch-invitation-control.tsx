@@ -67,7 +67,9 @@ export function TpoBatchInvitationControl(props: Props) {
       if (!response.ok)
         throw new Error(response.status === 409 ? "Batch changed. Refresh before saving." :
           errors[body.error ?? ""] ?? "Could not save the deadline.");
-      setMessage("Registration deadline saved. No messages were sent to students.");
+      setMessage(props.deadlinePassed && !clear
+        ? "Deadline moved. Eligible students who have not registered were told in the app."
+        : "Deadline saved.");
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save the deadline.");
@@ -85,7 +87,7 @@ export function TpoBatchInvitationControl(props: Props) {
         <button type="button" disabled={busy || !date}
           onClick={() => void saveDeadline(false)}
           className="min-h-11 rounded border border-border px-4 disabled:opacity-50">
-          {busy ? "Saving…" : TPO_INVITATION_COPY.move}
+          {busy ? "Saving…" : deadlinePassed ? TPO_INVITATION_COPY.reopenAndTell : TPO_INVITATION_COPY.move}
         </button>
         <button type="button" disabled={busy || !props.deadline}
           onClick={() => void saveDeadline(true)}
@@ -94,7 +96,7 @@ export function TpoBatchInvitationControl(props: Props) {
         </button>
       </div>
       {deadlinePassed ? <p className="text-sm text-muted-foreground">
-        Move the deadline to reopen it. Telling students again requires a separate reminder.
+        Move the deadline to reopen registration and tell eligible students in the app.
       </p> : null}
       {message ? <p role="status" className="text-sm">{message}</p> : null}
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
