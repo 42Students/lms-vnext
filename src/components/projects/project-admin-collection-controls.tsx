@@ -2,6 +2,7 @@ import Link from "next/link";
 
 export type ProjectAdminCollectionQuery = {
   fromMentorId?: string;
+  riskBucket?: "STALLED" | "BLOCKER" | "REVIEW";
   q?: string;
   status?:
     | "PLANNED"
@@ -81,6 +82,7 @@ export function ProjectAdminFilters({
         </select>
       </label>
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
+      {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {includeSubmissionStatus ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Submission status
@@ -149,6 +151,7 @@ export function ProjectAdminPagination({
     const params = new URLSearchParams();
     if (query.q) params.set("q", query.q);
     if (query.fromMentorId) params.set("fromMentorId", query.fromMentorId);
+    if (query.riskBucket) params.set("riskBucket", query.riskBucket);
     if (query.status) {
       params.set("status", query.status);
     }
