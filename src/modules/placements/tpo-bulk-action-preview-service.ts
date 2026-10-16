@@ -10,8 +10,9 @@ import { tpoBulkPreviewRequestSchema, selectedBulkActionRows,
 import { signTpoBulkPreview } from "./tpo-bulk-preview-token";
 import { getAuthConfig } from "@/modules/auth/config";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import {listTpoApplicantNotes} from "./applicant-notes-service";
+
 import {tpoBulkApplicationReady,tpoBulkStudentReady,tpoBulkStudentVersion} from "./tpo-bulk-decision-model";
+import {listTpoApplicantNotes} from "./applicant-notes-service";
 import {listTpoApplicantNotes} from "./applicant-notes-service";
 
 export type TpoBulkCurrent={version:string;ready:boolean};
