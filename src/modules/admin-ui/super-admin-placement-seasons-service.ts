@@ -23,11 +23,11 @@ export async function listSuperAdminPlacementSeasons(context:RequestContext,raw:
  const [totals,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.startDate),asc(source.name),asc(source.id))
-  .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+  .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=totals[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(r=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(r=>({
   id:r.id,title:r.name,subtitle:"Placement season "+r.code,status:r.status,
   details:["From: "+r.startDate,"To: "+r.endDate,"Closed: "+(r.closedAt?fmt.format(r.closedAt)+" IST":"Not closed")],
   href:`/admin/placements/seasons/${encodeURIComponent(r.id)}`,
