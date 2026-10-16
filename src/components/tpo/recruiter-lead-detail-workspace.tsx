@@ -81,6 +81,7 @@ export function RecruiterLeadDetailWorkspace({
   const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
+  const [actionToast,setActionToast]=useState("");
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
   const [edit, setEdit] = useState<EditValues>({
@@ -143,6 +144,7 @@ export function RecruiterLeadDetailWorkspace({
   async function mutate(url: string, method: "PATCH" | "POST", body: unknown) {
     setSaving(true);
     setActionError("");
+    setActionToast("");
     try {
       await readResponse(await fetch(url, {
         method, credentials: "same-origin",
@@ -150,6 +152,7 @@ export function RecruiterLeadDetailWorkspace({
         body: JSON.stringify(body),
       }));
       await load();
+      setActionToast(url.endsWith("/not-now")?"Not now":url.endsWith("/activity")?"Activity saved":url.endsWith("/follow-ups")?"Follow-up added":"Saved");
       return true;
     } catch (cause) {
       setActionError(cause instanceof Error ? cause.message : "Save failed.");
@@ -305,6 +308,7 @@ export function RecruiterLeadDetailWorkspace({
               {lead.notNowUntil ? " Revisit on " + lead.notNowUntil : ""}
             </div>
           ) : null}
+          {actionToast?<p role="status" className="rounded-md border border-border p-3 text-sm">{actionToast}</p>:null}
           {actionError ? <p role="alert" className="rounded-md border border-border p-3 text-sm text-destructive">{actionError}</p> : null}
 
           <div className="grid gap-5 lg:grid-cols-2">

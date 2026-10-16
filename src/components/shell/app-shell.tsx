@@ -18,6 +18,7 @@ import { MobileNavigation } from "./mobile-navigation";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
 import { ToastProvider } from "@/components/ui/toast";
 import { getLearnerShellAccess } from "@/modules/module-access/learner-shell-access";
+import {getTpoShellVerificationAccess} from "@/modules/verification/tpo-shell-access-service";
 import {
   getShellNavigation,
   getShellRoleLabel,
@@ -44,10 +45,9 @@ export async function AppShell({
   const learnerAccess = learner
     ? await getLearnerShellAccess(context)
     : null;
-  const navigation = getShellNavigation(
-    context,
-    learnerAccess,
-  );
+  const tpoVerificationEnabled=hasMembershipRole(context,"TPO")
+    ?await getTpoShellVerificationAccess(context):false;
+  const navigation=getShellNavigation(context,learnerAccess,tpoVerificationEnabled);
   const currentMembership = context.membership
     ? memberships.find(
         (membership) => membership.id === context.membership?.id,

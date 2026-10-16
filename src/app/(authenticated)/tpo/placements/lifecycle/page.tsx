@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-import {driveRequestStatusLabel,TPO_REQUESTS_COPY} from "@/modules/placements/tpo-drive-lifecycle-list-model";
+import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -30,7 +31,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   return <div className="space-y-6">
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
       description="College-owned drafts, live opportunities and closed drives from persisted jobs." />
-    <Link href="/tpo/placements" className="text-sm font-semibold text-primary-text hover:underline">← Placement operations</Link>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <Link href="/tpo/placements" className="text-sm font-semibold text-primary-text hover:underline">← Placement operations</Link>
+      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Create drive</Link>
+    </div>
     <form action="/tpo/placements/lifecycle" method="get"
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
@@ -86,12 +90,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
       <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}/> :
       <section aria-label="Recruiter drive requests" className="space-y-3">
-        <p role="status" className="text-sm">{data.totalMatching} requests awaiting review</p>
+        <p role="status" className="text-sm">{data.totalMatching} recruiter drive requests</p>
         {data.requestRows.length===0?<EmptyState title="No requests" description="No recruiter drive requests need review."/>:
           data.requestRows.map(item=><article key={item.id} className="rounded border border-border bg-surface p-4">
             <h2 className="font-semibold">{item.company} · {item.title}</h2>
             <p className="text-sm">{driveRequestStatusLabel(item.status)}</p>
             <p className="text-xs text-muted-foreground">Request ID: {item.id}</p>
+            {item.status==="REQUEST"||item.status==="SENT_BACK"?
+              <TpoDriveRequestActions requestId={item.id} status={item.status}/>:
+              item.approvedJobId?<Link href={"/tpo/placements/jobs/"+item.approvedJobId}
+                className="text-primary-text underline">Open draft</Link>:null}
           </article>)}
         <nav className="flex justify-between">
           {data.page>1?<Link href={pageHref(data.page-1)}>Previous</Link>:<span/>}
@@ -110,12 +118,15 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <p role="status" className="text-sm text-body">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
        Counts cover the selected season and search across every page.</p>
       {data.rows.length === 0 ?
-        <EmptyState title="No matching drives" description="No non-archived jobs match the selected season and lifecycle." /> :
+        <div className="space-y-3">
+          <EmptyState title="No matching drives" description="No non-archived jobs match the selected season and lifecycle." />
+          <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Create drive</Link>
+        </div> :
         <section className="grid gap-3" aria-label="Drives">
           {data.rows.map((job) => <article key={job.id} className="rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0"><h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
-                <p className="text-sm text-body">{job.status} · {job.employmentType} · {job.workMode}</p>
+                <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
                 <p className="text-xs text-body">Deadline: {job.applicationDeadline
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>

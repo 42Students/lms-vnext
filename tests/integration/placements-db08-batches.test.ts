@@ -290,7 +290,7 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     );
     expect(delivered.rows).toHaveLength(1);
     expect(delivered.rows[0].title).toBe("Placement registration is open");
-    expect(delivered.rows[0].action_href).toBe("/learn/placements");
+    expect(delivered.rows[0].action_href).toBe("/learn/my-placements/placement#registration");
   });
 
   it("rejects an invitation if another writer moved its deadline after settings were saved", async () => {
@@ -316,6 +316,13 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
   });
 
   it("LEARNER-placements-50 registers, records consent and refuses after closure", async () => {
+    // Registration requires the placements module; enable it for this test only.
+    const moduleRuleId=randomUUID();
+    await pool.query(
+      "INSERT INTO module_access_rules(id,scope_type,scope_id,module,enabled) VALUES($1,'COLLEGE',$2,'placements',true)",
+      [moduleRuleId,SEED_IDS.collegeA],
+    );
+    try{
     const a=await makeAcademicFixture(SEED_IDS.collegeA);
     const membershipId=await makeLearner(SEED_IDS.collegeA,a);
     const learner:RequestContext={
@@ -360,6 +367,9 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     await expect(registerOwnPlacementChoice(learner,{
       choice:"PLACEMENTS",acceptedConsent:true,
     })).rejects.toMatchObject({code:"DB08_REGISTRATION_WINDOW_CLOSED"});
+    }finally{
+      await pool.query("DELETE FROM module_access_rules WHERE id=$1",[moduleRuleId]);
+    }
   });
 
   it("TPO-batches-R01 opens registration when all eligible students have chosen", async () => {

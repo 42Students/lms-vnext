@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {RecruiterNotificationBell} from "@/components/hr/recruiter-notification-bell";
 import { accountActionCopy, type AccountMenuVariant } from "./college-account-copy";
 
 export function AccountActions({
@@ -38,8 +37,7 @@ export function AccountActions({
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-1 text-right">
-      {showNotifications && variant==="recruiter" ? <RecruiterNotificationBell /> : null}
-      {showNotifications && variant!=="recruiter" ? (
+      {showNotifications ? (
         <Link
           href="/notifications"
           className="inline-flex min-h-9 items-center justify-center rounded-md px-2 text-sm sm:px-3 font-semibold text-foreground transition hover:bg-muted"

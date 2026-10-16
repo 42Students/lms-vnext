@@ -54,7 +54,7 @@ describe("DB09 TPO recruiter CSV import", () => {
       { confirmed: false, csv },
       { confirmed: true, csv, collegeId: "spoof" },
       { confirmed: true, csv: "" },
-      { confirmed: true, csv: "x".repeat(160001) },
+      { confirmed: true, csv: "x".repeat(2000001) },
     ]) {
       expect(confirmedTpoLeadImportSchema.safeParse(value).success).toBe(false);
     }

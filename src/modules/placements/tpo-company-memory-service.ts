@@ -284,6 +284,15 @@ export async function getTpoCompanyMemory(
   const linkedJobs = group.jobs.map((row) => ({
     jobId: row.job.id, relationshipId: row.relationshipId,
   }));
+  const linkedRelationshipId=group.leads.find(lead=>lead.companyRelationshipId)?.companyRelationshipId;
+  const [relatedCompany]=linkedRelationshipId?await getDb().select({
+    companyId:placementCompanyRelationships.companyId,
+  }).from(placementCompanyRelationships).where(and(
+    eq(placementCompanyRelationships.id,linkedRelationshipId),
+    eq(placementCompanyRelationships.collegeId,rows.collegeId),
+    eq(placementCompanyRelationships.status,"ACTIVE"),
+  )).limit(1):[];
+  const canonicalCompanyId=group.jobs[0]?.companyId??relatedCompany?.companyId??null;
   const leadIds = group.leads.map((lead) => lead.id);
   const activities =
     leadIds.length === 0
@@ -322,6 +331,7 @@ export async function getTpoCompanyMemory(
 
   return {
     key: group.key,
+    canonicalCompanyId,
     name: group.name,
     alsoTypedAs: [...group.aliases].filter((value) => value !== group.name),
     people,

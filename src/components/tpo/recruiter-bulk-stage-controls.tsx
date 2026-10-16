@@ -36,7 +36,6 @@ export function RecruiterBulkStageControls({
   const [results, setResults] = useState<BulkResult[]>([]);
 
   const available = rows.filter((row) =>
-    !row.recruiterUserId && !row.unsubscribedAt &&
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
   );
   const selected = available.filter((row) => chosenIds.includes(row.id));
@@ -67,7 +66,7 @@ export function RecruiterBulkStageControls({
     if (!window.confirm(
       "Apply " + (action === "CONTACTED" ? "Mark Contacted" : "Not Now") +
       " to " + selections.length + " recruiter lead(s)? Changes are audited " +
-      "and joined or unsubscribed contacts are excluded.",
+      "for the selected contacts.",
     )) return;
 
     setBusy(true);
