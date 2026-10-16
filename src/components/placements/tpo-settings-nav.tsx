@@ -2,6 +2,7 @@ import Link from "next/link";
 type SettingsKey="season"|"rules"|"job-types"|"after-college"|"prep-readiness"|"blocked-dates"|"see"|"team"|"trusted"|"branding"|"notifications"|"recruiters"|"templates"|"notices"|"public-page"|"public-link";
 export const TPO_SETTINGS_NAV_GROUPS=[
  {title:"Placement policy",items:[
+  {id:"season",label:"Placement seasons",href:"/tpo/settings/season"},
   {id:"rules",label:"Placement rules",href:"/tpo/settings/rules"},
   {id:"job-types",label:"Job types",href:"/tpo/settings/job-types"},
   {id:"after-college",label:"After college",href:"/tpo/settings/after-college"},
@@ -9,6 +10,7 @@ export const TPO_SETTINGS_NAV_GROUPS=[
   {id:"blocked-dates",label:"Blocked dates",href:"/tpo/settings/blocked-dates"},
  ]},
  {title:"People",items:[
+  {id:"trusted",label:"Trusted domains",href:"/tpo/settings/trusted"},
   {id:"recruiters",label:"Recruiters",href:"/tpo/settings/recruiters"},
  ]},
  {title:"Students and companies",items:[
