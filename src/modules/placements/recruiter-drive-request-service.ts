@@ -115,7 +115,7 @@ export async function listOwnRecruiterDriveRequests(context:RequestContext,colle
    eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
    eq(placementRecruiterDriveRequests.companyRelationshipId,scope.relationshipId)))
    .orderBy(desc(placementRecruiterDriveRequests.createdAt));
- },{accessMode:"read only"});
+ });
 }
 export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:unknown){
  const input=recruiterRequestUpdateSchema.parse(raw);
