@@ -105,6 +105,7 @@ export function FacultyLessonAuthoring({
     useState<string | null>(null);
   const [success, setSuccess] =
     useState<string | null>(null);
+  const [publishNow,setPublishNow]=useState(true);
 
   function reset() {
     setTitle("");
@@ -150,11 +151,10 @@ export function FacultyLessonAuthoring({
       body: JSON.stringify(body),
     });
 
-    if (!response.ok) {
-      throw new Error(
-        await courseApiError(response),
-      );
-    }
+    if (!response.ok) throw new Error(await courseApiError(response));
+    const body:unknown=await response.json().catch(()=>null);
+    if(!body||typeof body!=="object")throw new Error("Saved response was incomplete; refresh before retrying.");
+    return body as {content?:{id:string}};
   }
 
   function quizPayload() {
@@ -246,6 +246,7 @@ export function FacultyLessonAuthoring({
     setSubmitting(true);
 
     try {
+      let createdContentId:string|null=null;
       const cleanTitle = title.trim();
       if (!cleanTitle) {
         throw new Error(
@@ -260,7 +261,7 @@ export function FacultyLessonAuthoring({
           );
         }
 
-        await post(
+        const receipt=await post(
           "/api/courses/lesson-contents",
           {
             lessonId,
@@ -275,6 +276,8 @@ export function FacultyLessonAuthoring({
               nextContentSequence,
           },
         );
+        createdContentId=receipt.content?.id??null;
+        if(!createdContentId)throw new Error("The new content receipt is missing. Refresh before retrying.");
       }
 
       if (mode === "YOUTUBE") {
@@ -293,7 +296,7 @@ export function FacultyLessonAuthoring({
           );
         }
 
-        await post(
+        const receipt=await post(
           "/api/courses/lesson-contents",
           {
             lessonId,
@@ -308,6 +311,8 @@ export function FacultyLessonAuthoring({
               nextContentSequence,
           },
         );
+        createdContentId=receipt.content?.id??null;
+        if(!createdContentId)throw new Error("The new content receipt is missing. Refresh before retrying.");
       }
 
       if (mode === "LIVE_CLASS") {
@@ -324,7 +329,7 @@ export function FacultyLessonAuthoring({
         const timingIssue=facultyLiveClassIssue(url.trim(),startIso,endIso);
         if(timingIssue)throw new Error(timingIssue);
 
-        await post(
+        const receipt=await post(
           "/api/courses/lesson-contents",
           {
             lessonId,
@@ -340,6 +345,8 @@ export function FacultyLessonAuthoring({
               nextContentSequence,
           },
         );
+        createdContentId=receipt.content?.id??null;
+        if(!createdContentId)throw new Error("The new content receipt is missing. Refresh before retrying.");
       }
 
       if (mode === "ASSIGNMENT") {
@@ -402,7 +409,16 @@ export function FacultyLessonAuthoring({
         );
       }
 
+      if(createdContentId&&publishNow){
+        try{
+          await post("/api/courses/lesson-contents/"+
+            encodeURIComponent(createdContentId)+"/transition",{action:"PUBLISH"});
+        }catch{
+          throw new Error("Content saved as a draft but could not publish. Open it and choose Publish.");
+        }
+      }
       setSuccess(
+        createdContentId?(publishNow?"Lesson content published successfully.":"Lesson content draft created."):
         mode === "ASSIGNMENT"
           ? "Assignment draft created."
           : mode === "QUIZ"
