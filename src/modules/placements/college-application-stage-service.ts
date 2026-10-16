@@ -11,15 +11,13 @@ import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {listCollegeDriveApplications} from "./college-drive-applications-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeStageCommandSchema} from "./college-stage-action-model";
-import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
 
 export async function getCollegeApplicationPipeline(context:RequestContext,rawJobId:unknown,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const data=await listCollegeDriveApplications(context,jobId,raw);
- const storageReady=await placementTableExists("placement_college_application_stages")&&
-  await placementTableExists("placement_college_application_stage_history");
- const stageRows=storageReady&&data.items.length?await getDb().select().from(placementCollegeApplicationStages)
+ const storageReady=true;
+ const stageRows=data.items.length?await getDb().select().from(placementCollegeApplicationStages)
   .where(and(eq(placementCollegeApplicationStages.jobId,jobId),
    inArray(placementCollegeApplicationStages.applicationId,data.items.map(x=>x.id)))):[];
  const stages=new Map(stageRows.map(x=>[x.applicationId,x]));
@@ -32,8 +30,6 @@ export async function getCollegeApplicationPipeline(context:RequestContext,rawJo
 }
 export async function mutateCollegeApplicationStages(context:RequestContext,rawJobId:unknown,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
- if(!await placementTableExists("placement_college_application_stages"))
-  throw Error("College Admin pipeline stage storage is not registered.");
  const input=collegeStageCommandSchema.parse(raw);
  if(input.notifyByEmail)throw Error("Email delivery is not registered for College Admin pipeline moves. Choose in-app notifications.");
  const results:Array<{applicationId:string;status:"moved"|"skipped";reason?:string;stage?:string}>=[];
