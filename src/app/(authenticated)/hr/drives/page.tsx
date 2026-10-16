@@ -171,7 +171,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
         ? <EmptyState title="No drives match this search" description="Try another role name or clear the current search." />
         : null}
-    {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio jobs={pageResult.rows} />:null}
+    {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio jobs={pageResult.rows} returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
     {query.data.view !== "WAITING" ? <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(query.data.page-1)*pageResult.pageSize+1))+"–"+
