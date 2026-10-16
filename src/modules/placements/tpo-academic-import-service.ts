@@ -1,0 +1,136 @@
+import "server-only";
+import { and, eq, inArray } from "drizzle-orm";
+import { z } from "zod";
+import { getDb } from "@/db/client";
+import {
+  activityEvents, collegeMemberships, membershipRoles,
+  placementCandidateAcademicEvidence, users,
+} from "@/db/schema";
+import type { RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import { requirePlacementManageScope } from "./scope";
+import { tpoAcademicPreviewRowSchema } from "./tpo-academic-preview-import-model";
+
+const schema = z.object({
+  rows: z.array(tpoAcademicPreviewRowSchema).min(1).max(200),
+  skipUnmatched: z.boolean().default(false),
+}).strict();
+type Input = z.infer<typeof schema>;
+
+async function scope(context: RequestContext) {
+  if (!context.membership || context.membership.status !== "ACTIVE" ||
+      !hasMembershipRole(context, "TPO"))
+    throw new AuthorizationError("placements.manage");
+  return requirePlacementManageScope(context, context.membership.collegeId);
+}
+
+function noDuplicates(rows: Input["rows"]) {
+  if (new Set(rows.map(row => row.studentCode)).size !== rows.length)
+    throw new Error("ACADEMIC_IMPORT_DUPLICATE_STUDENT");
+}
+
+async function lookup(
+  db: ReturnType<typeof getDb>,
+  collegeId: string,
+  ids: readonly string[],
+) {
+  if (!ids.length) return [];
+  return db.select({
+    id: collegeMemberships.id,
+    displayName: users.displayName,
+    rollNumber: users.id,
+    currentCgpa: placementCandidateAcademicEvidence.cgpaHundredths,
+    currentBacklogs: placementCandidateAcademicEvidence.activeBacklogs,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER")))
+    .leftJoin(placementCandidateAcademicEvidence,
+      eq(placementCandidateAcademicEvidence.membershipId, collegeMemberships.id))
+    .where(and(eq(collegeMemberships.collegeId, collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+      eq(users.platformStatus, "ACTIVE"),
+      inArray(collegeMemberships.id, [...ids])));
+}
+
+export async function previewTpoAcademicImport(context: RequestContext, raw: unknown) {
+  const input = schema.parse(raw);
+  noDuplicates(input.rows);
+  const college = await scope(context);
+  const rows = await lookup(getDb(), college.id, input.rows.map(row => row.studentCode));
+  const found = new Map(rows.map(row => [row.id, row]));
+  return {
+    rows: input.rows.map(row => {
+      const match = found.get(row.studentCode);
+      return {
+        ...row, match: match ? "WILL_UPDATE" as const : "CANT_MATCH" as const,
+        name: match?.displayName ?? null,
+        oldCgpa: match?.currentCgpa === null || match?.currentCgpa === undefined
+          ? null : match.currentCgpa / 100,
+        oldBacklogs: match?.currentBacklogs ?? null,
+      };
+    }),
+  };
+}
+
+export async function commitTpoAcademicImport(context: RequestContext, raw: unknown) {
+  const input = schema.parse(raw);
+  noDuplicates(input.rows);
+  const college = await scope(context);
+  return getDb().transaction(async tx => {
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      collegeId: college.id, organizationId: college.organizationId,
+    });
+    const ids = input.rows.map(row => row.studentCode);
+    // Lock the learner membership and role rows with the eligibility read so
+    // no campus-admin status or role change can race a verified import.
+    const found = await tx.select({
+      id: collegeMemberships.id,
+    }).from(collegeMemberships)
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .innerJoin(membershipRoles, and(
+        eq(membershipRoles.membershipId, collegeMemberships.id),
+        eq(membershipRoles.role, "LEARNER")))
+      .where(and(eq(collegeMemberships.collegeId, college.id),
+        eq(collegeMemberships.status, "ACTIVE"),
+        eq(users.platformStatus, "ACTIVE"),
+        inArray(collegeMemberships.id, ids)))
+      .for("share");
+    const eligible = new Set(found.map(row => row.id));
+    const missing = ids.filter(id => !eligible.has(id));
+    if (missing.length && !input.skipUnmatched)
+      throw new Error("ACADEMIC_IMPORT_UNMATCHED_STUDENTS");
+    const now = new Date();
+    let updated = 0;
+    for (const row of input.rows) {
+      if (!eligible.has(row.studentCode)) continue;
+      const evidence = {
+        cgpaHundredths: Math.round(row.cgpa * 100),
+        activeBacklogs: row.activeBacklogs,
+        source: "VERIFIED" as const,
+        verifiedAt: now,
+        verifiedByUserId: context.user.id,
+        updatedAt: now,
+      };
+      await tx.insert(placementCandidateAcademicEvidence)
+        .values({ membershipId: row.studentCode, ...evidence })
+        .onConflictDoUpdate({
+          target: placementCandidateAcademicEvidence.membershipId,
+          set: evidence,
+        });
+      await tx.insert(activityEvents).values({
+        organizationId: college.organizationId, collegeId: college.id,
+        actorUserId: context.user.id, actorMembershipId: context.membership!.id,
+        module: "PLACEMENTS", eventType: "ACADEMIC_RECORD_IMPORTED",
+        subjectType: "placement_candidate_academic_evidence", subjectId: row.studentCode,
+        summary: "Academic record imported",
+        metadata: { cgpa: row.cgpa, activeBacklogs: row.activeBacklogs },
+      });
+      updated++;
+    }
+    return { updated, skipped: missing.length, unmatched: missing };
+  });
+}
