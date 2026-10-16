@@ -1,3 +1,4 @@
+import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
@@ -17,6 +18,7 @@ export default async function SuperAdminDepartmentsPage() {
   if (!collegeId) {
     return (
       <div className="space-y-6">
+      <AcademicSetupSteps step={1} />
         <PageHeader
           eyebrow="Super Admin"
           title="Departments"
@@ -49,6 +51,7 @@ export default async function SuperAdminDepartmentsPage() {
 
   return (
     <div className="space-y-6">
+      <AcademicSetupSteps step={1} />
       <PageHeader
         eyebrow="Super Admin"
         title="Departments"
