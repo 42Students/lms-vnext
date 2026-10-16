@@ -9,7 +9,7 @@ const fields=z.object({
  maxAttempts:z.number().int().min(1).max(20),
  shuffleQuestions:z.boolean().optional(),
  shuffleOptions:z.boolean().optional(),
- questions:createCourseQuizInputSchema.shape.questions,
+ questions:createCourseQuizInputSchema.shape.questions.refine(rows=>rows.every(q=>q.points<=100),{message:"Question points must be between 1 and 100."}),
 }).strict();
 export const facultyQuizCommandSchema=z.discriminatedUnion("action",[
  fields.extend({
@@ -18,7 +18,7 @@ export const facultyQuizCommandSchema=z.discriminatedUnion("action",[
   confirmed:z.literal(true),
  }),
  fields.omit({questions:true}).extend({
-  questions:createCourseQuizInputSchema.shape.questions.optional(),
+  questions:fields.shape.questions.optional(),
   action:z.literal("EDIT"),
   quizId:z.string().uuid(),expectedUpdatedAt:z.iso.datetime({offset:true}),
   confirmed:z.literal(true),
