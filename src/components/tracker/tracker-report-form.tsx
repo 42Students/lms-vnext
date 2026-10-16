@@ -1,0 +1,169 @@
+"use client";
+
+import Link from "next/link";
+import { useState, type FormEvent, type KeyboardEvent } from "react";
+import {
+  ACCOUNT_OPTIONS, ENVIRONMENT_OPTIONS, ISSUE_TYPE_OPTIONS,
+  LOCATION_OPTIONS, REPORTER_OPTIONS, SEVERITY_OPTIONS,
+} from "@/modules/bug-tracker/report-form-options";
+import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
+
+const field = "mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground";
+const label = "block text-sm font-semibold text-body";
+
+export function TrackerReportForm() {
+  const [page, setPage] = useState("");
+  const [screen, setScreen] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [created, setCreated] = useState("");
+  const selectedPage = LOCATION_OPTIONS.find(item => item.value === page);
+  const selectedScreen = selectedPage?.children?.find(item => item.value === screen);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (pending) return;
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const value = (name: string) => String(data.get(name) ?? "");
+    const parsed = trackerReportSchema.safeParse({
+      reporterName: value("reporterName"), accountRole: value("accountRole"),
+      environment: value("environment"), page, screen: screen || null,
+      section: value("section") || null, issueType: value("issueType"),
+      severity: value("severity"), description: value("description"),
+      evidenceLink: value("evidenceLink") || null,
+    });
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? "Check your report details.");
+      return;
+    }
+    setPending(true); setError("");
+    try {
+      const response = await fetch("/api/tracker/issues", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.data),
+      });
+      if (!response.ok) {
+        const details: { error?: string } = await response.json().catch(() => ({}));
+        if (details.error === "DB10_TRACKER_MIGRATIONS_PENDING") {
+          throw new Error("Tracker database is not enabled. Ask an administrator to verify migration 0076.");
+        }
+        throw new Error("The issue could not be reported. Your text is still here — please try again.");
+      }
+      const payload: { issue: { publicId: string } } = await response.json();
+      setCreated(payload.issue.publicId);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The issue could not be reported. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  function onFormKeyDown(event: KeyboardEvent<HTMLFormElement>) {
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      event.currentTarget.requestSubmit();
+    }
+  }
+
+  if (created) return (
+    <section className="space-y-4 rounded-xl border border-border bg-surface p-6" aria-live="polite">
+      <p className="text-sm font-semibold text-success">Issue reported</p>
+      <h2 className="text-xl font-semibold">{created}</h2>
+      <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
+      <div className="flex flex-wrap gap-3">
+        <Link className="rounded-md border border-border px-4 py-2 text-sm font-semibold" href={"/tracker/issues/" + encodeURIComponent(created)}>View issue</Link>
+        <button className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+          onClick={() => {setCreated("");setPage("");setScreen("");setError("");}}
+          type="button">Report another</button>
+      </div>
+    </section>
+  );
+
+  return (
+    <form onSubmit={submit} onKeyDown={onFormKeyDown}
+      className="space-y-5 rounded-xl border border-border bg-surface p-5">
+      <div className="grid gap-4 md:grid-cols-3">
+        <label className={label}>Reporter
+          <select className={field} name="reporterName" required defaultValue="">
+            <option value="" disabled>Select reporter</option>
+            {REPORTER_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+        </label>
+        <label className={label}>Account used
+          <select className={field} name="accountRole" required defaultValue="">
+            <option value="" disabled>Select account</option>
+            {ACCOUNT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+        </label>
+        <label className={label}>Environment
+          <select className={field} name="environment" required defaultValue="">
+            <option value="" disabled>Select environment</option>
+            {ENVIRONMENT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+        </label>
+      </div>
+      <fieldset className="grid gap-3 rounded-lg border border-border p-4">
+        <legend className="px-1 text-sm font-semibold">Where did this happen?</legend>
+        <div className="grid gap-3 md:grid-cols-3">
+          <label className={label}>Page
+            <select className={field} required value={page} onChange={event => {
+              setPage(event.target.value); setScreen("");
+            }}>
+              <option value="" disabled>Search or select page → screen → section</option>
+              {LOCATION_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </label>
+          <label className={label}>Screen
+            <select className={field} required={Boolean(selectedPage?.children?.length)}
+              disabled={!selectedPage?.children?.length}
+              value={screen} onChange={event => setScreen(event.target.value)}>
+              <option value="">Select screen</option>
+              {selectedPage?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </label>
+          <label className={label}>Section
+            <select className={field} name="section" key={page + ":" + screen}
+              required={Boolean(selectedScreen?.children?.length)} disabled={!selectedScreen?.children?.length} defaultValue="">
+              <option value="">Select section</option>
+              {selectedScreen?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </label>
+        </div>
+      </fieldset>
+      <div className="grid gap-4 md:grid-cols-3">
+        <label className={label + " md:col-span-2"}>What kind of issue?
+          <select className={field} name="issueType" required defaultValue="">
+            <option value="" disabled>Search issue type</option>
+            {ISSUE_TYPE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+        </label>
+        <label className={label}>Severity
+          <select className={field} name="severity" defaultValue="NOT_SURE" required>
+            {SEVERITY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+        </label>
+      </div>
+      <label className={label}>What went wrong?
+        <textarea className={field + " min-h-36"} name="description" required maxLength={4000} rows={6}
+          placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
+        <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
+      </label>
+      <label className={label}>Evidence link
+        <input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" />
+        <span className="mt-1 block text-xs font-normal text-muted-foreground">
+          Optional — use this for a screen recording, Drive file, or other useful http/https link.
+        </span>
+      </label>
+      {error && <p role="alert" className="text-sm text-error">{error}</p>}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
+        <button disabled={pending} type="submit"
+          className="min-h-10 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+          {pending ? "Reporting…" : "Report issue"}
+        </button>
+      </div>
+    </form>
+  );
+}
