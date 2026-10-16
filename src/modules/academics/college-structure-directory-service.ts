@@ -21,8 +21,9 @@ import {
   sectionScheduleEvents,
   sections,
 } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   COLLEGE_STRUCTURE_PAGE_SIZE,
   collegeStructureQuerySchema,
@@ -31,20 +32,9 @@ import {
   collegeStructureTotalPages,
 } from "./college-structure-directory-model";
 
-function ownCollege(context: RequestContext) {
-  const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.read", {
-      organizationId: membership.organizationId,
-      collegeId: membership.collegeId,
-    })) {
-    throw new AuthorizationError("academics.read");
-  }
-  requirePermission(context, "academics.read", {
-    organizationId: membership.organizationId,
-    collegeId: membership.collegeId,
-  });
-  return membership.collegeId;
+async function ownCollege(context: RequestContext) {
+  const scope = await resolveActingCollege(context, "academics.read");
+  return scope.collegeId;
 }
 
 function searchPattern(search: string) {
@@ -67,7 +57,7 @@ function scopedPrograms(collegeId: string) {
 /** Registered section/learner-enrollment tables only; never infers scheduled attendance. */
 export async function listCollegeClasses(context: RequestContext, raw: unknown) {
   const query = collegeClassQuerySchema.parse(raw);
-  const collegeId = ownCollege(context);
+  const collegeId = await ownCollege(context);
   const db = getDb();
   const scoped = db.select({
     id: sections.id,
@@ -175,7 +165,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
 /** Registered elective slot directory. Not a learner-selection or feature-enablement claim. */
 export async function listCollegeElectives(context: RequestContext, raw: unknown) {
   const query = collegeElectiveQuerySchema.parse(raw);
-  const collegeId = ownCollege(context);
+  const collegeId = await ownCollege(context);
   const db = getDb();
   const scoped = db.select({
     id: electiveSlots.id,
