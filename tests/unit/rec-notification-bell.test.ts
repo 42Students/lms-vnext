@@ -12,6 +12,8 @@ describe("REC-calendar-messages-profile-21 recruiter notification bell",()=>{
   const bell=readFileSync(new URL("../../src/components/hr/hr-recruiter-bell.tsx",import.meta.url),"utf8");
   const svc=readFileSync(new URL("../../src/modules/placements/hr-recruiter-bell-service.ts",import.meta.url),"utf8");
   expect(bell).toContain("30000");
+  expect(bell).toContain("setNow(Date.now())");
+  expect(bell).toContain("Loading notifications…");
   expect(bell).toContain('Mark all read');
   expect(svc).toContain("eq(inAppNotifications.userId,ctx.user.id)");
   expect(svc).toContain("listOwnRecruiterPlacementJobs(ctx)");
