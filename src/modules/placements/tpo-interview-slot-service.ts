@@ -117,6 +117,27 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     .returning({id:placementRoundCandidateSlots.id});
    return {cleared:cleared.length};
   }
+  if(input.action==="CONFIRM_RECRUITER_PROPOSAL"){
+   if(!await placementTableExists("placement_hr_interview_slots"))throw Error("Recruiter slots are not registered.");
+   const [proposal]=await tx.select().from(hrInterviewSlots).where(and(
+    eq(hrInterviewSlots.id,input.proposalId),eq(hrInterviewSlots.collegeId,info.collegeId),
+    eq(hrInterviewSlots.roundId,info.round.id))).for("update").limit(1);
+   if(!proposal||proposal.version!==input.expectedVersion||proposal.status!=="PROPOSED")
+    throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
+   const [saved]=await tx.update(hrInterviewSlots).set({
+    status:"OFFERED",meetingLocation:input.venue,version:proposal.version+1,updatedAt:new Date(),
+   }).where(and(eq(hrInterviewSlots.id,proposal.id),eq(hrInterviewSlots.status,"PROPOSED")))
+    .returning({id:hrInterviewSlots.id});
+   if(!saved)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
+   await tx.insert(activityEvents).values({
+    organizationId:context.membership!.organizationId,collegeId:info.collegeId,
+    actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_RECRUITER_SLOT_CONFIRMED",
+    subjectType:"placement_round",subjectId:info.round.id,
+    summary:"TPO confirmed recruiter interview slot",metadata:{proposalId:proposal.id,venue:input.venue},
+   });
+   return {confirmed:1};
+  }
   const id=input.slotId;
   const [slot]=await tx.select().from(placementRoundCandidateSlots).where(and(
    eq(placementRoundCandidateSlots.id,id),eq(placementRoundCandidateSlots.roundId,info.round.id)))
