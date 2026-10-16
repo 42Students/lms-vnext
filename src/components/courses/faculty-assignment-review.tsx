@@ -482,6 +482,7 @@ export function FacultyAssignmentReview({
   const [page,setPage] = useState(1);
   const [pagination,setPagination] = useState<FacultySubmissionReviewResponse|null>(null);
   const loadSequence = useRef(0);
+  const [selectedSubmissionId,setSelectedSubmissionId]=useState<string|null>(null);
 
   if(status==="ARCHIVED")return null;
   if(status==="DRAFT")return <div className="mt-3">
@@ -515,6 +516,7 @@ export function FacultyAssignmentReview({
         throw new Error("The submission list belongs to a different Section. Reload this assignment.");
       if (!facultyReviewRequestCurrent(sequence,loadSequence.current)) return;
       setSubmissions(payload.items);setPagination(payload);setPage(payload.page);
+      setSelectedSubmissionId(current=>payload.items.some(item=>item.id===current)?current:payload.items[0]?.id??null);
     } catch (caught) {
       if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setError(caught instanceof Error ? caught.message :
         "Could not load Assignment submissions. Check your connection and try again.");
@@ -600,10 +602,37 @@ export function FacultyAssignmentReview({
         </p>
       ) : null}
 
+      {!loading && submissions && submissions.length>0 ? (
+        <nav aria-label="Submission student navigation" className="flex flex-wrap items-end gap-2 rounded-lg border border-border bg-surface p-3">
+          <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold">
+            Students ({submissions.filter(item=>item.gradingStatus==="GRADED").length}/{submissions.length} graded on this page)
+            <select className="min-h-10 rounded border border-border bg-surface px-2"
+              value={selectedSubmissionId??submissions[0].id}
+              onChange={event=>setSelectedSubmissionId(event.target.value)}>
+              {submissions.map(item=><option key={item.id} value={item.id}>
+                {learnerLabel(item)} · {item.gradingStatus==="GRADED"?"Graded":"Pending"}
+              </option>)}
+            </select>
+          </label>
+          <Button type="button" size="sm" variant="secondary"
+            disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
+            onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
+            Previous student
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            {Math.max(1,submissions.findIndex(item=>item.id===selectedSubmissionId)+1)} / {submissions.length}
+          </span>
+          <Button type="button" size="sm" variant="secondary"
+            disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
+            onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
+            Next student
+          </Button>
+        </nav>
+      ):null}
       {!loading && submissions &&
       submissions.length > 0 ? (
         <div className="mt-4 space-y-3">
-          {submissions.map(
+          {submissions.filter(submission=>submission.id===(selectedSubmissionId??submissions[0]?.id)).map(
             (submission) => (
               <SubmissionGradeCard
                 key={`${submission.id}:${submission.version}`}
