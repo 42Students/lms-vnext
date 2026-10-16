@@ -28,6 +28,6 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
     No selections can be recorded or released until the migration is registered.
   </div>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded border border-border p-5 text-sm">
     Selections can be recorded and released only on a published drive.
-  </p>:<TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections}/>}
+  </p>:<TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>}
  </div>;
 }
