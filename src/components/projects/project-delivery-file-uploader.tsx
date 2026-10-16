@@ -28,12 +28,13 @@ export function ProjectDeliveryFileUploader({projectId,disabled,onUploaded}:{
      originalName:declaration.originalName,contentType:declaration.contentType,
      sizeBytes:declaration.sizeBytes,title:file.name.slice(0,200),resourceId:null,
    });
-   if(!validProjectResourceUploadGrant(grant.grant) ||
-     grant.grant.fileId!==grant.file.id||Date.parse(grant.grant.expiresAt)<=Date.now())
+   const uploadGrant=grant.grant;
+   if(!validProjectResourceUploadGrant(uploadGrant) ||
+     uploadGrant.fileId!==grant.file.id||Date.parse(uploadGrant.expiresAt)<=Date.now())
      throw Error("Upload grant expired.");
    await new Promise<void>((resolve,reject)=>{
-    const req=new XMLHttpRequest();req.open("PUT",grant.grant.uploadUrl,true);
-    for(const [key,val] of Object.entries(grant.grant.requiredHeaders))req.setRequestHeader(key,val);
+    const req=new XMLHttpRequest();req.open("PUT",uploadGrant.uploadUrl,true);
+    for(const [key,val] of Object.entries(uploadGrant.requiredHeaders))req.setRequestHeader(key,val);
     req.upload.onprogress=event=>{if(event.lengthComputable)
       setProgress(Math.round(event.loaded/event.total*100));};
     req.onload=()=>req.status>=200&&req.status<300?resolve():reject(Error("File upload failed."));
