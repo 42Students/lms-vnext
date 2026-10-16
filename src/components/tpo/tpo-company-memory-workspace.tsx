@@ -261,7 +261,7 @@ export function TpoCompanyMemoryWorkspace({
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead className="border-b border-border text-muted-foreground">
-                    <tr><th className="py-2">Role</th><th>Status</th><th>Created</th></tr>
+                    <tr><th className="py-2">Role</th><th>Status</th><th>Year</th><th>Created</th></tr>
                   </thead>
                   <tbody>
                     {visibleDrives.map(drive => (
@@ -273,6 +273,7 @@ export function TpoCompanyMemoryWorkspace({
                           </Link>
                         </td>
                         <td>{drive.status}</td>
+                        <td>{new Intl.DateTimeFormat("en-IN",{year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(drive.createdAt))}</td>
                         <td>{dateLabel(drive.createdAt)}</td>
                       </tr>
                     ))}
