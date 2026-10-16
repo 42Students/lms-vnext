@@ -22,6 +22,7 @@ import {learnerNoticePageWasClamped} from "@/modules/placements/learner-notice-p
 import {filterLearnerNoticesBySource} from "@/modules/placements/learner-notice-source-filter-model";
 import {learnerNoticeEmptyLabel} from "@/modules/placements/learner-notice-empty-label-model";
 import { learnerNoticeFocusPage, learnerNoticeAnchor, learnerNoticeHref, learnerNoticeMissing, learnerNoticeRecoveryHref } from "@/modules/placements/learner-notice-deep-link-model";
+import {TpoNoticeAcknowledge} from "@/components/tpo/tpo-notice-acknowledge";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
   searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[]; source?:string | string[] }>;
@@ -176,6 +177,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                 {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}
               </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
+              {notice.senderLabel==="Placement cell"?<TpoNoticeAcknowledge id={notice.id}/>:null}
               {learnerNoticeHref(notice.id) ? (
                 <Link href={learnerNoticeHref(notice.id)!}
                   className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
