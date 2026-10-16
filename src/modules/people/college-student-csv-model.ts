@@ -88,8 +88,8 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   const entries = rows.slice(1).map((cells, index) => {
     const row = index + 2;
     if (cells.length !== (picker ? 4 : 5)) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
-    const record = canonical ? Object.fromEntries(STUDENT_CSV_COLUMNS.map(
-      (key, i) => [key, cells[i]?.trim() ?? ""])) : legacy ? {
+    const record = canonical ? { ...Object.fromEntries(STUDENT_CSV_COLUMNS.map(
+      (key, i) => [key, cells[i]?.trim() ?? ""])), sectionId: defaults.sectionId } : legacy ? {
         displayName: [cells[0],cells[1]].map(v=>v?.trim()).filter(Boolean).join(" "),
         phoneE164: (cells[2]?.trim() ?? "").replace(/^([0-9]{10})$/, "+91$1"),
         email: cells[3]?.trim() ?? "",
