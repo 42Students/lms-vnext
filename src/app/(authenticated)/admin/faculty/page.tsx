@@ -1,4 +1,5 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-membership-lifecycle-actions";
 import Link from "next/link";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
 import {SuperAdminFacultyBulkImport} from "@/components/admin/super-admin-faculty-bulk-import";
@@ -20,5 +21,5 @@ export default async function SuperAdminFacultyPage({searchParams}:{
   <AdminScopedReadPage title="Faculty" path="/admin/faculty" statuses={statuses}
   exportPath="/api/admin/faculty/export" exportFilename="super-admin-faculty-ist.csv"
   description="Read-only faculty memberships in the selected college. Contact details stay in the permission-checked membership detail."
-  searchParams={searchParams} loader={query=>listAdminScopedPeople(context,"FACULTY",query)}/></div>;
+  searchParams={searchParams} renderRowActions={row=><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>} loader={query=>listAdminScopedPeople(context,"FACULTY",query)}/></div>;
 }
