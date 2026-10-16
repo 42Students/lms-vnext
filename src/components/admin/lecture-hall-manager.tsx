@@ -78,11 +78,13 @@ export function LectureHallManager({
   halls,
   departments,
   emptyState,
+  availabilityBase = "/college/lecture-halls",
 }: {
   collegeId: string;
   halls: readonly HallRow[];
   departments: readonly { id: string; name: string }[];
   emptyState?: { title: string; description: string };
+  availabilityBase?: "/college/lecture-halls" | "/admin/lecture-halls";
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -205,7 +207,7 @@ export function LectureHallManager({
               className: "text-right",
               cell: (hall) => (
                 <div className="flex flex-wrap justify-end gap-2">
-                  <Link href={`/college/lecture-halls/${hall.id}`}
+                  <Link href={`${availabilityBase}/${hall.id}`}
                     className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
                     Availability
                   </Link>
