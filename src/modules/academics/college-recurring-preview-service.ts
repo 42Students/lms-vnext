@@ -1,9 +1,10 @@
 import "server-only";
-import { and, asc, eq, gt, lt, or } from "drizzle-orm";
+import { and, asc, eq, gt, lt, isNull, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohorts, collegeMemberships, departments, lectureHalls,
   membershipRoles, programs, sectionScheduleEvents, sections, users,
+  courseSectionDeliveries, courseOfferings, courses,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -64,6 +65,19 @@ export async function previewCollegeRecurringSchedule(context: RequestContext, r
       )).limit(1);
     if (!faculty) throw new RecurringPreviewNotFoundError();
   }
+  if (input.deliveryId) {
+    const [delivery] = await db.select({ id: courseSectionDeliveries.id })
+      .from(courseSectionDeliveries)
+      .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+      .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .where(and(eq(courseSectionDeliveries.id, input.deliveryId),
+        eq(courseSectionDeliveries.sectionId, input.sectionId),
+        isNull(courseSectionDeliveries.endedAt),
+        eq(courseOfferings.status, "ACTIVE"), eq(courses.status, "ACTIVE"),
+        eq(departments.collegeId, member.collegeId))).limit(1);
+    if (!delivery) throw new RecurringPreviewNotFoundError();
+  }
   const slots = expandIstSessions(input);
   if (!slots.length) return { slots: [], ready: 0, blocked: 0, notice: "No matching weekdays in this date range" };
   const first = new Date(slots[0].startsAt);
@@ -110,7 +124,7 @@ export async function listRecurringPreviewOptions(context: RequestContext) {
     collegeId: member.collegeId, organizationId: member.organizationId,
   });
   const db = getDb();
-  const [classes, halls, faculty] = await Promise.all([
+  const [classes, halls, faculty, deliveries] = await Promise.all([
     db.select({ id: sections.id, name: sections.name, updatedAt: sections.updatedAt, cohortName: cohorts.name,
       periodStart: academicPeriods.startDate, periodEnd: academicPeriods.endDate })
       .from(sections)
@@ -134,6 +148,18 @@ export async function listRecurringPreviewOptions(context: RequestContext) {
       .where(and(eq(collegeMemberships.collegeId, member.collegeId),
         eq(collegeMemberships.status, "ACTIVE")))
       .orderBy(asc(users.displayName), asc(collegeMemberships.id)),
+    db.select({
+      id: courseSectionDeliveries.id, sectionId: courseSectionDeliveries.sectionId,
+      name: courses.name, code: courses.code,
+    }).from(courseSectionDeliveries)
+      .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+      .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
+      .where(and(eq(departments.collegeId, member.collegeId),
+        eq(sections.status, "ACTIVE"), isNull(courseSectionDeliveries.endedAt),
+        eq(courses.status, "ACTIVE"), eq(courseOfferings.status, "ACTIVE")))
+      .orderBy(asc(courses.name)).limit(1000),
   ]);
-  return { classes, halls, faculty };
+  return { classes, halls, faculty, deliveries };
 }
