@@ -33,6 +33,7 @@ export async function updateLearnerProjectTaskProgress(
     const [candidate] = await tx.select({ sprintId: projectTasks.sprintId }).from(projectTasks)
       .where(and(eq(projectTasks.projectId, scope.project.id), eq(projectTasks.id, params.taskId))).limit(1);
     if (!candidate) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
+    if (!candidate.sprintId) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
     // Project then sprint then tasks: consistent lock order serializes competing reorders.
     const [sprint] = await tx.select({ status: projectSprints.status, releaseId: projectSprints.releaseId })
