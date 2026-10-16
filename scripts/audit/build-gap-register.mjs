@@ -342,16 +342,12 @@ function readCommits(range, extra) {
 }
 const cites = new Map(); // id -> {main:[], branch:[]}
 const getCite = (id) => { if (!cites.has(id)) cites.set(id, { main: [], branch: [] }); return cites.get(id); };
-const shaLane = new Map(); // sha -> lane branch that carries it
+// Lane attribution for main commits is not derivable (lane branches merge main back in), so FIXED-ON-MAIN and VERIFIED use the proposed lane.
 if (trackerOk) {
   const mainCommits = readCommits([MAIN_REF], [`--since=${TRACK_SINCE}`]);
   const brs = git(["for-each-ref", "--format=%(refname:short)", "refs/remotes/origin/chatgpt/"]).split(/\r?\n/).filter((b) => /\/chat-\d+$/.test(b));
-  for (const b of brs) {
-    const lane = /(chat-\d+)$/.exec(b)[1];
-    try { for (const sha of git(["rev-list", b, `--since=${TRACK_SINCE}`]).split(/\r?\n/).filter(Boolean)) if (!shaLane.has(sha)) shaLane.set(sha, lane); } catch { /* ignore */ }
-  }
   for (const c of mainCommits) {
-    for (const id of extractIds(`${c.subject}\n${c.body}`, `main ${c.sha.slice(0, 9)}`)) getCite(id).main.push({ sha: c.sha, date: c.date, subject: c.subject, merge: c.isMerge, lane: shaLane.get(c.sha) || null });
+    for (const id of extractIds(`${c.subject}\n${c.body}`, `main ${c.sha.slice(0, 9)}`)) getCite(id).main.push({ sha: c.sha, date: c.date, subject: c.subject, merge: c.isMerge, lane: null });
   }
   for (const b of brs) {
     const lane = /(chat-\d+)$/.exec(b)[1];
@@ -462,7 +458,7 @@ function trackerSections() {
   o += `### By account\n\n` + head("Account") + ACCOUNTS.map((a) => row(a, gaps.filter((g) => g.account === a))).join("") + row("**all**", gaps) + "\n";
   o += `### By severity\n\n` + head("Severity") + sevOrder.filter((v) => gaps.some((g) => g.severity === v)).map((v) => row(v, gaps.filter((g) => g.severity === v))).join("") + "\n";
   const lanes = [...new Set(gaps.map(effLane))].sort();
-  o += `### By lane\n\nLane = the lane branch that carried the latest citing commit when known, else the proposed lane.\n\n` + head("Lane") + lanes.map((l) => row(l, gaps.filter((g) => effLane(g) === l))).join("") + "\n";
+  o += `### By lane\n\nLane = the lane branch for IN-BRANCH gaps, else the proposed lane.\n\n` + head("Lane") + lanes.map((l) => row(l, gaps.filter((g) => effLane(g) === l))).join("") + "\n";
   o += `### Throughput per lane\n\nGaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (${nowIso}).\n\n`;
   const day = (d) => d.slice(0, 10);
   const fixedGaps = gaps.filter((g) => g.firstFixedAt && (g.status === "FIXED-ON-MAIN" || g.status === "VERIFIED" || g.status === "IN-BRANCH"));

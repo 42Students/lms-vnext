@@ -8,7 +8,7 @@ Rounds: Round 0 done; Round A done for all accounts; Round R (independent advers
 
 | Account | Pages audited | Pages reviewed | Rows | Round A | MISSED | S1 | S2 | S3 | S4 | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | CLOSED-SINCE | WRONG | Open work | Closed % |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 589 | 8 | 2 | 38 | 50 | 6 | 1 | 647 | 6.6% |
+| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 586 | 13 | 2 | 38 | 48 | 6 | 1 | 647 | 6.6% |
 | recruiter | 2 | 2 | 116 | 104 | 12 | 6 | 28 | 64 | 18 | 92 | 6 | 0 | 6 | 10 | 2 | 0 | 108 | 6.9% |
 | learner | 6 | 3 | 231 | 208 | 23 | 5 | 57 | 109 | 60 | 190 | 0 | 0 | 6 | 33 | 1 | 1 | 223 | 3.0% |
 | faculty | 3 | 2 | 105 | 87 | 18 | 2 | 14 | 46 | 43 | 92 | 0 | 0 | 0 | 7 | 0 | 6 | 99 | 0.0% |
@@ -16,7 +16,7 @@ Rounds: Round 0 done; Round A done for all accounts; Round R (independent advers
 | superadmin | 9 | 4 | 309 | 301 | 8 | 13 | 104 | 151 | 41 | 271 | 0 | 0 | 0 | 38 | 0 | 0 | 309 | 0.0% |
 | mentor | 2 | 1 | 88 | 77 | 11 | 0 | 17 | 52 | 19 | 86 | 0 | 0 | 0 | 2 | 0 | 0 | 88 | 0.0% |
 | public | 2 | 0 | 68 | 68 | 0 | 3 | 24 | 23 | 18 | 61 | 0 | 0 | 0 | 7 | 0 | 0 | 68 | 0.0% |
-| **all** | 45 | 24 | 1843 | 1677 | 166 | 113 | 624 | 807 | 299 | 1574 | 14 | 2 | 57 | 176 | 11 | 9 | 1764 | 3.8% |
+| **all** | 45 | 24 | 1843 | 1677 | 166 | 113 | 624 | 807 | 299 | 1571 | 19 | 2 | 57 | 174 | 11 | 9 | 1764 | 3.8% |
 
 Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 85, S2 593, S3 798, S4 288.
 
@@ -28,7 +28,7 @@ Open work = OPEN + UNCONFIRMED + IN-BRANCH. Closed % = (FIXED-ON-MAIN + VERIFIED
 
 | Account | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| tpo | 694 | 589 | 8 | 2 | 38 | 50 | 1 | 6 | 6.6% |
+| tpo | 694 | 586 | 13 | 2 | 38 | 48 | 1 | 6 | 6.6% |
 | recruiter | 116 | 92 | 6 | 0 | 6 | 10 | 0 | 2 | 6.9% |
 | learner | 231 | 190 | 0 | 0 | 6 | 33 | 1 | 1 | 3.0% |
 | faculty | 105 | 92 | 0 | 0 | 0 | 7 | 6 | 0 | 0.0% |
@@ -36,39 +36,39 @@ Open work = OPEN + UNCONFIRMED + IN-BRANCH. Closed % = (FIXED-ON-MAIN + VERIFIED
 | superadmin | 309 | 271 | 0 | 0 | 0 | 38 | 0 | 0 | 0.0% |
 | mentor | 88 | 86 | 0 | 0 | 0 | 2 | 0 | 0 | 0.0% |
 | public | 68 | 61 | 0 | 0 | 0 | 7 | 0 | 0 | 0.0% |
-| **all** | 1843 | 1574 | 14 | 2 | 57 | 176 | 9 | 11 | 3.8% |
+| **all** | 1843 | 1571 | 19 | 2 | 57 | 174 | 9 | 11 | 3.8% |
 
 ### By severity
 
 | Severity | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| S1 | 113 | 66 | 5 | 1 | 26 | 14 | 0 | 1 | 24.8% |
-| S2 | 624 | 527 | 7 | 1 | 25 | 59 | 2 | 3 | 4.7% |
+| S1 | 113 | 65 | 8 | 1 | 26 | 12 | 0 | 1 | 24.8% |
+| S2 | 624 | 525 | 9 | 1 | 25 | 59 | 2 | 3 | 4.7% |
 | S3 | 807 | 731 | 2 | 0 | 5 | 65 | 0 | 4 | 1.1% |
 | S4 | 299 | 250 | 0 | 0 | 1 | 38 | 7 | 3 | 1.4% |
 
 ### By lane
 
-Lane = the lane branch that carried the latest citing commit when known, else the proposed lane.
+Lane = the lane branch for IN-BRANCH gaps, else the proposed lane.
 
 | Lane | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| chat-2 | 241 | 172 | 6 | 2 | 45 | 14 | 0 | 2 | 20.3% |
-| chat-5 | 299 | 273 | 2 | 0 | 0 | 22 | 1 | 1 | 0.3% |
-| chat-7 | 596 | 521 | 6 | 0 | 0 | 59 | 7 | 3 | 0.5% |
-| chat-9 | 707 | 608 | 0 | 0 | 12 | 81 | 1 | 5 | 2.4% |
+| chat-2 | 207 | 169 | 9 | 1 | 12 | 14 | 0 | 2 | 7.2% |
+| chat-5 | 312 | 273 | 4 | 1 | 12 | 20 | 1 | 1 | 4.5% |
+| chat-7 | 608 | 521 | 6 | 0 | 12 | 59 | 7 | 3 | 2.5% |
+| chat-9 | 716 | 608 | 0 | 0 | 21 | 81 | 1 | 5 | 3.6% |
 
 ### Throughput per lane
 
-Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-16T14:29:42.301Z).
+Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-16T14:30:37.570Z).
 
 | Lane | Last 24 h | 2026-10-16 | Total |
 |---|---|---|---|
-| chat-2 | 53 | 53 | 53 |
-| chat-5 | 2 | 2 | 2 |
-| chat-7 | 6 | 6 | 6 |
-| chat-9 | 12 | 12 | 12 |
-| **all** | 73 | 73 | 73 |
+| chat-2 | 22 | 22 | 22 |
+| chat-5 | 17 | 17 | 17 |
+| chat-7 | 18 | 18 | 18 |
+| chat-9 | 21 | 21 | 21 |
+| **all** | 78 | 78 | 78 |
 
 ### 20 most recent fixes on main
 
