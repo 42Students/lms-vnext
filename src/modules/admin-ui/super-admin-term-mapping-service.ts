@@ -34,10 +34,10 @@ export async function listAdminTermCourseMappings(context:RequestContext,raw:unk
  const [counts,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.programName),asc(source.termNumber),asc(source.courseName),asc(source.id))
-   .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=counts[0]?.total??0;
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(row=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
   id:row.id,title:row.courseName,subtitle:row.programName+" · "+row.termName,
   status:row.active?"ACTIVE":"INACTIVE",
   details:["Course: "+row.courseCode,"Term "+row.termNumber,"Type: "+row.type,
