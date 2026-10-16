@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-import {driveRequestStatusLabel,TPO_REQUESTS_COPY} from "@/modules/placements/tpo-drive-lifecycle-list-model";
+import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -120,7 +120,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {data.rows.map((job) => <article key={job.id} className="rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0"><h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
-                <p className="text-sm text-body">{job.status} · {job.employmentType} · {job.workMode}</p>
+                <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
                 <p className="text-xs text-body">Deadline: {job.applicationDeadline
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>
