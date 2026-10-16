@@ -630,76 +630,75 @@ export function RecruiterLeadsWorkspace({
               {rows.length ? "No leads match your filters." : "No recruiter leads yet. Add your first contact."}
             </div>
           ) : view === "companies" ? (
-            companiesPhase !== "ready" ? (
-              <div
-                role={companiesPhase === "loading" ? "status" : "alert"}
-                className="rounded-lg border border-border bg-surface p-5"
-              >
-                {companiesPhase === "loading"
-                  ? "Loading companies…"
-                  : companiesError}
-                {companiesPhase === "error" ? (
-                  <button
-                    className={buttonStyle + " ml-3"}
-                    onClick={() => void loadCompanies()}
-                  >
-                    Retry
-                  </button>
-                ) : null}
+            <section className="space-y-3" aria-label="Company filters">
+              <div className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-3">
+                <label className="text-sm">Search company or people
+                  <input type="search" className={inputStyle+" mt-1"} value={companySearch}
+                    onChange={e=>setCompanySearch(e.target.value)} placeholder="Search companies"/>
+                </label>
+                <label className="text-sm">Contact
+                  <select className={inputStyle+" mt-1"} value={companyContacts}
+                    onChange={e=>setCompanyContacts(e.target.value)}>
+                    <option value="ALL">All companies</option>
+                    <option value="HAS">With contacts</option>
+                    <option value="NONE">Without contacts</option>
+                  </select>
+                </label>
+                <label className="text-sm">Drives that ran
+                  <select className={inputStyle+" mt-1"} value={companyHistory}
+                    onChange={e=>setCompanyHistory(e.target.value)}>
+                    <option value="ALL">Any drive history</option>
+                    <option value="HAS">Has drives</option>
+                    <option value="NONE">No drives yet</option>
+                  </select>
+                </label>
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={companyAliases}
+                    onChange={e=>setCompanyAliases(e.target.checked)}/>
+                  Typed more than one way
+                </label>
+                <button type="button" className={buttonStyle} onClick={()=>{
+                  setCompanySearch("");setCompanyContacts("ALL");setCompanyHistory("ALL");setCompanyAliases(false);
+                }}>Clear company filters</button>
               </div>
-            ) : companies.length === 0 ? (
-              <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
-                No companies yet. Add a recruiter contact to start Company Memory.
-              </div>
-            ) : (
-              <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                    <tr>
-                      {["Company", "People", "Drives that ran", "Accepted-offer drives", "Students placed"].map(label => (
-                        <th key={label} scope="col" className="px-4 py-3 font-semibold">{label}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {companies.map(company => (
+              <p role="status" className="text-xs text-body">{visibleCompanies.length} of {companies.length} companies</p>
+              {companiesPhase !== "ready" ? (
+                <p role="alert" className="text-sm text-body">
+                  {companiesPhase==="loading"?"Loading companies…":companiesError}
+                </p>
+              ) : visibleCompanies.length===0 ? (
+                <p className="rounded-lg border border-border bg-surface p-6 text-sm">
+                  No companies match the current filters.
+                </p>
+              ) : (
+                <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+                  <table className="w-full text-left text-sm">
+                    <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
+                      <tr>{["Company","People","Drives that ran","Accepted-offer drives","Students placed"].map(label=>
+                        <th key={label} scope="col" className="px-4 py-3">{label}</th>)}</tr>
+                    </thead>
+                    <tbody>{visibleCompanies.map(company=>(
                       <tr key={company.key} className="border-b border-border last:border-0">
-                        <td className="px-4 py-3 font-medium">
-                          <Link
-                            className="text-primary-text underline-offset-2 hover:underline"
-                            href={"/tpo/companies?name=" + encodeURIComponent(company.name)}
-                          >
-                            {company.name}
-                          </Link>
-                          {company.aliases.length ? (
-                            <span className="mt-1 block text-xs text-muted-foreground">
-                              Also typed as {company.aliases.join(", ")}
-                            </span>
-                          ) : null}
+                        <td className="px-4 py-3">
+                          <Link className="text-primary-text underline" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>{company.name}</Link>
+                          {company.aliases.length?<p className="text-xs text-muted-foreground">Also typed as {company.aliases.join(", ")}</p>:null}
                         </td>
                         <td className="px-4 py-3">
-                            {company.people?.length?(
-                              <div className="flex flex-wrap gap-1">
-                                {company.people.map(person=><Link key={person.id}
-                                  href={"/tpo/recruiters/"+encodeURIComponent(person.id)}
-                                  className="text-primary-text underline">{person.name}</Link>)}
-                              </div>
-                            ):<button type="button" className="text-primary-text underline"
-                              onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>
-                              Add a contact
-                            </button>}
-                          </td>
+                          {company.people?.length?company.people.map(person=>
+                            <Link key={person.id} className="mr-2 text-primary-text underline"
+                              href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>):
+                            <button type="button" className="text-primary-text underline"
+                              onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</button>}
+                        </td>
                         <td className="px-4 py-3">{company.drivesRan}</td>
                         <td className="px-4 py-3">{company.acceptedOfferDrives}</td>
-                        <td className="px-4 py-3">
-                          {company.studentsPlaced ?? "Pending placement-policy verification"}
-                        </td>
+                        <td className="px-4 py-3">{company.studentsPlaced??"Not enough data yet"}</td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )
+                    ))}</tbody>
+                  </table>
+                </div>
+              )}
+            </section>
           ) : view === "table" ? (
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm" tabIndex={0}
