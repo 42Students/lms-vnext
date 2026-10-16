@@ -177,9 +177,23 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       })}</ul>
     </section>:null}
     {query.data.view==="WAITING" && requestView.length===0
-      ? <EmptyState title="No drives sent for review" description="Requests you send to the placement cell appear here with their review status." />
+      ? <div className="rounded-xl border border-border p-5">
+          <EmptyState title="No Sent for review drives" description="Choose another drive stage to see more."/>
+          <Link href={recruiterDrivesHref({...query.data,view:"ALL",page:1})} className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">View all drives</Link>
+        </div>
       : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
-        ? <EmptyState title="No drives match this search" description="Try another role name or clear the current search." />
+        ? <div className="rounded-xl border border-border p-5">
+          {totals.all===0
+           ? <EmptyState title="You have no drives yet" description="Request a drive and the placement cell will review it."/>
+           : query.data.q
+            ? <EmptyState title="No drives match this search" description="Try another role name or clear the current search."/>
+            : <EmptyState title={"No "+(query.data.view==="LIVE"?"Live":"Completed and cancelled")+" drives"}
+              description="Choose another drive stage to see more."/>}
+          <Link href={totals.all===0?recruiterDriveDraftHref({collegeId:selectedCollege}):recruiterDrivesHref({...query.data,view:"ALL",q:"",page:1})}
+            className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+            {totals.all===0?"Request a drive":query.data.q?"Clear search":"View all drives"}
+          </Link>
+        </div>
         : null}
     {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio jobs={pageResult.rows} returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
     {query.data.view !== "WAITING" ? <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
