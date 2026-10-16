@@ -79,6 +79,7 @@ export async function ProjectAdminSubmissionsPage({
   ]);
   const queuePath =
     basePath + "/submissions";
+  const renderedAt = new Date();
 
   return (
     <div className="space-y-6">
@@ -153,7 +154,7 @@ export async function ProjectAdminSubmissionsPage({
               <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3">
                 <div><dt className="font-semibold">Pending</dt><dd>{
                   submission.status === "SUBMITTED" && submission.submittedAt
-                    ? Math.max(0, Math.floor((Date.now() - submission.submittedAt.getTime()) / 86400000)) + " days"
+                    ? Math.max(0, Math.floor((renderedAt.getTime() - submission.submittedAt.getTime()) / 86400000)) + " days"
                     : "—"
                 }</dd></div>
                 <div><dt className="font-semibold">Revisions</dt>
