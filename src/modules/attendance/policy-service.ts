@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq } from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents, attendancePolicies } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -10,6 +10,13 @@ import {
   DEFAULT_ATTENDANCE_POLICY,
 } from "./policy-validation";
 
+export async function correctionHoursDeploymentMax(){
+ const row=await getDb().execute(sql<{definition:string}>`
+  select pg_get_constraintdef(oid) as definition from pg_constraint
+  where conname='attendance_policies_correction_window_ck' limit 1
+ `);
+ return row.rows[0]?.definition?.includes("8760")?8760:168;
+}
 /**
  * Read the persisted policy for one authorized college.
  *
@@ -45,6 +52,7 @@ export async function getCollegeAttendancePolicy(
   return {
     college,
     policy: stored ?? DEFAULT_ATTENDANCE_POLICY,
+    maxCorrectionHours:await correctionHoursDeploymentMax(),
   };
 }
 
@@ -73,6 +81,8 @@ export async function updateCollegeAttendancePolicy(
     input.collegeId,
   );
 
+  if(input.correctionWindowHours>(await correctionHoursDeploymentMax()))
+    throw new Error("ATTENDANCE_POLICY_MIGRATION_PENDING");
   const now = new Date();
 
   return getDb().transaction(async (tx) => {
