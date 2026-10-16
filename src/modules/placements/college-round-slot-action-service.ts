@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,inArray,ne,or} from "drizzle-orm";
+import {and,asc,eq,inArray,ne,lt,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
@@ -62,4 +62,122 @@ export async function getCollegeRoundSlotAppointments(ctx:RequestContext,raw:unk
    event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"?"COMPLETED":"NO_SHOW");
  return {job,storageReady:true,rounds,candidates,
   interviews:bookings.map(s=>viewSlot(s,outcomes.get(s.id)))};
+}
+
+export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobId:unknown,raw:unknown){
+ const {collegeId,job}=await scope(ctx,rawJobId);
+ const cmd=collegeInterviewActionSchema.parse(raw);
+ if(job.status!=="PUBLISHED")throw Error("Only an open drive may schedule interviews.");
+ return getDb().transaction(async tx=>{
+  const [currentJob]=await tx.select({status:placementJobs.status})
+   .from(placementJobs).where(and(eq(placementJobs.id,job.id),
+    eq(placementJobs.collegeId,collegeId))).for("share").limit(1);
+  if(currentJob?.status!=="PUBLISHED")throw Error("The drive has changed status.");
+  let booked:typeof slots.$inferSelect;
+  let learnerApplicationId:string;
+  let eventType:string;
+  let message:string;
+  if(cmd.action==="SCHEDULE"||cmd.action==="EDIT"){
+   const a=cmd.appointment;
+   const start=new Date(a.scheduledAt),end=new Date(start.getTime()+a.durationMinutes*60_000);
+   if(start<=new Date())throw Error("Schedule an upcoming interview.");
+   const [round]=await tx.select({id:placementJobRounds.id,status:placementJobRounds.status})
+    .from(placementJobRounds).where(and(eq(placementJobRounds.id,a.roundId),
+      eq(placementJobRounds.jobId,job.id),eq(placementJobRounds.kind,"INTERVIEW")))
+    .for("update").limit(1);
+   if(!round||!["SCHEDULED","PENDING"].includes(round.status))
+    throw Error("Interview round is not schedulable.");
+   const [app]=await tx.select({id:placementApplications.id,userId:collegeMemberships.userId})
+    .from(placementApplications)
+    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+      eq(collegeMemberships.collegeId,collegeId)))
+    .innerJoin(placementApplicationScreenings,
+      eq(placementApplicationScreenings.applicationId,placementApplications.id))
+    .where(and(eq(placementApplications.id,a.applicationId),
+      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
+      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
+   if(!app)throw Error("Only an eligible shortlisted applicant can be scheduled.");
+   const room=a.mode==="VIRTUAL"?a.meetingUrl!:a.venue!;
+   const overlapping=await tx.select({id:slots.id,applicationId:slots.applicationId,room:slots.room})
+    .from(slots).where(and(eq(slots.jobId,job.id),eq(slots.status,"BOOKED"),
+      lt(slots.startsAt,end),gt(slots.endsAt,start)));
+   const oldId=cmd.action==="EDIT"?cmd.interviewId:null;
+   if(overlapping.some(x=>x.id!==oldId&&
+      (x.applicationId===a.applicationId||x.room.trim().toLowerCase()===room.trim().toLowerCase())))
+    throw Error("The candidate or room already has an overlapping interview.");
+   if(cmd.action==="SCHEDULE"){
+    const [saved]=await tx.insert(slots).values({
+     jobId:job.id,roundId:a.roundId,applicationId:a.applicationId,
+     startsAt:start,endsAt:end,room,panel:a.interviewer,status:"BOOKED",
+     source:"TPO",confirmedAt:new Date(),changedByUserId:ctx.user.id,
+    }).returning();
+    booked=saved;
+    eventType="PLACEMENTS_COLLEGE_INTERVIEW_SCHEDULED";
+    message="Interview scheduled for "+job.title+" on "+start.toISOString()+".";
+   }else{
+    const [old]=await tx.select().from(slots).where(and(eq(slots.id,cmd.interviewId),
+     eq(slots.jobId,job.id),eq(slots.status,"BOOKED")))
+     .for("update").limit(1);
+    if(!old||old.version!==cmd.expectedVersion||old.roundId!==a.roundId||
+      old.applicationId!==a.applicationId)throw Error("Interview changed; refresh and retry.");
+    const [saved]=await tx.update(slots).set({startsAt:start,endsAt:end,room,
+     panel:a.interviewer,version:old.version+1,changedByUserId:ctx.user.id,updatedAt:new Date()})
+     .where(and(eq(slots.id,old.id),eq(slots.version,old.version))).returning();
+    if(!saved)throw Error("Interview changed; refresh and retry.");
+    booked=saved;
+    eventType="PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED";
+    message="Interview rescheduled for "+job.title+" on "+start.toISOString()+". "+cmd.reason;
+   }
+   learnerApplicationId=a.applicationId;
+  }else{
+   const [old]=await tx.select().from(slots).where(and(eq(slots.id,cmd.interviewId),
+     eq(slots.jobId,job.id),eq(slots.status,"BOOKED"))).for("update").limit(1);
+   if(!old||old.version!==cmd.expectedVersion||!old.applicationId)
+    throw Error("Interview changed; refresh and retry.");
+   const [prior]=await tx.select({eventType:activityEvents.eventType})
+    .from(activityEvents).where(and(eq(activityEvents.subjectId,old.id),
+      eq(activityEvents.subjectType,"placement_round_candidate_slot"),
+      inArray(activityEvents.eventType,["PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
+       "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW"]))).limit(1);
+   if(prior)throw Error("An interview outcome is already recorded.");
+   if(cmd.action==="NO_SHOW"){
+    const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
+     .from(placementLearnerRequests)
+     .where(and(eq(placementLearnerRequests.applicationId,old.applicationId),
+      eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+      eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+    if(withdrawal)throw Error("Candidate has a pending withdrawal request; do not mark no-show.");
+   }
+   learnerApplicationId=old.applicationId;
+   const [saved]=await tx.update(slots).set({
+    status:cmd.action==="CANCEL"?"CANCELLED":"BOOKED",
+    applicationId:cmd.action==="CANCEL"?null:old.applicationId,
+    version:old.version+1,changedByUserId:ctx.user.id,updatedAt:new Date(),
+   }).where(and(eq(slots.id,old.id),eq(slots.version,old.version))).returning();
+   if(!saved)throw Error("Interview changed; refresh and retry.");
+   booked=saved;eventType="PLACEMENTS_COLLEGE_INTERVIEW_"+cmd.action;
+   message="Your interview for "+job.title+" was "+
+    cmd.action.toLowerCase().replaceAll("_"," ")+". "+cmd.reason;
+  }
+  const [learner]=await tx.select({userId:collegeMemberships.userId})
+   .from(placementApplications).innerJoin(collegeMemberships,
+    eq(collegeMemberships.id,placementApplications.membershipId))
+   .where(and(eq(placementApplications.id,learnerApplicationId),
+     eq(placementApplications.jobId,job.id),eq(collegeMemberships.collegeId,collegeId))).limit(1);
+  if(!learner)throw Error("Candidate is no longer in this college.");
+  const [audit]=await tx.insert(activityEvents).values({
+   organizationId:ctx.membership!.organizationId,collegeId,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+   module:"PLACEMENTS",eventType,
+   subjectType:"placement_round_candidate_slot",subjectId:booked.id,
+   summary:message,metadata:{jobId:job.id,applicationId:learnerApplicationId,
+    roundId:booked.roundId,room:booked.room,version:booked.version},
+  }).returning({id:activityEvents.id});
+  await tx.insert(inAppNotifications).values({
+   userId:learner.userId,eventId:audit.id,title:"Interview update",
+   body:message,actionHref:"/learn/my-placements/interviews",
+  }).onConflictDoNothing();
+  return {id:booked.id,status:cmd.action==="SCHEDULE"||cmd.action==="EDIT"?
+   "SCHEDULED":cmd.action,version:booked.version};
+ });
 }
