@@ -5,11 +5,11 @@ export const learnerBoardSprintSchema = z.string().uuid();
 export const learnerBoardReleaseSchema = z.string().uuid();
 export const learnerBoardPrioritySchema = z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]);
 export const learnerBoardStatusSchema = z.enum(["TODO", "IN_PROGRESS", "BLOCKED", "IN_REVIEW", "DONE"]);
-export type LearnerBoardTask = { id: string; title: string; description: string | null; acceptanceCriteria?: string | null; priority?: string; sprintId?: string };
+export type LearnerBoardTask = { id: string; title: string; description: string | null; acceptanceCriteria?: string | null; priority?: string; sprintId?: string; assigneeMembershipId?: string | null };
 
 export function filterLearnerBoardTasks<T extends LearnerBoardTask>(
   tasks: readonly T[], searchInput: unknown, options: {
-    priority?: string; status?: string; sprintId?: string; releaseId?: string;
+    priority?: string; status?: string; sprintId?: string; releaseId?: string; mineMembershipId?: string;
     sprintReleaseById?: ReadonlyMap<string,string>;
   } = {},
 ): T[] {
@@ -19,6 +19,7 @@ export function filterLearnerBoardTasks<T extends LearnerBoardTask>(
   const sprintId = learnerBoardSprintSchema.safeParse(options.sprintId).data;
   const releaseId = learnerBoardReleaseSchema.safeParse(options.releaseId).data;
   return tasks.filter(task =>
+    (!options.mineMembershipId || task.assigneeMembershipId === options.mineMembershipId) &&
     (!priority || task.priority === priority) &&
     (!status || ("status" in task && task.status === status)) &&
     (!sprintId || task.sprintId === sprintId) &&
@@ -35,9 +36,9 @@ export function learnerBoardEmptyState(total: number, shown: number): LearnerBoa
 }
 
 export function learnerBoardActiveFilterCount(filters: {
-  search: string; priority: string; status?: string; sprintId: string; releaseId: string; taskSort?: string;
+  search: string; priority: string; status?: string; sprintId: string; releaseId: string; taskSort?: string; mine?: boolean;
 }): number {
   return [filters.search.trim(), filters.priority, filters.status, filters.sprintId, filters.releaseId,
-      filters.taskSort && filters.taskSort !== "DEFAULT" ? filters.taskSort : ""]
+      filters.taskSort && filters.taskSort !== "DEFAULT" ? filters.taskSort : "", filters.mine ? "mine" : ""]
     .filter(Boolean).length;
 }
