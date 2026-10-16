@@ -95,11 +95,14 @@ export function RecruiterLeadsWorkspace({
   initialView = "table",
   initialAdd = false,
   initialCompany = "",
+  initialFilters = {},
 }: {
   collegeId: string;
   initialView?: "table" | "board" | "companies";
   initialAdd?: boolean;
   initialCompany?: string;
+  initialFilters?: Partial<Record<"q"|"stage"|"owner"|"invite"|"status"|"source"|
+    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added",string>>;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
@@ -109,19 +112,19 @@ export function RecruiterLeadsWorkspace({
   const [invitingId,setInvitingId]=useState<string|null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialFilters.q??"");
   const [filterOpen,setFilterOpen]=useState(false);
-  const [ownerFilter,setOwnerFilter]=useState("ALL");
-  const [inviteFilter,setInviteFilter]=useState("ALL");
-  const [statusFilter,setStatusFilter]=useState("ALL");
-  const [sourceFilter,setSourceFilter]=useState("ALL");
-  const [companyFilter,setCompanyFilter]=useState("ALL");
-  const [designationFilter,setDesignationFilter]=useState("");
-  const [reachFilter,setReachFilter]=useState("ALL");
-  const [nextFilter,setNextFilter]=useState("ALL");
-  const [activityFilter,setActivityFilter]=useState("ALL");
-  const [addedFilter,setAddedFilter]=useState("ALL");
-  const [stage, setStage] = useState<(typeof STAGES)[number]>("ALL");
+  const [ownerFilter,setOwnerFilter]=useState(initialFilters.owner??"ALL");
+  const [inviteFilter,setInviteFilter]=useState(initialFilters.invite??"ALL");
+  const [statusFilter,setStatusFilter]=useState(initialFilters.status??"ALL");
+  const [sourceFilter,setSourceFilter]=useState(initialFilters.source??"ALL");
+  const [companyFilter,setCompanyFilter]=useState(initialFilters.company??"ALL");
+  const [designationFilter,setDesignationFilter]=useState(initialFilters.designation??"");
+  const [reachFilter,setReachFilter]=useState(initialFilters.reach??"ALL");
+  const [nextFilter,setNextFilter]=useState(initialFilters.nextFollowup??"ALL");
+  const [activityFilter,setActivityFilter]=useState(initialFilters.lastActivity??"ALL");
+  const [addedFilter,setAddedFilter]=useState(initialFilters.added??"ALL");
+  const [stage, setStage] = useState<(typeof STAGES)[number]>(STAGES.includes(initialFilters.stage as (typeof STAGES)[number])?initialFilters.stage as (typeof STAGES)[number]:"ALL");
   const [need, setNeed] = useState<EngageNeed>("ALL");
   const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
   const [view, setView] = useState<"table" | "board" | "companies">(initialView);
