@@ -12,6 +12,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  const [name,setName]=useState(""),[note,setNote]=useState("");
  const [busy,setBusy]=useState(false),[notice,setNotice]=useState("");
  const [selected,setSelected]=useState("");
+ const [editingName,setEditingName]=useState(""),[editingNote,setEditingNote]=useState("");
  async function refresh(){
   try{
    const res=await fetch("/api/placements/tpo/leads/views",{credentials:"same-origin",cache:"no-store"});
@@ -33,8 +34,8 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
   if(busy||!ready)return;
   setBusy(true);setNotice("");
   const payload={
-   action,id:view?.id,name:action==="CREATE"?name.trim():view?.name,
-   note:action==="CREATE"?note.trim():view?.note??"",
+   action,id:view?.id,name:action==="CREATE"?name.trim():action==="UPDATE"?editingName.trim():view?.name,
+   note:action==="CREATE"?note.trim():action==="UPDATE"?editingNote.trim():view?.note??"",
    query:action==="PIN"||action==="DELETE"?undefined:currentQuery(),
    columns:action==="PIN"||action==="DELETE"?undefined:[...columns],
    pinned:action==="PIN"?!view?.pinned:action==="CREATE"?false:undefined,
@@ -86,12 +87,18 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
    {views.length?<div className="space-y-2">
     <label className="block text-sm">Open saved view
      <select className="mt-1 min-h-10 w-full max-w-sm rounded border border-border px-3"
-      value={selected} onChange={e=>setSelected(e.target.value)}>
+      value={selected} onChange={e=>{
+       setSelected(e.target.value);
+       const view=views.find(item=>item.id===e.target.value);
+       setEditingName(view?.name??"");setEditingNote(view?.note??"");
+      }}>
       <option value="">Choose a view</option>
       {views.map(view=><option key={view.id} value={view.id}>{view.pinned?"★ ":""}{view.name}</option>)}
      </select>
     </label>
     {active?<div className="flex flex-wrap gap-2">
+     <label className="text-sm">Rename view<input maxLength={100} className="ml-2 min-h-10 rounded border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
+     <label className="text-sm">Note<input maxLength={500} className="ml-2 min-h-10 rounded border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
      <button type="button" className={button} onClick={()=>open(active)}>Open</button>
      <button type="button" className={button} disabled={busy} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</button>
      <button type="button" className={button} disabled={busy} onClick={()=>void apply("PIN",active)}>
