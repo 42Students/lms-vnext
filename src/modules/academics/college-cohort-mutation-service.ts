@@ -16,8 +16,9 @@ import {
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { postgresConstraintName } from "./errors";
 import {
   collegeCohortIdSchema,
@@ -44,19 +45,8 @@ export class CollegeCohortMutationError extends Error {
 
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
-function ownCollege(context: RequestContext) {
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.manage", {
-      collegeId: member.collegeId,
-      organizationId: member.organizationId,
-    })) {
-    throw new AuthorizationError("academics.manage");
-  }
-  requirePermission(context, "academics.manage", {
-    collegeId: member.collegeId, organizationId: member.organizationId,
-  });
-  return member;
+async function ownCollege(context: RequestContext) {
+  return resolveActingCollege(context, "academics.manage");
 }
 
 async function lockProgram(tx: Tx, programId: string, collegeId: string) {
@@ -134,7 +124,7 @@ function mapError(error: unknown): never {
 
 export async function createCollegeCohort(context: RequestContext, raw: unknown) {
   const input = createCollegeCohortSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   try {
     return await getDb().transaction(async (tx) => {
       await lockProgram(tx, input.programId, member.collegeId);
@@ -169,7 +159,7 @@ export async function updateCollegeCohort(
 ) {
   const cohortId = collegeCohortIdSchema.parse(cohortIdInput);
   const input = updateCollegeCohortSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   try {
     return await getDb().transaction(async (tx) => {
       // Resolve parent before locking it, to serialize with program archive/edits.
