@@ -112,7 +112,9 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
     if(input.action==="EDIT"){
      // Stale token is checked before no-op detection. Only metadata-only
      // writes can be compared without loading the immutable question bank.
-     if(input.questions===undefined && facultyQuizMetadataUnchanged(current,input))
+     if(input.questions===undefined && facultyQuizMetadataUnchanged(current,input) &&
+      (input.shuffleQuestions===undefined||input.shuffleQuestions===current.shuffleQuestions) &&
+      (input.shuffleOptions===undefined||input.shuffleOptions===current.shuffleOptions))
       throw new CoursesServiceError("FACULTY_QUIZ_NO_CHANGE");
      if(input.questions){
      const oldQuestions=await tx.select({id:quizQuestions.id}).from(quizQuestions)
