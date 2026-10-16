@@ -19,7 +19,7 @@ async function scope(ctx:RequestContext,raw:unknown){
 }
 function viewSlot(s:typeof slots.$inferSelect,outcome?:string){
  const virtual=s.room.startsWith("https://");
- return {id:s.id,jobId:s.jobId,roundId:s.roundId,applicationId:s.applicationId,
+ return {id:s.id,jobId:s.jobId,roundId:s.roundId,applicationId:s.applicationId??"",
   status:s.status==="CANCELLED"?"CANCELLED":outcome??"SCHEDULED",
   scheduledAt:s.startsAt.toISOString(),
   durationMinutes:Math.round((s.endsAt.getTime()-s.startsAt.getTime())/60000),
