@@ -10,6 +10,7 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
   {label:"Rounds",href:root+"/rounds"},
   {label:"Selections",href:root+"/selections"},
   {label:"Offers",href:root+"/offers"},
+  {label:"Waitlist",href:root+"/waitlist"},
   {label:"Joining",href:root+"/joining"},
   {label:"Company sharing",href:root+"/share-preview"},
  ];
