@@ -4,7 +4,8 @@ import {useRouter} from "next/navigation";
 import {COLLEGE_APPLICATION_STAGES} from "@/modules/placements/college-stage-action-model";
 import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
 import {CollegeApplicationDetailDrawer} from "./college-application-detail-drawer";
-type Row={id:string;name:string|null;rollNumber:string|null;roleTitle:string;
+type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
+ source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
  status:string;screening:string|null;stage:string;previousStage:string|null;stageVersion:number|null};
 const transitions:Record<string,readonly string[]>={
  APPLIED:["SHORTLISTED","ASSESSMENT","REJECTED"],
@@ -86,14 +87,23 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
   <div className="overflow-x-auto rounded-xl border border-border bg-surface">
    <table className="min-w-full text-left text-sm">
     <thead><tr className="border-b border-border bg-muted"><th className="p-3">Select</th>
-     <th className="p-3">Learner Name</th><th className="p-3">Roll</th><th className="p-3">Role</th>
+     <th className="p-3">Learner Name</th><th className="p-3">Email</th><th className="p-3">College</th>
+     <th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Source</th>
+     <th className="p-3">Applied Date</th><th className="p-3">Age</th><th className="p-3">Match Score</th>
      <th className="p-3">Current Status</th><th className="p-3">Screening</th><th className="p-3">Actions</th></tr></thead>
     <tbody>{rows.map(row=><tr key={row.id} className="border-b border-border">
      <td className="p-3"><input type="checkbox" disabled={row.status!=="SUBMITTED"||busy||allMatching}
       aria-label={"Select "+(row.name??row.id)} checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/></td>
      <td className="p-3">{row.name??"Unnamed learner"}</td>
+     <td className="p-3">{row.email??"—"}</td>
+     <td className="p-3">{row.collegeName}</td>
      <td className="p-3">{row.rollNumber??"Not recorded"}</td>
-     <td className="p-3">{row.roleTitle}</td><td className="p-3">{row.stage}</td>
+     <td className="p-3">{row.roleTitle}</td>
+     <td className="p-3">{row.source}</td>
+     <td className="p-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.submittedAt))}</td>
+     <td className="p-3">{row.ageDays} days</td>
+     <td className="p-3" title="No persisted match score available">—</td>
+     <td className="p-3">{row.stage}</td>
      <td className="p-3">{row.screening??"Not recorded"}</td>
      <td className="p-3"><div className="flex flex-wrap gap-2">
       <button type="button" onClick={()=>setDetailId(row.id)}
