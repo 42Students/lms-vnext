@@ -17,6 +17,7 @@ import {ENGAGE_DEFAULT_COLUMNS,normalizeEngageColumns,sortEngageRows,
  type EngageColumn,type EngageSort} from "@/modules/placements/tpo-recruiter-table-view-model";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
+import {RecruiterBulkInviteControls} from "./recruiter-bulk-invite-controls";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Lead = {
@@ -641,6 +642,8 @@ export function RecruiterLeadsWorkspace({
                   onClick={()=>setSelectedIds([])}>Clear selection</button>:null}
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               </div>
+              <RecruiterBulkInviteControls collegeId={collegeId}
+                rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
               <RecruiterBulkOwnerControls rows={visible} onUpdated={() => void load()} />
             </div>
