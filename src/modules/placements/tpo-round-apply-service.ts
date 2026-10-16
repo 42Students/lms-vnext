@@ -1,0 +1,59 @@
+import "server-only";
+import {and,eq,ne} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {collegeMemberships,placementApplications,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
+import type {RequestContext} from "@/modules/identity/context";
+import {PlacementsServiceError} from "./errors";
+import {applyPlacementRoundResult} from "./result-service";
+import {requireTpoJobCollege} from "./tpo-job-write-base";
+import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
+import {roundApplyInputSchema,roundApplyPreviewToken,summarizeRoundApply} from "./tpo-round-apply-model";
+
+export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
+ const collegeId=await requireTpoJobCollege(context);
+ const jobId=placementJobIdSchema.parse(rawJobId),roundId=placementRoundIdSchema.parse(rawRoundId);
+ const [scope]=await getDb().select({
+  roundId:placementJobRounds.id,roundName:placementJobRounds.name,
+  roundStatus:placementJobRounds.status,roundKind:placementJobRounds.kind,
+  jobStatus:placementJobs.status,jobTitle:placementJobs.title,
+ }).from(placementJobRounds).innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
+  .where(and(eq(placementJobRounds.id,roundId),eq(placementJobs.id,jobId),
+   eq(placementJobs.collegeId,collegeId))).limit(1);
+ if(!scope)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
+ const facts=await getDb().select({
+  resultId:placementRoundResults.id,applicationId:placementRoundResults.applicationId,
+  student:users.displayName,outcome:placementRoundResults.outcome,
+  status:placementRoundResults.status,version:placementRoundResults.version,
+ }).from(placementRoundResults)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementRoundResults.applicationId))
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(eq(placementRoundResults.roundId,roundId),
+   eq(placementApplications.jobId,jobId),eq(collegeMemberships.collegeId,collegeId),
+   ne(placementRoundResults.status,"SUPERSEDED")))
+  .orderBy(users.displayName,placementRoundResults.applicationId);
+ const rows=facts.map(x=>({...x,student:x.student??"Learner"}));
+ const ready=scope.jobStatus==="PUBLISHED"&&scope.roundStatus==="COMPLETED"&&scope.roundKind!=="TALK";
+ return {scope,ready,rows,...summarizeRoundApply(rows),
+  previewToken:roundApplyPreviewToken(roundId,rows),
+  skippedUnrecordedNote:"Applicants with no staged result remain pending; they are not automatically failed."};
+}
+export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown,rawRoundId:unknown,raw:unknown){
+ const input=roundApplyInputSchema.parse(raw);
+ const preview=await getTpoRoundApplyPreview(context,rawJobId,rawRoundId);
+ if(!preview.ready)throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
+ if(input.expectedPreviewToken!==preview.previewToken)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+ const results:Array<{resultId:string;applicationId:string;student:string;outcome:string;status:"applied"|"skipped";reason?:string}>=[];
+ for(const row of preview.rows.filter(r=>r.status==="STAGED")){
+  try{
+   await applyPlacementRoundResult(context,row.resultId);
+   results.push({...row,status:"applied"});
+  }catch(error){
+   results.push({...row,status:"skipped",reason:error instanceof Error?error.message:"Result not applied"});
+  }
+ }
+ return {total:preview.rows.length,previouslyApplied:preview.applied,
+  applied:results.filter(r=>r.status==="applied").length,
+  skipped:results.filter(r=>r.status==="skipped").length,
+  unchanged:preview.rows.filter(r=>r.status==="APPLIED").length,results};
+}
