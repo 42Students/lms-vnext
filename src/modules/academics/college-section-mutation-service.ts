@@ -215,7 +215,8 @@ export async function updateCollegeSection(context: RequestContext,
       await assertUnique(tx, current.cohortId, current.academicPeriodId,
         input.name, input.code, sectionId);
       const [updated] = await tx.update(sections).set({
-        name: input.name, code: input.code, capacity: input.capacity, updatedAt: new Date(),
+        name: input.name, code: input.code, capacity: input.capacity,
+        ...(input.description !== undefined ? { description: input.description } : {}), updatedAt: new Date(),
       }).where(and(eq(sections.id, sectionId), eq(sections.status, "ACTIVE")))
         .returning();
       if (!updated) throw new CollegeSectionError("CLASS_NOT_FOUND");
