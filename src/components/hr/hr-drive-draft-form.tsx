@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
@@ -65,16 +65,27 @@ export function HrDriveDraftForm({
     "TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW",
   ] as const;
 
+  // REC-home-drives-29: scope the draft to this signed-in user and college.
+  useEffect(()=>{
+    if(fixRequestId)return;
+    const timer=window.setTimeout(()=>{
+      const saved=saveHrUnsentDraft(draft,Date.now());
+      if(!saved)return;
+      try{window.localStorage.setItem(storageKey,saved);}catch{/* Storage disabled */ }
+    },600);
+    return ()=>window.clearTimeout(timer);
+  },[draft,storageKey,fixRequestId]);
+
   function saveForThisTab(){
     const raw=saveHrUnsentDraft(draft,Date.now());
     if(!raw){setNotice("Validate the draft before saving it for this tab.");return;}
-    try{window.sessionStorage.setItem(storageKey,raw);
+    try{window.sessionStorage.setItem(storageKey,raw);window.localStorage.setItem(storageKey,raw);
       setNotice("Validated unsent draft saved for this browser tab (24-hour expiry).");}
     catch{setNotice("This browser cannot save a draft. Copy the preview instead.");}
   }
   function restoreFromThisTab(){
     try{
-      const saved=restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now());
+      const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey)??window.sessionStorage.getItem(storageKey),Date.now());
       if(!saved){setNotice("No valid, unexpired saved draft for this exact college and job.");return;}
       setDraft(saved);setShowPreview(false);
       setNotice("Restored local draft. It has not been submitted or sent.");}
@@ -347,7 +358,7 @@ export function HrDriveDraftForm({
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
             onClick={() => {
               if(hrDraftContainsWork(draft)&&!window.confirm("Discard all unsent draft changes and clear this tab's saved copy?"))return;
-              try{window.sessionStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
+              try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
               setDraft(emptyHrDriveDraft());setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
             }}>Start over</button>
         </div>
