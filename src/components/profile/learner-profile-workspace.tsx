@@ -326,6 +326,13 @@ export function LearnerProfileWorkspace(props: {
     setItemDraft(item ? { ...item } : newItem(section));
   }
 
+  function addPublication() {
+    if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
+    setCollection("metadata");
+    setEditingId(null);
+    setItemDraft(newLearnerPublicationEntry(crypto.randomUUID()));
+  }
+
   function saveOwnedSection(
     section: "education" | "skills" | "projects",
     items: LearnerProfileDocument[typeof section],
@@ -583,7 +590,7 @@ export function LearnerProfileWorkspace(props: {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-sm font-semibold text-foreground">Publications &amp; Research (learner entered)</p>
                 <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                  onClick={()=>openCollection("metadata",newLearnerPublicationEntry(crypto.randomUUID()))}>Add publication</Button>
+                  onClick={addPublication}>Add publication</Button>
               </div>
               {authoredPublicationsAwards.publications.length ?
                 <ul className="mt-1 space-y-2 text-sm text-body">
