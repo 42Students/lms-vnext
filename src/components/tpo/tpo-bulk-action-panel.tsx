@@ -8,7 +8,7 @@ import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
 import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
 import {tpoReviewOneByOneHref,tpoShareWithCompanyHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
-import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,
+import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,TPO_BULK_VIEW_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
 type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE"|"MOVE_TEST"|"MOVE_INTERVIEW";
@@ -54,7 +54,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   return response.json() as Promise<unknown>;
  }
  async function startPreview(choice:Action=action){
-  if(busy||safeSelected.length===0||safeSelected.length>TPO_BULK_UI_LIMIT)return;
+  if(busy||safeSelected.length===0)return;
   if(target==="APPLICATIONS"&&note.trim().length<10){
    setError("Provide at least 10 characters of screening context.");return;
   }
@@ -63,7 +63,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   }
   const next:PreviewPlan={
     target,...(target==="APPLICATIONS"?{jobId}:{}),
-    action:choice,note:target==="APPLICATIONS"||choice==="INELIGIBLE"?note.trim():"",ids:safeSelected,
+    action:choice,note:target==="APPLICATIONS"||choice==="INELIGIBLE"?note.trim():"",ids:safeSelected.slice(0,TPO_BULK_UI_LIMIT),
   };
   setBusy(true);invalidate();
   try{
@@ -126,7 +126,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    }) as {outcomes:BulkOutcome[]};
    if(!Array.isArray(response.outcomes))throw new Error("Missing outcomes");
    setOutcomes(response.outcomes);
-   setSelected([]);
+   setSelected(current=>current.filter(id=>!plan.ids.includes(id)));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Confirmation failed. Preview again before retrying.");setPreview(null);setPlan(null);}
   finally{setBusy(false);}
@@ -140,17 +140,21 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
   <div><h2 className="font-semibold text-foreground">Actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
    <p className="mt-1 text-sm text-body">
-    Select eligible rows or act on all matching records in this filtered view (up to 200 per preview).
+    Select eligible rows or act on all matching records in this filtered view (in verified batches of up to 200 per preview).
     Confirmation rechecks permission and versions; existing decisions are audited.
    </p></div>
-  <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {viewCount} matching records (200 maximum per operation).</p>
+  <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {viewCount} matching records (up to 200 processed in each confirmed batch).</p>
   <button type="button" disabled={busy||!canActOnEntireTpoView(viewCount,allRows)}
    onClick={()=>{setSelected(allRows!.map(row=>row.id));invalidate();}}
    className="min-h-11 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    Act on all {viewCount} in this view
   </button>
-  {viewCount>TPO_BULK_UI_LIMIT?<p role="status" className="text-sm text-warning-text">
-    This view has more than 200 records. Narrow the filters before acting on all; no unpreviewed rows will be changed.
+  {viewCount>TPO_BULK_VIEW_LIMIT?<p role="status" className="text-sm text-warning-text">
+    More than 5,000 records match. Narrow filters to enable an exact selection. No unpreviewed row is changed.
+   </p>:null}
+  {safeSelected.length>TPO_BULK_UI_LIMIT?<p role="status" className="text-sm text-body">
+    {safeSelected.length} selected. Preview and confirm the next {Math.min(200,safeSelected.length)} rows;
+    remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
   <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
@@ -253,7 +257,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   <button type="button" disabled={busy||safeSelected.length===0}
     onClick={()=>void startPreview()}
     className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50">
-    {busy?"Checking…":"Preview "+safeSelected.length+" selected"}
+    {busy?"Checking…":"Preview next "+Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)+" selected"}
   </button>
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
@@ -265,13 +269,17 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     </label>
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
-    busy={busy||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
+    busy={busy||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
   {outcomes.length>0?<div className="space-y-2 rounded-lg border border-border p-3">
     <p role="status" className="text-sm font-semibold">
      {outcomes.filter(item=>item.status==="updated").length} updated ·
      {" "}{outcomes.filter(item=>item.status!=="updated").length} not applied
     </p>
-    {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2">
+    {safeSelected.length>0?<button type="button" disabled={busy} onClick={()=>void startPreview(plan?.action??action)}
+     className="min-h-11 rounded-md bg-primary px-3 font-semibold text-on-primary">
+     Preview next batch ({Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)} of {safeSelected.length} remaining)
+    </button>:null}
+   {outcomes.some(item=>item.status!=="updated")?<div className="flex flex-wrap gap-2">
      <button type="button" disabled={busy} onClick={()=>{
        const ids=outcomes.filter(item=>item.status!=="updated").map(item=>item.id);
        setSelected(ids);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");
