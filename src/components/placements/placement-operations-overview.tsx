@@ -43,6 +43,12 @@ function FunnelMetric({
 }
 export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false }: { operations: Operations; basePath: string; showDriveSearch?: boolean }) {
   return <div className="space-y-6">
+    {showDriveSearch ? <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <Metric label="Active drives" value={operations.jobs.filter(r=>r.job.status==="PUBLISHED").length} description="Currently published opportunities." />
+      <Metric label="Closed / draft" value={operations.jobs.filter(r=>["CLOSED","DRAFT"].includes(r.job.status)).length} description="Closed and draft opportunities." />
+      <Metric label="All drives" value={operations.jobs.length} description="Non-archived drives in this college." />
+      <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Drives with outstanding operations." />
+    </div> : null}
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
       <Metric label="Applications" value={operations.summary.submittedApplications} description="Active submitted applications across current jobs." />
