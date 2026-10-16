@@ -124,6 +124,7 @@ export function CreateProjectResourceControl({
   const [url, setUrl] = useState("");
   const [required, setRequired] =
     useState(false);
+  const [visibility, setVisibility] = useState<"TEAM" | "MENTOR_ONLY">("TEAM");
   const [pending, setPending] =
     useState(false);
   const [error, setError] =
@@ -152,6 +153,7 @@ export function CreateProjectResourceControl({
             description.trim() || undefined,
           url: url.trim() || undefined,
           required,
+          visibility,
         },
       );
       setOpen(false);
@@ -159,6 +161,7 @@ export function CreateProjectResourceControl({
       setDescription("");
       setUrl("");
       setRequired(false);
+      setVisibility("TEAM");
       showToast({
         tone: "success",
         title: "Project resource added",
@@ -199,6 +202,8 @@ export function CreateProjectResourceControl({
             description={description}
             url={url}
             required={required}
+            visibility={visibility}
+            onVisibility={setVisibility}
             onTitle={setTitle}
             onDescription={setDescription}
             onUrl={setUrl}
@@ -262,6 +267,7 @@ export function ProjectResourceActions({
   );
   const [required, setRequired] =
     useState(resource.required);
+  const [visibility, setVisibility] = useState<"TEAM" | "MENTOR_ONLY">(resource.visibility);
   const [pending, setPending] =
     useState(false);
   const [error, setError] =
@@ -290,6 +296,7 @@ export function ProjectResourceActions({
             description.trim() || null,
           url: url.trim() || null,
           required,
+          visibility,
         },
       );
       setEditOpen(false);
@@ -349,6 +356,7 @@ export function ProjectResourceActions({
             );
             setUrl(resource.url ?? "");
             setRequired(resource.required);
+            setVisibility(resource.visibility);
             setError(null);
             setEditOpen(true);
           }}
@@ -378,6 +386,8 @@ export function ProjectResourceActions({
             description={description}
             url={url}
             required={required}
+            visibility={visibility}
+            onVisibility={setVisibility}
             onTitle={setTitle}
             onDescription={setDescription}
             onUrl={setUrl}
