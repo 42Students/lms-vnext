@@ -18,7 +18,8 @@ export default async function AdminPlacementsPage() {
           description="Placement administration requires a college safety scope."
         />
         <SuperAdminPlacementOversightNav />
-        <Link href="/admin/companies" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse companies across your current scope →</Link>
+        <Link href="/admin/placements/drives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open All drives table →</Link>
+      <Link href="/admin/companies" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse companies across your current scope →</Link>
         <EmptyState
           title="Select a college scope"
           description="Choose a college in the Super Admin scope selector before opening Placement operations."
