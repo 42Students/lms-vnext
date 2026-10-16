@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect,useRef,useState} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
@@ -67,6 +67,7 @@ export function FacultyQuizReview({
   deliveryOwned,
   updatedAt,
   deadlineReached = false,
+  autoOpen=false,
 }: {
   quizId: string;
   deliveryId: string;
@@ -79,8 +80,10 @@ export function FacultyQuizReview({
   deliveryOwned: boolean;
   updatedAt:string;
   deadlineReached?:boolean;
+  autoOpen?:boolean;
 }) {
   const router = useRouter();
+  const openedOnce=useRef(false);
   const actions = quizReviewActions({
     deliveryOwned,
     status,
@@ -98,6 +101,12 @@ export function FacultyQuizReview({
     useState<string | null>(null);
   const [notice,setNotice]=useState<string|null>(null);
 
+  useEffect(()=>{
+    if(autoOpen&&actions.canReviewAttempts&&!openedOnce.current){
+      openedOnce.current=true;
+      void load();
+    }
+  },[autoOpen,actions.canReviewAttempts]);
   if (!actions.canReviewAttempts) {
     return null;
   }
