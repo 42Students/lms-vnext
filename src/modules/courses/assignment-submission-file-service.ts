@@ -33,6 +33,7 @@ import {
 import { loadCourseAssignmentScope, loadAssignmentSubmissionScope } from "./assignment-scope";
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
 import { multipartAssignmentRuntimeEnabled } from "./assignment-file-readiness";
+import {assignmentSubmissionLinks} from "@/db/schema/assignment-submission-links-staged";
 import { postgresConstraintName } from "./errors";
 import {
   requireDeliveryContentMutation,
@@ -492,9 +493,9 @@ export async function submitAssignmentWithFiles(
       // same transaction as the one-shot submission and bound READY files.
       if(multipart){
         for(const [sequence,link] of input.links.entries()){
-          await tx.execute(sql`insert into assignment_submission_links
-            (submission_id,sequence,kind,url,caption)
-            values (${submission!.id},${sequence},${link.kind},${link.url},${link.caption})`);
+          await tx.insert(assignmentSubmissionLinks).values({
+            submissionId:submission!.id,sequence,kind:link.kind,url:link.url,caption:link.caption,
+          });
         }
       }
       const bound: FileRow[] = [];
@@ -669,4 +670,18 @@ export async function listSubmissionFiles(context: RequestContext, submissionIdI
       .orderBy(asc(assignmentSubmissionFiles.sequence));
   });
   return rows.map(toSubmissionFileDto);
+}
+
+/** Typed links for the same audience as the submitted private files. */
+export async function listAssignmentSubmissionLinks(context:RequestContext,submissionIdInput:string){
+ const submissionId=idSchema.parse(submissionIdInput);
+ await listSubmissionFiles(context,submissionId);
+ if(!multipartAssignmentRuntimeEnabled())return [];
+ return getDb().select({
+  id:assignmentSubmissionLinks.id,kind:assignmentSubmissionLinks.kind,
+  url:assignmentSubmissionLinks.url,caption:assignmentSubmissionLinks.caption,
+  sequence:assignmentSubmissionLinks.sequence,
+ }).from(assignmentSubmissionLinks)
+  .where(eq(assignmentSubmissionLinks.submissionId,submissionId))
+  .orderBy(asc(assignmentSubmissionLinks.sequence)).limit(20);
 }
