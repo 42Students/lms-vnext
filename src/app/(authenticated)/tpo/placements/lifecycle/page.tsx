@@ -198,6 +198,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                     <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
                     <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
                     <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
+                    {job.status==="PUBLISHED"?<Link
+                      className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle"
+                      href={"/tpo/placements/jobs/"+job.id+"/extend-deadline"}>
+                      Set or extend deadline
+                    </Link>:null}
                     {job.status==="PUBLISHED"?<TpoRemindNonApplicants jobId={job.id}/>:null}
                   </nav>
                 </details>
