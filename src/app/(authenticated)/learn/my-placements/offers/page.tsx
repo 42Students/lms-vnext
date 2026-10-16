@@ -279,6 +279,16 @@ export default async function LearnerOffersPage({
         <span aria-current="page">Page {paginated.page} of {paginated.pages}</span>
         {paginated.page<paginated.pages ? <Link href={pageUrl(paginated.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link> : null}
       </nav> : null}
+      <section aria-label="How offers work at your college" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-semibold text-foreground">How offers work at your college</h2>
+        <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
+        <div className="mt-3 flex flex-wrap gap-4">
+          <Link href="/learn/my-placements/rules?from=offers"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Read placement rules</Link>
+          <Link href="/learn/my-placements/placement"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Need more time? Send a request to the placement cell</Link>
+        </div>
+      </section>
       <p className="text-xs text-muted-foreground">
         Offer actions reuse the existing authorized offer-response endpoint.
         This page does not issue an offer or infer joining from acceptance.
