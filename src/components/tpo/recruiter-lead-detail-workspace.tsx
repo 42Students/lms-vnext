@@ -208,6 +208,9 @@ export function RecruiterLeadDetailWorkspace({
 
   async function addActivity(event: React.FormEvent) {
     event.preventDefault();
+    if(logType==="NOTE"&&!logNote.trim()){
+      setActionError("Write a note before logging this interaction.");return;
+    }
     const ok = await mutate(base + "/activity", "POST", {
       collegeId, type: logType,
       outcome: logOutcome.trim() || null,
