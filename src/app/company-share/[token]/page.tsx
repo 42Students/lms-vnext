@@ -13,7 +13,10 @@ export default async function CompanySharePage({
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"");
  if(result.kind!=="READY")notFound();
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
- return <main className="mx-auto max-w-5xl space-y-5 px-4 py-8">
+ return <main className="relative isolate mx-auto max-w-5xl space-y-5 px-4 py-8">
+  <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 sm:grid-cols-3">
+   {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
+  </div>
   <header>
    <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
    <h1 className="mt-2 text-2xl font-semibold text-foreground">Shared with {result.companyName}</h1>
