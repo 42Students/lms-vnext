@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeBrandingPreview } from "@/components/admin/college-branding-preview";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
+import {CollegeLogoUploader} from "@/components/admin/college-logo-uploader";
 import {getCollegeBranding} from "@/modules/colleges/branding-service";
 import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {can} from "@/modules/permissions/policy";
@@ -40,9 +41,10 @@ export default async function SuperAdminCollegeBrandingPage({
     <CollegeBrandingPreview branding={branding}/>
     <section aria-label="Edit college branding" className="space-y-3">
      <h2 className="text-lg font-semibold">Look and feel</h2>
-     <p className="text-sm text-body">Update the stored college logo URL, colours and sign-in appearance. Uploading and cropping image files is not available in this editor.</p>
+     <p className="text-sm text-body">Update the stored college logo URL, colours and sign-in appearance. Upload and crop your square logo above, then edit colours and sign-in appearance.</p>
+     <CollegeLogoUploader collegeId={collegeId} currentUrl={persisted.uploadedLogoUrl} canEdit={canEdit}/>
      <CollegeBrandingForm collegeId={collegeId} collegeName={persisted.collegeName}
-      canEdit={canEdit} initial={{
+      canEdit={canEdit} uploadedLogoUrl={persisted.uploadedLogoUrl} initial={{
        logoUrl:persisted.logoUrl,faviconUrl:persisted.faviconUrl,
        loginBackgroundUrl:persisted.loginBackgroundUrl,
        loginBackgroundUrlMobile:persisted.loginBackgroundUrlMobile,
