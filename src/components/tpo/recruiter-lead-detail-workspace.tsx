@@ -87,6 +87,7 @@ export function RecruiterLeadDetailWorkspace({
   const [activities, setActivities] = useState<Activity[]>([]);
   const [followups, setFollowups] = useState<Followup[]>([]);
   const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
+  const [openedAt] = useState(() => new Date());
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
   const [actionToast,setActionToast]=useState("");
@@ -535,7 +536,7 @@ export function RecruiterLeadDetailWorkspace({
                   <li key={f.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-3 text-sm">
                     <div>
                       <time className="font-medium" dateTime={f.dueAt}>{formatDateTimeIst(f.dueAt)}</time>
-                      {!f.doneAt && new Date(f.dueAt).getTime()<Date.now()?
+                      {!f.doneAt && new Date(f.dueAt).getTime()<openedAt.getTime()?
                         <span className="ml-2 rounded border border-warning px-2 py-0.5 text-xs text-warning">Overdue</span>:null}
                       <p className="text-muted-foreground">{f.note || "No note"}</p>
                     </div>
