@@ -10,6 +10,11 @@ import {
 
 export async function exportCollegeActivity(context: RequestContext, raw: unknown) {
   const query = collegeActivityExportQuerySchema.parse(raw);
+  const { view, category, ...filters } = query;
+  const modules = {
+    ACADEMIC_SETUP: "ACADEMICS", PEOPLE_ACCESS: "IDENTITY",
+    TEACHING: "COURSES", PROJECTS: "PROJECTS",
+  } as const;
   const member = context.membership;
   if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
     !can(context, "activity.read", {
@@ -27,7 +32,9 @@ export async function exportCollegeActivity(context: RequestContext, raw: unknow
   let truncated = false;
   do {
     const next = await listActivityEvents(context, {
-      ...query, collegeId: member.collegeId, organizationId: member.organizationId,
+      ...filters, module: category ? modules[category] : filters.module,
+      importantOnly: (view ?? "IMPORTANT") === "IMPORTANT" && !filters.importance,
+      collegeId: member.collegeId, organizationId: member.organizationId,
       limit: 100, ...(cursor ?? {}),
     });
     rows.push(...next.items.map(item => ({
