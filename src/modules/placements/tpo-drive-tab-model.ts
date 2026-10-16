@@ -8,6 +8,7 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
   {label:"Candidate schedule",href:root+"/candidate-schedule"},
   {label:"Drive day",href:root+"/drive-day"},
   {label:"Rounds",href:root+"/rounds"},
+  {label:"Selections",href:root+"/selections"},
   {label:"Offers",href:root+"/offers"},
   {label:"Joining",href:root+"/joining"},
   {label:"Company sharing",href:root+"/share-preview"},
