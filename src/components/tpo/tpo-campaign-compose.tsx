@@ -54,9 +54,10 @@ export function TpoCampaignCompose(){
      onChange={e=>setSubject(e.target.value)}/>
    </label>
    <label className="block text-sm font-semibold">Message
-    <textarea value={body} maxLength={4000} required rows={6}
+    <textarea value={body} maxLength={10000} required rows={6}
      className={field} onChange={e=>setBody(e.target.value)}/>
    </label>
+   <p className="text-xs text-muted-foreground" aria-live="polite">{body.length} / 10,000 characters</p>
    <p className="text-xs text-muted-foreground">
      Write {`{name}`} or {`{company}`} and each person sees their own. This preview uses example text;
      sending, signature and unsubscribe-link delivery have not been enabled.
