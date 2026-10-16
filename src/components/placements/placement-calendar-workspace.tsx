@@ -500,6 +500,10 @@ export async function PlacementCalendarWorkspace({
       1,
     );
 
+  const todayEvents=events.filter(event=>placementCalendarDayKey(event.startsAt)===today);
+  const sevenDayEnd=placementCalendarDayKey(new Date(now.getTime()+7*24*60*60*1000));
+  const nextSeven=events.filter(event=>event.startsAt>=now &&
+   placementCalendarDayKey(event.startsAt)<=sevenDayEnd);
   const isTpo = audience === "TPO";
   const calendarFollowupsWritable =
     isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
@@ -563,6 +567,17 @@ export async function PlacementCalendarWorkspace({
         </p>
       ) : null}
 
+      {isTpo?<section aria-label="Today and next 7 days" className="rounded-xl border border-border bg-surface p-4">
+       <h2 className="text-base font-semibold">Today</h2>
+       {window.from<=today&&window.to>=today?(
+        todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
+         <span className="font-semibold">{eventTime(event.startsAt)}</span>{" · "}{event.title}
+         {event.status==="DONE"?<span className="ml-2 text-success-text">Done</span>:null}
+        </li>)}</ul>:<p className="mt-2 text-sm text-body">Nothing scheduled today</p>
+       ):<Link href={basePath} className="mt-2 inline-flex text-sm text-primary-text underline">Show today's events</Link>}
+       {window.from<=today&&window.to>=sevenDayEnd?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:
+        <Link href={basePath+"?view=week&date="+encodeURIComponent(today)} className="mt-3 inline-flex text-sm text-primary-text underline">Next 7 days</Link>}
+      </section>:null}
       <section
         aria-label="Calendar summary"
         className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
