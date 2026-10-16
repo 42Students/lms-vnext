@@ -176,16 +176,19 @@ export function LearnerFinalDeliveryControl({
             pending || !canSubmitDraft
           }
           onClick={submitDraft}
-          title={
-            canSubmitDraft
-              ? undefined
-              : "Complete every release, sprint and task before submitting."
-          }
+          aria-describedby={!canSubmitDraft ? "delivery-ready-reason-" + projectId : undefined}
         >
           {pending
             ? "Submitting…"
             : "Submit final work"}
         </Button>
+      ) : null} 
+      {draft && !canSubmitDraft ? (
+        <p id={"delivery-ready-reason-" + projectId} role="status"
+          className="w-full text-xs leading-5 text-body">
+          Complete every release, sprint and task before submitting.
+          You can save your final draft in the meantime.
+        </p>
       ) : null}
 
       <Dialog
