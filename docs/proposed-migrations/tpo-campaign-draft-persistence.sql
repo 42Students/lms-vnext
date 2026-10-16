@@ -6,7 +6,7 @@ CREATE TABLE placement_tpo_campaign_drafts (
  college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
  title varchar(160) NOT NULL,
  subject varchar(200) NOT NULL,
- body text NOT NULL CHECK(length(trim(body)) BETWEEN 2 AND 4000),
+ body text NOT NULL CHECK(length(trim(body)) BETWEEN 2 AND 10000),
  sender_name varchar(200) NOT NULL,
  suppressed_counts jsonb NOT NULL DEFAULT '{}'::jsonb,
  template_key varchar(160) NOT NULL,
