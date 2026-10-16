@@ -20,6 +20,10 @@ const HR_DRAFT_PREVIEW_FIELDS=[
  ["bondMonths","Bond months"],
  ["bondAmountInr","Bond amount"],
  ["minimumCgpa","Minimum CGPA"],
+ ["ctcLpa","CTC (LPA)"],
+ ["fixedLpa","Fixed (LPA)"],
+ ["variableLpa","Variable (LPA)"],
+ ["stipendMonthlyInr","Stipend per month (₹)"],
  ["maximumActiveBacklogs","Maximum active backlogs"],
  ["passingYear","Passing year"],
 ] as const;
@@ -51,7 +55,7 @@ export function HrDriveDraftForm({
   const result = hrDriveDraftSchema.safeParse(draft);
   const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
   const selectOptions = [
-    ["FULL_TIME", "Full-time"], ["INTERNSHIP", "Internship"], ["CONTRACT", "Contract"],
+    ["FULL_TIME", "Full-time"], ["INTERNSHIP", "Internship"], ["INTERNSHIP_FULL_TIME", "Internship + full-time"], ["CONTRACT", "Contract"],
   ] as const;
   const workModes = [
     ["ONSITE", "On-site"], ["HYBRID", "Hybrid"], ["REMOTE", "Remote"],
@@ -194,6 +198,28 @@ export function HrDriveDraftForm({
 
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="font-semibold text-foreground">Compensation and eligibility</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <label className="grid gap-1 text-sm text-body">
+            CTC (LPA){draft.employmentType==="INTERNSHIP"?" after the internship (optional)":""}
+            <input className={inputClass} inputMode="decimal" value={draft.ctcLpa??""}
+              onChange={event=>setDraft(current=>({...current,ctcLpa:event.target.value}))}/>
+          </label>
+          <label className="grid gap-1 text-sm text-body">
+            Fixed (optional, LPA)
+            <input className={inputClass} inputMode="decimal" value={draft.fixedLpa??""}
+              onChange={event=>setDraft(current=>({...current,fixedLpa:event.target.value}))}/>
+          </label>
+          <label className="grid gap-1 text-sm text-body">
+            Variable (optional, LPA)
+            <input className={inputClass} inputMode="decimal" value={draft.variableLpa??""}
+              onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
+          </label>
+          {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid gap-1 text-sm text-body">
+            Stipend per month (₹)
+            <input className={inputClass} inputMode="numeric" value={draft.stipendMonthlyInr??""}
+              onChange={event=>setDraft(current=>({...current,stipendMonthlyInr:event.target.value}))}/>
+          </label>:null}
+        </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           {([
             ["minimumAnnualCtcInr", "Minimum annual CTC (₹)"],
