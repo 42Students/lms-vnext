@@ -23,11 +23,11 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 1. WP-chat-2-01-recruiters-public-links-marketing-s1 | IN-PROGRESS | 20 gaps: S1 20 (TPO-recruiters-23 CSV/XLSX preview and skips, -13 link-based bulk preparation, -14 partial result/retry, -18/-20 saved views/columns; campaign dispatch and targeted in-app visibility implemented behind gates; full email/bulk parity and runtime closure pending)
 2. WP-chat-2-02-public-links-marketing-campaigns-public-s2 | IN-PROGRESS | 20 gaps: S2 20 (PUB-auth-public-43/44/45 and unsubscribe improvements; campaign guarded send and draft snapshot code shipped; provider registration, live receipts, privacy/disclosure owner gates remain)
 3. WP-chat-2-03-companies-campaigns-public-s2 | IN-PROGRESS | 20 gaps: S2 20 (TPO-companies-10 fixed URL, -12 invite context, -13 company drive prefill, -16/-17 filters and People, -08 filtered drives CSV, -11 documents)
-4. WP-chat-2-04-inbox-team-home-s2 | IN-PROGRESS | 24 gaps: S2 24 (TPO-inbox-team-43 fixed recipient selection/visibility code, -02/21 reply draft/keyboard UX; scheduled/ended author notices visible; notification delivery/ask/read tracking still missing)
+4. WP-chat-2-04-inbox-team-home-s2 | IN-PROGRESS | 24 gaps: S2 24 (TPO-inbox-team-45/46/47/48 audience reach, scheduled notification worker, read receipts, reminder service and reschedule UI; -05/06 recruiter inbox preview/reply filters; worker deployment and many Team gaps remain)
 5. WP-chat-2-05-recruiters-settings-audit-s2 | IN-PROGRESS | 20 gaps: S2 17, S3 3 (recruiter detail S2 validations, actions and follow-ups improved; saved views, inline ownership, bulk parity outstanding)
-6. WP-chat-2-06-campaigns-public-calendar-messages-prof-s3 | TODO | 15 gaps: S3 15
-7. WP-chat-2-07-inbox-team-companies-s3 | TODO | 15 gaps: S3 15
-8. WP-chat-2-08-inbox-team-recruiters-s3 | TODO | 15 gaps: S3 7, S4 8
+6. WP-chat-2-06-campaigns-public-calendar-messages-prof-s3 | IN-PROGRESS | 15 gaps: S3 15 (TPO-campaigns-public-08 visible setup gate, TPO-companies-18 directory export; remaining S3 gaps pending)
+7. WP-chat-2-07-inbox-team-companies-s3 | IN-PROGRESS | 15 gaps: S3 15 (TPO-companies-27 export, TPO-companies-R05 newest-first; TPO-inbox-team-25 conversation layout partially implemented)
+8. WP-chat-2-08-inbox-team-recruiters-s3 | IN-PROGRESS | 15 gaps: S3 7, S4 8 (TPO-inbox-team-R07 accessible message log; TPO-campaigns-public-11 purpose filter; other gaps remain)
 
 ## FAST-mode checkpoint, 2026-10-17
 
@@ -78,3 +78,15 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - **TPO-inbox-team-43:** migration 0106 already exists; added atomic targeted membership snapshot for placements, batch, branch and drive applicants, optional recipient visibility in member announcement read, fail-closed registration gate, and author picker handoff. All-students option, still-in-drive distinction, scheduled in-app notification delivery, reminders/read receipts remain incomplete.
 - **TPO-inbox-team-02/21:** reply keyboard Enter/Shift+Enter, character count and unsent draft navigation warning.
 - **Follow-up:** no tests/typecheck/lint/build/CI were run under FAST MODE. These are source commits, not certified production closures; WP-01 through WP-05 remain IN-PROGRESS.
+
+## FAST-mode chat-2 continuation: notice, inbox and companies (2026-10-17)
+
+- `TPO-inbox-team-48`: author rescheduling via edit CAS and IST inputs; already scheduled/ended notices remain in Yours. Audience editing still missing.
+- `TPO-inbox-team-45/46`: reach shown in compose CTA; delivery worker scans eligible TPO notices only after send-at and the 30-second Undo hold, freezes targeted membership scope and writes real in-app notifications with transaction-based tenant validation. Protected POST-only scheduler endpoint requires unconfigured `TPO_NOTICE_SCHEDULER_SECRET`. The repository does not schedule itself.
+- `TPO-inbox-team-47`: actual notifications drive read counts/progress and first 500 unread names. Learner notice Read acknowledgement is owned-recipient-only. TPO author may remind unread once/hour via event and in-app notification. Pending live verification, notification delivery cap, full legacy analytics.
+- `TPO-inbox-team-05/06`: recruiter-thread Reply filter, latest-message preview, last-sender Waiting for you marker and text search. Still lacks full company/access fields and message body cross-thread search.
+- `TPO-inbox-team-25/R07`: recruiter thread log with day separators, own-side alignment, improved accessibility; Team object conversations/mentions/edit/asks remain missing.
+- `TPO-companies-15/16`: proposed tenant-scoped company communication status table, scoped read/write API, optimistic selection and company filter. Not live until migration is registered.
+- `TPO-companies-18/27`: filtered directory export with spreadsheet formula guard, Companies count in View label. `TPO-companies-R05`: canonical drive list newest first.
+- `TPO-campaigns-public-08`: specific missing-email-setup warning in composer and history. `TPO-campaigns-public-11`: purpose input/filter survives page navigation and current-page export.
+- Do not mark WP-01 through WP-08 DONE. Security-sensitive role/OD-07 and private storage decisions remain unresolved. No lint, typecheck, tests, build, CI waiting, live scheduler or email sends were run in FAST MODE.
