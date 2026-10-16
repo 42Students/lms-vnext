@@ -16,9 +16,18 @@ export default async function CompanySharePage({
  return <main className="mx-auto max-w-5xl space-y-5 px-4 py-8">
   <header>
    <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
-   <h1 className="mt-2 text-2xl font-semibold text-foreground">{result.title}</h1>
-   <p className="mt-2 text-sm text-body">Current shortlisted applicants only. Access expires
-    or can be revoked. Private notes, resumes, telephone numbers and scores are not shared.</p>
+   <h1 className="mt-2 text-2xl font-semibold text-foreground">Shared with {result.companyName}</h1>
+   <p className="mt-1 text-lg font-medium text-foreground">{result.title}</p>
+   <p className="mt-2 text-sm text-body">
+    Shared by {result.collegeName} on {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))}
+    {" "}for {result.companyName}. Please do not forward this page.
+   </p>
+   <p className="mt-2 text-sm text-body">
+    The link works until {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.
+   </p>
+   <p className="mt-2 text-sm text-muted-foreground">
+    Current shortlisted applicants only. Access can be revoked. Phone numbers, resumes, private notes and scores are not included in this restricted share.
+   </p>
   </header>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex flex-wrap items-end gap-3">
