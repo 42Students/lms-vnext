@@ -3,6 +3,8 @@ import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 
 export const COLLEGE_ACTIVITY_EXPORT_CAP = 1000;
 export const collegeActivityExportQuerySchema = z.object({
+  view: z.enum(["IMPORTANT", "EVERYTHING"]).optional(),
+  category: z.enum(["ACADEMIC_SETUP", "PEOPLE_ACCESS", "TEACHING", "PROJECTS"]).optional(),
   module: z.enum(ACTIVITY_MODULES).optional(),
   importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
   actorUserId: z.string().uuid().optional(),
