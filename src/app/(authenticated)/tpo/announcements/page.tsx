@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
+import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
 import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo-notice-audience-snapshot-model";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -62,7 +63,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    {audience?<div role="status" className="mt-3 rounded-lg border border-border p-3">
      <p className="text-sm font-semibold text-foreground">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
      <p className="mt-1 text-sm text-body">{audience.potentiallyVisibleMemberships} active memberships with active platform accounts.</p>
-     <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. Publishing is still college-wide; this preview does not change recipients.</p>
+     <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. The selected audience determines recipient visibility when targeted storage is ready.</p>
    </div>:null}
    {query.success&&!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)?
     <p role="alert" className="mt-4 rounded-md border border-border p-3 text-sm">
@@ -108,6 +109,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
       <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground">Ended</p>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{row.message}</p>
+    {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeReadProgress id={row.id}/>:null}
     {tab.data==="yours" && row.senderUserId===context.user.id ?
      <details className="mt-4 rounded-lg border border-border p-3">
       <summary className="cursor-pointer text-sm font-semibold text-primary-text">Edit notice</summary>
@@ -120,6 +122,16 @@ export default async function TpoAnnouncements({searchParams}:Props){
        <label className="grid gap-1 text-sm text-body">Message
         <textarea name="message" rows={5} required maxLength={10000} defaultValue={row.message}
          className="rounded-md border border-border bg-surface p-3"/>
+       </label>
+       <label className="grid gap-1 text-sm text-body">Send at (IST)
+        <input type="datetime-local" name="sendAt"
+         defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
+         className="min-h-10 rounded border border-border bg-surface px-3"/>
+       </label>
+       <label className="grid gap-1 text-sm text-body">Show until (IST)
+        <input type="datetime-local" name="showUntil"
+         defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
+         className="min-h-10 rounded border border-border bg-surface px-3"/>
        </label>
        <label className="flex items-center gap-2 text-sm text-body">
         <input name="pinned" type="checkbox" defaultChecked={row.isPinned}/> Pinned
