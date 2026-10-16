@@ -17,7 +17,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
   const raw = await searchParams;
   const selected = context.adminScope?.collegeId;
   const filter = collegeClassQuerySchema.safeParse({
-    q: raw.q, status: raw.status, page: raw.page,
+    q: raw.q, programId: raw.programId || undefined, cohortCode: raw.cohortCode || undefined, status: raw.status, page: raw.page,
   });
   const [data, options] = selected && filter.success
     ? await Promise.all([
@@ -29,16 +29,39 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       <AcademicSetupSteps step={6} />
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
+      <section aria-label="Filter managed classes" className="rounded-xl border border-border bg-surface p-4">
+        <form method="get" action="/admin/classes" className="flex flex-wrap items-end gap-3">
+          <label className="grid min-w-44 gap-1 text-sm font-semibold text-body">Program
+            <select name="programId" defaultValue={data.query.programId ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All programs</option>
+              {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
+            </select>
+          </label>
+          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">Batch code
+            <input name="cohortCode" defaultValue={data.query.cohortCode ?? ""} placeholder="Search batch code"
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search class, program or batch
+            <input name="q" type="search" defaultValue={data.query.q}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+          </label>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+          <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
+        </form>
+      </section>
       <section aria-label="Manage classes" className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="text-lg font-semibold">Manage classes</h2>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
         {data.items.length === 0 ? <p>No matching classes on this page.</p> :
           <div className="overflow-x-auto"><table className="w-full min-w-[38rem] text-left text-sm">
-            <thead><tr><th className="p-2">Class</th><th className="p-2">Batch</th>
-              <th className="p-2">Capacity</th><th className="p-2">Actions</th></tr></thead>
+            <thead><tr><th className="p-2">Class</th><th className="p-2">Program</th><th className="p-2">Batch</th>
+              <th className="p-2">Students</th><th className="p-2">Max Students</th><th className="p-2">Actions</th></tr></thead>
             <tbody>{data.items.map(row => <tr key={row.id} className="border-t border-border">
               <td className="p-2">{row.name} ({row.code})</td>
+              <td className="p-2">{row.programName}</td>
               <td className="p-2">{row.cohortName}</td>
+              <td className="p-2">{row.activeLearners}</td>
               <td className="p-2">{row.capacity ?? "—"}</td>
               <td className="p-2"><CollegeClassRowActions row={row} /></td>
             </tr>)}</tbody>
