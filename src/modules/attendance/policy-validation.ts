@@ -19,7 +19,7 @@ export const attendancePolicyUpdateSchema =
       .number()
       .int()
       .min(1)
-      .max(168),
+      .max(8760),
   });
 
 export type AttendancePolicyUpdateInput =
