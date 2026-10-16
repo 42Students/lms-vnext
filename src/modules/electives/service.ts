@@ -217,7 +217,6 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
     .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
     .innerJoin(courses, eq(courses.id, electiveOfferings.courseId))
     .where(and(eq(electiveOfferings.slotId, slotId),
-      eq(electiveOfferings.status, "ACTIVE"),
       isNull(electiveOfferings.deletedAt)));
 }
 
@@ -317,5 +316,36 @@ export async function updateCollegeElectiveOffering(
         throw new ElectivesServiceError("ELECTIVE_DELIVERY_ALREADY_USED");
       throw error;
     }
+  });
+}
+
+/** Keep enrolled history, but prevent further selection by archiving an offering. */
+export async function archiveCollegeElectiveOffering(
+  context: RequestContext, rawSlotId: string, rawOfferingId: string, rawExpectedVersion: unknown,
+) {
+  const slotId = uuid.parse(rawSlotId), offeringId = uuid.parse(rawOfferingId);
+  const expectedVersion = z.number().int().min(0).parse(rawExpectedVersion);
+  return getDb().transaction(async tx => {
+    const [slot] = await tx.select().from(electiveSlots)
+      .where(eq(electiveSlots.id, slotId)).for("update").limit(1);
+    if (!slot || slot.status !== "ACTIVE" || slot.deletedAt)
+      throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
+    requirePermission(context, "academics.manage", { collegeId: slot.collegeId });
+    await assertPersistedGroupActor(tx, context, { collegeId: slot.collegeId, mode: "MANUAL" });
+    const [offering] = await tx.select().from(electiveOfferings)
+      .where(and(eq(electiveOfferings.id, offeringId),
+        eq(electiveOfferings.slotId, slotId), isNull(electiveOfferings.deletedAt)))
+      .for("update").limit(1);
+    if (!offering) throw new ElectivesServiceError("ELECTIVE_OFFERING_NOT_FOUND");
+    if (offering.version !== expectedVersion)
+      throw new ElectivesServiceError("ELECTIVE_OFFERING_STALE");
+    if (offering.status !== "ACTIVE")
+      throw new ElectivesServiceError("ELECTIVE_OFFERING_ALREADY_ARCHIVED");
+    const [saved] = await tx.update(electiveOfferings).set({
+      status: "ARCHIVED", version: offering.version + 1, updatedAt: new Date(),
+    }).where(and(eq(electiveOfferings.id, offeringId),
+      eq(electiveOfferings.version, expectedVersion))).returning();
+    if (!saved) throw new ElectivesServiceError("ELECTIVE_OFFERING_STALE");
+    return saved;
   });
 }
