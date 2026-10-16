@@ -9,6 +9,7 @@ import { createProjectTemplate, assignProjectTemplateToCollege, publishProjectTe
 import { createProjectInstance, getProjectInstanceWorkspace, archiveProjectInstance } from "@/modules/projects/instance-service";
 import { addProjectMember, endProjectMember, listProjectMembers } from "@/modules/projects/member-service";
 import { assignProjectTaskToLearner } from "./support/projects-review-fixture";
+import { listProjectAdminRiskQueue } from "@/modules/projects/admin-insights-service";
 import { postProjectTaskComment } from "@/modules/projects/task-comment-service";
 import { requestProjectMeeting, scheduleProjectMeeting, transitionProjectMeeting } from "@/modules/projects/meeting-service";
 
@@ -53,6 +54,14 @@ describe.skipIf(!enabled)("COL-projects-R01 / LEARNER-projects-R01 notification 
   const task=(await getProjectInstanceWorkspace(mentor,project.id)).tasks[0]!;
   await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
   expect((await notificationRows(learner.user.id)).rows.map(row=>row.title)).toContain("New task assigned");
+  await pool!.query("update project_tasks set status='BLOCKED',blocker_reason='Awaiting API review' where id=$1",
+    [task.id]);
+  const risk=await listProjectAdminRiskQueue(admin,SEED_IDS.collegeA,{
+    q:"project-notices-r01-"+suffix,page:1,
+  });
+  const risky=risk.items.find(row=>row.id===project.id);
+  expect(risky?.riskReasons).toContain("Active blocker");
+  expect(risky?.blockerReason).toBe("Awaiting API review");
   const updated=(await getProjectInstanceWorkspace(mentor,project.id)).tasks[0]!;
   await postProjectTaskComment(mentor,project.id,updated.id,{
    body:"Please check the acceptance criteria.",expectedTaskUpdatedAt:updated.updatedAt.toISOString(),
