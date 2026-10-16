@@ -31,6 +31,7 @@ export async function transitionMentorProjectTask(
     if (!allowedMentorTaskTransition(task.status,input.status) ||
       task.updatedAt.getTime() !== new Date(input.expectedUpdatedAt).getTime())
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    if(!task.sprintId)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const [sprint] = await tx.select({status:projectSprints.status,releaseId:projectSprints.releaseId})
       .from(projectSprints).where(and(
         eq(projectSprints.id,task.sprintId), eq(projectSprints.projectId,scope.project.id),
