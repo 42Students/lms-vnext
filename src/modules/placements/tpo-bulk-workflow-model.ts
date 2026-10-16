@@ -2,7 +2,7 @@ import { z } from "zod";
 import { bulkActionCommandSchema, previewBulkAction } from "./tpo-bulk-action-model";
 
 export const tpoBulkTargetSchema = z.enum(["STUDENTS", "APPLICATIONS"]);
-export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "INELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED", "ADD_NOTE", "SEND_MESSAGE"]);
+export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "INELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED", "ADD_NOTE", "SEND_MESSAGE", "MOVE_TEST", "MOVE_INTERVIEW"]);
 const ids = z.array(z.string().uuid()).min(1).max(200)
   .refine(items => new Set(items).size === items.length, "Duplicate selected rows");
 
@@ -18,7 +18,7 @@ export const tpoBulkPreviewRequestSchema = z.object({
        (value.action==="INELIGIBLE" ? value.note.length < 3 || value.note.length > 200 : value.note.length > 0))
       ctx.addIssue({code:"custom",message:"Invalid student action"});
   } else {
-    if(!value.jobId||!["SHORTLISTED","REJECTED","ADD_NOTE","SEND_MESSAGE"].includes(value.action))
+    if(!value.jobId||!["SHORTLISTED","REJECTED","ADD_NOTE","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(value.action))
       ctx.addIssue({code:"custom",message:"Invalid application action"});
     if(value.note.length<10)
       ctx.addIssue({code:"custom",message:"Screening decisions require at least ten characters of review context"});
@@ -34,6 +34,8 @@ export function tpoBulkActionLabel(action:z.infer<typeof tpoBulkActionSchema>):s
     case "REJECTED":return "Reject applicants";
     case "ADD_NOTE":return "Add a note";
     case "SEND_MESSAGE":return "Send a message";
+    case "MOVE_TEST":return "Move to test";
+    case "MOVE_INTERVIEW":return "Move to interview";
   }
 }
 export type TpoBulkPreviewRequest=z.output<typeof tpoBulkPreviewRequestSchema>;
@@ -43,7 +45,7 @@ export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExten
   confirmed:z.literal(true),
   acknowledged:z.boolean().default(false),
 }).superRefine((value,ctx)=>{
-  if(["INELIGIBLE","REJECTED","SEND_MESSAGE"].includes(value.action) && !value.acknowledged)
+  if(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(value.action) && !value.acknowledged)
     ctx.addIssue({code:"custom",path:["acknowledged"],message:"Acknowledge the consequences before applying."});
   if(value.selections.length>200)
     ctx.addIssue({code:"custom",message:"Too many selected records"});
