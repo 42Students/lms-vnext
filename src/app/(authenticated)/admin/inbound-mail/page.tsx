@@ -46,7 +46,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   </form>
   <InboundMailList rows={data.items.map(x=>({
    id:x.id,receivedAt:x.receivedAt.toISOString(),fromAddress:x.fromAddress,
-   toAddress:x.toAddress,subject:x.subject,bodyPlain:x.bodyPlain,status:x.status,
+   toAddress:x.toAddress,subject:x.subject,bodyPlain:x.bodyPlain,status:x.status,version:x.version,
   }))}/>
   <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
    <span>Page {data.page}</span><div className="flex flex-wrap gap-3">
