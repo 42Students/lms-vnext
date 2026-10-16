@@ -41,6 +41,7 @@ export async function inviteTpoBatch(
   const invited = await markPlacementBatchInvited(ctx, { collegeId, cohortId: batchId });
   return { invitedAt: invited.invitedAt?.toISOString() ?? null,
     deadline: invited.registrationDeadline?.toISOString() ?? null,
+    notifiedCount: invited.notifiedCount,
     delivery: "APP_RECORDED_EMAIL_NOT_SENT" as const };
 }
 

@@ -615,7 +615,7 @@ export async function markPlacementBatchInvited(
       .where(eq(placementBatchLifecycles.cohortId, input.cohortId)).limit(1);
     if (!current) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
     if (current.finishedAt) throw new PlacementBatchError("DB08_ACTION_INVALID");
-    if (current.invitedAt) return current;
+    if (current.invitedAt) return { ...current, notifiedCount: 0 };
     if (!current.registrationDeadline || current.registrationDeadline.getTime() <= Date.now())
       throw new PlacementBatchError("DB08_ACTION_INVALID");
     const [updated] = await tx.update(placementBatchLifecycles).set({
@@ -654,7 +654,7 @@ export async function markPlacementBatchInvited(
         actionHref: "/learner/placements",
       }))).onConflictDoNothing();
     }
-    return updated;
+    return { ...updated, notifiedCount: recipientUserIds.length };
   });
 }
 
