@@ -332,7 +332,9 @@ export function RecruiterLeadDetailWorkspace({
                 formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
+              {!lead.recruiterUserId&&!lead.unsubscribedAt?<a className={button}
+                 href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
+               <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
                {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
                <button type="button" className={button} onClick={openEdit}>Edit details</button>
               {lead.manualStage === "NEW" ? (
@@ -380,7 +382,7 @@ export function RecruiterLeadDetailWorkspace({
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
               {!lead.recruiterUserId ? (
-                <div className="space-y-2 border-t border-border pt-3">
+                <div id="recruiter-invite" className="space-y-2 border-t border-border pt-3">
                   <label className="block text-xs">Personal note (optional)
                     <textarea className={input + " mt-1"} rows={2}
                       maxLength={500} value={invitePersonalNote} disabled={saving}
