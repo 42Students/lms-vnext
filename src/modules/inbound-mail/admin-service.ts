@@ -37,7 +37,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
    id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,toAddress:t.toAddress,
    subject:t.subject,bodyPlain:t.bodyPlain,status:t.status,version:t.version,
   }).from(t).where(conditions.length?and(...conditions):undefined)
-    .orderBy(desc(t.receivedAt),desc(t.id)).limit(26).offset((input.page-1)*25);
+    .orderBy(desc(t.receivedAt),desc(t.id)).limit(51).offset((input.page-1)*50);
  },
 };
 export async function listInboundMailForAdmin(
@@ -52,7 +52,7 @@ export async function listInboundMailForAdmin(
  if(!await repository.tableExists())
   return {available:false,items:[],page:input.page,hasMore:false};
  const items=await repository.list(input);
- return {available:true,items:items.slice(0,25),page:input.page,hasMore:items.length>25};
+ return {available:true,items:items.slice(0,50),page:input.page,hasMore:items.length>50};
 }
 
 /** Version-checked inbound triage mutation. Global Super Admin only: incoming
