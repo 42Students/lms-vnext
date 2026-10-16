@@ -120,6 +120,12 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
         className={item.collegeId === selectedId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{item.collegeName}</Link>)}</nav> : null}
+    {summaryPartiallyUnavailable?<div role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
+      <p className="font-semibold">Drive summary is partially unavailable.</p>
+      <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>
+      <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
+        className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Retry</Link>
+    </div>:null}
     <section aria-label="Recruiter tasks" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">{actions.map(action=>
       <Link key={action.label} href={action.url} className="rounded-xl border border-border bg-surface p-5 hover:border-primary">
         <span className="block text-sm text-body">{action.label}</span><span className="mt-2 block text-2xl font-bold tabular-nums text-foreground">{action.value}</span>
