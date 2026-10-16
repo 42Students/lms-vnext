@@ -1,6 +1,6 @@
 /** Public recruiter join links and their email-code challenges. */
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, check, foreignKey, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 
 export const placementPublicJoinLinks = pgTable(
@@ -54,5 +54,28 @@ export const placementPublicJoinChallenges = pgTable(
     index("public_join_challenges_link_email_idx").on(table.linkId, table.workEmail, table.createdAt.desc()),
     check("placement_public_join_challenges_code_ck", sql`${table.codeHash} ~ '^[a-f0-9]{64}$'`),
     check("placement_public_join_challenges_attempts_ck", sql`${table.attempts} BETWEEN 0 AND 5`),
+  ],
+);
+
+/** Per-network (hashed IP) throttle events for public join OTP send and join. */
+export const placementPublicJoinRateEvents = pgTable(
+  "placement_public_join_rate_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    linkId: uuid("link_id").notNull(),
+    ipHash: varchar("ip_hash", { length: 64 }).notNull(),
+    action: varchar("action", { length: 12 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      name: "public_join_rate_link_fk",
+      columns: [table.linkId],
+      foreignColumns: [placementPublicJoinLinks.id],
+    }).onDelete("restrict"),
+    index("public_join_rate_network_time_idx").on(table.ipHash, table.action, table.createdAt.desc()),
+    index("public_join_rate_link_time_idx").on(table.linkId, table.createdAt.desc()),
+    check("public_join_rate_hash_ck", sql`${table.ipHash} ~ '^[a-f0-9]{64}$'`),
+    check("public_join_rate_action_ck", sql`${table.action} in ('SEND_CODE','JOIN')`),
   ],
 );
