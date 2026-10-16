@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-16T15:57:49.123Z",
+ "generatedAt": "2026-10-16T18:47:25.760Z",
  "since": "2026-10-15",
  "mainRef": "origin/main",
  "statuses": [
@@ -13,32 +13,32 @@
  ],
  "total": 1843,
  "byStatus": {
-  "OPEN": 1473,
-  "IN-BRANCH": 29,
-  "FIXED-ON-MAIN": 22,
-  "VERIFIED": 135,
-  "UNCONFIRMED": 164,
+  "OPEN": 1460,
+  "IN-BRANCH": 0,
+  "FIXED-ON-MAIN": 21,
+  "VERIFIED": 181,
+  "UNCONFIRMED": 161,
   "WRONG": 9,
   "CLOSED-SINCE": 11,
   "total": 1843
  },
- "closedPercent": "9.2%",
+ "closedPercent": "11.6%",
  "byAccount": {
   "tpo": {
-   "OPEN": 549,
-   "IN-BRANCH": 13,
+   "OPEN": 542,
+   "IN-BRANCH": 0,
    "FIXED-ON-MAIN": 14,
-   "VERIFIED": 67,
-   "UNCONFIRMED": 44,
+   "VERIFIED": 89,
+   "UNCONFIRMED": 42,
    "WRONG": 1,
    "CLOSED-SINCE": 6,
    "total": 694
   },
   "recruiter": {
    "OPEN": 85,
-   "IN-BRANCH": 5,
-   "FIXED-ON-MAIN": 3,
-   "VERIFIED": 14,
+   "IN-BRANCH": 0,
+   "FIXED-ON-MAIN": 2,
+   "VERIFIED": 20,
    "UNCONFIRMED": 7,
    "WRONG": 0,
    "CLOSED-SINCE": 2,
@@ -46,9 +46,9 @@
   },
   "learner": {
    "OPEN": 175,
-   "IN-BRANCH": 3,
-   "FIXED-ON-MAIN": 3,
-   "VERIFIED": 17,
+   "IN-BRANCH": 0,
+   "FIXED-ON-MAIN": 2,
+   "VERIFIED": 21,
    "UNCONFIRMED": 31,
    "WRONG": 1,
    "CLOSED-SINCE": 1,
@@ -65,29 +65,29 @@
    "total": 105
   },
   "college": {
-   "OPEN": 172,
-   "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 2,
-   "VERIFIED": 24,
+   "OPEN": 171,
+   "IN-BRANCH": 0,
+   "FIXED-ON-MAIN": 1,
+   "VERIFIED": 28,
    "UNCONFIRMED": 29,
    "WRONG": 1,
    "CLOSED-SINCE": 2,
    "total": 232
   },
   "superadmin": {
-   "OPEN": 260,
-   "IN-BRANCH": 1,
-   "FIXED-ON-MAIN": 0,
-   "VERIFIED": 11,
-   "UNCONFIRMED": 37,
+   "OPEN": 255,
+   "IN-BRANCH": 0,
+   "FIXED-ON-MAIN": 1,
+   "VERIFIED": 17,
+   "UNCONFIRMED": 36,
    "WRONG": 0,
    "CLOSED-SINCE": 0,
    "total": 309
   },
   "mentor": {
    "OPEN": 83,
-   "IN-BRANCH": 1,
-   "FIXED-ON-MAIN": 0,
+   "IN-BRANCH": 0,
+   "FIXED-ON-MAIN": 1,
    "VERIFIED": 2,
    "UNCONFIRMED": 2,
    "WRONG": 0,
@@ -96,9 +96,9 @@
   },
   "public": {
    "OPEN": 57,
-   "IN-BRANCH": 4,
+   "IN-BRANCH": 0,
    "FIXED-ON-MAIN": 0,
-   "VERIFIED": 0,
+   "VERIFIED": 4,
    "UNCONFIRMED": 7,
    "WRONG": 0,
    "CLOSED-SINCE": 0,
@@ -107,20 +107,20 @@
  },
  "bySeverity": {
   "S1": {
-   "OPEN": 37,
-   "IN-BRANCH": 13,
+   "OPEN": 25,
+   "IN-BRANCH": 0,
    "FIXED-ON-MAIN": 6,
-   "VERIFIED": 47,
-   "UNCONFIRMED": 9,
+   "VERIFIED": 75,
+   "UNCONFIRMED": 6,
    "WRONG": 0,
    "CLOSED-SINCE": 1,
    "total": 113
   },
   "S2": {
-   "OPEN": 483,
-   "IN-BRANCH": 16,
-   "FIXED-ON-MAIN": 9,
-   "VERIFIED": 56,
+   "OPEN": 482,
+   "IN-BRANCH": 0,
+   "FIXED-ON-MAIN": 8,
+   "VERIFIED": 74,
    "UNCONFIRMED": 55,
    "WRONG": 2,
    "CLOSED-SINCE": 3,
@@ -148,63 +148,52 @@
   }
  },
  "byLane": {
-  "chat-11": {
-   "OPEN": 0,
-   "IN-BRANCH": 3,
-   "FIXED-ON-MAIN": 0,
-   "VERIFIED": 0,
-   "UNCONFIRMED": 0,
-   "WRONG": 0,
-   "CLOSED-SINCE": 0,
-   "total": 3
-  },
   "chat-2": {
-   "OPEN": 152,
-   "IN-BRANCH": 11,
+   "OPEN": 151,
+   "IN-BRANCH": 0,
    "FIXED-ON-MAIN": 2,
-   "VERIFIED": 33,
-   "UNCONFIRMED": 12,
+   "VERIFIED": 40,
+   "UNCONFIRMED": 11,
    "WRONG": 0,
    "CLOSED-SINCE": 2,
-   "total": 212
+   "total": 206
   },
   "chat-5": {
-   "OPEN": 253,
-   "IN-BRANCH": 6,
+   "OPEN": 247,
+   "IN-BRANCH": 0,
    "FIXED-ON-MAIN": 12,
-   "VERIFIED": 19,
+   "VERIFIED": 33,
    "UNCONFIRMED": 18,
    "WRONG": 1,
    "CLOSED-SINCE": 1,
-   "total": 310
+   "total": 312
   },
   "chat-7": {
    "OPEN": 492,
-   "IN-BRANCH": 6,
-   "FIXED-ON-MAIN": 6,
-   "VERIFIED": 33,
+   "IN-BRANCH": 0,
+   "FIXED-ON-MAIN": 5,
+   "VERIFIED": 47,
    "UNCONFIRMED": 54,
    "WRONG": 7,
    "CLOSED-SINCE": 3,
-   "total": 601
+   "total": 608
   },
   "chat-9": {
-   "OPEN": 576,
-   "IN-BRANCH": 3,
+   "OPEN": 570,
+   "IN-BRANCH": 0,
    "FIXED-ON-MAIN": 2,
-   "VERIFIED": 50,
-   "UNCONFIRMED": 80,
+   "VERIFIED": 61,
+   "UNCONFIRMED": 78,
    "WRONG": 1,
    "CLOSED-SINCE": 5,
    "total": 717
   }
  },
  "fixedLast24h": {
-  "chat-11": 3,
-  "chat-2": 46,
-  "chat-5": 37,
-  "chat-7": 45,
-  "chat-9": 55
+  "chat-2": 42,
+  "chat-5": 45,
+  "chat-7": 52,
+  "chat-9": 63
  },
  "parseProblems": 0
 }

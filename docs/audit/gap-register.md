@@ -10,11 +10,11 @@ Closure statuses (from git history since 2026-10-15, see docs/audit/README.md): 
 
 Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO drives, drive-workspace, batches, students, requests-verification -> chat-5; TPO home, settings-audit, calendar-reports, college/*, superadmin/* -> chat-9; recruiter, learner, faculty, mentor, public -> chat-7 (chat-4 can take over faculty, chat-11 mentor/projects).
 
-## tpo (694 rows: 617 Round A + 77 MISSED; 606 open or unconfirmed)
+## tpo (694 rows: 617 Round A + 77 MISSED; 584 open or unconfirmed)
 
 | ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |
 |---|---|---|---|---|---|---|---|---|
-| TPO-batches-01 | batches | Cards show no decision numbers: students, eligible, ineligible, not decided and the decision bar are absent; the card says "open Students t... | MISSING-FIELD | S1 | OPEN | chat-5 | tpo/batches.md |  |
+| TPO-batches-01 | batches | Cards show no decision numbers: students, eligible, ineligible, not decided and the decision bar are absent; the card says "open Students t... | MISSING-FIELD | S1 | VERIFIED | chat-5 | tpo/batches.md | 47400299f |
 | TPO-batches-02 | batches | No journey numbers on cards (Invited, Registered, Verified, Placed) and no student-count/singular wording. | MISSING-FIELD | S2 | OPEN | chat-5 | tpo/batches.md |  |
 | TPO-batches-03 | batches | State model differs: legacy In placements / Not started / Finished (derived from eligible > 0 and finished) vs vNext Planning / Invited / F... | COPY | S2 | OPEN | chat-5 | tpo/batches.md |  |
 | TPO-batches-04 | batches | KPI strip differs: legacy 4 working-set numbers (batches open for placements, students eligible, not decided yet, placed); vNext Total/Plan... | MISSING-FIELD | S2 | OPEN | chat-5 | tpo/batches.md |  |
@@ -44,8 +44,8 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-batches-28 | batches | Partial-failure alerts are absent: "Batch details may be stale", "Student roster unavailable", "Some student placement details are unavaila... | STATE | S3 | OPEN | chat-5 | tpo/batches.md |  |
 | TPO-batches-29 | batches | Tab deep links: legacy `?tab=students`, `?tab=rules`, `?tab=history` (and old `classes`/`registration`) land on the right tab; vNext ignore... | MISSING-TAB | S3 | OPEN | chat-5 | tpo/batches.md |  |
 | TPO-batches-30 | batches | Sub-pages (Students, Rules, History, Registrations) have no tab strip; the only navigation is a "Batch overview" link, so switching tabs co... | A11Y | S4 | OPEN | chat-5 | tpo/batches.md |  |
-| TPO-batches-31 | batches | Import matches by membership UUID, not roll number. TPOs hold sheets with roll numbers; vNext rows must carry the internal UUID (`studentCo... | VALIDATION | S1 | OPEN | chat-5 | tpo/batches.md |  |
-| TPO-batches-32 | batches | No bulk selection or bulk decisions. No row checkboxes, no select-all, no "Act on N selected / all M", so deciding a 300-student batch mean... | MISSING-ACTION | S1 | OPEN | chat-5 | tpo/batches.md |  |
+| TPO-batches-31 | batches | Import matches by membership UUID, not roll number. TPOs hold sheets with roll numbers; vNext rows must carry the internal UUID (`studentCo... | VALIDATION | S1 | VERIFIED | chat-5 | tpo/batches.md | c8c817dff |
+| TPO-batches-32 | batches | No bulk selection or bulk decisions. No row checkboxes, no select-all, no "Act on N selected / all M", so deciding a 300-student batch mean... | MISSING-ACTION | S1 | VERIFIED | chat-5 | tpo/batches.md | 8aefced61 |
 | TPO-batches-33 | batches | Search and filters apply only to the loaded page of 25 learners ("Search names on this page"), pagination is 25 per page, there is no whole... | MISSING-FILTER | S2 | OPEN | chat-5 | tpo/batches.md |  |
 | TPO-batches-34 | batches | Missing columns and identifiers: Roll no., Class, Branch, Stage, Gender, Email, Phone, Applications, Offers, Decided by, Reason column rule... | MISSING-COLUMN | S2 | OPEN | chat-5 | tpo/batches.md |  |
 | TPO-batches-35 | batches | Missing filters: Class, Decided on, Student's own, Branch, Stage, After college, Registered, Profile verified, Placed, Academics ranges (Lo... | MISSING-FILTER | S2 | OPEN | chat-5 | tpo/batches.md |  |
@@ -104,7 +104,7 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-calendar-reports-17 | calendar-reports | Header/subtitle wording differs from legacy subtitle; extra eyebrow `TPO`, action `Placement operations →`, and three extra link buttons | COPY | S3 | OPEN | chat-9 | tpo/calendar-reports.md |  |
 | TPO-calendar-reports-18 | calendar-reports | Month label/range text, "{n} item(s) in this week" counter, "+3 more" behaviour, empty copy: legacy agenda empty "Nothing scheduled in this... | COPY | S3 | OPEN | chat-9 | tpo/calendar-reports.md |  |
 | TPO-calendar-reports-19 | calendar-reports | Success/failure messages differ: legacy toast `Follow-up added`, errors "Could not move it", "Could not mark it done", "Could not save the... | COPY | S2* | OPEN | chat-9 | tpo/calendar-reports.md |  |
-| TPO-calendar-reports-20 | calendar-reports | Follow-up writes are gated by `DB09_TPO_API_READY`; when unset the calendar is read-only and the API returns 503. Deployed value UNCONFIRMED | STATE | S1 | UNCONFIRMED | chat-9 | tpo/calendar-reports.md |  |
+| TPO-calendar-reports-20 | calendar-reports | Follow-up writes are gated by `DB09_TPO_API_READY`; when unset the calendar is read-only and the API returns 503. Deployed value UNCONFIRMED | STATE | S1 | VERIFIED | chat-9 | tpo/calendar-reports.md | 9415452cd |
 | TPO-calendar-reports-21 | calendar-reports | No unsaved-draft protection on the add form (legacy confirm on close, beforeunload and route change) | STATE | S4 | OPEN | chat-9 | tpo/calendar-reports.md |  |
 | TPO-calendar-reports-22 | calendar-reports | No stale/partial-data states: legacy shows "This refresh failed. Showing the last successful load.", "Calendar summary is partially unavail... | STATE | S4 | OPEN | chat-9 | tpo/calendar-reports.md |  |
 | TPO-calendar-reports-23 | calendar-reports | Student interview emails on schedule/reschedule (`ROUND_SCHEDULED`) and the evening-before `ROUND_REMINDER` were not found for the TPO roun... | SIDE-EFFECT | S2 | UNCONFIRMED | chat-9 | tpo/calendar-reports.md |  |
@@ -146,8 +146,8 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-calendar-reports-R06 | calendar-reports | Unplaced report shows and exports the internal `Membership ID` (a UUID) as its third column. Legacy hides every `id`/`*Id` field from scree... | COPY | S3 | OPEN | chat-9 | tpo/calendar-reports-review.md |  |
 | TPO-calendar-reports-R07 | calendar-reports | Every `/tpo/calendar` render loads all recruiter leads (`listTpoLeads`) when the DB09 gate is on, only to slice the first 100 for the picke... | PERFORMANCE | S4 | OPEN | chat-9 | tpo/calendar-reports-review.md |  |
 | TPO-calendar-reports-R08 | calendar-reports | `/tpo/calendar/rounds` and `/tpo/calendar/interviews` cap at 200 rounds with only a notice, no search, filter or paging. A college with mor... | PERFORMANCE | S3 | OPEN | chat-9 | tpo/calendar-reports-review.md |  |
-| TPO-campaigns-public-01 | campaigns-public | No way to write and send a campaign: no `Send an email` entry in the Actions window, no composer modal (Subject max 200, Email max 10000 wi... | MISSING-ACTION | S1 | VERIFIED | chat-2 | tpo/campaigns-public.md | 5bbcf2092 |
-| TPO-campaigns-public-02 | campaigns-public | Campaign records cannot carry what the list needs: `placement_tpo_email_campaigns` has no subject, body, sender, sent/skipped/failed counte... | MISSING-FIELD | S1 | VERIFIED | chat-2 | tpo/campaigns-public.md | 8664b7688 |
+| TPO-campaigns-public-01 | campaigns-public | No way to write and send a campaign: no `Send an email` entry in the Actions window, no composer modal (Subject max 200, Email max 10000 wi... | MISSING-ACTION | S1 | VERIFIED | chat-2 | tpo/campaigns-public.md | e20d5f905 |
+| TPO-campaigns-public-02 | campaigns-public | Campaign records cannot carry what the list needs: `placement_tpo_email_campaigns` has no subject, body, sender, sent/skipped/failed counte... | MISSING-FIELD | S1 | VERIFIED | chat-2 | tpo/campaigns-public.md | 5560011a5 |
 | TPO-campaigns-public-03 | campaigns-public | The history page lists `messaging_delivery_batches` (purpose, total, accepted, failed, suppressed), not campaigns: no subject, no sender, n... | MISSING-FIELD | S2 | OPEN | chat-2 | tpo/campaigns-public.md |  |
 | TPO-campaigns-public-04 | campaigns-public | The history is always empty today: nothing implements `DeliveryRepository` or inserts `messaging_delivery_batches`/receipts, so even recrui... | STATE | S2 | OPEN | chat-2 | tpo/campaigns-public.md |  |
 | TPO-campaigns-public-05 | campaigns-public | Side effects of a send are all absent: lead timeline entry `EMAIL` "Campaign: {subject}", company outreach `EMAILED` for companies nobody h... | SIDE-EFFECT | S2 | OPEN | chat-2 | tpo/campaigns-public.md |  |
@@ -229,8 +229,8 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-companies-R04 | companies | Join link, domain and trust controls exist only on the UUID page. Companies that appear only as a CRM name or by drives (legacy `companyDet... | MISSING-ACTION | S2 | VERIFIED | chat-2 | tpo/companies-review.md | 86766efde |
 | TPO-companies-R05 | companies | Canonical page lists drives oldest first (`asc(placementJobs.createdAt)` in `tpo-companies-view-service.ts`, no re-sort); legacy and the vN... | STATE | S3 | UNCONFIRMED | chat-2 | tpo/companies-review.md |  |
 | TPO-drive-workspace-01 | drive-workspace | The drive workspace is one long page plus nine separate routes instead of a tabbed workspace with Applicants (default for live drives), Rou... | MISSING-TAB | S2 | OPEN | chat-5 | tpo/drive-workspace.md |  |
-| TPO-drive-workspace-02 | drive-workspace | No status-driven Next step card (what needs the TPO now, one button, up to 3 more items) and no state-aware main header button (Approve and... | MISSING-ACTION | S1 | IN-BRANCH | chat-5 | tpo/drive-workspace.md | chat-5:8dd41521d |
-| TPO-drive-workspace-03 | drive-workspace | Header lacks the status tag (Needs your review, Draft, Published, Closed, Cancelled, Declined), drive mode, `Recorded: happened outside` ta... | MISSING-FIELD | S2 | IN-BRANCH | chat-5 | tpo/drive-workspace.md | chat-5:ec778c482 |
+| TPO-drive-workspace-02 | drive-workspace | No status-driven Next step card (what needs the TPO now, one button, up to 3 more items) and no state-aware main header button (Approve and... | MISSING-ACTION | S1 | VERIFIED | chat-5 | tpo/drive-workspace.md | 8dd41521d |
+| TPO-drive-workspace-03 | drive-workspace | Header lacks the status tag (Needs your review, Draft, Published, Closed, Cancelled, Declined), drive mode, `Recorded: happened outside` ta... | MISSING-FIELD | S2 | VERIFIED | chat-5 | tpo/drive-workspace.md | ec778c482 |
 | TPO-drive-workspace-04 | drive-workspace | No `More` menu items for Export applicants (Name, Roll, Branch, CGPA, Stage CSV), Share with company, Run it again (copy) and Delete draft;... | MISSING-ACTION | S2 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-05 | drive-workspace | Clone a closed, cancelled or declined drive ("Run it again") is absent, so a past drive cannot be reused; the copy also drops finished batc... | MISSING-ACTION | S2 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-06 | drive-workspace | Delete draft (draft with no applicants, confirm text `It was never published...`) is absent. | MISSING-ACTION | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
@@ -243,7 +243,7 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-drive-workspace-13 | drive-workspace | Publish confirmation lacks eligibility counts (`{n} students are eligible and will be told by App and Email. {m} are excluded`), the blocki... | MISSING-MODAL | S1 | VERIFIED | chat-5 | tpo/drive-workspace.md | 9827a3667 |
 | TPO-drive-workspace-14 | drive-workspace | Publish requirements differ: legacy requires job type, pay, deadline in future (not for recorded-outside), off-campus link; vNext requires... | VALIDATION | S2 | UNCONFIRMED | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-15 | drive-workspace | Publish does not announce to eligible students by App and Email, and does not advance "debarred for N drives" counters (P-S1-08 count-at-pu... | SIDE-EFFECT | S1 | VERIFIED | chat-5 | tpo/drive-workspace.md | 9827a3667 |
-| TPO-drive-workspace-16 | drive-workspace | Extend deadline: legacy is a modal on the page with no reason; vNext is a separate page requiring a 10-character reason. Not a defect, but... | MISSING-ACTION | S2 | IN-BRANCH | chat-5 | tpo/drive-workspace.md | chat-5:f8a122231 |
+| TPO-drive-workspace-16 | drive-workspace | Extend deadline: legacy is a modal on the page with no reason; vNext is a separate page requiring a 10-character reason. Not a defect, but... | MISSING-ACTION | S2 | FIXED-ON-MAIN | chat-5 | tpo/drive-workspace.md | f8a122231 |
 | TPO-drive-workspace-17 | drive-workspace | Close does not end the drive's open applicants: legacy turns every open applicant into Not selected (waitlist ended), approves open request... | SIDE-EFFECT | S1 | FIXED-ON-MAIN | chat-5 | tpo/drive-workspace.md | c52bcfba7 |
 | TPO-drive-workspace-18 | drive-workspace | Cancel does not reject open applicants with student wording, cancel scheduled interviews, withdraw unreleased selections, settle withdrawal... | SIDE-EFFECT | S1 | FIXED-ON-MAIN | chat-5 | tpo/drive-workspace.md | 58783ac15 |
 | TPO-drive-workspace-19 | drive-workspace | Cancel reason has no preset chips (Company withdrew, hiring freeze, Moving it to a new date, Not enough eligible students) and no "Students... | MISSING-FIELD | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
@@ -252,7 +252,7 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-drive-workspace-22 | drive-workspace | Missing applicant columns: Roll, Batch, Class, Branch, Gender, marks, Current round, Last result, Skill match, Resume link, Applied on, Ema... | MISSING-COLUMN | S2 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-23 | drive-workspace | Missing filters: Journey, Current round, Last result, Flags, Applied (Today/7 days/Earlier), Skill match range, Academics, Batch, Branch, G... | MISSING-FILTER | S2 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-24 | drive-workspace | No Board view (drag between stages, `Move to…`). | MISSING-ACTION | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
-| TPO-drive-workspace-25 | drive-workspace | Bulk actions limited to shortlist and reject on one page of rows; missing Move to test, Move to interview, Send a message, Add a note, Shar... | MISSING-ACTION | S1 | IN-BRANCH | chat-5 | tpo/drive-workspace.md | chat-9:7e3c903fe |
+| TPO-drive-workspace-25 | drive-workspace | Bulk actions limited to shortlist and reject on one page of rows; missing Move to test, Move to interview, Send a message, Add a note, Shar... | MISSING-ACTION | S1 | VERIFIED | chat-5 | tpo/drive-workspace.md | 7e3c903fe |
 | TPO-drive-workspace-26 | drive-workspace | Moves are not held for 30 seconds before students are told, and undo does not tell nobody; vNext undo is version-based exact undo (UNCONFIR... | SIDE-EFFECT | S2 | UNCONFIRMED | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-27 | drive-workspace | Review one by one modal (keyboard S/R/arrows, progress, resume and full profile) is absent; vNext reviews one applicant per page. | MISSING-MODAL | S2 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-28 | drive-workspace | Registered, not applied list, Remind all (once a day, not after deadline) and Apply on behalf (48 hour opt-out) are absent; the Next step c... | MISSING-ACTION | S1 | OPEN | chat-5 | tpo/drive-workspace.md |  |
@@ -260,11 +260,11 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-drive-workspace-30 | drive-workspace | Skill match from `Skills the company wants` is absent. | MISSING-COLUMN | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-31 | drive-workspace | Company portal ID workflow absent (Company ID column, `haven't entered their ... ID` note). | MISSING-FIELD | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-32 | drive-workspace | Empty state text and CTA differ (`No matching applicants`; legacy points to Registered, not applied). | COPY | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
-| TPO-drive-workspace-33 | drive-workspace | Applicant list is a page of results with a 500-row capped export and an export gate (`DB09_TPO_API_READY`); legacy exports the whole filter... | MISSING-EXPORT | S1* | FIXED-ON-MAIN | chat-5 | tpo/drive-workspace.md | 3b13b6c5d |
+| TPO-drive-workspace-33 | drive-workspace | Applicant list is a page of results with a 500-row capped export and an export gate (`DB09_TPO_API_READY`); legacy exports the whole filter... | MISSING-EXPORT | S1* | VERIFIED | chat-5 | tpo/drive-workspace.md | a05ff3133 |
 | TPO-drive-workspace-34 | drive-workspace | Applicant review modal: legacy decision for Not selected stores an internal reason from presets; vNext reject requires a candidate-facing m... | VALIDATION | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
-| TPO-drive-workspace-35 | drive-workspace | Round cards with status, mode, when, venue/link, students in round (link to filter), results expected, results state, test details and what... | MISSING-FIELD | S2 | IN-BRANCH | chat-5 | tpo/drive-workspace.md | chat-5:634c20418 |
+| TPO-drive-workspace-35 | drive-workspace | Round cards with status, mode, when, venue/link, students in round (link to filter), results expected, results state, test details and what... | MISSING-FIELD | S2 | VERIFIED | chat-5 | tpo/drive-workspace.md | 634c20418 |
 | TPO-drive-workspace-36 | drive-workspace | Add round presets (`Start with: Talk, Test, Interview` etc.) are absent. | MISSING-ACTION | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
-| TPO-drive-workspace-37 | drive-workspace | Round reorder (drag handle, arrows, lock message) has no UI although the API route exists. | MISSING-ACTION | S2 | IN-BRANCH | chat-5 | tpo/drive-workspace.md | chat-5:cd6e57634 |
+| TPO-drive-workspace-37 | drive-workspace | Round reorder (drag handle, arrows, lock message) has no UI although the API route exists. | MISSING-ACTION | S2 | VERIFIED | chat-5 | tpo/drive-workspace.md | cd6e57634 |
 | TPO-drive-workspace-38 | drive-workspace | Add/Edit round modal fields are split across two places: vNext evaluation plan lacks Mode, Date, Venue/Meeting link and Results due at crea... | MISSING-FIELD | S2 | UNCONFIRMED | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-39 | drive-workspace | Unsaved-changes guard for round edits (beforeunload and route change) absent. | STATE | S3 | OPEN | chat-5 | tpo/drive-workspace.md |  |
 | TPO-drive-workspace-40 | drive-workspace | Import results from .xlsx/.csv with match order (applicant id, company id, email, roll), template, Matched/Not in file/Unmatched tabs, sugg... | MISSING-EXPORT | S1 | OPEN | chat-5 | tpo/drive-workspace.md |  |
@@ -419,7 +419,7 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-home-R07 | home | Finder result details differ beyond Round A 28/29: students link to `/tpo/students?search={name}` (legacy `?q={roll}&student={id}`, so the... | MISSING-FIELD | S3 | OPEN | chat-9 | tpo/home-review.md |  |
 | TPO-home-R08 | home | Performance and failure isolation. Home awaits `listTpoBatches`, then `getPlacementTpoOperations` (loads the college's whole job/applicatio... | PERFORMANCE | S3 | OPEN | chat-9 | tpo/home-review.md |  |
 | TPO-inbox-team-01 | inbox-team | TPO cannot open a recruiter conversation or read a single message: no thread detail page, bodies are never selected ("intentionally withhel... | MISSING-PAGE | S1 | VERIFIED | chat-2 | tpo/inbox-team.md | 506049783 |
-| TPO-inbox-team-02 | inbox-team | No way to write: no New message modal (recruiter picker of ACTIVE-access recruiters), no reply composer, no quick replies, no Ctrl/Cmd+Ente... | MISSING-ACTION | S1 | VERIFIED | chat-2 | tpo/inbox-team.md | 506049783 |
+| TPO-inbox-team-02 | inbox-team | No way to write: no New message modal (recruiter picker of ACTIVE-access recruiters), no reply composer, no quick replies, no Ctrl/Cmd+Ente... | MISSING-ACTION | S1 | VERIFIED | chat-2 | tpo/inbox-team.md | 01984cec5 |
 | TPO-inbox-team-03 | inbox-team | A recruiter's message never alerts the TPO: no bell item ("New message from a recruiter" / "A recruiter replied by email"), no unread count... | SIDE-EFFECT | S2* | VERIFIED | chat-2 | tpo/inbox-team.md | 3407fa46e |
 | TPO-inbox-team-04 | inbox-team | Read state is not manageable: legacy opens a thread and marks recruiter messages read (college-wide) and shows "Seen" under the TPO's last... | MISSING-ACTION | S2 | OPEN | chat-2 | tpo/inbox-team.md |  |
 | TPO-inbox-team-05 | inbox-team | Filters differ: legacy has `All (n)` / `Reply (n)` (recruiter spoke last, "Waiting for you") / `Unread (n)` segmented counts and instant se... | MISSING-FILTER | S2 | OPEN | chat-2 | tpo/inbox-team.md |  |
@@ -460,7 +460,7 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-inbox-team-40 | inbox-team | Page copy differs from legacy: subtitle "Who does what, and what you decided. Recruiters and students never see this." replaced by "People... | COPY | S3 | OPEN | chat-2 | tpo/inbox-team.md |  |
 | TPO-inbox-team-41 | inbox-team | Thread history paging: vNext pages of 40 with "Older messages"/"Newer messages" links and no auto-scroll to newest; legacy loads the last 5... | STATE | S4 | OPEN | chat-2 | tpo/inbox-team.md |  |
 | TPO-inbox-team-42 | inbox-team | Phone/desktop master-detail layout (list, conversation, details; one pane on phones with back button) replaced by separate pages. | RESPONSIVE | S4 | OPEN | chat-2 | tpo/inbox-team.md |  |
-| TPO-inbox-team-43 | inbox-team | Audience targeting does not exist. Legacy: Students in placements (default) / Batches / Branches / A drive's applicants (Everyone who appli... | MISSING-FIELD | S1 | IN-BRANCH | chat-2 | tpo/inbox-team.md | chat-2:ea91d0637 |
+| TPO-inbox-team-43 | inbox-team | Audience targeting does not exist. Legacy: Students in placements (default) / Batches / Branches / A drive's applicants (Everyone who appli... | MISSING-FIELD | S1 | VERIFIED | chat-2 | tpo/inbox-team.md | ea91d0637 |
 | TPO-inbox-team-44 | inbox-team | Audience pickers missing: batch/branch multi-selects and drive search select with empty-state texts ("No batch is in placements", "No stude... | MISSING-FIELD | S2 | OPEN | chat-2 | tpo/inbox-team.md |  |
 | TPO-inbox-team-45 | inbox-team | Live reach and guard missing: "Goes to n students · label" under the picker, the Send button reads "Send to n students" and is disabled at... | MISSING-FIELD | S2 | OPEN | chat-2 | tpo/inbox-team.md |  |
 | TPO-inbox-team-46 | inbox-team | Publishing delivers nothing: legacy queues one in-app notice per recipient (held 30 s for Undo, "Tell them it changed" re-notice, reminders... | SIDE-EFFECT | S2 | OPEN | chat-2 | tpo/inbox-team.md |  |
@@ -500,13 +500,13 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-recruiters-05 | recruiters | Board lacks drag and drop, droppable/locked states and hints, `Move to…` menu (Invite, Create drive, Mark contacted, Not now), card meta, c... | MISSING-ACTION | S2* | FIXED-ON-MAIN | chat-2 | tpo/recruiters.md | 886e058a3 |
 | TPO-recruiters-06 | recruiters | `view=campaigns` not recognised, no Emails tab, views are a select not tabs, Companies has no count | MISSING-TAB | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-07 | recruiters | Needs-doing strip differs (legacy: Follow-ups due, No next step, Gone quiet, Unassigned with counts, hidden at 0, toggle, "Nothing right no... | COPY | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
-| TPO-recruiters-08 | recruiters | Stage: RECRUITED/DRIVE_PLANNED only from drives of the lead's `companyRelationshipId`; manually added leads with no relationship never reac... | STATE | S1 | IN-BRANCH | chat-2 | tpo/recruiters.md | chat-2:1000e821e |
-| TPO-recruiters-09 | recruiters | Detail returns manual stage only: header `Stage: {manualStage}`, no invite status text, no owner, no recruiter last login | MISSING-FIELD | S1 | IN-BRANCH | chat-2 | tpo/recruiters.md | chat-2:5d7ce7fb1 |
+| TPO-recruiters-08 | recruiters | Stage: RECRUITED/DRIVE_PLANNED only from drives of the lead's `companyRelationshipId`; manually added leads with no relationship never reac... | STATE | S1 | VERIFIED | chat-2 | tpo/recruiters.md | 1000e821e |
+| TPO-recruiters-09 | recruiters | Detail returns manual stage only: header `Stage: {manualStage}`, no invite status text, no owner, no recruiter last login | MISSING-FIELD | S1 | VERIFIED | chat-2 | tpo/recruiters.md | 5d7ce7fb1 |
 | TPO-recruiters-10 | recruiters | Detail has no Company card (drive and student counts, drives list to `/tpo/drives/{id}`, company link) and no Added date | MISSING-FIELD | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-11 | recruiters | Detail header lacks Invite/Resend, Create drive, Team talk, More menu; vNext shows Mark contacted for NOT_NOW and uses `window.confirm` | MISSING-ACTION | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
-| TPO-recruiters-12 | recruiters | InviteModal: no personal note, no "Also email it" (API 503 on `sendEmail`), no message preview or Copy message, no close guard, no 7-day te... | MISSING-MODAL | S1 | OPEN | chat-2 | tpo/recruiters.md |  |
-| TPO-recruiters-13 | recruiters | No Invite/Resend row action in table or board, no bulk "Invite by email" endpoint or action, no unsubscribed disabling | MISSING-ACTION | S1 | IN-BRANCH | chat-2 | tpo/recruiters.md | chat-2:47d2221d8 |
-| TPO-recruiters-14 | recruiters | Bulk engine absent: no Actions window, preview/result/undo/retry-failed/copy-failed, no `bulk-record` audit line per run, no `restore` endp... | MISSING-ACTION | S1 | IN-BRANCH | chat-2 | tpo/recruiters.md | chat-2:9fe08eabe |
+| TPO-recruiters-12 | recruiters | InviteModal: no personal note, no "Also email it" (API 503 on `sendEmail`), no message preview or Copy message, no close guard, no 7-day te... | MISSING-MODAL | S1 | VERIFIED | chat-2 | tpo/recruiters.md | c1402a160 |
+| TPO-recruiters-13 | recruiters | No Invite/Resend row action in table or board, no bulk "Invite by email" endpoint or action, no unsubscribed disabling | MISSING-ACTION | S1 | VERIFIED | chat-2 | tpo/recruiters.md | 47d2221d8 |
+| TPO-recruiters-14 | recruiters | Bulk engine absent: no Actions window, preview/result/undo/retry-failed/copy-failed, no `bulk-record` audit line per run, no `restore` endp... | MISSING-ACTION | S1 | VERIFIED | chat-2 | tpo/recruiters.md | 9fe08eabe |
 | TPO-recruiters-15 | recruiters | Bulk actions: no per-row skip reasons ("Already contacted"), owner names show membership id prefix with lazy load step, no Send an email en... | MISSING-ACTION | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-16 | recruiters | No inline edit of Stage (New/Contacted/Not now) or Owner in the table | MISSING-ACTION | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-17 | recruiters | Day-4 invite reminder never runs: `remindTpoRecruiterInvite` has no caller; timeline text "Invite reminder sent" vs legacy "Reminder emaile... | SIDE-EFFECT | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
@@ -527,7 +527,7 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-recruiters-32 | recruiters | `?q=` search not in URL, `?due=1` and `?view=campaigns` ignored, no Add-with-company from Companies | MISSING-FILTER | S3 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-33 | recruiters | Unsubscribed leads: no detail alert, no disabled Invite/Send, no "Asked not to be contacted" skip reasons | STATE | S2 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-34 | recruiters | Page and bulk services require membership role TPO only; legacy college-admin access UNCONFIRMED | PERMISSION | S3 | UNCONFIRMED | chat-2 | tpo/recruiters.md |  |
-| TPO-recruiters-35 | recruiters | Page and all lead APIs fail closed until `DB09_TPO_API_READY=DB09_VERIFIED`; if unset the page shows "awaiting database verification" and e... | STATE | S1 | UNCONFIRMED | chat-2 | tpo/recruiters.md |  |
+| TPO-recruiters-35 | recruiters | Page and all lead APIs fail closed until `DB09_TPO_API_READY=DB09_VERIFIED`; if unset the page shows "awaiting database verification" and e... | STATE | S1 | VERIFIED | chat-2 | tpo/recruiters.md | 9415452cd |
 | TPO-recruiters-36 | recruiters | Responsive: custom overlays without focus trap, plain table without selection, board not horizontal-scroll columns, no phone Actions dropdo... | RESPONSIVE | S3 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-37 | recruiters | Accessibility: dialogs lack focus management and Esc, bulk results show raw UUIDs, board moves not keyboard operable, view switcher is a se... | A11Y | S3 | OPEN | chat-2 | tpo/recruiters.md |  |
 | TPO-recruiters-38 | recruiters | Free-mail list has 4 domains (legacy 8 plus personal/disposable list), so `icloud.com` yields company ICLOUD; company uppercased (`ACME`) v... | VALIDATION | S3 | OPEN | chat-2 | tpo/recruiters.md |  |
@@ -549,7 +549,7 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-requests-verification-05 | requests-verification | No TPO notification for a new request (bell "New {kind} request", link `/tpo/requests`) and no 24-hour escalation of an undecided withdrawa... | SIDE-EFFECT | S2 | OPEN | chat-5 | tpo/requests-verification.md |  |
 | TPO-requests-verification-06 | requests-verification | No pending-request counter on the sidebar `Requests` row (legacy 60 s poll, capped badge); only the Home row shows the count. | SIDE-EFFECT | S3 | OPEN | chat-5 | tpo/requests-verification.md |  |
 | TPO-requests-verification-07 | requests-verification | Closing a drive does not settle its pending requests: legacy approves open withdrawals, absence disputes and offer extensions as `AUTO_APPR... | SIDE-EFFECT | S2 | FIXED-ON-MAIN | chat-5 | tpo/requests-verification.md | 3d8b37338 |
-| TPO-requests-verification-08 | requests-verification | No urgency or decision-order support: legacy lists pending first, urgent first (escalated or a round within 24 h), soonest round, oldest as... | MISSING-FIELD | S2 | IN-BRANCH | chat-5 | tpo/requests-verification.md | chat-5:6c1561d4a |
+| TPO-requests-verification-08 | requests-verification | No urgency or decision-order support: legacy lists pending first, urgent first (escalated or a round within 24 h), soonest round, oldest as... | MISSING-FIELD | S2 | VERIFIED | chat-5 | tpo/requests-verification.md | 6c1561d4a |
 | TPO-requests-verification-09 | requests-verification | Student context columns are missing on `/tpo/requests`: roll number, branch, After-college choice, green `Already placed` tag (the facts a... | MISSING-COLUMN | S3 | OPEN | chat-5 | tpo/requests-verification.md |  |
 | TPO-requests-verification-10 | requests-verification | Decided requests show no `Decided by`, `Decided on` or `Why` (name of the TPO, date, reason; default approval note hidden). vNext shows onl... | MISSING-COLUMN | S3 | OPEN | chat-5 | tpo/requests-verification.md |  |
 | TPO-requests-verification-11 | requests-verification | Filters: missing Urgent, Waiting since (asked today / 1-2 days / more than 2 days), Proof (attached / missing / not needed), Drive, Branch,... | MISSING-FILTER | S3 | OPEN | chat-5 | tpo/requests-verification.md |  |
@@ -647,10 +647,10 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 | TPO-settings-audit-R03 | settings-audit | "Public placements" can never be switched on: `canEnable` needs `populationCount >= 5`, no code path writes `population_count` (the POST ro... | STATE | S2 | UNCONFIRMED | chat-9 | tpo/settings-audit-review.md |  |
 | TPO-settings-audit-R04 | settings-audit | No saved views on the audit log: legacy lets the TPO save, pin (max 5), rename, delete and reuse named filter sets for scope AUDIT (`/tpo/v... | MISSING-ACTION | S4 | OPEN | chat-9 | tpo/settings-audit-review.md |  |
 | TPO-students-01 | students | Working set differs. Legacy lists only students whose resolved decision is Eligible (batch, class or own), leaves finished-batch students o... | STATE | S1 | VERIFIED | chat-5 | tpo/students.md | 0ce30a18c |
-| TPO-students-02 | students | No student panel (drawer) at all: no Profile / Placement / Requests / Notes / History tabs, no hero facts, no needs-attention list, no Prev... | MISSING-MODAL | S1 | OPEN | chat-5 | tpo/students.md |  |
-| TPO-students-03 | students | No Act bar / Actions window: nothing to "Act on all N in this view" or on the ticked rows, no per-action counts, skip reasons, suggested ne... | MISSING-ACTION | S1 | IN-BRANCH | chat-5 | tpo/students.md | chat-9:2abc5d29d |
-| TPO-students-04 | students | No Send a message action for students (ready messages Register / Upload resume / Complete profile / Apply to drives / Answer your offer, fr... | MISSING-ACTION | S1 | OPEN | chat-5 | tpo/students.md |  |
-| TPO-students-05 | students | No way to set After college (final outcome NAAC/NIRF): not inline in the grid, not in the panel, not in bulk, no college labels, no Entrepr... | MISSING-ACTION | S1 | OPEN | chat-5 | tpo/students.md |  |
+| TPO-students-02 | students | No student panel (drawer) at all: no Profile / Placement / Requests / Notes / History tabs, no hero facts, no needs-attention list, no Prev... | MISSING-MODAL | S1 | VERIFIED | chat-5 | tpo/students.md | 8f7b021a7 |
+| TPO-students-03 | students | No Act bar / Actions window: nothing to "Act on all N in this view" or on the ticked rows, no per-action counts, skip reasons, suggested ne... | MISSING-ACTION | S1 | VERIFIED | chat-5 | tpo/students.md | 2abc5d29d |
+| TPO-students-04 | students | No Send a message action for students (ready messages Register / Upload resume / Complete profile / Apply to drives / Answer your offer, fr... | MISSING-ACTION | S1 | VERIFIED | chat-5 | tpo/students.md | c953d5261 |
+| TPO-students-05 | students | No way to set After college (final outcome NAAC/NIRF): not inline in the grid, not in the panel, not in bulk, no college labels, no Entrepr... | MISSING-ACTION | S1 | VERIFIED | chat-5 | tpo/students.md | 61fb3a1c2 |
 | TPO-students-06 | students | Debarment is not equivalent: legacy Debar (reason, until a date or for N drives, ack, student told and can dispute, bulk) and Lift (single... | MISSING-ACTION | S2 | OPEN | chat-5 | tpo/students.md |  |
 | TPO-students-07 | students | Debar/Lift and prep side effects absent: no student notification (`DEBARRED`), no dispute path, no `DEBARMENT_LIFTED` event, no debarments... | SIDE-EFFECT | S2 | OPEN | chat-5 | tpo/students.md |  |
 | TPO-students-08 | students | No bulk Verify profiles (blind verify of submitted Education / Identity, document-missing refusals by name, ack text, "N section(s) verifie... | MISSING-ACTION | S2 | OPEN | chat-5 | tpo/students.md |  |
@@ -711,22 +711,27 @@ Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO 
 
 Review notes (`*` after a severity marks a review severity change):
 
+- TPO-batches-01 verified by: tests/unit/tpo-batch-directory-counts.test.ts
 - TPO-batches-18 tracker: Review status was CLOSED-SINCE; a commit cites it on main.
 - TPO-batches-18 verified by: tests/unit/tpo-batch-invitation-model.test.ts
 - TPO-batches-19 tracker: Review status was CLOSED-SINCE; a commit cites it on main.
+- TPO-batches-31 verified by: tests/unit/tpo-batch-eligibility-import-scaffold-roll.test.ts, tests/unit/tpo-batch-eligibility-roll-import.test.ts
+- TPO-batches-32 verified by: tests/unit/tpo-batch-bulk-decisions.test.ts
 - TPO-batches-63 severity_note: Review: S2 to S3. S2 to S3. Part of it is now false: invite and reopen write the `BATCH_INVITED` / `BATCH_REGISTRATION_REOPENED` activity events and `in_app_notifications` rows (`batch-participation-service.ts:496-520,636-662`). What remains (REGISTRATION_REMINDER / BATCH_REMINDED, bulk-run audit)...
 - TPO-batches-R01 verified by: tests/integration/placements-db08-batches.test.ts
 - TPO-batches-R02 verified by: tests/integration/placements-db08-batches.test.ts
 - TPO-batches-R03 verified by: tests/unit/tpo-batch-notification-model.test.ts
 - TPO-batches-R05 verified by: tests/unit/tpo-batch-notification-model.test.ts
 - TPO-calendar-reports-19 severity_note: Review: S3 to S2. S3 to S2. Users see raw API codes (`Request failed: TPO_CRM_FOLLOWUP_ALREADY_DONE`, `DB09_MIGRATIONS_PENDING`); that is a workflow-visible error text, not a cosmetic wording gap, and Decision 13 (exact wording) applies.
+- TPO-calendar-reports-20 tracker: Review status was UNCONFIRMED; a commit cites it on main.
+- TPO-calendar-reports-20 verified by: tests/unit/tpo-crm-table-readiness-gate.test.ts
 - TPO-calendar-reports-24 severity_note: Review: S3 to S4. S3 to S4. Legacy writes no audit for follow-ups either (RLS:229-258); it is an improvement request, not parity.
 - TPO-calendar-reports-33 tracker: Review status was CLOSED-SINCE; a commit cites it on main.
 - TPO-calendar-reports-33 verified by: tests/unit/tpo-accreditation-students.test.ts
 - TPO-calendar-reports-34 CLOSED-SINCE: WRONG: Closed: the batch picker and the "NAAC 5.2.1 lists the students of one batch" prompt exist, and the export needs a batch. Residual: link not truly disabled and copy says "above" while picker is below (R05).
 - TPO-calendar-reports-56 severity_note: Review: S2 to S3. S2 to S3. Main metrics now honour `placement_college_rules.counts_as_placed_at` (`report-service.ts:86-123`, commits f3fd945bf, 8d67a7c5c). What remains is stale methodology text ("currently accepted offer", `placement-report-ui.tsx:138`) which now contradicts the numbers when the...
-- TPO-campaigns-public-01 verified by: tests/unit/chat2-campaign-draft-model.test.ts, tests/unit/chat2-tpo-campaign-compose-route.test.ts
-- TPO-campaigns-public-02 verified by: tests/unit/chat2-tpo-campaign-history.test.ts
+- TPO-campaigns-public-01 verified by: tests/unit/chat2-campaign-draft-model.test.ts, tests/unit/chat2-tpo-campaign-compose-route.test.ts, tests/unit/tpo-campaigns-public-01-merge-preview.test.ts
+- TPO-campaigns-public-02 verified by: tests/unit/chat2-tpo-campaign-history.test.ts, tests/unit/tpo-campaigns-public-02-receipts.test.ts
 - TPO-campaigns-public-13 severity_note: Review: S1 to S2. `api/public/campaign-unsubscribe/route.ts` now verifies the placement-cell token (`tpoClaim`) and calls `unsubscribeTpoCampaignRecipient`; `[token]/page.tsx` shows the placement-cell variant. What remains is that nothing issues a token (blocked by -01), so it is a dependency, not...
 - TPO-campaigns-public-13 verified by: tests/unit/chat2-campaign-unsubscribe-families.test.ts
 - TPO-campaigns-public-15 CLOSED-SINCE: WRONG: For the placement-cell token kind, title "Stop these emails?", body "The placement cell that wrote to you will not email you again.", button "Unsubscribe", success "You're unsubscribed" / "This placement cell will not email you again." are now exact (`[token]/page.tsx:12-31`, `confirmed/page...
@@ -761,11 +766,17 @@ Review notes (`*` after a severity marks a review severity change):
 - TPO-companies-30 CLOSED-SINCE: WRONG (deep link works): `tpo/recruiters/page.tsx:31-32` passes `initialAdd` and `initialCompany`; `recruiter-leads-workspace.tsx:106,109,482` opens the Add form with the company prefilled (commit 7ccc8b04b). Still missing is the in-table `Add a contact` button, already in TPO-companies-17
 - TPO-companies-R01 verified by: tests/unit/chat2-join-link-counters-contract.test.ts
 - TPO-companies-R04 verified by: tests/unit/chat2-company-canonical-link.test.ts
+- TPO-drive-workspace-02 verified by: tests/integration/tpo-drive-next-step-postgres.test.ts, tests/unit/tpo-drive-next-step-model.test.ts
+- TPO-drive-workspace-03 verified by: tests/unit/tpo-drive-header.test.ts
 - TPO-drive-workspace-13 verified by: tests/unit/tpo-drive-publish-reach-confirmation.test.ts
 - TPO-drive-workspace-15 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - TPO-drive-workspace-15 verified by: tests/unit/tpo-drive-publish-effects-model.test.ts
 - TPO-drive-workspace-21 severity_note: Review: S1 to S2. S1 to S2, see section 4.
+- TPO-drive-workspace-25 verified by: tests/integration/tpo-drive-workspace-25-message.test.ts, tests/unit/tpo-action-window-counts.test.ts, tests/unit/tpo-bulk-200-request-size.test.ts, tests/unit/tpo-bulk-all-view-selection.test.ts, tests/unit/tpo-bulk-application-add-note.test.ts, tests/unit/tpo-bulk-follow-up-links.test.ts, tests/unit/tpo-bulk-message-model.test.ts
 - TPO-drive-workspace-33 severity_note: Review: S2 to S1. S2 to S1 if `DB09_TPO_API_READY` is unset, see section 4 and R01.
+- TPO-drive-workspace-33 verified by: tests/unit/tpo-drive-applications-export-model.test.ts
+- TPO-drive-workspace-35 verified by: tests/unit/tpo-round-facts.test.ts
+- TPO-drive-workspace-37 verified by: tests/integration/tpo-round-reorder-postgres.test.ts, tests/unit/tpo-round-reorder.test.ts
 - TPO-drive-workspace-R01 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - TPO-drives-02 verified by: tests/integration/tpo-drive-requests-0101.test.ts, tests/unit/tpo-drive-requests-view.test.ts
 - TPO-drives-03 WRONG: WRONG: See section 4. The live TPO cancel flow stores `CLOSED`, so cancelled drives are in the Closed view and counts. Real residue is R04.
@@ -789,21 +800,31 @@ Review notes (`*` after a severity marks a review severity change):
 - TPO-home-R02 verified by: tests/unit/tpo-home-all-batches.test.ts
 - TPO-home-R03 verified by: tests/unit/tpo-home-specific-actions.test.ts
 - TPO-inbox-team-01 verified by: tests/unit/chat2-tpo-expired-grant-denial.test.ts, tests/unit/chat2-tpo-thread-read-boundary.test.ts
-- TPO-inbox-team-02 verified by: tests/unit/chat2-tpo-expired-grant-denial.test.ts, tests/unit/chat2-tpo-message-action-routing.test.ts, tests/unit/chat2-tpo-recruiter-message-picker.test.ts
+- TPO-inbox-team-02 verified by: tests/unit/chat2-tpo-expired-grant-denial.test.ts, tests/unit/chat2-tpo-message-action-routing.test.ts, tests/unit/chat2-tpo-recruiter-message-picker.test.ts, tests/unit/tpo-inbox-team-02-draft.test.ts, tests/unit/tpo-inbox-team-02-new-message.test.ts
 - TPO-inbox-team-03 severity_note: Review: S1 to S2. S1 to S2, and the first half is now WRONG on current main: `recruiter-message-tpo-notification-service.ts` (called from `tpo-messaging-service.ts:552,591,764`) writes one in-app bell per active TPO user (not the sender), title "New message from a recruiter". Still missing: Message...
 - TPO-inbox-team-03 verified by: tests/unit/chat2-tpo-unread-messages-topbar.test.ts
 - TPO-inbox-team-14 severity_note: Review: S4 to S3. S4 to S3. `/tpo/messages/notifications` is now the `actionHref` of the new recruiter-message bell (`recruiterMessageTpoHref()`), so it is the landing page for the most important inbox event and shows only event-type labels.
+- TPO-inbox-team-43 verified by: tests/unit/tpo-inbox-team-43-targeting.test.ts
 - TPO-inbox-team-60 severity_note: Review: S1 to S2. S1 to S2 and partly stale. Reason for S2: legacy `TpoBellPanel` doc says the bell is "things that happened, for information; things to do live on Home under Needs you", so the actionable drive request / student request / escalation still reach Requests, Drives and Home. Stale evid...
 - TPO-recruiters-01 verified by: tests/unit/chat2-recruiter-list-projection.test.ts
 - TPO-recruiters-02 verified by: tests/unit/chat2-recruiter-list-projection.test.ts
 - TPO-recruiters-03 verified by: tests/unit/chat2-engage-filter-model.test.ts
 - TPO-recruiters-04 verified by: tests/unit/chat2-engage-board-companies.test.ts
 - TPO-recruiters-05 severity_note: Review: S1 to S2. S1 to S2. The data bug that hides cards is 04. Drag/drop, hints and Move menu are convenience: Invite, Create drive, Mark contacted and Not now are reachable elsewhere (detail page, bulk panels).
+- TPO-recruiters-08 tracker: Review status was UNCONFIRMED; a commit cites it on main.
+- TPO-recruiters-08 verified by: tests/unit/tpo-recruiters-08-stage-fallback.test.ts
+- TPO-recruiters-09 verified by: tests/unit/tpo-recruiters-09-detail.test.ts
+- TPO-recruiters-12 verified by: tests/unit/tpo-recruiter-invite-message.test.ts, tests/unit/tpo-recruiter-invite-policy.test.ts
+- TPO-recruiters-13 verified by: tests/unit/tpo-recruiters-13-invite-readiness.test.ts, tests/unit/tpo-recruiters-13-invite-row.test.ts
+- TPO-recruiters-14 verified by: tests/unit/tpo-recruiters-14-copy-failed.test.ts
 - TPO-recruiters-19 verified by: tests/unit/chat2-recruiter-csv-export.test.ts
 - TPO-recruiters-23 verified by: tests/unit/chat2-tpo-import-aliases.test.ts
+- TPO-recruiters-35 tracker: Review status was UNCONFIRMED; a commit cites it on main.
+- TPO-recruiters-35 verified by: tests/unit/tpo-crm-table-readiness-gate.test.ts
 - TPO-recruiters-R02 verified by: tests/unit/chat2-engage-board-companies.test.ts
 - TPO-recruiters-R03 verified by: tests/unit/chat2-engage-bulk-protected-states.test.ts
 - TPO-recruiters-R04 verified by: tests/unit/chat2-engage-toast-copy.test.ts
+- TPO-requests-verification-08 verified by: tests/integration/tpo-requests-urgency-postgres.test.ts, tests/unit/tpo-global-requests-model.test.ts
 - TPO-requests-verification-19 tracker: Review status was CLOSED-SINCE; a commit cites it on main.
 - TPO-requests-verification-19 verified by: tests/unit/tpo-verification-review-surface.test.ts
 - TPO-requests-verification-20 tracker: Review status was CLOSED-SINCE; a commit cites it on main.
@@ -828,6 +849,10 @@ Review notes (`*` after a severity marks a review severity change):
 - TPO-settings-audit-R01 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - TPO-settings-audit-R01 verified by: tests/unit/chat2-recruiter-access-defaults.test.ts
 - TPO-students-01 verified by: tests/unit/tpo-students-working-set-parity.test.ts
+- TPO-students-02 verified by: tests/unit/tpo-student-quick-panel.test.ts
+- TPO-students-03 verified by: tests/unit/tpo-action-window-counts.test.ts, tests/unit/tpo-bulk-200-request-size.test.ts, tests/unit/tpo-bulk-all-view-selection.test.ts
+- TPO-students-04 verified by: tests/unit/tpo-students-nudge-send.test.ts
+- TPO-students-05 verified by: tests/unit/tpo-students-after-college-editor.test.ts
 - TPO-students-25 severity_note: Review: S2 to S3. S2 to S3, see section 4. Behaviour confirmed (`tpo-students-url-guard.ts:5-8`).
 - TPO-students-38 severity_note: Review: S2 to S3. S2 to S3, see section 4.
 - TPO-students-42 severity_note: Review: S2 to S3. S2 to S3, see section 4.
@@ -835,7 +860,7 @@ Review notes (`*` after a severity marks a review severity change):
 - TPO-students-R01 verified by: tests/integration/tpo-students-completed-batch.test.ts, tests/unit/tpo-finished-batch-filter.test.ts, tests/unit/tpo-students-working-set-parity.test.ts
 - TPO-students-R02 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 
-## recruiter (116 rows: 104 Round A + 12 MISSED; 97 open or unconfirmed)
+## recruiter (116 rows: 104 Round A + 12 MISSED; 92 open or unconfirmed)
 
 | ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |
 |---|---|---|---|---|---|---|---|---|
@@ -860,7 +885,7 @@ Review notes (`*` after a severity marks a review severity change):
 | REC-calendar-messages-profile-19 | calendar-messages-profile | `/hr/messages` and `/hr/profile` have no `error.tsx`/`loading.tsx`, so a failed load shows the global error instead of the in-page "Could n... | STATE | S4 | CLOSED-SINCE | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-20 | calendar-messages-profile | Inbox is paged (20/page) and thread pages 40/page newest-first with Older links; legacy shows the whole inbox and whole thread. Fine in its... | A11Y | S4 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-21 | calendar-messages-profile | No recruiter bell: legacy has a bell with an unread badge refreshed every 30 s, aria-label "Notifications, {n} new", opening a 400px drawer... | MISSING-MODAL | S2 | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | b44dc4ced |
-| REC-calendar-messages-profile-22 | calendar-messages-profile | Recruiter notification content is thin: legacy covers slot confirmed, applicants shared, students assigned to a round, offer accepted/decli... | SIDE-EFFECT | S2 | IN-BRANCH | chat-7 | recruiter/calendar-messages-profile.md | chat-7:fc9a4fdd2 |
+| REC-calendar-messages-profile-22 | calendar-messages-profile | Recruiter notification content is thin: legacy covers slot confirmed, applicants shared, students assigned to a round, offer accepted/decli... | SIDE-EFFECT | S2 | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | fc9a4fdd2 |
 | REC-calendar-messages-profile-23 | calendar-messages-profile | Read semantics: legacy keeps one per-college read marker, marks all read on opening the drawer unless older unread items are hidden, and co... | STATE | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-24 | calendar-messages-profile | The recruiter header does not show the college logo and name (vNext shows the word "Recruiter") and the mobile footer (Today, Drives, Calen... | MISSING-FIELD | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-25 | calendar-messages-profile | Mobile number cannot be edited (legacy editable, optional, 10-digit validation "Enter a valid 10-digit mobile number, or leave it blank", b... | MISSING-FIELD | S2 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
@@ -869,19 +894,19 @@ Review notes (`*` after a severity marks a review severity change):
 | REC-calendar-messages-profile-28 | calendar-messages-profile | Copy and layout: card titles should be "Your details", "College access", "Account" with the legacy help texts ("These details identify you... | COPY | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-29 | calendar-messages-profile | College access rows show "Access until {D MMM YYYY}. The placement cell can extend it." or "Access has no end date" in legacy; vNext shows... | MISSING-FIELD | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-30 | calendar-messages-profile | vNext adds `Leave Access` (self-service revoke of a college grant) and quick links per college; legacy has none and tells the recruiter "to... | PERMISSION | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
-| REC-calendar-messages-profile-31 | calendar-messages-profile | Reports tab lacks the combined funnel "All your drives at this college" (Applied, Shortlisted, Assessment, Interview, Offered, Hired with p... | MISSING-FIELD | S2 | IN-BRANCH | chat-7 | recruiter/calendar-messages-profile.md | chat-7:5c7c156d9 |
+| REC-calendar-messages-profile-31 | calendar-messages-profile | Reports tab lacks the combined funnel "All your drives at this college" (Applied, Shortlisted, Assessment, Interview, Offered, Hired with p... | MISSING-FIELD | S2 | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | 5c7c156d9 |
 | REC-calendar-messages-profile-32 | calendar-messages-profile | Company tab shows far less than legacy: no logo or initial avatar, no "Verified by 42" tag, domains list ("@a.com, @b.com"), industry ("Ind... | MISSING-FIELD | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-33 | calendar-messages-profile | "Trusted relationship" (a TPO-side setting made via the company join link) is exposed to the recruiter; legacy never shows it. Confirm with... | PERMISSION | S4 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-34 | calendar-messages-profile | Team list lacks the per-colleague "{n} drive(s) here" count, the avatar initial and the intro "Colleagues from your company who work with t... | MISSING-COLUMN | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-35 | calendar-messages-profile | Reports table columns and wording: legacy Drive (link plus status tag), Applied, Offered (awaiting+accepted+declined), Accepted, Declined,... | COPY | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-36 | calendar-messages-profile | Header copy: legacy button `Your profile` and subtitle "Your work with {college}"; vNext button `Profile`, description "{college} · {compan... | COPY | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-37 | calendar-messages-profile | Tabs are one URL in legacy (`/recruiter/company?tab=reports`, panes load lazily and client-side); vNext sends Reports to a separate route `... | STATE | S4 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
-| REC-calendar-messages-profile-38 | calendar-messages-profile | A recruiter cannot join: the `Join` button is permanently disabled ("Account activation is temporarily unavailable..."). There is no work-e... | MISSING-ACTION | S1 | IN-BRANCH | chat-7 | recruiter/calendar-messages-profile.md | chat-2:995013111 |
+| REC-calendar-messages-profile-38 | calendar-messages-profile | A recruiter cannot join: the `Join` button is permanently disabled ("Account activation is temporarily unavailable..."). There is no work-e... | MISSING-ACTION | S1 | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | 995013111 |
 | REC-calendar-messages-profile-39 | calendar-messages-profile | Invite-flow validation and error copy absent: INVALID_MOBILE, FIRST_NAME_REQUIRED, COMPANY_EMAIL_REQUIRED, EMAIL_REQUIRED, ACCOUNT_UNAVAILA... | VALIDATION | S2 | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | 6e9f97f90 |
 | REC-calendar-messages-profile-40 | calendar-messages-profile | Missing states: load_error with Retry ("We couldn't load this invitation"), joined ("You now have access to {college}" / "Sign in with your... | STATE | S2 | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | fea7184a6 |
 | REC-calendar-messages-profile-41 | calendar-messages-profile | Preview content missing: invited work email (locked), review-drive sentence "They posted a drive, {drive}, and would like you to review it.... | MISSING-FIELD | S3 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-42 | calendar-messages-profile | Declined/unsubscribed confirmation copy: legacy "Thank you, we have told the placement cell" / "You will not be contacted about this again.... | COPY | S4 | OPEN | chat-7 | recruiter/calendar-messages-profile.md |  |
-| REC-calendar-messages-profile-43 | calendar-messages-profile | Accept side effects are not wired for users: welcome email to brand-new accounts, TPO bell "{name} joined from {company}", lead activity "J... | SIDE-EFFECT | S2 | IN-BRANCH | chat-7 | recruiter/calendar-messages-profile.md | chat-2:74ab41ff7 |
+| REC-calendar-messages-profile-43 | calendar-messages-profile | Accept side effects are not wired for users: welcome email to brand-new accounts, TPO bell "{name} joined from {company}", lead activity "J... | SIDE-EFFECT | S2 | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | 74ab41ff7 |
 | REC-calendar-messages-profile-44 | calendar-messages-profile | `/company-join/[token]` is a static placeholder that says joining "is not active yet". No preview API, no send-code, no join: anyone at a c... | MISSING-ACTION | S1 | CLOSED-SINCE | chat-7 | recruiter/calendar-messages-profile.md |  |
 | REC-calendar-messages-profile-45 | calendar-messages-profile | Join-specific validation and result states missing: OTHER_COMPANY_EMAIL "Use your {company} email address for this link.", COMPANY_EMAIL_RE... | VALIDATION | S3* | VERIFIED | chat-7 | recruiter/calendar-messages-profile.md | 6e9f97f90 |
 | REC-calendar-messages-profile-46 | calendar-messages-profile | An existing-account recruiter who accepts an invite gets a pending grant in legacy that is accepted automatically at sign-in on the college... | MISSING-ACTION | S2 | UNCONFIRMED | chat-7 | recruiter/calendar-messages-profile.md |  |
@@ -902,7 +927,7 @@ Review notes (`*` after a severity marks a review severity change):
 | REC-home-drives-09 | home-drives | Pending college invitations are not accepted or declined from Home. Prod-only in legacy (`RecruiterPendingInvites`, accept/decline endpoint... | MISSING-ACTION | S4 | UNCONFIRMED | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-10 | home-drives | Task deep links with legacy tabs are broken: Today/notification links use `?tab=requests`, `?tab=messages`, `?tab=interviews \| results \| se... | STATE | S3 | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-11 | home-drives | Home error/empty copy not the legacy strings: "We couldn't load your account" + Retry, and the college-less message "Open this on your coll... | COPY | S4 | OPEN | chat-7 | recruiter/home-drives.md |  |
-| REC-home-drives-12 | home-drives | Requests and unpublished drives are invisible. Legacy lists every drive the recruiter owns, including requests in review, sent-back, approv... | MISSING-TAB | S1 | VERIFIED | chat-7 | recruiter/home-drives.md | b6728e2ac |
+| REC-home-drives-12 | home-drives | Requests and unpublished drives are invisible. Legacy lists every drive the recruiter owns, including requests in review, sent-back, approv... | MISSING-TAB | S1 | VERIFIED | chat-7 | recruiter/home-drives.md | 3074ee7b4 |
 | REC-home-drives-13 | home-drives | Tab and status wording: legacy tabs "All / Live / Sent for review / Completed and cancelled" with counts in a segmented control, default ta... | COPY | S2 | VERIFIED | chat-7 | recruiter/home-drives.md | b6728e2ac |
 | REC-home-drives-14 | home-drives | Row content is thinner. Legacy row shows CTC, `N applied`, `N offers`, "Applications close in 2 days"/"closed yesterday", the next step ("N... | MISSING-FIELD | S2 | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-15 | home-drives | No per-row "Hire again" / "Hire again with changes" / "Answer" actions on the list (legacy `?from={id}`). vNext offers Hire Again only on t... | MISSING-ACTION | S3 | OPEN | chat-7 | recruiter/home-drives.md |  |
@@ -911,8 +936,8 @@ Review notes (`*` after a severity marks a review severity change):
 | REC-home-drives-18 | home-drives | Empty-state copy differs: legacy "You have no drives yet" / "Request a drive and the placement cell will review it." (CTA Request a drive),... | COPY | S3 | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-19 | home-drives | Missing-capability state: legacy shows "Drive access is not switched on for you at this college" (DRIVE_WORK capability). vNext has no capa... | PERMISSION | S4 | UNCONFIRMED | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-20 | home-drives | Detail links from the list go to `/hr/placements/jobs/{id}` and "Review round results" to `/hr/round-results` (the old namespace), not `/re... | MISSING-ACTION | S3 | OPEN | chat-7 | recruiter/home-drives.md |  |
-| REC-home-drives-21 | home-drives | Submitting does not create a drive request. Legacy `plan-drive` creates a REQUEST job with rounds and eligibility, notifies the TPO ("New d... | MISSING-ACTION | S1 | VERIFIED | chat-7 | recruiter/home-drives.md | fb399a354 |
-| REC-home-drives-22 | home-drives | No edit of a request still in review (`?edit=`, PUT resubmit, "Save changes", "Saved. The placement cell sees the new version.") and no `Ed... | MISSING-ACTION | S2 | FIXED-ON-MAIN | chat-7 | recruiter/home-drives.md | c37f2ba4b |
+| REC-home-drives-21 | home-drives | Submitting does not create a drive request. Legacy `plan-drive` creates a REQUEST job with rounds and eligibility, notifies the TPO ("New d... | MISSING-ACTION | S1 | VERIFIED | chat-7 | recruiter/home-drives.md | d347456d1 |
+| REC-home-drives-22 | home-drives | No edit of a request still in review (`?edit=`, PUT resubmit, "Save changes", "Saved. The placement cell sees the new version.") and no `Ed... | MISSING-ACTION | S2 | VERIFIED | chat-7 | recruiter/home-drives.md | be902a3e2 |
 | REC-home-drives-23 | home-drives | Job description file upload (PDF/Word, <= 5 MB, link shown to students, Replace/Remove, messages) is absent. BLOCKED on private storage (st... | MISSING-FIELD | S3* | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-24 | home-drives | Eligibility inputs missing: Branches (with the college's branch list as suggestions) and Passing year. vNext has Minimum CGPA and Maximum a... | MISSING-FIELD | S2 | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-25 | home-drives | Pay model differs: legacy Job type (Full-time, Internship, Internship + full-time) drives Stipend per month (₹) (required for Internship),... | MISSING-FIELD | S2 | OPEN | chat-7 | recruiter/home-drives.md |  |
@@ -941,7 +966,7 @@ Review notes (`*` after a severity marks a review severity change):
 | REC-home-drives-48 | home-drives | Slots semantic differences: legacy recruiters propose slots (range picker with time, capacity, panel) that the placement cell confirms and... | MISSING-FIELD | S2* | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-49 | home-drives | Results from a table: no bulk "tick rows then set outcome" (Pass / shortlisted, Not selected, Waitlist, Absent), no pre-send summary confir... | MISSING-ACTION | S2 | UNCONFIRMED | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-50 | home-drives | Offers table copy: legacy columns Candidate (+roll), Type, CTC (LPA), Status words (With the placement cell, Being verified, Awaiting reply... | COPY | S3 | OPEN | chat-7 | recruiter/home-drives.md |  |
-| REC-home-drives-51 | home-drives | "Send a selection list" (Offer or Letter of intent, optional package, CTC LPA, applicant picker, confirm with unusual-CTC warning, verifica... | MISSING-ACTION | S1 | IN-BRANCH | chat-7 | recruiter/home-drives.md | chat-7:184125d64 |
+| REC-home-drives-51 | home-drives | "Send a selection list" (Offer or Letter of intent, optional package, CTC LPA, applicant picker, confirm with unusual-CTC warning, verifica... | MISSING-ACTION | S1 | VERIFIED | chat-7 | recruiter/home-drives.md | 184125d64 |
 | REC-home-drives-52 | home-drives | Offers tab list/summary gaps vs improvements: pre-issue offers (SELECTED/PENDING_VERIFICATION) and revoked offers not shown; legacy paginat... | MISSING-COLUMN | S4 | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-53 | home-drives | Data-quality banners and refresh: legacy warns "Some drive information may be stale or unavailable" (listing drive refresh, pipeline, priva... | STATE | S4 | OPEN | chat-7 | recruiter/home-drives.md |  |
 | REC-home-drives-54 | home-drives | Not-found/ended-access copy: legacy "We could not find this drive" / "It isn't one of your drives at this college, or it was removed." and... | COPY | S4 | OPEN | chat-7 | recruiter/home-drives.md |  |
@@ -968,22 +993,30 @@ Review notes (`*` after a severity marks a review severity change):
 - REC-calendar-messages-profile-17 verified by: tests/integration/recruiter-message-tpo-notifications.test.ts, tests/unit/recruiter-message-tpo-notification-model.test.ts
 - REC-calendar-messages-profile-19 CLOSED-SINCE: WRONG: `hr/messages/error.tsx`, `hr/messages/loading.tsx`, `hr/profile/error.tsx`, `hr/profile/loading.tsx` all exist. The residual difference is wording only (global in-page copy "Could not load your messages" / "We couldn't load your profile"), which is S4 COPY at most.
 - REC-calendar-messages-profile-21 verified by: tests/unit/rec-notification-bell.test.ts, tests/unit/recruiter-bell-model.test.ts
+- REC-calendar-messages-profile-22 tracker: Review status was UNCONFIRMED; a commit cites it on main.
+- REC-calendar-messages-profile-22 verified by: tests/unit/recruiter-decision-notice-model.test.ts
+- REC-calendar-messages-profile-31 verified by: tests/unit/recruiter-company-funnel-model.test.ts
+- REC-calendar-messages-profile-38 verified by: tests/unit/pub-auth-public-40-invite-accept.test.ts, tests/unit/pub-auth-public-41-invite-send.test.ts, tests/unit/pub-auth-public-43-invite-fields.test.ts
 - REC-calendar-messages-profile-39 verified by: tests/unit/public-join-client-error-model.test.ts
 - REC-calendar-messages-profile-40 verified by: tests/unit/recruiter-invite-preview-disposition-model.test.ts
+- REC-calendar-messages-profile-43 tracker: Review status was UNCONFIRMED; a commit cites it on main.
+- REC-calendar-messages-profile-43 verified by: tests/unit/rec-calendar-messages-profile-43-side-effects.test.ts
 - REC-calendar-messages-profile-44 CLOSED-SINCE: WRONG (closed on main, residual in 45 and R04): `/company-join/[token]` now renders `PublicRecruiterJoinForm` with send-code and join (app/company-join/[token]/page.tsx; routes `app/api/public/company-join/{send-code,join}`; commits 5b47d651a, 0999c1f65, b789b1861). The heading, "Send me a code", "...
 - REC-calendar-messages-profile-45 severity_note: Review: S2 to S3. Preview, invalid-link copy ("This link is no longer valid" / "Ask the placement cell for a new one."), and the success title "You now have access to {college}" exist now. What remains is error mapping (see R04) and the distinct "You already have access" text (join-service returns...
 - REC-calendar-messages-profile-45 verified by: tests/unit/public-join-client-error-model.test.ts
 - REC-calendar-messages-profile-R04 verified by: tests/unit/public-join-client-error-model.test.ts
 - REC-home-drives-01 verified by: tests/unit/hr-today-action-queue-scoped.test.ts
-- REC-home-drives-12 verified by: tests/unit/recruiter-request-list-model.test.ts
+- REC-home-drives-12 verified by: tests/integration/recruiter-drive-requests-0101.test.ts, tests/unit/recruiter-request-list-model.test.ts
 - REC-home-drives-13 verified by: tests/unit/recruiter-request-list-model.test.ts
-- REC-home-drives-21 verified by: tests/unit/recruiter-drive-request-model.test.ts, tests/unit/recruiter-drive-request-runtime-model.test.ts
+- REC-home-drives-21 verified by: tests/integration/recruiter-drive-requests-0101.test.ts, tests/unit/recruiter-drive-request-model.test.ts, tests/unit/recruiter-drive-request-runtime-model.test.ts
+- REC-home-drives-22 verified by: tests/integration/recruiter-drive-requests-0101.test.ts
 - REC-home-drives-23 severity_note: Review: S2 to S3. S2 -> S3, see section 4.
 - REC-home-drives-37 severity_note: Review: S2 to S3. S2 -> S3, see section 4.
 - REC-home-drives-38 severity_note: Review: S2 to S1. S2 -> S1, see section 4.
 - REC-home-drives-48 severity_note: Review: S3 to S2. S3 -> S2, see section 4.
+- REC-home-drives-51 verified by: tests/unit/recruiter-selection-list-model.test.ts
 
-## learner (231 rows: 208 Round A + 23 MISSED; 209 open or unconfirmed)
+## learner (231 rows: 208 Round A + 23 MISSED; 206 open or unconfirmed)
 
 | ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |
 |---|---|---|---|---|---|---|---|---|
@@ -1060,7 +1093,7 @@ Review notes (`*` after a severity marks a review severity change):
 | LEARNER-learning-misc-23 | learning-misc | Quiz deadline: legacy requires a due date (400 "Quiz deadline is not configured") and shows `Unavailable` otherwise; vNext allows a quiz wi... | VALIDATION | S2 | VERIFIED | chat-7 | learner/learning-misc.md | 47738b517 |
 | LEARNER-learning-misc-24 | learning-misc | Missed-quiz review: legacy lets a learner who never attempted see the question set with the answer key once results are released ("You didn... | MISSING-FIELD | S3 | OPEN | chat-7 | learner/learning-misc.md |  |
 | LEARNER-learning-misc-25 | learning-misc | Rich question content and question types: legacy renders sanitised HTML prompts (images, tables, code) and has UI branches for short-answer... | MISSING-FIELD | S3 | UNCONFIRMED | chat-7 | learner/learning-misc.md |  |
-| LEARNER-learning-misc-26 | learning-misc | Per-learner shuffle of questions/options (`shuffle_questions`, `shuffle_options`) is not implemented (DB-PARITY d7, S2). | MISSING-FIELD | S2 | IN-BRANCH | chat-7 | learner/learning-misc.md | chat-7:5dd03d110 |
+| LEARNER-learning-misc-26 | learning-misc | Per-learner shuffle of questions/options (`shuffle_questions`, `shuffle_options`) is not implemented (DB-PARITY d7, S2). | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/learning-misc.md | 5dd03d110 |
 | LEARNER-learning-misc-27 | learning-misc | Result release rule: legacy shows score/key when grade-published AND past due (auto after deadline); vNext needs the quiz CLOSED and `resul... | SIDE-EFFECT | S3 | OPEN | chat-7 | learner/learning-misc.md |  |
 | LEARNER-learning-misc-28 | learning-misc | Quiz attempt chrome: legacy left panel with logo, `Quiz` title, `Progress` list `Question n` + `{pts} pts`, mobile `Questions` button openi... | COPY | S4 | OPEN | chat-7 | learner/learning-misc.md |  |
 | LEARNER-learning-misc-29 | learning-misc | Quizzes header pills `{N} Quiz(zes)` and `{S} Submitted` with a popover listing submitted quiz names are replaced by 5 metric tiles. | COPY | S4 | OPEN | chat-7 | learner/learning-misc.md |  |
@@ -1145,15 +1178,15 @@ Review notes (`*` after a severity marks a review severity change):
 | LEARNER-profile-misc-R01 | profile-learning | The Notifications bell/alerts drawer is not audited and not reproduced. Legacy bell opens a drawer "Notifications" with the 8 latest items... | MISSING-MODAL / STATE | S3 | OPEN | chat-7 | learner/profile-learning-review.md |  |
 | LEARNER-learning-misc-R01 | profile-learning | Learner never receives in-app or email notices for grade publication or assignment due reminders. Legacy: `COURSE_GRADE_PUBLISHED` dispatch... | SIDE-EFFECT | S2 | OPEN | chat-7 | learner/profile-learning-review.md |  |
 | LEARNER-profile-misc-R02 | profile-learning | Job Preferences card missing: Role Preference (multi), Specific Role Preference (free text), Work Shift Preference (select), Preferred Empl... | MISSING-FIELD | S3 | UNCONFIRMED | chat-7 | learner/profile-learning-review.md |  |
-| LEARNER-profile-misc-R03 | profile-learning | Education entry validation and pickers absent. Legacy requires education type, institution name, grading type, grade obtained and max grade... | VALIDATION | S2 | IN-BRANCH | chat-7 | learner/profile-learning-review.md | chat-7:85fa7252b |
+| LEARNER-profile-misc-R03 | profile-learning | Education entry validation and pickers absent. Legacy requires education type, institution name, grading type, grade obtained and max grade... | VALIDATION | S2 | VERIFIED | chat-7 | learner/profile-learning-review.md | 85fa7252b |
 | LEARNER-profile-misc-R04 | profile-learning | Contact validation weaker. Legacy: primary mobile required and exactly 10 digits ("Primary mobile number must be exactly 10 digits"), alter... | VALIDATION | S3 | OPEN | chat-7 | learner/profile-learning-review.md |  |
 | LEARNER-profile-misc-R05 | profile-learning | Profile completion is weighted in legacy (Personal 15, Contact 10, Education 15, Skills 10, Experience 10, Projects 10, others 2 to 5; requ... | COPY / STATE | S4 | OPEN | chat-7 | learner/profile-learning-review.md |  |
 | LEARNER-profile-misc-01 | profile-misc | Resume upload/replace/remove and "Upload resume from Drive" missing (explicitly blocked). Legacy resume is the default attached to drive ap... | MISSING-ACTION | S1 | OPEN | chat-7 | learner/profile-misc.md |  |
 | LEARNER-profile-misc-02 | profile-misc | Profile photo upload (pencil button, upload from link) missing; initials avatar only. | MISSING-ACTION | S2 | OPEN | chat-7 | learner/profile-misc.md |  |
 | LEARNER-profile-misc-03 | profile-misc | Identity document upload (Aadhaar, PAN: PDF/JPG/PNG up to 10 MB, import from link) and marksheet upload per education entry missing; verifi... | MISSING-FIELD | S1 | OPEN | chat-7 | learner/profile-misc.md |  |
 | LEARNER-profile-misc-04 | profile-misc | "Record Video Intro" modal (camera recording, upload, discard confirms, success "All Set!") missing. Needs storage/video infra (BLOCKED cat... | MISSING-MODAL | S3 | OPEN | chat-7 | learner/profile-misc.md |  |
-| LEARNER-profile-misc-05 | profile-misc | Publications & Research and Awards & Recognitions have full add/edit cards in legacy; vNext shows a read-only summary derived from achievem... | MISSING-FIELD | S2 | IN-BRANCH | chat-7 | learner/profile-misc.md | chat-7:b044d43e8 |
-| LEARNER-profile-misc-06 | profile-misc | Education/Qualification depth: legacy exam-config driven forms (10th, 12th, Diploma, degree, grading types, marks) used by verification; vN... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/profile-misc.md | 1aa9fa7e9 |
+| LEARNER-profile-misc-05 | profile-misc | Publications & Research and Awards & Recognitions have full add/edit cards in legacy; vNext shows a read-only summary derived from achievem... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/profile-misc.md | b044d43e8 |
+| LEARNER-profile-misc-06 | profile-misc | Education/Qualification depth: legacy exam-config driven forms (10th, 12th, Diploma, degree, grading types, marks) used by verification; vN... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/profile-misc.md | ca50abab6 |
 | LEARNER-profile-misc-07 | profile-misc | Section titles differ: "Personal Details", "Education/Qualification", "Academic Achievements", "Extra-curricular Activities", "Hobbies & In... | COPY | S3 | OPEN | chat-7 | learner/profile-misc.md |  |
 | LEARNER-profile-misc-08 | profile-misc | vNext adds sections/copy not in legacy: "Academic identity", "Education and identity verification" card, "Coding platform profiles" card wi... | COPY | S4 | OPEN | chat-7 | learner/profile-misc.md |  |
 | LEARNER-profile-misc-09 | profile-misc | Completeness card: legacy ring with percentage, message and "N Completed"/"N Remaining" tags (`ProfileCompleteness.js`); vNext badge "x% co... | COPY | S3 | OPEN | chat-7 | learner/profile-misc.md |  |
@@ -1162,7 +1195,7 @@ Review notes (`*` after a severity marks a review severity change):
 | LEARNER-profile-misc-12 | profile-misc | Deep-link scrolling: legacy `?section=connect-accounts` and `?section=...` scroll to Social Profiles / Contacts; vNext supports `?section=`... | STATE | S4 | OPEN | chat-7 | learner/profile-misc.md |  |
 | LEARNER-profile-misc-13 | profile-misc | Skills picker: legacy "Search and select skills..." from the college skills catalog; vNext skills entry is name plus proficiency free text.... | MISSING-FIELD | S3 | UNCONFIRMED | chat-7 | learner/profile-misc.md |  |
 | LEARNER-profile-misc-14 | profile-misc | Verification card is not on the profile page; it is a separate page reached by a link. Legacy shows it at the top of Profile with a "Verifi... | MISSING-FIELD | S3 | OPEN | chat-7 | learner/profile-misc.md |  |
-| LEARNER-profile-misc-15 | profile-misc | "What is still missing" list per section and the help text (10th, 12th or Diploma, degree with marks and marksheet, resume; Aadhaar or PAN... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/profile-misc.md | 66a65e3b8 |
+| LEARNER-profile-misc-15 | profile-misc | "What is still missing" list per section and the help text (10th, 12th or Diploma, degree with marks and marksheet, resume; Aadhaar or PAN... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/profile-misc.md | 913bd30a4 |
 | LEARNER-profile-misc-16 | profile-misc | State labels differ: legacy "Incomplete / Ready to send / Waiting for the college / Needs a change / Verified / Verified · update waiting",... | COPY | S3 | VERIFIED | chat-7 | learner/profile-misc.md | 319ca25e4 |
 | LEARNER-profile-misc-17 | profile-misc | "Verified by {name} on {date}", changed-after-verification warning ("You changed this after it was verified. The verified details stay in u... | STATE | S3 | VERIFIED | chat-7 | learner/profile-misc.md | 319ca25e4 |
 | LEARNER-profile-misc-18 | profile-misc | Legacy backend `GET /learner/profile/data-access` ("who has my data") and academic-record read-only view have no learner vNext page. | MISSING-PAGE | S4 | OPEN | chat-7 | learner/profile-misc.md |  |
@@ -1214,8 +1247,8 @@ Review notes (`*` after a severity marks a review severity change):
 | LEARNER-projects-38 | projects | Panels missing: team shared-submission alert, "Last edited by {name}", "What's left before you can submit" list, "Mentor review: {status}"... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/projects.md | fbf7d21f7 |
 | LEARNER-projects-39 | projects | Field set differs: legacy Primary link, Summary (short), Notes; vNext Summary (long), Source URL, Demo URL, Notes. Labels and placeholders... | COPY | S3 | OPEN | chat-7 | learner/projects.md |  |
 | LEARNER-projects-40 | projects | Submit validation/confirmation copy: legacy "Submit on behalf of your team?" confirm, "Add at least one attachment and a summary before sub... | COPY | S3 | OPEN | chat-7 | learner/projects.md |  |
-| LEARNER-projects-R01 | projects | No project notifications for learners. Legacy notifies learners (and mentors where noted) on: new project assigned, added to project, new t... | SIDE-EFFECT | S2 | FIXED-ON-MAIN | chat-7 | learner/projects-review.md | 765231d35 |
-| LEARNER-projects-R02 | projects | Learners cannot see core task facts anywhere: assignee (who owns the task), due date, estimate, task type, blocker reason, comment count, "... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/projects-review.md | 5d2b5fe49 |
+| LEARNER-projects-R01 | projects | No project notifications for learners. Legacy notifies learners (and mentors where noted) on: new project assigned, added to project, new t... | SIDE-EFFECT | S2 | VERIFIED | chat-7 | learner/projects-review.md | e25181433 |
+| LEARNER-projects-R02 | projects | Learners cannot see core task facts anywhere: assignee (who owns the task), due date, estimate, task type, blocker reason, comment count, "... | MISSING-FIELD | S2 | VERIFIED | chat-7 | learner/projects-review.md | 79ff5e562 |
 | LEARNER-projects-R03 | projects | Why final submission is unavailable is shown only as a `title` tooltip on a disabled button ("Complete every release, sprint and task befor... | A11Y | S3 | OPEN | chat-7 | learner/projects-review.md |  |
 | LEARNER-projects-R04 | projects | Sprints tab summary: legacy shows "Sprints completed x of N" and an "Overdue" count for sprints; vNext has a Sprints x/y tile but no overdu... | MISSING-FIELD | S4 | OPEN | chat-7 | learner/projects-review.md |  |
 
@@ -1230,15 +1263,18 @@ Review notes (`*` after a severity marks a review severity change):
 - LEARNER-learning-misc-08 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - LEARNER-learning-misc-08 verified by: tests/unit/assignment-submission-receipt-notice.test.ts, tests/unit/learner-assignment-due-notice-model.test.ts, tests/unit/learner-assignment-published-notice.test.ts
 - LEARNER-learning-misc-23 verified by: tests/unit/learner-quiz-no-deadline-rejection.test.ts
+- LEARNER-learning-misc-26 verified by: tests/unit/learner-quiz-shuffle-model.test.ts
 - LEARNER-placements-19 WRONG: WRONG: `learner-jobs-browse.tsx:20` `PAGE_SIZE = 20`. Same as legacy `JobsListContent.jsx:51`. No gap.
 - LEARNER-placements-45 severity_note: Review: S3 to S2. Confirmed absent, and deeper than UI: no offer letter column in `placements.ts` offers, no `countsAsPlaced` per drive. Legacy internship offers (counts_as_placed false) are never held against the learner and never trigger the cascade (`PlacementCascadePolicy.java:36`); without the...
 - LEARNER-placements-50 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - LEARNER-placements-50 verified by: tests/integration/placements-db08-batches.test.ts, tests/unit/learner-registration-view-model.test.ts
 - LEARNER-placements-58 severity_note: Review: S3 to S4. The company-preview half duplicates -28. The "who has my data" half: `getDataAccessLog` and `getAcademicRecord` are defined in `TpoHubService.js:191-192` but called nowhere in lms-dev-2026 `src` (git grep), so legacy has the API but no learner UI. Not a parity gap.
+- LEARNER-profile-misc-R03 verified by: tests/unit/learner-education-legacy-repair.test.ts
+- LEARNER-profile-misc-05 verified by: tests/unit/learner-profile-publications-authoring.test.ts
 - LEARNER-profile-misc-06 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - LEARNER-profile-misc-06 verified by: tests/unit/learner-education-picker-model.test.ts
 - LEARNER-profile-misc-15 tracker: Review status was UNCONFIRMED; a commit cites it on main.
-- LEARNER-profile-misc-15 verified by: tests/unit/learner-verification-missing-notices.test.ts
+- LEARNER-profile-misc-15 verified by: tests/unit/learner-profile-missing-items.test.ts, tests/unit/learner-verification-missing-notices.test.ts
 - LEARNER-profile-misc-16 verified by: tests/unit/learner-verification-notice-model.test.ts
 - LEARNER-profile-misc-17 verified by: tests/unit/learner-verification-notice-model.test.ts
 - LEARNER-profile-misc-19 verified by: tests/unit/learner-notification-bell-links.test.ts
@@ -1249,6 +1285,7 @@ Review notes (`*` after a severity marks a review severity change):
 - LEARNER-projects-33 severity_note: Review: S3 to S2. S3 to S2. Learners lose the ability to add any link or file to the team workspace: `resource-service.ts` writes use `requireProjectLifecycleAccess` and `resourceFileUiAllowed` allows UPLOAD/DELETE only for ADMIN/MENTOR. In legacy this is one of the three learner contribution actio...
 - LEARNER-projects-38 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - LEARNER-projects-38 verified by: tests/unit/learner-project-review-notification-model.test.ts
+- LEARNER-projects-R01 verified by: tests/integration/project-notification-r01.test.ts
 - LEARNER-projects-R02 verified by: tests/unit/project-task-visible-facts-model.test.ts
 
 ## faculty (105 rows: 87 Round A + 18 MISSED; 99 open or unconfirmed)
@@ -1374,7 +1411,7 @@ Review notes (`*` after a severity marks a review severity change):
 - FAC-courses-28 WRONG: WRONG (partly): See section 3: vNext has a contacts count.
 - FAC-courses-33 severity_note: Review: S3 to S4. See section 3.
 
-## college (232 rows: 215 Round A + 17 MISSED; 203 open or unconfirmed)
+## college (232 rows: 215 Round A + 17 MISSED; 200 open or unconfirmed)
 
 | ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |
 |---|---|---|---|---|---|---|---|---|
@@ -1489,7 +1526,7 @@ Review notes (`*` after a severity marks a review severity change):
 | COL-courses-content-15 | courses-content | Mutation failures in the course and teaching panels print server codes in toasts (`Course update failed` with the raw API code) rather than... | COPY | S3 | VERIFIED | chat-9 | college/courses-content.md | a8603c54f |
 | COL-courses-content-16 | courses-content | Tabs `Lessons`, `Video`, `Resources`, `Live Classes`, `Assignments`, `Quizzes`, `Progress` of the Courses & Content strip are not covered b... | MISSING-PAGE | S4 | UNCONFIRMED | chat-9 | college/courses-content.md |  |
 | COL-courses-content-17 | courses-content | Course delete guard: legacy blocks delete while lessons/lesson content exist and shows a `Dependencies` count; vNext archives with no depen... | STATE | S4 | OPEN | chat-9 | college/courses-content.md |  |
-| COL-dashboard-01 | dashboard | The `Dashboard` sidebar landing (/college) has no Quick Actions grid; the grid exists only on /dashboard and 3 of its 11 cards are dead (`H... | MISSING-ACTION | S2 | OPEN | chat-9 | college/dashboard.md |  |
+| COL-dashboard-01 | dashboard | The `Dashboard` sidebar landing (/college) has no Quick Actions grid; the grid exists only on /dashboard and 3 of its 11 cards are dead (`H... | MISSING-ACTION | S2 | VERIFIED | chat-9 | college/dashboard.md | 9e7ad359a |
 | COL-dashboard-02 | dashboard | `At a glance` four-stat strip (`Students`, `Faculty`, `Courses`, `Active drives`) is replaced by 8 cards with different wording, plus extra... | COPY | S2 | VERIFIED | chat-9 | college/dashboard.md | 4be57bbb8 |
 | COL-dashboard-03 | dashboard | `Today` strip missing (classes scheduled today / held so far / with attendance taken) | MISSING-FIELD | S2 | OPEN | chat-9 | college/dashboard.md |  |
 | COL-dashboard-04 | dashboard | Card `Attendance not taken` (held sessions in the last 7 days with no attendance, with faculty name and `Open attendance` link) missing | MISSING-FIELD | S2 | OPEN | chat-9 | college/dashboard.md |  |
@@ -1509,7 +1546,7 @@ Review notes (`*` after a severity marks a review severity change):
 | COL-attendance-R01 | operations | An admin correction on a session nobody has marked yet silently marks the whole session as marked, so every other learner in the class chan... | VALIDATION | S2 | OPEN | chat-9 | college/operations-review.md |  |
 | COL-course-tabs-R01 | operations | The progress measure itself differs and is not stated. Legacy measures videos watched to the end, assignments submitted and quizzes attempt... | MISSING-FIELD | S3 | OPEN | chat-9 | college/operations-review.md |  |
 | COL-placements-R01 | operations | Companies and Interviews lack the list tooling an admin uses daily: Companies has sortable Company/Drives/Last active columns (default Last... | MISSING-EXPORT | S3 | OPEN | chat-9 | college/operations-review.md |  |
-| COL-projects-R01 | operations | No notifications when an admin acts on a workspace. Legacy sends "Project created" to the class, "New project assigned" to each student and... | SIDE-EFFECT | S2 | FIXED-ON-MAIN | chat-9 | college/operations-review.md | 28ff2f238 |
+| COL-projects-R01 | operations | No notifications when an admin acts on a workspace. Legacy sends "Project created" to the class, "New project assigned" to each student and... | SIDE-EFFECT | S2 | VERIFIED | chat-9 | college/operations-review.md | e25181433 |
 | COL-attendance-R02 | operations | No parent SMS when an admin marks a student absent, and no correction SMS when the admin marks them present. Legacy sends "Dear Parent, You... | SIDE-EFFECT | S3 | OPEN | chat-9 | college/operations-review.md |  |
 | COL-placements-R02 | operations | Company identity cues missing: legacy shows a `Verified by 42` tag, the company's domains under its name, the `Deleted` tag, and the Add fo... | MISSING-FIELD | S4 | OPEN | chat-9 | college/operations-review.md |  |
 | COL-projects-R02 | operations | The bulk mentor reassignment page lacks the workload tooling that makes the decision: legacy shows a `Mentor workload` card (flag when a me... | MISSING-FIELD | S3 | OPEN | chat-9 | college/operations-review.md |  |
@@ -1576,8 +1613,8 @@ Review notes (`*` after a severity marks a review severity change):
 | COL-projects-07 | projects | Create workspace form: `Mentor` and `Class` choices, `Status`, `Students` search (or whole class) at creation are missing from `Create Proj... | MISSING-FIELD | S2 | UNCONFIRMED | chat-9 | college/projects.md |  |
 | COL-projects-08 | projects | Workspaces list: no `Export this page` CSV, no template tag, no status values `In progress`/`Ready`/`Blocked` (vNext uses Planned/Active/Co... | MISSING-EXPORT | S3 | OPEN | chat-9 | college/projects.md |  |
 | COL-projects-09 | projects | Mentor column semantics: legacy picks the designated primary mentor (role-aware) over co-mentors; vNext `mentorName` shows `Unassigned` whe... | STATE | S4 | UNCONFIRMED | chat-9 | college/projects.md |  |
-| COL-projects-10 | projects | At Risk: no bucket cards `Stalled`, `Active blocker`, `Pending review` with whole-college counts, no `Severity`, `Inactive` days and `Block... | MISSING-FIELD | S2 | IN-BRANCH | chat-9 | college/projects.md | chat-11:91ed8d556 |
-| COL-projects-11 | projects | At Risk definition differs: legacy flags stalled (7 days), blocker text, or submission pending review; vNext flags 7 days of persisted inac... | MISSING-FIELD | S2 | IN-BRANCH | chat-9 | college/projects.md | chat-11:91ed8d556 |
+| COL-projects-10 | projects | At Risk: no bucket cards `Stalled`, `Active blocker`, `Pending review` with whole-college counts, no `Severity`, `Inactive` days and `Block... | MISSING-FIELD | S2 | VERIFIED | chat-9 | college/projects.md | 91ed8d556 |
+| COL-projects-11 | projects | At Risk definition differs: legacy flags stalled (7 days), blocker text, or submission pending review; vNext flags 7 days of persisted inac... | MISSING-FIELD | S2 | VERIFIED | chat-9 | college/projects.md | 91ed8d556 |
 | COL-projects-12 | projects | Readiness: no `Active overrides` table (workspace, direction, note, by, at, `Manage`) and no CSV of overrides; no workspace picker with sea... | MISSING-FIELD | S2 | OPEN | chat-9 | college/projects.md |  |
 | COL-projects-13 | projects | Submissions dashboard is thinner: no stat cards (`Active workspaces`, `Pending review`, `Needs student action`, `Reviewed`), no `Pending` a... | MISSING-COLUMN | S2 | OPEN | chat-9 | college/projects.md |  |
 | COL-projects-14 | projects | Delivery tab of a workspace: legacy shows submission type, submitted by/at, revisions, additional evidence and a `Review` card; vNext Deliv... | MISSING-FIELD | S2 | VERIFIED | chat-9 | college/projects.md | da92d51c1 |
@@ -1635,17 +1672,21 @@ Review notes (`*` after a severity marks a review severity change):
 - COL-courses-content-06 verified by: tests/unit/college-wording-copy.test.ts
 - COL-courses-content-13 verified by: tests/unit/college-wording-copy.test.ts
 - COL-courses-content-15 verified by: tests/unit/college-wording-copy.test.ts
+- COL-dashboard-01 verified by: tests/unit/admin-dashboard-navigation.test.ts
 - COL-dashboard-02 verified by: tests/unit/college-dashboard-cards-model.test.ts
 - COL-dashboard-11 verified by: tests/unit/college-dashboard-cards-model.test.ts
 - COL-dashboard-12 verified by: tests/unit/admin-dashboard-navigation.test.ts
 - COL-dashboard-13 verified by: tests/unit/col-dashboard-13-setup-hrefs.test.ts
+- COL-projects-R01 verified by: tests/integration/project-notification-r01.test.ts
 - COL-projects-01 verified by: tests/unit/college-admin-final-delivery-review.test.ts
 - COL-projects-02 severity_note: Review: S1 to S2. See section 2. Additional build note: no `PATCH /api/projects/[projectId]` exists (`src/app/api/projects/[projectId]/route.ts` exports only GET), so the real work is a new mutation with row-version, activity event and the "Active requires a mentor" rule that legacy states at `summ...
 - COL-projects-02 verified by: tests/unit/college-project-summary-editor.test.ts
+- COL-projects-10 verified by: tests/unit/college-project-blocked-risk-r01.test.ts
+- COL-projects-11 verified by: tests/unit/college-project-blocked-risk-r01.test.ts
 - COL-projects-14 verified by: tests/unit/college-project-delivery-review.test.ts
 - COL-verification-misc-01 severity_note: Review: S1 to S2. See section 2. Self-profile edit does not block a college workflow.
 
-## superadmin (309 rows: 301 Round A + 8 MISSED; 298 open or unconfirmed)
+## superadmin (309 rows: 301 Round A + 8 MISSED; 291 open or unconfirmed)
 
 | ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |
 |---|---|---|---|---|---|---|---|---|
@@ -1653,7 +1694,7 @@ Review notes (`*` after a severity marks a review severity change):
 | SA-academics-people-02 | academics-people-1-academic-setup | No-college state copy differs on most tabs. Legacy: "Select a college to continue" / "Choose a college in the header above to see its <seme... | COPY | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-03 | academics-people-1-academic-setup | Page chrome differs: legacy has only h1 (+ optional one-line subtitle); vNext adds an eyebrow ("Super Admin", "Super Admin · Academics", "S... | COPY | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-04 | academics-people-1-academic-setup | Titles differ from legacy: "Classes & Sections" (vNext "Classes / Sections"), "Batch Promotion" (vNext "Batch Promotion Preview"), "Electiv... | COPY | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
-| SA-academics-people-05 | academics-people-1-academic-setup | Super Admin Create / Rename / Archive department very likely fail with a permission error: the page posts to `/api/college/departments`, wh... | PERMISSION | S1 | UNCONFIRMED | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
+| SA-academics-people-05 | academics-people-1-academic-setup | Super Admin Create / Rename / Archive department very likely fail with a permission error: the page posts to `/api/college/departments`, wh... | PERMISSION | S1 | VERIFIED | chat-9 | superadmin/academics-people-1-academic-setup.md | 45d584900 |
 | SA-academics-people-06 | academics-people-1-academic-setup | Create-department success feedback missing: legacy toast `Created department “X”. Next, add programs or courses under it.`; vNext clears th... | COPY | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-07 | academics-people-1-academic-setup | Create errors surface the raw API code (`payload.error`, e.g. DEPARTMENT_NAME_CONFLICT) in the form; legacy shows "Department was not creat... | VALIDATION | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-08 | academics-people-1-academic-setup | Delete pre-flight missing: legacy disables Delete with tooltip "Move or remove its programs, courses, faculty before deleting." when any co... | STATE | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
@@ -1662,9 +1703,9 @@ Review notes (`*` after a severity marks a review severity change):
 | SA-academics-people-11 | academics-people-1-academic-setup | Programs: no "Contents" column (N semesters / batches / classes) and no delete pre-flight tooltip ("Remove linked semesters, batches, class... | MISSING-COLUMN | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-12 | academics-people-1-academic-setup | Programs: the edit form cannot change the Department (legacy edit includes a Department select). vNext states ownership is immutable. Needs... | MISSING-FIELD | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-13 | academics-people-1-academic-setup | Programs: success and helper copy differs (`Created program “X”. Next, create its semesters and batches.`, `Updated program “X”.`, card tit... | COPY | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
-| SA-academics-people-14 | academics-people-1-academic-setup | Semesters tab cannot create, edit (name, Active/Inactive) or delete a program semester. vNext tab is a read-only card directory ("This is r... | MISSING-ACTION | S1 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
+| SA-academics-people-14 | academics-people-1-academic-setup | Semesters tab cannot create, edit (name, Active/Inactive) or delete a program semester. vNext tab is a read-only card directory ("This is r... | MISSING-ACTION | S1 | VERIFIED | chat-9 | superadmin/academics-people-1-academic-setup.md | b49c8285d |
 | SA-academics-people-15 | academics-people-1-academic-setup | Semesters tab has no program filter, no "Courses" count column and no Credits-from-mapped-courses semantics ("—" when none); legacy table c... | MISSING-FILTER | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
-| SA-academics-people-16 | academics-people-1-academic-setup | Semester–Course Mapping tab cannot add courses, edit credits/order, remove a course or reorder; picker flow (Program -> Semester -> courses... | MISSING-ACTION | S1 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
+| SA-academics-people-16 | academics-people-1-academic-setup | Semester–Course Mapping tab cannot add courses, edit credits/order, remove a course or reorder; picker flow (Program -> Semester -> courses... | MISSING-ACTION | S1 | FIXED-ON-MAIN | chat-9 | superadmin/academics-people-1-academic-setup.md | 01546fc26 |
 | SA-academics-people-17 | academics-people-1-academic-setup | Staffing warnings ("No faculty assigned" / "No faculty for K of N classes", tooltips with class names) on mapped courses are absent. | MISSING-COLUMN | S2 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-18 | academics-people-1-academic-setup | Batches tab is read-only; create / edit / delete batch and the batch form live on `/admin/academics` ("Cohorts / batches"), which is not in... | MISSING-ACTION | S2 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-19 | academics-people-1-academic-setup | Batch model fields missing from the tab and the form: Start Date, End Date (with "End date cannot be before start date"), Academic Year (au... | MISSING-COLUMN | S2 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
@@ -1672,7 +1713,7 @@ Review notes (`*` after a severity marks a review severity change):
 | SA-academics-people-21 | academics-people-1-academic-setup | Batches filters: program filter and the legacy status values (Active/Inactive/Completed) not offered; only search and the vNext status list. | MISSING-FILTER | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-22 | academics-people-1-academic-setup | Classes tab is read-only: no create (Program -> Batch cascade, name, description, max students), edit or delete, and no per-row "Schedule"... | MISSING-ACTION | S2 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-23 | academics-people-1-academic-setup | Classes columns/filters missing: Description, Students count tag, Max Students as a column, program and batch filters, "Search class, progr... | MISSING-COLUMN | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
-| SA-academics-people-24 | academics-people-1-academic-setup | Batch Promotion cannot promote or graduate: no Promote / "Mark graduated" actions, no academic-year override submit, no "show completed / i... | MISSING-ACTION | S1 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
+| SA-academics-people-24 | academics-people-1-academic-setup | Batch Promotion cannot promote or graduate: no Promote / "Mark graduated" actions, no academic-year override submit, no "show completed / i... | MISSING-ACTION | S1 | VERIFIED | chat-9 | superadmin/academics-people-1-academic-setup.md | 412f46dee |
 | SA-academics-people-25 | academics-people-1-academic-setup | Batch Promotion lists no batches: the user must pick one in a dropdown; legacy shows a table of all batches with Semester tag, Academic Yea... | MISSING-COLUMN | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-26 | academics-people-1-academic-setup | Lecture Halls: the per-row `Availability` link goes to `/college/lecture-halls/{id}`; the College Admin layout redirects every non-college-... | PERMISSION | S2 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-27 | academics-people-1-academic-setup | Lecture Halls: no search ("Search halls"), no Export CSV (`lecture-halls.csv`: id, name, capacity, roomType, departmentId, description), no... | MISSING-EXPORT | S3 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
@@ -1695,8 +1736,8 @@ Review notes (`*` after a severity marks a review severity change):
 | SA-academics-people-44 | academics-people-1-academic-setup | Programs: `Program code` is required in vNext (regex, max 64) but does not exist in legacy; creating a program therefore needs an extra fie... | VALIDATION | S4 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-45 | academics-people-1-academic-setup | Batch "Show completed / inactive" toggle and `Mark graduated` hide completed batches from the list; no equivalent view of completed cohorts... | MISSING-FILTER | S4 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
 | SA-academics-people-46 | academics-people-1-academic-setup | CSV exports from read-only directories are server routes (`/api/admin/{semesters,semester-courses,batches,classes}/export`); their columns... | MISSING-EXPORT | S3 | UNCONFIRMED | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
-| SA-academics-people-47 | academics-people-1-academic-setup | Group-level: legacy tab pages share ONE data-entry component with College Admin so every capability exists for both roles; vNext implemente... | PERMISSION | S1 | OPEN | chat-9 | superadmin/academics-people-1-academic-setup.md |  |
-| SA-academics-people-R01 | academics-people-1-academic-setup | Program create, edit, archive and restore fail for a Super Admin. `/admin/programs` (`AdminProgramDirectory`, `ProgramActions`) and the "Ne... | PERMISSION | S1 | OPEN | chat-9 | superadmin/academics-people-review.md |  |
+| SA-academics-people-47 | academics-people-1-academic-setup | Group-level: legacy tab pages share ONE data-entry component with College Admin so every capability exists for both roles; vNext implemente... | PERMISSION | S1 | VERIFIED | chat-9 | superadmin/academics-people-1-academic-setup.md | a945037ce |
+| SA-academics-people-R01 | academics-people-1-academic-setup | Program create, edit, archive and restore fail for a Super Admin. `/admin/programs` (`AdminProgramDirectory`, `ProgramActions`) and the "Ne... | PERMISSION | S1 | VERIFIED | chat-9 | superadmin/academics-people-review.md | 45d584900 |
 | SA-academics-people-R02 | academics-people-1-academic-setup | Academic period Close and Reopen fail for a Super Admin although Create, Edit and Activate work. `transitionAcademicPeriod` delegates `CLOS... | PERMISSION | S2 | OPEN | chat-9 | superadmin/academics-people-review.md |  |
 | SA-academics-people-R03 | academics-people-1-academic-setup | Legacy `/superadmin/*` URLs (bookmarks, emailed links, in-product links from old docs) mostly 404: only `/superadmin/departments` and `/sup... | STATE | S3 | OPEN | chat-9 | superadmin/academics-people-review.md |  |
 | SA-academics-people-R04 | academics-people-1-academic-setup | Activity-log (audit) parity for Super Admin-reachable academic mutations is missing or unverified. The services Super Admin actually uses f... | SIDE-EFFECT | S3 | UNCONFIRMED | chat-9 | superadmin/academics-people-review.md |  |
@@ -1887,8 +1928,8 @@ Review notes (`*` after a severity marks a review severity change):
 | SA-placements-projects-121 | placements-projects-c-tracker | Finding drawer actions missing: allowed status transitions with required note for Won't fix / Can't reproduce / Needs info / Verified, mark... | MISSING-ACTION | S3 | OPEN | chat-9 | superadmin/placements-projects-c-tracker.md |  |
 | SA-placements-projects-122 | placements-projects-c-tracker | Audit findings board filtering and summary missing: Open / Release (critical + high open) / All views, multi-select Status, Severity, Area,... | MISSING-FILTER | S3 | OPEN | chat-9 | superadmin/placements-projects-c-tracker.md |  |
 | SA-placements-projects-123 | placements-projects-c-tracker | Wording: legacy h1 "Audit findings" with "From <repo> · last synced ..." vs "Audit Findings" with a disclaimer; legacy page titles "Report... | COPY | S4 | UNCONFIRMED | chat-9 | superadmin/placements-projects-c-tracker.md |  |
-| SA-tenants-modules-01 | tenants-modules | College-scoped Overview has no `At a glance` strip: Students, Faculty, Courses, Active drives counts from `college-summary`, with skeleton,... | MISSING-FIELD | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | 5cd070ed1 |
-| SA-tenants-modules-02 | tenants-modules | No `Today` attention board for the scoped college: classes scheduled / held / attendance taken line and six cards (Attendance not taken, Un... | MISSING-FIELD | S2 | IN-BRANCH | chat-9 | superadmin/tenants-modules.md | chat-9:512ac7559 |
+| SA-tenants-modules-01 | tenants-modules | College-scoped Overview has no `At a glance` strip: Students, Faculty, Courses, Active drives counts from `college-summary`, with skeleton,... | MISSING-FIELD | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | aeed33ace |
+| SA-tenants-modules-02 | tenants-modules | No `Today` attention board for the scoped college: classes scheduled / held / attendance taken line and six cards (Attendance not taken, Un... | MISSING-FIELD | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | 512ac7559 |
 | SA-tenants-modules-03 | tenants-modules | Scoped Overview quick actions differ: legacy has an 11-card keyboard-operable grid (Departments, Courses, Programs, Faculty, Students, Jobs... | MISSING-ACTION | S3 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-04 | tenants-modules | Platform (unscoped) Overview: legacy shows hero `Choose the level you need to operate at.` and four described cards including `Recruiter ac... | COPY | S3 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-05 | tenants-modules | Header scope picker: legacy is a searchable, clearable college list (type to find one of hundreds), warns `Showing all colleges — data may... | A11Y | S4 | UNCONFIRMED | chat-9 | superadmin/tenants-modules.md |  |
@@ -1901,23 +1942,23 @@ Review notes (`*` after a severity marks a review severity change):
 | SA-tenants-modules-12 | tenants-modules | College Unique ID rules: legacy lowercases and enforces `^[a-z0-9-]{3,63}$` with `Unique ID must be 3-63 chars, lowercase letters/numbers/h... | VALIDATION | S2 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-13 | tenants-modules | Colleges list has no search (`Search college, code, city or organization`), no `N colleges` count, no `Refresh`, no pagination or page-size... | MISSING-FILTER | S3 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-14 | tenants-modules | College remove wording and reasons: legacy `Delete College` Popconfirm with the dependency sentence and server reasons per blocker; vNext `... | COPY | S3 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
-| SA-tenants-modules-15 | tenants-modules | `Bulk Import` colleges (CSV paste, header optional, quoted CSV, max 200, duplicate code check before create, per-row result table, partial-... | MISSING-MODAL | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | 60502843b |
+| SA-tenants-modules-15 | tenants-modules | `Bulk Import` colleges (CSV paste, header optional, quoted CSV, max 200, duplicate code check before create, per-row result table, partial-... | MISSING-MODAL | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | 1c5f40da5 |
 | SA-tenants-modules-16 | tenants-modules | College edit: legacy lets a Super Admin change organization, Unique ID, address, pin code and country; vNext edits name, city, state, count... | MISSING-FIELD | S3 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-17 | tenants-modules | No `Manage College` drawer, so the `Admins` tab is missing: create College Admin / TPO for a college (role, names, email, required mobile,... | MISSING-TAB | S3* | UNCONFIRMED | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-18 | tenants-modules | No Super Admin view of a user's active sessions (device, IP, last used) and no `Sign out everywhere` action; vNext only lets a user manage... | MISSING-ACTION | S2 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-19 | tenants-modules | No per-college `Activity` tab (audit trail pinned to the college with Refresh and Export CSV) reachable from Tenant Setup; Activity Log can... | MISSING-TAB | S3 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
-| SA-tenants-modules-20 | tenants-modules | Web address: dev legacy launches a college with ONE action, `Allot` a subdomain on the platform domain (live immediately, HTTPS via wildcar... | MISSING-ACTION | S2* | VERIFIED | chat-9 | superadmin/tenants-modules.md | 2b35109f4 |
+| SA-tenants-modules-20 | tenants-modules | Web address: dev legacy launches a college with ONE action, `Allot` a subdomain on the platform domain (live immediately, HTTPS via wildcar... | MISSING-ACTION | S2* | VERIFIED | chat-9 | superadmin/tenants-modules.md | 46b2a91fe |
 | SA-tenants-modules-21 | tenants-modules | Sign-in methods cannot be changed: legacy radio-card picker (Email and phone default / Phone and email / Email only / Phone only) saved per... | MISSING-ACTION | S2 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
 | SA-tenants-modules-22 | tenants-modules | Branding cannot be edited by a Super Admin: legacy `Look and feel` uploads and crops the college logo (square, min 200x200), previews Deskt... | MISSING-ACTION | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | a366572c7 |
 | SA-tenants-modules-23 | tenants-modules | Launch checklist semantics: legacy splits `Must fix before launch` (domain blockers) from `Recommended`, headlines `Ready to go live` / `Ca... | STATE | S3 | OPEN | chat-9 | superadmin/tenants-modules.md |  |
-| SA-tenants-modules-24 | tenants-modules | Tenant mutations leave no trail in the Activity Log. Legacy writes audit rows for subdomain allot/remove, branding upsert, domain changes,... | SIDE-EFFECT | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | 7a767ff12 |
+| SA-tenants-modules-24 | tenants-modules | Tenant mutations leave no trail in the Activity Log. Legacy writes audit rows for subdomain allot/remove, branding upsert, domain changes,... | SIDE-EFFECT | S2 | VERIFIED | chat-9 | superadmin/tenants-modules.md | cffd594b0 |
 | SA-tenants-modules-R01 | tenants-modules | The control-page header cards are missing on Feature Controls, Module Access and Tenant Settings: scope tag (`Platform view`, `Organization... | MISSING-FIELD | S4 | OPEN | chat-9 | superadmin/tenants-modules-review.md |  |
 | SA-tenants-modules-R02 | tenants-modules | Archived organizations and colleges cannot be restored. vNext replaced legacy permanent delete with archive (`Archive` in `organization-act... | MISSING-ACTION | S3 | OPEN | chat-9 | superadmin/tenants-modules-review.md |  |
 | SA-tenants-modules-R03 | tenants-modules | Audit Findings access: legacy opens the board to a super admin or to a tracker manager who passes the tracker logs-access gate (`TrackerLog... | PERMISSION | S4 | OPEN | chat-9 | superadmin/tenants-modules-review.md |  |
 | SA-tenants-modules-25 | tenants-modules-2 | Feature Controls matrix has no inline college x module switches. Legacy flips Projects / Placements per college straight from the table (ar... | MISSING-ACTION | S3 | OPEN | chat-9 | superadmin/tenants-modules-2.md |  |
 | SA-tenants-modules-26 | tenants-modules-2 | Disabling a module shows no blast-radius numbers. Legacy asks the server first: Projects shows the active primary-mentor count (with the "n... | MISSING-MODAL | S2 | VERIFIED | chat-9 | superadmin/tenants-modules-2.md | f07c07df9 |
-| SA-tenants-modules-27 | tenants-modules-2 | Module Access cannot change anything below the college. Legacy edits Projects / Placements at Department, Program, Batch and Class (Inherit... | MISSING-ACTION | S1 | VERIFIED | chat-9 | superadmin/tenants-modules-2.md | 945ba3b19 |
-| SA-tenants-modules-28 | tenants-modules-2 | No full hierarchy tree: legacy lists every department, program, batch and class as rows (even with nothing set), with level tag, `Students... | MISSING-FIELD | S2 | VERIFIED | chat-9 | superadmin/tenants-modules-2.md | 56787813b |
+| SA-tenants-modules-27 | tenants-modules-2 | Module Access cannot change anything below the college. Legacy edits Projects / Placements at Department, Program, Batch and Class (Inherit... | MISSING-ACTION | S1 | VERIFIED | chat-9 | superadmin/tenants-modules-2.md | 7e3c903fe |
+| SA-tenants-modules-28 | tenants-modules-2 | No full hierarchy tree: legacy lists every department, program, batch and class as rows (even with nothing set), with level tag, `Students... | MISSING-FIELD | S2 | VERIFIED | chat-9 | superadmin/tenants-modules-2.md | 13a313ae9 |
 | SA-tenants-modules-29 | tenants-modules-2 | No broad-scope confirmation tied to population: legacy asks before changing a College / Department / Program, or any scope with 100+ studen... | MISSING-MODAL | S3 | OPEN | chat-9 | superadmin/tenants-modules-2.md |  |
 | SA-tenants-modules-30 | tenants-modules-2 | Lock handling beyond the college is absent: no lock toggle on descendant scopes (gap 27) and no `Clear legacy lock` for a student lock that... | MISSING-ACTION | S4 | UNCONFIRMED | chat-9 | superadmin/tenants-modules-2.md |  |
 | SA-tenants-modules-31 | tenants-modules-2 | Student explanation differs in presentation and a few details: legacy opens an in-page drawer from an always-visible autocomplete (`Why can... | MISSING-FIELD | S4 | UNCONFIRMED | chat-9 | superadmin/tenants-modules-2.md |  |
@@ -1961,25 +2002,32 @@ Review notes (`*` after a severity marks a review severity change):
 
 Review notes (`*` after a severity marks a review severity change):
 
+- SA-academics-people-05 tracker: Review status was UNCONFIRMED; a commit cites it on main.
+- SA-academics-people-05 verified by: tests/unit/sa-acting-college-mutations.test.ts
+- SA-academics-people-14 verified by: tests/unit/sa-semester-management-route.test.ts
+- SA-academics-people-24 verified by: tests/unit/sa-batch-promotion-execute.test.ts
+- SA-academics-people-47 verified by: tests/unit/sa-academic-batch-class-scope.test.ts
+- SA-academics-people-R01 verified by: tests/unit/sa-acting-college-mutations.test.ts
 - SA-academics-people-84 severity_note: Review: S3 to S4. OD-23 (owner-decisions.md) recommends recording "no hard delete" as intentional; vNext offers terminal End membership plus archive. Keep as an intentional difference; promote only if the owner rejects OD-23.
 - SA-academics-people-86 severity_note: Review: S3 to S4. vNext OTP throttling is per challenge: 5-minute attempt lifetime and a 10-minute send window (`modules/auth/login-service.ts:32,39`), so a throttled user recovers on their own; legacy needed a manual clear because its rate limiter had no short window. Still absent, but not a suppo...
 - SA-placements-projects-83 verified by: tests/integration/super-admin-template-plan-editor.test.ts, tests/unit/super-admin-template-plan-editor.test.ts
 - SA-placements-projects-84 verified by: tests/integration/super-admin-template-plan-editor.test.ts, tests/unit/super-admin-template-plan-editor.test.ts
-- SA-tenants-modules-01 verified by: tests/unit/sa-tenants-modules-01-glance.test.ts
-- SA-tenants-modules-15 verified by: tests/unit/sa-tenants-modules-15-bulk-import.test.ts
+- SA-tenants-modules-01 verified by: tests/unit/sa-tenants-modules-01-glance-refresh.test.ts, tests/unit/sa-tenants-modules-01-glance.test.ts
+- SA-tenants-modules-02 verified by: tests/integration/sa-tenants-modules-02-today-board.test.ts, tests/unit/sa-tenants-modules-02-today-board.test.ts
+- SA-tenants-modules-15 verified by: tests/unit/sa-tenants-modules-15-bulk-import.test.ts, tests/unit/sa-tenants-modules-15-import-result-type.test.ts, tests/unit/sa-tenants-modules-15-import-toast.test.ts
 - SA-tenants-modules-17 severity_note: Review: S2 to S3. S2 to S3. `person-onboard-dialog.tsx` and `person-membership-actions.tsx` (suspend) give a Super Admin the same College Admin/TPO create and suspend path from `/admin/people`; what is missing is the in-context tab, permanent delete and per-admin history. See section 4.
 - SA-tenants-modules-20 severity_note: Review: S1 to S2. S1 to S2. The gap is real (`college-subdomain-model.ts` unreferenced), but a platform-domain host can still be added through `tenant-domain-manager.tsx` with a TXT record, so launch is slower rather than blocked. See section 4.
-- SA-tenants-modules-20 verified by: tests/unit/sa-tenants-modules-20-managed-subdomain.test.ts
+- SA-tenants-modules-20 verified by: tests/unit/sa-tenants-modules-20-managed-subdomain.test.ts, tests/unit/sa-tenants-modules-20-primary-domain-transition.test.ts, tests/unit/sa-tenants-modules-20-subdomain-conflicts.test.ts
 - SA-tenants-modules-22 verified by: tests/unit/sa-tenants-modules-22-branding-admin.test.ts
-- SA-tenants-modules-24 verified by: tests/unit/sa-tenants-modules-24-branding-activity.test.ts, tests/unit/sa-tenants-modules-24-college-mutation-audit.test.ts, tests/unit/sa-tenants-modules-24-organization-audit.test.ts
+- SA-tenants-modules-24 verified by: tests/integration/sa-tenants-modules-24-tenant-activity.test.ts, tests/unit/sa-tenants-modules-24-branding-activity.test.ts, tests/unit/sa-tenants-modules-24-college-mutation-audit.test.ts, tests/unit/sa-tenants-modules-24-organization-audit.test.ts
 - SA-tenants-modules-26 verified by: tests/unit/sa-tenants-modules-26-impact.test.ts
-- SA-tenants-modules-27 verified by: tests/unit/sa-tenants-modules-27-descendant-policy.test.ts
-- SA-tenants-modules-28 verified by: tests/unit/sa-tenants-modules-28-scope-inventory.test.ts
+- SA-tenants-modules-27 verified by: tests/integration/sa-tenants-modules-27-academic-placements.test.ts, tests/unit/sa-tenants-modules-27-descendant-policy.test.ts, tests/unit/sa-tenants-modules-27-placements-inheritance.test.ts
+- SA-tenants-modules-28 verified by: tests/integration/sa-tenants-modules-28-academic-effective.test.ts, tests/unit/sa-tenants-modules-28-effective-sources.test.ts, tests/unit/sa-tenants-modules-28-scope-inventory.test.ts, tests/unit/sa-tenants-modules-28-student-counts.test.ts
 - SA-tenants-modules-34 severity_note: Review: S2 to S3. S2 to S3, and the UNCONFIRMED is resolved: College Admin edits both values at `/college/attendance/settings` through `PUT /api/attendance/admin/policy` (`college-attendance-policy-form.tsx`). Only the Super Admin copy of the control is missing.
 - SA-tenants-modules-34 tracker: Review status was UNCONFIRMED; a commit cites it on main.
 - SA-tenants-modules-34 verified by: tests/unit/sa-tenants-modules-34-attendance-settings.test.ts
 
-## mentor (88 rows: 77 Round A + 11 MISSED; 86 open or unconfirmed)
+## mentor (88 rows: 77 Round A + 11 MISSED; 85 open or unconfirmed)
 
 | ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |
 |---|---|---|---|---|---|---|---|---|
@@ -2013,7 +2061,7 @@ Review notes (`*` after a severity marks a review severity change):
 | MEN-projects-meetings-28 | projects-meetings | Labels and messages differ: "Ceremony" options (Sprint planning/Sprint review/Retrospective) vs "planning/review/retro" lower-case; "Meetin... | COPY | S3 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-29 | projects-meetings | Meeting URL accepts only `https:` (legacy accepts `http:` and `https:`). Past start times are rejected only by the server (`isFutureProject... | VALIDATION | S4 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-30 | projects-meetings | "Add notes"/"View notes" is not on the meeting card; outcome notes are only reachable from the separate "Team & meeting log" page, and Comp... | MISSING-ACTION | S3 | OPEN | chat-7 | mentor/projects-meetings.md |  |
-| MEN-projects-meetings-31 | projects-meetings | No notifications to the team when a mentor schedules, reschedules or cancels, and no mentor notification row on a learner request; no calen... | SIDE-EFFECT | S2 | IN-BRANCH | chat-7 | mentor/projects-meetings.md | chat-11:e25181433 |
+| MEN-projects-meetings-31 | projects-meetings | No notifications to the team when a mentor schedules, reschedules or cancels, and no mentor notification row on a learner request; no calen... | SIDE-EFFECT | S2 | FIXED-ON-MAIN | chat-7 | mentor/projects-meetings.md | e25181433 |
 | MEN-projects-meetings-32 | projects-meetings | No release create, edit or delete. In vNext a release exists only if the template provided it; legacy requires a release before any sprint... | MISSING-ACTION | S2 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-33 | projects-meetings | Release facts missing: target date, notes ("What ships in this release"), "x of y sprints complete", points rollup, ready-to-ship state, ro... | MISSING-FIELD | S3 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-34 | projects-meetings | Sprint create/edit form has only title and description. Missing: goal, sprint dates (range, locked once active), due date, status, "Ships i... | MISSING-FIELD | S2 | OPEN | chat-7 | mentor/projects-meetings.md |  |
@@ -2023,7 +2071,7 @@ Review notes (`*` after a severity marks a review severity change):
 | MEN-projects-meetings-38 | projects-meetings | Internal wording shown to users: "Execution", "Release → sprint → task state from normalized Project records.", "Recorded tasks: …", "Compl... | COPY | S3 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-39 | projects-meetings | No lane board: tasks are not grouped by Backlog / To Do / In Progress / In Review / Blocked / Completed and cannot be dragged (mouse, touch... | MISSING-TAB | S2 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-40 | projects-meetings | Board filters missing on the tab: Lane chips, Priority, Sprint scope (current sprint + backlog vs all history), Assignee (Mine/Unassigned/m... | MISSING-FILTER | S3 | OPEN | chat-7 | mentor/projects-meetings.md |  |
-| MEN-projects-meetings-41 | projects-meetings | Task rows omit assignee, due date (with Overdue / Due soon), estimate, type, sprint label, blocker reason and the learner's submission link... | MISSING-FIELD | S2 | VERIFIED | chat-7 | mentor/projects-meetings.md | 5d2b5fe49 |
+| MEN-projects-meetings-41 | projects-meetings | Task rows omit assignee, due date (with Overdue / Due soon), estimate, type, sprint label, blocker reason and the learner's submission link... | MISSING-FIELD | S2 | VERIFIED | chat-7 | mentor/projects-meetings.md | 79ff5e562 |
 | MEN-projects-meetings-42 | projects-meetings | No task details modal: no "Done when", "Approach", Blocked alert, Submission link with submitter, Created/Last edited attribution, Activity... | MISSING-MODAL | S2 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-43 | projects-meetings | Task comments show only the message text: no commenter name, timestamp or type (Note / Progress update / Flag for mentor), no type select o... | MISSING-FIELD | S3 | OPEN | chat-7 | mentor/projects-meetings.md |  |
 | MEN-projects-meetings-44 | projects-meetings | Create-task differences: cannot create a backlog task (no sprint), cannot choose assignee, status or sprint in the dialog (it is fixed to t... | MISSING-FIELD | S3 | OPEN | chat-7 | mentor/projects-meetings.md |  |
@@ -2077,7 +2125,7 @@ Review notes (`*` after a severity marks a review severity change):
 - MEN-projects-meetings-41 verified by: tests/unit/project-task-visible-facts-model.test.ts
 - MEN-projects-meetings-R01 verified by: tests/integration/mentor-final-delivery-reopen-r01.test.ts
 
-## public (68 rows: 68 Round A + 0 MISSED; 68 open or unconfirmed)
+## public (68 rows: 68 Round A + 0 MISSED; 64 open or unconfirmed)
 
 | ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |
 |---|---|---|---|---|---|---|---|---|
@@ -2120,10 +2168,10 @@ Review notes (`*` after a severity marks a review severity change):
 | PUB-auth-public-37 | auth-public-1-login-session | `/auth/handoff` equivalent: legacy cross-domain token handoff has no vNext counterpart and, by design, none is needed (host-scoped cookies,... | MISSING-PAGE | S4 | OPEN | chat-7 | public/auth-public-1-login-session.md |  |
 | PUB-auth-public-38 | auth-public-1-login-session | Logout destination hygiene: legacy clears recent-search and TPO memory keys from localStorage on logout (shared device privacy). vNext keep... | PERMISSION | S4 | OPEN | chat-7 | public/auth-public-1-login-session.md |  |
 | PUB-auth-public-39 | auth-public-1-login-session | The unauthenticated `/` is the login on every host, so there is no marketing landing for visitors of the platform host (legacy rewrote it t... | MISSING-PAGE | S4 | OPEN | chat-7 | public/auth-public-1-login-session.md |  |
-| PUB-auth-public-40 | auth-public-2-links-marketing | Recruiter invite cannot be accepted: the `Join` button is permanently disabled with a "temporarily unavailable" note. Every invitation emai... | MISSING-ACTION | S1 | IN-BRANCH | chat-7 | public/auth-public-2-links-marketing.md | chat-2:47d2221d8 |
-| PUB-auth-public-41 | auth-public-2-links-marketing | No `send-code` for the invitation: legacy emails a 6-digit code to the work address to prove ownership (company-email checks, rate limits,... | MISSING-ACTION | S1 | IN-BRANCH | chat-7 | public/auth-public-2-links-marketing.md | chat-2:7c17e8771 |
-| PUB-auth-public-42 | auth-public-2-links-marketing | The accept route requires an already signed-in session, but an invited recruiter is usually a new person with no account: legacy accept is... | PERMISSION | S1 | IN-BRANCH | chat-7 | public/auth-public-2-links-marketing.md | chat-2:789874eeb |
-| PUB-auth-public-43 | auth-public-2-links-marketing | Form fields missing: `Work email` (prefilled and read-only when the invite has one, help "From your invitation. You'll sign in with it."; t... | MISSING-FIELD | S2 | IN-BRANCH | chat-7 | public/auth-public-2-links-marketing.md | chat-2:995013111 |
+| PUB-auth-public-40 | auth-public-2-links-marketing | Recruiter invite cannot be accepted: the `Join` button is permanently disabled with a "temporarily unavailable" note. Every invitation emai... | MISSING-ACTION | S1 | VERIFIED | chat-7 | public/auth-public-2-links-marketing.md | 47d2221d8 |
+| PUB-auth-public-41 | auth-public-2-links-marketing | No `send-code` for the invitation: legacy emails a 6-digit code to the work address to prove ownership (company-email checks, rate limits,... | MISSING-ACTION | S1 | VERIFIED | chat-7 | public/auth-public-2-links-marketing.md | 7c17e8771 |
+| PUB-auth-public-42 | auth-public-2-links-marketing | The accept route requires an already signed-in session, but an invited recruiter is usually a new person with no account: legacy accept is... | PERMISSION | S1 | VERIFIED | chat-7 | public/auth-public-2-links-marketing.md | 789874eeb |
+| PUB-auth-public-43 | auth-public-2-links-marketing | Form fields missing: `Work email` (prefilled and read-only when the invite has one, help "From your invitation. You'll sign in with it."; t... | MISSING-FIELD | S2 | VERIFIED | chat-7 | public/auth-public-2-links-marketing.md | 995013111 |
 | PUB-auth-public-44 | auth-public-2-links-marketing | Validation and field-level errors missing: "Enter your work email", "Enter a valid email", "Enter your name", "Enter a valid 10-digit mobil... | VALIDATION | S2 | OPEN | chat-7 | public/auth-public-2-links-marketing.md |  |
 | PUB-auth-public-45 | auth-public-2-links-marketing | Result states after joining missing: joined ("You now have access to {college}" / "Sign in with your work email, {email}. We'll email you a... | STATE | S2 | OPEN | chat-7 | public/auth-public-2-links-marketing.md |  |
 | PUB-auth-public-46 | auth-public-2-links-marketing | A failed load (server error, service not ready) is shown as "This link is no longer valid", so a working link looks dead. Legacy separates... | STATE | S2 | OPEN | chat-7 | public/auth-public-2-links-marketing.md |  |
@@ -2149,4 +2197,11 @@ Review notes (`*` after a severity marks a review severity change):
 | PUB-auth-public-66 | auth-public-2-links-marketing | `/request-demo` ("See 42 LMS in action"; "What to expect" list; mailto button `Email us to book a demo`, address `hello@42lms.com`; no form... | MISSING-PAGE | S4 | OPEN | chat-7 | public/auth-public-2-links-marketing.md |  |
 | PUB-auth-public-67 | auth-public-2-links-marketing | `/privacy-policy` (13-section policy dated April 20, 2026; contact `privacy@42lms.com`; Android package `com.lms42.app`). Not marketing: it... | MISSING-PAGE | S2 | OPEN | chat-7 | public/auth-public-2-links-marketing.md |  |
 | PUB-auth-public-68 | auth-public-2-links-marketing | Static legal files `/assets/static/terms-and-conditions-view.html` and `/assets/static/privacy-policy-view.html`, linked from the login con... | MISSING-PAGE | S2 | OPEN | chat-7 | public/auth-public-2-links-marketing.md |  |
+
+Review notes (`*` after a severity marks a review severity change):
+
+- PUB-auth-public-40 verified by: tests/integration/pub-auth-public-40-public-invite.test.ts, tests/unit/pub-auth-public-40-invite-accept.test.ts, tests/unit/tpo-recruiters-13-invite-readiness.test.ts
+- PUB-auth-public-41 verified by: tests/integration/pub-auth-public-40-public-invite.test.ts, tests/unit/pub-auth-public-41-invite-send.test.ts
+- PUB-auth-public-42 verified by: tests/integration/pub-auth-public-40-public-invite.test.ts, tests/unit/pub-auth-public-40-invite-accept.test.ts, tests/unit/pub-auth-public-42-rollback.test.ts
+- PUB-auth-public-43 verified by: tests/unit/pub-auth-public-43-invite-fields.test.ts
 

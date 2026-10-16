@@ -1816,13 +1816,15 @@
   "account": "college",
   "type": "MISSING-ACTION",
   "severity": "S2",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "9e7ad359a",
+  "fixedAt": "2026-10-16T21:36:13+05:30",
+  "verifiedBy": [
+   "tests/unit/admin-dashboard-navigation.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -2144,13 +2146,15 @@
   "account": "college",
   "type": "SIDE-EFFECT",
   "severity": "S2",
-  "status": "FIXED-ON-MAIN",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "R",
-  "fixedBy": "28ff2f238",
-  "fixedAt": "2026-10-16T20:48:28+05:30",
-  "verifiedBy": [],
+  "fixedBy": "e25181433",
+  "fixedAt": "2026-10-16T20:57:16+05:30",
+  "verifiedBy": [
+   "tests/integration/project-notification-r01.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -3220,13 +3224,15 @@
   "account": "college",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
-  "lane": "chat-11",
+  "status": "VERIFIED",
+  "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
   "fixedBy": "91ed8d556",
   "fixedAt": "2026-10-16T21:00:41+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/college-project-blocked-risk-r01.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -3236,13 +3242,15 @@
   "account": "college",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
-  "lane": "chat-11",
+  "status": "VERIFIED",
+  "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
   "fixedBy": "91ed8d556",
   "fixedAt": "2026-10-16T21:00:41+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/college-project-blocked-risk-r01.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -6629,13 +6637,15 @@
   "account": "learner",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "5dd03d110",
   "fixedAt": "2026-10-16T21:10:46+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/learner-quiz-shuffle-model.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -7992,13 +8002,15 @@
   "account": "learner",
   "type": "VALIDATION",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "R",
   "fixedBy": "85fa7252b",
   "fixedAt": "2026-10-16T21:12:44+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/learner-education-legacy-repair.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -8104,13 +8116,15 @@
   "account": "learner",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "b044d43e8",
   "fixedAt": "2026-10-16T21:02:16+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/learner-profile-publications-authoring.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -8124,8 +8138,8 @@
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
-  "fixedBy": "1aa9fa7e9",
-  "fixedAt": "2026-10-16T20:07:45+05:30",
+  "fixedBy": "ca50abab6",
+  "fixedAt": "2026-10-16T20:51:21+05:30",
   "verifiedBy": [
    "tests/unit/learner-education-picker-model.test.ts"
   ],
@@ -8270,9 +8284,10 @@
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
-  "fixedBy": "66a65e3b8",
-  "fixedAt": "2026-10-16T19:15:25+05:30",
+  "fixedBy": "913bd30a4",
+  "fixedAt": "2026-10-16T20:57:36+05:30",
   "verifiedBy": [
+   "tests/unit/learner-profile-missing-items.test.ts",
    "tests/unit/learner-verification-missing-notices.test.ts"
   ],
   "reviewStatus": "UNCONFIRMED",
@@ -9119,13 +9134,15 @@
   "account": "learner",
   "type": "SIDE-EFFECT",
   "severity": "S2",
-  "status": "FIXED-ON-MAIN",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "R",
-  "fixedBy": "765231d35",
-  "fixedAt": "2026-10-16T20:49:27+05:30",
-  "verifiedBy": [],
+  "fixedBy": "e25181433",
+  "fixedAt": "2026-10-16T20:57:16+05:30",
+  "verifiedBy": [
+   "tests/integration/project-notification-r01.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -9139,8 +9156,8 @@
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "R",
-  "fixedBy": "5d2b5fe49",
-  "fixedAt": "2026-10-16T20:51:55+05:30",
+  "fixedBy": "79ff5e562",
+  "fixedAt": "2026-10-16T20:52:48+05:30",
   "verifiedBy": [
    "tests/unit/project-task-visible-facts-model.test.ts"
   ],
@@ -9665,8 +9682,8 @@
   "account": "mentor",
   "type": "SIDE-EFFECT",
   "severity": "S2",
-  "status": "IN-BRANCH",
-  "lane": "chat-11",
+  "status": "FIXED-ON-MAIN",
+  "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "e25181433",
@@ -9829,8 +9846,8 @@
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
-  "fixedBy": "5d2b5fe49",
-  "fixedAt": "2026-10-16T20:51:55+05:30",
+  "fixedBy": "79ff5e562",
+  "fixedAt": "2026-10-16T20:52:48+05:30",
   "verifiedBy": [
    "tests/unit/project-task-visible-facts-model.test.ts"
   ],
@@ -11221,13 +11238,17 @@
   "account": "public",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
-  "lane": "chat-2",
+  "status": "VERIFIED",
+  "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "47d2221d8",
   "fixedAt": "2026-10-16T21:08:30+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/pub-auth-public-40-public-invite.test.ts",
+   "tests/unit/pub-auth-public-40-invite-accept.test.ts",
+   "tests/unit/tpo-recruiters-13-invite-readiness.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -11237,13 +11258,16 @@
   "account": "public",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
-  "lane": "chat-2",
+  "status": "VERIFIED",
+  "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "7c17e8771",
   "fixedAt": "2026-10-16T20:47:21+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/pub-auth-public-40-public-invite.test.ts",
+   "tests/unit/pub-auth-public-41-invite-send.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -11253,13 +11277,17 @@
   "account": "public",
   "type": "PERMISSION",
   "severity": "S1",
-  "status": "IN-BRANCH",
-  "lane": "chat-2",
+  "status": "VERIFIED",
+  "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "789874eeb",
   "fixedAt": "2026-10-16T20:55:46+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/pub-auth-public-40-public-invite.test.ts",
+   "tests/unit/pub-auth-public-40-invite-accept.test.ts",
+   "tests/unit/pub-auth-public-42-rollback.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -11269,13 +11297,15 @@
   "account": "public",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
-  "lane": "chat-2",
+  "status": "VERIFIED",
+  "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "995013111",
   "fixedAt": "2026-10-16T21:05:41+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/pub-auth-public-43-invite-fields.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -12037,15 +12067,17 @@
   "account": "recruiter",
   "type": "SIDE-EFFECT",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "fc9a4fdd2",
   "fixedAt": "2026-10-16T21:04:08+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/recruiter-decision-notice-model.test.ts"
+  ],
   "reviewStatus": "UNCONFIRMED",
-  "note": null
+  "note": "Review status was UNCONFIRMED; a commit cites it on main."
  },
  {
   "id": "REC-calendar-messages-profile-23",
@@ -12181,13 +12213,15 @@
   "account": "recruiter",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "5c7c156d9",
   "fixedAt": "2026-10-16T20:56:12+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/recruiter-company-funnel-model.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -12293,13 +12327,17 @@
   "account": "recruiter",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
-  "lane": "chat-2",
+  "status": "VERIFIED",
+  "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "995013111",
   "fixedAt": "2026-10-16T21:05:41+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/pub-auth-public-40-invite-accept.test.ts",
+   "tests/unit/pub-auth-public-41-invite-send.test.ts",
+   "tests/unit/pub-auth-public-43-invite-fields.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -12377,15 +12415,17 @@
   "account": "recruiter",
   "type": "SIDE-EFFECT",
   "severity": "S2",
-  "status": "IN-BRANCH",
-  "lane": "chat-2",
+  "status": "VERIFIED",
+  "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "74ab41ff7",
   "fixedAt": "2026-10-16T20:45:34+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/rec-calendar-messages-profile-43-side-effects.test.ts"
+  ],
   "reviewStatus": "UNCONFIRMED",
-  "note": null
+  "note": "Review status was UNCONFIRMED; a commit cites it on main."
  },
  {
   "id": "REC-calendar-messages-profile-44",
@@ -12723,9 +12763,10 @@
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
-  "fixedBy": "b6728e2ac",
-  "fixedAt": "2026-10-16T19:57:15+05:30",
+  "fixedBy": "3074ee7b4",
+  "fixedAt": "2026-10-16T20:48:12+05:30",
   "verifiedBy": [
+   "tests/integration/recruiter-drive-requests-0101.test.ts",
    "tests/unit/recruiter-request-list-model.test.ts"
   ],
   "reviewStatus": "OPEN",
@@ -12871,9 +12912,10 @@
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
-  "fixedBy": "fb399a354",
-  "fixedAt": "2026-10-16T20:27:25+05:30",
+  "fixedBy": "d347456d1",
+  "fixedAt": "2026-10-16T20:47:39+05:30",
   "verifiedBy": [
+   "tests/integration/recruiter-drive-requests-0101.test.ts",
    "tests/unit/recruiter-drive-request-model.test.ts",
    "tests/unit/recruiter-drive-request-runtime-model.test.ts"
   ],
@@ -12886,13 +12928,15 @@
   "account": "recruiter",
   "type": "MISSING-ACTION",
   "severity": "S2",
-  "status": "FIXED-ON-MAIN",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
-  "fixedBy": "c37f2ba4b",
-  "fixedAt": "2026-10-16T19:56:04+05:30",
-  "verifiedBy": [],
+  "fixedBy": "be902a3e2",
+  "fixedAt": "2026-10-16T21:09:16+05:30",
+  "verifiedBy": [
+   "tests/integration/recruiter-drive-requests-0101.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -13350,13 +13394,15 @@
   "account": "recruiter",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-7",
   "proposedLane": "chat-7",
   "source": "A",
   "fixedBy": "184125d64",
   "fixedAt": "2026-10-16T20:54:05+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/recruiter-selection-list-model.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -13638,15 +13684,17 @@
   "account": "superadmin",
   "type": "PERMISSION",
   "severity": "S1",
-  "status": "UNCONFIRMED",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "45d584900",
+  "fixedAt": "2026-10-16T21:43:17+05:30",
+  "verifiedBy": [
+   "tests/unit/sa-acting-college-mutations.test.ts"
+  ],
   "reviewStatus": "UNCONFIRMED",
-  "note": null
+  "note": "Review status was UNCONFIRMED; a commit cites it on main."
  },
  {
   "id": "SA-academics-people-06",
@@ -13782,13 +13830,15 @@
   "account": "superadmin",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "b49c8285d",
+  "fixedAt": "2026-10-16T21:46:02+05:30",
+  "verifiedBy": [
+   "tests/unit/sa-semester-management-route.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -13814,12 +13864,12 @@
   "account": "superadmin",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "FIXED-ON-MAIN",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
+  "fixedBy": "01546fc26",
+  "fixedAt": "2026-10-16T22:03:19+05:30",
   "verifiedBy": [],
   "reviewStatus": "OPEN",
   "note": null
@@ -13942,13 +13992,15 @@
   "account": "superadmin",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "412f46dee",
+  "fixedAt": "2026-10-16T22:21:45+05:30",
+  "verifiedBy": [
+   "tests/unit/sa-batch-promotion-execute.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -14310,13 +14362,15 @@
   "account": "superadmin",
   "type": "PERMISSION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "a945037ce",
+  "fixedAt": "2026-10-16T22:06:19+05:30",
+  "verifiedBy": [
+   "tests/unit/sa-academic-batch-class-scope.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -14326,13 +14380,15 @@
   "account": "superadmin",
   "type": "PERMISSION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "R",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "45d584900",
+  "fixedAt": "2026-10-16T21:43:17+05:30",
+  "verifiedBy": [
+   "tests/unit/sa-acting-college-mutations.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -17392,9 +17448,10 @@
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": "5cd070ed1",
-  "fixedAt": "2026-10-16T20:20:09+05:30",
+  "fixedBy": "aeed33ace",
+  "fixedAt": "2026-10-16T21:10:56+05:30",
   "verifiedBy": [
+   "tests/unit/sa-tenants-modules-01-glance-refresh.test.ts",
    "tests/unit/sa-tenants-modules-01-glance.test.ts"
   ],
   "reviewStatus": "OPEN",
@@ -17406,13 +17463,16 @@
   "account": "superadmin",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
   "fixedBy": "512ac7559",
   "fixedAt": "2026-10-16T21:14:41+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/sa-tenants-modules-02-today-board.test.ts",
+   "tests/unit/sa-tenants-modules-02-today-board.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -17618,10 +17678,12 @@
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": "60502843b",
-  "fixedAt": "2026-10-16T20:37:30+05:30",
+  "fixedBy": "1c5f40da5",
+  "fixedAt": "2026-10-16T21:16:43+05:30",
   "verifiedBy": [
-   "tests/unit/sa-tenants-modules-15-bulk-import.test.ts"
+   "tests/unit/sa-tenants-modules-15-bulk-import.test.ts",
+   "tests/unit/sa-tenants-modules-15-import-result-type.test.ts",
+   "tests/unit/sa-tenants-modules-15-import-toast.test.ts"
   ],
   "reviewStatus": "OPEN",
   "note": null
@@ -17700,10 +17762,12 @@
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": "2b35109f4",
-  "fixedAt": "2026-10-16T20:12:46+05:30",
+  "fixedBy": "46b2a91fe",
+  "fixedAt": "2026-10-16T21:21:19+05:30",
   "verifiedBy": [
-   "tests/unit/sa-tenants-modules-20-managed-subdomain.test.ts"
+   "tests/unit/sa-tenants-modules-20-managed-subdomain.test.ts",
+   "tests/unit/sa-tenants-modules-20-primary-domain-transition.test.ts",
+   "tests/unit/sa-tenants-modules-20-subdomain-conflicts.test.ts"
   ],
   "reviewStatus": "OPEN",
   "note": null
@@ -17768,9 +17832,10 @@
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": "7a767ff12",
-  "fixedAt": "2026-10-16T20:34:04+05:30",
+  "fixedBy": "cffd594b0",
+  "fixedAt": "2026-10-16T21:22:08+05:30",
   "verifiedBy": [
+   "tests/integration/sa-tenants-modules-24-tenant-activity.test.ts",
    "tests/unit/sa-tenants-modules-24-branding-activity.test.ts",
    "tests/unit/sa-tenants-modules-24-college-mutation-audit.test.ts",
    "tests/unit/sa-tenants-modules-24-organization-audit.test.ts"
@@ -17870,10 +17935,12 @@
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": "945ba3b19",
-  "fixedAt": "2026-10-16T20:10:29+05:30",
+  "fixedBy": "7e3c903fe",
+  "fixedAt": "2026-10-16T21:20:06+05:30",
   "verifiedBy": [
-   "tests/unit/sa-tenants-modules-27-descendant-policy.test.ts"
+   "tests/integration/sa-tenants-modules-27-academic-placements.test.ts",
+   "tests/unit/sa-tenants-modules-27-descendant-policy.test.ts",
+   "tests/unit/sa-tenants-modules-27-placements-inheritance.test.ts"
   ],
   "reviewStatus": "OPEN",
   "note": null
@@ -17888,10 +17955,13 @@
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": "56787813b",
-  "fixedAt": "2026-10-16T20:23:53+05:30",
+  "fixedBy": "13a313ae9",
+  "fixedAt": "2026-10-16T21:23:08+05:30",
   "verifiedBy": [
-   "tests/unit/sa-tenants-modules-28-scope-inventory.test.ts"
+   "tests/integration/sa-tenants-modules-28-academic-effective.test.ts",
+   "tests/unit/sa-tenants-modules-28-effective-sources.test.ts",
+   "tests/unit/sa-tenants-modules-28-scope-inventory.test.ts",
+   "tests/unit/sa-tenants-modules-28-student-counts.test.ts"
   ],
   "reviewStatus": "OPEN",
   "note": null
@@ -18544,13 +18614,15 @@
   "account": "tpo",
   "type": "MISSING-FIELD",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "47400299f",
+  "fixedAt": "2026-10-16T22:16:07+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-batch-directory-counts.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -19026,13 +19098,16 @@
   "account": "tpo",
   "type": "VALIDATION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "c8c817dff",
+  "fixedAt": "2026-10-16T21:56:47+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-batch-eligibility-import-scaffold-roll.test.ts",
+   "tests/unit/tpo-batch-eligibility-roll-import.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -19042,13 +19117,15 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "8aefced61",
+  "fixedAt": "2026-10-16T22:24:40+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-batch-bulk-decisions.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -19994,15 +20071,17 @@
   "account": "tpo",
   "type": "STATE",
   "severity": "S1",
-  "status": "UNCONFIRMED",
+  "status": "VERIFIED",
   "lane": "chat-9",
   "proposedLane": "chat-9",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "9415452cd",
+  "fixedAt": "2026-10-16T23:48:45+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-crm-table-readiness-gate.test.ts"
+  ],
   "reviewStatus": "UNCONFIRMED",
-  "note": null
+  "note": "Review status was UNCONFIRMED; a commit cites it on main."
  },
  {
   "id": "TPO-calendar-reports-21",
@@ -20672,11 +20751,12 @@
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
-  "fixedBy": "5bbcf2092",
-  "fixedAt": "2026-10-16T20:20:20+05:30",
+  "fixedBy": "e20d5f905",
+  "fixedAt": "2026-10-16T21:09:46+05:30",
   "verifiedBy": [
    "tests/unit/chat2-campaign-draft-model.test.ts",
-   "tests/unit/chat2-tpo-campaign-compose-route.test.ts"
+   "tests/unit/chat2-tpo-campaign-compose-route.test.ts",
+   "tests/unit/tpo-campaigns-public-01-merge-preview.test.ts"
   ],
   "reviewStatus": "OPEN",
   "note": null
@@ -20691,10 +20771,11 @@
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
-  "fixedBy": "8664b7688",
-  "fixedAt": "2026-10-16T20:22:36+05:30",
+  "fixedBy": "5560011a5",
+  "fixedAt": "2026-10-16T21:00:32+05:30",
   "verifiedBy": [
-   "tests/unit/chat2-tpo-campaign-history.test.ts"
+   "tests/unit/chat2-tpo-campaign-history.test.ts",
+   "tests/unit/tpo-campaigns-public-02-receipts.test.ts"
   ],
   "reviewStatus": "OPEN",
   "note": null
@@ -22050,13 +22131,16 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
   "fixedBy": "8dd41521d",
   "fixedAt": "2026-10-16T20:42:48+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/tpo-drive-next-step-postgres.test.ts",
+   "tests/unit/tpo-drive-next-step-model.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -22066,13 +22150,15 @@
   "account": "tpo",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
   "fixedBy": "ec778c482",
   "fixedAt": "2026-10-16T21:15:53+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-drive-header.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -22278,7 +22364,7 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "FIXED-ON-MAIN",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
@@ -22422,13 +22508,21 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
-  "lane": "chat-9",
+  "status": "VERIFIED",
+  "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
   "fixedBy": "7e3c903fe",
   "fixedAt": "2026-10-16T21:20:06+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/tpo-drive-workspace-25-message.test.ts",
+   "tests/unit/tpo-action-window-counts.test.ts",
+   "tests/unit/tpo-bulk-200-request-size.test.ts",
+   "tests/unit/tpo-bulk-all-view-selection.test.ts",
+   "tests/unit/tpo-bulk-application-add-note.test.ts",
+   "tests/unit/tpo-bulk-follow-up-links.test.ts",
+   "tests/unit/tpo-bulk-message-model.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -22550,13 +22644,15 @@
   "account": "tpo",
   "type": "MISSING-EXPORT",
   "severity": "S1",
-  "status": "FIXED-ON-MAIN",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
-  "fixedBy": "3b13b6c5d",
-  "fixedAt": "2026-10-16T20:25:49+05:30",
-  "verifiedBy": [],
+  "fixedBy": "a05ff3133",
+  "fixedAt": "2026-10-16T20:48:40+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-drive-applications-export-model.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -22582,13 +22678,15 @@
   "account": "tpo",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
   "fixedBy": "634c20418",
   "fixedAt": "2026-10-16T21:13:18+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-round-facts.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -22614,13 +22712,16 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
   "fixedBy": "cd6e57634",
   "fixedAt": "2026-10-16T21:11:39+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/tpo-round-reorder-postgres.test.ts",
+   "tests/unit/tpo-round-reorder.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -25126,12 +25227,14 @@
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
-  "fixedBy": "506049783",
-  "fixedAt": "2026-10-16T19:14:59+05:30",
+  "fixedBy": "01984cec5",
+  "fixedAt": "2026-10-16T21:01:49+05:30",
   "verifiedBy": [
    "tests/unit/chat2-tpo-expired-grant-denial.test.ts",
    "tests/unit/chat2-tpo-message-action-routing.test.ts",
-   "tests/unit/chat2-tpo-recruiter-message-picker.test.ts"
+   "tests/unit/chat2-tpo-recruiter-message-picker.test.ts",
+   "tests/unit/tpo-inbox-team-02-draft.test.ts",
+   "tests/unit/tpo-inbox-team-02-new-message.test.ts"
   ],
   "reviewStatus": "OPEN",
   "note": null
@@ -25784,13 +25887,15 @@
   "account": "tpo",
   "type": "MISSING-FIELD",
   "severity": "S1",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
   "fixedBy": "ea91d0637",
   "fixedAt": "2026-10-16T20:57:25+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-inbox-team-43-targeting.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -26432,15 +26537,17 @@
   "account": "tpo",
   "type": "STATE",
   "severity": "S1",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
   "fixedBy": "1000e821e",
   "fixedAt": "2026-10-16T20:52:05+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-recruiters-08-stage-fallback.test.ts"
+  ],
   "reviewStatus": "UNCONFIRMED",
-  "note": null
+  "note": "Review status was UNCONFIRMED; a commit cites it on main."
  },
  {
   "id": "TPO-recruiters-09",
@@ -26448,13 +26555,15 @@
   "account": "tpo",
   "type": "MISSING-FIELD",
   "severity": "S1",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
   "fixedBy": "5d7ce7fb1",
   "fixedAt": "2026-10-16T20:50:40+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-recruiters-09-detail.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -26496,13 +26605,16 @@
   "account": "tpo",
   "type": "MISSING-MODAL",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "c1402a160",
+  "fixedAt": "2026-10-16T23:56:57+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-recruiter-invite-message.test.ts",
+   "tests/unit/tpo-recruiter-invite-policy.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -26512,13 +26624,16 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
   "fixedBy": "47d2221d8",
   "fixedAt": "2026-10-16T21:08:30+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-recruiters-13-invite-readiness.test.ts",
+   "tests/unit/tpo-recruiters-13-invite-row.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -26528,13 +26643,15 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
   "fixedBy": "9fe08eabe",
   "fixedAt": "2026-10-16T21:07:21+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-recruiters-14-copy-failed.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -26868,15 +26985,17 @@
   "account": "tpo",
   "type": "STATE",
   "severity": "S1",
-  "status": "UNCONFIRMED",
+  "status": "VERIFIED",
   "lane": "chat-2",
   "proposedLane": "chat-2",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "9415452cd",
+  "fixedAt": "2026-10-16T23:48:45+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-crm-table-readiness-gate.test.ts"
+  ],
   "reviewStatus": "UNCONFIRMED",
-  "note": null
+  "note": "Review status was UNCONFIRMED; a commit cites it on main."
  },
  {
   "id": "TPO-recruiters-36",
@@ -27226,13 +27345,16 @@
   "account": "tpo",
   "type": "MISSING-FIELD",
   "severity": "S2",
-  "status": "IN-BRANCH",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
   "fixedBy": "6c1561d4a",
   "fixedAt": "2026-10-16T21:25:00+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/integration/tpo-requests-urgency-postgres.test.ts",
+   "tests/unit/tpo-global-requests-model.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -28823,13 +28945,15 @@
   "account": "tpo",
   "type": "MISSING-MODAL",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "8f7b021a7",
+  "fixedAt": "2026-10-17T00:01:47+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-student-quick-panel.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -28839,13 +28963,17 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "IN-BRANCH",
-  "lane": "chat-9",
+  "status": "VERIFIED",
+  "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
   "fixedBy": "2abc5d29d",
   "fixedAt": "2026-10-16T21:18:54+05:30",
-  "verifiedBy": [],
+  "verifiedBy": [
+   "tests/unit/tpo-action-window-counts.test.ts",
+   "tests/unit/tpo-bulk-200-request-size.test.ts",
+   "tests/unit/tpo-bulk-all-view-selection.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -28855,13 +28983,15 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "c953d5261",
+  "fixedAt": "2026-10-16T23:53:05+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-students-nudge-send.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
@@ -28871,13 +29001,15 @@
   "account": "tpo",
   "type": "MISSING-ACTION",
   "severity": "S1",
-  "status": "OPEN",
+  "status": "VERIFIED",
   "lane": "chat-5",
   "proposedLane": "chat-5",
   "source": "A",
-  "fixedBy": null,
-  "fixedAt": null,
-  "verifiedBy": [],
+  "fixedBy": "61fb3a1c2",
+  "fixedAt": "2026-10-16T22:18:16+05:30",
+  "verifiedBy": [
+   "tests/unit/tpo-students-after-college-editor.test.ts"
+  ],
   "reviewStatus": "OPEN",
   "note": null
  },
