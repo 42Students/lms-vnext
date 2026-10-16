@@ -81,12 +81,19 @@ export function resolveRecruiterLeadRelationship(
 export function deriveOwnRecruiterLeadStage(
   lead: Pick<LeadRow, "manualStage" | "recruiterUserId" |
     "inviteSentAt" | "inviteClickedAt" | "companyRelationshipId"> & {companyName?:string|null},
-  jobs: readonly { jobId: string; relationshipId: string;companyName?:string|null }[],
+  jobs: readonly { jobId: string; relationshipId: string;companyName?:string|null;createdByUserId?:string|null }[],
   driveRows: readonly DriveFactRow[],
 ) {
-  const relationshipId=resolveRecruiterLeadRelationship(lead,jobs);
-  const ownJobIds=new Set(relationshipId?
-    jobs.filter(row=>row.relationshipId===relationshipId).map(row=>row.jobId):[]);
+  // Legacy groups the employer by normalized name, even when multiple
+  // persisted company relationships share that name. A recruiter-owned
+  // drive also counts when it is not attached to the lead's relationship.
+  const companyKey=tpoCompanyKey(lead.companyName);
+  const ownJobIds=new Set(jobs.filter(row=>
+    (lead.recruiterUserId!==null && row.createdByUserId===lead.recruiterUserId) ||
+    (lead.companyRelationshipId!==null
+      ?row.relationshipId===lead.companyRelationshipId
+      :Boolean(companyKey)&&tpoCompanyKey(row.companyName)===companyKey),
+  ).map(row=>row.jobId));
   const facts = deriveCompanyDriveFacts(
     driveRows.filter((row) => ownJobIds.has(row.jobId)),
   );
@@ -187,6 +194,7 @@ export async function getTpoRecruiterLeadStages(
   const source = await loadCompanySourceRows(context, rawCollegeId);
   const jobs = source.jobs.map(row => ({
     jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
+    createdByUserId:row.job.createdByUserId,
   }));
   const driveRows = await loadDriveFacts(jobs.map(row => row.jobId));
   return new Map(source.leads.map(lead => [

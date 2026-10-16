@@ -54,7 +54,7 @@ export function TpoCampaignCompose(){
      onChange={e=>setSubject(e.target.value)}/>
    </label>
    <label className="block text-sm font-semibold">Message
-    <textarea value={body} maxLength={10000} required rows={6}
+    <textarea value={body} maxLength={4000} required rows={6}
      className={field} onChange={e=>setBody(e.target.value)}/>
    </label>
    <p className="text-xs text-muted-foreground">

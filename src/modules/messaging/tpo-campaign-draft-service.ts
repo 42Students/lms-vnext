@@ -3,7 +3,7 @@ import {createHmac} from "node:crypto";
 import {z} from "zod";
 import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementTpoLeads,placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients,users}
+import {placementTpoLeads,placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients}
  from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -57,15 +57,12 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
    totalRecipients:snapshot.recipientIds.length,
   }).returning({id:placementTpoEmailCampaigns.id});
   if(!campaign)throw new TpoCampaignDraftError("NOT_READY");
-  const [actor]=await tx.select({name:users.displayName}).from(users)
-   .where(eq(users.id,context.user.id)).limit(1);
   await tx.execute(sql`insert into placement_tpo_campaign_drafts
     (campaign_id,college_id,title,subject,body,template_key,segment,
-     created_by_user_id,sender_name,suppressed_counts)
+     created_by_user_id)
     values(${campaign.id}::uuid,${college.id}::uuid,${input.title}::varchar,
      ${input.subject}::varchar,${input.body}::text,${input.templateKey}::varchar,
-     ${input.segment}::varchar,${context.user.id}::uuid,
-     ${actor?.name??"Placement cell"}::varchar,${JSON.stringify(snapshot.suppressed)}::jsonb)`);
+     ${input.segment}::varchar,${context.user.id}::uuid)`);
   const emails=new Map(subset.map(row=>[row.id,row.emailNorm]));
   await tx.insert(placementTpoEmailCampaignRecipients).values(
    snapshot.recipientIds.map(leadId=>({
@@ -87,7 +84,8 @@ export async function listTpoCampaignDrafts(context:RequestContext){
   total_recipients:number;created_at:Date;sender_name:string;suppressed_counts:Record<string,number>;
   sent:number;failed:number;skipped:number;
  }>(sql`select d.campaign_id,d.title,d.subject,d.segment,c.status,
-    c.total_recipients,d.created_at,d.sender_name,d.suppressed_counts,
+    c.total_recipients,d.created_at,coalesce((select u.display_name from users u where u.id=d.created_by_user_id),'Placement cell') as sender_name,
+    '{}'::jsonb as suppressed_counts,
     (select count(*)::integer from placement_tpo_email_campaign_recipients r
       where r.campaign_id=c.id and r.status='SENT') as sent,
     (select count(*)::integer from placement_tpo_email_campaign_recipients r
@@ -112,7 +110,8 @@ export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
    segment:string;status:string;total_recipients:number;created_at:Date;
    sender_name:string;suppressed_counts:Record<string,number>;sent:number;failed:number;skipped:number;
  }>(sql`select d.campaign_id,d.title,d.subject,d.body,d.template_key,d.segment,
-   c.status,c.total_recipients,d.created_at,d.sender_name,d.suppressed_counts,
+   c.status,c.total_recipients,d.created_at,coalesce((select u.display_name from users u where u.id=d.created_by_user_id),'Placement cell') as sender_name,
+    '{}'::jsonb as suppressed_counts,
    (select count(*)::integer from placement_tpo_email_campaign_recipients r where r.campaign_id=c.id and r.status='SENT') as sent,
    (select count(*)::integer from placement_tpo_email_campaign_recipients r where r.campaign_id=c.id and r.status='FAILED') as failed,
    (select count(*)::integer from placement_tpo_email_campaign_recipients r where r.campaign_id=c.id and r.status like 'SKIPPED_%') as skipped from placement_tpo_campaign_drafts d
