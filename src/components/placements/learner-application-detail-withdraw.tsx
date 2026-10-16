@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
 
-export function LearnerApplicationDetailWithdraw({applicationId}:{applicationId:string}) {
+export function LearnerApplicationDetailWithdraw({applicationId,requiresRequest=false}:{applicationId:string;requiresRequest?:boolean}) {
   const router=useRouter();
   const [open,setOpen]=useState(false);
   const [reason,setReason]=useState("");
@@ -19,8 +19,12 @@ export function LearnerApplicationDetailWithdraw({applicationId}:{applicationId:
     if(!parsed.success) {setError(parsed.error.issues[0]?.message??"Enter a withdrawal reason.");return;}
     setPending(true);setError(null);
     try{
-      const result=await fetch("/api/placements/applications/"+encodeURIComponent(applicationId)+"/actions",{
-        method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(parsed.data),
+      const result=await fetch(requiresRequest?"/api/placements/requests":
+        "/api/placements/applications/"+encodeURIComponent(applicationId)+"/actions",{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify(requiresRequest?{
+          requestType:"APPLICATION_WITHDRAWAL",applicationId,reason:reason.trim(),
+        }:parsed.data),
       });
       if(!result.ok)throw new Error("Application withdrawal was not recorded. Your status is unchanged.");
       setOpen(false);setReason("");router.refresh();
@@ -28,13 +32,15 @@ export function LearnerApplicationDetailWithdraw({applicationId}:{applicationId:
     finally{setPending(false);}
   }
   return <>
-    <Button variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>Withdraw application</Button>
+    <Button variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>{requiresRequest?"Ask to withdraw":"Withdraw application"}</Button>
     <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}}
-      title="Confirm application withdrawal"
-      description="The existing placement service checks your membership and current application state again before recording withdrawal."
+      title={requiresRequest?"Ask to withdraw":"Confirm application withdrawal"}
+      description={requiresRequest?
+        "The placement cell must review your withdrawal request because a round was booked. This does not immediately withdraw the application.":
+        "Your account and current application state are checked before withdrawal is recorded."}
       footer={<>
         <Button variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Keep application</Button>
-        <Button disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":"Confirm withdrawal"}</Button>
+        <Button disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":requiresRequest?"Send withdrawal request":"Confirm withdrawal"}</Button>
       </>}>
       <label htmlFor="own-application-withdraw-reason" className="block text-sm font-semibold text-foreground">
         Reason for withdrawal
