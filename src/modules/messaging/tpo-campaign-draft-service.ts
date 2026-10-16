@@ -50,6 +50,13 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
   const subset=contacts.filter(row=>
     input.segment==="NEW"?row.manualStage==="NEW":
     input.segment==="UNASSIGNED"?row.ownerMembershipId===null:true);
+  if(input.body.length>4000){
+   const migrated=await tx.execute<{ready:boolean}>(sql`
+    select exists(select 1 from pg_constraint
+      where conname='tpo_campaign_draft_body_ck'
+       and pg_get_constraintdef(oid) like '%10000%') as ready`);
+   if(!migrated.rows[0]?.ready)throw new TpoCampaignDraftError("NOT_READY");
+  }
   const snapshot=planTpoCampaignRecipients(subset);
   if(!snapshot.recipientIds.length)throw new TpoCampaignDraftError("NO_RECIPIENTS");
   const [campaign]=await tx.insert(placementTpoEmailCampaigns).values({
