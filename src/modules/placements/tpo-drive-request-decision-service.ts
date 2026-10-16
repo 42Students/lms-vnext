@@ -10,13 +10,14 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
 import { hrDriveDraftSchema } from "./hr-drive-draft-model";
-import { tpoDriveRequestDecisionSchema, type TpoDriveRequestDecision }
+import { tpoDriveRequestDecisionSchema }
   from "./tpo-drive-request-decision-model";
 
 export class TpoDriveRequestDecisionError extends Error {
   constructor(public readonly code:
     "REQUEST_NOT_FOUND" | "REQUEST_STALE" | "NO_ACTIVE_SEASON" |
-    "AMBIGUOUS_ACTIVE_SEASONS" | "COMPANY_INACTIVE" | "REQUEST_ALREADY_DECIDED") {
+    "AMBIGUOUS_ACTIVE_SEASONS" | "COMPANY_INACTIVE" |
+    "WORK_MODE_REVIEW_REQUIRED" | "REQUEST_ALREADY_DECIDED") {
     super(code);this.name="TpoDriveRequestDecisionError";
   }
 }
@@ -58,7 +59,11 @@ export async function decideTpoRecruiterDriveRequest(
         .orderBy(asc(placementSeasons.id)).for("update").limit(2);
       if(seasons.length===0)throw new TpoDriveRequestDecisionError("NO_ACTIVE_SEASON");
       if(seasons.length!==1)throw new TpoDriveRequestDecisionError("AMBIGUOUS_ACTIVE_SEASONS");
-      const workMode=draft.workMode==="NO_PREFERENCE"?"ONSITE":draft.workMode;
+      // Do not silently turn a recruiter's "No preference" into on-site.
+      // Request clarification; publication changes where students must attend.
+      if(draft.workMode==="NO_PREFERENCE")
+        throw new TpoDriveRequestDecisionError("WORK_MODE_REVIEW_REQUIRED");
+      const workMode=draft.workMode;
       const [job]=await tx.insert(placementJobs).values({
         collegeId,seasonId:seasons[0].id,
         companyRelationshipId:request.companyRelationshipId,

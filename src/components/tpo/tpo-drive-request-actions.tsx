@@ -28,7 +28,10 @@ export function TpoDriveRequestActions({requestId,status}:{
       });
       const data=await response.json() as {error?:string;approvedJobId?:string};
       if(!response.ok)throw new Error(data.error==="REQUEST_STALE"?
-        "This request changed. Refresh the list before deciding.":data.error??"Decision could not be saved");
+        "This request changed. Refresh the list before deciding.":
+        data.error==="WORK_MODE_REVIEW_REQUIRED"?
+        "The recruiter did not specify a work mode. Request a change before approval.":
+        data.error??"Decision could not be saved");
       setMessage(action==="APPROVE_LATER"?
         "Approved for later. Open the draft to review before publishing.":
         action==="DECLINE"?"Request declined. It is now cancelled.":"Changes requested.");
