@@ -26,6 +26,9 @@ import {
 } from "./tpo-drive-lifecycle-model";
 import { requirePlacementManageScope } from "./scope";
 import { placementJobIdSchema } from "./validation";
+import {
+  countPublishedDriveDebarments,notifyEligiblePublishedDrive,
+} from "./tpo-drive-publish-effects";
 
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
@@ -128,6 +131,10 @@ export async function getTpoDriveLifecycleReadiness(
   };
 }
 
+export class TpoPublishEmailUnavailable extends Error {
+  constructor(){super("EMAIL_DELIVERY_UNAVAILABLE");this.name="TpoPublishEmailUnavailable";}
+}
+
 export async function changeTpoDriveLifecycle(
   context: RequestContext,
   rawJobId: unknown,
@@ -136,6 +143,8 @@ export async function changeTpoDriveLifecycle(
   const collegeId = requireTpo(context);
   const jobId = placementJobIdSchema.parse(rawJobId);
   const input = tpoDriveLifecycleSchema.parse(raw);
+  if(input.action==="PUBLISH"&&input.notifyByEmail)
+    throw new TpoPublishEmailUnavailable();
   const [owned] = await getDb().select({
     id: placementJobs.id, collegeId: placementJobs.collegeId,
   }).from(placementJobs).where(and(
@@ -170,7 +179,7 @@ export async function changeTpoDriveLifecycle(
       eq(placementJobs.status, input.expectedStatus),
     )).returning();
     if (!updated) throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
-    await recordActivityEventInTransaction(tx, context, {
+    const event = await recordActivityEventInTransaction(tx, context, {
       eventType: input.action === "CLOSE"
         ? ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_CLOSED
         : ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
@@ -188,10 +197,19 @@ export async function changeTpoDriveLifecycle(
       },
       groupKey: "placement-job:" + jobId,
     });
+    let notifiedCount=0;
+    let debarmentCounted=0;
+    if(input.action==="PUBLISH"){
+      debarmentCounted=await countPublishedDriveDebarments(
+        tx,context,updated.id,collegeId,now,
+      );
+      notifiedCount=await notifyEligiblePublishedDrive(tx,context,updated,event.id);
+    }
     return {
       id: updated.id,
       status: updated.status,
       blockers: [] as string[],
+      notifiedCount,debarmentCounted,emailSent:false,
     };
   });
 }

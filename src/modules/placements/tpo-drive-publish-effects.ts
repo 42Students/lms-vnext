@@ -1,0 +1,90 @@
+import "server-only";
+import {and,eq,isNull} from "drizzle-orm";
+import {
+  collegeMemberships, inAppNotifications, learnerProgramEnrollments,
+  membershipRoles, placementBatchRegistrations, placementCandidatePreferences,
+  placementDebarmentDriveEvents, placementDebarments, users,
+} from "@/db/schema";
+import type {RequestContext} from "@/modules/identity/context";
+import {getDb} from "@/db/client";
+import {isDebarmentActive} from "./batch-registration-policy";
+import {evaluatePlacementEligibility} from "./eligibility-service";
+type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+export function collegeDate(now:Date){
+  const values=new Intl.DateTimeFormat("en-US",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).formatToParts(now);
+  const get=(key:string)=>values.find(row=>row.type===key)?.value??"";
+  return get("year")+"-"+get("month")+"-"+get("day");
+}
+/**
+ * Only a first publication consumes a debarment drive count. DB08 trigger
+ * writes the irreversible counter/event and the pair uniqueness prevents retry duplication.
+ */
+export async function countPublishedDriveDebarments(
+  tx:Tx,context:RequestContext,jobId:string,collegeId:string,now:Date,
+){
+  const bans=await tx.select().from(placementDebarments)
+    .where(and(eq(placementDebarments.collegeId,collegeId),
+      isNull(placementDebarments.liftedAt))).for("update");
+  let affected=0;
+  const today=collegeDate(now);
+  for(const ban of bans){
+    if(ban.untilDate!==null||ban.untilDrives===null||!isDebarmentActive(ban,today))continue;
+    const inserted=await tx.insert(placementDebarmentDriveEvents).values({
+      debarmentId:ban.id,jobId,recordedByUserId:context.user.id,
+    }).onConflictDoNothing().returning({id:placementDebarmentDriveEvents.id});
+    affected+=inserted.length;
+  }
+  return affected;
+}
+/**
+ * Conservative eligible audience: active learner, explicit PLACEMENTS
+ * registration, notification preference on, and job-specific eligibility.
+ * NEVER count mere college membership as eligibility.
+ */
+export async function notifyEligiblePublishedDrive(
+  tx:Tx,context:RequestContext,job:{id:string;collegeId:string;title:string},
+  eventId:string,
+){
+  const registrations=await tx.select({
+    membershipId:collegeMemberships.id,userId:users.id,
+    notify:placementCandidatePreferences.notifyMatchingJobs,
+  }).from(placementBatchRegistrations)
+    .innerJoin(learnerProgramEnrollments,and(
+      eq(learnerProgramEnrollments.cohortId,placementBatchRegistrations.cohortId),
+      eq(learnerProgramEnrollments.membershipId,placementBatchRegistrations.membershipId),
+      eq(learnerProgramEnrollments.status,"ACTIVE")))
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,placementBatchRegistrations.membershipId),
+      eq(collegeMemberships.collegeId,job.collegeId),
+      eq(collegeMemberships.status,"ACTIVE")))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"LEARNER")))
+    .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE")))
+    .leftJoin(placementCandidatePreferences,
+      eq(placementCandidatePreferences.membershipId,collegeMemberships.id))
+    .where(and(eq(placementBatchRegistrations.collegeId,job.collegeId),
+      eq(placementBatchRegistrations.choice,"PLACEMENTS")));
+  const recipients:string[]=[];
+  for(const learner of registrations){
+    if(learner.notify===false)continue;
+    const eligibility=await evaluatePlacementEligibility(
+      context,job.id,learner.membershipId,tx,
+    );
+    if(eligibility.status==="ELIGIBLE")recipients.push(learner.userId);
+  }
+  const distinct=[...new Set(recipients)];
+  for(let i=0;i<distinct.length;i+=200){
+    await tx.insert(inAppNotifications).values(
+      distinct.slice(i,i+200).map(userId=>({
+        userId,eventId,title:"New placement drive",
+        body:job.title+" is open for applications.",
+        actionHref:"/learn/my-placements/jobs/"+job.id,
+      })),
+    ).onConflictDoNothing();
+  }
+  return distinct.length;
+}
