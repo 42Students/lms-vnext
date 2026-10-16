@@ -7,6 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const pagesDir = path.join(root, "docs", "audit", "pages");
@@ -249,6 +250,165 @@ for (const account of ACCOUNTS) {
   }
 }
 
+// ---- Closure tracking (git citations + test/acceptance evidence) ------------
+// Lanes cite gap IDs in commit subjects/bodies. Cited on origin/main -> FIXED-ON-MAIN;
+// cited only on an origin/chatgpt/chat-* branch -> IN-BRANCH; evidence in tests/ or
+// docs/audit/acceptance/ -> VERIFIED (only ever upgrades FIXED-ON-MAIN).
+const TRACK_SINCE = process.env.TRACK_SINCE || "2026-10-15";
+const MAIN_REF = process.env.TRACK_MAIN_REF || "origin/main";
+const git = (args) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 1 << 29, stdio: ["ignore", "pipe", "pipe"] });
+const pad2 = (n) => (/^R?\d$/.test(n) ? n.replace(/(\d)$/, "0$1") : n);
+const knownPrefixes = new Set();
+for (const g of gaps) knownPrefixes.add(g.id.replace(/-R?\d+[a-z]?$/, ""));
+const parseIssues = []; // {kind, id, where}
+const GEN = /\b(?:TPO|REC|LEARNER|FAC|COL|SA|MEN|PUB)(?:-[A-Za-z][A-Za-z0-9]*)+-R?\d+[a-z]?(?![A-Za-z0-9])/g;
+// Return the register IDs cited in a text. Handles lists ("X-13, 21, 25"), "a/b", "and", ranges "X-01..05".
+function extractIds(text, where) {
+  const out = [];
+  let m;
+  GEN.lastIndex = 0;
+  while ((m = GEN.exec(text))) {
+    const full = m[0];
+    const end = GEN.lastIndex;
+    const prefix = full.replace(/-R?\d+[a-z]?$/, "");
+    const first = /(R?\d+[a-z]?)$/.exec(full)[1];
+    if (!knownPrefixes.has(prefix)) {
+      // "TPO-drives-01-05" style hyphen range: the prefix itself ends in a number.
+      const p2 = prefix.replace(/-\d+$/, "");
+      if (p2 !== prefix && knownPrefixes.has(p2)) {
+        const a = Number(/-(\d+)$/.exec(prefix)[1]), b = Number(/(\d+)/.exec(first)[1]);
+        for (let n = a; n <= b && n - a < 200; n++) out.push({ prefix: p2, num: String(n).padStart(2, "0") });
+        continue;
+      }
+      parseIssues.push({ kind: "unknown-prefix", id: full, where });
+      continue;
+    }
+    out.push({ prefix, num: first });
+    const rest = text.slice(end);
+    let consumed = 0;
+    const rng = /^\s*(?:\.\.|-|–|—)\s*(\d{2,3})(?![\w-])/.exec(rest);
+    if (rng && !first.startsWith("R")) {
+      const a = Number(/(\d+)/.exec(first)[1]), b = Number(/(\d+)/.exec(rng[1])[1]);
+      for (let n = a + 1; n <= b && n - a < 200; n++) out.push({ prefix, num: String(n).padStart(2, "0") });
+      consumed = rng[0].length;
+    }
+    let tail = rest.slice(consumed);
+    for (;;) {
+      const c = /^(?:\s*,\s*(?:and\s+)?|\s*\/\s*|\s+and\s+|\s*&\s*|\s*\+\s*)(R?\d+[a-z]?)(?![\w-]|\.\d)/.exec(tail);
+      if (!c) break;
+      // bare numbers: at least two digits (or R-prefixed) and not a count ("30 rows", "2 tests")
+      if (!/^R/.test(c[1]) && c[1].replace(/\D/g, "").length < 2) break;
+      if (/^\s+(?:rows?|tests?|files?|gaps?|cases?|lines?|commits?|items?|checks?|students?|ms|px|%|more|other|others)\b/i.test(tail.slice(c[0].length))) break;
+      out.push({ prefix, num: c[1], bare: true });
+      consumed += c[0].length; tail = tail.slice(c[0].length);
+      const r2 = /^\s*\.\.\s*(R?\d+)(?![\w-])/.exec(tail);
+      if (r2) {
+        const a = Number(/(\d+)/.exec(c[1])[1]), b = Number(/(\d+)/.exec(r2[1])[1]);
+        for (let n = a + 1; n <= b && n - a < 200; n++) out.push({ prefix, num: String(n).padStart(2, "0"), bare: true });
+        consumed += r2[0].length; tail = tail.slice(r2[0].length);
+      }
+    }
+    GEN.lastIndex = end + consumed;
+  }
+  const ids = [];
+  for (const o of out) {
+    const cands = [`${o.prefix}-${o.num}`, `${o.prefix}-${pad2(o.num)}`];
+    const hit = cands.find((c) => byId.has(c));
+    if (hit) ids.push(hit);
+    else parseIssues.push({ kind: o.bare ? "list-number-not-in-register" : "not-in-register", id: cands[0], where });
+  }
+  return [...new Set(ids)];
+}
+
+if (process.argv[2] === "--selftest-ids") { console.log(JSON.stringify(extractIds(process.argv[3] || "", "selftest")), JSON.stringify(parseIssues)); process.exit(0); }
+const trackerOk = (() => { try { git(["rev-parse", "--verify", "-q", MAIN_REF]); return true; } catch { return false; } })();
+if (!trackerOk) notes.push(`Closure tracking skipped: ref ${MAIN_REF} not found (run git fetch origin).`);
+const NOISE_TYPE = /^(docs|chore|audit)(\(|:|!)/i;
+function readCommits(range, extra) {
+  const fmt = "%x01%H%x02%cI%x02%P%x02%s%x02%b%x03";
+  const raw = git(["log", ...range, ...extra, "--name-only", `--format=${fmt}`]);
+  const res = [];
+  for (const chunk of raw.split("\x01").slice(1)) {
+    const [head, filesPart] = chunk.split("\x03");
+    const [sha, date, parents, subject, body] = head.split("\x02");
+    const files = (filesPart || "").split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+    const isMerge = (parents || "").trim().split(/\s+/).length > 1;
+    // documentation and audit housekeeping commits list gap IDs without fixing them
+    if (NOISE_TYPE.test(subject)) continue;
+    if (!isMerge && files.length && files.every((f) => /^(docs\/|scripts\/audit\/)/.test(f))) continue;
+    res.push({ sha, date, subject, body: body || "", isMerge });
+  }
+  return res;
+}
+const cites = new Map(); // id -> {main:[], branch:[]}
+const getCite = (id) => { if (!cites.has(id)) cites.set(id, { main: [], branch: [] }); return cites.get(id); };
+// Lane attribution for main commits is not derivable (lane branches merge main back in), so FIXED-ON-MAIN and VERIFIED use the proposed lane.
+if (trackerOk) {
+  const mainCommits = readCommits([MAIN_REF], [`--since=${TRACK_SINCE}`]);
+  const brs = git(["for-each-ref", "--format=%(refname:short)", "refs/remotes/origin/chatgpt/"]).split(/\r?\n/).filter((b) => /\/chat-\d+$/.test(b));
+  for (const c of mainCommits) {
+    for (const id of extractIds(`${c.subject}\n${c.body}`, `main ${c.sha.slice(0, 9)}`)) getCite(id).main.push({ sha: c.sha, date: c.date, subject: c.subject, merge: c.isMerge, lane: null });
+  }
+  for (const b of brs) {
+    const lane = /(chat-\d+)$/.exec(b)[1];
+    let bc = [];
+    try { bc = readCommits([`${MAIN_REF}..${b}`], []); } catch { /* ignore */ }
+    for (const c of bc) for (const id of extractIds(`${c.subject}\n${c.body}`, `${lane} ${c.sha.slice(0, 9)}`)) getCite(id).branch.push({ lane, sha: c.sha, date: c.date, subject: c.subject });
+  }
+}
+
+// Evidence: tests and acceptance reports in the checked-out tree (origin/main when run by refresh-tracker.sh).
+const evidence = new Map(); // id -> {tests:Set, acceptance:Set}
+const addEv = (id, kind, f) => { if (!evidence.has(id)) evidence.set(id, { tests: new Set(), acceptance: new Set() }); evidence.get(id)[kind].add(f); };
+function walk(dir, exts, cb) {
+  if (!fs.existsSync(dir)) return;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (e.name === "node_modules" || e.name.startsWith(".")) continue;
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) walk(full, exts, cb);
+    else if (exts.test(e.name)) cb(full);
+  }
+}
+walk(path.join(root, "tests"), /\.(m?[jt]sx?|cjs|sql|json)$/, (f) => {
+  const rel = path.relative(root, f).split(path.sep).join("/");
+  for (const id of extractIds(fs.readFileSync(f, "utf8"), rel)) addEv(id, "tests", rel);
+});
+walk(path.join(root, "docs", "audit", "acceptance"), /\.md$/, (f) => {
+  const rel = path.relative(root, f).split(path.sep).join("/");
+  for (const id of extractIds(fs.readFileSync(f, "utf8"), rel)) addEv(id, "acceptance", rel);
+});
+
+const STATUSES = ["OPEN", "IN-BRANCH", "FIXED-ON-MAIN", "VERIFIED", "UNCONFIRMED", "WRONG", "CLOSED-SINCE"];
+const byDateDesc = (a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+for (const g of gaps) {
+  g.reviewStatus = g.status;
+  g.fixedBy = ""; g.fixedAt = ""; g.firstFixedAt = ""; g.fixedLane = ""; g.verifiedBy = []; g.trackNote = "";
+  const c = cites.get(g.id);
+  const ev = evidence.get(g.id);
+  if (c && c.main.length) {
+    const sorted = [...c.main].sort(byDateDesc);
+    g.fixedBy = sorted[0].sha.slice(0, 9); g.fixedAt = sorted[0].date;
+    g.firstFixedAt = sorted[sorted.length - 1].date;
+    g.fixedLane = (sorted.find((x) => x.lane) || {}).lane || "";
+    if (g.reviewStatus === "WRONG") g.trackNote = `Cited on main (${g.fixedBy}) but a review marks the Round A claim WRONG; status left WRONG.`;
+    else {
+      g.status = "FIXED-ON-MAIN";
+      if (g.reviewStatus !== "OPEN") g.trackNote = `Review status was ${g.reviewStatus}; a commit cites it on main.`;
+    }
+  } else if (c && c.branch.length && g.reviewStatus !== "WRONG" && g.reviewStatus !== "CLOSED-SINCE") {
+    const sorted = [...c.branch].sort(byDateDesc);
+    g.status = "IN-BRANCH";
+    g.fixedBy = sorted[0].sha.slice(0, 9); g.fixedAt = sorted[0].date; g.firstFixedAt = sorted[sorted.length - 1].date; g.fixedLane = sorted[0].lane;
+  }
+  if (ev) {
+    g.verifiedBy = [...ev.tests, ...ev.acceptance].sort();
+    if (g.status === "FIXED-ON-MAIN") g.status = "VERIFIED";
+    else if (g.status === "OPEN" || g.status === "UNCONFIRMED" || g.status === "IN-BRANCH") g.trackNote = `${g.trackNote} Mentioned in ${g.verifiedBy[0]} but not cited by a commit on main; not marked VERIFIED.`.trim();
+  }
+}
+const isLive = (g) => g.status === "OPEN" || g.status === "UNCONFIRMED" || g.status === "IN-BRANCH";
+const effLane = (g) => (g.fixedLane && g.status !== "OPEN" ? g.fixedLane : g.lane);
+
 // ---- Output ------------------------------------------------------------------
 const esc = (s) => (s || "").replace(/\|/g, "\\|");
 const cut = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "..." : s);
@@ -256,29 +416,31 @@ const sevOrder = ["S1", "S2", "S3", "S4", "S?"];
 const gapNum = (id) => { const m = /(R?)(\d+)$/.exec(id); return m ? (m[1] ? 1000 : 0) + Number(m[2]) : 0; };
 const stamp = new Date().toISOString().slice(0, 10);
 
-const isLive = (g) => g.status === "OPEN" || g.status === "UNCONFIRMED";
 let reg = `# Gap register (phase 2 page audit)\n\nGenerated by \`node scripts/audit/build-gap-register.mjs\` on ${stamp}. Do not edit by hand: re-run the script as Round R reviews arrive.\n\n`;
 reg += `Sources: Round A gap rows in \`docs/audit/pages/<account>/*.md\`, Round R verdicts and MISSED rows in \`*-review.md\`.\n\n`;
 reg += `Status: **OPEN** (confirmed or not yet reviewed), **UNCONFIRMED** (a row or review says it needs a live or database check; still counted as open work), **CLOSED-SINCE** (a review says it is already fixed on main), **WRONG** (a review says the Round A claim is incorrect). Severity is the review's value where a review changed it (see the Severity column notes below the table). Source "A" = Round A, "R" = Round R MISSED row (ID contains R).\n\n`;
+reg += `Closure statuses (from git history since ${TRACK_SINCE}, see docs/audit/README.md): **IN-BRANCH** (a commit on an origin/chatgpt/chat-N lane branch cites the ID, not yet on main), **FIXED-ON-MAIN** (a commit on origin/main cites the ID; "Fixed by" is the latest citing commit), **VERIFIED** (FIXED-ON-MAIN plus a test under tests/ or an acceptance report under docs/audit/acceptance/ that names the ID; listed in the notes). A citation overrides OPEN, UNCONFIRMED and CLOSED-SINCE; WRONG stays WRONG. Open work = OPEN + UNCONFIRMED + IN-BRANCH.\n\n`;
 reg += `Proposed lanes: TPO recruiters, companies, campaigns, inbox-team -> chat-2; TPO drives, drive-workspace, batches, students, requests-verification -> chat-5; TPO home, settings-audit, calendar-reports, college/*, superadmin/* -> chat-9; recruiter, learner, faculty, mentor, public -> chat-7 (chat-4 can take over faculty, chat-11 mentor/projects).\n\n`;
 
 const totals = {};
 for (const account of ACCOUNTS) {
   const ag = gaps.filter((g) => g.account === account).sort((a, b) => a.page.localeCompare(b.page) || gapNum(a.id) - gapNum(b.id));
-  const t = { total: ag.length, S1: 0, S2: 0, S3: 0, S4: 0, "S?": 0, OPEN: 0, UNCONFIRMED: 0, "CLOSED-SINCE": 0, WRONG: 0, openLive: 0, openBySev: { S1: 0, S2: 0, S3: 0, S4: 0, "S?": 0 }, roundA: 0, missed: 0 };
+  const t = { total: ag.length, S1: 0, S2: 0, S3: 0, S4: 0, "S?": 0, ...Object.fromEntries(STATUSES.map((x) => [x, 0])), openLive: 0, openBySev: { S1: 0, S2: 0, S3: 0, S4: 0, "S?": 0 }, roundA: 0, missed: 0 };
   for (const g of ag) { t[g.severity]++; t[g.status]++; if (isLive(g)) { t.openLive++; t.openBySev[g.severity]++; } g.source === "A" ? t.roundA++ : t.missed++; }
   totals[account] = t;
   reg += `## ${account} (${t.total} rows: ${t.roundA} Round A + ${t.missed} MISSED; ${t.openLive} open or unconfirmed)\n\n`;
-  reg += "| ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file |\n|---|---|---|---|---|---|---|---|\n";
+  reg += "| ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |\n|---|---|---|---|---|---|---|---|---|\n";
   for (const g of ag) {
     const sev = g.severity + (g.severity_note ? "*" : "");
-    reg += `| ${g.id} | ${g.page} | ${esc(cut(g.gap, 140))} | ${esc(g.type)} | ${sev} | ${g.status} | ${g.lane} | ${g.file.replace("docs/audit/pages/", "")} |\n`;
+    reg += `| ${g.id} | ${g.page} | ${esc(cut(g.gap, 140))} | ${esc(g.type)} | ${sev} | ${g.status} | ${g.lane} | ${g.file.replace("docs/audit/pages/", "")} | ${g.fixedBy ? (g.status === "IN-BRANCH" ? g.fixedLane + ":" : "") + g.fixedBy : ""} |\n`;
   }
-  const withNotes = ag.filter((g) => g.severity_note || ((g.status === "WRONG" || g.status === "CLOSED-SINCE") && g.review_note));
+  const withNotes = ag.filter((g) => g.severity_note || ((g.status === "WRONG" || g.status === "CLOSED-SINCE") && g.review_note) || g.trackNote || g.verifiedBy.length);
   if (withNotes.length) {
     reg += `\nReview notes (\`*\` after a severity marks a review severity change):\n\n`;
     for (const g of withNotes) {
       if (g.severity_note) reg += `- ${g.id} severity_note: ${cut(g.severity_note, 300)}\n`;
+      if (g.trackNote) reg += `- ${g.id} tracker: ${g.trackNote}\n`;
+      if (g.verifiedBy.length) reg += `- ${g.id} verified by: ${g.verifiedBy.join(", ")}\n`;
       if (g.status === "WRONG" || g.status === "CLOSED-SINCE") reg += `- ${g.id} ${g.status}: ${cut(g.review_note, 300)}\n`;
     }
   }
@@ -287,17 +449,47 @@ for (const account of ACCOUNTS) {
 fs.writeFileSync(outRegister, reg.replace(/\n{3,}/g, "\n\n"));
 
 // PROGRESS
+const nowIso = new Date().toISOString();
+function cnt(list) { const c = Object.fromEntries(STATUSES.map((x) => [x, 0])); c.total = list.length; for (const g of list) c[g.status]++; return c; }
+function trackerSections() {
+  let o = `## Closure status (git citations since ${TRACK_SINCE})\n\nOpen work = OPEN + UNCONFIRMED + IN-BRANCH. Closed % = (FIXED-ON-MAIN + VERIFIED + CLOSED-SINCE) / (all rows minus WRONG). How statuses work: \`docs/audit/README.md\`.\n\n`;
+  const row = (label, list) => { const c = cnt(list); return `| ${label} | ${c.total} | ${STATUSES.map((k) => c[k]).join(" | ")} | ${pctClosed(c)} |\n`; };
+  const head = (first) => `| ${first} | Rows | ${STATUSES.join(" | ")} | Closed % |\n|${"---|".repeat(STATUSES.length + 3)}\n`;
+  o += `### By account\n\n` + head("Account") + ACCOUNTS.map((a) => row(a, gaps.filter((g) => g.account === a))).join("") + row("**all**", gaps) + "\n";
+  o += `### By severity\n\n` + head("Severity") + sevOrder.filter((v) => gaps.some((g) => g.severity === v)).map((v) => row(v, gaps.filter((g) => g.severity === v))).join("") + "\n";
+  const lanes = [...new Set(gaps.map(effLane))].sort();
+  o += `### By lane\n\nLane = the lane branch for IN-BRANCH gaps, else the proposed lane.\n\n` + head("Lane") + lanes.map((l) => row(l, gaps.filter((g) => effLane(g) === l))).join("") + "\n";
+  o += `### Throughput per lane\n\nGaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (${nowIso}).\n\n`;
+  const day = (d) => d.slice(0, 10);
+  const fixedGaps = gaps.filter((g) => g.firstFixedAt && (g.status === "FIXED-ON-MAIN" || g.status === "VERIFIED" || g.status === "IN-BRANCH"));
+  const days = [...new Set(fixedGaps.map((g) => day(g.firstFixedAt)))].sort();
+  const since24 = Date.now() - 24 * 3600 * 1000;
+  o += `| Lane | Last 24 h | ${days.join(" | ")} | Total |\n|---|---|${days.map(() => "---|").join("")}---|\n`;
+  for (const l of lanes) {
+    const fl = fixedGaps.filter((g) => effLane(g) === l);
+    if (!fl.length) continue;
+    o += `| ${l} | ${fl.filter((g) => Date.parse(g.firstFixedAt) >= since24).length} | ${days.map((d) => fl.filter((g) => day(g.firstFixedAt) === d).length).join(" | ")} | ${fl.length} |\n`;
+  }
+  o += `| **all** | ${fixedGaps.filter((g) => Date.parse(g.firstFixedAt) >= since24).length} | ${days.map((d) => fixedGaps.filter((g) => day(g.firstFixedAt) === d).length).join(" | ")} | ${fixedGaps.length} |\n\n`;
+  const recent = gaps.filter((g) => g.status === "FIXED-ON-MAIN" || g.status === "VERIFIED").sort((a, b) => (a.fixedAt < b.fixedAt ? 1 : -1)).slice(0, 20);
+  o += `### 20 most recent fixes on main\n\n| ID | Severity | Status | Fixed by | Date |\n|---|---|---|---|---|\n` + recent.map((g) => `| ${g.id} | ${g.severity} | ${g.status} | ${g.fixedBy} | ${g.fixedAt.slice(0, 16).replace("T", " ")} |\n`).join("") + "\n";
+  const tr = parseIssues.filter((i, k, a) => a.findIndex((x) => x.kind === i.kind && x.id === i.id) === k);
+  o += `### Citation parse problems\n\n${tr.length ? tr.slice(0, 80).map((i) => `- ${i.kind}: ${i.id} (${i.where})`).join("\n") + (tr.length > 80 ? `\n- ... ${tr.length - 80} more` : "") : "None."}\n\n`;
+  return o;
+}
+const pctClosed = (t) => { const d = t.total - t.WRONG; return d > 0 ? (((t["FIXED-ON-MAIN"] + t.VERIFIED + t["CLOSED-SINCE"]) / d) * 100).toFixed(1) + "%" : "n/a"; };
 const sum = (f) => ACCOUNTS.reduce((a, k) => a + f(totals[k]), 0);
 let pr = `# Phase 2 audit progress\n\nGenerated by \`node scripts/audit/build-gap-register.mjs\` on ${stamp}. Re-run after each review lands. Detail: \`gap-register.md\`; decisions: \`owner-decisions.md\`; live checks: \`live-check-list.md\`.\n\n`;
 pr += `Rounds: Round 0 done; Round A done for all accounts; Round R (independent adversarial review per page) in progress. Re-audit threshold: discrepancy rate above 15%.\n\n`;
-pr += `## Counts per account\n\n| Account | Pages audited | Pages reviewed | Rows | Round A | MISSED | S1 | S2 | S3 | S4 | OPEN | UNCONFIRMED | CLOSED-SINCE | WRONG | Open + unconfirmed |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n`;
+pr += `## Counts per account\n\n| Account | Pages audited | Pages reviewed | Rows | Round A | MISSED | S1 | S2 | S3 | S4 | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | CLOSED-SINCE | WRONG | Open work | Closed % |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n`;
 for (const a of ACCOUNTS) {
   const t = totals[a]; const ps = pages.filter((p) => p.account === a);
-  pr += `| ${a} | ${ps.length} | ${ps.filter((p) => p.reviewFile).length} | ${t.total} | ${t.roundA} | ${t.missed} | ${t.S1} | ${t.S2} | ${t.S3} | ${t.S4} | ${t.OPEN} | ${t.UNCONFIRMED} | ${t["CLOSED-SINCE"]} | ${t.WRONG} | ${t.openLive} |\n`;
+  pr += `| ${a} | ${ps.length} | ${ps.filter((p) => p.reviewFile).length} | ${t.total} | ${t.roundA} | ${t.missed} | ${t.S1} | ${t.S2} | ${t.S3} | ${t.S4} | ${t.OPEN} | ${t["IN-BRANCH"]} | ${t["FIXED-ON-MAIN"]} | ${t.VERIFIED} | ${t.UNCONFIRMED} | ${t["CLOSED-SINCE"]} | ${t.WRONG} | ${t.openLive} | ${pctClosed(t)} |\n`;
 }
-pr += `| **all** | ${pages.length} | ${pages.filter((p) => p.reviewFile).length} | ${sum((t) => t.total)} | ${sum((t) => t.roundA)} | ${sum((t) => t.missed)} | ${sum((t) => t.S1)} | ${sum((t) => t.S2)} | ${sum((t) => t.S3)} | ${sum((t) => t.S4)} | ${sum((t) => t.OPEN)} | ${sum((t) => t.UNCONFIRMED)} | ${sum((t) => t["CLOSED-SINCE"])} | ${sum((t) => t.WRONG)} | ${sum((t) => t.openLive)} |\n\n`;
+pr += `| **all** | ${pages.length} | ${pages.filter((p) => p.reviewFile).length} | ${sum((t) => t.total)} | ${sum((t) => t.roundA)} | ${sum((t) => t.missed)} | ${sum((t) => t.S1)} | ${sum((t) => t.S2)} | ${sum((t) => t.S3)} | ${sum((t) => t.S4)} | ${sum((t) => t.OPEN)} | ${sum((t) => t["IN-BRANCH"])} | ${sum((t) => t["FIXED-ON-MAIN"])} | ${sum((t) => t.VERIFIED)} | ${sum((t) => t.UNCONFIRMED)} | ${sum((t) => t["CLOSED-SINCE"])} | ${sum((t) => t.WRONG)} | ${sum((t) => t.openLive)} | ${pctClosed(cnt(gaps))} |\n\n`;
 pr += `Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 ${sum((t) => t.openBySev.S1)}, S2 ${sum((t) => t.openBySev.S2)}, S3 ${sum((t) => t.openBySev.S3)}, S4 ${sum((t) => t.openBySev.S4)}${sum((t) => t.openBySev["S?"]) ? `, unparsed ${sum((t) => t.openBySev["S?"])}` : ""}.\n\n`;
 
+pr += trackerSections();
 pr += `## Per page\n\n| Account | Page | Audited | Reviewed | Rows | S1 | S2 | S3 | S4 | Open + unconfirmed | Discrepancy rate | Over 15% |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n`;
 const rateOf = (p) => reviews.find((r) => r.targets.includes(p));
 const over = [];
@@ -340,6 +532,39 @@ const uniq = [...new Set(notes)];
 pr += uniq.length ? uniq.map((n) => `- ${n}`).join("\n") + "\n" : "No parse issues.\n";
 pr += `\nParsing rules: gap tables are any table whose header is ID/Gap/Type/Severity (or Sev); the last four cells are Type, Severity, Legacy evidence, vNext evidence so a stray pipe in the gap text is tolerated. Review verdict IDs written as \`-NN\` or \`NN\` are resolved inside the matching Round A file. WRONG verdicts become CLOSED-SINCE when the note says closed, stale, fixed, built or already present on main, otherwise WRONG. A Round A row or review verdict that says UNCONFIRMED (or live check pending) gives status UNCONFIRMED. Review severity changes are read from "S<old> to S<new>" in the verdict row.\n`;
 fs.writeFileSync(outProgress, pr);
+
+// ---- tracker-data.json, tracker-summary.json, progress-history.csv -----------
+const trackerData = gaps.map((g) => ({
+  id: g.id, page: g.page, account: g.account, type: g.type, severity: g.severity, status: g.status,
+  lane: effLane(g), proposedLane: g.lane, source: g.source, fixedBy: g.fixedBy || null, fixedAt: g.fixedAt || null,
+  verifiedBy: g.verifiedBy, reviewStatus: g.reviewStatus, note: g.trackNote || null,
+})).sort((a, b) => a.account.localeCompare(b.account) || a.page.localeCompare(b.page) || gapNum(a.id) - gapNum(b.id));
+const laneList = [...new Set(gaps.map(effLane))].sort();
+const summary = {
+  generatedAt: nowIso, since: TRACK_SINCE, mainRef: MAIN_REF, statuses: STATUSES,
+  total: gaps.length, byStatus: cnt(gaps), closedPercent: pctClosed(cnt(gaps)),
+  byAccount: Object.fromEntries(ACCOUNTS.map((a) => [a, cnt(gaps.filter((g) => g.account === a))])),
+  bySeverity: Object.fromEntries(sevOrder.filter((v) => gaps.some((g) => g.severity === v)).map((v) => [v, cnt(gaps.filter((g) => g.severity === v))])),
+  byLane: Object.fromEntries(laneList.map((l) => [l, cnt(gaps.filter((g) => effLane(g) === l))])),
+  fixedLast24h: Object.fromEntries(laneList.map((l) => [l, gaps.filter((g) => effLane(g) === l && g.firstFixedAt && ["FIXED-ON-MAIN", "VERIFIED", "IN-BRANCH"].includes(g.status) && Date.parse(g.firstFixedAt) >= Date.now() - 864e5).length])),
+  parseProblems: parseIssues.length,
+};
+fs.writeFileSync(path.join(root, "docs", "audit", "tracker-data.json"), JSON.stringify(trackerData, null, 1) + "\n");
+fs.writeFileSync(path.join(root, "docs", "audit", "tracker-summary.json"), JSON.stringify(summary, null, 1) + "\n");
+{
+  const histFile = path.join(root, "docs", "audit", "progress-history.csv");
+  const hdr = "date,time,dimension,key,total," + STATUSES.join(",") + ",closed_pct\n";
+  const rows = [["all", "all", cnt(gaps)]];
+  for (const a of ACCOUNTS) rows.push(["account", a, cnt(gaps.filter((g) => g.account === a))]);
+  for (const v of sevOrder) if (gaps.some((g) => g.severity === v)) rows.push(["severity", v, cnt(gaps.filter((g) => g.severity === v))]);
+  for (const l of laneList) rows.push(["lane", l, summary.byLane[l]]);
+  const lineOf = (d, t, [dim, key, c]) => [d, t, dim, key, c.total, ...STATUSES.map((k) => c[k]), pctClosed(c).replace("%", "")].join(",");
+  const old = fs.existsSync(histFile) ? fs.readFileSync(histFile, "utf8") : "";
+  const lastBlock = old.split("\n").filter((l) => l && !l.startsWith("date,")).slice(-rows.length);
+  const fresh = rows.map((r) => lineOf("", "", r).split(",").slice(2).join(","));
+  const unchanged = lastBlock.length === rows.length && lastBlock.map((l) => l.split(",").slice(2).join(",")).join("\n") === fresh.join("\n");
+  if (!unchanged) fs.writeFileSync(histFile, (old || hdr) + rows.map((r) => lineOf(nowIso.slice(0, 10), nowIso.slice(11, 19), r)).join("\n") + "\n");
+}
 
 
 // ---- live-check-list.md -------------------------------------------------------
@@ -432,7 +657,8 @@ fs.writeFileSync(path.join(root, "docs", "audit", "live-check-list.md"), ll);
 console.log(`live-check items: ${items.length} (A ${items.filter((i) => bucketOf(i.text) === "A").length}, B ${items.filter((i) => bucketOf(i.text) === "B").length}, C ${items.filter((i) => bucketOf(i.text) === "C").length}, D ${items.filter((i) => bucketOf(i.text) === "D").length})`);
 
 // console summary
-console.log("account      rows  roundA missed  S1  S2  S3  S4  open  unconf closed wrong");
-for (const a of ACCOUNTS) { const t = totals[a]; console.log(`${a.padEnd(12)} ${String(t.total).padStart(4)} ${String(t.roundA).padStart(6)} ${String(t.missed).padStart(6)} ${String(t.S1).padStart(3)} ${String(t.S2).padStart(3)} ${String(t.S3).padStart(3)} ${String(t.S4).padStart(3)} ${String(t.OPEN).padStart(5)} ${String(t.UNCONFIRMED).padStart(6)} ${String(t["CLOSED-SINCE"]).padStart(6)} ${String(t.WRONG).padStart(5)}`); }
+console.log("account      rows  roundA missed  S1  S2  S3  S4  open inbr  fixed verif unconf closed wrong");
+for (const a of ACCOUNTS) { const t = totals[a]; console.log(`${a.padEnd(12)} ${String(t.total).padStart(4)} ${String(t.roundA).padStart(6)} ${String(t.missed).padStart(6)} ${String(t.S1).padStart(3)} ${String(t.S2).padStart(3)} ${String(t.S3).padStart(3)} ${String(t.S4).padStart(3)} ${String(t.OPEN).padStart(5)} ${String(t["IN-BRANCH"]).padStart(4)} ${String(t["FIXED-ON-MAIN"]).padStart(6)} ${String(t.VERIFIED).padStart(5)} ${String(t.UNCONFIRMED).padStart(6)} ${String(t["CLOSED-SINCE"]).padStart(6)} ${String(t.WRONG).padStart(5)}`); }
 console.log(`ALL          ${sum((t) => t.total)} (roundA ${sum((t) => t.roundA)}, missed ${sum((t) => t.missed)}); S1 ${sum((t) => t.S1)} S2 ${sum((t) => t.S2)} S3 ${sum((t) => t.S3)} S4 ${sum((t) => t.S4)}; reviews ${reviews.length}/${pages.length}`);
+console.log("status counts: " + STATUSES.map((k) => k + " " + cnt(gaps)[k]).join(", ") + `; closed ${pctClosed(cnt(gaps))}; citation parse problems ${parseIssues.length}`);
 console.log(`parser notes: ${uniq.length}; count mismatches: ${mism}`);
