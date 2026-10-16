@@ -27,5 +27,5 @@ export const placementDriveSelections = pgTable("placement_drive_selections", {
   index("placement_drive_selections_job_status_idx").on(t.jobId, t.status),
   check("placement_drive_selections_status_ck", sql`${t.status} in ('SELECTED','VERIFIED','RELEASED')`),
   check("placement_drive_selections_ctc_ck", sql`${t.annualCtcInr} is null or ${t.annualCtcInr} between 0 and 100000000`),
-  check("placement_drive_selections_verified_ck", sql`(${t.status} = 'SELECTED' and ${t.verifiedAt} is null and ${t.releasedAt} is null and ${t.releasedOfferId} is null) or (${t.status} = 'VERIFIED' and ${t.verifiedAt} is not null and ${t.releasedAt} is null) or (${t.status} = 'RELEASED' and ${t.verifiedAt} is not null and ${t.releasedOfferId} is not null and ${t.releasedAt} is not null)`),
+  check("placement_drive_selections_verified_ck", sql`(${t.status} = 'SELECTED' and ${t.verifiedAt} is null and ${t.releasedAt} is null and ${t.releasedOfferId} is null) or (${t.status} = 'VERIFIED' and ${t.verifiedAt} is not null and ${t.releasedAt} is null and ${t.releasedOfferId} is null) or (${t.status} = 'RELEASED' and ${t.verifiedAt} is not null and ${t.releasedOfferId} is not null and ${t.releasedAt} is not null)`),
 ]);
