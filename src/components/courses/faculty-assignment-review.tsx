@@ -483,9 +483,17 @@ export function FacultyAssignmentReview({
   const [pagination,setPagination] = useState<FacultySubmissionReviewResponse|null>(null);
   const loadSequence = useRef(0);
 
-  if (status !== "PUBLISHED") {
-    return null;
-  }
+  if(status==="ARCHIVED")return null;
+  if(status==="DRAFT")return <div className="mt-3">
+    <Button type="button" size="sm" variant="secondary"
+      onClick={()=>setOpen(true)}>View submissions</Button>
+    <Drawer open={open} onOpenChange={setOpen} title="Assignment submissions"
+      description="Draft assignments are hidden from learners.">
+      <p role="status" className="text-sm text-muted-foreground">
+        No submissions yet. Publish this assignment to allow students to submit work.
+      </p>
+    </Drawer>
+  </div>;
 
   async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
     const sequence = ++loadSequence.current;
