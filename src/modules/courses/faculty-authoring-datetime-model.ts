@@ -18,6 +18,7 @@ export function authoringDueInstant(local: string): string | null {
 export function assignmentActionAvailable(status:string|null,action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE"){
  if(action==="CREATE")return status===null;
  if(status===null||status==="ARCHIVED")return false;
- if(action==="EDIT"||action==="PUBLISH")return status==="DRAFT";
+ if(action==="EDIT")return status==="DRAFT"||status==="PUBLISHED";
+ if(action==="PUBLISH")return status==="DRAFT";
  return status==="DRAFT"||status==="PUBLISHED";
 }
