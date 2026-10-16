@@ -22,6 +22,8 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
   const rows = await getDb().select({
     id: electiveSlots.id,
     name: electiveSlots.name,
+    description: electiveSlots.description,
+    version: electiveSlots.version,
     programId: programs.id,
     programName: programs.name,
     semesterNumber: electiveSlots.semesterNumber,
