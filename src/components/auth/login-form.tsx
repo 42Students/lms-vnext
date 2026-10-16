@@ -257,6 +257,14 @@ export function LoginForm({
           >
             {busy ? "Sending code…" : "Send code"}
           </Button>
+          <p className="text-xs leading-5 text-muted-foreground">
+            By continuing, you agree to the{" "}
+            <a className="text-primary-text underline" href="/assets/static/terms-and-conditions-view.html"
+              target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+            {" "}and acknowledge the{" "}
+            <a className="text-primary-text underline" href="/assets/static/privacy-policy-view.html"
+              target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+          </p>
         </form>
       ) : (
         <form onSubmit={verify} className="mt-5 space-y-4" noValidate>
