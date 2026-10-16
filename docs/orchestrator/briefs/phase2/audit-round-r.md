@@ -1,0 +1,16 @@
+# Phase 2 Round R: adversarial re-audit brief (read-only agents)
+
+You are the REVIEWER for ONE audited page group. A different agent already wrote a Round A audit for it. Your job is to find what that audit MISSED or got WRONG, by re-auditing the same legacy code independently first. Read `docs/planning/phase-2-page-audit-plan.md` sections 2 to 7 and `AGENTS.md`, and `docs/orchestrator/briefs/phase2/audit-round-a.md` (method, sources, gap types and severities, ID rules).
+
+## Hard rule: independence
+1. DO NOT open the Round A audit file (`docs/audit/pages/<account>/<slug>*.md`) until step 4. Do not open other Round A files of the same account before step 4 either.
+2. Step 1 to 3 are your own audit: read the legacy page closure and backend (file:line for every claim), read the vNext equivalent, and write your own gap list into the review file (below) with a temporary ID scheme `R-<n>`.
+3. Pay extra attention to what auditors usually skip: every modal field and its validation message, empty/error/loading states, success/failure toast text, keyboard and responsive behaviour, permission and scope rules on each API (who may call it, college scoping), audit events, notifications and emails sent, counters and derived numbers, exports (columns, file names), URL/query state, confirm dialogs, bulk-action preview/undo, and anything behind feature flags or roles. Also check for FALSE gaps: things the vNext code already does.
+4. Only then open the Round A file for the same page group and diff. For each Round A gap: CONFIRMED, WRONG (vNext already does it, or legacy does not), or SEVERITY-CHANGE (with reason). For each of your gaps not in Round A: MISSED (add it).
+5. Record the discrepancy rate = (MISSED + WRONG + SEVERITY-CHANGE) / (Round A gaps + MISSED).
+
+## Output
+Write `docs/audit/pages/<account>/<slug>-review.md` (same folder as the audit) with: (1) summary line with counts and discrepancy rate; (2) table `Round A gap ID | verdict | note`; (3) table of MISSED gaps using IDs `<A-ID-prefix>-R<nn>` (for example `TPO-batches-R01`) with Gap, Type, Severity, Legacy evidence, vNext evidence; (4) WRONG/SEVERITY-CHANGE details; (5) UNCONFIRMED items and how to confirm (batch them for the later live check on the deployed dev site). Commit only that file: `git fetch origin`, `git add <file>`, `git commit -m "docs(audit): phase 2 round R <account>/<slug>" -- <file>` (end the message with `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`), `git rebase origin/main` (if that fails, `git push` anyway with `git push origin HEAD:main` after `git fetch`), `git push origin HEAD:main`. Never use broad adds; leave untracked `.claude/`, `sticky-notes/`, `scripts/orchestrator/lane-watch.sh`, `scripts/verify/route-sweep.mjs`, `tsconfig.tsbuildinfo` alone. If a merge is in progress in the checkout, commit from a temporary git worktree and remove it afterwards.
+
+## Limits
+Read-only: no dev servers, tests, builds or databases. Keep memory low. Legacy source: `_hr-tpo-fe` and `42LMS-BACKEND\lms` worktrees at lms-dev-2026 (the ref may not resolve in the 42lms root; use the worktree checkouts, `42LMS-FRONTEND\lms2-fe` for learner/faculty/mentor/college). Final report (<= 12 lines): file written, counts (confirmed / wrong / severity-change / missed), discrepancy rate, top 3 MISSED gaps.
