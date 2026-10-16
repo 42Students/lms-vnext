@@ -49,6 +49,7 @@ export async function updateOwnLearnerContacts(
 
     const [user] = await tx.select({
       status: users.platformStatus,
+      phoneE164: users.phoneE164,
     }).from(users).where(eq(users.id, context.user.id))
       .for("share").limit(1);
     const [role] = await tx.select({ id: membershipRoles.id })
@@ -61,6 +62,14 @@ export async function updateOwnLearnerContacts(
       throw new AuthorizationError("profile.self.manage");
     }
 
+    const alternate = input.contacts.alternatePhone.replace(/\D/g,"");
+    const primary = (user.phoneE164??"").replace(/\D/g,"").slice(-10);
+    if (alternate && (alternate.length < 10 || alternate.length > 15)) {
+      throw new PeopleServiceError("ALTERNATE_PHONE_INVALID");
+    }
+    if (alternate && primary && alternate.slice(-10) === primary) {
+      throw new PeopleServiceError("ALTERNATE_PHONE_SAME_AS_PRIMARY");
+    }
     // One locked profile row prevents same-contact lost updates while still
     // allowing unrelated profile sections to merge through jsonb_set.
     await tx.insert(learnerProfiles).values({
