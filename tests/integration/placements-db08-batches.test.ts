@@ -107,6 +107,14 @@ afterEach(async () => {
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='SECTION' AND scope_id = ANY($1::uuid[])", [f.sections]);
   }
   if (f.cohorts.length) {
+    await pool.query(
+      "DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE event_type IN ('BATCH_INVITED','BATCH_REGISTRATION_REOPENED') AND subject_id = ANY($1::text[]))",
+      [f.cohorts],
+    );
+    await pool.query(
+      "DELETE FROM activity_events WHERE event_type IN ('BATCH_INVITED','BATCH_REGISTRATION_REOPENED') AND subject_id = ANY($1::text[])",
+      [f.cohorts],
+    );
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='COHORT' AND scope_id = ANY($1::uuid[])", [f.cohorts]);
     await pool.query("DELETE FROM placement_batch_lifecycles WHERE cohort_id = ANY($1::uuid[])", [f.cohorts]);
   }
@@ -250,6 +258,123 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     })).rejects.toMatchObject({ code: "DB08_ACTION_STALE" });
   });
 
+  it("sends in-app invitation to eligible unregistered learners only, once", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const eligible = await makeLearner(SEED_IDS.collegeA, a);
+    const ineligible = await makeLearner(SEED_IDS.collegeA, a);
+    await decidePlacementParticipation(admin, {
+      collegeId: SEED_IDS.collegeA, changes: [
+        { scopeType: "MEMBERSHIP", scopeId: eligible, status: "ELIGIBLE" },
+        { scopeType: "MEMBERSHIP", scopeId: ineligible,
+          status: "INELIGIBLE", reason: "Not participating" },
+      ],
+    });
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2027-01-01T18:29:59.999Z", rulesOverride: null,
+    });
+    await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    const results = await pool.query(
+      "SELECT a.metadata, n.user_id FROM activity_events a LEFT JOIN in_app_notifications n ON n.event_id=a.id WHERE a.event_type='BATCH_INVITED' AND a.subject_id=$1",
+      [a.cohortId],
+    );
+    expect(results.rows).toHaveLength(1);
+    expect(results.rows[0].metadata.appRecipients).toBe(1);
+    const delivered = await pool.query(
+      "SELECT user_id,title,action_href FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1 AND event_type='BATCH_INVITED')",
+      [a.cohortId],
+    );
+    expect(delivered.rows).toHaveLength(1);
+    expect(delivered.rows[0].title).toBe("Placement registration is open");
+    expect(delivered.rows[0].action_href).toBe("/learn/placements");
+  });
+
+  it("rejects an invitation if another writer moved its deadline after settings were saved", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const first = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2026-12-20T18:29:59.999Z",
+      rulesOverride: null,
+    });
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2026-12-22T18:29:59.999Z",
+      rulesOverride: null, expectedVersion: first.updatedAt.toISOString(),
+    });
+    await expect(markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      expectedVersion: first.updatedAt.toISOString(),
+    })).rejects.toMatchObject({ code: "DB08_ACTION_STALE" });
+    const row = await pool.query(
+      "SELECT invited_at FROM placement_batch_lifecycles WHERE cohort_id=$1", [a.cohortId],
+    );
+    expect(row.rows[0].invited_at).toBeNull();
+  });
+
+  it("tells unregistered eligible students when reopening an expired invitation", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const learner = await makeLearner(SEED_IDS.collegeA, a);
+    await decidePlacementParticipation(admin, {
+      collegeId: SEED_IDS.collegeA,
+      changes: [{ scopeType: "MEMBERSHIP", scopeId: learner, status: "ELIGIBLE" }],
+    });
+    const future = new Date(Date.now() + 86400000 * 2);
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: future, rulesOverride: null,
+    });
+    await markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+    });
+    await pool.query(
+      "UPDATE placement_batch_lifecycles SET registration_deadline=now()-interval '1 day' WHERE cohort_id=$1",
+      [a.cohortId],
+    );
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: future, rulesOverride: null,
+    });
+    const event = await pool.query(
+      "SELECT a.metadata,count(n.id)::int AS deliveries FROM activity_events a LEFT JOIN in_app_notifications n ON n.event_id=a.id WHERE a.event_type='BATCH_REGISTRATION_REOPENED' AND a.subject_id=$1 GROUP BY a.id",
+      [a.cohortId],
+    );
+    expect(event.rows).toHaveLength(1);
+    expect(event.rows[0].metadata.appRecipients).toBe(1);
+    expect(event.rows[0].deliveries).toBe(1);
+  });
+
+  it("enforces optimistic deadline changes, preserves rules, and can clear the deadline", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const initial = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2026-12-10T18:29:59.999Z",
+      rulesOverride: { maxOffers: 1 }, expectedVersion: "none",
+    });
+    await expect(upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: null, rulesOverride: null,
+      expectedVersion: "none",
+    })).rejects.toMatchObject({ code: "DB08_ACTION_STALE" });
+    const cleared = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: null, rulesOverride: initial.rulesOverride,
+      expectedVersion: initial.updatedAt.toISOString(),
+    });
+    expect(cleared.registrationDeadline).toBeNull();
+    expect(cleared.rulesOverride).toEqual({ maxOffers: 1 });
+    await expect(markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+    })).rejects.toMatchObject({ code: "DB08_ACTION_INVALID" });
+    const reopened = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2027-01-01T18:29:59.999Z",
+      rulesOverride: cleared.rulesOverride,
+      expectedVersion: cleared.updatedAt.toISOString(),
+    });
+    expect(reopened.registrationDeadline).not.toBeNull();
+  });
+
   it("keeps batch settings and finish state separate for each cohort", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
     const b = await makeAcademicFixture(SEED_IDS.collegeA);
@@ -262,6 +387,18 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
       registrationDeadline: "2026-12-20T18:30:00+05:30", rulesOverride: null,
     });
     await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    const [inviteEvent] = (await pool.query(
+      "SELECT event_type,metadata FROM activity_events WHERE subject_type='COHORT' AND subject_id=$1 AND event_type='BATCH_INVITED'",
+      [a.cohortId],
+    )).rows;
+    expect(inviteEvent?.event_type).toBe("BATCH_INVITED");
+    expect(inviteEvent?.metadata?.registrationDeadline).toBeTruthy();
+    await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    const inviteCount = await pool.query(
+      "SELECT count(*)::int AS n FROM activity_events WHERE subject_type='COHORT' AND subject_id=$1 AND event_type='BATCH_INVITED'",
+      [a.cohortId],
+    );
+    expect(inviteCount.rows[0].n).toBe(1);
     await markPlacementBatchFinished(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
     await expect(markPlacementBatchFinished(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: b.cohortId,

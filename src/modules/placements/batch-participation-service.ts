@@ -4,11 +4,14 @@ import {
   asc,
   desc,
   eq,
+  inArray,
   or,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
+  activityEvents,
+  inAppNotifications,
   cohorts,
   collegeMemberships,
   colleges,
@@ -18,12 +21,15 @@ import {
   programs,
   sectionEnrollments,
   sections,
+  users,
+  placementApplications,
 } from "@/db/schema";
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import {
   placementBatchLifecycles,
   placementEligibilityEvents,
 } from "@/db/schema/placement-batches";
+import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import {
   hasMembershipRole,
   type RequestContext,
@@ -70,10 +76,14 @@ const cohortInput = z.object({
   collegeId: uuid,
   cohortId: uuid,
 }).strict();
+const inviteCohortInput = cohortInput.extend({
+  expectedVersion: z.string().min(1).max(80).optional(),
+}).strict();
 const batchSettingsInput = cohortInput.extend({
   registrationDeadline: z.coerce.date().nullable(),
   // null means inherit the college's placement rules, never an empty override.
   rulesOverride: z.record(z.string(), z.unknown()).nullable(),
+  expectedVersion: z.string().min(1).max(80).optional(),
 }).strict();
 
 type Scope = z.infer<typeof scope>;
@@ -449,6 +459,16 @@ export async function upsertPlacementBatchSettings(
       .where(eq(placementBatchLifecycles.cohortId, input.cohortId))
       .limit(1);
     if (current?.finishedAt) throw new PlacementBatchError("DB08_ACTION_INVALID");
+    if (input.expectedVersion !== undefined &&
+        (current?.updatedAt.toISOString() ?? "none") !== input.expectedVersion)
+      throw new PlacementBatchError("DB08_ACTION_STALE");
+    const now = new Date();
+    const reopenAndTell = Boolean(
+      current?.invitedAt && current.registrationDeadline &&
+      current.registrationDeadline.getTime() <= now.getTime() &&
+      input.registrationDeadline &&
+      input.registrationDeadline.getTime() > now.getTime(),
+    );
 
     const [row] = await tx.insert(placementBatchLifecycles).values({
       cohortId: input.cohortId,
@@ -466,7 +486,122 @@ export async function upsertPlacementBatchSettings(
         updatedAt: new Date(),
       },
     }).returning();
+    if (reopenAndTell) {
+      const recipientUserIds = await findUnchosenEligibleBatchStudents(
+        tx, input.collegeId, input.cohortId,
+      );
+      const [college] = await tx.select({ organizationId: colleges.organizationId })
+        .from(colleges).where(eq(colleges.id, input.collegeId)).limit(1);
+      if (!college) throw new PlacementBatchError("DB08_SCOPE_COLLEGE_MISMATCH");
+      const [event] = await tx.insert(activityEvents).values({
+        organizationId: college.organizationId,
+        collegeId: input.collegeId,
+        actorUserId: context.user.id,
+        actorMembershipId: context.membership?.id ?? null,
+        module: "PLACEMENTS",
+        eventType: "BATCH_REGISTRATION_REOPENED",
+        subjectType: "COHORT",
+        subjectId: input.cohortId,
+        summary: "TPO reopened placement registration with a new deadline",
+        metadata: {
+          registrationDeadline: row.registrationDeadline?.toISOString() ?? null,
+          appRecipients: recipientUserIds.length,
+        },
+      }).returning({ id: activityEvents.id });
+      if (!event) throw new PlacementBatchError("DB08_ACTION_INVALID");
+      for (let offset = 0; offset < recipientUserIds.length; offset += 200) {
+        await tx.insert(inAppNotifications).values(
+          recipientUserIds.slice(offset, offset + 200).map(userId => ({
+            userId, eventId: event.id,
+            title: "Placement registration is open",
+            body: "Your placement cell reopened registration. Please record your choice before the new deadline.",
+            actionHref: "/learn/placements",
+          })),
+        ).onConflictDoNothing();
+      }
+    }
     return row;
+  });
+}
+
+
+/**
+ * Only eligible, active learners who have neither made an outcome choice nor
+ * applied to a drive receive the first invite. The college row lock used by
+ * DB08 decisions/registrations is already held by the caller.
+ */
+export async function findUnchosenEligibleBatchStudents(tx: Tx, collegeId: string, cohortId: string) {
+  const roster = await tx.select({
+    membershipId: collegeMemberships.id,
+    enrollmentId: learnerProgramEnrollments.id,
+    userId: users.id,
+  }).from(learnerProgramEnrollments)
+    .innerJoin(collegeMemberships, eq(collegeMemberships.id, learnerProgramEnrollments.membershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER"),
+    ))
+    .where(and(
+      eq(learnerProgramEnrollments.cohortId, cohortId),
+      eq(learnerProgramEnrollments.status, "ACTIVE"),
+      eq(collegeMemberships.collegeId, collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+      eq(users.platformStatus, "ACTIVE"),
+    ));
+  if (roster.length === 0) return [];
+  const memberIds = roster.map(row => row.membershipId);
+  const enrollmentIds = roster.map(row => row.enrollmentId);
+  const sectionRows = await tx.select({
+    enrollmentId: sectionEnrollments.learnerEnrollmentId,
+    sectionId: sections.id,
+  }).from(sectionEnrollments)
+    .innerJoin(sections, and(
+      eq(sections.id, sectionEnrollments.sectionId),
+      eq(sections.cohortId, cohortId),
+      eq(sections.status, "ACTIVE"),
+    ))
+    .where(and(eq(sectionEnrollments.status, "ACTIVE"),
+      inArray(sectionEnrollments.learnerEnrollmentId, enrollmentIds)));
+  const sectionIds = sectionRows.map(row => row.sectionId);
+  const decisions = await tx.select().from(placementEligibilityDecisions).where(and(
+    eq(placementEligibilityDecisions.collegeId, collegeId),
+    inArray(placementEligibilityDecisions.scopeId, [cohortId, ...memberIds, ...sectionIds]),
+  ));
+  const registrations = await tx.select({ membershipId: placementBatchRegistrations.membershipId })
+    .from(placementBatchRegistrations)
+    .where(and(eq(placementBatchRegistrations.collegeId, collegeId),
+      eq(placementBatchRegistrations.cohortId, cohortId),
+      inArray(placementBatchRegistrations.membershipId, memberIds)));
+  const applications = await tx.select({ membershipId: placementApplications.membershipId })
+    .from(placementApplications)
+    .where(inArray(placementApplications.membershipId, memberIds));
+  const alreadyChosen = new Set([
+    ...registrations.map(row => row.membershipId),
+    ...applications.map(row => row.membershipId),
+  ]);
+  const decisionsByScope = new Map(
+    decisions.map(row => [row.scopeType + ":" + row.scopeId, row] as const),
+  );
+  const sectionsByEnrollment = new Map<string, string[]>();
+  for (const row of sectionRows) {
+    sectionsByEnrollment.set(row.enrollmentId,
+      [...(sectionsByEnrollment.get(row.enrollmentId) ?? []), row.sectionId]);
+  }
+  const decisionFor = (scopeType: string, scopeId: string | null) => {
+    const row = scopeId ? decisionsByScope.get(scopeType + ":" + scopeId) : undefined;
+    return decisionView(row);
+  };
+  return roster.flatMap(row => {
+    if (alreadyChosen.has(row.membershipId)) return [];
+    const activeSections = sectionsByEnrollment.get(row.enrollmentId) ?? [];
+    if (activeSections.length > 1) return [];
+    const resolved = resolvePlacementParticipation({
+      learner: decisionFor("MEMBERSHIP", row.membershipId),
+      section: decisionFor("SECTION", activeSections[0] ?? null),
+      cohort: decisionFor("COHORT", cohortId),
+    });
+    return resolved.status === "ELIGIBLE" ? [row.userId] : [];
   });
 }
 
@@ -474,7 +609,7 @@ export async function markPlacementBatchInvited(
   context: RequestContext,
   raw: unknown,
 ) {
-  const input = cohortInput.parse(raw);
+  const input = inviteCohortInput.parse(raw);
   await requirePlacementManageScope(context, input.collegeId);
   return getDb().transaction(async (tx) => {
     await lockCollege(tx, input.collegeId);
@@ -482,14 +617,49 @@ export async function markPlacementBatchInvited(
     const [current] = await tx.select().from(placementBatchLifecycles)
       .where(eq(placementBatchLifecycles.cohortId, input.cohortId)).limit(1);
     if (!current) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
+    if (input.expectedVersion !== undefined && current.updatedAt.toISOString() !== input.expectedVersion)
+      throw new PlacementBatchError("DB08_ACTION_STALE");
     if (current.finishedAt) throw new PlacementBatchError("DB08_ACTION_INVALID");
-    if (current.invitedAt) return current;
+    if (current.invitedAt) return { ...current, notifiedCount: 0 };
+    if (!current.registrationDeadline || current.registrationDeadline.getTime() <= Date.now())
+      throw new PlacementBatchError("DB08_ACTION_INVALID");
     const [updated] = await tx.update(placementBatchLifecycles).set({
       invitedAt: new Date(),
       updatedByUserId: context.user.id,
       updatedAt: new Date(),
     }).where(eq(placementBatchLifecycles.cohortId, input.cohortId)).returning();
-    return updated;
+    if (!updated) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
+    const [college] = await tx.select({ organizationId: colleges.organizationId })
+      .from(colleges).where(eq(colleges.id, input.collegeId)).limit(1);
+    if (!college) throw new PlacementBatchError("DB08_SCOPE_COLLEGE_MISMATCH");
+    const recipientUserIds = await findUnchosenEligibleBatchStudents(tx, input.collegeId, input.cohortId);
+    const [invitationEvent] = await tx.insert(activityEvents).values({
+      organizationId: college.organizationId,
+      collegeId: input.collegeId,
+      actorUserId: context.user.id,
+      actorMembershipId: context.membership?.id ?? null,
+      module: "PLACEMENTS",
+      eventType: "BATCH_INVITED",
+      subjectType: "COHORT",
+      subjectId: input.cohortId,
+      summary: "TPO opened placement registration for a batch",
+      metadata: {
+        registrationDeadline: updated.registrationDeadline?.toISOString() ?? null,
+        appRecipients: recipientUserIds.length,
+      },
+    }).returning({ id: activityEvents.id });
+    if (!invitationEvent) throw new PlacementBatchError("DB08_ACTION_INVALID");
+    for (let offset = 0; offset < recipientUserIds.length; offset += 200) {
+      const users = recipientUserIds.slice(offset, offset + 200);
+      await tx.insert(inAppNotifications).values(users.map(userId => ({
+        userId,
+        eventId: invitationEvent.id,
+        title: "Placement registration is open",
+        body: "Your placement cell has invited you to register for placements.",
+        actionHref: "/learn/placements",
+      }))).onConflictDoNothing();
+    }
+    return { ...updated, notifiedCount: recipientUserIds.length };
   });
 }
 
