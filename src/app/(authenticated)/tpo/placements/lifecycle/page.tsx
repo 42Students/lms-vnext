@@ -130,7 +130,17 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 <p className="text-xs text-body">Deadline: {job.applicationDeadline
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>
-              <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-10 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open drive</Link>
+              <div className="flex flex-wrap items-center gap-2">
+                <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-10 items-center justify-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open drive</Link>
+                <details className="relative">
+                  <summary aria-label={"More actions for "+job.company+" "+job.title} className="flex min-h-10 cursor-pointer list-none items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">More ···</summary>
+                  <nav aria-label={"Drive links for "+job.title} className="absolute right-0 z-10 mt-1 min-w-48 space-y-1 rounded-md border border-border bg-surface p-2 shadow-lg">
+                    <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
+                    <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/rounds"}>Rounds and schedule</Link>
+                    <Link className="block rounded px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle" href={"/tpo/placements/jobs/"+job.id+"/offers"}>Offers</Link>
+                  </nav>
+                </details>
+              </div>
             </div></article>)}
         </section>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
