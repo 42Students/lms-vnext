@@ -57,12 +57,23 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
    totalRecipients:snapshot.recipientIds.length,
   }).returning({id:placementTpoEmailCampaigns.id});
   if(!campaign)throw new TpoCampaignDraftError("NOT_READY");
-  await tx.execute(sql`insert into placement_tpo_campaign_drafts
-    (campaign_id,college_id,title,subject,body,template_key,segment,
-     created_by_user_id)
+  const suppressionColumn=await tx.execute<{registered:boolean}>(sql`
+   select exists(select 1 from information_schema.columns where table_schema='public'
+    and table_name='placement_tpo_campaign_drafts' and column_name='suppression_counts') as registered`);
+  if(suppressionColumn.rows[0]?.registered){
+   await tx.execute(sql`insert into placement_tpo_campaign_drafts
+    (campaign_id,college_id,title,subject,body,template_key,segment,created_by_user_id,suppression_counts)
     values(${campaign.id}::uuid,${college.id}::uuid,${input.title}::varchar,
      ${input.subject}::varchar,${input.body}::text,${input.templateKey}::varchar,
-     ${input.segment}::varchar,${context.user.id}::uuid)`);
+     ${input.segment}::varchar,${context.user.id}::uuid,${JSON.stringify(snapshot.suppressed)}::jsonb)`);
+  }else{
+    await tx.execute(sql`insert into placement_tpo_campaign_drafts
+      (campaign_id,college_id,title,subject,body,template_key,segment,
+       created_by_user_id)
+      values(${campaign.id}::uuid,${college.id}::uuid,${input.title}::varchar,
+       ${input.subject}::varchar,${input.body}::text,${input.templateKey}::varchar,
+       ${input.segment}::varchar,${context.user.id}::uuid)`);
+  }
   const emails=new Map(subset.map(row=>[row.id,row.emailNorm]));
   await tx.insert(placementTpoEmailCampaignRecipients).values(
    snapshot.recipientIds.map(leadId=>({
