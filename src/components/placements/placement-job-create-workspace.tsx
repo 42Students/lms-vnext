@@ -11,11 +11,13 @@ export async function PlacementJobCreateWorkspace({
   collegeId,
   eyebrow,
   basePath,
+  initialCompanyName = "",
 }: {
   context: RequestContext;
   collegeId: string;
   eyebrow: string;
   basePath: string;
+  initialCompanyName?: string;
 }) {
   const [companies, programs, seasons] =
     await Promise.all([
@@ -60,6 +62,7 @@ export async function PlacementJobCreateWorkspace({
           ) ?? null
         }
         basePath={basePath}
+        initialCompanyName={initialCompanyName}
         academicOptions={{
           programs: programs.map(
             (program) => ({
