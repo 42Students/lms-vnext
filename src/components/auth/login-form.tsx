@@ -69,10 +69,12 @@ async function post<T>(url: string, body: unknown) {
 
 export function LoginForm({
   collegeName,
+  defaultChannel = "EMAIL",
 }: {
   collegeName?: string | null;
+  defaultChannel?: Channel;
 }) {
-  const [channel, setChannel] = useState<Channel>("PHONE");
+  const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [contact, setContact] = useState("");
   const [code, setCode] = useState("");
   const [secondCode, setSecondCode] = useState("");
