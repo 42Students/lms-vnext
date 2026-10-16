@@ -1,9 +1,12 @@
 "use client";
 import {useState} from "react";
+import Link from "next/link";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
 /** All stored and inheriting academic nodes on the bounded college scope page.
  * The effective learner decision still depends on runtime enrollment/locks. */
-export function AcademicModuleScopeInventory({scopes}:{scopes:readonly AcademicModuleScope[]}){
+export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
+ scopes:readonly AcademicModuleScope[];page?:number;baseHref?:string;
+}){
  const [expanded,setExpanded]=useState(false);
  const visible=expanded?scopes:scopes.slice(0,15);
  return <section aria-label="Academic scope inventory" className="mt-4 space-y-3">
@@ -34,7 +37,12 @@ export function AcademicModuleScopeInventory({scopes}:{scopes:readonly AcademicM
     </tr>)}</tbody>
    </table>
   </div>
-  {scopes.length>=500&&<p role="status" className="text-xs text-warning-text">
-   Only the first 500 academic nodes are included. The full hierarchy remains incomplete.</p>}
+  {baseHref?<nav aria-label="Academic scope pages" className="flex flex-wrap items-center gap-4 text-sm">
+   <span>Academic hierarchy page {page} · {scopes.length} nodes on this page</span>
+   {page>1?<Link href={baseHref+"?academicPage="+(page-1)}
+    className="inline-flex min-h-10 items-center text-primary-text underline">Previous hierarchy page</Link>:null}
+   {scopes.length===500?<Link href={baseHref+"?academicPage="+(page+1)}
+    className="inline-flex min-h-10 items-center text-primary-text underline">Next hierarchy page</Link>:null}
+  </nav>:null}
  </section>;
 }
