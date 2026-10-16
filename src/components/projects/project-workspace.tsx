@@ -399,12 +399,44 @@ export function ProjectWorkspace({
       {show("overview") ? (
         <section className="rounded-xl border border-border bg-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="m-0 text-lg font-semibold text-foreground">Overview</h2>
+            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="LEARNER"?"About this project":"Overview"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
               className="inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
               Review submission
             </Link> : null}
           </div>
+          {mode==="LEARNER"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <section className="rounded-lg border border-border p-3">
+              <h3 className="font-semibold text-foreground">Definition of done</h3>
+              <p className="mt-1 text-sm text-body">
+                Finish the planned tasks, have each sprint signed off, and send the final submission for mentor review.
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Submission also needs all {workspace.sprints.length} sprint(s) signed off.
+              </p>
+            </section>
+            <section className="rounded-lg border border-border p-3">
+              <h3 className="font-semibold text-foreground">Who’s who</h3>
+              <ul className="mt-2 space-y-1 text-sm text-body">
+                <li>Mentor · Reviews tasks and final delivery</li>
+                <li>Project team · Works on assigned tasks and shared submissions</li>
+                {workspace.members.filter(m=>m.role==="MENTOR").slice(0,2).map(m=>
+                  <li key={m.membershipId}>{m.displayName} · Mentor</li>)}
+              </ul>
+            </section>
+          </div>:null}
+          {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-lg border border-border p-3">
+            <h3 className="font-semibold text-foreground">Task progress</h3>
+            <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
+              {([
+                ["Backlog","BACKLOG"],["To do","TODO"],["In progress","IN_PROGRESS"],
+                ["In review","IN_REVIEW"],["Blocked","BLOCKED"],["Completed","DONE"],
+              ] as const).map(([label,status])=><div key={status} className="rounded-lg bg-muted p-2 text-center">
+                <p className="text-xl font-bold tabular-nums">{workspace.tasks.filter(task=>task.status===status).length}</p>
+                <p className="text-xs text-body">{label}</p>
+              </div>)}
+            </div>
+          </section>:null}
           {workspace.templateOverview ? (
             <div className="mt-3 space-y-4 text-sm leading-6 text-body">
               {brief.goal ? <div>
