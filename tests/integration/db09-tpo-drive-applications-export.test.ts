@@ -61,6 +61,12 @@ describe.skipIf(!enabled)("TPO scoped application export PostgreSQL",()=>{
   const report=await getTpoDriveApplicationsExport(tpo,{jobId});
   expect(report.rows.find(row=>row.applicationId===ids.application)?.status).toBe("SUBMITTED");
   expect(report.csv).toContain("'=FORMULA(1)");
+  const full=await getTpoDriveApplicationsExport(tpo,{jobId},{exportAll:true});
+  expect(full.truncated).toBe(false);
+  expect(full.rows).toHaveLength(1);
+  expect(full.csv).toContain("Roll number");
+  expect(full.csv).toContain("Email");
+  expect(full.csv).toContain("Phone");
   expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"PENDING",search:"FORMULA"})).rows).toHaveLength(1);
   expect((await getTpoDriveApplicationsExport(tpo,{jobId,stage:"REJECTED"})).rows).toHaveLength(0);
   expect((await getTpoDriveApplicationsExport(tpo,{jobId,search:"%"})).rows).toHaveLength(0);

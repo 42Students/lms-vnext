@@ -1,15 +1,15 @@
 import "server-only";
 import {and,asc,desc,eq,gte,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,
+import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
  placementJobRoleOptions,placementJobs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {tpoApplicantSubmittedSince} from "./tpo-applicant-pipeline-model";
-import {projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
+import {collectTpoExportPages,projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
  TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
-export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown){
+export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown,options:{exportAll?:boolean}={}){
  const collegeId=await requireTpoJobCollege(context);
  const {jobId,stage,search,channel,eligibility,sort,submittedWithin}=tpoDriveApplicationsExportQuerySchema.parse(raw);
  const since=tpoApplicantSubmittedSince(submittedWithin,new Date());
@@ -19,15 +19,17 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
    eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
- const records=await db.select({
+ const readPage=(offset:number,limit:number)=>db.select({
   applicationId:placementApplications.id,studentName:users.displayName,
   roleTitle:placementJobRoleOptions.title,status:placementApplications.status,
   screeningStatus:placementApplicationScreenings.status,
   channel:placementApplications.channel,submittedAt:placementApplications.submittedAt,
+  rollNumber:learnerProfiles.rollNumber,email:users.email,phone:users.phoneE164,
  }).from(placementApplications)
   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
    eq(collegeMemberships.collegeId,collegeId)))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
    eq(placementJobRoleOptions.jobId,job.id)))
   .leftJoin(placementApplicationScreenings,
@@ -46,8 +48,11 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   .orderBy(sort==="OLDEST"?asc(placementApplications.submittedAt):
     sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
     placementApplications.id)
-  .limit(TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
+  .limit(limit).offset(offset);
+ const records=options.exportAll
+  ? await collectTpoExportPages(readPage)
+  : await readPage(0,TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
  return {job,stage,search,channel,eligibility,sort,submittedWithin,...projectTpoDriveApplicationsExport(records.map(r=>({
   ...r,submittedAt:r.submittedAt.toISOString(),
- })),job.title)};
+ })),job.title,options)};
 }
