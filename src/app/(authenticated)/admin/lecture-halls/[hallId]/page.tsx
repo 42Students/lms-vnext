@@ -58,6 +58,7 @@ export default async function SuperAdminLectureHallAvailability({
         ? <ErrorState title="Invalid date range" description="Select valid IST dates (up to 31 consecutive days)." />
         : <p role="status" className="text-sm">Choose an IST date range to view scheduled classes.</p>
       : <section aria-label="Hall scheduled sessions" className="space-y-3">
+        <p className="text-sm text-body">Capacity: {result?.hall.capacity ?? "Unknown"} seats · Status: {result?.hall.status ?? "Unknown"}</p>
         <h2 className="text-lg font-semibold">{result?.sessions.length ?? 0}
           {result?.truncated ? "+" : ""} scheduled classes · {result?.conflictCount ?? 0} potential conflicts
         </h2>
