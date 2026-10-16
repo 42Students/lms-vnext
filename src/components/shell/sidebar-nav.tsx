@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import {Fragment,useEffect,useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,6 +27,24 @@ export function SidebarNav({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const [tpoCounts,setTpoCounts]=useState<{requests:number;messages:number;notifications:number}|null>(null);
+  useEffect(()=>{
+   if(!pathname.startsWith("/tpo/"))return;
+   let active=true;
+   const refresh=async()=>{
+    if(document.hidden)return;
+    try{
+     const response=await fetch("/api/tpo/shell-counts",{credentials:"same-origin",cache:"no-store"});
+     if(!response.ok)return;
+     const value=await response.json() as {requests:number;messages:number;notifications:number};
+     if(active)setTpoCounts(value);
+    }catch{/* Preserve previous count on transport failure. */}
+   };
+   void refresh();
+   const timer=window.setInterval(()=>void refresh(),60000);
+   document.addEventListener("visibilitychange",refresh);
+   return ()=>{active=false;window.clearInterval(timer);document.removeEventListener("visibilitychange",refresh);};
+  },[pathname]);
 
   return (
     <nav
@@ -101,6 +119,14 @@ export function SidebarNav({
               )}
             </span>
             <span>{item.label}</span>
+            {tpoCounts&&item.href.startsWith("/tpo/")&&
+             (item.href==="/tpo/requests"||item.href==="/tpo/messages"||item.href==="/tpo/notifications")?(()=>{
+              const count=item.href==="/tpo/requests"?tpoCounts.requests:
+               item.href==="/tpo/messages"?tpoCounts.messages:tpoCounts.notifications;
+              return count>0?<span aria-label={count+" pending"} className="ml-auto min-w-6 rounded-full bg-primary-subtle px-2 py-1 text-center text-xs font-semibold text-primary-text">
+               {count>99?"99+":count}
+              </span>:null;
+             })():null}
           </Link>
           </Fragment>
         );
