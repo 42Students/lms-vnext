@@ -5,6 +5,7 @@ import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  cohortProgressionState,
   cohorts,
   collegeMemberships,
   courseOfferings,
@@ -46,6 +47,13 @@ export async function listCollegeTeachingOptions(context: RequestContext) {
       sectionName: sections.name,
       cohortName: cohorts.name,
       periodName: academicPeriods.name,
+      periodId: academicPeriods.id,
+      programId: programs.id,
+      programName: programs.name,
+      cohortId: cohorts.id,
+      sectionId: sections.id,
+      semesterNumber: cohortProgressionState.currentTermNumber,
+      academicYear: academicPeriods.name,
     }).from(courseSectionDeliveries)
       .innerJoin(courseOfferings, and(
         eq(courseOfferings.id, courseSectionDeliveries.offeringId),
@@ -61,6 +69,7 @@ export async function listCollegeTeachingOptions(context: RequestContext) {
       ))
       .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
       .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .leftJoin(cohortProgressionState, eq(cohortProgressionState.cohortId, cohorts.id))
       .innerJoin(programDepartment, and(
         eq(programDepartment.id, programs.departmentId),
         eq(programDepartment.collegeId, collegeId),
@@ -103,6 +112,11 @@ export async function listCollegeTeachingOptions(context: RequestContext) {
       id: item.id,
       label: [item.courseName + " (" + item.courseCode + ")", item.cohortName,
         item.sectionName, item.periodName].join(" · "),
+      programId: item.programId, programName: item.programName,
+      cohortId: item.cohortId, cohortName: item.cohortName,
+      sectionId: item.sectionId, sectionName: item.sectionName,
+      semesterNumber: item.semesterNumber, academicYear: item.academicYear,
+      courseName: item.courseName, courseCode: item.courseCode,
     })),
     faculty: faculty.slice(0, MAX_CHOICES).map(item => ({
       id: item.id,
