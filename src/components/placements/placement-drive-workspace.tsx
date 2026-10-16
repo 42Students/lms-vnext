@@ -24,6 +24,8 @@ import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-control
 import { TpoDriveLifecycleControls } from "./tpo-drive-lifecycle-controls";
 import { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
 import {getTpoRoundReorderReadiness} from "@/modules/placements/round-service";
+import {getTpoDriveDeadlineState} from "@/modules/placements/tpo-drive-deadline-service";
+import {TpoDriveDeadlineForm} from "./tpo-drive-deadline-form";
 import {TpoRoundReorder} from "./tpo-round-reorder";
 import { PlacementOfferControls } from "./placement-offer-controls";
 import { PlacementRoleOptions } from "./placement-role-options";
@@ -83,6 +85,8 @@ export async function PlacementDriveWorkspace({
     : [null, null];
 
   const roundOrder = isTpo ? await getTpoRoundReorderReadiness(context,jobId) : null;
+  const deadlineState = isTpo && job.status==="PUBLISHED" ?
+    await getTpoDriveDeadlineState(context,jobId) : null;
 
   const scheduleWarnings = isTpo
     ? projectTpoDriveScheduleWarnings(
@@ -228,6 +232,7 @@ export async function PlacementDriveWorkspace({
         closeAllowed: lifecycleReadiness.close.allowed,
         shortlistCount: shortlist?.total ?? null,
         pendingRequests: placementRequests.filter(row => row.request.status === "PENDING").length,
+        deadlineMissing: job.applicationDeadline===null,
         stagedRounds: driveDay.rounds.map(round => ({
           id: round.id,
           name: round.name,
@@ -347,6 +352,17 @@ export async function PlacementDriveWorkspace({
           <span>Applications close: {headerFacts.deadline}</span>
         </div>
       </section>
+      {deadlineState?.extendable?(
+        <section id="drive-deadline-actions" aria-label="Set or extend deadline"
+          className="rounded-xl border border-border bg-surface p-4">
+          <details>
+            <summary className="cursor-pointer font-semibold text-primary-text">
+              {deadlineState.applicationDeadline?"Extend deadline":"Set deadline"}
+            </summary>
+            <div className="mt-4"><TpoDriveDeadlineForm job={deadlineState}/></div>
+          </details>
+        </section>
+      ):null}
       {nextStep ? (
         <section aria-label="Next step" className="rounded-xl border border-border bg-surface p-5">
           <h2 className="text-base font-semibold text-foreground">Next step</h2>
