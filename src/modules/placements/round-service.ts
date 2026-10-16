@@ -523,7 +523,8 @@ export async function actOnPlacementRound(
  * PENDING but a student already has an attendance entry, result or exception.
  * These are real persisted execution artifacts, not candidate projections.
  */
-async function findRoundOrderLock(tx: ReturnType<typeof getDb>, jobId: string): Promise<string | null> {
+type PlacementRoundTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+async function findRoundOrderLock(tx: PlacementRoundTx, jobId: string): Promise<string | null> {
   const [result] = await tx.select({id: placementRoundResults.id})
     .from(placementRoundResults)
     .innerJoin(placementJobRounds, eq(placementJobRounds.id,placementRoundResults.roundId))
