@@ -100,11 +100,15 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
         shareId:row.id,applicationId,
       })));
     }
-    await tx.insert(activityEvents).values(companyShareLifecycleActivity("ISSUED",{
+    const event=companyShareLifecycleActivity("ISSUED",{
       organizationId:college.organizationId,collegeId:college.id,
       actorUserId:context.user.id,actorMembershipId,
       jobId:job.id,shareId:row.id,
-    }));
+    });
+    await tx.insert(activityEvents).values({...event,metadata:{
+      ...event.metadata,selectionMode:parsed.selectedApplicationIds?.length?"EXACT_SELECTION":"CURRENT_SHORTLIST",
+      selectedCount:parsed.selectedApplicationIds?.length??null,
+    }});
     return {shareId:row.id,token,expiresAt:expiresAt.toISOString(),
        selectedCount:parsed.selectedApplicationIds?.length??null};
   });
