@@ -10,6 +10,10 @@ import { LearnerProfileWorkspace } from "@/components/profile/learner-profile-wo
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
 import { getOwnLearnerAcademicSummary } from "@/modules/people/learner-academic-summary-service";
+import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-verification-status-service";
+import {learnerProfileMissingItems} from "@/modules/placements/learner-profile-missing-items-model";
+import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
+import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
 
 export default async function LearnerProfilePage({
   searchParams,
@@ -37,6 +41,33 @@ export default async function LearnerProfilePage({
       <PageHeader
         title="Profile"
       />
+      <LearnerVerificationLiveRefresh/>
+      <section aria-label="Profile verification summary" className="rounded-xl border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold text-foreground">Profile verification</h2>
+          <span className="rounded-full border border-border px-3 py-1 text-sm font-semibold text-foreground">
+            {verification&&["VERIFIED","UPDATE_PENDING"].includes(verification.education.status)&&
+              ["VERIFIED","UPDATE_PENDING"].includes(verification.identity.status)
+              ?"Verified profile":"Not verified yet"}
+          </span>
+        </div>
+        {verification? <div className="mt-3 space-y-2 text-sm text-body">
+          {(["education","identity"] as const).map(section=>{
+            const row=verification[section];
+            return <p key={section}>
+              <strong>{section==="education"?"Education":"Identity"}:</strong>{" "}
+              {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
+                decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,
+                heading:section})??(row.status==="NOT_SUBMITTED"?"Not verified yet":row.status)}
+            </p>;
+          })}
+          {verification.education.status==="UPDATE_PENDING"||verification.identity.status==="UPDATE_PENDING"?
+            <p role="status" className="rounded-md border border-warning p-3">
+              You changed this after it was verified. The verified details stay in use until you send the changes for review.
+            </p>:null}
+        </div>:<p role="status" className="mt-2 text-sm text-body">Verification status is temporarily unavailable.</p>}
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Review verification status</Link>
+      </section>
       {sectionNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{sectionNotice}</p> : null}
       <section aria-label="Academic identity" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
