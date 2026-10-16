@@ -28,6 +28,7 @@ import {
 
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
 import { listTpoLeads } from "@/modules/placements/tpo-crm-service";
+import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
 import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
 
@@ -466,6 +467,22 @@ export async function PlacementCalendarWorkspace({
         )
       : response.events;
 
+  const needsWindow=audience==="TPO"?await listPlacementCalendarEvents(context,{
+    collegeId,
+    from:placementCalendarDayKey(new Date(now.getTime()-90*86400000)),
+    to:placementCalendarDayKey(new Date(now.getTime()+7*86400000)),
+  }):null;
+  const blockedDays=audience==="TPO"?await getTpoBlockedDates(context):null;
+  const needsEvents=needsWindow?.events??[];
+  const overdue=needsEvents.filter(item=>item.kind==="FOLLOW_UP"&&item.status==="OPEN"&&item.startsAt<now);
+  const blockedSet=new Set(blockedDays?.rows.map(item=>item.day)??[]);
+  const blockedRounds=needsEvents.filter(item=>item.kind==="ROUND"&&blockedSet.has(placementCalendarDayKey(item.startsAt)));
+  const byBusyDay=new Map<string,number>();
+  for(const item of needsEvents){
+    const day=placementCalendarDayKey(item.startsAt);
+    byBusyDay.set(day,(byBusyDay.get(day)??0)+1);
+  }
+  const busyDays=[...byBusyDay].filter(([,count])=>count>=3);
   const groups =
     groupPlacementCalendarEvents(events);
 
@@ -577,6 +594,25 @@ export async function PlacementCalendarWorkspace({
        ):<Link href={basePath} className="mt-2 inline-flex text-sm text-primary-text underline">Show today's events</Link>}
        {window.from<=today&&window.to>=sevenDayEnd?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:
         <Link href={basePath+"?view=week&date="+encodeURIComponent(today)} className="mt-3 inline-flex text-sm text-primary-text underline">Next 7 days</Link>}
+      </section>:null}
+      {isTpo?<section aria-label="Needs doing" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+       <h2 className="text-base font-semibold">Needs doing</h2>
+       <div className="grid gap-3 sm:grid-cols-3">
+        <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
+         className="rounded-md border border-border p-3 text-sm text-primary-text">
+         <strong className="block text-lg">{overdue.length}</strong>Follow-ups overdue (last 90 days)
+        </Link>
+        <Link href={blockedRounds.length?basePath+"?view=week&date="+placementCalendarDayKey(blockedRounds[0].startsAt):basePath}
+         className="rounded-md border border-border p-3 text-sm text-primary-text">
+         <strong className="block text-lg">{blockedRounds.length}</strong>Rounds on a blocked date
+        </Link>
+        <Link href={busyDays.length?basePath+"?view=week&date="+busyDays[0][0]:basePath}
+         className="rounded-md border border-border p-3 text-sm text-primary-text">
+         <strong className="block text-lg">{busyDays.length}</strong>Busy days (3 or more)
+        </Link>
+       </div>
+       {blockedDays&&!blockedDays.ready?<p role="status" className="text-xs text-warning-text">
+        Blocked-day storage is unavailable; conflict counts cannot be verified.</p>:null}
       </section>:null}
       <section
         aria-label="Calendar summary"
