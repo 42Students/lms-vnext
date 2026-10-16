@@ -27,7 +27,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   const [classId,setClassId]=useState("");
   const [roster,setRoster]=useState<Roster|null>(null);
   const [templateId,setTemplateId]=useState(templates[0]?.templateId??"");
-  const [mode,setMode]=useState<"TEAMS"|"WHOLE_CLASS">("TEAMS");
+  const [mode,setMode]=useState<"TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL">("TEAMS");
   const [order,setOrder]=useState<"ROLL"|"SHUFFLE">("ROLL");
   const [size,setSize]=useState(5);
   const [seed,setSeed]=useState("class-project");
@@ -41,6 +41,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   const createInFlight=useRef(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
+  const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number}|null>(null);
+  const [outcome,setOutcome]=useState<{created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number}|null>(null);
   useEffect(()=>{
     const controller=new AbortController();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- derived/fetched state synchronised to props
@@ -79,6 +81,17 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
       setError(e instanceof Error?e.message:"Invalid team plan");
     }
   },[roster,mode,order,size,seed]);
+  useEffect(()=>{
+    if(mode!=="INDIVIDUAL"||!classId||!templateId){setPreflight(null);return;}
+    const ctl=new AbortController();
+    void fetch("/api/projects/cohort-preflight?collegeId="+encodeURIComponent(collegeId)+
+      "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
+      {signal:ctl.signal}).then(r=>r.ok?r.json():Promise.reject(Error("Preflight failed")))
+      .then((data:{toCreate:number;alreadyCovered:number;eligible:number})=>{
+        if(!ctl.signal.aborted)setPreflight(data);
+      }).catch(()=>{if(!ctl.signal.aborted)setPreflight(null)});
+    return ()=>ctl.abort();
+  },[mode,collegeId,classId,templateId,roster]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
   const plannerEditable=canEditClassTeamPlanner(pending,rosterLoading);
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
@@ -86,25 +99,31 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
   async function create() {
     if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     if(!roster)return;
+    if(mode==="INDIVIDUAL"&&!preflight)return;
+    if(mode==="INDIVIDUAL"&&!window.confirm("Create "+preflight.toCreate+
+      " workspaces? "+preflight.alreadyCovered+" already covered."))return;
     createInFlight.current=true;
     let created=false;
     setPending(true);setError("");setNotice("");
     try {
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
-        baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,expectedPreviewVersion:previewVersion(groups),
-      }) as {created:{projectId:string}[]};
+        baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
+      }) as {created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number};
+      setOutcome(result);
       created=true;
       setNotice(result.created.length+" Project workspaces created.");
-      if(result.created.length===1)router.push(basePath+"/"+result.created[0].projectId);
-      else router.push(basePath);
+      if(mode!=="INDIVIDUAL"){
+        if(result.created.length===1)router.push(basePath+"/"+result.created[0].projectId);
+        else router.push(basePath);
+      }
       router.refresh();
     } catch(e) {
       setError(classTeamCreationFeedback(e));
     } finally {
       // After a successful POST, keep Create locked until navigation unmounts this form.
       // Releasing the latch would allow a second request while router.push is pending.
-      if(!created){
+      if(!created||mode==="INDIVIDUAL"){
         createInFlight.current=false;
         setPending(false);
       }
@@ -133,9 +152,10 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
       <label className="block space-y-1 text-sm font-medium">Add students as
-        <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS")}>
+        <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL")}>
           <option value="TEAMS">Split class into teams</option>
           <option value="WHOLE_CLASS">Add a whole class</option>
+          <option value="INDIVIDUAL">Cohort · one workspace per student</option>
         </Select>
       </label>
       {mode==="TEAMS"?<>
@@ -160,6 +180,9 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     </div>:null}
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
     {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
+    {mode==="INDIVIDUAL"&&preflight?<p role="status" className="rounded-lg border border-border p-3 text-sm">
+      {preflight.toCreate} to create · {preflight.alreadyCovered} already covered
+    </p>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2" aria-label="Adjustable team preview">
       {groups.map((team,index)=><section key={index} className="min-w-0 rounded-lg border border-border p-3">
         <h2 className="font-semibold">{team.name} · {team.membershipIds.length}</h2>
@@ -193,10 +216,23 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{colleg
     {!balanced&&groups.length>0?<p role="alert" className="text-sm text-error">Teams must have sizes differing by at most one.</p>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {notice?<p role="status" className="text-sm">{notice}</p>:null}
+    {outcome&&mode==="INDIVIDUAL"?<section className="space-y-2 rounded-lg border border-border p-4">
+      <h3 className="font-semibold">Latest cohort creation outcome</h3>
+      <p className="text-sm">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
+      <button type="button" className="text-sm font-semibold text-primary-text underline"
+        onClick={()=>{
+          const rows=["Workspace,Student membership,Project ID",
+            ...outcome.created.map(item=>[item.title,item.learnerMembershipId,item.projectId]
+             .map(value=>'"'+value.replaceAll('"','""')+'"').join(","))];
+          const blob=new Blob(["\uFEFF"+rows.join("\r\n")],{type:"text/csv;charset=utf-8"});
+          const url=URL.createObjectURL(blob),link=document.createElement("a");
+          link.href=url;link.download="cohort-creation-outcome.csv";link.click();URL.revokeObjectURL(url);
+        }}>Export outcome CSV</button>
+    </section>:null}
     <div className="flex flex-wrap justify-end gap-3">
       <Button variant="secondary" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
       <Button disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading} onClick={()=>void create()}>
-        {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":"Create whole-class workspace"}
+        {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":mode==="INDIVIDUAL"?"Create "+(preflight?.toCreate??0)+" workspaces":"Create whole-class workspace"}
       </Button>
     </div>
   </div>;
