@@ -227,6 +227,20 @@ export function RecruiterLeadsWorkspace({
     matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
     [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter,
       companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter]);
+  const filterChips=([
+    {key:"stage",label:"Stage",value:stage},
+    {key:"owner",label:"Owner",value:ownerFilter},
+    {key:"invite",label:"Invite",value:inviteFilter},
+    {key:"status",label:"Status",value:statusFilter},
+    {key:"source",label:"Source",value:sourceFilter},
+    {key:"company",label:"Company",value:companyFilter},
+    {key:"designation",label:"Designation",value:designationFilter},
+    {key:"reach",label:"Reach",value:reachFilter},
+    {key:"nextFollowup",label:"Next follow-up",value:nextFilter},
+    {key:"lastActivity",label:"Last activity",value:activityFilter},
+    {key:"added",label:"Added",value:addedFilter},
+    {key:"query",label:"Search",value:query},
+  ] as const).filter(item=>Boolean(item.value)&&item.value!=="ALL");
 
   function exportRows(selection:"shown"|"selected",format:"csv"|"xlsx"){
     const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
@@ -458,7 +472,18 @@ export function RecruiterLeadsWorkspace({
           </div>
           <div className="space-y-3">
             <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
-              aria-expanded={filterOpen} aria-controls="engage-filter-panel">Filters</button>
+              aria-expanded={filterOpen} aria-controls="engage-filter-panel">
+              Filters{filterChips.length?" ("+filterChips.length+")":""}
+            </button>
+            {filterChips.length?<div role="group" aria-label="Active recruiter filters"
+              className="flex flex-wrap gap-2">
+              {filterChips.map(chip=><button type="button" key={chip.key}
+                className="rounded-full border border-border bg-primary-subtle px-3 py-1 text-xs text-body"
+                title={"Clear "+chip.label+" filter"}
+                onClick={()=>updateFilter(chip.key,"ALL")}>
+                {chip.label}: {chip.value} ×
+              </button>)}
+            </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
               className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4">
               <label className="text-sm">Status
