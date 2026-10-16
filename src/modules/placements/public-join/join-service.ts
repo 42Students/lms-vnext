@@ -105,6 +105,7 @@ export async function acceptPublicRecruiterJoin(
         .where(eq(placementPublicJoinChallenges.id, challenge.id));
       return challenge.attempts+1>=PUBLIC_JOIN_MAX_FAILURES?"CODE_LOCKED":"WRONG_CODE";
     }
+    await tx.insert(placementTpoCollegeSettings).values({collegeId:link.collegeId}).onConflictDoNothing();
     const [settings] = await tx.select({
       months: placementTpoCollegeSettings.recruiterAccessMonths,
     }).from(placementTpoCollegeSettings)
