@@ -232,6 +232,25 @@ export async function listCollegeAssessmentAggregate(
     .where(and(inArray(courseSectionDeliveries.offeringId,offeringIds),
       isNull(courseSectionDeliveries.endedAt)))
     .groupBy(courseSectionDeliveries.offeringId,courseSectionDeliveries.id):[];
+  // Section selector for College Admin's authorized assignment review drawer.
+  // A shared assignment may be submitted in several active course Sections.
+  const reviewDeliveries=kind==="ASSIGNMENT"&&offeringIds.length?
+    await db.select({
+      offeringId:courseSectionDeliveries.offeringId,
+      deliveryId:courseSectionDeliveries.id,
+      sectionName:sections.name,
+      sectionCode:sections.code,
+    }).from(courseSectionDeliveries)
+      .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+      .innerJoin(sections,and(
+        eq(sections.id,courseSectionDeliveries.sectionId),
+        eq(sections.cohortId,courseOfferings.cohortId),
+        eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+      ))
+      .where(and(inArray(courseSectionDeliveries.offeringId,offeringIds),
+        isNull(courseSectionDeliveries.endedAt),
+        eq(sections.status,"ACTIVE")))
+      .orderBy(asc(sections.name),asc(sections.code)):[];
   const eligibleByOffering=new Map<string,number>();
   const eligibleByDelivery=new Map<string,number>();
   for(const entry of eligibleRows){
@@ -313,6 +332,7 @@ export async function listCollegeAssessmentAggregate(
     status: row.status,
     dueAt: row.dueAt,
     deliverySpecific: row.deliveryId !== null,
+    deliveryId:row.deliveryId,
     points: row.points,
     activityCount: countById.get(row.id) ?? 0,
     eligibleLearners:row.deliveryId?
@@ -327,6 +347,7 @@ export async function listCollegeAssessmentAggregate(
     collegeId,
     query,
     items,
+    reviewDeliveries,
     total,
     page: query.page,
     pageSize: COLLEGE_ASSESSMENT_PAGE_SIZE,
