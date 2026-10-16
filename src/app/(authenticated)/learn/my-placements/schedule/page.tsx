@@ -72,7 +72,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="My Placements" title="Schedule"
-        description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice; please confirm each one so they know you'll be there" />
+        description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice; review your booking details and ask to reschedule if you cannot attend" />
       <nav aria-label="Schedule view" className="flex flex-wrap gap-2">
         {([
           ["coming","Coming up"],["past","Past"],["calendar","Calendar"],
