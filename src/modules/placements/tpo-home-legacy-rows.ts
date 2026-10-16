@@ -3,6 +3,7 @@
 export type TpoHomeSummary={
  batch:{name:string;invited:boolean;eligible:number|null;registered:number|null;placed:number|null}|null;
  moreBatches:number;hasUninvitedBatch?:boolean;liveDrives:number;driveAttention:number;
+ driveDetail?:string|null;driveHref?:string;
  registered:number|null;placedUnique:number|null;
  recruiterLeads:number|null;followUps:number|null;recruiterAccess:number|null;
  pendingRequests:number;messages:number|null;
@@ -28,7 +29,8 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  const batchStatus=batch?(batch.eligible!==null&&batch.registered!==null
   ? `${batch.name} · ${batch.registered} of ${batch.eligible} registered${batch.placed===null?"":`, ${batch.placed} placed`}${d.moreBatches?` · +${d.moreBatches} more`:""}`
   :batch.name+" · Registration summary unavailable"):"No batch in placements yet";
- const drives=d.liveDrives?plural(d.liveDrives,"live drive"):"No live drives";
+ const drives=(d.liveDrives?plural(d.liveDrives,"live drive"):"No live drives")+
+  (d.driveDetail?" · "+d.driveDetail:"");
  const requests=d.pendingRequests,messages=d.messages;
  const inboxStatus=requests||messages
   ?[requests?plural(requests,"request"):null,messages?plural(messages,"message")+" to answer":null].filter(Boolean).join(" · ")
@@ -44,7 +46,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  return [
   {key:"batches",title:"Placement eligibility",status:batchStatus,href:"/tpo/batches",
    needsAttention:!batch||(d.hasUninvitedBatch??!batch.invited)},
-  {key:"drives",title:"Drives",status:drives,href:"/tpo/placements",
+  {key:"drives",title:"Drives",status:drives,href:d.driveHref??"/tpo/placements",
    needsAttention:d.driveAttention>0},
   {key:"students",title:"Students",status:d.registered===null?"Open student roster":
    d.registered?d.registered+" registered · "+(d.placedUnique??0)+" placed":"Nobody registered yet",
