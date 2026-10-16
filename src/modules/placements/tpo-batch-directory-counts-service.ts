@@ -67,8 +67,11 @@ export async function listTpoBatchCardEligibility(
       enrollmentId: sectionEnrollments.learnerEnrollmentId,
       sectionId: sections.id,
     }).from(sectionEnrollments)
+      .innerJoin(learnerProgramEnrollments,
+        eq(learnerProgramEnrollments.id, sectionEnrollments.learnerEnrollmentId))
       .innerJoin(sections, and(
         eq(sections.id, sectionEnrollments.sectionId),
+        eq(sections.cohortId, learnerProgramEnrollments.cohortId),
         eq(sections.status, "ACTIVE"),
         inArray(sections.cohortId, ids),
       ))

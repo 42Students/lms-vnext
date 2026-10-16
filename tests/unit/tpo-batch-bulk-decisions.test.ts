@@ -11,6 +11,9 @@ describe("TPO-batches-32 preview/confirm batch bulk actions",()=>{
    target:"STUDENTS",action:"INELIGIBLE",note:"",ids:[id],
   }).success).toBe(false);
   expect(tpoBulkPreviewRequestSchema.safeParse({
+   target:"STUDENTS",action:"INELIGIBLE",note:"x".repeat(201),ids:[id],
+  }).success).toBe(false);
+  expect(tpoBulkPreviewRequestSchema.safeParse({
    target:"STUDENTS",action:"ELIGIBLE",note:"unexpected text",ids:[id],
   }).success).toBe(false);
   expect(tpoBulkActionLabel("INELIGIBLE")).toBe("Mark learners ineligible");
