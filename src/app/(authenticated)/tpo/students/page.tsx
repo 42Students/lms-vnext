@@ -234,7 +234,9 @@ export default async function TpoStudentsPage({
       <PageHeader
         eyebrow="TPO · Students"
         title={TPO_OWNER_PAGE_COPY.students}
-        description="Read-only college-wide placement participation, branch performance and student journeys. Counts are based on active learner enrollments."
+        description={query.batchId?
+          "Batch student journeys, including completed learners from a finished batch.":
+          "Read-only college-wide placement participation, branch performance and student journeys."}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Link
@@ -375,7 +377,7 @@ export default async function TpoStudentsPage({
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <div className="rounded-lg bg-muted px-4 py-3">
             <p className="text-xs font-semibold text-muted-foreground">
-              Active enrolled learners
+              {query.batchId?"Students in selected batch":"Active enrolled learners"}
             </p>
             <p className="mt-1 text-xl font-semibold text-foreground">
               {summary.activeLearners}
@@ -421,8 +423,7 @@ export default async function TpoStudentsPage({
 
         {data.branches.length === 0 ? (
           <p className="p-5 text-sm text-body">
-            No active learner enrollments are available for
-            branch intelligence.
+            No learners are available for this selection.
           </p>
         ) : (
           <div className="overflow-x-auto">
