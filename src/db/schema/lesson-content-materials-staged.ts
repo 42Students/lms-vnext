@@ -1,6 +1,6 @@
 /** W02 DB05 staged only; W01 owns migration registration/index export. */
 import { sql } from "drizzle-orm";
-import { check, index, integer, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { check, bigint, index, integer, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { lessonContents } from "./courses";
 import { users } from "./users";
 
@@ -20,6 +20,18 @@ export const lessonContentMaterials = pgTable(
     createdByUserId: uuid("created_by_user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    notes: text("notes"),
+    uploadStatus: text("upload_status").notNull().default("READY"),
+    uploadTokenHash: varchar("upload_token_hash",{length:64}),
+    uploadExpiresAt: timestamp("upload_expires_at",{withTimezone:true}),
+    objectGeneration: text("object_generation"),
+    scanStatus: varchar("scan_status",{length:16}).notNull().default("PENDING"),
+    scanAttestedBy: varchar("scan_attested_by",{length:80}),
+    scanAttestedAt: timestamp("scan_attested_at",{withTimezone:true}),
+    verifiedSizeBytes: bigint("verified_size_bytes",{mode:"number"}),
+    verifiedContentType: varchar("verified_content_type",{length:128}),
+    completedAt: timestamp("completed_at",{withTimezone:true}),
+    failureCode: varchar("failure_code",{length:64}),
   },
   (table) => [
     uniqueIndex("lesson_content_materials_content_sequence_uq").on(table.lessonContentId, table.sequence),
@@ -28,6 +40,9 @@ export const lessonContentMaterials = pgTable(
     check("lesson_content_materials_kind_ck", sql`${table.kind} in (\'LINK\', \'FILE\')`),
     check("lesson_content_materials_sequence_ck", sql`${table.sequence} >= 0`),
     check("lesson_content_materials_size_ck", sql`${table.sizeBytes} is null or (${table.sizeBytes} > 0 and ${table.sizeBytes} <= 52428800)`),
+    check("lesson_content_materials_upload_status_ck", sql`${table.uploadStatus} in ('UPLOADING','VERIFYING','READY','QUARANTINED','FAILED','DELETED')`),
+    check("lesson_content_materials_scan_status_ck", sql`${table.scanStatus} in ('PENDING','CLEAN','REJECTED')`),
+    check("lesson_content_materials_ready_ck", sql`${table.kind} <> 'FILE' or ${table.uploadStatus} <> 'READY' or (${table.scanStatus} = 'CLEAN' and ${table.scanAttestedBy} is not null and ${table.scanAttestedAt} is not null and ${table.objectGeneration} is not null and ${table.verifiedSizeBytes} between 1 and 52428800 and ${table.verifiedContentType} is not null and ${table.completedAt} is not null)`),
     check("lesson_content_materials_shape_ck", sql`(${table.kind} = \'LINK\' and ${table.externalUrl} is not null and ${table.storageKey} is null and ${table.originalName} is null and ${table.mimeType} is null and ${table.sizeBytes} is null) or (${table.kind} = \'FILE\' and ${table.externalUrl} is null and ${table.storageKey} is not null and ${table.originalName} is not null and ${table.mimeType} is not null and ${table.sizeBytes} is not null)`),
   ],
 );
