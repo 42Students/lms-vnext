@@ -40,7 +40,7 @@ export function RecruiterPlacementPortfolio({
                       : "neutral"
                   }
                 >
-                  {item.job.status}
+                  {item.job.status==="PUBLISHED"?"Live":item.job.status==="CLOSED"?"Completed":item.job.status}
                 </StatusBadge>
                 <span className="text-xs font-semibold text-muted-foreground">
                   {item.collegeName}
@@ -58,6 +58,17 @@ export function RecruiterPlacementPortfolio({
                 ·{" "}
                 {item.job.workMode
                   .toLowerCase()}
+              </p>
+              <p className="mt-2 text-sm font-medium text-foreground">
+                {item.job.minimumAnnualCtcInr!=null||item.job.maximumAnnualCtcInr!=null
+                  ? "CTC: "+[item.job.minimumAnnualCtcInr,item.job.maximumAnnualCtcInr]
+                    .filter(value=>value!=null).map(value=>"₹"+new Intl.NumberFormat("en-IN").format(value!)).join("–")
+                  : "CTC not specified"}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {item.job.applicationDeadline
+                  ? "Applications close "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.job.applicationDeadline)+" IST"
+                  : "Application deadline not recorded"}
               </p>
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
                 {item.job.description}
