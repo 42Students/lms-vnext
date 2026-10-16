@@ -3,8 +3,8 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import {serializeTpoEligibilityPreviewCsv} from "@/modules/placements/tpo-eligibility-preview-csv-model";
-import {parseTpoEligibilityCsv} from "@/modules/placements/tpo-eligibility-import-model";
-type ImportRow=ReturnType<typeof parseTpoEligibilityCsv>[number];
+import {parseTpoEligibilitySheetCsv} from "@/modules/placements/tpo-eligibility-sheet-model";
+type ImportRow=ReturnType<typeof parseTpoEligibilitySheetCsv>[number];
 type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
  index:number;status:"matched"|"unusable";reason:string|null;membershipId:string|null;expectedVersion:string|null;
 }[]};
@@ -16,7 +16,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  async function previewChanges(){
   if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);
   try{
-   const rows=parseTpoEligibilityCsv(csv);
+   const rows=parseTpoEligibilitySheetCsv(csv);
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-preview",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows}),
    });
@@ -53,10 +53,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
   <h2 className="font-semibold">Import eligibility decisions</h2>
-  <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 200 records.</p>
+  <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   <label className="block text-sm">CSV contents
    <textarea className="mt-1 min-h-32 w-full min-w-0 rounded border border-border bg-surface p-2 font-mono text-xs"
-    value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={50000}/>
+    value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={1500000}/>
   </label>
   <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-11 rounded border border-border px-4 text-sm">{busy?"Working…":"Preview import"}</button>
   {preview?<div className="space-y-2">
