@@ -64,23 +64,11 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
    totalRecipients:snapshot.recipientIds.length,
   }).returning({id:placementTpoEmailCampaigns.id});
   if(!campaign)throw new TpoCampaignDraftError("NOT_READY");
-  const suppressionColumn=await tx.execute<{registered:boolean}>(sql`
-   select exists(select 1 from information_schema.columns where table_schema='public'
-    and table_name='placement_tpo_campaign_drafts' and column_name='suppression_counts') as registered`);
-  if(suppressionColumn.rows[0]?.registered){
    await tx.execute(sql`insert into placement_tpo_campaign_drafts
     (campaign_id,college_id,title,subject,body,template_key,segment,created_by_user_id,suppression_counts)
     values(${campaign.id}::uuid,${college.id}::uuid,${input.title}::varchar,
      ${input.subject}::varchar,${input.body}::text,${input.templateKey}::varchar,
      ${input.segment}::varchar,${context.user.id}::uuid,${JSON.stringify(snapshot.suppressed)}::jsonb)`);
-  }else{
-    await tx.execute(sql`insert into placement_tpo_campaign_drafts
-      (campaign_id,college_id,title,subject,body,template_key,segment,
-       created_by_user_id)
-      values(${campaign.id}::uuid,${college.id}::uuid,${input.title}::varchar,
-       ${input.subject}::varchar,${input.body}::text,${input.templateKey}::varchar,
-       ${input.segment}::varchar,${context.user.id}::uuid)`);
-  }
   const emails=new Map(subset.map(row=>[row.id,row.emailNorm]));
   await tx.insert(placementTpoEmailCampaignRecipients).values(
    snapshot.recipientIds.map(leadId=>({
@@ -97,18 +85,14 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
 export async function listTpoCampaignDrafts(context:RequestContext){
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())return {ready:false as const,rows:[]};
- const registeredColumn=await getDb().execute<{ready:boolean}>(sql`select exists(
-   select 1 from information_schema.columns where table_schema='public'
-   and table_name='placement_tpo_campaign_drafts' and column_name='suppression_counts'
- ) as ready`);
- const suppressionField=registeredColumn.rows[0]?.ready?sql`d.suppression_counts`:sql`'{}'::jsonb`;
+
  const rows=await getDb().execute<{
   campaign_id:string;title:string;subject:string;segment:string;status:string;
   total_recipients:number;created_at:Date;sender_name:string;suppressed_counts:Record<string,number>;
   sent:number;failed:number;skipped:number;
  }>(sql`select d.campaign_id,d.title,d.subject,d.segment,c.status,
     c.total_recipients,d.created_at,coalesce((select u.display_name from users u where u.id=d.created_by_user_id),'Placement cell') as sender_name,
-    ${suppressionField} as suppressed_counts,
+    d.suppression_counts as suppressed_counts,
     (select count(*)::integer from placement_tpo_email_campaign_recipients r
       where r.campaign_id=c.id and r.status='SENT') as sent,
     (select count(*)::integer from placement_tpo_email_campaign_recipients r
@@ -128,18 +112,14 @@ export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
  if(!parsed.success)return null;
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())return null;
- const registeredColumn=await getDb().execute<{ready:boolean}>(sql`select exists(
-   select 1 from information_schema.columns where table_schema='public'
-   and table_name='placement_tpo_campaign_drafts' and column_name='suppression_counts'
- ) as ready`);
- const suppressionField=registeredColumn.rows[0]?.ready?sql`d.suppression_counts`:sql`'{}'::jsonb`;
+
  const result=await getDb().execute<{
    campaign_id:string;title:string;subject:string;body:string;template_key:string;
    segment:string;status:string;total_recipients:number;created_at:Date;
    sender_name:string;suppressed_counts:Record<string,number>;sent:number;failed:number;skipped:number;
  }>(sql`select d.campaign_id,d.title,d.subject,d.body,d.template_key,d.segment,
    c.status,c.total_recipients,d.created_at,coalesce((select u.display_name from users u where u.id=d.created_by_user_id),'Placement cell') as sender_name,
-    ${suppressionField} as suppressed_counts,
+    d.suppression_counts as suppressed_counts,
    (select count(*)::integer from placement_tpo_email_campaign_recipients r where r.campaign_id=c.id and r.status='SENT') as sent,
    (select count(*)::integer from placement_tpo_email_campaign_recipients r where r.campaign_id=c.id and r.status='FAILED') as failed,
    (select count(*)::integer from placement_tpo_email_campaign_recipients r where r.campaign_id=c.id and r.status like 'SKIPPED_%') as skipped from placement_tpo_campaign_drafts d
