@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { buildRecruiterToday, recruiterTodayWeek } from "@/modules/placements/recruiter-today-model";
+import { buildRecruiterToday, recruiterTodayEightDayWindow } from "@/modules/placements/recruiter-today-model";
 import { projectHrTodayResultsDue } from "@/modules/placements/hr-today-results-due-model";
 import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
 import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
@@ -67,7 +67,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const grant = grants.find(item => item.collegeId === selectedId)!;
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
-  const week = recruiterTodayWeek(now);
+  const week = recruiterTodayEightDayWindow(now);
   const jobs=await listOwnRecruiterPlacementJobs(context);
   const [calendarResult,inboxResult,conversationResult]=await Promise.allSettled([
     listRecruiterCalendarEvents(context,week),
