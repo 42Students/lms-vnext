@@ -11,6 +11,7 @@ import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-writ
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
+import { LearnerTaskProgressControl } from "./learner-task-progress-control";
 import { learnerTaskCriteriaPreview } from "@/modules/projects/learner-task-criteria-model";
 import { MentorTaskCreate } from "./mentor-task-create";
 import { MentorTaskStatusTransition } from "./mentor-task-status-transition";
@@ -679,6 +680,20 @@ export function ProjectWorkspace({
                                 />
                               </div>
                             ) : null}
+                            {mode === "LEARNER" && !readOnly &&
+                              sprint.status === "ACTIVE" &&
+                              ["TODO", "IN_PROGRESS", "BLOCKED"].includes(task.status) &&
+                              task.assigneeMembershipId === currentMembershipId ? (
+                                <LearnerTaskProgressControl
+                                  projectId={workspace.project.id} taskId={task.id}
+                                  status={task.status} blockerReason={task.blockerReason}
+                                  updatedAt={task.updatedAt.toISOString()}
+                                  canMoveUp={(tasksBySprint.get(sprint.id) ?? [])
+                                    .some(other => other.sequence < task.sequence)}
+                                  canMoveDown={(tasksBySprint.get(sprint.id) ?? [])
+                                    .some(other => other.sequence > task.sequence)}
+                                />
+                              ) : null}
                             <ProjectTaskComments projectId={workspace.project.id}
                               taskId={task.id} updatedAt={task.updatedAt.toISOString()}
                               canPost={!readOnly}/>
