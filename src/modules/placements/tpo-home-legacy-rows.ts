@@ -14,6 +14,15 @@ export type TpoHomeLegacyRow={
  title:string;status:string;href:string;needsAttention:boolean;
 };
 const plural=(n:number,one:string,many=one+"s")=>n+" "+(n===1?one:many);
+/** TPO-home-02: count only attention rows, never null/unavailable metrics. */
+export function tpoHomeNeedsLine(rows:readonly Pick<TpoHomeLegacyRow,"needsAttention">[]):string {
+ const k=rows.filter(row=>row.needsAttention).length;
+ if(!k)return "You're all caught up.";
+ const words=["","One thing needs","Two things need","Three things need",
+  "Four things need","Five things need","Six things need","Seven things need"];
+ return (words[k]??String(k)+" things need")+" you today.";
+}
+
 export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):TpoHomeLegacyRow[]{
  const batch=d.batch;
  const batchStatus=batch?(batch.eligible!==null&&batch.registered!==null
