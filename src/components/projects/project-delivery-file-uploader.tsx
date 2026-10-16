@@ -1,0 +1,60 @@
+"use client";
+import {useState} from "react";
+import {projectResourceFileDeclaration,validProjectResourceUploadGrant,
+ type ProjectResourceFile} from "@/modules/projects/project-resource-files-ui-model";
+import {acceptAttributeFor} from "@/modules/storage/file-policy";
+import {storageErrorMessage} from "@/modules/storage/ui-models";
+type Attachment={kind:"FILE";name:string;fileId:string;url:null};
+async function json<T>(url:string,method:"POST",body?:unknown):Promise<T>{
+ const response=await fetch(url,{method,credentials:"same-origin",
+  ...(body===undefined?{}:{headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})});
+ if(!response.ok){const data=await response.json().catch(()=>({error:"STORAGE_INVALID_STATE"})) as {error:string};
+  throw Error(storageErrorMessage(data.error));}
+ return response.json() as Promise<T>;
+}
+export function ProjectDeliveryFileUploader({projectId,disabled,onUploaded}:{
+ projectId:string;disabled:boolean;onUploaded:(item:Attachment)=>void;
+}){
+ const [file,setFile]=useState<File|null>(null);
+ const [progress,setProgress]=useState(0),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ async function upload(){
+  if(!file||disabled||busy)return;
+  const declaration=projectResourceFileDeclaration(file);
+  if(!declaration.ok){setError(storageErrorMessage(declaration.error));return;}
+  setBusy(true);setError("");setProgress(0);
+  try{
+   const base="/api/projects/"+encodeURIComponent(projectId)+"/resource-files";
+   const grant=await json<{file:ProjectResourceFile;grant:unknown}>(base,"POST",{
+     originalName:declaration.originalName,contentType:declaration.contentType,
+     sizeBytes:declaration.sizeBytes,title:file.name.slice(0,200),resourceId:null,
+   });
+   if(!validProjectResourceUploadGrant(grant.grant) ||
+     grant.grant.fileId!==grant.file.id||Date.parse(grant.grant.expiresAt)<=Date.now())
+     throw Error("Upload grant expired.");
+   await new Promise<void>((resolve,reject)=>{
+    const req=new XMLHttpRequest();req.open("PUT",grant.grant.uploadUrl,true);
+    for(const [key,val] of Object.entries(grant.grant.requiredHeaders))req.setRequestHeader(key,val);
+    req.upload.onprogress=event=>{if(event.lengthComputable)
+      setProgress(Math.round(event.loaded/event.total*100));};
+    req.onload=()=>req.status>=200&&req.status<300?resolve():reject(Error("File upload failed."));
+    req.onerror=()=>reject(Error("File upload failed."));
+    req.send(file);
+   });
+   const saved=await json<{file:ProjectResourceFile}>(base+"/"+encodeURIComponent(grant.file.id)+"/complete","POST");
+   if(saved.file.status!=="READY")throw Error("File requires verification before attaching.");
+   onUploaded({kind:"FILE",name:saved.file.originalName,fileId:saved.file.id,url:null});
+   setFile(null);setProgress(0);
+  }catch(e){setError(e instanceof Error?e.message:"File upload failed.");}finally{setBusy(false);}
+ }
+ return <div className="space-y-2 rounded-lg border border-border p-3">
+  <label className="block text-sm font-semibold">Upload a file (up to 50 MB)
+   <input type="file" accept={acceptAttributeFor("project-resource")} disabled={disabled||busy}
+    className="mt-2 block w-full text-sm" onChange={e=>setFile(e.target.files?.[0]??null)}/>
+  </label>
+  <button type="button" onClick={()=>void upload()} disabled={disabled||busy||!file}
+   className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+   {busy?"Uploading…":"Attach file"}</button>
+  {busy?<p role="status" className="text-xs text-body">Uploading · {progress}%</p>:null}
+  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+ </div>;
+}
