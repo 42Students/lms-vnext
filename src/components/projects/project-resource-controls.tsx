@@ -19,6 +19,7 @@ type Resource = {
   description: string | null;
   url: string | null;
   required: boolean;
+  visibility: "TEAM" | "MENTOR_ONLY";
 };
 
 function ResourceForm({
@@ -26,6 +27,8 @@ function ResourceForm({
   description,
   url,
   required,
+  visibility,
+  onVisibility,
   onTitle,
   onDescription,
   onUrl,
@@ -35,6 +38,8 @@ function ResourceForm({
   description: string;
   url: string;
   required: boolean;
+  visibility: "TEAM" | "MENTOR_ONLY";
+  onVisibility: (value: "TEAM" | "MENTOR_ONLY") => void;
   onTitle: (value: string) => void;
   onDescription: (value: string) => void;
   onUrl: (value: string) => void;
@@ -82,6 +87,14 @@ function ResourceForm({
             onDescription(event.target.value)
           }
         />
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">
+        Visible to
+        <select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
+          className="min-h-10 rounded-md border border-border bg-surface px-3 py-2">
+          <option value="TEAM">Everyone</option>
+          <option value="MENTOR_ONLY">Mentors only</option>
+        </select>
       </label>
       <label className="flex items-center gap-2 text-sm font-semibold text-body">
         <input
