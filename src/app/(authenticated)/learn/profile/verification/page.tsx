@@ -50,7 +50,17 @@ export default async function LearnerVerificationPage() {
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
-        <p className="mt-3 text-xs text-muted-foreground">Update profile details and privately uploaded evidence before submitting. The server checks the real stored documents; a pending upload is not sufficient.</p>
+        {row.missing.length>0?<section className="mt-4 rounded-lg border border-border bg-surface-subtle p-3"
+          aria-label={"What is still missing for "+item.heading}>
+          <h3 className="text-sm font-semibold text-foreground">What is still missing</h3>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-body">
+            {row.missing.map(message=><li key={message}>{message}</li>)}
+          </ul>
+        </section>:<p className="mt-3 text-sm text-body">No missing items are indicated by the saved profile and receipt metadata.</p>}
+        <p className="mt-3 text-xs text-muted-foreground">{item.section==="EDUCATION"
+          ? "For verification, provide 10th, 12th or Diploma, and degree education with marks and their marksheets, plus a resume."
+          : "For verification, provide Aadhaar or PAN details with a clean private document."}</p>
+        <p className="mt-2 text-xs text-muted-foreground">This checklist is preliminary. A clean receipt does not prove storage ownership or final eligibility; the submission server checks the actual private objects. Uploads awaiting scanning are not ready.</p>
         {row.status === "UPDATE_PENDING" ? <LearnerVerificationWithdraw
           key={item.section+":"+row.version} section={item.section}
           expectedVersion={row.version}/> : null}

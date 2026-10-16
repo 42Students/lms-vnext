@@ -2,6 +2,9 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { profileVerifications, profilePrivateDocumentReceipts } from "@/db/schema/profile-verification";
+import { learnerProfiles } from "@/db/schema";
+import { learnerProfileDocumentSchema } from "@/modules/people/profile-validation";
+import { evaluateVerificationEvidence, type Receipt } from "@/modules/profile-verification/evidence";
 import {learnerPrivateEvidenceSummary} from "./learner-private-evidence-model";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireOwnLearnerProfileAccess } from "@/modules/people/learner-profile-access-service";
@@ -22,13 +25,23 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
     decidedAt: profileVerifications.decidedAt,
   }).from(profileVerifications)
     .where(eq(profileVerifications.learnerMembershipId, member.id));
-  const receiptRows=await getDb().select({
-    purpose:profilePrivateDocumentReceipts.purpose,
-    scanStatus:profilePrivateDocumentReceipts.scanStatus,
-    revokedAt:profilePrivateDocumentReceipts.revokedAt,
-    retentionUntil:profilePrivateDocumentReceipts.retentionUntil,
-  }).from(profilePrivateDocumentReceipts).where(eq(profilePrivateDocumentReceipts.owningMembershipId,member.id));
-  const evidence=learnerPrivateEvidenceSummary(receiptRows,new Date());
+  const receiptRows=await getDb().select().from(profilePrivateDocumentReceipts)
+    .where(eq(profilePrivateDocumentReceipts.owningMembershipId,member.id));
+  const [ownProfile]=await getDb().select({document:learnerProfiles.profileDocument})
+    .from(learnerProfiles).where(eq(learnerProfiles.membershipId,member.id)).limit(1);
+  const document=learnerProfileDocumentSchema.parse(ownProfile?.document??{});
+  const now=new Date();
+  const evidence=learnerPrivateEvidenceSummary(receiptRows,now);
+  const receipts=receiptRows.map(row=>({...row,
+    purpose:row.purpose as Receipt["purpose"],scanStatus:row.scanStatus as Receipt["scanStatus"],
+  }));
+  const readiness=(section:"EDUCATION"|"IDENTITY")=>evaluateVerificationEvidence({
+    owningMembershipId:member.id,section,
+    education:document.education.map(row=>({id:row.id,educationType:row.educationType,
+      gradeObtained:row.gradeObtained})),
+    hasAadhaarNumber:Boolean(document.identity.aadhaarNumber),
+    hasPanNumber:Boolean(document.identity.panNumber),receipts,now,
+  });
   const select = (section: "EDUCATION" | "IDENTITY") => {
     const row = rows.find(r => r.section === section);
     const view = learnerVerificationStatus(section,
@@ -38,6 +51,7 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
         : null);
     return {
       ...view,
+      missing:readiness(section).missing,
       submittedAt:row?.submittedAt?.toISOString()??null,
       decidedAt:row?.decidedAt?.toISOString()??null,
     };
