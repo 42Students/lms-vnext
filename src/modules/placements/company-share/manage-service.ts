@@ -4,13 +4,15 @@ import { projectCompanyShareAudit } from "./audit-history-model";
 import {tpoCompanyAuditKindSchema} from "./audit-kind-model";
 import {companyShareAuditPageSchema,COMPANY_SHARE_AUDIT_PAGE_SIZE,COMPANY_SHARE_AUDIT_EXPORT_LIMIT,clampCompanyShareAuditPage} from "./audit-page-model";
 import { getDb } from "@/db/client";
-import {placementJobs,activityEvents} from "@/db/schema";
+import {placementJobs,activityEvents,placementApplications,placementApplicationScreenings,collegeMemberships,users} from "@/db/schema";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {companyShareLifecycleActivity} from "./activity-model";
 import {requirePersistedTpoMembership} from "../tpo-persisted-actor-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoReadCollege } from "../tpo-surface-access";
 import { companyShareTablesReady } from "./readiness";
+import { placementTableExists } from "../staged-tables";
+import {placementCompanyShareSelections as selectedShares} from "@/db/schema/placement-company-share-selection";
 import { placementCompanyApplicantShares as shares, placementCompanyApplicantShareViews as views } from "@/db/schema/placement-company-shares";
 import { companyShareAuditTotals } from "./audit-model";
 import {canIssueCompanyApplicantShare} from "./issue-policy";
@@ -45,6 +47,8 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
   const parsed = companyShareIssueSchema.parse(raw);
   const college = await tpoJob(context,parsed.jobId);
   if (!await companyShareTablesReady()) throw new CompanyShareError("MIGRATION_PENDING");
+  if(parsed.selectedApplicationIds?.length && !await placementTableExists("placement_company_share_selections"))
+    throw new CompanyShareError("MIGRATION_PENDING");
   if (!context.membership) throw new CompanyShareError("NOT_FOUND");
   const actorMembershipId=context.membership.id;
   return getDb().transaction(async tx=>{
@@ -66,6 +70,23 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
     if(!canIssueCompanyApplicantShare(existing?.total??0)){
       throw new CompanyShareError("ACTIVE_LINK_LIMIT");
     }
+    if(parsed.selectedApplicationIds?.length){
+      const eligible=await tx.select({id:placementApplications.id}).from(placementApplications)
+       .innerJoin(placementApplicationScreenings,
+         eq(placementApplicationScreenings.applicationId,placementApplications.id))
+       .innerJoin(collegeMemberships,
+         eq(collegeMemberships.id,placementApplications.membershipId))
+       .innerJoin(users,eq(users.id,collegeMemberships.userId))
+       .where(and(eq(placementApplications.jobId,job.id),
+         inArray(placementApplications.id,parsed.selectedApplicationIds),
+         eq(placementApplications.status,"SUBMITTED"),
+         eq(placementApplicationScreenings.status,"SHORTLISTED"),
+         eq(collegeMemberships.collegeId,college.id),
+         eq(collegeMemberships.status,"ACTIVE"),
+         eq(users.platformStatus,"ACTIVE")));
+      if(eligible.length!==parsed.selectedApplicationIds.length)
+        throw new CompanyShareError("NOT_SHAREABLE");
+    }
     const {token,digest}=issueCompanyShareToken();
     const expiresAt=companyShareExpiry(new Date(),parsed.expiresInDays);
     const [row]=await tx.insert(shares).values({
@@ -74,12 +95,18 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
       tokenHash:digest,expiresAt,
     }).returning({id:shares.id});
     if(!row)throw new CompanyShareError("NOT_SHAREABLE");
+    if(parsed.selectedApplicationIds?.length){
+      await tx.insert(selectedShares).values(parsed.selectedApplicationIds.map(applicationId=>({
+        shareId:row.id,applicationId,
+      })));
+    }
     await tx.insert(activityEvents).values(companyShareLifecycleActivity("ISSUED",{
       organizationId:college.organizationId,collegeId:college.id,
       actorUserId:context.user.id,actorMembershipId,
       jobId:job.id,shareId:row.id,
     }));
-    return {shareId:row.id,token,expiresAt:expiresAt.toISOString()};
+    return {shareId:row.id,token,expiresAt:expiresAt.toISOString(),
+       selectedCount:parsed.selectedApplicationIds?.length??null};
   });
 }
 export async function listTpoCompanyApplicantShares(
