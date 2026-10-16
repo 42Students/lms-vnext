@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray} from "drizzle-orm";
+import {and,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
  placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,placementRecruiterDriveRequests,users} from "@/db/schema";
@@ -8,7 +8,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {recruiterGrantEffectiveAt} from "./recruiter-grant-expiry-policy";
 import {hrDriveDraftSchema} from "./hr-drive-draft-model";
-import {recruiterDriveRequestInputSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
+import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
 import {z} from "zod";
 
 export class RecruiterDriveRequestError extends Error{
@@ -71,6 +71,9 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
  const input=recruiterDriveRequestInputSchema.parse(raw);
  return getDb().transaction(async tx=>{
   const scope=await lockedRelationship(tx,context,input.collegeId);
+  // A repeated POST with the same nonce is a replay, not a 409 caused by
+  // concurrent requests passing the first existence check together.
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${input.submissionId}), 711021)`);
   const [existing]=await tx.select().from(placementRecruiterDriveRequests).where(and(
    eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
    eq(placementRecruiterDriveRequests.collegeId,input.collegeId),
@@ -104,19 +107,16 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
  });
 }
 export async function listOwnRecruiterDriveRequests(context:RequestContext,collegeId:string){
- await getDb().transaction(tx=>lockedRelationship(tx,context,z.string().uuid().parse(collegeId)));
- return getDb().select().from(placementRecruiterDriveRequests).where(and(
-  eq(placementRecruiterDriveRequests.collegeId,collegeId),
-  eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
-  inArray(placementRecruiterDriveRequests.companyRelationshipId,context.recruiter!.grants
-    .filter(g=>g.collegeId===collegeId).map(g=>g.companyRelationshipId))))
-  .orderBy(desc(placementRecruiterDriveRequests.createdAt));
+ const id=z.string().uuid().parse(collegeId);
+ return getDb().transaction(async tx=>{
+  const scope=await lockedRelationship(tx,context,id);
+  return tx.select().from(placementRecruiterDriveRequests).where(and(
+   eq(placementRecruiterDriveRequests.collegeId,id),
+   eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
+   eq(placementRecruiterDriveRequests.companyRelationshipId,scope.relationshipId)))
+   .orderBy(desc(placementRecruiterDriveRequests.createdAt));
+ });
 }
-export const recruiterRequestUpdateSchema=z.strictObject({
- requestId:z.string().uuid(),collegeId:z.string().uuid(),
- action:z.enum(["RESUBMIT","CANCEL"]),expectedUpdatedAt:z.iso.datetime({offset:true}),
- draft:recruiterDriveRequestInputSchema.shape.draft.optional(),
-});
 export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:unknown){
  const input=recruiterRequestUpdateSchema.parse(raw);
  return getDb().transaction(async tx=>{
@@ -129,7 +129,9 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
   if(!original)throw new RecruiterDriveRequestError("NOT_FOUND");
   if(original.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new RecruiterDriveRequestError("STALE");
-  if(input.action==="RESUBMIT" && (!canRecruiterResubmit(original.status as "REQUEST"|"SENT_BACK"|"DRAFT"|"REJECTED"|"CANCELLED")||!input.draft))
+  if(input.action==="EDIT" && (original.status!=="REQUEST"||!input.draft))
+   throw new RecruiterDriveRequestError("INVALID_STATE");
+  if(input.action==="RESUBMIT" && (original.status!=="SENT_BACK"||!input.draft))
    throw new RecruiterDriveRequestError("INVALID_STATE");
   if(input.action==="CANCEL" && !["REQUEST","SENT_BACK"].includes(original.status))
    throw new RecruiterDriveRequestError("INVALID_STATE");
@@ -139,7 +141,7 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
    decisionNote:null,decidedAt:null,decidedByUserId:null,updatedAt:new Date(),
   }).where(eq(placementRecruiterDriveRequests.id,original.id)).returning();
   if(!updated)throw new RecruiterDriveRequestError("STALE");
-  if(input.action==="RESUBMIT")await informPlacementCell(tx,context,{
+  if(input.action==="RESUBMIT"||input.action==="EDIT")await informPlacementCell(tx,context,{
    collegeId:input.collegeId,organizationId:scope.organizationId},updated.id,
    String(input.draft?.title??"Updated drive request"));
   return updated;

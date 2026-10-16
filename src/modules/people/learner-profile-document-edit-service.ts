@@ -8,7 +8,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {PeopleServiceError} from "./errors";
 import {requireOwnLearnerProfileAccess} from "./learner-profile-access-service";
-import {learnerProfileDocumentSchema} from "./profile-validation";
+import {learnerProfileDocumentSchema,learnerProfileEducationWriteSchema} from "./profile-validation";
 import {learnerProfileDocumentEditInputSchema,learnerProfileChangedFields,learnerProfileDocumentIsStale} from "./learner-profile-document-edit-model";
 export async function updateOwnLearnerProfileDocument(context:RequestContext,raw:unknown){
   const input=learnerProfileDocumentEditInputSchema.parse(raw);
@@ -31,6 +31,7 @@ export async function updateOwnLearnerProfileDocument(context:RequestContext,raw
     if(learnerProfileDocumentIsStale(current,input.expectedDocument))
       throw new PeopleServiceError("LEARNER_PROFILE_DOCUMENT_STALE");
     const fields=learnerProfileChangedFields(current,input.document);
+    if(fields.includes("education")) learnerProfileEducationWriteSchema.parse(input.document.education);
     if(!fields.length)return {...locked,profileDocument:current};
     const [saved]=await tx.update(learnerProfiles).set({profileDocument:input.document,updatedAt:new Date()})
       .where(eq(learnerProfiles.membershipId,member.id)).returning();

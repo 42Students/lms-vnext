@@ -31,6 +31,7 @@ export function HrDriveDraftForm({
   sourceJobId,
   fixRequestId=null,
   fixUpdatedAt=null,
+  editMode="RESUBMIT",
 }: {
   initial: HrDriveDraft;
   sourceJobTitle: string | null;
@@ -39,6 +40,7 @@ export function HrDriveDraftForm({
   sourceJobId:string|null;
   fixRequestId?:string|null;
   fixUpdatedAt?:string|null;
+  editMode?:"EDIT"|"RESUBMIT";
 }) {
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
   const [showPreview, setShowPreview] = useState(false);
@@ -98,14 +100,14 @@ export function HrDriveDraftForm({
     const next=nextHrProposalAttempt(attempted.current,signature,()=>crypto.randomUUID());
     attempted.current=next;
     setSubmitting(true);
-    setNotice(fixRequestId?"Resubmitting your updated request...":"Sending to the placement cell for review...");
+    setNotice(fixRequestId?(editMode==="EDIT"?"Saving changes...":"Resubmitting your updated request..."):"Sending to the placement cell for review...");
     try{
       const response=await fetch("/api/placements/recruiter/drives/requests",{
         method:fixRequestId?"PATCH":"POST",
         credentials:"same-origin",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(fixRequestId?{
-          requestId:fixRequestId,collegeId,action:"RESUBMIT",
+          requestId:fixRequestId,collegeId,action:editMode,
           expectedUpdatedAt:fixUpdatedAt,draft:valid.data,
         }:{
           collegeId,sourceJobId:sourceJobId??undefined,
@@ -281,7 +283,7 @@ export function HrDriveDraftForm({
             aria-busy={submitting}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
             onClick={() => void sendFormalDriveRequest()}>
-            {submitting?"Sending request...":fixRequestId?"Save changes and resend":"Send for review"}
+            {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
           </button>
           <button type="button" disabled={!result.success}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"

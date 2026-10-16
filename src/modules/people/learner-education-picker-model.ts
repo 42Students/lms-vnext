@@ -6,9 +6,17 @@ export const LEARNER_QUALIFYING_EXAMS=[
 /** Keep historical free-text institutions/exams, but validate numeric grade range
  * and impossible year order both in UI and server Zod writes. */
 export function learnerEducationValidationProblem(input:{
- educationType?:string;gradingType?:string;gradeObtained?:string;
+ educationType?:string;institution?:string;gradingType?:string;gradeObtained?:string;
  maxGrade?:string;startYear?:string;endYear?:string;
 }):{field:string;message:string}|null{
+ const educationType=input.educationType?.trim()??"";
+ if(!educationType)return {field:"educationType",message:"Education type is required"};
+ if(!LEARNER_EDUCATION_TYPES.some(level=>level===educationType))
+  return {field:"educationType",message:"Choose a valid education type"};
+ if(!input.institution?.trim())return {field:"institution",message:"Institution name is required"};
+ if(!input.gradingType?.trim())return {field:"gradingType",message:"Grading type is required"};
+ if(!input.gradeObtained?.trim())return {field:"gradeObtained",message:"Grade obtained is required"};
+ if(!input.maxGrade?.trim())return {field:"maxGrade",message:"Max grade is required for job screening"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();
  if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
   return {field:"endYear",message:"End year cannot be before start year"};
