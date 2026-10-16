@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, gte, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, learnerProfiles, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
   placementJobs, users } from "@/db/schema";
