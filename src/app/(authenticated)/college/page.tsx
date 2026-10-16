@@ -8,6 +8,7 @@ import { CollegeAdminQuickActions } from "@/components/admin/admin-dashboard-act
 import { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-cards-service";
 import { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashboard-attendance-service";
 import { getCollegeDashboardLowAttendance } from "@/modules/admin-ui/college-dashboard-risk-service";
+import { getCollegeDashboardUnstaffedCourses } from "@/modules/admin-ui/college-dashboard-staffing-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listColleges } from "@/modules/colleges/service";
@@ -37,10 +38,11 @@ export default async function CollegeOverviewPage() {
     );
   }
 
-  const [dashboard, attendance, lowAttendance] = await Promise.all([
+  const [dashboard, attendance, lowAttendance, unstaffed] = await Promise.all([
     getCollegeDashboardCards(context, {}),
     getCollegeDashboardAttendance(context),
     getCollegeDashboardLowAttendance(context),
+    getCollegeDashboardUnstaffedCourses(context),
   ]);
 
   return (
@@ -186,6 +188,30 @@ export default async function CollegeOverviewPage() {
           </div>}
         {lowAttendance.rows.length === 200 &&
           <p className="text-xs text-muted-foreground">Showing first 200 at-risk learners. Open attendance for full reports.</p>}
+      </section>
+      <section aria-label="Courses with no teacher" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
+          <Link href="/college/faculty-assignments" className="font-semibold text-primary-text hover:underline">
+            Manage faculty
+          </Link>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {unstaffed.length} active course(s) with unstaffed sections this semester.
+        </p>
+        {unstaffed.length === 0 ? <p className="text-sm text-muted-foreground">
+          All active semester deliveries have a teaching assignment.
+        </p> : <ul className="divide-y divide-border">
+          {unstaffed.map(course => <li key={course.courseId}
+            className="flex flex-wrap items-center justify-between gap-3 py-2 text-sm">
+            <div>
+              <p className="font-semibold">{course.name} ({course.code})</p>
+              <p className="text-muted-foreground">{course.sections.length} unstaffed class(es): {course.sections.join(", ")}</p>
+            </div>
+            <Link href="/college/faculty-assignments"
+              className="font-semibold text-primary-text hover:underline">Assign faculty</Link>
+          </li>)}
+        </ul>}
       </section>
       <CollegeAdminQuickActions />
       <CollegeSetupChecklist phases={dashboard.setup.phases} />
