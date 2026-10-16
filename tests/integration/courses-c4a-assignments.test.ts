@@ -483,7 +483,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
     });
   });
 
-  it("enforces one-shot submission, keeps published late work submittable, and checks assignment audience", async () => {
+  it("enforces one-shot submission, rejects late or missing-deadline submissions, and checks assignment audience", async () => {
     const structure = await createStructure();
     const assignment =
       await createCourseAssignment(
@@ -590,24 +590,21 @@ describe("courses C4A assignments against PostgreSQL", () => {
       ["2020-01-01T12:00:00.000Z", late.id],
     );
 
-    const lateSubmission =
-      await submitCourseAssignment(
-        learner,
-        late.id,
-        {
-          deliveryId:
-            structure.deliveryA.id,
-          submissionType: "TEXT",
-          textContent:
-            "Late but still accepted",
-        },
-      );
+    await expect(submitCourseAssignment(learner,late.id,{
+      deliveryId:structure.deliveryA.id,submissionType:"TEXT",textContent:"Too late",
+    })).rejects.toMatchObject({code:"ASSIGNMENT_DEADLINE_PASSED"});
+    const [lateCount] = (await pool.query<{n:number}>(
+      "select count(*)::int as n from assignment_submissions where assignment_id=$1", [late.id],
+    )).rows;
+    expect(lateCount?.n).toBe(0);
 
-    expect(lateSubmission).toMatchObject({
-      assignmentId: late.id,
-      membershipId:
-        SEED_IDS.learnerCollegeAMembership,
+    const undated=await createCourseAssignment(collegeAdmin,{
+      lessonId:structure.lesson.id,title:"C4A No Deadline Task",maxPoints:5,sequence:3,
     });
+    await transitionCourseAssignment(collegeAdmin,undated.id,{action:"PUBLISH"});
+    await expect(submitCourseAssignment(learner,undated.id,{
+      deliveryId:structure.deliveryA.id,submissionType:"TEXT",textContent:"No deadline",
+    })).rejects.toMatchObject({code:"ASSIGNMENT_DEADLINE_NOT_CONFIGURED"});
 
     const expired =
       await createCourseAssignment(

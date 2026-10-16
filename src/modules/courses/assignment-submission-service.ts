@@ -6,6 +6,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
 import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
 import {facultyRegradeFeedbackAllowed} from "./faculty-regrade-feedback-model";
 import {facultyGradeHasChanges} from "./faculty-grade-noop-model";
@@ -206,9 +207,6 @@ export async function submitCourseAssignment(
         )
       : null;
 
-  // Legacy LMS parity: the due date is an urgency/late marker, not a hard
-  // submission gate. A published assignment remains submittable until its
-  // lifecycle is explicitly changed.
   try {
     return await getDb().transaction(async (tx) => {
       // Hold a shared lock until the submission commits: a faculty ARCHIVE
@@ -217,6 +215,7 @@ export async function submitCourseAssignment(
         .select({
           status: courseAssignments.status,
           deliveryId: courseAssignments.deliveryId,
+          dueAt: courseAssignments.dueAt,
         })
         .from(courseAssignments)
         .where(eq(courseAssignments.id, assignmentId))
@@ -229,6 +228,8 @@ export async function submitCourseAssignment(
           currentAssignment.deliveryId !== input.deliveryId) {
         throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
       }
+
+      assertAssignmentSubmissionDeadline(currentAssignment.dueAt, new Date());
 
       const [persistedMembership] = await tx
         .select({

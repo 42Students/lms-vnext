@@ -29,6 +29,7 @@ afterAll(async()=>{await pool.end();await closeDatabaseConnection();},30000);
 describe("assignment detail and audited learner submission on PostgreSQL",()=>{
   it("lists own persisted assignment and writes text with atomic private audit",async()=>{
     const {learner,ids}=fixture!;
+    await pool.query("UPDATE course_assignments SET due_at=$1 WHERE id=$2",["2099-01-01T00:00:00.000Z",ids.assignment]);
     const overview=await getLearnerAssessmentOverview(learner.context);
     expect(findOwnLearnerAssignment(overview.assignments,{
       assignmentId:ids.assignment,deliveryId:ids.delivery,
