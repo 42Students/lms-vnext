@@ -101,6 +101,14 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose}:{
         :<p className="mt-2 text-sm text-body">Link shared soon</p>}
       </section>
       <section className="rounded-lg border border-border p-4">
+       <h3 className="font-semibold">Interview scheduling</h3>
+       <a href={"/college/placements/jobs/"+encodeURIComponent(jobId)+
+        "/interviews?applicationId="+encodeURIComponent(applicationId)}
+        className="mt-2 inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">
+        Schedule or view candidate interviews
+       </a>
+      </section>
+      <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Offer history</h3>
        {detail.offers.length?<ul className="mt-2 text-sm">{detail.offers.map(o=>
         <li key={o.id}>{o.status} · {when(o.issuedAt)}</li>)}</ul>:
