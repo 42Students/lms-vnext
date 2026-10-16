@@ -1,7 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-import {collegeSignInMethodSchema,type updateCollegeSignInSchema} from "@/modules/colleges/signin-methods-model";
+import {collegeSignInMethodSchema} from "@/modules/colleges/signin-methods-model";
 import type {z} from "zod";
 type Method=z.infer<typeof collegeSignInMethodSchema>;
 const choices:{value:Method;label:string;hint:string}[]=[
