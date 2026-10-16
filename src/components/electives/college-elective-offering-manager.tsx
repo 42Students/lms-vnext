@@ -1,63 +1,148 @@
 "use client";
-import {useRouter} from "next/navigation";
-import {useState} from "react";
-type Choice={id:string;courseId:string;course:string;code:string;section:string};
-type Group={id:string;name:string;capacity:number|null};
-type Load={deliveries:Choice[];groups:Group[];offerings:{offeringId:string;courseId:string;capacity:number|null}[]};
-export function CollegeElectiveOfferingManager({slotId}:{slotId:string}){
- const router=useRouter(),[opened,setOpened]=useState(false),[loading,setLoading]=useState(false);
- const [data,setData]=useState<Load|null>(null),[deliveryId,setDeliveryId]=useState(""),
-  [groupId,setGroupId]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
-  [message,setMessage]=useState("");
- const api="/api/academics/elective-slots/"+encodeURIComponent(slotId)+"/offerings";
- async function open(){
-  if(opened){setOpened(false);return;}
-  setOpened(true);setLoading(true);setError("");setMessage("");
-  try{
-   const response=await fetch(api,{cache:"no-store"});
-   if(!response.ok)throw Error("Unable to load offerings for this slot.");
-   const next=await response.json() as Load;
-   setData(next);setDeliveryId(next.deliveries[0]?.id??"");setGroupId(next.groups[0]?.id??"");
-  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load offerings");}
-  finally{setLoading(false);}
- }
- async function add(){
-  const delivery=data?.deliveries.find(row=>row.id===deliveryId);
-  if(!delivery||!groupId||busy)return;
-  if(!window.confirm("Add this elective course and group to the slot?"))return;
-  setBusy(true);setError("");setMessage("");
-  try{
-   const res=await fetch(api,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({courseId:delivery.courseId,backedDeliveryId:deliveryId,groupId})});
-   if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to add offering"}));
-    throw Error(problem.error??"Unable to add offering");}
-   setMessage("Offering added.");router.refresh();setOpened(false);
-  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to add offering");}
-  finally{setBusy(false);}
- }
- return <div className="min-w-0">
-  <button type="button" onClick={()=>void open()} className="min-h-10 rounded border border-border px-3 text-sm text-primary-text">
-   Add offering</button>
-  {opened&&<section aria-label="Add elective offering" className="mt-2 min-w-64 space-y-2 rounded border bg-surface p-3">
-   {loading?<p role="status">Loading eligible courses and groups…</p>:null}
-   {data?<><p className="text-xs">Existing offerings: {data.offerings.length}</p>
-    <label className="block text-sm">Course and class
-     <select className="mt-1 w-full rounded border bg-background p-2" value={deliveryId}
-      onChange={e=>setDeliveryId(e.target.value)}>
-      {data.deliveries.map(o=><option key={o.id} value={o.id}>{o.course} ({o.code}) · {o.section}</option>)}
-     </select></label>
-    <label className="block text-sm">Elective group (capacity)
-     <select className="mt-1 w-full rounded border bg-background p-2" value={groupId}
-      onChange={e=>setGroupId(e.target.value)}>
-      {data.groups.map(group=><option key={group.id} value={group.id}>{group.name} · {group.capacity??"No cap"}</option>)}
-     </select></label>
-    {!data.deliveries.length||!data.groups.length?<p role="status" className="text-sm">
-     Create an active elective course delivery and an empty elective group before adding an offering.</p>:null}
-    <button type="button" onClick={()=>void add()} disabled={busy||!deliveryId||!groupId}
-     className="min-h-10 rounded bg-primary px-3 text-sm text-on-primary disabled:opacity-50">Confirm add offering</button>
-   </>:null}
-   {error&&<p role="alert" className="text-sm text-error">{error}</p>}
-   {message&&<p role="status" className="text-sm">{message}</p>}
-  </section>}
- </div>;
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+type Delivery = { id: string; courseId: string; course: string; code: string; section: string };
+type Group = { id: string; name: string; capacity: number | null };
+type Offering = {
+  offeringId: string; courseId: string; courseName: string; courseCode: string;
+  backedDeliveryId: string; groupId: string; capacity: number | null;
+  activeMembers: number; version: number;
+};
+type Load = { deliveries: Delivery[]; groups: Group[]; offerings: Offering[] };
+
+export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
+  const router = useRouter();
+  const [opened, setOpened] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Load | null>(null);
+  const [editing, setEditing] = useState<Offering | null>(null);
+  const [deliveryId, setDeliveryId] = useState("");
+  const [groupId, setGroupId] = useState("");
+  const [capacity, setCapacity] = useState("30");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const api = "/api/academics/elective-slots/" + encodeURIComponent(slotId) + "/offerings";
+
+  async function load() {
+    setLoading(true); setError("");
+    try {
+      const res = await fetch(api, { cache: "no-store" });
+      if (!res.ok) throw Error("Unable to load offerings for this slot.");
+      const next = await res.json() as Load;
+      setData(next);
+      if (!editing) setDeliveryId(next.deliveries[0]?.id ?? "");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to load offerings");
+    } finally { setLoading(false); }
+  }
+
+  async function open() {
+    if (opened) { setOpened(false); return; }
+    setOpened(true); setEditing(null); setMessage("");
+    await load();
+  }
+
+  function startEdit(offering: Offering) {
+    setEditing(offering);
+    setDeliveryId(offering.backedDeliveryId);
+    setCapacity(String(offering.capacity ?? 30));
+    setError(""); setMessage("");
+  }
+
+  async function save() {
+    const delivery = data?.deliveries.find(row => row.id === deliveryId);
+    const number = Number(capacity);
+    if (!delivery || !Number.isInteger(number) || number < 1 || number > 100000) {
+      setError("Select an eligible course and enter a valid capacity.");
+      return;
+    }
+    if (editing && number < editing.activeMembers) {
+      setError("Capacity cannot be lower than enrolled students.");
+      return;
+    }
+    if (!window.confirm(editing ? "Save changes to this elective offering?" : "Add this course to the elective slot?"))
+      return;
+    setBusy(true); setError(""); setMessage("");
+    const url = editing ? api + "/" + encodeURIComponent(editing.offeringId) : api;
+    try {
+      const res = await fetch(url, {
+        method: editing ? "PATCH" : "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          courseId: delivery.courseId, backedDeliveryId: delivery.id, capacity: number,
+          ...(editing ? { expectedVersion: editing.version } : { groupId: groupId || undefined }),
+        }),
+      });
+      const result = await res.json().catch(() => null);
+      if (!res.ok) throw Error(result?.error ?? "Unable to save elective offering");
+      setMessage(editing ? "Offering updated." : "Offering added.");
+      setEditing(null); setGroupId("");
+      await load(); router.refresh();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to save elective offering");
+    } finally { setBusy(false); }
+  }
+
+  const offered = new Set(data?.offerings.map(row => row.courseId) ?? []);
+  const selectable = (data?.deliveries ?? []).filter(row =>
+    (editing && row.courseId === editing.courseId) || !offered.has(row.courseId));
+  return <div className="min-w-0">
+    <button type="button" onClick={() => void open()}
+      className="min-h-10 rounded border border-border px-3 text-sm text-primary-text">
+      Manage offerings
+    </button>
+    {opened && <section aria-label="Elective course offerings"
+      className="mt-2 min-w-64 max-w-xl space-y-3 rounded border border-border bg-surface p-3">
+      {loading && <p role="status">Loading eligible courses and groups…</p>}
+      {data && <>
+        <h3 className="text-sm font-semibold">Courses in this elective slot</h3>
+        {data.offerings.length === 0 && <p className="text-sm text-muted-foreground">
+          No courses added yet.</p>}
+        {data.offerings.map(offering => <div key={offering.offeringId}
+          className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-2 text-sm">
+          <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers}</span>
+          <button type="button" onClick={() => startEdit(offering)}
+            className="rounded border border-border px-2 py-1 text-primary-text">Edit</button>
+        </div>)}
+        <div className="border-t border-border pt-3">
+          <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
+          <label className="mt-2 block text-sm">Course
+            <select className="mt-1 w-full rounded border border-border bg-background p-2"
+              value={deliveryId} onChange={event => setDeliveryId(event.target.value)}>
+              <option value="">Select course and class</option>
+              {selectable.map(row => <option key={row.id} value={row.id}>
+                {row.course} ({row.code}) · {row.section}</option>)}
+            </select>
+          </label>
+          {!editing && <label className="mt-2 block text-sm">Group (optional)
+            <select className="mt-1 w-full rounded border border-border bg-background p-2"
+              value={groupId} onChange={event => setGroupId(event.target.value)}>
+              <option value="">Create elective group automatically</option>
+              {data.groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
+            </select>
+          </label>}
+          <label className="mt-2 block text-sm">Capacity
+            <input type="number" min="1" max="100000" required
+              value={capacity} onChange={event => setCapacity(event.target.value)}
+              className="mt-1 w-full rounded border border-border bg-background p-2" />
+          </label>
+          {selectable.length === 0 && <p role="status" className="mt-2 text-sm">
+            Create an active elective course delivery for this program before adding an offering.</p>}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button type="button" disabled={busy || loading || !deliveryId || selectable.length === 0}
+              onClick={() => void save()} className="min-h-10 rounded bg-primary px-3 text-sm text-on-primary disabled:opacity-50">
+              {busy ? "Saving…" : editing ? "Save offering" : "Add offering"}
+            </button>
+            {editing && <button type="button" disabled={busy} onClick={() => {
+              setEditing(null); setDeliveryId(data.deliveries.find(row => !offered.has(row.courseId))?.id ?? "");
+            }} className="min-h-10 rounded border border-border px-3 text-sm">Cancel edit</button>}
+          </div>
+        </div>
+      </>}
+      {error && <p role="alert" className="text-sm text-error">{error}</p>}
+      {message && <p role="status" className="text-sm">{message}</p>}
+    </section>}
+  </div>;
 }
