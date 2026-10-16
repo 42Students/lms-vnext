@@ -8,6 +8,7 @@ import {
   cohorts, departments, learnerProgramEnrollments, programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import { PlacementsServiceError } from "./errors";
 import { placementReportCsv } from "./report-model";
 import { requireCollegePlacementAdmin } from "./college-drive-read-service";
@@ -47,6 +48,9 @@ export async function listCollegeDriveApplications(
     status: placementApplications.status,
     screening: sql<string | null>`${placementApplicationScreenings.status}`.as("screening_status"),
     submittedAt: placementApplications.submittedAt,
+    stage: sql<string>`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN' else coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end) end`.as("college_stage"),
+    stageVersion: placementCollegeApplicationStages.version,
+    previousStage: placementCollegeApplicationStages.previousStage,
   }).from(placementApplications)
     .innerJoin(collegeMemberships, and(
       eq(collegeMemberships.id, placementApplications.membershipId),
@@ -59,9 +63,14 @@ export async function listCollegeDriveApplications(
     ))
     .leftJoin(learnerProfiles, eq(learnerProfiles.membershipId, collegeMemberships.id))
     .leftJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
+    .leftJoin(placementCollegeApplicationStages, and(eq(placementCollegeApplicationStages.applicationId, placementApplications.id),eq(placementCollegeApplicationStages.jobId,jobId)))
     .where(and(
       eq(placementApplications.jobId, jobId),
       query.status === "ALL" ? undefined : eq(placementApplications.status, query.status),
+      query.stage === "ALL" ? undefined : query.stage === "WITHDRAWN" ?
+        eq(placementApplications.status,"WITHDRAWN") : and(
+        eq(placementApplications.status,"SUBMITTED"),
+        sql`coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end) = ${query.stage}`),
       query.source === "ALL" ? undefined : eq(placementApplications.channel,query.source),
       query.departmentId||query.programId||query.cohortId ? exists(
         db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
@@ -104,14 +113,14 @@ export async function exportCollegeDriveApplicationsCsv(
   context: RequestContext, jobId: unknown, raw: unknown,
 ) {
   const data = await listCollegeDriveApplications(context, jobId, raw, { exportAll: true });
-  const headings = ["Student name","Roll number","Role option","Application status","Screening status","Submitted at"];
+  const headings = ["Student name","Email","Roll number","Role option","Source","Pipeline stage","Application status","Screening status","Submitted at"];
   const rows: (string | number | null)[][] = data.items.map(item => [
-    item.name ?? "", item.rollNumber, item.roleTitle, item.status,
-    item.screening ?? "Not recorded", item.submittedAt.toISOString(),
+    item.name ?? "",item.email,item.rollNumber,item.roleTitle,item.source,item.stage,item.status,
+    item.screening ?? "Not recorded",item.submittedAt.toISOString(),
   ]);
   if (data.truncated) {
     rows.push(["TRUNCATED — export capped at " + DRIVE_APPLICATION_EXPORT_CAP + " of " + data.total + " matching rows",
-      "", "", "", "", ""]);
+      "", "", "", "", "", "", "", "", ""]);
   }
   return { csv: "\uFEFF" + placementReportCsv(headings, rows),
     truncated: data.truncated, exported: data.items.length, total: data.total };
