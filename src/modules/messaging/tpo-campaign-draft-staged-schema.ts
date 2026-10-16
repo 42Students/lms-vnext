@@ -1,6 +1,6 @@
 /** STAGED TPO-campaigns-public-01. No runtime import until migration registered. */
 import {sql} from "drizzle-orm";
-import {check,foreignKey,pgTable,text,timestamp,uuid,varchar} from "drizzle-orm/pg-core";
+import {check,foreignKey,jsonb,pgTable,text,timestamp,uuid,varchar} from "drizzle-orm/pg-core";
 import {colleges,placementTpoEmailCampaigns,users} from "@/db/schema";
 export const stagedTpoCampaignDrafts=pgTable("placement_tpo_campaign_drafts",{
  campaignId:uuid("campaign_id").primaryKey(),
@@ -8,6 +8,8 @@ export const stagedTpoCampaignDrafts=pgTable("placement_tpo_campaign_drafts",{
  title:varchar("title",{length:160}).notNull(),
  subject:varchar("subject",{length:200}).notNull(),
  body:text("body").notNull(),
+ senderName:varchar("sender_name",{length:200}).notNull(),
+ suppressedCounts:jsonb("suppressed_counts").$type<Record<string,number>>().notNull(),
  templateKey:varchar("template_key",{length:160}).notNull(),
  segment:varchar("segment",{length:24}).notNull(),
  createdByUserId:uuid("created_by_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),

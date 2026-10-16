@@ -7,6 +7,8 @@ CREATE TABLE placement_tpo_campaign_drafts (
  title varchar(160) NOT NULL,
  subject varchar(200) NOT NULL,
  body text NOT NULL CHECK(length(trim(body)) BETWEEN 2 AND 4000),
+ sender_name varchar(200) NOT NULL,
+ suppressed_counts jsonb NOT NULL DEFAULT '{}'::jsonb,
  template_key varchar(160) NOT NULL,
  segment varchar(24) NOT NULL CHECK(segment IN ('ALL_ELIGIBLE','NEW','UNASSIGNED')),
  created_by_user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
