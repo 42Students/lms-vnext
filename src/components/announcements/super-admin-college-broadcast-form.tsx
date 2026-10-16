@@ -41,22 +41,22 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    }
    const published=data&&typeof data==="object"&&"result" in data&&data.result&&typeof data.result==="object"&&"count" in data.result?Number(data.result.count):null;
    if(published===null||!Number.isSafeInteger(published)||published<=0){setFeedback("Publication confirmation was incomplete. Check the notice list.");return;}
-   setFeedback(published+" college notices published.");setTitle("");setMessage("");setSelected([]);
+   setFeedback(published+" placement-cell notices published.");setTitle("");setMessage("");setSelected([]);
    router.refresh();
   }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
   finally{setPending(false);setReview(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
-  <h2 className="m-0 text-lg font-semibold text-foreground">Publish to all or selected colleges</h2>
-  <p className="text-sm text-body">One in-app notice is persisted per authorized college. This action does not send SMS or email.</p>
+  <h2 className="m-0 text-lg font-semibold text-foreground">Publish to every placement cell or selected placement cells</h2>
+  <p className="text-sm text-body">One in-app notice is persisted for each authorized college with an active TPO. This action does not send SMS or email.</p>
   <label className="grid gap-1 text-sm font-semibold text-body">Audience
    <select value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11 rounded-md border border-border bg-surface px-3">
-    <option value="SELECTED_COLLEGES">Selected colleges</option>
-    <option value="ALL_COLLEGES">All colleges in current scope</option>
+    <option value="SELECTED_COLLEGES">Selected placement cells</option>
+    <option value="ALL_COLLEGES">Every placement cell in current scope ({colleges.length})</option>
    </select>
   </label>
   {mode==="SELECTED_COLLEGES"?<fieldset className="space-y-2 rounded-md border border-border p-3">
-   <legend className="text-sm font-semibold">Select colleges</legend>
+   <legend className="text-sm font-semibold">Select placement cells</legend>
    {colleges.map(item=><label key={item.id} className="flex min-h-10 items-center gap-3 text-sm text-body">
     <input type="checkbox" checked={selected.includes(item.id)} onChange={e=>setSelected(prev=>e.target.checked?[...prev,item.id]:prev.filter(id=>id!==item.id))}/>{item.label}
    </label>)}
