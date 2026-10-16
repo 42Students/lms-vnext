@@ -6,6 +6,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegePromotionQuerySchema } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
+import { getPromotionFacultyReadiness } from "@/modules/academics/college-promotion-faculty-readiness";
 import {
   listCollegePromotionOptions,
   previewCollegeBatchPromotion,
@@ -43,9 +44,13 @@ export default async function CollegeBatchPromotionPage({
   const preview = parsed.data.cohortId
     ? await previewCollegeBatchPromotion(context, parsed.data)
     : null;
+  const facultySetup = preview?.plan.targetTermNumber && parsed.data.cohortId
+    ? await getPromotionFacultyReadiness(context, preview.batch.programId,
+      parsed.data.cohortId, preview.plan.targetTermNumber)
+    : null;
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion"
-      description="Server-authored eligibility preview. A confirmed promotion rechecks blockers in one transaction; graduation remains unavailable."
+      description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<Link href="/college/batches"
         className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Batches</Link>} />
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -122,6 +127,10 @@ export default async function CollegeBatchPromotionPage({
           <p className="text-sm font-semibold text-body">
             {preview.simulatedReadiness ? BATCH_PROMOTION_COPY.ready : BATCH_PROMOTION_COPY.notReady}
           </p>
+          {facultySetup?.incomplete && <p role="status" className="text-sm font-semibold text-amber-700">
+            Faculty setup is still incomplete
+            {facultySetup.totalCourses > 0 ? ` — ${facultySetup.missingCourses} of ${facultySetup.totalCourses} mapped course(s) lack active teaching assignments.` : " — no target semester courses mapped."}
+          </p>}
           {preview.simulatedReadiness && preview.plan.action === "PROMOTE" &&
             preview.batch.version !== null ? (
               <CollegePromotionConfirmation cohortId={preview.batch.id}
@@ -161,7 +170,7 @@ export default async function CollegeBatchPromotionPage({
     )}
     <p className="text-xs leading-5 text-muted-foreground">
       Preview never writes. Confirming promotion requires an unchanged version and rechecks
-      blockers in a transaction. Graduation and automatic class movement remain unavailable.
+      blockers in a transaction. Graduation is available for batches in their final registered semester.
     </p>
   </div>;
 }
