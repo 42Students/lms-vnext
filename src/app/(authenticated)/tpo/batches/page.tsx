@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import {countTpoLearnersWithoutClass} from "@/modules/placements/tpo-batch-unassigned-students-service";
 import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-directory-counts-service";
+import { listTpoBatchJourneyCounts } from "@/modules/placements/tpo-batch-journey-service";
 import { batchEligibilityShare } from "@/modules/placements/tpo-batch-eligibility-summary-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
@@ -35,11 +36,19 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(filterTpoBatchDirectory(data.batches,data.ready?parsed.data:{...parsed.data,state:"ALL"}),programParsed.data),departmentParsed.data);
  const batches=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(selected,deadlineParsed.data,new Date()):selected,sortParsed.data);
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
- const eligibility=await listTpoBatchCardEligibility(context,batchPage.items.map(batch=>batch.id));
+ const [eligibility,journey]=await Promise.all([
+  listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)),
+  listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)),
+ ]);
  const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data};
  const programs=listTpoBatchPrograms(data.batches);
  const departments=listTpoBatchDepartments(data.batches);
  const summary=summarizeTpoBatchStates(data.batches);
+ const working=data.batches.filter(batch=>!batch.finishedAt);
+ const activeCount=data.batches.filter(batch=>!batch.finishedAt && Boolean(batch.invitedAt)).length;
+ const eligibleCount=working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.eligible??0),0);
+ const pendingCount=working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
+ const placedCount=working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Make placement eligibility decisions cohort by cohort. This list does not guess inherited learner eligibility."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
@@ -59,8 +68,8 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {!data.ready&&parsed.data.state!=="ALL"?<p role="status" className="text-sm">State filtering is unavailable until batch lifecycle storage is registered. Showing all matching batch names.</p>:null}
   {!data.ready?<p role="status" className="rounded border border-border p-3">Placement batch lifecycle migration is pending. Academic cohorts remain visible; invitation and completion status is unavailable.</p>:null}
   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
-  ["Total batches",summary.total],["Planning",summary.planning],["Invited",summary.invited],["Finished",summary.finished],
-  ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:label==="Total batches"?value:"—"}</dd></div>)}</dl>
+  ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
+  ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:"—"}</dd></div>)}</dl>
   <p role="status" className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<p role="status" className="rounded border border-border p-3 text-sm text-body">The requested batch page no longer exists for these filters. Showing the last available page.</p>:null}
   <nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
