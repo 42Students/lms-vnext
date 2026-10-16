@@ -2,6 +2,7 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoSettingsNav} from "@/components/placements/tpo-settings-nav";
+import {TpoPublicPlacementToggle} from "@/components/placements/tpo-public-placement-toggle";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoPublicPlacementPublication} from "@/modules/placements/public-page/publication-service";
 import {publicPlacementSettingState} from "@/modules/placements/public-page/publication-view-model";
@@ -26,17 +27,10 @@ export default async function PublicPlacementSettingsPage({
     The public page displays live, college-scoped results from the last 12 months only after you opt in.
     Metrics below the publication threshold of five are not shown.
    </p>
-   {value.ready&&value.settings?<p className="mt-3 text-sm text-muted-foreground">
-      Recorded cohort: {value.settings.populationCount??"Not recorded"}
+   {value.ready?<p className="mt-3 text-sm text-muted-foreground">
+      Active consented placement cohort: {view.populationCount??"Unavailable"}
     </p>:null}
-   {value.ready&&value.settings?
-    <form action="/api/placements/tpo/public-placement" method="post" className="mt-4">
-     <input type="hidden" name="enabled" value={view.enabled?"false":"true"}/>
-     <button type="submit" disabled={!view.enabled&&!view.canEnable}
-       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:cursor-not-allowed disabled:opacity-50">
-      {view.enabled?"Disable public statistics":"Enable public statistics"}
-     </button>
-    </form>:null}
+   {value.ready?<TpoPublicPlacementToggle enabled={view.enabled} canEnable={view.canEnable}/>:null}
    {!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
      Public statistics cannot be enabled without a recorded cohort of at least five.
     </p>:null}
