@@ -1,6 +1,7 @@
 import "server-only";
 import {and,asc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {activityEvents,collegeMemberships,colleges,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,users} from "@/db/schema";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
@@ -117,7 +118,7 @@ export async function moveTpoBulkApplicationStage(ctx:RequestContext,jobId:strin
   await tx.insert(activityEvents).values({
    organizationId:college?.organizationId??ctx.membership!.organizationId,
    collegeId,actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
-   module:"PLACEMENTS",eventType:"placements.applicant.stage_moved",
+   module:"PLACEMENTS",eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICANT_STAGE_MOVED,
    subjectType:"placement_application",subjectId:applicationId,
    summary:"Placement cell moved applicant to "+target.toLowerCase(),
    metadata:{jobId,from:current?.stage??"SCREENING",to:target,roundId:round.id},
