@@ -3,10 +3,12 @@ import { notFound, redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { tpoCompanyDetailQuerySchema } from "@/modules/placements/tpo-companies-view-service";
 import { getTpoCompanyDetailReadOnly } from "@/modules/placements/tpo-company-detail-read-service";
+import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
 
 function dateLabel(value: Date | null) {
   if (!value) return "—";
@@ -57,6 +59,7 @@ export default async function TpoCompanyDetailPage({
   );
 
   if (!detail) notFound();
+  const companyLink = await getTpoPublicJoinLinkStatus(context, "COMPANY", route.companyId);
 
   const {
     company,
@@ -94,6 +97,8 @@ export default async function TpoCompanyDetailPage({
           </Link>
         }
       />
+
+      <TpoPublicJoinLinkCard initial={companyLink} scope="COMPANY" companyId={route.companyId} companyName={detail.company.name} />
 
       <section aria-label="College company relationship" className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">College relationship and trust</h2>
