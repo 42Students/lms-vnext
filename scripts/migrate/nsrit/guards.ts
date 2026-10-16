@@ -110,7 +110,62 @@ export const WRITE_TABLE_ALLOWLIST: ReadonlySet<string> = new Set([
   "quiz_attempt_answers",
   "course_discussion_messages",
   "announcements",
+  // Stage 2b-ii (placements, projects, learner in-app notifications). Never an outbox,
+  // delivery or messaging table: activity_events and in_app_notifications hold the
+  // already-delivered learner notifications only.
+  "module_access_rules",
+  "placement_companies",
+  "placement_company_relationships",
+  "placement_recruiter_profiles",
+  "placement_recruiter_college_grants",
+  "placement_seasons",
+  "placement_jobs",
+  "placement_job_role_options",
+  "placement_job_eligibility_policies",
+  "placement_job_rounds",
+  "placement_hr_interview_slots",
+  "placement_applications",
+  "placement_application_status_history",
+  "placement_application_screenings",
+  "placement_application_screening_history",
+  "placement_round_results",
+  "placement_offers",
+  "placement_offer_status_history",
+  "placement_batch_lifecycles",
+  "placement_batch_registrations",
+  "placement_eligibility_decisions",
+  "placement_saved_jobs",
+  "placement_candidate_preferences",
+  "project_templates",
+  "project_template_versions",
+  "project_template_college_assignments",
+  "project_instances",
+  "project_releases",
+  "project_sprints",
+  "project_tasks",
+  "project_task_submissions",
+  "project_task_comments",
+  "project_members",
+  "project_resources",
+  "project_meetings",
+  "project_submissions",
+  "project_submission_reviews",
+  "project_delivery_events",
+  "activity_events",
+  "in_app_notifications",
 ]);
+
+/**
+ * Statements allowed ONLY during a rollback, written out in full: the
+ * registration audit trail is append-only (immutability trigger plus a
+ * restrict foreign key), so undoing a loaded batch must lift that one trigger
+ * inside the rollback transaction, delete the audit rows of the mapped
+ * registrations and put the trigger back. Nothing else is ever allowed.
+ */
+export const ROLLBACK_ONLY_STATEMENTS: readonly RegExp[] = [
+  /^alter table placement_batch_registration_events (disable|enable) trigger db08_registration_events_no_mutation$/i,
+  /^delete from placement_batch_registration_events where registration_id in \(select new_id from legacy_id_map where batch_id = \$1 and college_id = \$2 and new_entity_type = 'placement_batch_registrations'\)$/i,
+];
 
 const WRITE_STATEMENT =
   /^(insert\s+into|update|delete\s+from)\s+(?:only\s+)?(?:public\.)?"?([a-z_][a-z0-9_]*)"?/i;
@@ -118,6 +173,7 @@ const WRITE_STATEMENT =
 /** Throws unless a statement is read-only or writes an allowlisted table. */
 export function assertStatementAllowed(sql: string) {
   const text = sql.trim();
+  if (ROLLBACK_ONLY_STATEMENTS.some((re) => re.test(text.replace(/\s+/g, " ")))) return;
   if (/^(select|begin|commit|rollback|savepoint|release|show|set\s+local)\b/i.test(text)) return;
   const match = WRITE_STATEMENT.exec(text);
   if (!match) {

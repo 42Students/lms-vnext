@@ -491,7 +491,7 @@ describe("reports and write guards", () => {
     for (const table of ["courses", "course_offerings", "lesson_contents", "attendance_records", "quiz_attempt_answers", "announcements"]) {
       expect(() => assertStatementAllowed(`INSERT INTO ${table} (id) VALUES ($1)`)).not.toThrow();
     }
-    for (const table of ["in_app_notifications", "outbound_messages", "activity_events", "assignment_submission_files", "lesson_video_assets"]) {
+    for (const table of ["outbound_messages", "general_notification_outbox", "assignment_submission_files", "lesson_video_assets"]) {
       expect(() => assertStatementAllowed(`INSERT INTO ${table} (id) VALUES ($1)`)).toThrow(/not allowed/);
     }
   });

@@ -365,7 +365,7 @@ describe("loader guards", () => {
     expect(() => assertStatementAllowed("  INSERT INTO users (id) VALUES ($1)")).not.toThrow();
     expect(() => assertStatementAllowed('UPDATE "college_memberships" SET status = $1')).not.toThrow();
     expect(() => assertStatementAllowed("DELETE FROM legacy_id_map WHERE 1=1")).not.toThrow();
-    for (const table of ["in_app_notifications", "outbound_messages", "general_notification_outbox", "activity_events", "tenant_domains"]) {
+    for (const table of ["outbound_messages", "general_notification_outbox", "tenant_domains"]) {
       expect(() => assertStatementAllowed(`INSERT INTO ${table} (id) VALUES (1)`)).toThrow(/not allowed/);
     }
     expect(() => assertStatementAllowed("DROP TABLE users")).toThrow(GuardError);

@@ -1,16 +1,18 @@
 /**
  * NSRIT legacy -> vNext loader: stage 2a (foundation + people, default) and
- * stage 2b-i (academics, --stage=2b; needs stage 2a applied first).
+ * stage 2b-i (academics, --stage=2b; needs stage 2a applied first) and stage 2b-ii
+ * (placements, projects, learner in-app notifications, --stage=2bii; needs 2a and 2b).
  *
  *   tsx scripts/migrate/nsrit/load.ts --snapshot=<dir>                 dry-run (default)
  *   tsx scripts/migrate/nsrit/load.ts --snapshot=<dir> --apply         write
  *   tsx scripts/migrate/nsrit/load.ts --snapshot=<dir> --rollback=<batch-id>
  *   tsx scripts/migrate/nsrit/load.ts --snapshot=<dir> --stage=2b [--apply]
+ *   tsx scripts/migrate/nsrit/load.ts --snapshot=<dir> --stage=2bii [--apply]
  *
  * Options: --out=<report dir> (default <snapshot>/reports), --allow-remote-dev,
- * --stage=2a|2b, --rehearsal-keep-demo (local rehearsal only: keeps the
+ * --stage=2a|2b|2bii, --rehearsal-keep-demo (local rehearsal only: keeps the
  * "Demo Attendance Session" schedule rows that real-data-only mode rejects).
- * Roll back stage 2b-i before stage 2a (2b rows reference 2a rows).
+ * Roll back stage 2b-ii before 2b-i and 2b-i before 2a (later stages reference earlier rows).
  * Environment: DATABASE_URL (required), ALLOW_NSRIT_IMPORT=I_ACCEPT for
  * --apply/--rollback. A non-loopback database additionally needs
  * --allow-remote-dev and ALLOW_NSRIT_REMOTE_DEV (do not use outside dev).
@@ -23,7 +25,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { Client } from "pg";
-import { LOADER_VERSION, LOADER_VERSION_2B } from "./common";
+import { LOADER_VERSION, LOADER_VERSION_2B, LOADER_VERSION_2BII, nsritId } from "./common";
 import {
   LoadContext,
   LoadAbort,
@@ -49,6 +51,10 @@ import {
 } from "./guards";
 import { buildPlan, type Plan } from "./plan";
 import { loadAcademics2b, preflightAcademics, validateAcademics } from "./db-academics";
+import { findExistingCompanies, loadPlacementsProjects2bii, preflight2bii, validate2bii } from "./db-2bii";
+import { buildPlan2bii } from "./plan-2bii";
+import { reconcile2bii, type Reconciliation2bii } from "./reconcile-2bii";
+import { buildReconciliation2bii, reconciliationMarkdown2bii, rejectionReportMarkdown2bii } from "./reports-2bii";
 import { buildAcademicsPlan } from "./plan-academics";
 import { compareFacts, computeVnextFacts, type ReconciliationOutcome } from "./reconcile";
 import {
@@ -91,7 +97,7 @@ async function main() {
   if (rollbackId && apply) throw new GuardError("Use either --apply or --rollback, not both");
   const mode = rollbackId ? "rollback" : apply ? "apply" : "dry-run";
   const stage = arg("stage") ?? "2a";
-  if (stage !== "2a" && stage !== "2b") throw new GuardError("--stage must be 2a or 2b");
+  if (stage !== "2a" && stage !== "2b" && stage !== "2bii") throw new GuardError("--stage must be 2a, 2b or 2bii");
 
   const target = assertTargetAllowed(process.env.DATABASE_URL, {
     allowRemoteDev: arg("allow-remote-dev") === "true",
@@ -127,6 +133,19 @@ async function main() {
         await client.query("ROLLBACK");
         throw error;
       }
+      return;
+    }
+
+    if (stage === "2bii") {
+      await runPlacementsProjects({
+        client,
+        tx,
+        snapshot,
+        mode: mode as "dry-run" | "apply",
+        outDir,
+        timings,
+        started,
+      });
       return;
     }
 
@@ -344,6 +363,113 @@ async function runAcademics(args: {
   writeFileSync(path.join(outDir, `reconciliation-2b-${mode}-${stamp}.md`), academicsReconciliationMarkdown(reconciliation), "utf8");
   writeFileSync(path.join(outDir, "rejected-rows-report-2b.md"), academicsRejectionReportMarkdown(plan), "utf8");
   process.stdout.write(academicsReconciliationMarkdown(reconciliation));
+  if (validation.some((v) => !v.ok)) process.exitCode = 2;
+}
+
+async function runPlacementsProjects(args: {
+  client: Client;
+  tx: Tx;
+  snapshot: ReturnType<typeof readSnapshot>;
+  mode: "dry-run" | "apply";
+  outDir: string;
+  timings: Record<string, number>;
+  started: number;
+}) {
+  const { client, tx, snapshot, mode, outDir, timings, started } = args;
+  const base0 = buildPlan(snapshot);
+  const externalConflicts = await findExternalConflicts(client, base0);
+  const base = buildPlan(snapshot, { externalConflicts });
+  const collegeId = base.college.newId;
+  if (collegeId !== NSRIT_COLLEGE_ID) throw new LoadAbort("Unexpected college id derivation");
+  const asOf = new Date(snapshot.manifest.exportedAt);
+
+  // Pass 1 finds the companies this loader owns; pass 2 reuses global companies that already exist under other owners.
+  const pass1 = buildPlan2bii(snapshot, base, { asOf });
+  const owned = new Set(pass1.placements.companies.map((x) => x.newId));
+  const externalCompanies = await findExistingCompanies(client, owned);
+  const ownIds = new Set([
+    ...base.people.map((p) => p.newId),
+    ...(snapshot.tables.recruiter ?? []).map((r) => nsritId("users", "recruiter", String(r.id))),
+  ]);
+  const phones = (snapshot.tables.recruiter ?? []).map((r) => String(r.contact_mobile ?? "")).filter(Boolean);
+  const emails = (snapshot.tables.recruiter ?? []).map((r) => String(r.contact_mail ?? "").toLowerCase()).filter(Boolean);
+  const externalContacts = { phones: new Set<string>(), emails: new Set<string>() };
+  if (phones.length || emails.length) {
+    const res = await client.query<{ id: string; phone_e164: string | null; email: string | null }>(
+      `SELECT id, phone_e164, lower(email) AS email FROM users WHERE right(coalesce(phone_e164, ''), 10) = ANY($1::text[]) OR lower(email) = ANY($2::text[])`,
+      [phones.map((p) => p.replace(/\D/g, "").slice(-10)), emails],
+    );
+    for (const row of res.rows) {
+      if (ownIds.has(row.id)) continue;
+      if (row.phone_e164) externalContacts.phones.add(row.phone_e164);
+      if (row.email) externalContacts.emails.add(row.email);
+    }
+  }
+  const plan = buildPlan2bii(snapshot, base, { asOf, externalCompanies, externalContacts });
+  const problems = await preflight2bii(client, plan);
+  if (problems.length) throw new LoadAbort(`Preflight failed: ${problems.join("; ")}`);
+
+  const label = `NSRIT stage 2b-ii${mode === "dry-run" ? " dry-run" : ""}`;
+  let validation: Validation[] = [];
+  let derived: Reconciliation2bii | null = null;
+  let batchId: string | null = null;
+  const counts: LoadCounts = {};
+  const t0 = Date.now();
+  await client.query("BEGIN");
+  try {
+    const bid = await createBatch(tx, collegeId, snapshot.manifest.snapshotSha256, label, LOADER_VERSION_2BII);
+    batchId = bid;
+    const ctx = new LoadContext(tx, collegeId, bid);
+    await loadPlacementsProjects2bii(ctx, plan);
+    validation = await validate2bii(ctx, plan);
+    derived = await reconcile2bii(tx, plan, collegeId);
+    for (const [table, c] of Object.entries(ctx.counts)) counts[table] = c;
+    if (mode === "apply") {
+      if (validation.some((v) => !v.ok)) {
+        throw new LoadAbort(`Validation failed: ${validation.filter((v) => !v.ok).map((v) => v.check).join("; ")}`);
+      }
+      await finishBatch(tx, bid, "COMPLETED", {
+        loaderVersion: LOADER_VERSION_2BII,
+        stage: "2b-ii",
+        tables: counts,
+        rejected: plan.rejections.length,
+        derivedMismatches: derived.mismatches.length,
+      });
+      await client.query("COMMIT");
+    } else {
+      await client.query("ROLLBACK");
+      batchId = null;
+    }
+  } catch (error) {
+    await client.query("ROLLBACK");
+    if (mode === "apply" && batchId) {
+      await client.query("BEGIN");
+      try {
+        await finishBatch(tx, batchId, "FAILED", { error: safeErrorMessage(error).slice(0, 300) });
+        await client.query("COMMIT");
+      } catch {
+        await client.query("ROLLBACK");
+      }
+    }
+    throw error;
+  }
+  timings[mode === "apply" ? "placements+projects apply" : "placements+projects dry-run (rolled back)"] = Date.now() - t0;
+  timings.total = Date.now() - started;
+  const reconciliation = buildReconciliation2bii(plan, counts, {
+    mode,
+    batchId,
+    snapshotSha256: snapshot.manifest.snapshotSha256,
+    loaderVersion: LOADER_VERSION_2BII,
+    validation,
+    derived,
+    timingsMs: timings,
+  });
+  mkdirSync(outDir, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  writeFileSync(path.join(outDir, `reconciliation-2bii-${mode}-${stamp}.json`), JSON.stringify(reconciliation, null, 2), "utf8");
+  writeFileSync(path.join(outDir, `reconciliation-2bii-${mode}-${stamp}.md`), reconciliationMarkdown2bii(reconciliation), "utf8");
+  writeFileSync(path.join(outDir, "rejected-rows-report-2bii.md"), rejectionReportMarkdown2bii(plan), "utf8");
+  process.stdout.write(reconciliationMarkdown2bii(reconciliation));
   if (validation.some((v) => !v.ok)) process.exitCode = 2;
 }
 

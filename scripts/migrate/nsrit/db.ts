@@ -80,11 +80,12 @@ export async function createBatch(
   collegeId: string,
   snapshotSha256: string,
   label: string,
+  loaderVersion: string = LOADER_VERSION,
 ): Promise<string> {
   const result = await tx.query<{ id: string }>(
     `INSERT INTO data_import_batches (college_id, source_system, source_label, loader_version, snapshot_sha256, status)
      VALUES ($1, $2, $3, $4, $5, 'RUNNING') RETURNING id`,
-    [collegeId, SOURCE_SYSTEM, label.slice(0, 120), LOADER_VERSION, snapshotSha256],
+    [collegeId, SOURCE_SYSTEM, label.slice(0, 120), loaderVersion, snapshotSha256],
   );
   return result.rows[0].id;
 }
@@ -196,6 +197,11 @@ const KEY_COLUMN: Record<string, string> = {
   faculty_profiles: "membership_id",
   attendance_sessions: "schedule_event_id",
   section_schedule_event_courses: "schedule_event_id",
+  placement_job_eligibility_policies: "job_id",
+  placement_application_screenings: "application_id",
+  placement_recruiter_profiles: "user_id",
+  placement_batch_lifecycles: "cohort_id",
+  placement_candidate_preferences: "membership_id",
 };
 
 export async function existingIds(ctx: LoadContext, table: string, ids: string[]): Promise<Set<string>> {
@@ -556,7 +562,48 @@ export async function validate(ctx: LoadContext, plan: Plan): Promise<Validation
 
 /** Child-first deletion order; organizations and colleges are kept (batches reference the college). */
 export const ROLLBACK_ORDER: { table: string; key: string }[] = [
-  // Stage 2b-i tables first (they reference stage 2a rows).
+  // Stage 2b-ii tables first (they reference stage 2a and 2b-i rows).
+  { table: "in_app_notifications", key: "id" },
+  { table: "module_access_rules", key: "id" },
+  { table: "activity_events", key: "id" },
+  { table: "project_delivery_events", key: "id" },
+  { table: "project_submission_reviews", key: "id" },
+  { table: "project_submissions", key: "id" },
+  { table: "project_meetings", key: "id" },
+  { table: "project_resources", key: "id" },
+  { table: "project_task_comments", key: "id" },
+  { table: "project_task_submissions", key: "id" },
+  { table: "project_tasks", key: "id" },
+  { table: "project_sprints", key: "id" },
+  { table: "project_releases", key: "id" },
+  { table: "project_members", key: "id" },
+  { table: "project_instances", key: "id" },
+  { table: "project_template_college_assignments", key: "id" },
+  { table: "project_template_versions", key: "id" },
+  { table: "project_templates", key: "id" },
+  { table: "placement_saved_jobs", key: "id" },
+  { table: "placement_candidate_preferences", key: "membership_id" },
+  { table: "placement_eligibility_decisions", key: "id" },
+  { table: "placement_batch_registrations", key: "id" },
+  { table: "placement_batch_lifecycles", key: "cohort_id" },
+  { table: "placement_offer_status_history", key: "id" },
+  { table: "placement_offers", key: "id" },
+  { table: "placement_round_results", key: "id" },
+  { table: "placement_application_screening_history", key: "id" },
+  { table: "placement_application_screenings", key: "application_id" },
+  { table: "placement_application_status_history", key: "id" },
+  { table: "placement_applications", key: "id" },
+  { table: "placement_hr_interview_slots", key: "id" },
+  { table: "placement_job_rounds", key: "id" },
+  { table: "placement_job_eligibility_policies", key: "job_id" },
+  { table: "placement_job_role_options", key: "id" },
+  { table: "placement_jobs", key: "id" },
+  { table: "placement_seasons", key: "id" },
+  { table: "placement_recruiter_college_grants", key: "id" },
+  { table: "placement_recruiter_profiles", key: "user_id" },
+  { table: "placement_company_relationships", key: "id" },
+  { table: "placement_companies", key: "id" },
+  // Stage 2b-i tables next (they reference stage 2a rows).
   { table: "quiz_attempt_answers", key: "id" },
   { table: "quiz_attempts", key: "id" },
   { table: "quiz_options", key: "id" },
@@ -617,6 +664,17 @@ export async function rollbackBatch(
   );
   deleted.membership_roles = roles.rowCount;
   for (const { table, key } of ROLLBACK_ORDER) {
+    if (table === "placement_batch_registrations") {
+      // The registration audit trail is append-only: lift its one trigger inside this transaction.
+      await tx.query("ALTER TABLE placement_batch_registration_events DISABLE TRIGGER db08_registration_events_no_mutation");
+      const events = await tx.query(
+        `DELETE FROM placement_batch_registration_events WHERE registration_id IN
+           (SELECT new_id FROM legacy_id_map WHERE batch_id = $1 AND college_id = $2 AND new_entity_type = 'placement_batch_registrations')`,
+        [batchId, expectedCollegeId],
+      );
+      deleted.placement_batch_registration_events = events.rowCount;
+      await tx.query("ALTER TABLE placement_batch_registration_events ENABLE TRIGGER db08_registration_events_no_mutation");
+    }
     const res = await tx.query(
       `DELETE FROM ${table} WHERE ${key} IN
          (SELECT new_id FROM legacy_id_map WHERE batch_id = $1 AND college_id = $2 AND new_entity_type = $3)`,
