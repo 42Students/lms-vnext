@@ -19,18 +19,21 @@ export function quizReviewActions(input: {
     | "CLOSED"
     | "ARCHIVED";
   resultsPublished: boolean;
+  deadlineReached?: boolean;
 }) {
+  const mayRelease=input.status==="CLOSED" ||
+    (input.status==="PUBLISHED"&&Boolean(input.deadlineReached));
   return {
     canReviewAttempts:
       input.status === "PUBLISHED" ||
       input.status === "CLOSED",
     canPublishResults:
       input.deliveryOwned &&
-      input.status === "CLOSED" &&
+      mayRelease &&
       !input.resultsPublished,
     canHideResults:
       input.deliveryOwned &&
-      input.status === "CLOSED" &&
+      mayRelease &&
       input.resultsPublished,
   };
 }
