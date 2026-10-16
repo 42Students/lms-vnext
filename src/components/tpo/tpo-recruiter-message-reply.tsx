@@ -46,7 +46,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><button key={reply} type="button" disabled={busy}
       className="min-h-10 rounded-md border border-border px-3 text-sm text-body"
-      onClick={()=>persistDraft(body.trim()?body.trim()+"\n"+reply:reply)}>{reply}</button>)}
+      onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</button>)}
    </div>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-sm text-body">Message
