@@ -60,6 +60,6 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    <button className="min-h-11 rounded bg-primary px-4 text-on-primary" disabled={busy} onClick={()=>void save()}>Save rule</button>
   </>}
   {message&&<p role="status" className="w-full text-sm text-body">{message}</p>}
-  {scopes.length>=500&&<p className="w-full text-sm text-warning-text">Only the first 500 academic scopes are loaded. Narrowing the directory is required for larger colleges.</p>}
+  {scopes.length>=500&&<p className="w-full text-sm text-warning-text">This page displays up to 500 academic scopes. Open the next hierarchy page to edit later scopes.</p>}
  </div>;
 }
