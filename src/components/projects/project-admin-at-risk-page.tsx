@@ -131,6 +131,30 @@ export async function ProjectAdminAtRiskPage({
                 <p className="font-semibold">Active blocker</p>
                 <p className="mt-1 whitespace-pre-wrap break-words">{project.blockerReason}</p>
               </div> : null}
+              <dl className="mt-3 grid gap-3 text-sm text-body sm:grid-cols-3">
+                <div><dt className="font-semibold">Severity</dt><dd>
+                  {project.riskReasons.length > 1 || project.blockerReason ? "High" : "Medium"}
+                </dd></div>
+                <div><dt className="font-semibold">Inactive</dt><dd>
+                  {project.inactiveDays} days
+                </dd></div>
+                <div><dt className="font-semibold">Blocker</dt><dd className="break-words">
+                  {project.blockerReason ?? "—"}
+                </dd></div>
+              </dl>
+              <div className="mt-3 flex flex-wrap gap-3 text-sm font-semibold">
+                <Link href={basePath + "/" + project.id + "/summary?from=at-risk&reason=" +
+                  encodeURIComponent(project.riskReasons.join(", "))}
+                  className="text-primary-text hover:underline">Open</Link>
+                <Link href={basePath + "/reassign-mentor?fromMentorId=" +
+                  encodeURIComponent(project.mentorMembershipId ?? "UNASSIGNED")}
+                  className="text-primary-text hover:underline">
+                  {project.mentorMembershipId ? "Reassign mentor" : "Assign mentor"}
+                </Link>
+                {project.riskReasons.includes("Pending review") ?
+                  <Link href={basePath + "/" + project.id + "/delivery?from=at-risk&reason=pending-review"}
+                    className="text-primary-text hover:underline">Review submission</Link> : null}
+              </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {project.riskReasons.map((reason) => (
                   <StatusBadge
