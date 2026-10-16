@@ -310,7 +310,7 @@ export function ProjectWorkspace({
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditor
         project={{id:workspace.project.id,title:workspace.project.title,
          summary:workspace.project.summary,status:workspace.project.status}}/>:null}
-      {show("summary") || show("readiness") ? (
+      {show("summary") || show("readiness") || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Metric
             label="Tasks"
@@ -388,13 +388,40 @@ export function ProjectWorkspace({
 
       {show("overview") ? (
         <section className="rounded-xl border border-border bg-surface p-5">
-          <h2 className="m-0 text-lg font-semibold text-foreground">
-            Overview
-          </h2>
-          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
-            {workspace.project.summary ??
-              "No project overview has been recorded yet."}
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="m-0 text-lg font-semibold text-foreground">Overview</h2>
+            {mode === "MENTOR" && workspace.finalDelivery.submissions.some(
+              submission => submission.status === "SUBMITTED",
+            ) ? <Link href={"/mentor/projects/" + encodeURIComponent(workspace.project.id) + "?tab=delivery"}
+              className="inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
+              Review submission
+            </Link> : null}
+          </div>
+          {workspace.templateOverview ? (
+            <div className="mt-3 space-y-4 text-sm leading-6 text-body">
+              {workspace.templateOverview.goal ? <div>
+                <h3 className="font-semibold text-foreground">Project goal</h3>
+                <p className="whitespace-pre-wrap">{workspace.templateOverview.goal}</p>
+              </div> : null}
+              {workspace.templateOverview.description ? <div>
+                <h3 className="font-semibold text-foreground">Description</h3>
+                <p className="whitespace-pre-wrap">{workspace.templateOverview.description}</p>
+              </div> : null}
+              <div>
+                <h3 className="font-semibold text-foreground">Deliverables</h3>
+                {workspace.templateOverview.deliverables.length ? (
+                  <ul className="list-disc space-y-1 pl-6">
+                    {workspace.templateOverview.deliverables.map((deliverable, index) => (
+                      <li key={index}>{deliverable}</li>
+                    ))}
+                  </ul>
+                ) : <p>No deliverables have been recorded yet.</p>}
+              </div>
+            </div>
+          ) : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
+          {workspace.project.summary ? (
+            <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">{workspace.project.summary}</p>
+          ) : null}
         </section>
       ) : null}
 
@@ -483,6 +510,12 @@ export function ProjectWorkspace({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Execution
           </h2>
+          {mode === "MENTOR" && workspace.finalDelivery.submissions.some(
+            submission => submission.status === "SUBMITTED",
+          ) ? <Link href={"/mentor/projects/" + encodeURIComponent(workspace.project.id) + "?tab=delivery"}
+            className="mt-2 inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
+            Review submission
+          </Link> : null}
           <p className="mt-1 text-sm text-body">
             Release → sprint → task state from normalized
             Project records.
