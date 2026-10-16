@@ -68,6 +68,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     status: sections.status,
     updatedAt: sql<Date>`${sections.updatedAt}`.mapWith(sections.updatedAt).as("section_updated_at"),
     capacity: sections.capacity,
+    description: sections.description,
     programId: sql<string>`${programs.id}`.as("class_program_id"),
     programName: sql<string>`${programs.name}`.as("class_program_name"),
     cohortName: sql<string>`${cohorts.name}`.as("class_cohort_name"),
@@ -110,6 +111,8 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
         ilike(sections.code, searchPattern(query.q)),
         ilike(cohorts.name, searchPattern(query.q)),
         ilike(programs.name, searchPattern(query.q)),
+        sql<boolean>`${sections.capacity}::text ILIKE ${searchPattern(query.q)}`,
+        ilike(sections.description, searchPattern(query.q)),
       ) : undefined,
     )).as("college_structure_classes");
 
