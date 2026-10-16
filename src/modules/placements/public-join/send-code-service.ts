@@ -100,6 +100,8 @@ export async function requestPublicJoinCode(
   let sent = false;
   try {
     sent = await deliver(email, code);
+  } catch {
+    sent = false;
   } finally {
     if (!sent) await getDb().update(placementPublicJoinChallenges)
       .set({ expiresAt: new Date() })
