@@ -794,8 +794,8 @@ export function FacultyAttendanceWorkspace({
         <>
           {workspace.sessions.length === 0 ? (
             <EmptyState
-              title="No class sessions to mark"
-              description="Schedule a class first, then return here to mark learner attendance."
+              title="No class scheduled for this date"
+              description="Use Schedule Class to create a class session before marking attendance."
             />
           ) : (
             <section className="rounded-xl border border-border bg-surface p-5">
