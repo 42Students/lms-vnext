@@ -155,9 +155,8 @@ export function CreateProjectResourceControl({
           description:
             description.trim() || undefined,
           url: url.trim() || undefined,
-          required,
-          visibility: isLearner ? "TEAM" : visibility,
           required: isLearner ? false : required,
+          visibility: isLearner ? "TEAM" : visibility,
         },
       );
       setOpen(false);
