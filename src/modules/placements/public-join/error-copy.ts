@@ -1,4 +1,6 @@
 export const JOIN_ERROR_COPY={
+ PHONE_STORAGE_NOT_READY:"Mobile contact storage is not ready. Remove the optional mobile number or ask the placement cell to enable it.",
+ INVALID_MOBILE:"Enter a valid 10-digit mobile number, or leave it blank.",
  WRONG_CODE:"That code isn't right. Check the latest email from us.",
  CODE_EXPIRED:"That code has expired. Send a new one.",
  CODE_LOCKED:"Too many wrong codes. Send a new one.",
