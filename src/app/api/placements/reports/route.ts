@@ -8,6 +8,7 @@ import {
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { placementReportCsv } from "@/modules/placements/report-model";
 import { getPlacementAccreditationReport } from "@/modules/placements/report-accreditation-service";
+import {getTpoAccreditationStudentExport} from "@/modules/placements/tpo-accreditation-students-service";
 import {
   getPlacementFailureReasonsReport,
   getPlacementLeadsReport,
@@ -38,9 +39,11 @@ const exportQuerySchema = z
       "failure-reasons",
       "leads",
       "accreditation",
+      "accreditation-students",
     ]),
     seasonId: z.string().uuid().optional(),
     jobId: z.string().uuid().optional(),
+    batchId: z.string().uuid().optional(),
   })
   .strict();
 
@@ -535,6 +538,18 @@ export async function GET(request: Request) {
     // Separate migrated-only evidence path: the normal report workspace
     // optionally touches staged registration persistence and is not a
     // suitable accreditation source.
+    if(query.kind==="accreditation-students"){
+      if(!hasMembershipRole(context,"TPO")||!query.batchId)
+        throw new AuthorizationError("placements.manage");
+      const studentReport=await getTpoAccreditationStudentExport(context,{
+       collegeId,seasonId:query.seasonId,jobId:query.jobId,batchId:query.batchId,
+      });
+      return new Response("\uFEFF"+studentReport.csv,{
+       headers:{"Content-Type":"text/csv; charset=utf-8",
+        "Content-Disposition":'attachment; filename="naac-5.2.1-students.csv"',
+        "Cache-Control":"private, no-store, max-age=0","X-Content-Type-Options":"nosniff",Vary:"Cookie"},
+      });
+    }
     if (query.kind === "accreditation") {
       const accreditation = await getPlacementAccreditationReport(
         context,
