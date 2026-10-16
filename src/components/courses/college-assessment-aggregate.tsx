@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
+import { CollegeAssignmentReview } from "./college-assignment-review";
+import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import {
   collegeAssessmentHref,
   collegeAssessmentSummary,
@@ -20,6 +22,7 @@ type Data = {
   page: number;
   pageSize: number;
   totalPages: number;
+  reviewDeliveries: {offeringId:string;deliveryId:string;sectionName:string;sectionCode:string}[];
 };
 
 function formatDue(value: Date | null) {
@@ -50,6 +53,7 @@ function QuizListActions({item}:{item:CollegeAssessmentAggregateItem}){
 
 export function CollegeAssessmentAggregate({ data }: { data: Data }) {
   const isAssignment = data.kind === "ASSIGNMENT";
+  const assignmentFilesEnabled=isAssignment&&assignmentFilesRuntimeEnabled();
   const name = isAssignment ? "Assignments" : "Quizzes";
   const summary = collegeAssessmentSummary(data.items);
 
@@ -206,6 +210,11 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
                 </dl>
                 {!isAssignment?<QuizListActions item={item}/>:null}
+                {isAssignment?<CollegeAssignmentReview
+                 assignmentId={item.id} offeringId={item.offeringId}
+                 specificDeliveryId={item.deliveryId} maxPoints={item.points}
+                 status={item.status} deliveries={data.reviewDeliveries}
+                 filesEnabled={assignmentFilesEnabled}/>:null}
               </article>)}
             </div>
             <div className="hidden overflow-x-auto sm:block">
@@ -220,7 +229,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                 <th scope="col" className="px-4 py-3">Due (IST)</th>
                 <th scope="col" className="px-4 py-3">Submitted / eligible</th>
                 {isAssignment?<th scope="col" className="px-4 py-3">Graded</th>:null}
-                {!isAssignment?<th scope="col" className="px-4 py-3">Actions</th>:null}
+                <th scope="col" className="px-4 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -251,7 +260,14 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     {item.submittedLearners}/{item.eligibleLearners} submitted
                   </td>
                   {isAssignment?<td className="px-4 py-4 tabular-nums text-body">{item.gradedLearners} graded</td>:null}
-                  {!isAssignment?<td className="px-4 py-4"><QuizListActions item={item}/></td>:null}
+                  <td className="px-4 py-4">
+                    {isAssignment?<CollegeAssignmentReview
+                     assignmentId={item.id} offeringId={item.offeringId}
+                     specificDeliveryId={item.deliveryId} maxPoints={item.points}
+                     status={item.status} deliveries={data.reviewDeliveries}
+                     filesEnabled={assignmentFilesEnabled}/>:
+                     <QuizListActions item={item}/>}
+                  </td>
                 </tr>
               ))}
             </tbody>
