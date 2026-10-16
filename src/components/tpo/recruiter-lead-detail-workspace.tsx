@@ -317,6 +317,7 @@ export function RecruiterLeadDetailWorkspace({
                 {lead.designation ? " · " + lead.designation : ""}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.stage.replaceAll("_", " ")}</p>
+               <p className="mt-1 text-sm text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
               <p className="mt-1 text-sm text-muted-foreground">Invite: {lead.inviteStatus.replaceAll("_", " ")}</p>
               <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
               <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
