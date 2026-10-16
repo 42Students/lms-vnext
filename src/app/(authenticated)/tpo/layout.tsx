@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { canOpenTpoWorkspace, hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-service";
-import { TpoBellPanel } from "@/components/tpo/tpo-bell-panel";
+import {TpoHeaderIndicators} from "@/components/tpo/tpo-header-indicators";
 import { countTpoUnreadRecruiterMessages } from "@/modules/placements/tpo-recruiter-unread-count-service";
 import { TPO_TOPBAR_QUICK_LINKS } from "@/modules/placements/tpo-topbar-links";
 import { TpoFindShortcut } from "@/components/tpo/tpo-find-shortcut";
@@ -30,8 +30,7 @@ export default async function TpoLayout({children}:Readonly<{children:React.Reac
           className="block min-h-10 rounded px-2 py-2 text-sm text-primary-text hover:bg-primary-subtle">{item.label}</Link>)}
      </nav>
    </details>
-   <Link href="/tpo/messages" className="min-h-11 inline-flex items-center text-sm text-primary-text underline">Messages{recruiterUnread>0 ? " ("+recruiterUnread+" unread)" : ""}</Link>
-   <TpoBellPanel initialUnread={inbox.unreadCount} items={items}/>
+   <TpoHeaderIndicators initial={{messages:recruiterUnread,unread:inbox.unreadCount,items}}/>
   </div>
   {children}
  </div>;
