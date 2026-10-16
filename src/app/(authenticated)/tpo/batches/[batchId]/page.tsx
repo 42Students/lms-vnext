@@ -19,13 +19,25 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  const selected=Array.isArray(rawTab)?rawTab[0]:rawTab;
  const aliases:Record<string,string>={classes:"students",registration:"registrations",students:"students",registrations:"registrations",rules:"rules",history:"history"};
  if(selected && aliases[selected])redirect("/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected]);const context=await getCurrentRequestContext();
- const [{batch,lifecycle,ready},eligibility,history,registrations,invitePreview]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId),getTpoBatchInvitationPreview(context,batchId)]);
+ const [{batch,lifecycle,ready,decision},eligibility,history,registrations,invitePreview]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId),getTpoBatchInvitationPreview(context,batchId)]);
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
  const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department}/>
  <Link href="/tpo/batches" className="text-sm text-primary-text underline">All batches</Link>
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
+ <section aria-label="Whole batch eligibility decision" className="space-y-2 rounded-lg border border-border bg-surface p-4">
+  <div className="flex flex-wrap items-center justify-between gap-3">
+    <div><h2 className="font-semibold">Whole batch</h2>
+      <p className="text-sm text-body">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
+      {decision.reason?<p className="text-xs text-muted-foreground">Reason: {decision.reason}</p>:null}
+    </div>
+    <Link href={"/tpo/batches/"+batchId+"/rules"} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
+      {lifecycle?.finishedAt?"Review batch decision":"Set batch decision"} →
+    </Link>
+  </div>
+  {decision.status==="INELIGIBLE"?<p className="text-sm text-warning">The batch is ineligible: {decision.reason??"No reason recorded"}. Classes or students set to Eligible are still in placements.</p>:null}
+ </section>
  <p className="text-sm">Status: {!ready?"Lifecycle unavailable":lifecycle?.finishedAt?"Finished":lifecycle?.invitedAt?"Invited":"Preparing"}</p>
  {ready && registrations.available ? <TpoBatchInvitationControl
   batchId={batchId} invitedAt={lifecycle?.invitedAt?.toISOString() ?? null}
