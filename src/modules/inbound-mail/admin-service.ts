@@ -30,8 +30,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
   if(input.status!=="ALL")conditions.push(eq(t.status,input.status));
   if(input.recipient)conditions.push(sql`lower(${t.toAddress}) = ${input.recipient}::text`);
   if(input.q){
-   const escaped=input.q.replace(/[\\%_]/g,"\\ async list(input){
-  const t=inboundMailMessagesStaged,conditions:SQL[]=[];");
+   const escaped=input.q.replace(/[\\%_]/g,"\\$&");
    const pattern="%"+escaped+"%";
    conditions.push(or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern))!);
   }
