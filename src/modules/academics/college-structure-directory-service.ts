@@ -117,8 +117,8 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     db.select({ total: count() }).from(scoped),
     db.select().from(scoped)
       .orderBy(asc(scoped.programName), asc(scoped.cohortName), asc(scoped.name), asc(scoped.id))
-      .limit(COLLEGE_STRUCTURE_PAGE_SIZE)
-      .offset((query.page - 1) * COLLEGE_STRUCTURE_PAGE_SIZE),
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize),
     scopedPrograms(collegeId),
   ]);
   const ids = baseRows.map(row => row.id);
@@ -158,7 +158,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
   return {
     kind: "CLASSES" as const,
     query, items, total, programs: programChoices,
-    totalPages: collegeStructureTotalPages(total),
+    totalPages: collegeStructureTotalPages(total, query.pageSize),
   };
 }
 
@@ -230,8 +230,8 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
     db.select({ total: count() }).from(scoped),
     db.select().from(scoped)
       .orderBy(asc(scoped.programName), asc(scoped.semesterNumber), asc(scoped.name), asc(scoped.id))
-      .limit(COLLEGE_STRUCTURE_PAGE_SIZE)
-      .offset((query.page - 1) * COLLEGE_STRUCTURE_PAGE_SIZE),
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize),
     scopedPrograms(collegeId),
   ]);
   const ids = baseRows.map(item => item.id);
@@ -259,6 +259,6 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
   return {
     kind: "ELECTIVES" as const,
     query, items, total, programs: programChoices,
-    totalPages: collegeStructureTotalPages(total),
+    totalPages: collegeStructureTotalPages(total, query.pageSize),
   };
 }
