@@ -226,3 +226,7 @@ The recruiter thread composer now validates empty/over-limit messages with the l
 ## REC-calendar-messages-profile-13 source implementation (2026-10-17)
 
 Recruiter conversations inbox and detail mount a visible-tab-only four-second pulse. A dedicated read-only GET endpoint validates active recruiter+college grants and, for a thread, exact recruiter ownership; it returns only a digest of message update instants and thread identities. Changed digests trigger server refresh; no read receipt is written by polling. The message rows are not repeatedly sent every four seconds. Auth/database/browser integration still requires the orchestrator's test environment; source is not VERIFIED.
+
+## REC-calendar-messages-profile-36 source implementation — 2026-10-17
+
+Company & Team header now uses the legacy `Recruiter` eyebrow, `Your profile` action, and `Your work with {college}` description, with focused exact-copy unit coverage. Browser/typecheck verification remains required.

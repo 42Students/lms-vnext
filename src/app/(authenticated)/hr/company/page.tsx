@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { ErrorState } from "@/components/ui/error-state";
+import {RECRUITER_COMPANY_EYEBROW,RECRUITER_PROFILE_LINK_LABEL,recruiterCompanySubtitle} from "@/modules/placements/hr-company-header-copy-model";
 import { buildRecruiterCompanyOverview } from "@/modules/placements/recruiter-company-overview-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -31,7 +32,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   const query = await searchParams;
   const collegeQuery = z.string().uuid().optional().safeParse(one(query.collegeId));
-  if (!collegeQuery.success) return <div className="space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Company & Team" />
+  if (!collegeQuery.success) return <div className="space-y-5"><PageHeader eyebrow={RECRUITER_COMPANY_EYEBROW} title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="text-primary-text underline">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -58,7 +59,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="Employer Recruiter"
+          eyebrow={RECRUITER_COMPANY_EYEBROW}
           title="Company & Team"
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
         />
@@ -98,15 +99,15 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
-          eyebrow="Employer Recruiter"
+          eyebrow={RECRUITER_COMPANY_EYEBROW}
           title="Company & Team"
-          description={result.grant.collegeName + " · " + result.company.name}
+          description={recruiterCompanySubtitle(result.grant.collegeName)}
         />
         <Link
           href="/hr/profile"
           className="rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-secondary"
         >
-          Profile
+          {RECRUITER_PROFILE_LINK_LABEL}
         </Link>
       </div>
 
