@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import {
   TpoCalendarCreateFollowup,
   TpoCalendarMoveFollowup,
+  TpoCalendarDoneFollowup,
 } from "@/components/placements/tpo-calendar-followup-actions";
 import { StatusBadge } from "@/components/ui/status-badge";
 
@@ -398,10 +399,13 @@ function CalendarEventCard({
       {audience === "TPO" && allowFollowupEditing &&
        event.kind === "FOLLOW_UP" && event.status === "OPEN" &&
        event.followupId ? (
-        <TpoCalendarMoveFollowup
+        <div className="space-y-2">
+         <TpoCalendarMoveFollowup
           followupId={event.followupId}
           currentIst={calendarDueAtToIstLocal(event.startsAt)}
-        />
+         />
+         <TpoCalendarDoneFollowup followupId={event.followupId}/>
+        </div>
       ) : null}
     </article>
   );
