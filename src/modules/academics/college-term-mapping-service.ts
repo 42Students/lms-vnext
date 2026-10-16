@@ -62,13 +62,14 @@ export async function listCollegeTermMappings(context: RequestContext) {
   const [terms, courseChoices, mapped] = await Promise.all([
     db.select({
       id: programTerms.id, name: programTerms.name, termNumber: programTerms.termNumber,
-      programName: programs.name, programId: programs.id, isActive: programTerms.isActive,
+      programName: programs.name, programId: programs.id, departmentId: departments.id,
+      isActive: programTerms.isActive,
     }).from(programTerms)
       .innerJoin(programs, eq(programs.id, programTerms.programId))
       .innerJoin(departments, and(eq(departments.id, programs.departmentId),
         eq(departments.collegeId, membership.collegeId)))
       .orderBy(asc(programs.name), asc(programTerms.termNumber)),
-    db.select({ id: courses.id, name: courses.name, code: courses.code })
+    db.select({ id: courses.id, name: courses.name, code: courses.code, departmentId: courses.departmentId })
       .from(courses)
       .innerJoin(departments, and(eq(departments.id, courses.departmentId),
         eq(departments.collegeId, membership.collegeId)))
