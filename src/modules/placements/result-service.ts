@@ -3,11 +3,14 @@ import {
   asc,
   desc,
   eq,
+  gt,
   lt,
   max,
   ne,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -676,6 +679,37 @@ export async function applyPlacementRoundResult(
       throw new PlacementsServiceError(
         "PLACEMENT_RESULT_NOT_FOUND",
       );
+    }
+
+    // TPO-drive-workspace-42: applied PASS advances this applicant to the
+    // next active evaluative round. Applied FAIL/HOLD/ABSENT clears stale
+    // progression. 0108 is the registered durable stage table.
+    if(applied.outcome==="PASS"){
+      const [nextRound]=await tx.select({id:placementJobRounds.id,kind:placementJobRounds.kind})
+        .from(placementJobRounds).where(and(
+          eq(placementJobRounds.jobId,current.job.id),
+          ne(placementJobRounds.kind,"TALK"),
+          ne(placementJobRounds.status,"CANCELLED"),
+          gt(placementJobRounds.sequence,current.round.sequence),
+        )).orderBy(asc(placementJobRounds.sequence)).limit(1);
+      if(nextRound){
+        const stage=nextRound.kind==="INTERVIEW"?"INTERVIEW":"TEST";
+        await tx.insert(placementTpoApplicationStages).values({
+          applicationId:current.application.id,jobId:current.job.id,roundId:nextRound.id,
+          stage,changedByUserId:context.user.id,changedAt:now,
+        }).onConflictDoUpdate({
+          target:placementTpoApplicationStages.applicationId,
+          set:{jobId:current.job.id,roundId:nextRound.id,stage,
+            changedByUserId:context.user.id,changedAt:now,
+            version:sql`${placementTpoApplicationStages.version}+1`},
+        });
+      }else{
+        await tx.delete(placementTpoApplicationStages).where(
+          eq(placementTpoApplicationStages.applicationId,current.application.id));
+      }
+    }else{
+      await tx.delete(placementTpoApplicationStages).where(
+        eq(placementTpoApplicationStages.applicationId,current.application.id));
     }
 
     await recordActivityEventInTransaction(
