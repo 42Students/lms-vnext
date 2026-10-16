@@ -26,10 +26,10 @@ export async function listSuperAdminHiringByJob(context:RequestContext,raw:unkno
  const [totals,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.title),asc(source.id))
-  .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+  .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=totals[0]?.total??0;
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(r=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(r=>({
   id:r.id,title:r.title,subtitle:"Persisted application funnel · job-level totals",
   status:r.status,details:[
    "Total applications: "+r.applications,
