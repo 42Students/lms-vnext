@@ -28,9 +28,13 @@ export async function getTpoDriveClosePreview(context:RequestContext,rawJobId:un
   if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const [season]=await tx.select({status:placementSeasons.status}).from(placementSeasons)
    .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
+  const [unreleased]=await tx.select({n:count()}).from(placementOffers)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .where(and(eq(placementApplications.jobId,job.id),eq(placementOffers.status,"ISSUED")));
+  const issuedOffers=unreleased?.n??0;
   return {id:job.id,title:job.title,status:job.status,expectedUpdatedAt:job.updatedAt.toISOString(),
-   canClose:job.status==="PUBLISHED"&&season?.status==="ACTIVE",
-   counts:await impact(tx,job.id)};
+   canClose:job.status==="PUBLISHED"&&season?.status==="ACTIVE"&&issuedOffers===0,
+   issuedOffers,counts:await impact(tx,job.id)};
  });
 }
 export async function closeTpoDriveWithPreview(context:RequestContext,rawJobId:unknown,raw:unknown){
@@ -51,6 +55,10 @@ export async function closeTpoDriveWithPreview(context:RequestContext,rawJobId:u
    counts,input.expectedCounts);
   if(decision==="PREVIEW_STALE")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
   if(decision!=="ALLOW")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
+  const [issued]=await tx.select({n:count()}).from(placementOffers)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .where(and(eq(placementApplications.jobId,jobId),eq(placementOffers.status,"ISSUED")));
+  if((issued?.n??0)>0)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
   const [saved]=await tx.update(placementJobs).set({
    status:"CLOSED",closedAt:new Date(),
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementJobs.updatedAt})+interval '1 millisecond')`,

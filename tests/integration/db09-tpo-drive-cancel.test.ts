@@ -66,7 +66,12 @@ async function cleanup() {
   if (ids.offer) await pool.query("DELETE FROM placement_offer_status_history WHERE offer_id=$1", [ids.offer]);
   if (ids.offer) await pool.query("DELETE FROM placement_offers WHERE id=$1", [ids.offer]);
   if (ids.round) await pool.query("DELETE FROM placement_job_rounds WHERE id=$1", [ids.round]);
-  if (ids.application) await pool.query("DELETE FROM placement_applications WHERE id=$1", [ids.application]);
+  if (ids.application) {
+    await pool.query("DELETE FROM placement_application_screening_history WHERE application_id=$1",[ids.application]);
+    await pool.query("DELETE FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
+    await pool.query("DELETE FROM placement_application_status_history WHERE application_id=$1",[ids.application]);
+    await pool.query("DELETE FROM placement_applications WHERE id=$1", [ids.application]);
+  }
   if (ids.role) await pool.query("DELETE FROM placement_job_role_options WHERE id=$1", [ids.role]);
   if (ids.job) {
     await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1)",[ids.job]);
@@ -120,6 +125,8 @@ describe.skipIf(!enabled)("TPO drive cancellation isolated PostgreSQL", () => {
     expect(saved.roundsCancelled).toBe(1);
     const round = await pool.query<{ status: string }>("SELECT status FROM placement_job_rounds WHERE id=$1", [ids.round]);
     expect(round.rows[0]?.status).toBe("CANCELLED");
+    const screening=await pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
+    expect(screening.rows[0]?.status).toBe("REJECTED");
     const offer = await pool.query<{ status: string }>("SELECT status FROM placement_offers WHERE id=$1", [ids.offer]);
     expect(offer.rows[0]?.status).toBe("WITHDRAWN");
     await expect(cancelTpoDriveWithPreview(tpo, jobId, write)).rejects.toMatchObject({ code: "PLACEMENT_JOB_STALE" });
