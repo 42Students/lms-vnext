@@ -764,6 +764,7 @@ export function FacultyLessonAuthoring({
                   </FieldLabel>
                   <Input
                     type="datetime-local"
+                    step={900}
                     value={startsAt}
                     onChange={(event) =>
                       setStartsAt(
@@ -779,6 +780,7 @@ export function FacultyLessonAuthoring({
                   </FieldLabel>
                   <Input
                     type="datetime-local"
+                    step={900}
                     value={endsAt}
                     onChange={(event) =>
                       setEndsAt(
@@ -790,6 +792,10 @@ export function FacultyLessonAuthoring({
                 </label>
               </div>
             ) : null}
+
+            {mode==="LIVE_CLASS"?<p className="mt-2 text-xs text-muted-foreground">
+              Times are in India Standard Time (IST). Use 15-minute intervals.
+            </p>:null}
 
             {mode === "ASSIGNMENT" ||
             mode === "QUIZ" ? (
