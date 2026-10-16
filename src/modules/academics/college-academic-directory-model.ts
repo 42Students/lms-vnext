@@ -41,7 +41,7 @@ export const collegeBatchDirectoryBaseSchema = z.object({
   activeClassState: z.enum(["ALL","HAS_ACTIVE","NONE_ACTIVE"]).optional(),
   startOnOrAfter: z.iso.date().optional(),
   startOnOrBefore: z.iso.date().optional(),
-  status: z.enum(["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
+  status: z.enum(["ALL", "PLANNED", "ACTIVE", "INACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
 export function withCollegeBatchFilterCheck<T extends z.ZodType<{startOnOrAfter?:string;startOnOrBefore?:string;progression?:"ALL"|"RECORDED"|"MISSING";currentTerm?:number;yearStart?:number;academicYearState?:"ALL"|"RECORDED"|"UNRECORDED"}>>(schema:T){
