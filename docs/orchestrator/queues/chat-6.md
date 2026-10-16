@@ -32,7 +32,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 Reassigned in `docs/orchestrator/queues/reassignments.md`; original work packages live in `docs/audit/work-packages/chat-5/`.
 
 1. WP-chat-5-04-batches-placements-s2 | IN-PROGRESS (TPO-batches-08/10/21/23 improved; remaining batch workflow and parity gaps open) | moved from chat-5
-2. WP-chat-5-05-batches-calendar-reports-s2 | TODO | moved from chat-5
+2. WP-chat-5-05-batches-calendar-reports-s2 | IN-PROGRESS (TPO-batches-37/38/39/41/42/58/59 import and history improvements; remaining calendar/reports and messaging work open) | moved from chat-5
 3. WP-chat-5-11-batches-placements-s3 | IN-PROGRESS (TPO-batches-06/10/29/43/48 implemented or partly implemented; other S3 open) | moved from chat-5
 4. WP-chat-5-16-batches-placements-s4 | IN-PROGRESS (TPO-batches-30/62 navigation implemented; other S4 open) | moved from chat-5
 
@@ -92,3 +92,15 @@ Direct-to-main implementation commits use the required `[chat-6]` prefix. No tes
 - `src/auth/**` and `src/security/**` were not edited.
 - Login channel policy enforcement, credential/rate-limit logic, cross-host handoff/session issuance, silent refresh-token semantics, OTP device/session revocation, and unusual historic college-specific Roll/PIN sign-in require separately approved auth-layer work or owner decisions.
 - Login attempt persistence is UI-only and does not extend or override the server challenge lifetime.
+
+## Chat-6 FAST round — 2026-10-17 later continuation
+
+- TPO-batches-37/38/39: added a quoted UTF-8 CSV parser, sheet header aliases and status normalization; 5000-row schema, server preview, membership/roll matching, stale-version commit, file picker/drop zone, inclusion controls, tabbed preview and before/after comparisons. Excel .xlsx binary import is not implemented; export CSV from Excel. No tests were run.
+- TPO-batches-48: finished batch now blocks bulk decisions when an expected batch ID is supplied and explicitly rejects cohort decisions. This still needs verification across every other bulk/import entrypoint; preserve OPEN if any workflow remains writable.
+- TPO-batches-42/41/58/59: learner inline decisions append eligibility history when DB08 events storage exists; batch history includes cohort, class and learner events with actor/reason, renders undo affordances and includes new columns in CSV. The server still rejects stale and invalid undo requests.
+- SA-academics-people-82: authorised Faculty CSV registration, sample CSV, validation and per-row success/failure reporting using existing canonical onboard service; max 500 records.
+- SA-academics-people-58/59: Super Admin lesson video view reuses the existing grant->PUT->complete video manager for offering-wide content. Existing signed upload contract still requires an actual active selected-college uploader membership. A pure system Super Admin with no such membership cannot upload until the staged owner-user schema and storage attestation changes are properly registered. No impersonation or fake membership was added; video gap remains PARTIAL.
+- PUB-auth-public-34/37: keyboard method tabs and retired legacy cross-host handoff URL with safe fresh-login notice.
+- PUB-auth-public-64/65/66: Universities, Enterprises and Request Demo marketing pages now exist; shared marketing layout is present. PUB-auth-public-62/63 /home and /platform routes were not accepted by GitHub writes and remain OPEN. Apex / marketing routing remains undecided.
+- All work packages still contain other unresolved items (particularly class/learner roster workflows, company global merge, platform policy, recruiter life cycle, .xlsx import and session/auth work). Keep each WP IN-PROGRESS; do not mark DONE until its entire gap list is closed and owner-gated items are dispositioned.
+- No tests/typecheck/lint/build were run, per FAST MODE; authorisation stays within existing central permission functions. src/auth and src/security were not edited.
