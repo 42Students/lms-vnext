@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {TpoCompanyVisibilityEditor} from "@/components/tpo/tpo-company-visibility-editor";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   describeTpoCompanyVisibility,
@@ -52,10 +53,15 @@ export default async function TpoWhatCompaniesSeePage() {
           Review the data-sharing permissions configured
           for recruiters viewing learner information
           through your college&apos;s placement workflows.
-          These settings are read-only here.
+          Edit the sharing policy below and save your choices.
         </p>
       </section>
 
+      <TpoCompanyVisibilityEditor collegeId={context.membership.collegeId}
+       version={visibility.version}
+       initial={{showCgpaExact:visibility.showCgpaExact,showTenthTwelfth:visibility.showTenthTwelfth,
+        showProjectLinks:visibility.showProjectLinks,showAssessmentScores:visibility.showAssessmentScores,
+        showAttendance:visibility.showAttendance}}/>
       <section
         aria-label="Company visibility policy source"
         className="rounded-xl border border-border bg-surface p-5"
@@ -217,8 +223,7 @@ export default async function TpoWhatCompaniesSeePage() {
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        This page does not edit or save visibility
-        settings. Verification that every recruiter
+        Verification that every recruiter
         preview, export, and company-sharing path
         consistently enforces these flags remains
         a separate integration and browser-parity task.
