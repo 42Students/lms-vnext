@@ -26,7 +26,7 @@ export const collegeOwnProfileSchema = z.object({
     state: short, postalCode: z.string().trim().max(20), country: short,
   }),
   contacts: z.object({
-    alternateEmail: z.union([z.literal(""), z.email()]),
+    alternateEmail: z.union([z.literal(""), z.string().email()]),
     alternatePhone: z.string().trim().max(40),
     contactPerson: short,
   }),
@@ -43,8 +43,8 @@ function ownMembership(context: RequestContext) {
   const membership = context.membership;
   if (!membership || membership.status !== "ACTIVE" ||
       !hasMembershipRole(context, "COLLEGE_ADMIN"))
-    throw new AuthorizationError("profile.self.manage");
-  requirePermission(context, "profile.self.manage", {
+    throw new AuthorizationError("academics.manage");
+  requirePermission(context, "academics.manage", {
     collegeId: membership.collegeId, organizationId: membership.organizationId,
   });
   return membership;
