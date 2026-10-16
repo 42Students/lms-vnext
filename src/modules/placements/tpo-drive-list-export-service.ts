@@ -6,16 +6,12 @@ import {placementReportCsv} from "./report-model";
 
 const MAX_PAGES=1000; // 25,000 matching drives, far beyond the page preview.
 export async function exportTpoDriveLifecycle(context:RequestContext,raw:unknown){
- const options=tpoDriveLifecycleQuerySchema.extend({
-  scope:tpoDriveLifecycleQuerySchema.shape.view.optional().transform(()=>undefined).optional(),
- }).safeParse(raw);
- // Scope (PAGE or ALL) is validated below separately from filters.
- void options;
- const input=raw as Record<string,unknown>;
+ const input=raw&&typeof raw==="object"&&!Array.isArray(raw)?
+  raw as Record<string,unknown>:{};
  const scope=input.scope==="PAGE"?"PAGE":"ALL";
  const {scope:_scope,...rest}=input;
  const query=tpoDriveLifecycleQuerySchema.parse(rest);
- const first=await getTpoDriveLifecycleList(context,query);
+ const first=await getTpoDriveLifecycleList(context,scope==="ALL"?{...query,page:1}:query);
  const all=scope==="PAGE"?[first]:[];
  if(scope==="ALL"){
   if(first.totalPages>MAX_PAGES)throw Error("This export exceeds 25,000 drives. Narrow the filters before exporting.");
