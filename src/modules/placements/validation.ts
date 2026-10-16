@@ -288,8 +288,8 @@ const placementJobFieldsSchema = z
       .uuid()
       .optional(),
     companyRelationshipId: z.string().uuid(),
-    title: z.string().trim().min(2).max(200),
-    description: z.string().trim().min(1).max(20_000),
+    title: z.string().trim().min(3, "At least 3 characters").max(100),
+    description: z.string().trim().max(15_000).default(""),
     employmentType: z.enum(placementEmploymentTypes),
     workMode: z.enum(placementJobWorkModes),
     locations: distinctTextList(20, 120).optional().default([]),
