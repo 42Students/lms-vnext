@@ -28,7 +28,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
- const permitted=new Set((allRows??rows).map(row=>row.id));
+ const availableRows=allRows??rows;
+ const labelsById=new Map(availableRows.map(row=>[row.id,row.label]));
+ const previewWithNames=preview?.rows.map((row,index)=>({...row,
+   label:labelsById.get(row.id)??"Selected row "+(index+1),
+ }))??[];
+ const permitted=new Set(availableRows.map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
  function invalidate(){setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
  async function post(path:string,payload:unknown){
@@ -213,7 +218,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   </button>
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
-  {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
+  {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
     busy={busy||outcomes.length>0} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
