@@ -1,8 +1,9 @@
 /** Legacy reply shortcuts are text-only; never append tokens or recipient addresses. */
 export const TPO_QUICK_REPLIES=[
- "Thank you. We'll get back to you shortly.",
- "Please share the job description and requirements.",
- "Could you confirm the interview dates?",
+ "Thanks, noted.",
+ "Will confirm by end of day.",
+ "Please share the updated list.",
+ "Can we talk today?",
 ] as const;
 /** Owner isolation prevents a second signed-in user from reading another's draft. */
 export function recruiterMessageDraftKey(actorUserId:string,threadId:string){
