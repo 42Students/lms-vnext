@@ -1,0 +1,113 @@
+"use client";
+import {useRouter} from "next/navigation";
+import {useState} from "react";
+type Lesson={id:string;name:string;course:string;courseCode:string};
+type Existing={id:string;lessonId:string;title:string;externalUrl:string|null;
+ durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
+type Kind="YOUTUBE"|"LIVE_CLASS";
+const dateInput=(iso:string|null)=>iso?new Intl.DateTimeFormat("sv-SE",{
+ timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+ hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+ }).format(new Date(iso)).replace(" ","T"):"";
+function isoIst(local:string){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))throw Error("Enter date and time");
+ const date=new Date(local+":00+05:30");
+ if(Number.isNaN(date.getTime()))throw Error("Enter a valid date and time");
+ return date.toISOString();
+}
+export function CollegeContentAuthoringControl({kind,lessons,existing}:{
+ kind:Kind;lessons:Lesson[];existing:Existing[];
+}){
+ const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
+ const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
+  [url,setUrl]=useState(""),[duration,setDuration]=useState("60"),
+  [start,setStart]=useState(""),[end,setEnd]=useState(""),
+  [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
+ const text=kind==="YOUTUBE"?"Import from link":"Schedule live class";
+ function select(item:Existing){
+  setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
+  setUrl(item.externalUrl??"");setDuration(String(item.durationSeconds??60));
+  setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setError("");setMessage("");
+ }
+ function fresh(){
+  setEditing(null);setOpen(true);setTitle("");setUrl("");setDuration("60");setStart("");setEnd("");
+  setError("");setMessage("");
+ }
+ async function save(){
+  if(busy||!title.trim()||!url.trim()||!lessonId)return;
+  setBusy(true);setError("");setMessage("");
+  try{
+   let target:URL;
+   try{target=new URL(url);}catch{throw Error("Enter a valid HTTPS link.");}
+   if(target.protocol!=="https:")throw Error("Enter a valid HTTPS link.");
+   if(kind==="YOUTUBE"&&!["youtube.com","youtu.be"].includes(target.hostname.toLowerCase())&&
+     !target.hostname.toLowerCase().endsWith(".youtube.com"))throw Error("Enter a YouTube URL.");
+   const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:
+    {startsAt:isoIst(start),endsAt:isoIst(end)};
+   if(kind==="YOUTUBE"&&(!Number.isInteger(Number(duration))||Number(duration)<1||
+    Number(duration)>86400))throw Error("Video length must be 1–86400 seconds.");
+   if(kind==="LIVE_CLASS"&&new Date(isoIst(end)).getTime()<=new Date(isoIst(start)).getTime())
+    throw Error("End must be after start.");
+   if(!window.confirm(editing?"Save changes?":"Create this content?"))return;
+   const res=await fetch(editing?"/api/courses/lesson-contents/"+encodeURIComponent(editing):
+    "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
+     headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
+      {title:title.trim(),externalUrl:url.trim(),...extra}:
+      {lessonId,title:title.trim(),contentType:kind,externalUrl:url.trim(),
+       sequence:0,...extra})});
+   if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
+    throw Error(problem.error??"Unable to save content");}
+   setMessage(editing?"Content updated.":"Content created.");setOpen(false);router.refresh();
+  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save content");}
+  finally{setBusy(false);}
+ }
+ return <section className="space-y-3 rounded border border-border bg-surface p-4">
+  <div className="flex flex-wrap items-center gap-3">
+   <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":"Live Classes"}</h2>
+   <button type="button" className="min-h-10 rounded border px-3 text-sm" disabled={!lessons.length}
+    onClick={fresh}>{text}</button>
+  </div>
+  {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
+  {open&&<div className="grid max-w-3xl gap-3 md:grid-cols-2">
+   <label className="text-sm">Lesson
+    <select className="mt-1 w-full rounded border bg-background p-2" value={lessonId}
+     onChange={e=>setLessonId(e.target.value)} disabled={Boolean(editing)}>
+     {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
+      {lesson.courseCode} · {lesson.course} · {lesson.name}</option>)}
+    </select></label>
+   <label className="text-sm">Title
+    <input required maxLength={200} className="mt-1 w-full rounded border bg-background p-2"
+     value={title} onChange={e=>setTitle(e.target.value)}/></label>
+   <label className="text-sm">{kind==="YOUTUBE"?"YouTube URL":"Meeting Link"}
+    <input type="url" required className="mt-1 w-full rounded border bg-background p-2"
+     value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://"/></label>
+   {kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
+    <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
+     className="mt-1 w-full rounded border bg-background p-2"/></label>:<>
+    <label className="text-sm">Start date and time (IST)
+     <input type="datetime-local" required value={start} onChange={e=>setStart(e.target.value)}
+      className="mt-1 w-full rounded border bg-background p-2"/></label>
+    <label className="text-sm">End date and time (IST)
+     <input type="datetime-local" required value={end} onChange={e=>setEnd(e.target.value)}
+      className="mt-1 w-full rounded border bg-background p-2"/></label>
+   </>}
+   <div className="flex gap-2 md:col-span-2">
+    <button type="button" className="rounded bg-primary px-3 py-2 text-on-primary" disabled={busy} onClick={()=>void save()}>
+     {busy?"Saving…":"Save"}</button>
+    <button type="button" className="rounded border px-3 py-2" onClick={()=>setOpen(false)}>Cancel</button>
+   </div>
+  </div>}
+  {existing.length>0&&<div className="space-y-2">
+   <h3 className="text-sm font-semibold">Existing Content</h3>
+   <ul className="space-y-1">{existing.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
+    <span className="break-words">{item.title}</span>
+    <div className="flex gap-2">
+     {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
+      {kind==="YOUTUBE"?"View":"Join"}</a>}
+     <button type="button" className="underline" onClick={()=>select(item)}>Edit</button>
+    </div>
+   </li>)}</ul>
+  </div>}
+  {error&&<p role="alert" className="text-sm text-error">{error}</p>}
+  {message&&<p role="status" className="text-sm">{message}</p>}
+ </section>;
+}
