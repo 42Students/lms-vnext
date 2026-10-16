@@ -88,7 +88,7 @@ export function LearnerProjectBoardSearch({
         {LEARNER_BOARD_STATUS_LABELS.map(item => (
           <Link key={item.value}
             aria-current={status===item.value ? "true" : undefined}
-            href={learnerBoardStatusFilterHref(projectId, {taskSearch:search,priority,status,sprintId,releaseId,taskSort}, item.value)}
+            href={learnerBoardStatusFilterHref(projectId, {taskSearch:search,priority,status,sprintId,releaseId,taskSort,mine}, item.value)}
             className={status===item.value
               ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
               : "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-border px-3 text-xs font-semibold text-body hover:border-primary"}>
@@ -99,7 +99,7 @@ export function LearnerProjectBoardSearch({
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Task counts by priority">
         {LEARNER_BOARD_PRIORITY_LABELS.map(item => (
           <Link key={item.value} href={learnerBoardPriorityFilterHref(projectId,
-            {taskSearch:search,priority,status,sprintId,releaseId,taskSort},item.value)}
+            {taskSearch:search,priority,status,sprintId,releaseId,taskSort,mine},item.value)}
             aria-current={priority===item.value ? "true" : undefined}
             className={priority===item.value
               ? "flex min-h-11 items-center justify-between gap-2 rounded-lg border border-primary bg-primary-subtle px-3 text-xs font-semibold text-primary-text"
