@@ -19,6 +19,8 @@ type Batch = {
   updatedAt: Date;
   activeSections: number;
   activeEnrolledLearners: number;
+  currentTermNumber: number | null;
+  durationTerms?: number;
 };
 
 async function send(method: "POST" | "PATCH", url: string, body: unknown) {
@@ -138,6 +140,24 @@ export function CollegeCohortRowActions({ row, periods }: {
   const blocked = row.status !== "PLANNED" || row.activeSections > 0 ||
     row.activeEnrolledLearners > 0;
 
+  function graduate() {
+    if (!window.confirm(`Mark "${row.name}" graduated? This completes the batch after its final registered semester.`)) return;
+    setNotice("");
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/college/batches/" + encodeURIComponent(row.id) + "/graduate", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ confirm: true }),
+        });
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(payload?.error ?? "Graduation failed");
+        setNotice("Batch marked graduated.");
+        router.refresh();
+      } catch (error) {
+        setNotice(academicSetupErrorMessage(error, "Unable to graduate batch."));
+      }
+    });
+  }
   function retire() {
     if(row.status!=="PLANNED")return;
     if(!window.confirm(`Remove planned batch "${row.name}"? The batch will be archived, not physically deleted. Historical or linked records block this.`))return;
@@ -192,6 +212,12 @@ export function CollegeCohortRowActions({ row, periods }: {
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Edit
     </button>
+    {row.status === "ACTIVE" && <button type="button"
+      disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
+      onClick={graduate}
+      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      Mark graduated
+    </button>}
     <button type="button" disabled={pending || row.status!=="PLANNED"} onClick={retire}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Remove
