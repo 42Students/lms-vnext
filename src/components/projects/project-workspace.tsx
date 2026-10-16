@@ -432,7 +432,7 @@ export function ProjectWorkspace({
                 <h3 className="text-sm font-semibold text-foreground">Final submission</h3>
                 <StatusBadge tone={readiness.finalSubmission.latest?.status === "APPROVED" ? "success" :
                   readiness.finalSubmission.latest?.status === "SUBMITTED" ? "info" : "warning"}>
-                  {readiness.finalSubmission.latest?.status === "APPROVED" ? "Ready for review" :
+                  {readiness.finalSubmission.latest?.status === "APPROVED" ? "Accepted" :
                     readiness.finalSubmission.latest?.status === "SUBMITTED" ? "Submitted" :
                     "Waiting for completion"}
                 </StatusBadge>
