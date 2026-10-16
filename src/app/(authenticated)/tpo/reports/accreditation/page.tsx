@@ -6,6 +6,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import {getPlacementAccreditationReport} from "@/modules/placements/report-accreditation-service";
 import {getTpoAccreditationStudentExport} from "@/modules/placements/tpo-accreditation-students-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
+import {accreditationStudentCompleteness} from "@/modules/placements/tpo-accreditation-completeness";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -40,6 +41,7 @@ export default async function TpoAccreditationReportPage({
    collegeId:context.membership.collegeId,seasonId:report.selectedSeasonId??undefined,
    jobId:report.selectedJobId??undefined,batchId:selectedBatch.id,
   }):null;
+  const completeness=studentReport?accreditationStudentCompleteness(studentReport.rows):null;
   const query=new URLSearchParams({kind:"accreditation-students"});
   if(selectedBatch)query.set("batchId",selectedBatch.id);
   if (report.selectedSeasonId) {
@@ -90,6 +92,15 @@ export default async function TpoAccreditationReportPage({
        </form>
        {batchId&&!selectedBatch&&<p role="alert" className="text-sm">Choose a batch from this college.</p>}
        {studentReport&&<>
+        {completeness?<div aria-label="NAAC and NIRF completeness" className="space-y-2 rounded border border-border bg-surface-subtle p-4">
+         <h3 className="font-semibold">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
+         <ul className="grid gap-1 text-sm sm:grid-cols-2">{completeness.fields.map(field=>
+          <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
+         <p className="text-xs text-muted-foreground">This checks seven fields in the recorded placed-student export, not all graduating learners or external placement evidence.</p>
+         <a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-10 items-center text-primary-text underline">
+          Export anyway
+         </a>
+        </div>:null}
         <p className="text-sm">{studentReport.rows.length} placed students in this batch.</p>
         <p className="text-sm text-muted-foreground">{studentReport.warning}</p>
         <div className="overflow-x-auto">
