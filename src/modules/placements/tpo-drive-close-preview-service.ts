@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {placementApplications,placementJobRounds,placementJobs,placementOffers,placementSeasons} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
+import {settleDriveWithdrawalRequests} from "./tpo-drive-stop-effects";
 import {placementJobIdSchema} from "./validation";
 import {auditTpoJobChange,requireTpoJobActor,requireTpoJobCollege,type TpoJobTx} from "./tpo-job-write-base";
 import {evaluateTpoDriveClosure,tpoDriveCloseSchema} from "./tpo-drive-close-preview-model";
@@ -59,10 +60,15 @@ export async function closeTpoDriveWithPreview(context:RequestContext,rawJobId:u
   )).returning({id:placementJobs.id,title:placementJobs.title,
    status:placementJobs.status,updatedAt:placementJobs.updatedAt});
   if(!saved)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
+  const settledWithdrawalRequests=await settleDriveWithdrawalRequests(
+    tx,context,jobId,collegeId,"CLOSED",input.reason,
+  );
   await auditTpoJobChange(tx,context,saved,"PLACEMENTS_TPO_DRIVE_CLOSED_WITH_PREVIEW","closed",{
    reason:input.reason,action:input.action,fromStatus:job.status,toStatus:saved.status,
-   counts,previewVersion:input.expectedUpdatedAt,updatedAt:saved.updatedAt.toISOString(),
+   counts,settledWithdrawalRequests,previewVersion:input.expectedUpdatedAt,
+   updatedAt:saved.updatedAt.toISOString(),
   });
-  return {id:saved.id,status:saved.status,updatedAt:saved.updatedAt.toISOString(),counts};
+  return {id:saved.id,status:saved.status,updatedAt:saved.updatedAt.toISOString(),counts,
+   settledWithdrawalRequests};
  });
 }
