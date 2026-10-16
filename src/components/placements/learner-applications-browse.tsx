@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
+import {learnerWithdrawalMode} from "@/modules/placements/learner-withdrawal-mode-model";
 import {learnerApplicationJourneyTimeline} from "@/modules/placements/learner-application-journey-timeline-model";
 import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
@@ -111,24 +112,27 @@ export function LearnerApplicationsBrowse({
       setWithdrawError(parsed.error.issues[0]?.message ?? "Enter a valid reason.");
       return;
     }
+    const requested=learnerWithdrawalMode({
+      applicationStatus:withdrawTarget.applicationStatus,
+      screeningStatus:withdrawTarget.screening.status,
+      scheduledRoundCount:scheduledRounds.filter(r=>r.applicationId===withdrawTarget.applicationId).length,
+    })==="REQUEST";
     setWithdrawPending(true);
     setWithdrawError(null);
     try {
-      const response = await fetch(
-        "/api/placements/applications/" +
-          encodeURIComponent(withdrawTarget.applicationId) + "/actions",
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(parsed.data),
-        },
-      );
+      const response=await fetch(requested?"/api/placements/requests":
+        "/api/placements/applications/"+encodeURIComponent(withdrawTarget.applicationId)+"/actions",{
+          method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify(requested?{
+            requestType:"APPLICATION_WITHDRAWAL",applicationId:withdrawTarget.applicationId,reason:withdrawReason.trim(),
+          }:parsed.data),
+        });
       if (!response.ok) {
         throw new Error("Withdrawal could not be saved. Your application has not been changed.");
       }
       setWithdrawTarget(null);
       setWithdrawReason("");
-      setWithdrawNotice("Application withdrawn. The updated status will appear in your history.");
+      setWithdrawNotice(requested?"Withdrawal request sent to the placement cell. Your application is still active until approved.":"Application withdrawn. The updated status will appear in your history.");
       updateQuery({ applicationId: null });
       router.refresh();
     } catch (error) {
@@ -403,7 +407,7 @@ export function LearnerApplicationsBrowse({
                 setWithdrawNotice(null);
               }}
             >
-              Withdraw application
+              {selected.screening.status==="SHORTLISTED"&&scheduledRounds.some(r=>r.applicationId===selected.applicationId)?"Ask to withdraw":"Withdraw application"}
             </Button>
           ) : null}
           <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
@@ -515,8 +519,10 @@ export function LearnerApplicationsBrowse({
             setWithdrawError(null);
           }
         }}
-        title="Confirm application withdrawal"
-        description="This changes the official status of your submitted application. This action cannot be undone here."
+        title={withdrawTarget?.screening.status==="SHORTLISTED"&&scheduledRounds.some(r=>r.applicationId===withdrawTarget.applicationId)?"Ask to withdraw":"Confirm application withdrawal"}
+        description={withdrawTarget?.screening.status==="SHORTLISTED"&&scheduledRounds.some(r=>r.applicationId===withdrawTarget.applicationId)
+          ?"A scheduled round has been booked. Your request goes to the placement cell; it does not immediately withdraw your application."
+          :"This changes the official status of your submitted application. This action cannot be undone here."}
         footer={
           <>
             <Button variant="secondary" disabled={withdrawPending}
