@@ -1,3 +1,4 @@
+import { shuffleQuizForLearner } from "./learner-quiz-shuffle-model";
 import { commandFacultyQuiz } from "./faculty-quiz-authoring-service";
 import { facultyQuizLegacyEdit } from "./faculty-quiz-authoring-model";
 import {
@@ -364,7 +365,10 @@ export async function getCourseQuiz(
       access === "LEARNER"
         ? revealCorrect
         : true,
-    questions: [...grouped.values()],
+    questions:access==="LEARNER"&&context.membership
+      ? shuffleQuizForLearner([...grouped.values()],quizId,context.membership.id,
+          quiz.shuffleQuestions,quiz.shuffleOptions)
+      : [...grouped.values()],
   };
 }
 
