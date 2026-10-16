@@ -294,19 +294,19 @@ export default async function MentorProjectsPage({
             progressPercent: mentorTaskProgress(workCounts.get(row.project.id))?.percent ?? undefined,
             progressDetail: mentorTaskProgress(workCounts.get(row.project.id))?.label,
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
+            courseLabel:row.project.courseLabel,
+            phase:row.project.phase,
+            dueLabel:row.project.dueLabel || row.project.endDate,
+            actionLine:row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open project"),
+            blockedHref:row.project.blocker?.trim()
+              ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
             participation:
               row.isPrimaryMentor
                 ? "Primary mentor"
                 : "Mentor",
-            attention:
-              projectAlerts,
-            href:
-              "/mentor/projects/" +
-              row.project.id +
-              (directTab
-                ? "?tab=" +
-                  directTab
-                : ""),
+            attention:row.project.blocker?.trim()?[...projectAlerts,"Blocked"]:projectAlerts,
+            href:"/mentor/projects/"+row.project.id+
+              (row.project.blocker?.trim()?"?tab=board&lane=BLOCKED":directTab?"?tab="+directTab:""),
           };
         })}
         basePath="/mentor/projects"
