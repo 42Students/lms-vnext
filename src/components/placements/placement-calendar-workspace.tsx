@@ -782,6 +782,9 @@ export async function PlacementCalendarWorkspace({
             </button>
           </div>
         </form>
+        {isTpo && (state.company || state.kind) ? (
+          <Link href={basePath} className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Show everything</Link>
+        ) : null}
       </section>
 
       <section
