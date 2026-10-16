@@ -50,7 +50,7 @@ export function evaluateTpoDriveCancellation(
   ) {
     return "PREVIEW_STALE";
   }
-  if (current.acceptedOffers > 0) return "BLOCKED_ACCEPTED_OFFERS";
+  // Keep previously accepted offers intact; cancel stops only pending ones.
   return "ALLOW";
 }
 
