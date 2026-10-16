@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { cohorts, collegeMemberships, departments, learnerProgramEnrollments, learnerProfiles, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
@@ -26,7 +26,9 @@ export async function requireTpoBatchActor(ctx:RequestContext) {
 }
 export async function listTpoBatches(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
- const batches=await getDb().select({id:cohorts.id,name:cohorts.name,code:cohorts.code,status:cohorts.status,program:programs.name,department:departments.name})
+ const batches=await getDb().select({id:cohorts.id,name:cohorts.name,code:cohorts.code,status:cohorts.status,program:programs.name,department:departments.name,
+  startYear:sql<number | null>`(select extract(year from ap.start_date)::int from academic_periods ap where ap.id = ${cohorts.startPeriodId})`,
+  endYear:sql<number | null>`(select extract(year from ap.end_date)::int from academic_periods ap where ap.id = ${cohorts.expectedEndPeriodId})`})
  .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
  .innerJoin(departments,eq(departments.id,programs.departmentId))
  .where(eq(departments.collegeId,collegeId)).orderBy(asc(programs.name),asc(cohorts.name));
