@@ -24,9 +24,6 @@ export async function commandFacultyAssignment(
 ){
   const {deliveryId}=facultyAssignmentParamsSchema.parse(rawParams);
   const input=facultyAssignmentCommandSchema.parse(rawInput);
-  if((input.action==="CREATE"||input.action==="EDIT") && input.allowedMethods!==undefined &&
-    process.env.DB06_MULTIPART_SUBMISSIONS_READY!=="DB06_VERIFIED")
-    throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
@@ -74,6 +71,7 @@ export async function commandFacultyAssignment(
           title:input.title,description:input.description,
           dueAt:input.dueAt?new Date(input.dueAt):null,
           maxPoints:input.maxPoints,sequence:input.sequence,
+          ...(input.allowedMethods?{allowedSubmissionMethods:input.allowedMethods}:{}),
           status:"DRAFT",createdByUserId:context.user.id,
         }).returning();
         if(!created)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
@@ -111,6 +109,7 @@ export async function commandFacultyAssignment(
             title:input.title,description:input.description,
             dueAt:input.dueAt?new Date(input.dueAt):null,
             maxPoints:input.maxPoints,updatedAt:now,
+            ...(input.allowedMethods?{allowedSubmissionMethods:input.allowedMethods}:{}),
           }:{status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
         ).where(and(eq(courseAssignments.id,current.id),
           eq(courseAssignments.deliveryId,deliveryId),
@@ -120,12 +119,6 @@ export async function commandFacultyAssignment(
         )).returning();
         if(!updated)throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
         result=updated;
-      }
-      if((input.action==="CREATE"||input.action==="EDIT")&&input.allowedMethods!==undefined){
-        // DB06 integration. Execute only after the registered column is verified.
-        await tx.execute(sql`update course_assignments
-          set allowed_submission_methods=${JSON.stringify(input.allowedMethods)}::jsonb
-          where id=${result.id} and delivery_id=${deliveryId}`);
       }
       await recordActivityEventInTransaction(tx,context,{
         eventType:eventType as typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES],
@@ -159,7 +152,7 @@ export async function getFacultyAssignmentMethods(
  if(actor!=="FACULTY")throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const [row]=await getDb().select({
   id:courseAssignments.id,
-  methods:sql<unknown>`allowed_submission_methods`,
+  methods:courseAssignments.allowedSubmissionMethods,
  }).from(courseAssignments).where(and(
   eq(courseAssignments.id,assignmentId),
   eq(courseAssignments.deliveryId,deliveryId),
