@@ -79,3 +79,22 @@ export const placementPublicJoinRateEvents = pgTable(
     check("public_join_rate_action_ck", sql`${table.action} in ('SEND_CODE','JOIN')`),
   ],
 );
+
+/** Per-network (hashed IP) throttle events for the public "Recruit from us" send-code and recruit actions. */
+export const placementPublicEnquiryRateEvents = pgTable(
+  "placement_public_enquiry_rate_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id")
+      .notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    ipHash: varchar("ip_hash", { length: 64 }).notNull(),
+    action: varchar("action", { length: 12 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("public_enquiry_rate_ip_action_idx").on(table.ipHash, table.action, table.createdAt.desc()),
+    check("public_enquiry_rate_ip_ck", sql`${table.ipHash} ~ '^[a-f0-9]{64}$'`),
+    check("public_enquiry_rate_action_ck", sql`${table.action} in ('SEND_CODE','RECRUIT')`),
+  ],
+);
