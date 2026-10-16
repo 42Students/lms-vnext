@@ -68,18 +68,23 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayWeek(now);
-  const [jobs, calendar, inbox, conversations] = await Promise.all([
-    listOwnRecruiterPlacementJobs(context),
-    listRecruiterCalendarEvents(context, week),
+  const jobs=await listOwnRecruiterPlacementJobs(context);
+  const [calendarResult,inboxResult,conversationResult]=await Promise.allSettled([
+    listRecruiterCalendarEvents(context,week),
     listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),
     listHrConversations(context,{collegeId:selectedId,page:1}),
   ]);
+  const calendar=calendarResult.status==="fulfilled"?calendarResult.value:
+    {events:[],resultsDue:[]};
+  const conversations=conversationResult.status==="fulfilled"?conversationResult.value:null;
+  const summaryPartiallyUnavailable=calendarResult.status==="rejected"||
+    inboxResult.status==="rejected"||conversationResult.status==="rejected";
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
-  const unreadAction=hrTodayUnreadAction({...inbox,collegeId:selectedId});
-  const conversationSignals = conversations.status==="READY"
+  const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
+  const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
     : null;
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,
