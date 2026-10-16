@@ -9,7 +9,7 @@ import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
-import {learnerProfilePublicationsAwards} from "@/modules/people/learner-profile-publications-awards-model";
+import {learnerProfilePublicationsAwards,newLearnerPublicationEntry} from "@/modules/people/learner-profile-publications-awards-model";
 import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
 import {learnerProfileSocialFocusField} from "@/modules/people/learner-profile-social-connect-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
@@ -150,6 +150,7 @@ function newItem(section: CollectionKey) {
   }
   if (section === "languages") item.proficiency = "Intermediate";
   if (section === "education") item.examDetails = {};
+  if (section === "metadata") item.type = "text";
   return item;
 }
 
@@ -325,6 +326,13 @@ export function LearnerProfileWorkspace(props: {
     setItemDraft(item ? { ...item } : newItem(section));
   }
 
+  function addPublication() {
+    if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
+    setCollection("metadata");
+    setEditingId(null);
+    setItemDraft(newLearnerPublicationEntry(crypto.randomUUID()));
+  }
+
   function saveOwnedSection(
     section: "education" | "skills" | "projects",
     items: LearnerProfileDocument[typeof section],
@@ -360,6 +368,7 @@ export function LearnerProfileWorkspace(props: {
     if(collection==="education"){
       const issue=learnerEducationValidationProblem({
         educationType:String(itemDraft.educationType??""),
+        institution:String(itemDraft.institution??""),
         gradingType:String(itemDraft.gradingType??""),
         gradeObtained:String(itemDraft.gradeObtained??""),
         maxGrade:String(itemDraft.maxGrade??""),
@@ -560,18 +569,38 @@ export function LearnerProfileWorkspace(props: {
           </p>
           <div className="mt-3 space-y-3">
             <div>
-              <p className="text-sm font-semibold text-foreground">Achievements / possible awards</p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-foreground">Awards &amp; Recognitions (learner entered)</p>
+                <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                  onClick={()=>openCollection("achievements")}>Add award</Button>
+              </div>
               {authoredPublicationsAwards.achievements.length ?
-                <ul className="mt-1 space-y-1 text-sm text-body">
-                  {authoredPublicationsAwards.achievements.slice(0,4).map(item=><li key={item.id} className="break-words">{item.title}{item.year?" · "+item.year:""}</li>)}
+                <ul className="mt-1 space-y-2 text-sm text-body">
+                  {authoredPublicationsAwards.achievements.map(item=><li key={item.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2">
+                    <span className="break-words">{item.title}{item.year?" · "+item.year:""}</span>
+                    <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                      onClick={()=>openCollection("achievements",document.achievements.find(entry=>entry.id===item.id))}>
+                      Edit</Button>
+                  </li>)}
                 </ul> : <p className="mt-1 text-sm text-muted-foreground">No recorded achievements.</p>}
               <Link href="/learn/profile?section=achievements" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review achievements</Link>
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">Publication-labelled additional information</p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-foreground">Publications &amp; Research (learner entered)</p>
+                <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                  onClick={addPublication}>Add publication</Button>
+              </div>
               {authoredPublicationsAwards.publications.length ?
-                <ul className="mt-1 space-y-1 text-sm text-body">
-                  {authoredPublicationsAwards.publications.slice(0,4).map(item=><li key={item.id} className="break-words">{item.value}</li>)}
+                <ul className="mt-1 space-y-2 text-sm text-body">
+                  {authoredPublicationsAwards.publications.map(item=><li key={item.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2">
+                    <span className="break-words">{item.value}</span>
+                    <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
+                      onClick={()=>openCollection("metadata",document.metadata.find(entry=>entry.id===item.id))}>
+                      Edit</Button>
+                  </li>)}
                 </ul> : <p className="mt-1 text-sm text-muted-foreground">No publication-labelled entries recorded.</p>}
               <Link href="/learn/profile?section=metadata" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review additional information</Link>
             </div>
@@ -737,14 +766,21 @@ export function LearnerProfileWorkspace(props: {
             {fields[collection].map((field) => {
               const raw = itemDraft[field.key];
               const value = field.key === "skills" && Array.isArray(raw) ? raw.join(", ") : String(raw || "");
-              if(collection==="education"&&(field.key==="educationType"||field.key==="qualifyingExam"))
+              if(collection==="education"&&field.key==="educationType")
+                return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
+                  <Select className="mt-1.5" value={value}
+                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}>
+                    <option value="">Choose education type</option>
+                    {LEARNER_EDUCATION_TYPES.map(option=><option key={option} value={option}>{option}</option>)}
+                  </Select>
+                </label>;
+              if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
                   <input className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3"
-                    list={"learner-education-"+field.key} value={value} maxLength={120}
-                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}/>
-                  <datalist id={"learner-education-"+field.key}>
-                    {(field.key==="educationType"?LEARNER_EDUCATION_TYPES:LEARNER_QUALIFYING_EXAMS)
-                      .map(option=><option key={option} value={option}/>)}
+                    list="learner-qualifying-exams" value={value} maxLength={120}
+                    onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
+                  <datalist id="learner-qualifying-exams">
+                    {LEARNER_QUALIFYING_EXAMS.map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
               if (field.type === "textarea") return <label key={field.key} className="text-xs font-semibold text-body sm:col-span-2">{field.label}<Textarea className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;

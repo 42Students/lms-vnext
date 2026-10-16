@@ -28,6 +28,9 @@ export default async function LearnerProfilePage({
     Promise.allSettled([getOwnLearnerAcademicSummary(context)]).then(([result])=>learnerProfileAcademicRecovery(result)),
   ]);
   const academic=academicOutcome.summary;
+  const verificationOutcome=await Promise.allSettled([getOwnLearnerVerificationStatus(context)]);
+  const verification=verificationOutcome[0]?.status==="fulfilled"?verificationOutcome[0].value:null;
+  const missing=verification?learnerProfileMissingItems(verification):[];
 
   return (
     <div className="space-y-6">
@@ -69,6 +72,23 @@ export default async function LearnerProfilePage({
       <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
+        {verification?<div className="mt-4 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">What is still missing</h3>
+          {missing.length?<ul className="list-disc space-y-1 pl-5 text-sm text-body">
+            {missing.map(row=><li key={row.section+row.message}>
+              <strong>{row.section}:</strong> {row.message}
+            </li>)}
+          </ul>:<p role="status" className="text-sm text-body">
+            No missing items are reported by the saved profile and private receipt metadata.
+          </p>}
+          <p className="text-xs text-muted-foreground">
+            For verification, provide 10th, 12th or Diploma and degree education with marks and
+            marksheets, plus a resume. Provide Aadhaar or PAN details with a clean private document.
+            A saved receipt is not final verification.
+          </p>
+        </div>:<p role="status" className="mt-3 text-sm text-body">
+          Verification requirements are temporarily unavailable. Open the verification page to retry.
+        </p>}
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View my verification status →</Link>
       </section>
       <section aria-label="Coding profiles" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
