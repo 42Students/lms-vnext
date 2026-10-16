@@ -17,6 +17,7 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
    description={workspace.course.courseName+" · "+workspace.course.sectionName} />
   {workspace.lessons.length?
    <FacultyAssignmentEditor deliveryId={deliveryId}
+     methodsEnabled={process.env.DB06_MULTIPART_SUBMISSIONS_READY==="DB06_VERIFIED"}
      lessons={workspace.lessons.map(x=>({id:x.id,name:x.name}))} assignments={assignments}/>
    :<p className="rounded-xl border border-border bg-surface p-5">No registered lessons yet. Create and publish a learning path before authoring assignments.</p>}
   <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
