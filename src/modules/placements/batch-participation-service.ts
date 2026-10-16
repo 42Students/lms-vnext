@@ -459,6 +459,13 @@ export async function upsertPlacementBatchSettings(
     if (input.expectedVersion !== undefined &&
         (current?.updatedAt.toISOString() ?? "none") !== input.expectedVersion)
       throw new PlacementBatchError("DB08_ACTION_STALE");
+    const now = new Date();
+    const reopenAndTell = Boolean(
+      current?.invitedAt && current.registrationDeadline &&
+      current.registrationDeadline.getTime() <= now.getTime() &&
+      input.registrationDeadline &&
+      input.registrationDeadline.getTime() > now.getTime(),
+    );
 
     const [row] = await tx.insert(placementBatchLifecycles).values({
       cohortId: input.cohortId,
@@ -476,6 +483,40 @@ export async function upsertPlacementBatchSettings(
         updatedAt: new Date(),
       },
     }).returning();
+    if (reopenAndTell) {
+      const recipientUserIds = await findUnchosenEligibleBatchStudents(
+        tx, input.collegeId, input.cohortId,
+      );
+      const [college] = await tx.select({ organizationId: colleges.organizationId })
+        .from(colleges).where(eq(colleges.id, input.collegeId)).limit(1);
+      if (!college) throw new PlacementBatchError("DB08_SCOPE_COLLEGE_MISMATCH");
+      const [event] = await tx.insert(activityEvents).values({
+        organizationId: college.organizationId,
+        collegeId: input.collegeId,
+        actorUserId: context.user.id,
+        actorMembershipId: context.membership?.id ?? null,
+        module: "PLACEMENTS",
+        eventType: "BATCH_REGISTRATION_REOPENED",
+        subjectType: "COHORT",
+        subjectId: input.cohortId,
+        summary: "TPO reopened placement registration with a new deadline",
+        metadata: {
+          registrationDeadline: row.registrationDeadline?.toISOString() ?? null,
+          appRecipients: recipientUserIds.length,
+        },
+      }).returning({ id: activityEvents.id });
+      if (!event) throw new PlacementBatchError("DB08_ACTION_INVALID");
+      for (let offset = 0; offset < recipientUserIds.length; offset += 200) {
+        await tx.insert(inAppNotifications).values(
+          recipientUserIds.slice(offset, offset + 200).map(userId => ({
+            userId, eventId: event.id,
+            title: "Placement registration is open",
+            body: "Your placement cell reopened registration. Please record your choice before the new deadline.",
+            actionHref: "/learner/placements",
+          })),
+        ).onConflictDoNothing();
+      }
+    }
     return row;
   });
 }
@@ -575,7 +616,7 @@ export async function markPlacementBatchInvited(
     if (!current) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
     if (current.finishedAt) throw new PlacementBatchError("DB08_ACTION_INVALID");
     if (current.invitedAt) return current;
-    if (!current.registrationDeadline || current.registrationDeadline <= new Date())
+    if (!current.registrationDeadline || current.registrationDeadline.getTime() <= Date.now())
       throw new PlacementBatchError("DB08_ACTION_INVALID");
     const [updated] = await tx.update(placementBatchLifecycles).set({
       invitedAt: new Date(),
