@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, users } from "@/db/schema";
@@ -8,6 +8,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { loadPlacementCollegeScope } from "./scope";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
+import {effectiveTpoVerifierSetting,tpoVerifierGrantAllowed} from "@/modules/verification/switch-state";
 import { placementTableExists } from "./staged-tables";
 import type { VerificationQueueCard } from "@/components/verification/VerificationWorkspace";
 const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]);
@@ -21,13 +22,12 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
  if(!available)return {available:false,enabled:false,permitted:false,rows:[]};
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
   .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,collegeId)).limit(1);
- // A missing setting does not authorize staff to view sensitive identity data.
- if(setting?.enabled!==true)return {available:true,enabled:false,permitted:false,rows:[]};
- const [grant]=await getDb().select({id:profileVerificationTpoGrants.membershipId})
+ // Legacy default: enabled unless the college admin explicitly switches it off.
+ if(!effectiveTpoVerifierSetting(setting))return {available:true,enabled:false,permitted:false,rows:[]};
+ const [grant]=await getDb().select({revokedAt:profileVerificationTpoGrants.revokedAt})
   .from(profileVerificationTpoGrants)
-  .where(and(eq(profileVerificationTpoGrants.membershipId,ctx.membership!.id),
-   isNull(profileVerificationTpoGrants.revokedAt))).limit(1);
- if(!grant)return {available:true,enabled:true,permitted:false,rows:[]};
+  .where(eq(profileVerificationTpoGrants.membershipId,ctx.membership!.id)).limit(1);
+ if(!tpoVerifierGrantAllowed(grant))return {available:true,enabled:true,permitted:false,rows:[]};
  const college=await loadPlacementCollegeScope(collegeId);
  requirePermission(ctx,"profile-verification.review",{
   collegeId,organizationId:college.organizationId,

@@ -1,0 +1,62 @@
+/** Legacy dev-branch homeRows.nextUp, with explicit urgency and action copy. */
+export type HomeNeed={
+ type:string;priority:number;title:string;count:number;link:string;
+};
+export type HomeInviteBatch={batchId:string;name:string;eligible:number;registered:number;invitedAt:string|null};
+export type HomeStep={label:string;done:boolean;link?:string};
+export type HomeNextUp={title:string;text:string;action:string;href:string};
+const ACTION:Record<string,string>={
+ DRIVE_REQUESTS:"Review requests",RECRUITER_ACCESS:"Review recruiters",
+ SHARE_APPLICANTS:"Share applicants",DEADLINE_TODAY:"Remind students",
+ SLOTS_TO_CONFIRM:"Confirm slots",RESULTS_READY:"Apply results",
+ SELECTIONS_TO_VERIFY:"Verify selections",REQUESTS:"Decide requests",
+ RECRUITER_MESSAGES:"Reply",FOLLOW_UPS:"See follow-ups",
+ NO_DEADLINE:"Set a deadline",CLOSING_SOON:"Remind students",
+ TEAM_ASKS:"See what you were asked",
+};
+const count=(n:number,one:string,many=one+"s")=>n+" "+(n===1?one:many);
+export function buildTpoLegacyNextUp(input:{
+ needsYou:readonly HomeNeed[];batches:readonly HomeInviteBatch[];checklist:readonly HomeStep[];
+}):HomeNextUp|null{
+ const cards=[...input.needsYou].sort((a,b)=>a.priority-b.priority);
+ const top=cards[0];
+ if(top?.type==="REGISTRATION_CLOSED"){
+  const batch=input.batches.find(b=>!b.invitedAt);
+  const eligible=batch?.eligible??top.count;
+  const toTell=batch?Math.max(0,eligible-batch.registered):eligible;
+  return {title:batch?`Invite the ${batch.name} to register`:top.title,
+   text:`${count(toTell,"eligible student hasn't","eligible students haven't")} registered; they can't until you invite the batch.`,
+   action:`Invite ${count(toTell,"student")}`,
+   href:batch?"/tpo/batches/"+batch.batchId:top.link};
+ }
+ if(top)return {title:top.title,
+  text:cards.length>1?`Then ${count(cards.length-1,"more thing")} after this.`:
+   "That is the only thing waiting.",
+  action:ACTION[top.type]??"Open",href:top.link};
+ const steps=input.checklist.filter(step=>!step.done);
+ if(steps.length)return {title:steps[0].label,
+  text:`Setting up placements: ${count(steps.length,"step")} left.`,
+  action:"Start",href:steps[0].link??"/tpo/batches"};
+ return null;
+}
+/** Map existing persisted operational queues without inventing a needs-you
+ * signal that the query has not yet established. */
+export function operationalHomeNeeds(queues:readonly {
+ code:string;priority:"HIGH"|"MEDIUM"|"LOW";jobId:string;
+ jobTitle:string;companyName:string;count:number;
+}[]):HomeNeed[]{
+ const kind:Record<string,string>={
+  RESULTS_AWAITING_APPLY:"RESULTS_READY",
+  SCREENING_PENDING:"SCREENING_PENDING",
+  OFFERS_AWAITING_RESPONSE:"FOLLOW_UPS",
+  JOINING_OUTCOME_PENDING:"FOLLOW_UPS",
+  DRIVE_NOT_SCHEDULED:"DRIVE_NOT_SCHEDULED",
+  EVALUATION_PLAN_MISSING:"EVALUATION_PLAN_MISSING",
+  JOB_DRAFT:"JOB_DRAFT",
+ };
+ return queues.filter(q=>q.count>0&&!!kind[q.code]).map(q=>({
+  type:kind[q.code],priority:q.priority==="HIGH"?10:q.priority==="MEDIUM"?20:30,
+  title:`${q.companyName} · ${q.jobTitle}`,count:q.count,
+  link:"/tpo/placements/jobs/"+encodeURIComponent(q.jobId),
+ }));
+}

@@ -10,10 +10,9 @@ import { requirePermission } from "@/modules/permissions/policy";
 
 const uuid = z.string().uuid();
 
-/** Admin-controlled delegated verification rights. Simply holding the TPO role
- * never suffices: membership must be explicitly granted and not revoked.
- * All grant/revoke operations create a durable activity record.
- */
+/** Legacy TPO access is granted to active TPO admins by the college switch
+ * (default on). The grant row records an explicit restriction/reinstatement,
+ * and all overrides create a durable activity record. */
 export async function setTpoProfileVerificationAdminGrant(
   context: RequestContext, collegeIdInput: string, membershipIdInput: string,
   enabled: boolean,

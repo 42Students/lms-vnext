@@ -345,6 +345,7 @@ export default async function TpoAuditPage({
                   >
                     Context
                   </th>
+                  <th scope="col" className="border-b border-border px-4 py-3">Actor</th>
                   <th
                     scope="col"
                     className="border-b border-border px-4 py-3"
@@ -392,6 +393,7 @@ export default async function TpoAuditPage({
                       </p>
                     </td>
 
+                    <td className="px-4 py-3 align-top text-body">{event.actorName}</td>
                     <td className="px-4 py-3 align-top">
                       {event.jobId ? (
                         <Link
@@ -471,7 +473,7 @@ export default async function TpoAuditPage({
         application and screening history, round changes,
         recorded result versions, offer and joining transitions,
         and available share-access events. This view omits
-        personal identifiers, raw audit metadata, messages,
+        personal identifiers other than display names, raw audit metadata, messages,
         rejection reasons and recipient details. Historical
         settings changes without persisted event records
         cannot be reconstructed.
