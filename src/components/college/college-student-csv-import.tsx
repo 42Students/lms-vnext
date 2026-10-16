@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { studentImportReportCsv, type StudentCsvResult } from "@/modules/people/college-student-csv-model";
+import { LEGACY_STUDENT_CSV_COLUMNS, studentImportReportCsv, type StudentCsvResult } from "@/modules/people/college-student-csv-model";
 
 type Report = {
   preview: boolean;
@@ -12,11 +12,16 @@ type Report = {
   results: StudentCsvResult[];
 };
 
-const TEMPLATE = "displayName,phoneE164,email,programId,cohortId";
+const TEMPLATE = LEGACY_STUDENT_CSV_COLUMNS.join(",");
+type Choices = {programs: {id:string;name:string}[]; batches:{id:string;name:string;programId:string}[];
+  classes:{id:string;name:string;cohortId:string;capacity:number|null}[]};
 
-export function CollegeStudentCsvImport() {
+export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
   const router = useRouter();
   const [csv, setCsv] = useState(TEMPLATE + "\n");
+  const [programId,setProgramId] = useState("");
+  const [cohortId,setCohortId] = useState("");
+  const [sectionId,setSectionId] = useState("");
   const [report, setReport] = useState<Report | null>(null);
   const [pending, startTransition] = useTransition();
   const [confirm, setConfirm] = useState(false);
@@ -27,7 +32,8 @@ export function CollegeStudentCsvImport() {
     const response = await fetch("/api/people/student-import", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ action, csv, confirm: action === "IMPORT" ? confirm : false }),
+      body: JSON.stringify({ action, csv, programId, cohortId, sectionId:sectionId||undefined,
+        confirm: action === "IMPORT" ? confirm : false }),
     });
     const payload = await response.json().catch(() => null);
     if (!response.ok || !payload?.report) {
@@ -52,13 +58,46 @@ export function CollegeStudentCsvImport() {
         The dry run validates format and college ownership; existing identity conflicts are checked during import.
       </p>
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
+      <a download="student-import-template.csv"
+        href={"data:text/csv;charset=utf-8,"+encodeURIComponent(TEMPLATE+"\n")}
+        className="mt-2 inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+        Download CSV template
+      </a>
+      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <label className="grid gap-1 text-sm font-semibold">Program
+          <select required value={programId}
+            onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
+            className="min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Choose program</option>
+            {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold">Batch
+          <select required value={cohortId}
+            onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
+            className="min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Choose batch</option>
+            {choices.batches.filter(option=>option.programId===programId).map(option=>
+              <option key={option.id} value={option.id}>{option.name}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold">Class/Section
+          <select value={sectionId}
+            onChange={event=>{setSectionId(event.target.value);setReport(null);}}
+            className="min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">No class placement</option>
+            {choices.classes.filter(option=>option.cohortId===cohortId).map(option=>
+              <option key={option.id} value={option.id}>{option.name} · capacity {option.capacity??"unlimited"}</option>)}
+          </select>
+        </label>
+      </div>
       <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
         Choose local CSV file
         <input type="file" accept=".csv,text/csv" className="max-w-full text-sm"
           onChange={async event => {
             const file = event.currentTarget.files?.[0];
             if (!file) return;
-            if (file.size > 100000) { setError("File exceeds 100 KB"); return; }
+            if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
             setCsv(await file.text()); setReport(null); setConfirm(false);
           }} />
       </label>
@@ -69,7 +108,7 @@ export function CollegeStudentCsvImport() {
         }} rows={8} spellCheck={false}
           className="w-full rounded-md border border-border bg-surface p-3 font-mono text-xs text-foreground" />
       </label>
-      <button type="button" disabled={pending || !csv.trim()} onClick={() => startTransition(async () => {
+      <button type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => startTransition(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
