@@ -6,7 +6,7 @@ import { FacultyLessonVideoManager } from "@/components/courses/faculty-lesson-v
 type Lesson={id:string;name:string;courseName:string;courseCode:string;offeringId:string;nextContentSequence:number};
 type Kind="VIDEOS"|"LIVE_CLASSES"|"RESOURCES";
 const modes={VIDEOS:["YOUTUBE"],LIVE_CLASSES:["LIVE_CLASS"],RESOURCES:["RESOURCE"]} as const;
-export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=false}:{kind:Kind;lessons:Lesson[];allowVideoUpload?:boolean}){
+export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:{kind:Kind;lessons:Lesson[];allowVideoUpload?:boolean}){
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const selected=lessons.find(x=>x.id===lessonId);
  return <section aria-label="Create lesson content" className="space-y-3 rounded-xl border border-border bg-surface p-4">
