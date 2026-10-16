@@ -353,13 +353,20 @@ function JobActions({
   }
 
   if (!item.canApply) {
-    return (
-      <p className="m-0 text-sm font-semibold text-body">
-        {item.eligibility.status === "NEEDS_DATA"
-          ? "Complete your placement academic evidence to apply."
-          : "You do not currently meet this job's eligibility rules."}
-      </p>
-    );
+    const missing=item.eligibility.checks.filter(check=>check.status==="MISSING");
+    const failed=item.eligibility.checks.filter(check=>check.status==="FAIL");
+    return <div role="status" className="space-y-2 rounded-lg border border-border bg-surface-subtle p-3 text-sm">
+      <p className="font-semibold text-foreground">You cannot apply to this drive yet</p>
+      <p className="text-body">{item.eligibility.status==="NEEDS_DATA"
+        ?"Some academic evidence is missing."
+        :failed.length?"One or more college eligibility rules are not met.":"The placement cell has not cleared this application."}</p>
+      {missing.length>0?<p className="text-xs text-body">Missing: {missing.map(row=>row.criterion).join(", ")}</p>:null}
+      {failed.length>0?<p className="text-xs text-body">Not met: {failed.map(row=>row.criterion).join(", ")}</p>:null}
+      <div className="flex flex-wrap gap-3">
+        <Link href="/learn/my-placements#registration" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Check registration</Link>
+        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Review academic evidence</Link>
+      </div>
+    </div>;
   }
 
   const safeExternalUrl = safeLearnerPlacementUrl(job.externalApplicationUrl);
