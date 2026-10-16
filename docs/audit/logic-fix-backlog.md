@@ -74,12 +74,12 @@ S1
 - T-S1-01 Recruiter grants never lapse: placement_recruiter_college_grants has no valid_until/capabilities/verification/revoke_reason; recruiterAccessMonths setting unused. Add columns (migration), enforce in loadActiveRecruiterGrant.
 - T-S1-02 Lead stage wrong/never computed: deriveTpoRecruiterLeadStage has no callers; tpo-company-memory-service.ts leadStage reimplements without RECRUITED and the 'own drives' rule. Make it call the policy function.
 - T-S1-03 Recruiter invite accept flow absent (OTP 6 digits, 10 min expiry, 5 wrong tries lock, 5 sends/hour per link, 300/hour shared link; hash sha256(tokenHash:code) -> prefer HMAC; table recruiter_invite_code). Accept must consume the token and grant access in one transaction.
-- T-S1-04 Held-offer / uplift rule counting VERIFIED external offers not enforced (same as P-S1-05).
+- T-S1-04 Held-offer / uplift rule counting VERIFIED external offers not enforced (same as P-S1-05). Tables `placement_external_offers` and events are real migration 0094 now, so the rule can read them.
 S2
 - T-S2-01 lead chips OVERDUE/NO_NEXT_STEP/QUIET(14d from createdAt)/BOUNCED/UNVERIFIED not ported (tpo-lead-health-model.ts only).
 - T-S2-02 add-lead phone validation: normalise first, 8-10 digits in zod, return null for empty, map DB 23514 to a validation error; checkTpoLeadContact must not query with ''.
 - T-S2-03 invite reminder job (day 4, rotate hash only, keep inviteSentAt) and invite preview must record inviteClickedAt (stops reminders).
-- T-S2-04 campaign unsubscribe through the campaign recipient token; email campaigns (500 recipients cap, skip NO_EMAIL/UNSUBSCRIBED, EMAIL activity, company EMAILED): tables placement_tpo_email_campaigns + recipients.
+- T-S2-04 campaign unsubscribe through the campaign recipient token; email campaigns (500 recipients cap, skip NO_EMAIL/UNSUBSCRIBED, EMAIL activity, company EMAILED): tables placement_tpo_email_campaigns + recipients (real migration 0095).
 - T-S2-05 share link: decide scope (legacy: code gate, columns, max_stage, shortlist_by, phone only SHORTLISTED, 7-day expiry, 90-day retention, ZIP, lockout after 10 wrong codes/hour; vNext live path company-share is token-only with 2-day default). Add CODE_FAILED event if legacy behaviour required.
 - T-S2-06 team threads: kinds EVERYONE/DRIVE/COMPANY/STUDENT/TOPIC, members, mentions, asks, decisions, private, follow/mute (vNext is 2-person only).
 - T-S2-07 announcements: audience kinds (PLACEMENTS/BATCHES/BRANCHES/DRIVE), send-at, show-until, read tracking, remind-unread (1h gap), 30s undo; fix preview counting all active memberships.

@@ -107,3 +107,5 @@ Legacy pages: expected roughly 250 to 350 routes across accounts (matrix has abo
 - Run the legacy stack for confirmation screenshots? (default: code-only audit)
 - Are S4 "nice-to-have" gaps in scope, or only S1 to S3?
 - Storage buckets and video signing: who provides access, and when?
+
+**Note 2026-10-16:** the exact-wording rule applies to the audit (decision 13 in docs/decisions/2026-10-14-orchestrator-defaults.md): sidebar, navbar and all strings must equal the old LMS, S4 gaps are in scope, and the legacy stack is run on demand only within the RAM/CPU rules. The TPO labels `Engage`, `Drives`, `Audit log` and Recruiter `Calendar`, `Messages`, `Profile` were restored after an inverted brief; page audits must check headings against the legacy source, not earlier builder copy. NSRIT defaults are decision 14.
