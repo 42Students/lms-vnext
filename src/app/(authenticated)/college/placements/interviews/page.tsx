@@ -21,9 +21,11 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   <Link href="/college/placements/interviews" className="text-primary-text underline">Clear filters</Link></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data);
  const build=(page:number,ics=false)=>{
-  const query=new URLSearchParams({...valid.data,page:String(page)});
-  if(!valid.data.companyId)query.delete("companyId");
-  if(!valid.data.departmentId)query.delete("departmentId");
+  const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
+   mode:valid.data.mode,type:valid.data.type,sort:valid.data.sort,page:String(page),
+   ...(valid.data.companyId?{companyId:valid.data.companyId}:{}),
+   ...(valid.data.departmentId?{departmentId:valid.data.departmentId}:{}),
+  });
   return (ics?"/api/college/placements/interviews/calendar":"/college/placements/interviews")+"?"+query;
  };
  const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
