@@ -28,6 +28,6 @@ export default async function SlotsPage({params}:{params:Promise<{jobId:string;r
    :<TpoInterviewSlotPlanner jobId={jobId} roundId={roundId}
      slots={data.slots.map(s=>({id:s.id,startsAt:s.startsAt,endsAt:s.endsAt,room:s.room,
        panel:s.panel,status:s.status,applicationId:s.applicationId,version:s.version}))}
-     roster={data.roster}/>}
+     roster={data.roster} recruiterProposals={data.recruiterProposals}/>}
  </div>;
 }
