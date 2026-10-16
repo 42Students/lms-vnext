@@ -179,10 +179,10 @@ export function FacultyLessonAuthoring({
         if (
           !Number.isInteger(points) ||
           points < 1 ||
-          points > 1000
+          points > 100
         ) {
           throw new Error(
-            `Question ${questionIndex + 1} points must be between 1 and 1000.`,
+            `Question ${questionIndex + 1} points must be between 1 and 100.`,
           );
         }
         if (
@@ -961,7 +961,7 @@ export function FacultyLessonAuthoring({
                           <Input
                             type="number"
                             min={1}
-                            max={1000}
+                            max={100}
                             value={
                               question.points
                             }
