@@ -3,8 +3,8 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {Button} from "@/components/ui/button";
-export function ProjectTaskAssigneeControl({projectId,taskId,assigneeMembershipId,updatedAt,learners}:{
-  projectId:string;taskId:string;assigneeMembershipId:string|null;updatedAt:string;
+export function ProjectTaskAssigneeControl({projectId,taskId,taskTitle,assigneeMembershipId,updatedAt,learners}:{
+  projectId:string;taskId:string;taskTitle?:string;assigneeMembershipId:string|null;updatedAt:string;
   learners:readonly {membershipId:string;displayName:string|null}[];
 }){
   const router=useRouter();
@@ -27,7 +27,7 @@ export function ProjectTaskAssigneeControl({projectId,taskId,assigneeMembershipI
   return <div className="flex flex-wrap items-center gap-2">
     <label className="text-xs font-semibold text-body">Assignee
       <select value={selected} disabled={pending} onChange={e=>setSelected(e.target.value)}
-        aria-label="Assign to a team member" className="ml-2 rounded border border-border bg-surface px-2 py-2">
+        aria-label={"Reassign "+(taskTitle??"task")+" to a team member"} className="ml-2 rounded border border-border bg-surface px-2 py-2">
         <option value="">Unassigned</option>
         {learners.map(person=><option key={person.membershipId} value={person.membershipId}>{person.displayName ?? "Learner"}</option>)}
       </select>
