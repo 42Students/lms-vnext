@@ -2,6 +2,8 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
+import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
@@ -34,6 +36,7 @@ type SearchParams = {
   page?: string | string[];
   pageSize?: string | string[];
   columns?: string | string[];
+  student?: string | string[];
 };
 
 const JOURNEY_LABELS: Record<TpoStudentJourneyState, string> = {
@@ -190,6 +193,7 @@ export default async function TpoStudentsPage({
   }));
   const summary = data.summary;
   const roster = data.roster;
+  const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
 
   const counts: Record<TpoStudentJourneyState, number> = {
     NOT_REGISTERED: summary.notRegistered,
@@ -602,9 +606,17 @@ export default async function TpoStudentsPage({
           </div>
         ) : null}
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
+          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}
+            afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
+        {manageAllowed?<TpoStudentNudgePanel
+          key={"nudge:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.search}
+          rows={roster.items.map(student=>({
+            id:student.membershipId,
+            label:student.displayName+" · "+(student.rollNumber??student.branchName),
+            registered:student.registeredForPlacements,
+          }))} />:null}
         <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
           target="STUDENTS"
           rows={roster.items.map(student=>({id:student.membershipId,

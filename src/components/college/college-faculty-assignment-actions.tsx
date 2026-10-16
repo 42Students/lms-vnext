@@ -1,5 +1,7 @@
 "use client";
 
+import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modules/courses/college-courses-copy";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
@@ -53,18 +55,14 @@ export function CollegeFacultyAssignmentCreate({
       setMembershipId("");
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Assignment could not be created.");
+      setError(academicSetupErrorMessage(cause, FACULTY_ASSIGNMENT_COPY.createFailed));
     } finally {
       setSaving(false);
     }
   }
   return <section aria-label="Assign Faculty to course delivery"
     className="rounded-xl border border-border bg-surface p-4 sm:p-5">
-    <h2 className="m-0 text-lg font-semibold text-foreground">Assign Faculty</h2>
-    <p className="mt-1 text-sm text-body">
-      Choose a live course/class delivery and an active Faculty membership in this college.
-      Duplicated roles and a second primary teacher are blocked.
-    </p>
+    <h2 className="m-0 text-lg font-semibold text-foreground">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
     {unavailable ? (
       <p className="mt-3 text-sm text-muted-foreground">
         {deliveries.length === 0
@@ -89,12 +87,12 @@ export function CollegeFacultyAssignmentCreate({
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">
-        Teaching role
+        {FACULTY_ASSIGNMENT_COPY.roleLabel}
         <select value={role} onChange={event => setRole(event.target.value as CourseTeachingRole)}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-          <option value="PRIMARY">Primary</option>
-          <option value="CO_TEACHER">Co-teacher</option>
-          <option value="TA">Teaching assistant</option>
+          <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
+          <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
+          <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
         </select>
       </label>
       <button type="submit" disabled={saving}

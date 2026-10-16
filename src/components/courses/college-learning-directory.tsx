@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
@@ -12,16 +13,14 @@ type DirectoryData =
 
 export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
   const lessons = data.kind === "LESSONS";
-  const title = lessons ? "Lessons" : "Course Progress";
+  const title = lessons ? COLLEGE_COURSE_TAB_COPY.lessonsTitle : COLLEGE_COURSE_TAB_COPY.progressTitle;
   const href = lessons ? "/college/lessons" : "/college/course-progress";
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="College Admin · Courses & Content"
         title={title}
-        description={lessons
-          ? "Read-only lesson catalogue across college course offerings and learning paths."
-          : "Persisted learner content activity by offering. Not a course-completion rate or academic eligibility report."}
+        description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
         actions={
           <Link href="/college/courses"
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -534,10 +533,10 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
           <table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground">
               {lessons ? <tr>
-                <th scope="col" className="px-4 py-3">Lesson / order</th>
-                <th scope="col" className="px-4 py-3">Course / offering</th>
-                <th scope="col" className="px-4 py-3">Learning path / lesson state</th>
-                <th scope="col" className="px-4 py-3">Content records</th>
+                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.name}</th>
+                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.course}</th>
+                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.order}</th>
+                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.lessonColumns.studentsSeeIt}</th>
               </tr> : <tr>
                 <th scope="col" className="px-4 py-3">Course / offering</th>
                 <th scope="col" className="px-4 py-3">Offering state</th>
@@ -550,16 +549,14 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
                   <tr key={item.id} className="border-t border-border align-top">
                     <td className="px-4 py-4">
                       <p className="font-semibold text-foreground">{item.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">Order {item.sequence + 1}</p>
                     </td>
                     <td className="px-4 py-4">
                       <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
                         className="font-semibold text-primary-text hover:underline">{item.courseName} ({item.courseCode})</Link>
                       <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
                     </td>
-                    <td className="px-4 py-4 text-body">Path: {item.pathStatus}; Lesson: {item.status}</td>
-                    <td className="px-4 py-4 text-body">{item.publishedContentCount} published / {item.contentCount} authored
-                      <p className="mt-1 text-xs text-muted-foreground">{item.publishedAndVisibleFlagCount} published and flagged visible to students</p>
+                    <td className="px-4 py-4 tabular-nums text-body">{item.sequence + 1}</td>
+                    <td className="px-4 py-4 text-body">{collegeLessonVisibilityLabel(item)}
                       <Link href={collegeOfferingProgressHref(item.offeringId)}
                         className="mt-2 inline-block font-semibold text-primary-text hover:underline">
                         View recorded course activity

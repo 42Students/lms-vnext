@@ -1,3 +1,4 @@
+import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { notFound, redirect } from "next/navigation";
 import { ZodError } from "zod";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -15,7 +16,7 @@ export default async function TpoRecruiterDetailPage({ params }: RouteProps) {
   }
   const { leadId } = await params;
   // Same gate as the lead API: while DB09 is unverified the client shows its pending notice.
-  if (process.env.DB09_TPO_API_READY === "DB09_VERIFIED") {
+  if (await tpoCrmTablesReady()) {
     try {
       await getTpoLead(context, context.membership.collegeId, leadId);
     } catch (error) {

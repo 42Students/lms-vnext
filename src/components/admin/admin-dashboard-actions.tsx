@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   COLLEGE_ADMIN_QUICK_ACTIONS,
   COLLEGE_ADMIN_SETUP_PHASES,
+  COLLEGE_SETUP_GUIDE_COPY,
   SUPER_ADMIN_GLOBAL_LINKS,
   SUPER_ADMIN_COLLEGE_LINKS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
@@ -41,25 +42,31 @@ function ActionLink({
   );
 }
 
+/** The sidebar's /college landing and the cross-role /dashboard use the same legacy actions. */
+export function CollegeAdminQuickActions() {
+  return (
+    <section aria-label="Quick Actions" className="space-y-3">
+      <h2 className="m-0 text-lg font-semibold text-foreground">Quick Actions</h2>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {COLLEGE_ADMIN_QUICK_ACTIONS.map((item) => (
+          <ActionLink key={item.key} label={item.label} href={item.href} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function CollegeAdminDashboardActions() {
   return (
     <div className="space-y-6">
-      <section aria-label="Quick Actions" className="space-y-3">
-        <h2 className="m-0 text-lg font-semibold text-foreground">Quick Actions</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {COLLEGE_ADMIN_QUICK_ACTIONS.map((item) => (
-            <ActionLink key={item.key} label={item.label} href={item.href} />
-          ))}
-        </div>
-      </section>
+      <CollegeAdminQuickActions />
       <section aria-label="Setup Guide" className="space-y-4">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Setup Guide (Follow in Order)
+            {COLLEGE_SETUP_GUIDE_COPY.heading}
           </h2>
           <p className="mt-1 text-sm text-body">
-            Start with academic structure, then add courses and people.
-            Unavailable stages are shown explicitly until their full workflows are ported.
+            {COLLEGE_SETUP_GUIDE_COPY.intro}
           </p>
         </div>
         {COLLEGE_ADMIN_SETUP_PHASES.map((phase, phaseIndex) => (
@@ -77,7 +84,7 @@ export function CollegeAdminDashboardActions() {
                   key={step.key}
                   label={step.label}
                   href={step.href}
-                  subtitle={step.href ? "Open setup workflow" : undefined}
+                  subtitle={step.desc}
                 />
               ))}
             </div>

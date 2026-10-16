@@ -145,8 +145,16 @@ describe("DB01 tenant host lifecycle — real repository SQL", () => {
       await expect(
         resolveTenantFromHost(fixture.host, drizzleTenantDomainRepository),
       ).resolves.not.toBeNull();
-      await deleteTenantDomain(
+      // Deleting a verified PRIMARY host needs the exact hostname confirmation.
+      await expect(deleteTenantDomain(
         superAdmin, fixture.domainId, drizzleTenantDomainRepository,
+      )).rejects.toMatchObject({ code: "PRIMARY_HOST_CONFIRMATION_REQUIRED" });
+      await expect(
+        resolveTenantFromHost(fixture.host, drizzleTenantDomainRepository),
+      ).resolves.not.toBeNull();
+
+      await deleteTenantDomain(
+        superAdmin, fixture.domainId, drizzleTenantDomainRepository, fixture.host,
       );
       await expect(
         resolveTenantFromHost(fixture.host, drizzleTenantDomainRepository),

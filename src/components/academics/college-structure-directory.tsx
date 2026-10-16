@@ -71,6 +71,9 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               <option value="ALL">All</option>
             </select>
           </label>
+          <details className="col-span-full rounded-md border border-border p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-body">More filters</summary>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Minimum slot credits
@@ -339,6 +342,8 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
               <input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
+            </div>
+          </details>
           <div className="flex items-end gap-2">
             <button type="submit"
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

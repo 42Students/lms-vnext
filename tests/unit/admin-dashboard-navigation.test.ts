@@ -1,7 +1,9 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   COLLEGE_ADMIN_QUICK_ACTIONS,
   COLLEGE_ADMIN_SETUP_PHASES,
+  COLLEGE_SETUP_GUIDE_COPY,
   SUPER_ADMIN_GLOBAL_LINKS,
   SUPER_ADMIN_COLLEGE_LINKS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
@@ -9,6 +11,19 @@ import {
 type SetupStep = { key: string; label: string; href: string | null };
 
 describe("W06 legacy admin Dashboard navigation fidelity", () => {
+  it("COL-dashboard-01 renders all 11 live Quick Actions on the primary College Admin landing", () => {
+    const routes = new Map(COLLEGE_ADMIN_QUICK_ACTIONS.map(action => [action.key, action.href]));
+    expect(routes.size).toBe(11);
+    expect([...routes.values()].every(href => href?.startsWith("/college/"))).toBe(true);
+    expect(routes.get("hiring-dashboard")).toBe("/college/hiring-dashboard");
+    expect(routes.get("attendance")).toBe("/college/attendance");
+    expect(routes.get("people")).toBe("/college/people");
+    const collegePage = readFileSync("src/app/(authenticated)/college/page.tsx", "utf8");
+    expect(collegePage).toMatch(/<CollegeAdminQuickActions\s*\/>/);
+    const dashboardActions = readFileSync("src/components/admin/admin-dashboard-actions.tsx", "utf8");
+    expect(dashboardActions).toContain("export function CollegeAdminQuickActions()");
+  });
+
   it("preserves the complete 11-card College Admin Quick Actions roster", () => {
     expect(COLLEGE_ADMIN_QUICK_ACTIONS.map((item) => item.label)).toEqual([
       "Departments", "Courses", "Programs", "Faculty", "Students",
@@ -48,8 +63,8 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
     expect(COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps])
       .find((step) => step.key === "faculty-assignment")?.href)
       .toBe("/college/faculty-assignment");
-    expect(missing).toContain("semester-courses");
-    expect(missing).toContain("classes");
+    expect(missing).not.toContain("semester-courses");
+    expect(missing).not.toContain("classes");
   });
 
   it("does not erroneously restore a full setup guide to Super Admin", () => {
@@ -64,5 +79,21 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
       "/admin/people", "/admin/placements", "/admin/projects/templates",
       "/admin/verification", "/tracker/audit-findings",
     ]);
+  });
+
+  it("COL-dashboard-12 uses the exact legacy setup guide wording", () => {
+    expect(COLLEGE_SETUP_GUIDE_COPY).toEqual({
+      collapseLabel: "Setting up a new college? Step-by-step setup guide",
+      heading: "Setup Guide (Follow in Order)",
+      intro: "If you're setting up the LMS for the first time, follow these phases in order. Each phase depends on the previous one being completed.",
+    });
+    const steps = COLLEGE_ADMIN_SETUP_PHASES.flatMap<{ label: string; desc: string }>((p) => [...p.steps]);
+    expect(steps.map((s) => s.label)).toEqual([
+      "Create Departments", "Create Courses", "Add Lessons", "Add Lesson Content",
+      "Set up Programs", "Create Semesters", "Map courses to semesters", "Create Batches", "Create Classes",
+      "Add Faculty", "Assign Faculty", "Add Students", "Add Lecture Halls", "Jobs & Placements",
+    ]);
+    expect(steps.find((s) => s.label === "Set up Programs")?.desc).toBe("Degree programs (B.Tech, MBA)");
+    expect(steps.find((s) => s.label === "Add Students")?.desc).toBe("Student accounts, placed in a section");
   });
 });

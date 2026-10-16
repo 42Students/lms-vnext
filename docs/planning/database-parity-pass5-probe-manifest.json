@@ -624,7 +624,7 @@
       "domain": "SHARED_OPS",
       "state": "SOURCE_PROTECTED_DRAFT_UNMIGRATED",
       "purpose": "Concurrent announcement edit/delete/restore cannot silently overwrite a newer version",
-      "source": "src/modules/announcements/service.ts; src/db/schema/db10-announcements.draft.ts",
+      "source": "src/modules/announcements/service.ts; src/db/schema/db10-announcements.ts",
       "currentProtection": "Mutations require expectedVersion and update with id+version plus deleted-state predicates; zero-row update becomes STALE_VERSION. Schema is still a draft, so runtime protection is not registered.",
       "requiredWitness": "After migration registration, race edit/edit, edit/delete and restore/delete from one version; exactly one version increment wins and the loser returns STALE_VERSION.",
       "executionEvidence": "NOT_RUN"
@@ -634,7 +634,7 @@
       "domain": "SHARED_OPS",
       "state": "SOURCE_PROTECTED_DRAFT_UNMIGRATED",
       "purpose": "Bug-tracker workflow updates cannot lose a concurrent change or commit state without its immutable activity",
-      "source": "src/modules/bug-tracker/admin-service.ts; src/db/schema/db10-bug-tracker.draft.ts",
+      "source": "src/modules/bug-tracker/admin-service.ts; src/db/schema/db10-bug-tracker.ts",
       "currentProtection": "Admin workflow update runs in one transaction, computes a state-machine transition, CAS-updates by loaded version, then appends activity; stale version aborts the transaction. Schema is not registered.",
       "requiredWitness": "After migration registration, race two workflow transitions from the same version; one wins, one is STALE_VERSION, and only the committed transition has a matching activity row.",
       "executionEvidence": "NOT_RUN"

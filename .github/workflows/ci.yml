@@ -11,7 +11,7 @@ permissions:
 
 # Nine independent required jobs: failing lint must not suppress DB acceptance.
 concurrency:
-  group: lms-vnext-ci-main
+  group: lms-vnext-ci-${{ github.sha }}
   cancel-in-progress: false
 
 jobs:
@@ -391,12 +391,6 @@ jobs:
         run: npm run db:journal:verify
       - name: Safely reset and seed isolated baseline PostgreSQL 17
         run: npm run db:test:prepare
-      - name: Execute DB04 unregistered DDL and faculty-profile proposals on isolated DB
-        shell: bash
-        run: |
-          set -euo pipefail
-          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/db04-proposed-migration.sql
-          psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f docs/planning/sql/db04-faculty-profile-document-staging.sql
       - name: DB-007 profile private-receipt, GPA, owner and image negative witnesses
         shell: bash
         run: |
@@ -548,15 +542,12 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
-      - name: Apply DB08 UNREGISTERED proposals to isolated fixture in dependency order
+      - name: Confirm DB08 batch, registration, debarment and external-offer tables are in the registered schema
         shell: bash
         run: |
           set -euo pipefail
-          for draft in \
-            db08-batch-eligibility-staging.sql \
-            db08-external-offers-staging.sql; do
-            psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f "scripts/sql/$draft"
-          done
+          result="$(psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -Atc "SELECT to_regclass('public.placement_batch_lifecycles') IS NOT NULL AND to_regclass('public.placement_batch_registrations') IS NOT NULL AND to_regclass('public.placement_debarments') IS NOT NULL AND to_regclass('public.placement_external_offers') IS NOT NULL AND to_regclass('public.placement_saved_jobs') IS NOT NULL")"
+          test "$result" = t
       - name: DB08-A/B/C batch, registration, debarment and external offer integration
         env:
           DB08_ISOLATED_TEST_DATABASE: "1"

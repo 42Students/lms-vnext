@@ -4,15 +4,19 @@ import { COLLEGE_SETUP_DEEP_LINKS } from "./college-setup-checklist-model";
 export const collegeDashboardCardsQuerySchema = z.strictObject({});
 
 export const COLLEGE_DASHBOARD_CARD_DEFINITIONS = [
-  { key: "students", label: "Active student memberships", description: "Active LEARNER roles; not enrolled headcount" },
-  { key: "faculty", label: "Active faculty memberships", description: "Active FACULTY roles; not classroom availability" },
-  { key: "course-list", label: "Active course records", description: "College-owned active courses, not active deliveries" },
+  { key: "students", label: "Students", description: "Active LEARNER roles; not enrolled headcount" },
+  { key: "faculty", label: "Faculty", description: "Active FACULTY roles; not classroom availability" },
+  { key: "course-list", label: "Courses", description: "College-owned active courses, not active deliveries" },
   { key: "batches", label: "Non-archived batches", description: "Planned, active or completed cohorts" },
   { key: "classes", label: "Active classes", description: "Sections with an active status" },
   { key: "faculty-assignment", label: "Active teaching assignments", description: "Assignment rows, not teaching hours" },
   { key: "lecture-halls", label: "Active lecture halls", description: "Active hall records, not available rooms" },
-  { key: "jobs", label: "Published placement drives", description: "Non-archived published jobs" },
+  { key: "jobs", label: "Active drives", description: "Non-archived published jobs" },
 ] as const;
+
+/** Legacy AtAGlance.js: exactly four stats in this order under the heading below. */
+export const COLLEGE_AT_A_GLANCE_HEADING = "At a glance";
+export const COLLEGE_AT_A_GLANCE_KEYS = ["students", "faculty", "course-list", "jobs"] as const;
 
 type DashboardCountKey = (typeof COLLEGE_DASHBOARD_CARD_DEFINITIONS)[number]["key"];
 
@@ -46,4 +50,13 @@ export function collegeDashboardCardsProjection(
       href,
     };
   });
+}
+
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+  "August", "September", "October", "November", "December"] as const;
+
+/** Legacy header date, moment format `dddd, D MMMM YYYY` (for example `Friday, 16 October 2026`). */
+export function formatCollegeHeaderDate(date: Date) {
+  return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }

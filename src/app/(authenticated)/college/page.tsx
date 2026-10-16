@@ -4,11 +4,12 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import { CollegeSetupChecklist } from "@/components/admin/college-setup-checklist";
 import { CollegeDashboardCards } from "@/components/admin/college-dashboard-cards";
+import { CollegeAdminQuickActions } from "@/components/admin/admin-dashboard-actions";
 import { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-cards-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { listColleges } from "@/modules/colleges/service";
+import { formatCollegeHeaderDate } from "@/modules/admin-ui/college-dashboard-cards-model";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 
 export default async function CollegeOverviewPage() {
@@ -39,12 +40,10 @@ export default async function CollegeOverviewPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin"
         title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}
-        description={college.name}
+        description={`${college.name} · ${formatCollegeHeaderDate(new Date())}`}
         actions={
           <>
-            <StatusBadge tone="success">Active</StatusBadge>
             <Link href="/college/contacts"
               className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
               Contacts
@@ -105,6 +104,7 @@ export default async function CollegeOverviewPage() {
         </div>
       </section>
       <CollegeDashboardCards cards={dashboard.cards} />
+      <CollegeAdminQuickActions />
       <CollegeSetupChecklist phases={dashboard.setup.phases} />
     </div>
   );

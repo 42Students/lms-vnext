@@ -302,7 +302,7 @@ test.describe("Core tenant browser acceptance", () => {
       .fill(superDepartment);
     await page
       .getByRole("button", {
-        name: "Create department",
+        name: "Create Department",
       })
       .click();
     await expect(
@@ -351,7 +351,7 @@ test.describe("Core tenant browser acceptance", () => {
       .fill(adminDepartment);
     await page
       .getByRole("button", {
-        name: "Create department",
+        name: "Create Department",
       })
       .click();
     await expect(

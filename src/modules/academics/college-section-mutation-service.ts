@@ -9,8 +9,9 @@ import {
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { postgresConstraintName } from "./errors";
 import {
   collegeSectionIdSchema, createCollegeSectionSchema,
@@ -37,16 +38,8 @@ export class CollegeSectionError extends Error {
 
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
-function ownCollege(context: RequestContext) {
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.manage", {
-      organizationId: member.organizationId, collegeId: member.collegeId,
-    })) throw new AuthorizationError("academics.manage");
-  requirePermission(context, "academics.manage", {
-    organizationId: member.organizationId, collegeId: member.collegeId,
-  });
-  return member;
+async function ownCollege(context: RequestContext) {
+  return resolveActingCollege(context, "academics.manage");
 }
 
 async function lockCohort(tx: Tx, cohortId: string, collegeId: string) {
@@ -162,7 +155,7 @@ function mapError(error: unknown): never {
 
 export async function createCollegeSection(context: RequestContext, raw: unknown) {
   const input = createCollegeSectionSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   try {
     return await getDb().transaction(async tx => {
       const cohort = await lockCohort(tx, input.cohortId, member.collegeId);
@@ -189,7 +182,7 @@ export async function updateCollegeSection(context: RequestContext,
 ) {
   const sectionId = collegeSectionIdSchema.parse(sectionIdInput);
   const input = updateCollegeSectionSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   try {
     return await getDb().transaction(async tx => {
       const [reference] = await tx.select({
@@ -244,7 +237,7 @@ export async function updateCollegeSection(context: RequestContext,
 
 /** Select menus are server-scoped. These are not permission grants for writes. */
 export async function listCollegeSectionOptions(context: RequestContext) {
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   const db = getDb();
   const [cohortChoices, periodChoices] = await Promise.all([
     db.select({

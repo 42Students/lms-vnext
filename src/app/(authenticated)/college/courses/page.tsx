@@ -25,7 +25,6 @@ export default async function CollegeCoursesPage() {
       <PageHeader
         eyebrow="College Admin"
         title="Courses"
-        description="Course catalog, Cohort Offerings, exact Section deliveries and Faculty teaching ownership."
       />
       <AdminCourseOverview
         workspace={workspace}

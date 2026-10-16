@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegePromotionQuerySchema } from "@/modules/academics/college-batch-promotion-model";
+import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import {
   listCollegePromotionOptions,
   previewCollegeBatchPromotion,
@@ -96,7 +97,6 @@ export default async function CollegeBatchPromotionPage({
           <p className="text-sm text-body">Program: {preview.batch.programName} · Batch status: {preview.batch.status}</p>
           <p className="text-sm text-body">
             Recorded term: {preview.batch.currentTermNumber ?? "Not recorded"} of {preview.batch.durationTerms}.
-            Proposed action: {preview.plan.action}.
             Target term: {preview.plan.targetTermNumber ?? "No next term (graduation or unavailable)"}.
           </p>
           <p className="text-sm text-body">
@@ -105,7 +105,7 @@ export default async function CollegeBatchPromotionPage({
             {parsed.data.yearStart !== undefined ? " (override entered; not saved)" : ""}.
           </p>
           <p className="text-sm text-body">
-            {preview.checkedLearners} learner enrollments examined
+            {promotionImpactMessage(preview.checkedLearners)}
             {preview.completePreview ? "" : " (preview truncated at 2,000; NOT a complete batch check)"}.
             {preview.blockedLearners} have learner-specific blockers in the examined set.
           </p>
@@ -120,8 +120,7 @@ export default async function CollegeBatchPromotionPage({
             No batch-level blockers were observed. This is not authorization to execute a promotion.
           </p>}
           <p className="text-sm font-semibold text-body">
-            Preview indicates {preview.simulatedReadiness ? "no detected blockers" : "detected blockers"}.
-            Graduation remains unavailable here.
+            {preview.simulatedReadiness ? BATCH_PROMOTION_COPY.ready : BATCH_PROMOTION_COPY.notReady}
           </p>
           {preview.simulatedReadiness && preview.plan.action === "PROMOTE" &&
             preview.batch.version !== null ? (

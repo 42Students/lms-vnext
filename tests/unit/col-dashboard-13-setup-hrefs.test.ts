@@ -5,11 +5,11 @@ describe("COL-dashboard-13 setup guide routes",()=>{
   const expected={
    "Add Lessons":"/college/lessons","Add Lesson Content":"/college/videos",
    "Create Semesters":"/college/semesters",
-   "Map Semester-Courses":"/college/semester-courses",
+   "Map courses to semesters":"/college/semester-courses",
    "Create Batches":"/college/batches","Create Classes":"/college/classes",
-   "Register Faculty":"/college/faculty","Register Students":"/college/students",
+   "Add Faculty":"/college/faculty","Add Students":"/college/students",
   };
-  const steps=COLLEGE_ADMIN_SETUP_PHASES.flatMap(x=>x.steps);
+  const steps=COLLEGE_ADMIN_SETUP_PHASES.flatMap((x): readonly {label:string;href:string}[]=>x.steps);
   for(const [label,href] of Object.entries(expected)){
    expect(steps.find(step=>step.label===label)?.href).toBe(href);
   }
