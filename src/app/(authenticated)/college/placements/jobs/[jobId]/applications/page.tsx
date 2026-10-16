@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
 import { listCollegeDriveApplications } from "@/modules/placements/college-drive-applications-service";
+import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
@@ -15,13 +16,16 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   const {jobId} = await params;
   const query = driveApplicationsParams(await searchParams);
   if (!query) return <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid." />;
-  const data = await listCollegeDriveApplications(context,jobId,query);
+  const [data,filters] = await Promise.all([
+    listCollegeDriveApplications(context,jobId,query),
+    listCollegeDriveApplicationFilters(context),
+  ]);
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Applications · " + data.drive.title}
       description="Read-only scoped applicant register. Private fields are limited to the TPO-approved roster."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-primary-text underline">Drive overview</Link>} />
-    <form method="get" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-4">
-      <label className="grid gap-1 text-sm">Name, roll or role
+    <form method="get" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
+      <label className="grid gap-1 text-sm">Name, email, roll or role
         <input name="q" defaultValue={query.q} maxLength={100} className="min-h-10 rounded-md border border-border px-2" />
       </label>
       <label className="grid gap-1 text-sm">Application
@@ -34,6 +38,35 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </select>
       </label>
+      <label className="grid gap-1 text-sm">Source
+        <select name="source" defaultValue={query.source} className="min-h-10 rounded-md border border-border px-2">
+          {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm">Department
+        <select name="departmentId" defaultValue={query.departmentId??""} className="min-h-10 rounded-md border border-border px-2">
+          <option value="">All departments</option>
+          {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
+            <option value={query.departmentId}>Selected department</option>}
+          {filters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm">Program
+        <select name="programId" defaultValue={query.programId??""} className="min-h-10 rounded-md border border-border px-2">
+          <option value="">All programs</option>
+          {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
+            <option value={query.programId}>Selected program</option>}
+          {filters.programs.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm">Batch
+        <select name="cohortId" defaultValue={query.cohortId??""} className="min-h-10 rounded-md border border-border px-2">
+          <option value="">All batches</option>
+          {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
+            <option value={query.cohortId}>Selected batch</option>}
+          {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+        </select>
+      </label>
       <button type="submit" className="min-h-10 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <div className="flex flex-wrap justify-between gap-3 text-sm">
@@ -44,13 +77,14 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <section className="overflow-x-auto rounded-xl border border-border">
       {data.items.length?<table className="w-full min-w-[45rem] text-left text-sm">
         <thead><tr className="border-b border-border bg-muted">
-          <th className="p-3">Student</th><th className="p-3">Roll</th><th className="p-3">Role</th>
+          <th className="p-3">Student</th><th className="p-3">Email</th><th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Source</th>
           <th className="p-3">Application</th><th className="p-3">Screening</th>
         </tr></thead>
         <tbody>{data.items.map(item=><tr key={item.id} className="border-b border-border">
           <td className="p-3">{item.name ?? "Unnamed learner"}</td>
+          <td className="p-3">{item.email ?? "—"}</td>
           <td className="p-3">{item.rollNumber ?? "Not recorded"}</td>
-          <td className="p-3">{item.roleTitle}</td><td className="p-3">{item.status}</td>
+          <td className="p-3">{item.roleTitle}</td><td className="p-3">{item.source}</td><td className="p-3">{item.status}</td>
           <td className="p-3">{item.screening ?? "Not recorded"}</td>
         </tr>)}</tbody>
       </table>:<p className="p-6 text-sm text-body">
