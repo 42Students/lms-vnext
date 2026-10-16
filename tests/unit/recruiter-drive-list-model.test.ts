@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterRecruiterDrives, recruiterDriveListQuerySchema, summarizeRecruiterDrives, sortRecruiterDrives, isHrDriveDeadlineToday } from "@/modules/placements/recruiter-drive-list-model";
+import { filterRecruiterDrives, recruiterDriveListQuerySchema, summarizeRecruiterDrives, sortRecruiterDrives, isHrDriveDeadlineToday, recruiterDrivesHref, resolveRecruiterDriveView } from "@/modules/placements/recruiter-drive-list-model";
 const id = "00000000-0000-4000-8000-000000000001";
 const other = "00000000-0000-4000-8000-000000000002";
 const rows = [
@@ -48,4 +48,30 @@ describe("HR drive lifecycle filters", () => {
     expect(recruiterDriveListQuerySchema.safeParse({deadline:"TOMORROW"}).success).toBe(false);
   });
 
+});
+
+// REC-home-drives-R06: legacy recruiter links retain tab, query and namespace.
+describe("REC-home-drives-R06 legacy recruiter list URLs", () => {
+  const collegeId = "00000000-0000-4000-8000-000000000001";
+  for (const tab of ["all", "live", "waiting", "closed"] as const) {
+    it("round-trips tab="+tab+" on /recruiter/drives", () => {
+      const view = resolveRecruiterDriveView(tab, undefined);
+      const parsed = recruiterDriveListQuerySchema.parse({view, collegeId, q:"engineer"});
+      const href = recruiterDrivesHref(parsed, "/recruiter/drives");
+      const url = new URL(href,"https://example.test");
+      expect(url.pathname).toBe("/recruiter/drives");
+      expect(url.searchParams.get("tab")).toBe(tab);
+      expect(url.searchParams.get("q")).toBe("engineer");
+      expect(url.searchParams.get("collegeId")).toBe(collegeId);
+      expect(resolveRecruiterDriveView(url.searchParams.get("tab")??undefined,undefined)).toBe(parsed.view);
+    });
+  }
+  it("rejects unknown legacy tabs while preserving HR view links", () => {
+    expect(recruiterDriveListQuerySchema.safeParse({
+      view:resolveRecruiterDriveView("unexpected",undefined),
+    }).success).toBe(false);
+    expect(resolveRecruiterDriveView(undefined,"LIVE")).toBe("LIVE");
+    expect(recruiterDrivesHref(recruiterDriveListQuerySchema.parse({view:"CLOSED"})))
+      .toBe("/hr/drives?view=CLOSED");
+  });
 });

@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives, sortRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
+import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives, sortRecruiterDrives, resolveRecruiterDriveView } from "@/modules/placements/recruiter-drive-list-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
@@ -14,30 +14,32 @@ import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 
-type Params = { collegeId?: string | string[]; view?: string | string[]; q?: string | string[];
+type Params = { collegeId?: string | string[]; view?: string | string[]; tab?: string | string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
-export default async function HrDrivesPage({ searchParams }: { searchParams: Promise<Params> }) {
+export default async function HrDrivesPage({ searchParams, basePath="/hr/drives" }: {
+  searchParams: Promise<Params>; basePath?: "/hr/drives" | "/recruiter/drives";
+}) {
   const context = await getCurrentRequestContext();
   if (!hasActiveRecruiter(context) || !context.recruiter) redirect("/dashboard");
   const raw = await searchParams;
   const query = recruiterDriveListQuerySchema.safeParse({
     collegeId: first(raw.collegeId) || undefined,
-    view: first(raw.view) || undefined, q: first(raw.q) || undefined,
+    view: resolveRecruiterDriveView(first(raw.tab),first(raw.view)), q: first(raw.q) || undefined,
     employment:first(raw.employment)||undefined,mode:first(raw.mode)||undefined,
     deadline:first(raw.deadline)||undefined,page:first(raw.page)||undefined,
     sort:first(raw.sort)||undefined,
   });
   if (!query.success) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" />
     <ErrorState title="Invalid drive filters" description="Review the college, lifecycle and search text."
-      action={<Link href="/hr/drives" className="text-primary-text underline">Clear filters</Link>} /></div>;
+      action={<Link href={basePath} className="text-primary-text underline">Clear filters</Link>} /></div>;
   const grants = context.recruiter.grants;
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
   if (!selectedCollege) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Drives" description="Choose an authorized college to open its hiring drives." />
     {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
-    <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
+    <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId},basePath)}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
   const jobs = (await listOwnRecruiterPlacementJobs(context)).filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
@@ -76,7 +78,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </span>
     </nav>
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
-      <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
+      <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId},basePath)}
         className={selectedCollege === grant.collegeId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{grant.collegeName}</Link>)}</nav> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
       className="rounded-xl border border-border bg-surface p-4 sm:p-5">
@@ -96,7 +98,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </div>
     </section>:null}
     <nav aria-label="Drive lifecycle" className="flex flex-wrap gap-2">{viewOptions.map(option =>
-      <Link key={option.view} href={recruiterDrivesHref({...query.data, collegeId: selectedCollege, view: option.view, page: 1})}
+      <Link key={option.view} href={recruiterDrivesHref({...query.data, collegeId: selectedCollege, view: option.view, page: 1},basePath)}
         aria-current={query.data.view === option.view ? "page" : undefined}
         className={query.data.view === option.view ? "rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary" : "rounded-md border border-border px-4 py-2 text-sm text-body"}>
         {option.label} ({option.count})</Link>)}</nav>
@@ -107,9 +109,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         Export matching drives CSV
       </Link>
     </div>:null}
-    <form method="get" action="/hr/drives" className="flex flex-wrap items-end gap-3">
+    <form method="get" action={basePath} className="flex flex-wrap items-end gap-3">
       <input type="hidden" name="collegeId" value={selectedCollege} />
-      <input type="hidden" name="view" value={query.data.view} />
+      <input type="hidden" name={basePath==="/recruiter/drives"?"tab":"view"} value={basePath==="/recruiter/drives"?query.data.view.toLowerCase():query.data.view} />
       <input type="hidden" name="page" value="1" />
       <label className="grid min-w-52 flex-1 gap-1 text-sm text-body">Search role
         <input name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="min-h-11 rounded-md border border-border bg-surface px-3" /></label>
@@ -133,7 +135,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         </select>
       </label>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-      <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="py-3 text-sm text-primary-text">Reset</Link>
+      <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"},basePath)} className="py-3 text-sm text-primary-text">Reset</Link>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
       <h2 className="text-lg font-semibold text-foreground">Your drive requests</h2>
@@ -168,9 +170,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         "Showing "+(Math.min(pageResult.total,(query.data.page-1)*pageResult.pageSize+1))+"–"+
         Math.min(pageResult.total,query.data.page*pageResult.pageSize)+" of "+pageResult.total}</p>
       <div className="flex gap-2">
-        {query.data.page>1?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page-1})}
+        {query.data.page>1?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page-1},basePath)}
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Previous</Link>:null}
-        {query.data.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page+1})}
+        {query.data.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page+1},basePath)}
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div></nav>:null}
     <Link href="/hr/round-results" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>

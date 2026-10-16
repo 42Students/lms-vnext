@@ -12,6 +12,15 @@ export const recruiterDriveListQuerySchema = z.object({
 }).strict();
 export type RecruiterDriveListQuery = z.infer<typeof recruiterDriveListQuerySchema>;
 
+/** REC-home-drives-R06: parse bookmarked legacy tabs through strict view validation. */
+export function resolveRecruiterDriveView(tab: string | undefined, view: string | undefined): string | undefined {
+  if (tab === undefined) return view;
+  const legacy: Record<string, string> = {
+    all: "ALL", live: "LIVE", waiting: "WAITING", closed: "CLOSED",
+  };
+  return legacy[tab.toLowerCase()] ?? tab;
+}
+
 export type RecruiterDriveListItem = {
   collegeId: string;
   job: { id: string; title: string; status: string; archivedAt: Date | null;
@@ -61,10 +70,12 @@ export function filterRecruiterDrives<T extends RecruiterDriveListItem>(
   );
 }
 
-export function recruiterDrivesHref(query: RecruiterDriveListQuery) {
+export function recruiterDrivesHref(query: RecruiterDriveListQuery,
+  basePath: "/hr/drives" | "/recruiter/drives" = "/hr/drives") {
   const p = new URLSearchParams();
   if (query.collegeId) p.set("collegeId", query.collegeId);
-  if (query.view !== "ALL") p.set("view", query.view);
+  if (basePath === "/recruiter/drives") p.set("tab", query.view.toLowerCase());
+  else if (query.view !== "ALL") p.set("view", query.view);
   if (query.q) p.set("q", query.q);
   if (query.employment !== "ALL") p.set("employment", query.employment);
   if (query.mode !== "ALL") p.set("mode", query.mode);
@@ -72,7 +83,7 @@ export function recruiterDrivesHref(query: RecruiterDriveListQuery) {
   if (query.page > 1) p.set("page", String(query.page));
   if (query.sort !== "RECENT") p.set("sort", query.sort);
   const s = p.toString();
-  return "/hr/drives" + (s ? "?" + s : "");
+  return basePath + (s ? "?" + s : "");
 }
 
 export const HR_DRIVE_PAGE_SIZE=20;

@@ -107,3 +107,8 @@ Still to confirm live or by owner decision:
 6. REC-home-drives-10 and R06 together: verify what a recruiter sees from any legacy-format notification link once Messages and bells are wired (route error page vs content).
 7. R05: keyboard walk of the vNext applicant drawer at 375 px and 1280 px (Tab order escapes the dialog, Esc does nothing).
 8. Both apps were read statically; no rendering, responsive or timing checks were run.
+ 
+
+## REC-home-drives-R06 source implementation (2026-10-17)
+
+Legacy `/recruiter/drives?tab=all|live|waiting|closed&q=` bookmarks now map to the strict filter model. Within the recruiter list, tab, search, college selection, reset and pagination retain the `/recruiter/drives` namespace. The `/hr/drives?view=` alias continues to work; invalid tabs show a filter error. Unit tests are authored; browser and typecheck verification remain outstanding before marking this reviewed gap fully CLOSED.
