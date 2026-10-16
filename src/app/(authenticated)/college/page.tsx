@@ -192,7 +192,7 @@ export default async function CollegeOverviewPage() {
       <section aria-label="Courses with no teacher" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
-          <Link href="/college/faculty-assignments" className="font-semibold text-primary-text hover:underline">
+          <Link href="/college/faculty-assignment" className="font-semibold text-primary-text hover:underline">
             Manage faculty
           </Link>
         </div>
@@ -208,7 +208,7 @@ export default async function CollegeOverviewPage() {
               <p className="font-semibold">{course.name} ({course.code})</p>
               <p className="text-muted-foreground">{course.sections.length} unstaffed class(es): {course.sections.join(", ")}</p>
             </div>
-            <Link href="/college/faculty-assignments"
+            <Link href="/college/faculty-assignment"
               className="font-semibold text-primary-text hover:underline">Assign faculty</Link>
           </li>)}
         </ul>}
