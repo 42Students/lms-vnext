@@ -22,7 +22,9 @@ import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruite
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinAcceptError extends Error {
   constructor(readonly code: "INVALID" | "REMOVED" | "NOT_CONFIGURED" |
-    "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY") {
+    "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY" | "WRONG_CODE" |
+    "CODE_EXPIRED" | "CODE_LOCKED" | "CODE_REQUIRED" |
+    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "ACCOUNT_UNAVAILABLE") {
     super("PUBLIC_JOIN_" + code);
     this.name = "PublicJoinAcceptError";
   }
@@ -68,7 +70,8 @@ export async function acceptPublicRecruiterJoin(
       .for("update").limit(1);
     if (!link) return "DENIED";
     const emailDomain = registrableWorkDomain(email);
-    if (!emailDomain || (scope === "COMPANY" && !matchesCompanyDomain(email,link.companyDomain??""))) return "DENIED";
+    if(!emailDomain)return "OTHER_COMPANY_EMAIL";
+    if(scope==="COMPANY"&&!matchesCompanyDomain(email,link.companyDomain??""))return "OTHER_COMPANY_EMAIL";
     const hourAgo = new Date(now.getTime() - 60 * 60_000);
     const counts = await tx.execute<{ n: number }>(sql`
       select count(*)::integer as n from placement_public_join_rate_events
@@ -86,14 +89,14 @@ export async function acceptPublicRecruiterJoin(
       .orderBy(desc(placementPublicJoinChallenges.createdAt),
         desc(placementPublicJoinChallenges.id))
       .for("update").limit(1);
-    if (!challenge || challenge.verifiedAt ||
-        challenge.expiresAt.getTime() <= now.getTime() ||
-        challenge.attempts >= PUBLIC_JOIN_MAX_FAILURES) return "DENIED";
+    if(!challenge || challenge.verifiedAt)return "CODE_REQUIRED";
+    if(challenge.expiresAt.getTime()<=now.getTime())return "CODE_EXPIRED";
+    if(challenge.attempts>=PUBLIC_JOIN_MAX_FAILURES)return "CODE_LOCKED";
     if (!matchesPublicJoinCode(challenge.codeHash, link.id, email, code, secret)) {
       await tx.update(placementPublicJoinChallenges)
         .set({ attempts: challenge.attempts + 1 })
         .where(eq(placementPublicJoinChallenges.id, challenge.id));
-      return "DENIED";
+      return challenge.attempts+1>=PUBLIC_JOIN_MAX_FAILURES?"CODE_LOCKED":"WRONG_CODE";
     }
     const [settings] = await tx.select({
       months: placementTpoCollegeSettings.recruiterAccessMonths,
@@ -109,7 +112,7 @@ export async function acceptPublicRecruiterJoin(
     }).onConflictDoNothing();
     const [user] = await tx.select().from(users)
       .where(sql`lower(${users.email}) = ${email}`).for("update").limit(1);
-    if (!user || user.platformStatus !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
+    if (!user || user.platformStatus !== "ACTIVE") throw new PublicJoinAcceptError("ACCOUNT_UNAVAILABLE");
     let companyId = link.companyId;
     if (companyId) {
       const [company] = await tx.select({ id: placementCompanies.id })
@@ -129,7 +132,7 @@ export async function acceptPublicRecruiterJoin(
         if (companyName.trim().length < 2) throw new PublicJoinAcceptError("INVALID");
         const [sameName] = await tx.select({ id: placementCompanies.id }).from(placementCompanies)
           .where(sql`lower(${placementCompanies.name}) = lower(${companyName})`).limit(1);
-        if (sameName) throw new PublicJoinAcceptError("INVALID");
+        if (sameName) throw new PublicJoinAcceptError("COMPANY_EXISTS");
         const [created] = await tx.insert(placementCompanies).values({
           name: companyName, primaryDomain: emailDomain, createdByUserId: user.id,
         }).returning({ id: placementCompanies.id });
@@ -207,7 +210,10 @@ export async function acceptPublicRecruiterJoin(
         isNull(placementPublicJoinChallenges.verifiedAt)));
     return outcome;
   });
-  if (decision === "RATE_LIMITED") throw new PublicJoinAcceptError("RATE_LIMITED");
+  for(const code of ["RATE_LIMITED","WRONG_CODE","CODE_EXPIRED","CODE_LOCKED",
+    "CODE_REQUIRED","OTHER_COMPANY_EMAIL"] as const){
+    if(decision===code)throw new PublicJoinAcceptError(code);
+  }
   if (decision === "NOT_CONFIGURED") throw new PublicJoinAcceptError("NOT_CONFIGURED");
   if (decision !== "JOINED" && decision !== "ALREADY_JOINED") {
     throw new PublicJoinAcceptError("INVALID");
