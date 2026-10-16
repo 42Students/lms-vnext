@@ -44,9 +44,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as { error?: string } | null;
         throw new Error(
-          body?.error === "PLACEMENT_JOB_CANCEL_BLOCKED"
-            ? "Accepted offers exist, so this drive cannot be cancelled."
-            : "The preview is stale or the drive changed. Refresh and review again.",
+          body?.error ?? "The preview is stale or the drive changed. Refresh and review again.",
         );
       }
       router.push("/tpo/placements/jobs/" + preview.id);
