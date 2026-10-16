@@ -6,6 +6,8 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrConversationQuerySchema} from "@/modules/placements/hr-conversation-inbox-model";
 import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-service";
 import {hrConversationsHref} from "@/modules/placements/hr-conversation-urls-model";
+import {listOwnRecruiterDecisionNotices} from "@/modules/placements/recruiter-decision-notice-service";
+import {RecruiterDecisionReadButton} from "@/components/hr/recruiter-decision-read-button";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[]};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -19,6 +21,8 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
  const result=await listHrConversations(context,parsed.data);
+ const decisionNotices=result.status==="READY"
+  ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
  return <main className="space-y-5">
   <PageHeader eyebrow="Recruiter · Messages" title="Conversations"
    description="Private employer conversations with the placement cell. Notifications remain a separate inbox."/>
@@ -28,6 +32,21 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
     className="block rounded-md border border-border p-3 text-primary-text">{g.collegeName}</Link>)}
   </section>:<>
+   {decisionNotices.length>0?<section aria-label="Drive request decisions"
+     className="rounded-xl border border-border bg-surface p-4">
+    <h2 className="font-semibold text-foreground">Drive request decisions</h2>
+    <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
+    <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
+      className="rounded-lg border border-border p-3">
+      <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
+      <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
+      <Link href={item.href} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">
+       View your drive request
+      </Link>
+      {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
+    </li>)}</ul>
+   </section>:null}
    {result.choices.length>1?<nav aria-label="College conversations" className="flex flex-wrap gap-2">
     {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
      className="rounded-md border border-border px-4 py-3 text-primary-text">{g.collegeName}</Link>)}
