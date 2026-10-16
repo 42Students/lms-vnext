@@ -75,3 +75,4 @@ export * from "./placement-drive-requests";
 export * from "./tpo-campaign-drafts";
 export * from "./placement-recruiter-public-contacts";
 export * from "./placement-tpo-application-stages";
+export * from "./placement-tpo-recruiter-saved-views";
