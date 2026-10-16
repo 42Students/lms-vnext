@@ -27,6 +27,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
  const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
+ const [acknowledged,setAcknowledged]=useState(false);
  const [error,setError]=useState("");
  const availableRows=allRows??rows;
  const labelsById=new Map(availableRows.map(row=>[row.id,row.label]));
@@ -35,7 +36,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  }))??[];
  const permitted=new Set(availableRows.map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
- function invalidate(){setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
+ function invalidate(){setAcknowledged(false);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
  async function post(path:string,payload:unknown){
   const response=await fetch("/api/placements/tpo/bulk-actions/"+path,{
     method:"POST",credentials:"same-origin",cache:"no-store",
@@ -98,7 +99,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   try{
    const response=await post("confirm",{
      ...plan,selections:preview.rows.map(row=>({id:row.id,version:row.version})),
-     previewToken:preview.previewToken,confirmed:true,
+     previewToken:preview.previewToken,confirmed:true,acknowledged,
    }) as {outcomes:BulkOutcome[]};
    if(!Array.isArray(response.outcomes))throw new Error("Missing outcomes");
    setOutcomes(response.outcomes);
@@ -218,8 +219,15 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   </button>
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
+  {preview&&plan&&["INELIGIBLE","REJECTED","SEND_MESSAGE"].includes(plan.action)?(
+    <label className="flex items-start gap-3 rounded-md border border-warning bg-surface-subtle p-4 text-sm">
+     <input type="checkbox" checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}
+      disabled={busy||outcomes.length>0} className="mt-1"/>
+     I understand this bulk action may change eligibility, reject applications or notify students. I have reviewed the preview and left-out rows.
+    </label>
+  ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
-    busy={busy||outcomes.length>0} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
+    busy={busy||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;
 }
