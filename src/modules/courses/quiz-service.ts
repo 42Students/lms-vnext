@@ -738,13 +738,16 @@ export async function setCourseQuizResults(
     const [locked]=await tx.select().from(courseQuizzes)
       .where(eq(courseQuizzes.id,quizId)).for("update").limit(1);
     if(!locked)throw new CoursesServiceError("QUIZ_NOT_FOUND");
-    if(!legacyQuizResultsWriteAllowed(manage,locked.status,
+    const eligibleStatus=locked.status==="CLOSED" ||
+      (locked.status==="PUBLISHED" && locked.dueAt!==null &&
+       locked.dueAt.getTime()<=Date.now());
+    if(!eligibleStatus || !legacyQuizResultsWriteAllowed(manage,"CLOSED",
       locked.resultsPublished,input.published))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     const now=new Date(Math.max(Date.now(),locked.updatedAt.getTime()+1));
     const [updated]=await tx.update(courseQuizzes).set({
-      resultsPublished:input.published,updatedAt:now,
-    }).where(and(eq(courseQuizzes.id,quizId),eq(courseQuizzes.status,"CLOSED"),
+      resultsPublished:input.published,status:"CLOSED",updatedAt:now,
+    }).where(and(eq(courseQuizzes.id,quizId),eq(courseQuizzes.status,locked.status),
       eq(courseQuizzes.resultsPublished,!input.published))).returning();
     if(!updated)throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     await recordActivityEventInTransaction(tx,context,{
