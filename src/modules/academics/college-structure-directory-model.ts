@@ -8,6 +8,7 @@ export const collegeStructureQuerySchema = z.object({
   programId: z.string().uuid().optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
+  pageSize: z.coerce.number().int().refine(n => [10,25,50,100].includes(n)).default(10),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
@@ -88,7 +89,7 @@ export function readCollegeStructureParams(
   values: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "programCode", "departmentCode", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "periodLifecycle", "descriptionPresence", "page"] as const) {
+  for (const key of ["q", "programId", "status", "cohortCode", "capacityState", "minimumCapacity", "maximumCapacity", "semesterNumber", "minimumCredits", "maximumCredits", "cohortStatus", "programStatus", "periodState", "periodCode", "classCode", "choiceMode", "offeringState", "academicYearState", "periodLifecycle", "programCode", "className", "cohortName", "schedulePresence", "facultyCoverage", "deliveryPresence", "periodStartsOnOrAfter", "periodEndsOnOrBefore", "departmentCode", "slotName", "programCode", "departmentCode", "minimumRequiredPicks", "maximumAllowedPicks", "semesterFrom", "semesterThrough", "periodLifecycle", "descriptionPresence", "page", "pageSize"] as const) {
     const value = values[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && !((key === "programCode" || key === "className" || key === "cohortName" || key === "periodStartsOnOrAfter" || key === "periodEndsOnOrBefore" || key === "departmentCode" || key === "slotName" || key === "minimumRequiredPicks" || key === "maximumAllowedPicks" || key === "semesterFrom" || key === "semesterThrough" || key === "programId" || key === "cohortCode" || key === "classCode" || key === "periodCode" || key === "minimumCapacity" || key === "maximumCapacity" || key === "semesterNumber" || key === "minimumCredits" || key === "maximumCredits") && !value)) {
@@ -149,11 +150,12 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (kind === "ELECTIVES" && "periodStartsOnOrAfter" in query && query.periodStartsOnOrAfter) params.set("periodStartsOnOrAfter",query.periodStartsOnOrAfter);
   if (kind === "ELECTIVES" && "periodEndsOnOrBefore" in query && query.periodEndsOnOrBefore) params.set("periodEndsOnOrBefore",query.periodEndsOnOrBefore);
   if (query.page > 1) params.set("page", String(query.page));
+  if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
   return params.size ? path + "?" + params.toString() : path;
 }
 
-export function collegeStructureTotalPages(total: number) {
-  return Math.max(1, Math.ceil(total / COLLEGE_STRUCTURE_PAGE_SIZE));
+export function collegeStructureTotalPages(total: number, pageSize = COLLEGE_STRUCTURE_PAGE_SIZE) {
+  return Math.max(1, Math.ceil(total / pageSize));
 }
 
 export function classCapacityLabel(capacity: number | null) {
