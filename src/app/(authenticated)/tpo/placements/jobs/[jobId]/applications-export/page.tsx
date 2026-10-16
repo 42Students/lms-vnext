@@ -29,7 +29,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     <select name="stage" defaultValue={result.stage} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
     </select></label>
-   <label className="min-w-40 flex-1 text-sm text-body">Student or role
+   <label className="min-w-40 flex-1 text-sm text-body">Name, roll, branch, batch, email, phone or role
     <input name="search" defaultValue={result.search} maxLength={100} className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface p-2"/>
    </label>
    <label className="min-w-32 flex-1 text-sm text-body">Channel
