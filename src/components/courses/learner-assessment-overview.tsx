@@ -205,7 +205,7 @@ export function LearnerAssessmentOverview({
         description={
           kind === "ASSIGNMENT"
             ? "Your assignments will appear here once your teachers add them."
-            : "Your quizzes will appear here once your Faculty publishes them."
+            : "Quizzes assigned to you by your teachers will appear here."
         }
       />
     );
