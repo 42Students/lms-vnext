@@ -31,6 +31,8 @@ export function facultyQuizDraftIssue(
   }[]}[],
 ):string|null{
  if(!title.trim() || title.trim().length > 255)return "Enter a Quiz title (up to 255 characters).";
+ if(questions.some(q=>!Number.isInteger(q.points)||q.points<1||q.points>100))
+  return "Question points must be between 1 and 100.";
  const normalized=questions.map((q,i)=>({...q,sequence:i,
    options:q.options.map((o,j)=>({...o,sequence:j}))}));
  const valid=createCourseQuizInputSchema.shape.questions.safeParse(normalized);
