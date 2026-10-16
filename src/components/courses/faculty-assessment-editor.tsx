@@ -277,6 +277,7 @@ export function FacultyAssessmentEditor({
             <Input
               className="mt-1.5"
               type="datetime-local"
+              disabled={assessment.kind==="QUIZ" && assessment.status==="CLOSED"}
               value={dueAt}
               onChange={(event) =>
                 setDueAt(event.target.value)
@@ -306,7 +307,7 @@ export function FacultyAssessmentEditor({
               required
             />
             {!facultyAssessmentLimitEditable(assessment.kind,assessment.status) ?
-              <span className="mt-1 block text-xs font-normal text-muted-foreground">The published Quiz attempt limit is locked; you can still edit its title, description and due date.</span> : null}
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">The published Quiz attempt limit is locked. Quiz deadlines cannot change after learner attempts or closure.</span> : null}
           </label>
 
           {error ? (
