@@ -8,9 +8,10 @@ import {VerificationStateError,type VerificationSection,type VerificationStatus}
 import {verificationDocumentManifest} from "./document-manifest";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
+import {requireTpoVerificationActor} from "./tpo-staff-auth";
 
-export async function getCollegeVerificationDetail(context:RequestContext,membershipId:string,section:VerificationSection,superAdminCollegeId?:string){
- const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
+export async function getCollegeVerificationDetail(context:RequestContext,membershipId:string,section:VerificationSection,superAdminCollegeId?:string,allowTpo=false){
+ const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : allowTpo ? await requireTpoVerificationActor(context) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
  const [record]=await getDb().select({
   learnerMembershipId:collegeMemberships.id,learnerName:users.displayName,
