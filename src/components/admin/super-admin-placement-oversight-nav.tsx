@@ -1,5 +1,6 @@
 import Link from "next/link";
 const oversightLinks=[
+ {href:"/admin/placements/drives",label:"All drives"},
  {href:"/admin/placements/interviews",label:"Interviews"},
  {href:"/admin/placements/shortlisted",label:"Shortlisted"},
  {href:"/admin/placements/job-settings",label:"Job Settings"},
