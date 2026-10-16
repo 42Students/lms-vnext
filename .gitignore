@@ -14,3 +14,9 @@
 .vscode/
 *.log
 /.verification/
+
+# NSRIT legacy migration: snapshots hold real personal data and must never be committed
+/scripts/migrate/nsrit/snapshot/
+/scripts/migrate/nsrit/reports/
+/scripts/migrate/nsrit/*.ndjson
+/scripts/migrate/nsrit/manifest.json
