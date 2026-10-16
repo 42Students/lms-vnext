@@ -9,6 +9,7 @@ import {TpoParticipationConflictError,decideTpoLearnerParticipation,
   getTpoLearnerParticipation} from "./tpo-participation-service";
 import {reviewTpoApplicant} from "./tpo-applicant-review-service";
 import {addTpoApplicantNote} from "./applicant-notes-service";
+import {moveTpoBulkApplicationStage,TpoBulkStageError} from "./tpo-bulk-application-stage-service";
 import {sendTpoBulkApplicationMessage} from "./tpo-bulk-applicant-message-service";
 import {loadTpoBulkCurrent} from "./tpo-bulk-action-preview-service";
 import {tpoBulkStudentVersion} from "./tpo-bulk-decision-model";
@@ -53,7 +54,9 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
        });
        outcomes.push({id:selected.id,status:response.changed?"updated":"skipped",reason:null});
      }else{
-       if(plan.action==="ADD_NOTE"){
+       if(plan.action==="MOVE_TEST"||plan.action==="MOVE_INTERVIEW"){
+         await moveTpoBulkApplicationStage(context,plan.jobId!,selected.id,plan.action,selected.version);
+       }else if(plan.action==="ADD_NOTE"){
          await addTpoApplicantNote(context,plan.jobId!,selected.id,{
            body:plan.note,expectedLatestNoteId:selected.version==="none"?null:selected.version,
          });
@@ -74,6 +77,7 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
    }catch(error){
      if(error instanceof PlacementsServiceError||
         error instanceof TpoParticipationConflictError||
+        error instanceof TpoBulkStageError||
         error instanceof AuthorizationError){
        outcomes.push({id:selected.id,status:"skipped",reason:safeBulkActionFailure()});
        continue;
