@@ -41,6 +41,7 @@ async function loadCollege(collegeId: string) {
       name: colleges.name,
       organizationId: colleges.organizationId,
       status: colleges.status,
+      logoObjectPath: colleges.logoObjectPath,
     })
     .from(colleges)
     .where(eq(colleges.id, collegeId))
@@ -89,7 +90,11 @@ export async function getPublicCollegeBranding(collegeId: string) {
     loadBranding(collegeId),
   ]);
   if (!college) return null;
-  return { collegeName: college.name, ...toView(row) };
+  return { collegeName: college.name, ...toView(row),
+    ...(college.logoObjectPath?.startsWith("branding/"+college.id+"/")?{
+      logoUrl:"/api/colleges/"+college.id+"/branding/logo",
+    }:{}),
+  };
 }
 
 export async function getCollegeBranding(
@@ -101,7 +106,10 @@ export async function getCollegeBranding(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
-  return { collegeName: college.name, ...toView(await loadBranding(collegeId)) };
+  return { collegeName: college.name, ...toView(await loadBranding(collegeId)),
+    uploadedLogoUrl:college.logoObjectPath?.startsWith("branding/"+college.id+"/")?
+     "/api/colleges/"+college.id+"/branding/logo":null,
+  };
 }
 
 export async function saveCollegeBranding(
