@@ -1,7 +1,7 @@
 import "server-only";
-import { and, desc, eq, gte, ilike, isNull, lt, lte, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, ilike, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
+import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -42,38 +42,41 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
       rows:[],requestRows:[],requestsAvailable:false as const,...common};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
-    const countResult=await db.execute(sql`
-      select count(*)::int as total from placement_recruiter_drive_requests r
-      inner join placement_company_relationships rel
-        on rel.id=r.company_relationship_id and rel.college_id=r.college_id
-      inner join placement_companies company on company.id=rel.company_id
-      where r.college_id=${collegeId}::uuid and r.status in ('REQUEST','SENT_BACK')
-        and (${!filters.search}::boolean or r.draft->>'title' ilike ${pattern}
-          or company.name ilike ${pattern})
-    `);
-    const countRows=Array.isArray(countResult)?countResult:
-      (countResult as {rows?:unknown[]}).rows??[];
-    const total=Number((countRows[0] as {total?:number}|undefined)?.total??0);
-    const pagination=tpoDriveLifecyclePage(total,filters.page);
-    const result=await db.execute(sql`
-      select r.id::text as id,r.status::text as status,
-        coalesce(r.draft->>'title','Untitled drive request')::text as title,
-        company.name::text as company,r.created_at::text as "createdAt"
-      from placement_recruiter_drive_requests r
-      inner join placement_company_relationships rel
-        on rel.id=r.company_relationship_id and rel.college_id=r.college_id
-      inner join placement_companies company on company.id=rel.company_id
-      where r.college_id=${collegeId}::uuid and r.status in ('REQUEST','SENT_BACK')
-        and (${!filters.search}::boolean or r.draft->>'title' ilike ${pattern}
-          or company.name ilike ${pattern})
-      order by r.created_at desc,r.id desc
-      limit ${pagination.pageSize} offset ${pagination.offset}
-    `);
-    const sourceRows=Array.isArray(result)?result:(result as {rows?:unknown[]}).rows??[];
-    const requestRows=sourceRows.map(value=>{
-      const row=value as {id:string;status:string;title:string;company:string;createdAt:string};
-      return {id:row.id,status:row.status,title:row.title,company:row.company,createdAt:row.createdAt};
-    });
+    const requestScope=and(
+      eq(placementRecruiterDriveRequests.collegeId,collegeId),
+      inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK"]),
+      filters.search?or(
+        ilike(placementCompanies.name,pattern),
+        sql`${placementRecruiterDriveRequests.draft}->>'title' ilike ${pattern}`,
+      ):undefined,
+    );
+    const [tally]=await db.select({total:count()})
+      .from(placementRecruiterDriveRequests)
+      .innerJoin(placementCompanyRelationships,and(
+        eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
+        eq(placementCompanyRelationships.collegeId,placementRecruiterDriveRequests.collegeId)))
+      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+      .where(requestScope);
+    const pagination=tpoDriveLifecyclePage(tally?.total??0,filters.page);
+    const requestRecords=await db.select({
+      id:placementRecruiterDriveRequests.id,
+      status:placementRecruiterDriveRequests.status,
+      draft:placementRecruiterDriveRequests.draft,
+      company:placementCompanies.name,
+      createdAt:placementRecruiterDriveRequests.createdAt,
+    }).from(placementRecruiterDriveRequests)
+      .innerJoin(placementCompanyRelationships,and(
+        eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
+        eq(placementCompanyRelationships.collegeId,placementRecruiterDriveRequests.collegeId)))
+      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+      .where(requestScope)
+      .orderBy(desc(placementRecruiterDriveRequests.createdAt),desc(placementRecruiterDriveRequests.id))
+      .limit(pagination.pageSize).offset(pagination.offset);
+    const requestRows=requestRecords.map(row=>({
+      id:row.id,status:row.status,
+      title:typeof row.draft.title==="string"?row.draft.title:"Untitled drive request",
+      company:row.company,createdAt:row.createdAt.toISOString(),
+    }));
     return {...pagination,counts,rows:[],requestRows,requestsAvailable:true as const,...common};
   }
   const target=filters.view==="DRAFT"?"DRAFT":filters.view==="LIVE"?"PUBLISHED":filters.view==="CLOSED"?"CLOSED":null;
