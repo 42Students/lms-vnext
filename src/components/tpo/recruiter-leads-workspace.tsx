@@ -103,6 +103,8 @@ export function RecruiterLeadsWorkspace({
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
   const [exportFeedback,setExportFeedback]=useState("");
   const [actionToast,setActionToast]=useState("");
+  const [freshInvite,setFreshInvite]=useState<{leadId:string;url:string}|null>(null);
+  const [invitingId,setInvitingId]=useState<string|null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -243,6 +245,31 @@ export function RecruiterLeadsWorkspace({
    else setQuery(value);
   }
 
+  async function createInviteLink(lead:Lead){
+    if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||lead.manualStage==="NOT_NOW")return;
+    if(lead.inviteSentAt&&!window.confirm("Make a new link? The old link stops working."))return;
+    setInvitingId(lead.id);setFreshInvite(null);setActionToast("");
+    try{
+      const response=await fetch("/api/placements/tpo/leads/"+encodeURIComponent(lead.id)+"/invite",{
+        method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({collegeId,sendEmail:false}),
+      });
+      if(!response.ok)throw new Error(response.status===503?
+        "Recruiter invitations are unavailable until the database is ready.":
+        "Couldn't create the invite link. Check this contact's access and email.");
+      const payload=await response.json() as {invite?:{token:string}};
+      if(!payload.invite?.token)throw new Error("Invite link was not returned.");
+      const url=window.location.origin+"/recruiter-invite/"+encodeURIComponent(payload.invite.token);
+      setFreshInvite({leadId:lead.id,url});
+      setActionToast("Invite link created. Copy it now: for safety it is shown only once. No email has been sent.");
+    }catch(error){setActionToast(error instanceof Error?error.message:"Couldn't create invite link");}
+    finally{setInvitingId(null);}
+  }
+  async function copyInvite(){
+    if(!freshInvite)return;
+    try{await navigator.clipboard.writeText(freshInvite.url);setActionToast("Link copied");}
+    catch{setActionToast("Couldn't copy. Select the link and copy it.");}
+  }
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
     setDuplicate(null);
@@ -442,6 +469,18 @@ export function RecruiterLeadsWorkspace({
           <p className="text-sm text-muted-foreground" aria-live="polite">
             Showing {visible.length} of {rows.length} recruiter leads
           </p>
+          {freshInvite ? (
+            <section className="rounded-lg border border-border bg-surface p-3" aria-label="Fresh recruiter invite link">
+              <p className="text-sm text-body">Copy this link now. It is shown only once. No email has been sent.</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <input readOnly aria-label="Invite link" value={freshInvite.url}
+                  onFocus={event=>event.currentTarget.select()}
+                  className={inputStyle+" min-w-0 flex-1"}/>
+                <button type="button" className={buttonStyle} onClick={()=>void copyInvite()}>Copy</button>
+                <button type="button" className={buttonStyle} onClick={()=>setFreshInvite(null)}>Hide link</button>
+              </div>
+            </section>
+          ):null}
           {view !== "companies" ? (
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
@@ -523,7 +562,7 @@ export function RecruiterLeadsWorkspace({
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                  <tr>{["Select", "Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone"].map(x =>
+                  <tr>{["Select", "Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
@@ -567,6 +606,11 @@ export function RecruiterLeadsWorkspace({
                         className="block rounded-md border border-border p-3 hover:bg-surface-secondary">
                         <span className="block font-medium">{lead.name}</span>
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
+                        {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
+                         <button type="button" className={buttonStyle+" mt-2"}
+                          disabled={Boolean(invitingId)} onClick={event=>{
+                           event.preventDefault();event.stopPropagation();void createInviteLink(lead);
+                          }}>Create invite link</button>:null}
                       </Link>
                     ))}
                   </div>
