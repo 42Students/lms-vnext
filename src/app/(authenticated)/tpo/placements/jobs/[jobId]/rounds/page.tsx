@@ -1,15 +1,64 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { hasMembershipRole } from "@/modules/identity/context";
+import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 
-/**
- * The drive tab strip links "Rounds" here, but rounds are managed from the
- * drive overview (round results are the only nested route); without this the
- * tab 404ed (acceptance pass 6).
- */
-export default async function TpoDriveRoundsRedirect({
+export default async function TpoDriveRoundsPage({
   params,
 }: {
   params: Promise<{ jobId: string }>;
 }) {
+  const context = await getCurrentRequestContext();
+  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const { jobId } = await params;
-  redirect(`/tpo/placements/jobs/${encodeURIComponent(jobId)}`);
+  const drive = await getPlacementDriveDay(context, jobId);
+  const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
+  const date = (value: Date | null) =>
+    value ? new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
+    }).format(value) + " IST" : "To be scheduled";
+  return <div className="space-y-6">
+    <PageHeader eyebrow="TPO · Drive workspace" title="Rounds and schedule"
+      description="Plan the drive rounds, check bookings and record company results." />
+    <Link href={root + "#drive-round-actions"} className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+      Manage and reorder rounds
+    </Link>
+    {drive.rounds.length === 0
+      ? <EmptyState title="No rounds planned" description="Add an evaluation round in the drive workspace before scheduling students." />
+      : <div className="grid gap-4">
+        {drive.rounds.map((round) => {
+          const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
+          const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
+          return <article key={round.id} className="rounded-xl border border-border bg-surface p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-body">Round {round.sequence} · {round.kind}</p>
+                <h2 className="mt-1 text-lg font-semibold text-foreground">{round.name}</h2>
+                <p className="mt-1 text-sm text-body">{round.status} · {round.mode} · {date(round.scheduledAt)}</p>
+              </div>
+              <Link href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}
+                className="inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+                See who / record results
+              </Link>
+            </div>
+            <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+              <div><dt className="text-body">Students in round</dt><dd className="font-semibold">{round.participants.length}</dd></div>
+              <div><dt className="text-body">Results</dt><dd className="font-semibold">{applied} applied · {staged} waiting to apply</dd></div>
+              <div><dt className="text-body">Results expected</dt><dd>{date(round.resultsDueAt)}</dd></div>
+              <div><dt className="text-body">Venue</dt><dd>{round.venue || "Venue to be told"}</dd></div>
+              <div><dt className="text-body">Platform</dt><dd>{round.platform || "Not specified"}</dd></div>
+              <div><dt className="text-body">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes + " minutes" : "Not specified"}</dd></div>
+            </dl>
+            {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}
+            {round.meetingUrl ? <a href={round.meetingUrl} target="_blank" rel="noopener noreferrer"
+              className="mt-3 inline-block text-sm font-semibold text-primary-text underline">Meeting link</a> : null}
+            {round.testUrl ? <a href={round.testUrl} target="_blank" rel="noopener noreferrer"
+              className="ml-4 mt-3 inline-block text-sm font-semibold text-primary-text underline">Test link</a> : null}
+          </article>;
+        })}
+      </div>}
+  </div>;
 }
