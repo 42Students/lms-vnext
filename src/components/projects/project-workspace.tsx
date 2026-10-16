@@ -11,6 +11,7 @@ import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
+import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
@@ -753,6 +754,11 @@ export function ProjectWorkspace({
                         >
                           {label(sprint.status)}
                         </StatusBadge>
+                        {mode!=="LEARNER"&&!readOnly&&sprint.status==="PLANNED"&&release.status!=="SHIPPED"?
+                          <MentorSprintDeleteControl projectId={workspace.project.id}
+                            sprintId={sprint.id} title={sprint.title}
+                            taskCount={(tasksBySprint.get(sprint.id)??[]).length}
+                            updatedAt={sprint.updatedAt.toISOString()}/>:null}
                         {mode !== "LEARNER" && !readOnly ? <>
                           {["PLANNED","ACTIVE"].includes(sprint.status) &&
                             release.status !== "SHIPPED" ? (
