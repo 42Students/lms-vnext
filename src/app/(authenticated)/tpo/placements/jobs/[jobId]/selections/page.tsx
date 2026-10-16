@@ -3,6 +3,7 @@ import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {TpoDriveSelectionManager} from "@/components/placements/tpo-drive-selection-manager";
+import {TpoSelectionImport} from "@/components/placements/tpo-selection-import";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoSelectionWorkspace} from "@/modules/placements/tpo-drive-selection-service";
@@ -28,6 +29,7 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
     No selections can be recorded or released until the migration is registered.
   </div>:data.job.status!=="PUBLISHED"?<p role="status" className="rounded border border-border p-5 text-sm">
     Selections can be recorded and released only on a published drive.
-  </p>:<TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>}
+  </p>:<div className="space-y-6"><TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>
+    <TpoSelectionImport jobId={jobId} candidates={data.candidates}/></div>}
  </div>;
 }
