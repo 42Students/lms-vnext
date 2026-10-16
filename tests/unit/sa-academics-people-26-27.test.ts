@@ -41,7 +41,7 @@ describe("SA-academics-people-27 lecture hall directory", () => {
       id: "id-1", name: "=hall", capacity: 45, roomType: "LAB",
       departmentId: "dept-1", description: "+unsafe",
     }], false);
-    expect(csv).toContain("id,name,capacity,roomType,departmentId,description");
+    expect(csv).toContain('"id","name","capacity","roomType","departmentId","description"');
     expect(csv).toContain("'=hall");
     expect(csv).toContain("'+unsafe");
     const service = readFileSync("src/modules/academics/college-lecture-halls-export-service.ts", "utf8");
