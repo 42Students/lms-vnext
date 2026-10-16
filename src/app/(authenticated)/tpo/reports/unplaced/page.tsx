@@ -11,10 +11,15 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
+import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
+import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
+import Link from "next/link";
 
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
+  batchId?:string|string[];
+  branchId?:string|string[];
 };
 
 function first(value: string | string[] | undefined) {
@@ -39,6 +44,16 @@ export default async function TpoUnplacedReportPage({
     jobId: first(query.jobId) || undefined,
   });
 
+  const batches=await listTpoBatches(context);
+  const batchId=first(query.batchId)||undefined,branchId=first(query.branchId)||undefined;
+  const permittedBatch=!batchId||batches.batches.some(batch=>batch.id===batchId);
+  const intelligence=permittedBatch?await getTpoStudentsIntelligence(context,{
+    collegeId:context.membership.collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
+    page:1,pageSize:100,
+  },{includeExportRows:true}):null;
+  const rowsById=new Map(intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]);
+  const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
+  const branches=[...new Map((intelligence?.branches??[]).map(row=>[row.branchId,row.branchName]))];
   return (
     <div className="space-y-6">
       <PageHeader
@@ -49,6 +64,24 @@ export default async function TpoUnplacedReportPage({
       />
 
       <ReportNavigation workspace={workspace} />
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
+       {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+       {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+       <label className="grid gap-1 text-sm">Batch
+        <select name="batchId" defaultValue={batchId??""} className="min-h-10 rounded border px-3">
+         <option value="">All current batches</option>
+         {batches.batches.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
+        </select></label>
+       <label className="grid gap-1 text-sm">Branch
+        <select name="branchId" defaultValue={branchId??""} className="min-h-10 rounded border px-3">
+         <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
+        </select></label>
+       <button type="submit" className="min-h-10 rounded bg-primary px-4 text-on-primary">Filter</button>
+       <Link href="/tpo/students?journeyState=READY_NOT_APPLYING"
+        className="inline-flex min-h-10 items-center text-primary-text underline">Act on them on Students</Link>
+      </form>
+      {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
+      <p className="text-xs text-muted-foreground">Applications count is all recorded activity across the current roster; academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} path="/tpo/reports/unplaced" />
 
       <section className="grid gap-3 sm:grid-cols-2">
@@ -57,7 +90,7 @@ export default async function TpoUnplacedReportPage({
             Unplaced in selected scope
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
-            {reportNumber(workspace.details.unplaced.length)}
+            {reportNumber(unplaced.length)}
           </p>
         </div>
         <div className="rounded-xl border border-border bg-surface p-4">
@@ -77,12 +110,13 @@ export default async function TpoUnplacedReportPage({
 
       <ReportTable
         title="Registered learners without an accepted offer"
-        headings={["Student", "Branch", "Membership ID"]}
-        rows={workspace.details.unplaced.map((learner) => [
-          learner.displayName,
-          learner.departmentName,
-          learner.membershipId,
-        ])}
+        headings={["Student","Roll no.","Batch","Branch","Lowest %","UG %","Marks verified","Resume","Applications","Still in a drive","Last applied"]}
+        rows={unplaced.map(learner=>{
+         const row=rowsById.get(learner.membershipId);
+         return [learner.displayName,row?.rollNumber??"—",row?.cohortName??"—",
+          learner.departmentName,"—","—","Not verified","Not confirmed",
+          row?.applicationCount??0,row?.activeApplicationCount?"Yes":"No","Not recorded"];
+        })}
         emptyDescription="No unplaced learners match this reporting scope. This does not prove that all learners have been placed across all seasons."
       />
     </div>
