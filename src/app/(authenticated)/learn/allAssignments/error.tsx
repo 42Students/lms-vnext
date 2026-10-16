@@ -12,9 +12,9 @@ export default function LearnerAssessmentsError({
 }) {
   return (
     <div className="rounded-xl border border-border bg-surface p-8 text-center">
-      <h1 className="m-0 text-xl font-semibold text-foreground">Could not load this page</h1>
+      <h1 className="m-0 text-xl font-semibold text-foreground">Assignments could not be loaded</h1>
       <p className="mt-2 text-sm text-body">
-        The assessment list failed to load. This is not treated as an empty list.
+        This is a loading problem, not an empty list. Check your connection and try again.
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Try again</Button>
