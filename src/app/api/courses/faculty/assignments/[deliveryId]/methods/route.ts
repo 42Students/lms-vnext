@@ -7,8 +7,6 @@ export async function GET(request:Request,{params}:{
  params:Promise<{deliveryId:string}>
 }){
  try{
-  if(process.env.DB06_MULTIPART_SUBMISSIONS_READY!=="DB06_VERIFIED")
-   return Response.json({error:"METHODS_NOT_READY"},{status:503});
   const {deliveryId}=await params;
   const assignmentId=new URL(request.url).searchParams.get("assignmentId");
   const context=await getCurrentRequestContext();
