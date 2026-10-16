@@ -108,7 +108,7 @@ export async function getTpoDriveCancelPreview(
       status: job.status,
       expectedUpdatedAt: job.updatedAt.toISOString(),
       cancellable,
-      blockedByAcceptedOffers: cancellable && counts.acceptedOffers > 0,
+      blockedByAcceptedOffers: false,
       impact: counts,
     };
   });

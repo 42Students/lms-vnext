@@ -16,9 +16,9 @@ describe("TPO drive cancellation", () => {
     expect(evaluateTpoDriveCancellation("PUBLISHED", "ACTIVE", impact, { ...impact, openRounds: 1 })).toBe("PREVIEW_STALE");
   });
 
-  it("blocks cancellation when a learner has accepted an offer", () => {
+  it("keeps accepted offers and permits cancellation", () => {
     const accepted = { ...impact, acceptedOffers: 1 };
-    expect(evaluateTpoDriveCancellation("PUBLISHED", "ACTIVE", accepted, accepted)).toBe("BLOCKED_ACCEPTED_OFFERS");
+    expect(evaluateTpoDriveCancellation("PUBLISHED", "ACTIVE", accepted, accepted)).toBe("ALLOW");
   });
 
   it("requires confirmation, a real reason and strict shape", () => {
@@ -38,12 +38,12 @@ describe("TPO drive cancellation", () => {
 });
 
 describe("P-S2-12 cancel outstanding offers", () => {
-  it("withdraws ISSUED only; accepted offers must block cancellation", () => {
+  it("withdraws ISSUED only; accepted offers are retained", () => {
     expect(isIssuedOfferCancelable("ISSUED")).toBe(true);
     for (const status of ["ACCEPTED","DECLINED","WITHDRAWN","EXPIRED"]) {
       expect(isIssuedOfferCancelable(status)).toBe(false);
     }
     const accepted = { submittedApplications: 2, openRounds: 1, issuedOffers: 1, acceptedOffers: 1 };
-    expect(evaluateTpoDriveCancellation("PUBLISHED","ACTIVE", accepted, accepted)).toBe("BLOCKED_ACCEPTED_OFFERS");
+    expect(evaluateTpoDriveCancellation("PUBLISHED","ACTIVE", accepted, accepted)).toBe("ALLOW");
   });
 });
