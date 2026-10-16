@@ -164,6 +164,61 @@ function SubmissionGradeCard({
     }
   }
 
+  /** College parity: one explicit action saves the private grade, then releases it. */
+  async function saveAndPublish(){
+    setError(null);setSuccess(null);setNeedsRefresh(false);
+    const parsed=draftState.points;
+    if(parsed===null){
+      setError("Enter whole-number points between 0 and "+maxPoints+".");
+      return;
+    }
+    if(submission.gradePublished&&feedback.trim().length<8){
+      setError("Explain the regrade to the learner in at least 8 characters.");
+      return;
+    }
+    if(!window.confirm("Save and publish this grade to the learner?"))return;
+    if(!beginFacultyManualGradeOperation(operationInFlight))return;
+    setSaving(true);
+    try{
+      const changed=await fetch(
+        "/api/courses/assignment-submissions/"+encodeURIComponent(submission.id)+"/grade",{
+          method:"PATCH",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            pointsAwarded:parsed,feedback:feedback.trim()||null,
+            expectedVersion:submission.version,
+          }),
+        });
+      if(!changed.ok){
+        setNeedsRefresh(facultyManualGradeNeedsRefresh(changed.status));
+        setError(await courseApiError(changed));return;
+      }
+      const saved=facultyManualGradeReceipt(await changed.json(),submission,"GRADE",maxPoints,{
+        points:parsed,feedback:feedback.trim()||null,
+      });
+      const current={...submission,...saved};
+      const released=await fetch(
+        "/api/courses/assignment-submissions/"+encodeURIComponent(submission.id)+"/publish",{
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({expectedVersion:saved.version}),
+        });
+      if(!released.ok){
+        setNeedsRefresh(facultyManualGradeNeedsRefresh(released.status));
+        setError("Grade saved privately but publication failed: "+await courseApiError(released));
+        onUpdated(current);return;
+      }
+      const published=facultyManualGradeReceipt(await released.json(),current,"PUBLISH",maxPoints,{
+        points:parsed,feedback:feedback.trim()||null,
+      });
+      setSuccess("Grade saved and published to the learner.");
+      onUpdated({...current,...published});
+    }catch{
+      setNeedsRefresh(true);
+      setError("The grade or publication outcome is uncertain. Reload before retrying.");
+    }finally{
+      operationInFlight.current=false;setSaving(false);
+    }
+  }
+
   async function publishGrade() {
     setError(null);
     setSuccess(null);setNeedsRefresh(false);
@@ -328,10 +383,18 @@ function SubmissionGradeCard({
                 ? "Saving…"
                 : submission.gradingStatus ===
                     "GRADED"
-                  ? "Edit grade"
-                  : "Submit grade"}
+                  ? "Save privately"
+                  : "Save privately"}
             </Button>
           ) : null}
+
+          {actions.canGrade&&draftState.hasChanges?(
+            <Button size="sm" type="button" variant="secondary"
+              disabled={saving||publishing||draftState.points===null}
+              onClick={()=>void saveAndPublish()}>
+              Save &amp; publish
+            </Button>
+          ):null}
 
           {actions.canPublish ? (
             <Button
