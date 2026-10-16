@@ -1,5 +1,7 @@
 import "server-only";
 import {and,eq,isNull,sql} from "drizzle-orm";
+import {activityEvents,colleges,collegeMemberships,membershipRoles,users,inAppNotifications} from "@/db/schema";
+import {tpoCampaignUnsubscribeEvent} from "./tpo-campaign-unsubscribe-notification-model";
 import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoLeadActivities,placementTpoEmailCampaignRecipients} from "@/db/schema/tpo-crm";
 import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision} from "./tpo-campaign-recipient-token";
@@ -48,15 +50,40 @@ export async function unsubscribeTpoCampaignRecipient(
         eq(placementTpoLeads.id,row.leadId),
         eq(placementTpoLeads.collegeId,row.collegeId),
         isNull(placementTpoLeads.unsubscribedAt),
-      )).returning({id:placementTpoLeads.id});
+      )).returning({id:placementTpoLeads.id,name:placementTpoLeads.name});
     // Every scoped recipient FK must resolve to the same lead, even when
     // their unsubscribe flag was already recorded by another channel.
     if(lead){
+      const eventCopy=tpoCampaignUnsubscribeEvent(lead.name,row.leadId);
       await tx.insert(placementTpoLeadActivities).values({
         collegeId:row.collegeId,leadId:row.leadId,
-        type:"SYSTEM",isSystem:true,note:"Unsubscribed from campaign emails",
+        type:"SYSTEM",isSystem:true,note:eventCopy.timeline,
         createdAt:now,
       });
+      const [college]=await tx.select({organizationId:colleges.organizationId})
+        .from(colleges).where(eq(colleges.id,row.collegeId)).limit(1);
+      if(college){
+        const [event]=await tx.insert(activityEvents).values({
+          organizationId:college.organizationId,collegeId:row.collegeId,
+          module:"PLACEMENTS",eventType:eventCopy.eventType,
+          subjectType:"placement_tpo_lead",subjectId:row.leadId,
+          subjectLabel:lead.name,summary:eventCopy.summary,
+          metadata:{campaignId:row.campaignId,recipientId:row.id},
+          occurredAt:now,
+        }).returning({id:activityEvents.id});
+        if(event){
+          const officers=await tx.selectDistinct({userId:collegeMemberships.userId})
+            .from(collegeMemberships)
+            .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+            .innerJoin(users,eq(users.id,collegeMemberships.userId))
+            .where(and(eq(collegeMemberships.collegeId,row.collegeId),
+              eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO"),
+              eq(users.platformStatus,"ACTIVE")));
+          if(officers.length)await tx.insert(inAppNotifications).values(officers.map(officer=>({
+            eventId:event.id,userId:officer.userId,...eventCopy.notification,
+          }))).onConflictDoNothing();
+        }
+      }
     }
     return "APPLY";
   });
