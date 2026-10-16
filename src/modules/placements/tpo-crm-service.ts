@@ -15,6 +15,7 @@ import {
   placementTpoFollowups,
   placementTpoLeadActivities,
   placementTpoLeads,
+  collegeMemberships,users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
@@ -121,7 +122,7 @@ export async function listTpoLeads(
   if (rows.length === 0) return [];
   const ids = rows.map(row => row.id);
   const db = getDb();
-  const [contacts, followups, stages] = await Promise.all([
+  const [contacts, followups, stages, activities, owners] = await Promise.all([
     db.select({
       leadId: placementTpoLeadActivities.leadId,
       lastContactAt: max(placementTpoLeadActivities.createdAt),
@@ -139,11 +140,26 @@ export async function listTpoLeads(
       isNull(placementTpoFollowups.doneAt),
     )).groupBy(placementTpoFollowups.leadId),
     getTpoRecruiterLeadStages(context, collegeId),
+    db.select({
+      leadId:placementTpoLeadActivities.leadId,
+      lastActivityAt:max(placementTpoLeadActivities.createdAt),
+    }).from(placementTpoLeadActivities).where(and(
+      eq(placementTpoLeadActivities.collegeId,collegeId),
+      inArray(placementTpoLeadActivities.leadId,ids),
+    )).groupBy(placementTpoLeadActivities.leadId),
+    db.select({membershipId:collegeMemberships.id,ownerName:users.displayName})
+      .from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(and(eq(collegeMemberships.collegeId,collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))),
   ]);
   const contactByLead = new Map(contacts.map(row => [row.leadId, row.lastContactAt]));
   const nextByLead = new Map(followups.map(row => [row.leadId, row.nextFollowupAt]));
   const now = new Date();
-  return rows.map(row => tpoLeadView(row, recruiterAttentionFromPersistedFacts({
+  const activityByLead=new Map(activities.map(row=>[row.leadId,row.lastActivityAt]));
+  const ownerByMembership=new Map(owners.map(row=>[row.membershipId,row.ownerName]));
+  return rows.map(row => ({
+    ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
     lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
     nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
@@ -152,7 +168,13 @@ export async function listTpoLeads(
     recruiterUserId: row.recruiterUserId,
     manualStage: row.manualStage,
     unsubscribedAt: row.unsubscribedAt,
-  }, now), stages.get(row.id)));
+  }, now), stages.get(row.id)),
+    ownerName:row.ownerMembershipId?ownerByMembership.get(row.ownerMembershipId)??null:null,
+    lastActivityAt:activityByLead.get(row.id)?.toISOString()??null,
+    nextFollowupAt:nextByLead.get(row.id)?.toISOString()??null,
+    inviteStatus:row.recruiterUserId?"JOINED":row.inviteClickedAt?"OPENED":
+      row.inviteSentAt?"SENT":"NOT_INVITED",
+  }));
 }
 
 /** Database partial uniques make email/phone duplicate prevention race-safe. */

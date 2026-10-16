@@ -1,6 +1,5 @@
-import {workEmailDomain} from "../public-college-join-model";
-/** A matching domain is necessary, but NEVER sufficient for an access grant. */
+import { matchesCompanyDomain } from "./domain-model";
+/** A verified work mailbox is still required; a domain match alone grants no access. */
 export function companyJoinEmailCandidate(workEmail:string,companyDomain:string){
- const domain=workEmailDomain(workEmail);
- return !!domain && domain===companyDomain.trim().toLowerCase();
+ return matchesCompanyDomain(workEmail,companyDomain);
 }

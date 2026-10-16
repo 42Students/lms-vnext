@@ -1,3 +1,4 @@
+import { recruiterAccessMonthsOrDefault } from "@/modules/placements/recruiter-access-defaults";
 import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import { equalsIgnoreCase } from "@/lib/sql-match";
@@ -37,7 +38,8 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       }).from(placementTpoCollegeSettings)
         .where(eq(placementTpoCollegeSettings.collegeId, collegeId))
         .for("share").limit(1);
-      if (!duration || duration.months < 1 || duration.months > 60) {
+      const accessMonths = recruiterAccessMonthsOrDefault(duration?.months);
+      if (accessMonths < 1 || accessMonths > 60) {
         throw new TpoRecruiterGrantConflict();
       }
       const [relationship] = await tx.select({
@@ -81,7 +83,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         if (!valid?.ok) throw new TpoRecruiterGrantConflict();
         return { outcome: "already-active" as const, grantId: existing.id };
       }
-      const expiry = recruiterGrantValidUntil(new Date(), duration.months);
+      const expiry = recruiterGrantValidUntil(new Date(), accessMonths);
       const [grant] = await tx.insert(placementRecruiterCollegeGrants).values({
         recruiterUserId: recruiter.id, companyRelationshipId: relationship.id,
         grantedByUserId: actorUserId, validUntil: expiry,

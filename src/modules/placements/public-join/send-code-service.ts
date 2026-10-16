@@ -60,6 +60,7 @@ export async function requestPublicJoinCode(
       .innerJoin(organizations, eq(colleges.organizationId, organizations.id))
       .where(and(eq(placementPublicJoinLinks.tokenHash, digest),
         eq(placementPublicJoinLinks.scope, scope),
+        eq(placementPublicJoinLinks.enabled,true),
         isNull(placementPublicJoinLinks.revokedAt),
         gt(placementPublicJoinLinks.expiresAt, now),
         eq(colleges.status, "ACTIVE"), eq(organizations.status, "ACTIVE")))
