@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
+import {useRouter,useSearchParams} from "next/navigation";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
@@ -19,11 +19,17 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  projectId:string;initialTasks:Task[];sprints:Sprint[];releases:Release[];members:Person[];
  taskSubmissions?:TaskSubmission[];taskActivity?:TaskEvent[];readOnly?:boolean;
 }){
- const router=useRouter(),[tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),
- [sprint,setSprint]=useState(""),[priority,setPriority]=useState(""),
- [assignee,setAssignee]=useState(""),[statusFilter,setStatusFilter]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
+ const router=useRouter(),params=useSearchParams();
+ const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(params.get("release")??""),
+ [sprint,setSprint]=useState(params.get("sprint")??""),[priority,setPriority]=useState(params.get("priority")??""),
+ [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
  [undo,setUndo]=useState<{id:string;status:string}|null>(null);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ function remember(name:string,value:string){
+  const query=new URLSearchParams(window.location.search);
+  if(value)query.set(name,value);else query.delete(name);
+  window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
+ }
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
  const visible=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
    (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release));
@@ -66,25 +72,25 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   </div>
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-3">
    <label className="text-sm font-semibold">Release
-    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");}}
+    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-10 rounded-md border border-border bg-background px-2">
      <option value="">All releases</option>{releases.map(r=><option key={r.id} value={r.id}>{r.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Sprint
-    <select value={sprint} onChange={e=>setSprint(e.target.value)}
+    <select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-10 rounded-md border border-border bg-background px-2">
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold">Priority
-    <select value={priority} onChange={e=>setPriority(e.target.value)}
+    <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Assignee
-    <select value={assignee} onChange={e=>setAssignee(e.target.value)}
+    <select value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
      {members.filter(m=>m.role==="LEARNER").map(m=>
@@ -92,14 +98,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </select>
    </label>
    <label className="text-sm font-semibold">Lane
-    <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}
+    <select value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
       className="ml-2 min-h-10 rounded border border-border bg-background p-2">
       <option value="">All lanes</option>
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
       <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
     </select>
    </label>
-   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");}}
+   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");["priority","assignee","sprint","release","lane"].forEach(k=>remember(k,""));}}
     className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
