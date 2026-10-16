@@ -16,6 +16,7 @@ import {isRecruiterInviteTokenShape,recruiterInviteTokenHash,requireRecruiterInv
 import {recruiterOtpAttemptDecision,recruiterOtpMatches,recruiterInviteOtpSchema}
  from "./recruiter-invite-otp-policy";
 import {TpoRecruiterInviteServiceError} from "./tpo-recruiter-invite-service";
+import {publicRecruiterJoinedNotification} from "./public-join/join-notification-model";
 
 /** Public signup is authorized solely by an invite bound to a known work email
  * plus its latest DELIVERED OTP. Never accept claimed user, email, company or college IDs.
@@ -52,6 +53,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   }
   const [relationship]=await tx.select({
    companyId:placementCompanyRelationships.companyId,
+   companyName:placementCompanies.name,
    status:placementCompanyRelationships.status,
    companyStatus:placementCompanies.status,
    collegeStatus:colleges.status,
@@ -128,10 +130,11 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
    .where(and(eq(collegeMemberships.collegeId,lead.collegeId),
     eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO"),
     eq(users.platformStatus,"ACTIVE")));
+  const notification=publicRecruiterJoinedNotification({
+   name:lead.name,companyName:relationship.companyName,scope:"COLLEGE",
+  });
   if(officers.length)await tx.insert(inAppNotifications).values(officers.map(officer=>({
-    eventId:event.id,userId:officer.userId,category:"PLACEMENTS",
-    title:lead.name+" joined from "+(lead.companyName??"their company"),
-    body:"A recruiter joined your placement cell through an invitation.",
+    eventId:event.id,userId:officer.userId,...notification,
   }))).onConflictDoNothing();
   return {result:"JOINED" as const,email};
  });
