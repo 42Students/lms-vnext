@@ -69,7 +69,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             <thead><tr><th className="p-2">Batch</th><th className="p-2">Program</th>
               <th className="p-2">Status</th><th className="p-2">Actions</th></tr></thead>
             <tbody>{data.items.map(row => <tr key={row.id} className="border-t border-border">
-              <td className="p-2">{row.name} ({row.code})</td>
+              <td className="p-2">{row.name} ({row.code})
+                <Link href={`/admin/classes?cohortCode=${encodeURIComponent(row.code)}`} className="mt-1 block text-xs font-semibold text-primary-text">Manage students →</Link></td>
               <td className="p-2">{row.programName}</td>
               <td className="p-2">{row.status}</td>
               <td className="p-2"><CollegeCohortRowActions row={row} periods={periods} /></td>
