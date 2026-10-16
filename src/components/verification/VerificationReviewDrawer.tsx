@@ -13,8 +13,8 @@ import type {VerificationQueueCard} from "./VerificationWorkspace";
 
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
  documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;decidedAt:string|null;}};
-export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId}:{
- row:VerificationQueueCard;onClose:()=>void;onSaved:(action?:"VERIFY"|"SEND_BACK")=>void;apiBase?:string;collegeId?:string;
+export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId,sequenceProgress,onNext,onFinish}:{
+ row:VerificationQueueCard;onClose:()=>void;onSaved:(action?:"VERIFY"|"SEND_BACK")=>void;apiBase?:string;collegeId?:string;sequenceProgress?:string;onNext?:()=>void;onFinish?:()=>void;
 }){
  const closeButton=useRef<HTMLButtonElement>(null);
  const drawer=useRef<HTMLElement>(null);
@@ -93,6 +93,11 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      <p className="text-sm">{row.section==="EDUCATION"?"Education":"Identity"} · {row.status.replaceAll("_"," ")}</p></div>
     <button type="button" ref={closeButton} disabled={saving} onClick={onClose} className="rounded-md border px-3 py-2 disabled:opacity-50">Close</button>
    </header>
+   {sequenceProgress&&<nav aria-label="Sequential verification progress" className="flex flex-wrap items-center gap-3 border-b py-3 text-sm">
+     <span role="status">{sequenceProgress}</span>
+     <button type="button" disabled={saving} onClick={onNext} className="rounded border px-3 py-2">Next</button>
+     <button type="button" disabled={saving} onClick={onFinish} className="rounded border px-3 py-2">Finish</button>
+   </nav>}
    {loading?<p role="status" className="py-4">Loading submitted details…</p>:null}
    {error?<div role="alert" className="my-3 space-y-2 rounded-md border p-3"><p>{error}</p>
     {canRetryVerificationReview(error,loading)&&<button type="button" onClick={retryReview}
