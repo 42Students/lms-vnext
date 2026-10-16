@@ -387,8 +387,10 @@ export function FacultyAssignmentReview({
   maxPoints,
   status,
   filesEnabled,
+  reviewScope="FACULTY",
 }: {
   filesEnabled: boolean;
+  reviewScope?:"FACULTY"|"COLLEGE";
   assignmentId: string;
   deliveryId: string;
   maxPoints: number;
@@ -420,9 +422,13 @@ export function FacultyAssignmentReview({
     setOpen(true);setError(null);setLoading(true);setSubmissions(null);setPagination(null);
     setFilter(next.filter);
     try {
-      const response = await fetch(facultySubmissionReviewApiHref({
+      const facultyUrl=facultySubmissionReviewApiHref({
         assignmentId,deliveryId,filter:next.filter,page:next.page,
-      }),{cache:"no-store"});
+      });
+      const reviewUrl=reviewScope==="COLLEGE"?
+        facultyUrl.replace("/api/courses/faculty/assignments/",
+          "/api/courses/college/assignments/"):facultyUrl;
+      const response=await fetch(reviewUrl,{cache:"no-store"});
       if (!response.ok) throw new Error(facultySubmissionReviewFailure(response.status) ?? await courseApiError(response));
       const parsed = facultySubmissionReviewResponseSchema.safeParse(await response.json());
       if (!parsed.success) throw new Error("The submission list could not be read. Refresh and try again.");
