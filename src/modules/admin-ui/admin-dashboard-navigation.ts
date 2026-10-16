@@ -78,6 +78,20 @@ export const SUPER_ADMIN_GLOBAL_LINKS = [
   { label: "Activity Log", href: "/admin/audit" },
 ] as const;
 
+export const SUPER_ADMIN_COLLEGE_QUICK_ACTIONS=[
+ {label:"Departments",href:"/admin/departments"},
+ {label:"Courses",href:"/admin/courses"},
+ {label:"Programs",href:"/admin/programs"},
+ {label:"Faculty",href:"/admin/faculty"},
+ {label:"Students",href:"/admin/students"},
+ {label:"Jobs",href:"/admin/placements"},
+ {label:"Hiring Dashboard",href:"/admin/placements"},
+ {label:"Attendance",href:"/admin/attendance"},
+ {label:"Assignments",href:"/admin/assignments"},
+ {label:"Quizzes",href:"/admin/quizzes"},
+ {label:"People Directory",href:"/admin/people"},
+] as const;
+
 /** Dedicated college-scoped Super Admin shortcuts, not a restored setup guide. */
 export const SUPER_ADMIN_COLLEGE_LINKS = [
   { label: "Tenant Setup", href: "/admin/tenants/setup?tab=setup" },
