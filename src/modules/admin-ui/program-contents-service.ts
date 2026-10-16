@@ -1,8 +1,8 @@
 import "server-only";
 
-import { count, eq, inArray } from "drizzle-orm";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { cohorts, programTerms, sections } from "@/db/schema";
+import { cohorts, departments, programs, programTerms, sections } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { loadAcademicCollegeScope } from "@/modules/academics/scope";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -31,14 +31,25 @@ export async function listProgramContents(
   const db = getDb();
   const [termCounts, cohortCounts, sectionCounts] = await Promise.all([
     db.select({ programId: programTerms.programId, total: count() })
-      .from(programTerms).where(inArray(programTerms.programId, [...scopedProgramIds]))
+      .from(programTerms)
+      .innerJoin(programs, eq(programs.id, programTerms.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(and(inArray(programTerms.programId, [...scopedProgramIds]),
+        eq(departments.collegeId, collegeId)))
       .groupBy(programTerms.programId),
     db.select({ programId: cohorts.programId, total: count() })
-      .from(cohorts).where(inArray(cohorts.programId, [...scopedProgramIds]))
+      .from(cohorts)
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(and(inArray(cohorts.programId, [...scopedProgramIds]),
+        eq(departments.collegeId, collegeId)))
       .groupBy(cohorts.programId),
     db.select({ programId: cohorts.programId, total: count() })
       .from(sections).innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
-      .where(inArray(cohorts.programId, [...scopedProgramIds]))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(and(inArray(cohorts.programId, [...scopedProgramIds]),
+        eq(departments.collegeId, collegeId)))
       .groupBy(cohorts.programId),
   ]);
   const semesters = new Map(termCounts.map(row => [row.programId, row.total]));
