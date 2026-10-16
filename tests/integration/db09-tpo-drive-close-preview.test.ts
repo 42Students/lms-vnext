@@ -45,9 +45,18 @@ async function cleanup(){
  if(!pool)return;
  if(ids.offer)await pool.query("DELETE FROM placement_offers WHERE id=$1",[ids.offer]);
  if(ids.round)await pool.query("DELETE FROM placement_job_rounds WHERE id=$1",[ids.round]);
- if(ids.application)await pool.query("DELETE FROM placement_applications WHERE id=$1",[ids.application]);
+ if(ids.application){
+  await pool.query("DELETE FROM placement_application_screening_history WHERE application_id=$1",[ids.application]);
+  await pool.query("DELETE FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
+  await pool.query("DELETE FROM placement_application_status_history WHERE application_id=$1",[ids.application]);
+  await pool.query("DELETE FROM placement_applications WHERE id=$1",[ids.application]);
+ }
  if(ids.role)await pool.query("DELETE FROM placement_job_role_options WHERE id=$1",[ids.role]);
- if(ids.job)await pool.query("DELETE FROM placement_jobs WHERE id=$1",[ids.job]);
+ if(ids.job){
+  await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1)",[ids.job]);
+  await pool.query("DELETE FROM activity_events WHERE subject_id=$1",[ids.job]);
+  await pool.query("DELETE FROM placement_jobs WHERE id=$1",[ids.job]);
+ }
  if(ids.relationship)await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[ids.relationship]);
  if(ids.company)await pool.query("DELETE FROM placement_companies WHERE id=$1",[ids.company]);
 }
@@ -65,7 +74,14 @@ describe.skipIf(!enabled)("TPO close consequence preview isolated PostgreSQL",()
  }await closeDatabaseConnection();});
  it("closes from an accurate SQL-microsecond preview and audits; rejects forged scope and stale data",async()=>{
   if(!pool)throw Error("PG required");
-  const jobId=await fixture(),snapshot=await getTpoDriveClosePreview(tpo,jobId);
+  const jobId=await fixture();
+  const blocked=await getTpoDriveClosePreview(tpo,jobId);
+  expect(blocked.canClose).toBe(false);
+  expect(blocked.issuedOffers).toBe(1);
+  await pool.query("UPDATE placement_offers SET status='WITHDRAWN',withdrawn_at=now(),withdrawn_by_user_id=$2,updated_at=now() WHERE id=$1",
+   [ids.offer,SEED_IDS.facultyUser]);
+  const snapshot=await getTpoDriveClosePreview(tpo,jobId);
+  expect(snapshot.canClose).toBe(true);
   expect(snapshot.counts).toEqual({applications:1,rounds:1,offers:1});
   const write={action:"CLOSE",confirmed:true,expectedUpdatedAt:snapshot.expectedUpdatedAt,
    expectedCounts:snapshot.counts,reason:"Drive completed with all records retained"};
@@ -82,6 +98,9 @@ describe.skipIf(!enabled)("TPO close consequence preview isolated PostgreSQL",()
    .toISOString().replace("Z","+05:30");
   const saved=await closeTpoDriveWithPreview(tpo,jobId,{...write,expectedUpdatedAt:offsetToken});
   expect(saved.status).toBe("CLOSED");
+  expect(saved.applicantEffects.rejected).toBe(1);
+  const screening=await pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
+  expect(screening.rows[0]?.status).toBe("REJECTED");
   await expect(closeTpoDriveWithPreview(tpo,jobId,write))
    .rejects.toMatchObject({code:"PLACEMENT_JOB_STALE"});
   const audit=await pool.query<{count:number}>(

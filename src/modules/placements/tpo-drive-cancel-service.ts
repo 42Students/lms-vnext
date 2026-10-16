@@ -19,6 +19,7 @@ import {
   requireTpoJobCollege,
   type TpoJobTx,
 } from "./tpo-job-write-base";
+import {endDriveApplicants,settleDriveWithdrawalRequests,tellRecruiterDriveStopped} from "./tpo-drive-stop-effects";
 import {
   evaluateTpoDriveCancellation,
   isIssuedOfferCancelable,
@@ -107,7 +108,7 @@ export async function getTpoDriveCancelPreview(
       status: job.status,
       expectedUpdatedAt: job.updatedAt.toISOString(),
       cancellable,
-      blockedByAcceptedOffers: cancellable && counts.acceptedOffers > 0,
+      blockedByAcceptedOffers: false,
       impact: counts,
     };
   });
@@ -162,7 +163,7 @@ export async function cancelTpoDriveWithPreview(
     const [saved] = await tx
       .update(placementJobs)
       .set({
-        status: "CLOSED",
+        status: "CANCELLED",
         closedAt: new Date(),
         updatedAt: sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementJobs.updatedAt})+interval '1 millisecond')`,
       })
@@ -233,6 +234,15 @@ export async function cancelTpoDriveWithPreview(
         })),
       );
     }
+    const settledWithdrawalRequests=await settleDriveWithdrawalRequests(
+      tx,context,jobId,collegeId,"CANCELLED",input.reason,
+    );
+    const applicantEffects=await endDriveApplicants(
+      tx,context,jobId,collegeId,"CANCELLED",input.reason,
+    );
+    const recruiterNotified=await tellRecruiterDriveStopped(
+      tx,context,jobId,collegeId,"CANCELLED",input.reason,
+    );
     await auditTpoJobChange(
       tx,
       context,
@@ -247,6 +257,7 @@ export async function cancelTpoDriveWithPreview(
         impact: current,
         roundsCancelled: cancelledRounds.length,
         issuedOffersWithdrawn: issued.length,
+        settledWithdrawalRequests,applicantEffects,recruiterNotified,
         previewVersion: input.expectedUpdatedAt,
         updatedAt: saved.updatedAt.toISOString(),
       },
@@ -257,6 +268,7 @@ export async function cancelTpoDriveWithPreview(
       updatedAt: saved.updatedAt.toISOString(),
       roundsCancelled: cancelledRounds.length,
       issuedOffersWithdrawn: issued.length,
+      settledWithdrawalRequests,applicantEffects,recruiterNotified,
       impact: current,
     };
   });
