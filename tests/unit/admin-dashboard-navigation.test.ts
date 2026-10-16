@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   COLLEGE_ADMIN_QUICK_ACTIONS,
   COLLEGE_ADMIN_SETUP_PHASES,
+  COLLEGE_SETUP_GUIDE_COPY,
   SUPER_ADMIN_GLOBAL_LINKS,
   SUPER_ADMIN_COLLEGE_LINKS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
@@ -64,5 +65,21 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
       "/admin/people", "/admin/placements", "/admin/projects/templates",
       "/admin/verification", "/tracker/audit-findings",
     ]);
+  });
+
+  it("COL-dashboard-12 uses the exact legacy setup guide wording", () => {
+    expect(COLLEGE_SETUP_GUIDE_COPY).toEqual({
+      collapseLabel: "Setting up a new college? Step-by-step setup guide",
+      heading: "Setup Guide (Follow in Order)",
+      intro: "If you're setting up the LMS for the first time, follow these phases in order. Each phase depends on the previous one being completed.",
+    });
+    const steps = COLLEGE_ADMIN_SETUP_PHASES.flatMap<{ label: string; desc: string }>((p) => [...p.steps]);
+    expect(steps.map((s) => s.label)).toEqual([
+      "Create Departments", "Create Courses", "Add Lessons", "Add Lesson Content",
+      "Set up Programs", "Create Semesters", "Map courses to semesters", "Create Batches", "Create Classes",
+      "Add Faculty", "Assign Faculty", "Add Students", "Add Lecture Halls", "Jobs & Placements",
+    ]);
+    expect(steps.find((s) => s.label === "Set up Programs")?.desc).toBe("Degree programs (B.Tech, MBA)");
+    expect(steps.find((s) => s.label === "Add Students")?.desc).toBe("Student accounts, placed in a section");
   });
 });

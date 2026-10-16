@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   COLLEGE_ADMIN_QUICK_ACTIONS,
   COLLEGE_ADMIN_SETUP_PHASES,
+  COLLEGE_SETUP_GUIDE_COPY,
   SUPER_ADMIN_GLOBAL_LINKS,
   SUPER_ADMIN_COLLEGE_LINKS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
@@ -55,11 +56,10 @@ export function CollegeAdminDashboardActions() {
       <section aria-label="Setup Guide" className="space-y-4">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Setup Guide (Follow in Order)
+            {COLLEGE_SETUP_GUIDE_COPY.heading}
           </h2>
           <p className="mt-1 text-sm text-body">
-            Start with academic structure, then add courses and people.
-            Unavailable stages are shown explicitly until their full workflows are ported.
+            {COLLEGE_SETUP_GUIDE_COPY.intro}
           </p>
         </div>
         {COLLEGE_ADMIN_SETUP_PHASES.map((phase, phaseIndex) => (
@@ -77,7 +77,7 @@ export function CollegeAdminDashboardActions() {
                   key={step.key}
                   label={step.label}
                   href={step.href}
-                  subtitle={step.href ? "Open setup workflow" : undefined}
+                  subtitle={step.desc}
                 />
               ))}
             </div>
