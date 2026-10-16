@@ -108,15 +108,29 @@ export async function stageTpoRoundImport(
  const candidates=new Map(roster.roster.map(c=>[c.applicationId,c]));
  const inputRows=parseTpoRoundImport(bytes,filename);
  const used=new Set<string>(),entries:Array<{line:number;applicationId:string;outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT";rank:number|null;message:string|null}>=[];
+ const rejected:Array<{applicationId:string;line:number;status:"skipped";reason:string}>=[];
  const skippedLines=new Set(input.skippedLines),override=new Map(input.overrides.map(v=>[v.line,v.applicationId]));
  for(const row of inputRows){
   if(skippedLines.has(row.line))continue;
-  const match=override.get(row.line)??matchSource(row,roster.roster)[0]?.applicationId;
-  if(!match||!row.outcome||!candidates.has(match)||used.has(match))continue;
+  const exact=matchSource(row,roster.roster);
+  const chosen=override.get(row.line);
+  // Do not use the first ambiguous match: an import must never stage results
+  // for a different learner merely because their roll/email was duplicated.
+  const match=chosen??(exact.length===1?exact[0]!.applicationId:undefined);
+  const reason=!match?"Unmatched or ambiguous learner; review and choose Skip or a verified match":
+   !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
+   used.has(match)?"Duplicate learner in the import":"";
+  if(reason){
+   rejected.push({applicationId:match??"",line:row.line,status:"skipped",reason});
+   continue;
+  }
   const current=candidates.get(match)!;
-  if(current.currentStatus==="APPLIED")continue;
+  if(current.currentStatus==="APPLIED"){
+   rejected.push({applicationId:match,line:row.line,status:"skipped",reason:"Applied result cannot be overwritten"});
+   continue;
+  }
   used.add(match);
-  entries.push({line:row.line,applicationId:match,outcome:row.outcome,rank:row.rank,message:row.message});
+  entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
   for(const candidate of roster.roster){
@@ -126,7 +140,7 @@ export async function stageTpoRoundImport(
    }
   }
  }
- const results:Array<{applicationId:string;line:number;status:"staged"|"skipped";reason?:string}>=[];
+ const results:Array<{applicationId:string;line:number;status:"staged"|"skipped";reason?:string}>=[...rejected];
  let nextWaitlistRank=1;
  for(const entry of entries){
   try{
