@@ -28,6 +28,7 @@ import { requirePlacementManageScope } from "./scope";
 import { placementJobIdSchema } from "./validation";
 import {
   countPublishedDriveDebarments,notifyEligiblePublishedDrive,
+  previewEligiblePublishedDrive,
 } from "./tpo-drive-publish-effects";
 
 type Db = ReturnType<typeof getDb>;
@@ -120,11 +121,17 @@ export async function getTpoDriveLifecycleReadiness(
   )).limit(1);
   if (!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   await requirePlacementManageScope(context, job.collegeId);
-  const facts = await getDb().transaction((tx) => loadFacts(tx, job, new Date()));
+  const [facts,reach] = await getDb().transaction(async tx=>Promise.all([
+    loadFacts(tx,job,new Date()),
+    job.status==="DRAFT"?previewEligiblePublishedDrive(tx,context,job):
+      Promise.resolve({eligible:0,excluded:0,candidateCount:0,recipientUserIds:[]}),
+  ]),{accessMode:"read only"});
   return {
     jobId,
     status: job.status,
     facts,
+    reach:{eligible:reach.eligible,excluded:reach.excluded,
+      considered:reach.candidateCount},
     publish: evaluateTpoDriveLifecycle("PUBLISH", facts),
     close: evaluateTpoDriveLifecycle("CLOSE", facts),
     reopen: evaluateTpoDriveLifecycle("REOPEN", facts),

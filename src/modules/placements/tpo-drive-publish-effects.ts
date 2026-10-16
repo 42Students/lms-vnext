@@ -43,9 +43,8 @@ export async function countPublishedDriveDebarments(
  * registration, notification preference on, and job-specific eligibility.
  * NEVER count mere college membership as eligibility.
  */
-export async function notifyEligiblePublishedDrive(
+export async function previewEligiblePublishedDrive(
   tx:Tx,context:RequestContext,job:{id:string;collegeId:string;title:string},
-  eventId:string,
 ){
   const registrations=await tx.select({
     membershipId:collegeMemberships.id,userId:users.id,
@@ -77,6 +76,15 @@ export async function notifyEligiblePublishedDrive(
     if(eligibility.status==="ELIGIBLE")recipients.push(learner.userId);
   }
   const distinct=[...new Set(recipients)];
+  return {eligible:distinct.length,excluded:registrations.length-distinct.length,
+    candidateCount:registrations.length,recipientUserIds:distinct};
+}
+export async function notifyEligiblePublishedDrive(
+  tx:Tx,context:RequestContext,job:{id:string;collegeId:string;title:string},
+  eventId:string,
+){
+  const result=await previewEligiblePublishedDrive(tx,context,job);
+  const distinct=result.recipientUserIds;
   for(let i=0;i<distinct.length;i+=200){
     await tx.insert(inAppNotifications).values(
       distinct.slice(i,i+200).map(userId=>({
