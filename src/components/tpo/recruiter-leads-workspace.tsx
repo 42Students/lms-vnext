@@ -422,8 +422,14 @@ export function RecruiterLeadsWorkspace({
             <label className="min-w-36 text-sm">
               View
               <select className={inputStyle + " mt-1"} value={view}
-                onChange={e => setView(e.target.value as typeof view)}>
-                <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies</option>
+                onChange={e => {
+                  if (e.target.value === "campaigns") {
+                    window.location.assign("/tpo/recruiters?view=campaigns");
+                  } else {
+                    setView(e.target.value as typeof view);
+                  }
+                }}>
+                <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies</option><option value="campaigns">Emails</option>
               </select>
             </label>
           </div>
