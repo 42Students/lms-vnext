@@ -474,7 +474,7 @@ export function RecruiterLeadDetailWorkspace({
                     </li>
                   ))}
                 </ol>
-              ) : <p className="text-sm text-muted-foreground">No recorded interactions yet.</p>}
+              ) : <p className="text-sm text-muted-foreground">Nothing logged yet. A call, email, meeting or note logged above shows up here.</p>}
             </section>
           </div>
 
