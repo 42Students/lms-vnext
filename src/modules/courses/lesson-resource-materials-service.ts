@@ -95,7 +95,7 @@ export async function commandLessonResourceMaterial(
  // Activity history uses established event taxonomy, with URLs excluded.
  await getDb().transaction(async tx=>{
   await recordActivityEventInTransaction(tx,context,{
-   eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_CONTENT_UPDATED,
+   eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_MATERIAL_UPDATED,
    collegeId:content.collegeId,organizationId:content.organizationId,
    subjectType:"lesson_content",subjectId:contentId,
    summary:"Resource material "+result.action.toLowerCase(),
