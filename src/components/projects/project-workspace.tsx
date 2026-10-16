@@ -8,6 +8,7 @@ import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-
 import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
+import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
@@ -428,13 +429,11 @@ export function ProjectWorkspace({
           {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-lg border border-border p-3">
             <h3 className="font-semibold text-foreground">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
-              {([
-                ["Backlog","BACKLOG"],["To do","TODO"],["In progress","IN_PROGRESS"],
-                ["In review","IN_REVIEW"],["Blocked","BLOCKED"],["Completed","DONE"],
-              ] as const).map(([label,status])=><div key={status} className="rounded-lg bg-muted p-2 text-center">
-                <p className="text-xl font-bold tabular-nums">{workspace.tasks.filter(task=>task.status===status).length}</p>
-                <p className="text-xs text-body">{label}</p>
-              </div>)}
+              {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
+                <div key={lane.id} className="rounded-lg bg-muted p-2 text-center">
+                  <p className="text-xl font-bold tabular-nums">{lane.tasks.length}</p>
+                  <p className="text-xs text-body">{lane.label}</p>
+                </div>)}
             </div>
           </section>:null}
           {workspace.templateOverview ? (
