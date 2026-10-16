@@ -1,8 +1,8 @@
 import "server-only";
-import {and,asc,desc,eq,gte,ilike,or,sql} from "drizzle-orm";
+import {and,asc,desc,eq,exists,gte,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
- placementJobRoleOptions,placementJobs,users} from "@/db/schema";
+ placementJobRoleOptions,placementJobs,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
@@ -20,6 +20,17 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
    eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const records=await db.transaction(async tx=>{
+ const queryPattern=tpoApplicantExportSearchPattern(search);
+ const rosterMatch=search?exists(
+  tx.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+   .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+   .innerJoin(programs,eq(programs.id,cohorts.programId))
+   .innerJoin(departments,eq(departments.id,programs.departmentId))
+   .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+    eq(learnerProgramEnrollments.status,"ACTIVE"),eq(departments.collegeId,collegeId),
+    or(ilike(cohorts.name,queryPattern),ilike(cohorts.code,queryPattern),
+       ilike(programs.name,queryPattern),ilike(departments.name,queryPattern))))
+ ):undefined;
  const readPage=async(offset:number,limit:number)=>await tx.select({
   applicationId:placementApplications.id,studentName:users.displayName,
   roleTitle:placementJobRoleOptions.title,status:placementApplications.status,
@@ -45,8 +56,10 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
     sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
      when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
      then ${placementApplicationScreenings.status}::text else 'PENDING' end = ${stage}::text`,
-   search?or(ilike(users.displayName,tpoApplicantExportSearchPattern(search)),
-    ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(search))):undefined,
+   search?or(ilike(users.displayName,queryPattern),
+    ilike(placementJobRoleOptions.title,queryPattern),
+    ilike(learnerProfiles.rollNumber,queryPattern),ilike(users.email,queryPattern),
+    ilike(users.phoneE164,queryPattern),rosterMatch):undefined,
   ))
   .orderBy(sort==="OLDEST"?asc(placementApplications.submittedAt):
     sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
