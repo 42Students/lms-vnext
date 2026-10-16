@@ -6,6 +6,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { LearnerApplicationDetailWithdraw } from "@/components/placements/learner-application-detail-withdraw";
 import { getOwnLearnerApplicationHistory } from "@/modules/placements/learner-application-detail-service";
 import { placementApplicationIdSchema } from "@/modules/placements/validation";
+import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
+import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 
 function when(date:Date) {
   return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(date)+" IST";
@@ -18,6 +20,10 @@ export default async function LearnerApplicationDetailPage({params}:{
   const context=await getCurrentRequestContext();
   const record=await getOwnLearnerApplicationHistory(context,applicationId);
   if(!record)notFound();
+  const scheduled=await readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context));
+  const requiresRequest=!scheduled.available || scheduled.value.rounds.some(
+    round=>round.applicationId===applicationId,
+  );
   return <div className="space-y-6">
     <Link href="/learn/my-placements/applications"
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">← Applications</Link>
@@ -28,11 +34,11 @@ export default async function LearnerApplicationDetailPage({params}:{
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-foreground">Application actions</h2>
         {record.currentStatus==="SUBMITTED"
-          ? <LearnerApplicationDetailWithdraw applicationId={record.applicationId}/>
+          ? <LearnerApplicationDetailWithdraw applicationId={record.applicationId} requiresRequest={requiresRequest}/>
           : <p className="text-sm text-muted-foreground">Withdrawal unavailable in the current status.</p>}
       </div>
       <p className="mt-2 text-sm text-body">
-        Withdrawing requires a reason and confirmation. Only a successful response updates your status.
+        {requiresRequest?"A booked round requires the placement cell to review your withdrawal request. Your application stays active until approved.":"Withdrawing requires a reason and confirmation. Only a successful response updates your status."}
       </p>
       <Link href={"/learn/my-placements/applications/"+encodeURIComponent(record.applicationId)+"/company"}
         className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
