@@ -15,3 +15,14 @@ export const collegeStageCommandSchema=z.object({
  if(v.action==="REINSTATE"&&v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Reinstate uses the previous stage"});
 });
 export type CollegeStageCommand=z.infer<typeof collegeStageCommandSchema>;
+
+/** Legacy row-level moves; terminal placement facts must still be verified in service. */
+export const COLLEGE_APPLICATION_TRANSITIONS: Record<string,readonly string[]>={
+ APPLIED:["SHORTLISTED","ASSESSMENT","REJECTED"],
+ SHORTLISTED:["ASSESSMENT","INTERVIEW","WAITLISTED","REJECTED"],
+ ASSESSMENT:["INTERVIEW","WAITLISTED","REJECTED"],
+ INTERVIEW:["WAITLISTED","OFFERED","REJECTED"],
+ WAITLISTED:["OFFERED","REJECTED"],
+ OFFERED:["HIRED","REJECTED"],
+ HIRED:[], REJECTED:[],
+};
