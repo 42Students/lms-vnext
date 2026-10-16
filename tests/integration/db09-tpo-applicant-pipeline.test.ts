@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoApplicantPipeline} from "@/modules/placements/tpo-applicant-pipeline-service";
+import {getTpoDriveApplicationsExport} from "@/modules/placements/tpo-drive-applications-export-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=process.env.DB09_ISOLATED_TEST_DATABASE==="1"&&Boolean(process.env.TEST_DATABASE_URL);
@@ -110,6 +111,13 @@ const searchApp=extraApps[0];
   expect(searched.rows.some(r=>r.id===searchApp)).toBe(true);
  }
  expect((await getTpoApplicantPipeline(tpo,{jobId,search:r02Roll})).rows[0]?.rollNumber).toBe(r02Roll);
+ const exported=await getTpoDriveApplicationsExport(tpo,{jobId,search:r02Roll},{exportAll:true});
+ expect(exported.rows.map(r=>r.applicationId)).toEqual([searchApp]);
+ expect(exported.csv).toContain(r02Roll);
+ expect(exported.csv).toContain("r02-"+r02Roll.toLowerCase()+"@example.invalid");
+ const onlyOneExport=await getTpoDriveApplicationsExport(tpo,{jobId,search:"%"},
+  {exportAll:true});
+ expect(onlyOneExport.rows).toHaveLength(0);
  const alphabetical=await getTpoApplicantPipeline(tpo,{jobId,stage:"PENDING",sort:"LEARNER_NAME",page:1});
 expect(alphabetical.rows.length).toBeGreaterThan(0);
 expect(alphabetical.rows.map(row=>row.student??"").slice(0,2)).toEqual([...alphabetical.rows.map(row=>row.student??"").slice(0,2)].sort());

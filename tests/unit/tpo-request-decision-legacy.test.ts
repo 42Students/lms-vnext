@@ -49,4 +49,9 @@ describe("TPO-requests-verification-04 learner notification",()=>{
   expect(learnerPlacementRequestDecisionNotice("APPROVE",null).body).toBe(
    "Your request was approved.");
  });
+ it("keeps the notification within delivery schema bounds even for a maximum-length decision note",()=>{
+  const notice=learnerPlacementRequestDecisionNotice("REJECT","x".repeat(2000));
+  expect(notice.body.length).toBeLessThanOrEqual(2000);
+  expect(notice.body).toMatch(/^Your request was rejected\. /);
+ });
 });
