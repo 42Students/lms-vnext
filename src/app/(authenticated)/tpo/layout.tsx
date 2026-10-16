@@ -7,6 +7,7 @@ import { TpoBellPanel } from "@/components/tpo/tpo-bell-panel";
 import { countTpoUnreadRecruiterMessages } from "@/modules/placements/tpo-recruiter-unread-count-service";
 import { TPO_TOPBAR_QUICK_LINKS } from "@/modules/placements/tpo-topbar-links";
 import { TpoFindShortcut } from "@/components/tpo/tpo-find-shortcut";
+import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 export default async function TpoLayout({children}:Readonly<{children:React.ReactNode}>){
  const context=await getCurrentRequestContext();
  if (!canOpenTpoWorkspace(context)) redirect("/dashboard");
@@ -23,8 +24,10 @@ export default async function TpoLayout({children}:Readonly<{children:React.Reac
    <details className="relative">
      <summary className="min-h-11 cursor-pointer rounded-md border border-border px-3 py-2 text-sm text-primary-text">+ New</summary>
      <nav aria-label="Create placement work" className="absolute right-0 z-20 min-w-44 rounded-md border border-border bg-surface p-2 shadow-lg">
-       {TPO_TOPBAR_QUICK_LINKS.map(item => <Link key={item.href} href={item.href}
-         className="block min-h-10 rounded px-2 py-2 text-sm text-primary-text hover:bg-primary-subtle">{item.label}</Link>)}
+       {TPO_TOPBAR_QUICK_LINKS.map(item => item.label==="Follow-up"?
+         <TpoNewFollowupModal key={item.href} collegeId={context.membership!.collegeId}/>:
+         <Link key={item.href} href={item.href}
+          className="block min-h-10 rounded px-2 py-2 text-sm text-primary-text hover:bg-primary-subtle">{item.label}</Link>)}
      </nav>
    </details>
    <Link href="/tpo/messages" className="min-h-11 inline-flex items-center text-sm text-primary-text underline">Messages{recruiterUnread>0 ? " ("+recruiterUnread+" unread)" : ""}</Link>
