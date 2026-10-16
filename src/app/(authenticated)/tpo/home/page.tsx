@@ -11,6 +11,10 @@ import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-reque
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
+import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
+import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
+import {listTpoLeads,listDueTpoFollowups} from "@/modules/placements/tpo-crm-service";
+import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
@@ -24,6 +28,15 @@ export default async function TpoHome(){
  const operations=await getPlacementTpoOperations(ctx,ctx.membership!.collegeId);
  const pendingRequestCount=await getPendingTpoRequestsCount(ctx);
  const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
+ const [studentStats,unreadMessages,crmReady]=await Promise.all([
+  getTpoStudentsIntelligence(ctx,{collegeId:ctx.membership!.collegeId,page:1,pageSize:1}),
+  countTpoUnreadRecruiterMessages(ctx),
+  tpoCrmTablesReady(),
+ ]);
+ const [recruiters,dueFollowups]=crmReady?await Promise.all([
+  listTpoLeads(ctx,ctx.membership!.collegeId),
+  listDueTpoFollowups(ctx,ctx.membership!.collegeId),
+ ]):[null,null];
  const firstBatch=batches.batches[0];
  const inviteCandidates=batches.ready?batches.batches.filter(batch=>!batch.invitedAt&&!batch.finishedAt):[];
  // Check each uninvited batch until an actionable cohort is found; a fully
@@ -53,9 +66,11 @@ export default async function TpoHome(){
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
   driveDetail:operations.workQueue.find(item=>item.count>0)?.jobTitle??null,
   driveHref:"/tpo/placements",
-  registered:null,placedUnique:null,recruiterLeads:null,followUps:null,recruiterAccess:null,
+  registered:studentStats.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
+  placedUnique:studentStats.summary.placed,recruiterLeads:recruiters?.length??null,
+  followUps:dueFollowups?.length??null,recruiterAccess:null,
   pendingRequests:pendingRequestCount,
-  messages:null,teamAsks:null,teamMentions:null,teamUnread:null,
+  messages:unreadMessages,teamAsks:null,teamMentions:null,teamUnread:null,
   upcoming:operations.upcomingRounds.map(round=>({startsAt:round.scheduledAt,title:round.name})),
  });
  const next=buildTpoLegacyNextUp({
@@ -65,6 +80,7 @@ export default async function TpoHome(){
       link:"/tpo/batches/"+inviteCandidate!.id}]:[]),
    ...deadlineTpoHomeNeeds(operations.jobs.map(item=>item.job)),
    ...operationalHomeNeeds(operations.workQueue),
+   ...(unreadMessages>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages,link:"/tpo/messages"}]:[]),
    ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
       count:pendingRequestCount,link:"/tpo/requests"}]:[]),
   ],
