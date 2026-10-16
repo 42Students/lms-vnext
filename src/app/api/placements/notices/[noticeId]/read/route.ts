@@ -1,0 +1,13 @@
+import {NextResponse} from "next/server";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {isSameOriginRequest} from "@/auth/origin";
+import {apiErrorResponse} from "@/lib/api-error";
+import {markOwnTpoNoticeRead} from "@/modules/announcements/tpo-notice-read-receipts-service";
+export const runtime="nodejs";
+export async function POST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const value=await markOwnTpoNoticeRead(await getCurrentRequestContext(),(await params).noticeId);
+  return NextResponse.json(value,{headers:{"Cache-Control":"no-store"}});
+ }catch(e){return apiErrorResponse(e);}
+}
