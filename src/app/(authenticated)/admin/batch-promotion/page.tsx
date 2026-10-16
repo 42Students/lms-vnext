@@ -12,7 +12,9 @@ import { readAdminPromotionParams, summarizeAdminPromotion } from "@/modules/aca
 export default async function SuperAdminBatchPromotionPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const input = readAdminPromotionParams(await searchParams);
+  const raw = await searchParams;
+  const input = readAdminPromotionParams(raw);
+  const showCompleted = raw.showCompleted==="1";
   if (!input.success) return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion Preview" />
     <ErrorState title="Invalid batch promotion filters" description="Use valid program, cohort and optional academic year values."
@@ -24,6 +26,7 @@ export default async function SuperAdminBatchPromotionPage({
     <EmptyState title="Select a college scope" description="Choose the exact college before inspecting promotion eligibility. No batch is selected automatically." />
   </div>;
   const options = await listCollegePromotionOptions(context, input.data);
+  const visibleCohorts = showCompleted ? options.cohorts : options.cohorts.filter(item=>!["COMPLETED","ARCHIVED"].includes(item.status));
   let preview: Awaited<ReturnType<typeof previewCollegeBatchPromotion>> | null = null;
   let invalidCohort = false;
   if (input.data.cohortId) {
@@ -53,12 +56,15 @@ export default async function SuperAdminBatchPromotionPage({
         <select name="cohortId" defaultValue={input.data.cohortId ?? ""}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="">Select a batch</option>
-          {options.cohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
+          {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Academic year start override
         <input name="yearStart" type="number" min={1900} max={9998} step={1}
           defaultValue={input.data.yearStart ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+      </label>
+      <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
+        <input name="showCompleted" type="checkbox" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
       </label>
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Preview</button>
     </form>
