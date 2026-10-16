@@ -1,0 +1,2 @@
+ALTER TABLE "placement_tpo_campaign_drafts" ADD COLUMN "suppression_counts" jsonb DEFAULT '{}'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "placement_tpo_campaign_drafts" ADD CONSTRAINT "tpo_campaign_draft_suppression_counts_ck" CHECK (jsonb_typeof("placement_tpo_campaign_drafts"."suppression_counts")='object');
