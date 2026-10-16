@@ -438,6 +438,12 @@ export function RecruiterLeadDetailWorkspace({
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}
                   </select>
                 </label>
+                {logType==="CALL"?<div className="flex flex-wrap gap-2" role="group" aria-label="Call outcome">
+                  {["Connected","No answer","Busy","Wrong number","Not interested"].map(outcome=>
+                   <button key={outcome} type="button" aria-pressed={logOutcome===outcome}
+                    className={logOutcome===outcome?primary:button}
+                    onClick={()=>setLogOutcome(outcome)}>{outcome}</button>)}
+                </div>:null}
                 <label className="block text-sm">Outcome
                   <input className={input + " mt-1"} maxLength={30} value={logOutcome}
                     onChange={e => setLogOutcome(e.target.value)} />
