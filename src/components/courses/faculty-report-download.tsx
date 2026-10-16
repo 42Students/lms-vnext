@@ -24,13 +24,13 @@ export function FacultyReportDownload(props: Props) {
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
     } catch {
-      setError("Could not generate the PDF. Please try again.");
+      setError(props.kind==="attendance"?"Couldn\'t generate the attendance report. Please try again.":"Could not generate the PDF. Please try again.");
     }
   }
 
   return (
     <div className="flex flex-wrap items-center gap-3 print:hidden">
-      <Button variant="secondary" onClick={download}>Download PDF</Button>
+      <Button variant="secondary" onClick={download}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
       {error ? <p role="alert" className="text-sm font-semibold text-error">{error}</p> : null}
     </div>
   );
