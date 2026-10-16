@@ -4,6 +4,7 @@ export const superAdminReadQuerySchema = z.strictObject({
  q: z.string().trim().max(100).default(""),
  status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN","PENDING","SCHEDULED","CANCELLED","HOLD","SHORTLISTED","REJECTED","ISSUED","ACCEPTED","DECLINED","JOINED","DID_NOT_JOIN","DEFERRED","CLOSED","DRAFT","PUBLISHED"]).default("ALL"),
  page: z.coerce.number().int().min(1).max(1000).default(1),
+ pageSize: z.coerce.number().int().refine(n=>[10,25,50,100].includes(n)).default(25),
  jobId: z.string().uuid().optional(),
 });
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;
@@ -14,8 +15,8 @@ export type SuperAdminReadRow = {
 export type SuperAdminReadResult = {
  query:SuperAdminReadQuery; total:number; totalPages:number; items:SuperAdminReadRow[];
 };
-export function superAdminReadPages(total:number) {
- return Math.max(1,Math.ceil(total/SUPER_ADMIN_READ_PAGE_SIZE));
+export function superAdminReadPages(total:number,pageSize=SUPER_ADMIN_READ_PAGE_SIZE) {
+ return Math.max(1,Math.ceil(total/pageSize));
 }
 export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  const params=new URLSearchParams();
@@ -23,10 +24,11 @@ export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  if(query.jobId)params.set("jobId",query.jobId);
  if(query.status!=="ALL")params.set("status",query.status);
  if(query.page>1)params.set("page",String(query.page));
+ if(query.pageSize!==25)params.set("pageSize",String(query.pageSize));
  return path+(params.size?"?"+params:"");
 }
 export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
- return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,jobId:raw.jobId});
+ return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId});
 }
 export function scopedSearchLike(q:string) {
  return "%"+q.replace(/[\\%_]/g,"\\$&")+"%";
