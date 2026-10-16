@@ -44,7 +44,7 @@ export function FacultyCourseTabNavigation({
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
           <Link href="/teacher/courses" className="text-sm font-semibold text-primary-text hover:underline">
-            ← My Teaching Courses
+            Back to courses
           </Link>
           <p className="mt-2 text-sm font-semibold text-foreground">
             {courseName} · {sectionName}
