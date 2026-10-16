@@ -5,6 +5,11 @@ export const facultyQuizResultsCommandSchema=z.object({
  expectedUpdatedAt:z.string().datetime({offset:true}),
  confirmed:z.literal(true),
 }).strict();
-export function facultyQuizResultsTransition(status:string,published:boolean,action:"PUBLISH"|"HIDE"){
- return status==="CLOSED"&&(action==="PUBLISH"?!published:published);
+export function facultyQuizResultsTransition(
+ status:string,published:boolean,action:"PUBLISH"|"HIDE",
+ dueAt:Date|null=null,now=new Date(),
+){
+ const deadlineReached=status==="PUBLISHED" && Boolean(dueAt && dueAt.getTime()<=now.getTime());
+ return (status==="CLOSED"||deadlineReached) &&
+   (action==="PUBLISH"?!published:published);
 }
