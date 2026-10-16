@@ -7,7 +7,7 @@ export const collegeTermCourseAddSchema = z.object({
   credits: z.number().int().min(0).max(30).nullable(),
 }).strict();
 export const collegeTermCourseUpdateSchema = z.object({
-  credits: z.number().int().min(0).max(30).nullable(),
+  credits: z.number().int().min(1).max(10),
   position: z.number().int().min(1).max(100000),
 }).strict();
 
