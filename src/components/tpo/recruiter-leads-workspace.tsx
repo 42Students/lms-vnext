@@ -115,6 +115,12 @@ export function RecruiterLeadsWorkspace({
   const [inviteFilter,setInviteFilter]=useState("ALL");
   const [statusFilter,setStatusFilter]=useState("ALL");
   const [sourceFilter,setSourceFilter]=useState("ALL");
+  const [companyFilter,setCompanyFilter]=useState("ALL");
+  const [designationFilter,setDesignationFilter]=useState("");
+  const [reachFilter,setReachFilter]=useState("ALL");
+  const [nextFilter,setNextFilter]=useState("ALL");
+  const [activityFilter,setActivityFilter]=useState("ALL");
+  const [addedFilter,setAddedFilter]=useState("ALL");
   const [stage, setStage] = useState<(typeof STAGES)[number]>("ALL");
   const [need, setNeed] = useState<EngageNeed>("ALL");
   const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
@@ -212,10 +218,12 @@ export function RecruiterLeadsWorkspace({
 
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
-    source:sourceFilter};
+    source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
+    nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter};
   const visible=useMemo(()=>filterEngageRoster(rows,filters,lead=>
     matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
-    [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter]);
+    [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter,
+      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter]);
 
   function exportRows(selection:"shown"|"selected",format:"csv"|"xlsx"){
     const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
@@ -238,7 +246,8 @@ export function RecruiterLeadsWorkspace({
     }catch{setExportFeedback("Couldn't copy rows. Use Export CSV.");}
   }
 
-  function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query",value:string){
+  function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
+     "reach"|"nextFollowup"|"lastActivity"|"added",value:string){
    const params=new URLSearchParams(window.location.search);
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
    else params.delete(kind==="query"?"q":kind);
@@ -247,6 +256,12 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="invite")setInviteFilter(value);
    else if(kind==="status")setStatusFilter(value);
    else if(kind==="source")setSourceFilter(value);
+   else if(kind==="company")setCompanyFilter(value);
+   else if(kind==="designation")setDesignationFilter(value);
+   else if(kind==="reach")setReachFilter(value);
+   else if(kind==="nextFollowup")setNextFilter(value);
+   else if(kind==="lastActivity")setActivityFilter(value);
+   else if(kind==="added")setAddedFilter(value);
    else setQuery(value);
   }
 
