@@ -4,9 +4,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {tpoBellOpenHref} from "@/modules/activity/tpo-bell-open-model";
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null};
-export function TpoBellPanel({initialUnread,items}:{initialUnread:number;items:readonly BellItem[]}){
- const [open,setOpen]=useState(false),[unread,setUnread]=useState(initialUnread),[pending,setPending]=useState(false),[error,setError]=useState("");
+export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:number;items:readonly BellItem[];revision?:number}){
+ const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
+ const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
  const [readIds,setReadIds]=useState<string[]>([]);
+ const unread=allReadRevision===revision?0:Math.max(0,initialUnread-
+  readIds.filter(id=>items.some(item=>item.id===id&&!item.readAt)).length);
  const router=useRouter();
  async function openItem(item:BellItem){
   if(pending)return;
@@ -20,7 +23,7 @@ export function TpoBellPanel({initialUnread,items}:{initialUnread:number;items:r
     });
     if(!response.ok)throw new Error("Read state was not confirmed");
     setReadIds(ids=>ids.includes(item.id)?ids:[...ids,item.id]);
-    setUnread(n=>Math.max(0,n-1));
+
    }catch{
     setError("Read state was not confirmed. Refresh before retrying.");
     return;
@@ -36,12 +39,12 @@ export function TpoBellPanel({initialUnread,items}:{initialUnread:number;items:r
   try{
    const response=await fetch("/api/tpo/notifications/read-all",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:"{}"});
    if(!response.ok)throw new Error("Unable to confirm read status");
-   setUnread(0);setReadIds(items.map(item=>item.id));router.refresh();
+   setAllReadRevision(revision);setReadIds(items.map(item=>item.id));router.refresh();
   }catch{setError("Read state was not confirmed. Refresh before retrying.");}
   finally{setPending(false);}
  }
  return <div className="relative min-w-0">
-  <button type="button" aria-label="TPO notifications" aria-expanded={open} onClick={()=>setOpen(!open)}
+  <button type="button" aria-label={"Notifications, "+unread+" new"} aria-expanded={open} onClick={()=>setOpen(!open)}
    className="min-h-11 rounded border border-border bg-surface px-3 text-sm">
    Notifications {unread>0?"("+unread+" unread)":""}
   </button>
