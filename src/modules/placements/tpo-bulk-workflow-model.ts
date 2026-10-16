@@ -3,7 +3,7 @@ import { bulkActionCommandSchema, previewBulkAction } from "./tpo-bulk-action-mo
 
 export const tpoBulkTargetSchema = z.enum(["STUDENTS", "APPLICATIONS"]);
 export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED"]);
-const ids = z.array(z.string().uuid()).min(1).max(25)
+const ids = z.array(z.string().uuid()).min(1).max(200)
   .refine(items => new Set(items).size === items.length, "Duplicate selected rows");
 
 export const tpoBulkPreviewRequestSchema = z.object({
@@ -39,7 +39,7 @@ export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExten
   previewToken:z.string().min(10).max(256),
   confirmed:z.literal(true),
 }).superRefine((value,ctx)=>{
-  if(value.selections.length>25)
+  if(value.selections.length>200)
     ctx.addIssue({code:"custom",message:"Too many selected records"});
 });
 export type TpoBulkConfirmRequest=z.output<typeof tpoBulkConfirmRequestSchema>;

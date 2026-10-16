@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
-import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,TPO_BULK_UI_LIMIT,
+import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
 type Action="ELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED";
@@ -13,8 +13,8 @@ type PreviewPlan={
  target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;ids:string[];
 };
 type PreviewResponse={rows:BulkPreviewRow[];previewToken:string;counts:{ready:number;skipped:number}};
-export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLICATIONS";
- jobId?:string;rows:readonly TpoBulkUiRow[]}){
+export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.length}:{target:"STUDENTS"|"APPLICATIONS";
+ jobId?:string;rows:readonly TpoBulkUiRow[];allRows?:readonly TpoBulkUiRow[];viewCount?:number}){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
  const [action,setAction]=useState<Action>(target==="STUDENTS"?"ELIGIBLE":"SHORTLISTED");
@@ -24,7 +24,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
- const permitted=new Set(rows.map(row=>row.id));
+ const permitted=new Set((allRows??rows).map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
  function invalidate(){setPreview(null);setPlan(null);setOutcomes([]);setError("");}
  async function post(path:string,payload:unknown){
@@ -60,7 +60,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
  }
  async function confirm(){
   if(busy||!plan||!preview||preview.counts.ready===0||
-     !isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id)))return;
+     !isTpoBulkPreviewCurrent(plan.ids,[...permitted]))return;
   setBusy(true);setError("");
   try{
    const response=await post("confirm",{
@@ -82,15 +82,23 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
   <div><h2 className="font-semibold text-foreground">Bulk actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
    <p className="mt-1 text-sm text-body">
-    Select up to 25 rows on this page. Preview shows only numbered rows and eligibility.
+    Select eligible rows or act on all matching records in this filtered view (up to 200 per preview).
     Confirmation rechecks permission and versions; existing decisions are audited.
    </p></div>
-  <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {TPO_BULK_UI_LIMIT} allowed rows on this page.</p>
+  <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {viewCount} matching records (200 maximum per operation).</p>
+  <button type="button" disabled={busy||!canActOnEntireTpoView(viewCount,allRows)}
+   onClick={()=>{setSelected(allRows!.map(row=>row.id));invalidate();}}
+   className="min-h-11 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   Act on all {viewCount} in this view
+  </button>
+  {viewCount>TPO_BULK_UI_LIMIT?<p role="status" className="text-sm text-warning-text">
+    This view has more than 200 records. Narrow the filters before acting on all; no unpreviewed rows will be changed.
+   </p>:null}
   <div className="max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
    <label className="flex min-h-11 items-center gap-2 p-2 text-sm">
     <input type="checkbox" disabled={busy} checked={isTpoBulkPageSelected(rows.map(row=>row.id),safeSelected)}
      onChange={e=>{setSelected(e.target.checked?selectTpoBulkPage(rows.map(row=>row.id)):[]);invalidate();}}/>
-    Select first {Math.min(rows.length,TPO_BULK_UI_LIMIT)} current-page rows
+    Select current-page rows
    </label>
    {rows.map(row=><label key={row.id} className="flex min-h-10 items-center gap-2 rounded p-2 text-sm hover:bg-muted">
     <input type="checkbox" disabled={busy||!canSelectTpoBulkRow(safeSelected,row.id)} checked={safeSelected.includes(row.id)}
@@ -128,7 +136,7 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
     className="min-h-11 rounded bg-primary px-4 py-2 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Checking…":"Preview "+safeSelected.length+" selected"}
   </button>
-  {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?
+  {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,rows.map(row=>row.id))?<TpoBulkActionPreview rows={preview.rows} outcomes={outcomes}
     busy={busy||outcomes.length>0} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}

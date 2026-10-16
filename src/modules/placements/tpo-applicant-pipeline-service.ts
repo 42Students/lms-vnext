@@ -85,7 +85,19 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       input.sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
       placementApplications.id)
     .limit(pagination.pageSize).offset(pagination.offset);
-   return {counts:totals,...pagination,rows:records.map(row=>({
+   const allFiltered=totalMatching>0&&totalMatching<=200?await tx.select({
+    id:placementApplications.id,student:users.displayName,role:placementJobRoleOptions.title,
+   }).from(placementApplications)
+    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+      eq(collegeMemberships.collegeId,collegeId)))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+      eq(placementJobRoleOptions.jobId,job.id)))
+    .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+    .where(and(scope,input.stage==="ALL"?undefined:input.stage==="SUBMITTED"?
+      eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
+    .orderBy(placementApplications.id).limit(200):null;
+   return {counts:totals,...pagination,allFiltered,rows:records.map(row=>({
     ...row,submittedAt:row.submittedAt.toISOString(),
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
