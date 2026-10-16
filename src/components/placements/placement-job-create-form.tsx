@@ -136,8 +136,6 @@ export function PlacementJobCreateForm({
   );
   const [pending, setPending] =
     useState(false);
-  const [publishNow, setPublishNow] =
-    useState(false);
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -395,19 +393,9 @@ export function PlacementJobCreateForm({
         },
       );
 
-      if (publishNow) {
-        await requestJson(
-          `/api/placements/jobs/${jobId}/status`,
-          "POST",
-          { action: "PUBLISH" },
-        );
-      }
-
       showToast({
         tone: "success",
-        title: publishNow
-          ? "Opportunity published"
-          : "Draft opportunity created",
+        title: "Draft opportunity created",
         description:
           "Continue in the drive workspace to configure rounds and run the hiring process.",
       });
@@ -947,29 +935,14 @@ export function PlacementJobCreateForm({
       </section>
 
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
-        <label className="flex items-center gap-2 text-sm font-semibold text-body">
-          <input
-            type="checkbox"
-            checked={publishNow}
-            onChange={(event) =>
-              setPublishNow(
-                event.target.checked,
-              )
-            }
-          />
-          Publish immediately after creation
-        </label>
+        <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
         <Button
           type="submit"
           disabled={
             pending || !activeSeason
           }
         >
-          {pending
-            ? "Creating…"
-            : publishNow
-              ? "Create & publish"
-              : "Create draft"}
+          {pending ? "Creating…" : "Create draft"}
         </Button>
       </section>
     </form>
