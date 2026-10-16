@@ -14,7 +14,7 @@ import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-serv
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
-const dateTime=(value:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value);
+const dateTime=(value:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
 export default async function RecruiterConversationDetail({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context))redirect("/dashboard");
@@ -52,7 +52,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <ol aria-label="Employer and placement cell messages" className="space-y-3">
    {messages.map(message=><li key={message.id}
     className="rounded-xl border border-border bg-surface p-4">
-    <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"Recruiter":"Placement cell"} · {dateTime(message.createdAt)} IST</p>
+    <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":"Placement cell"} · {dateTime(message.createdAt)} IST</p>
     {message.proposal?<div className="mt-2 rounded-md border border-border bg-surface-secondary p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
       <p>Role: {message.proposal.title}</p>
