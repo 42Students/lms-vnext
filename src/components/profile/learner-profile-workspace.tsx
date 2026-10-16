@@ -185,6 +185,7 @@ export function LearnerProfileWorkspace(props: {
   const [collection, setCollection] = useState<CollectionKey | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
+  const [itemBaseline,setItemBaseline]=useState<Record<string,unknown>>({});
   const [educationError,setEducationError] = useState<string|null>(null);
   const [showcaseDraft,setShowcaseDraft]=useState<(LearnerShowcaseDetails & {id: string | null;kind:LearnerShowcaseKind})|null>(null);
   const [showcaseError,setShowcaseError]=useState<string|null>(null);
@@ -281,6 +282,23 @@ export function LearnerProfileWorkspace(props: {
     setDetailsOpen(true);
   }
 
+  function closeDetails() {
+    if(pending)return;
+    if(JSON.stringify(detailsDraft)!==JSON.stringify(detailsBaseline)&&
+      !window.confirm("Discard profile changes?"))return;
+    setDetailsOpen(false);
+  }
+
+  function closeCollection() {
+    if(pending)return;
+    if(JSON.stringify(itemDraft)!==JSON.stringify(itemBaseline)&&
+      !window.confirm("Discard your changes?"))return;
+    setCollection(null);
+    setEditingId(null);
+    setItemDraft({});
+    setItemBaseline({});
+  }
+
   function openContacts() {
     setContactDraft({ ...document.contacts });
     setContactError(null);
@@ -340,9 +358,11 @@ export function LearnerProfileWorkspace(props: {
 
   function openCollection(section: CollectionKey, item?: Record<string, unknown>) {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
+    const initial = item ? {...item} : newItem(section);
     setCollection(section);
     setEditingId(item ? String(item.id) : null);
-    setItemDraft(item ? { ...item } : newItem(section));
+    setItemDraft(initial);
+    setItemBaseline(initial);
   }
 
   function openShowcase(kind: LearnerShowcaseKind, entry?: LearnerShowcaseDetails & {id:string}) {
@@ -758,10 +778,10 @@ export function LearnerProfileWorkspace(props: {
 
       <Dialog
         open={detailsOpen}
-        onOpenChange={setDetailsOpen}
+        onOpenChange={open=>{if(!open)closeDetails();}}
         title="Edit learner profile"
         description="Account phone/email stay authoritative. These are your self-service profile fields."
-        footer={<><Button variant="secondary" disabled={pending} onClick={() => setDetailsOpen(false)}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
+        footer={<><Button variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
       >
         <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
           <fieldset className="grid gap-4">
@@ -893,9 +913,9 @@ export function LearnerProfileWorkspace(props: {
 
       <Dialog
         open={collection !== null}
-        onOpenChange={(open) => { if (!open) { setCollection(null); setEditingId(null); setItemDraft({}); } }}
+        onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
-        footer={<><Button variant="secondary" disabled={pending} onClick={() => { setCollection(null); setEditingId(null); setItemDraft({}); }}>Cancel</Button><Button disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
+        footer={<><Button variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
       >
         {collection ? (
           <div className="grid gap-4 sm:grid-cols-2">
