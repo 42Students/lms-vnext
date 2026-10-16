@@ -1,10 +1,11 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-type Candidate={applicationId:string;name:string;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
+type Candidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
+type RoleOption={id:string;title:string;annualCtcInr:number|null};
 type Selection={id:string;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;status:string;recordedAt:string;offerReady:boolean;releasedOfferId:string|null};
 type Result={selectionId:string;applicationId:string;status:string;reason?:string};
-export function TpoDriveSelectionManager({jobId,candidates,selections}:{jobId:string;candidates:Candidate[];selections:Selection[]}){
+export function TpoDriveSelectionManager({jobId,candidates,selections,roleOptions}:{jobId:string;candidates:Candidate[];selections:Selection[];roleOptions:RoleOption[]}){
  const router=useRouter();const [mode,setMode]=useState<"RECORD"|"VERIFY_AND_RELEASE"|null>(null);
  const [chosen,setChosen]=useState<string[]>([]);const [role,setRole]=useState("");
  const [lpa,setLpa]=useState("");const [pending,setPending]=useState(false);
@@ -61,6 +62,13 @@ export function TpoDriveSelectionManager({jobId,candidates,selections}:{jobId:st
     <p className="text-sm text-body">{mode==="RECORD"
       ?"Choose selected students and enter their package. Nothing is sent until release."
       :"Releasing issues offers immediately. Eligibility, held-offer limits and response deadlines are rechecked for each student. Skipped rows will be reported."}</p>
+    {mode==="RECORD"?<label className="grid gap-1 text-sm">Package from this drive
+     <select className="min-h-11 rounded border border-border bg-surface px-3" defaultValue=""
+      onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
+        if(option){setRole(option.title);setLpa(option.annualCtcInr==null?"":String(option.annualCtcInr/100000));}}}>
+      <option value="">Choose a role package or enter manually</option>
+      {roleOptions.map(o=><option value={o.id} key={o.id}>{o.title}{o.annualCtcInr==null?"":" · ₹"+(o.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</option>)}
+     </select></label>:null}
     {mode==="RECORD"?<div className="grid gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Role<input required value={role} onChange={e=>setRole(e.target.value)}
       maxLength={200} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
