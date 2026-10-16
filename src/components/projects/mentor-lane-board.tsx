@@ -6,7 +6,7 @@ import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-mod
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
-type Task={id:string;title:string;status:string;priority:string;sprintId:string;updatedAt:Date;
+type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
 type Sprint={id:string;title:string;status:string;releaseId:string};
@@ -21,10 +21,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [undo,setUndo]=useState<{id:string;status:string}|null>(null);
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
  const visible=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
-   (!release||bySprint.get(task.sprintId)?.releaseId===release));
+   (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release));
  const lanes=groupLearnerBoardLanes(visible,sprints);
  async function move(id:string,status:string){
-  const task=tasks.find(item=>item.id===id),sp=task?bySprint.get(task.sprintId):null;
+  const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
   if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
     !editable.includes(task.status as typeof editable[number])||
     !editable.includes(status as typeof editable[number])||task.status===status)return;
@@ -82,7 +82,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     onDrop={e=>drop(e,lane.id)}>
     <h2 className="flex justify-between font-semibold"><span>{lane.label}</span><span>{lane.tasks.length}</span></h2>
     <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
-     const sprintRow=bySprint.get(task.sprintId);
+     const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
      return <li key={task.id} draggable={canMove}
@@ -90,6 +90,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       className="space-y-2 rounded-lg border border-border bg-surface p-3 text-sm">
       <p className="font-semibold">{task.title}</p>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
+      {task.carriedFromSprintId&&!task.sprintId?<p className="text-xs font-semibold text-warning-text">Carried over</p>:null}
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}
       {canMove?<label className="block text-xs font-semibold">Move task
