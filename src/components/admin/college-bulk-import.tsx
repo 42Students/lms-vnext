@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
 import {collegeBulkImportToast} from "@/modules/colleges/bulk-import-feedback-model";
 import {parseCollegeImportCsv} from "@/modules/colleges/bulk-import-model";
-type Result={line:number;code:string;status:string;message:string};
+type Result={line:number;code:string;status:"CREATED"|"SKIPPED"|"FAILED";message:string};
 export function CollegeBulkImport({organizations}:{organizations:readonly {id:string;name:string}[]}){
  const router=useRouter(),{showToast}=useToast(),[open,setOpen]=useState(false),[organizationId,setOrganizationId]=useState(organizations[0]?.id??""),
  [csv,setCsv]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[results,setResults]=useState<Result[]>([]);
