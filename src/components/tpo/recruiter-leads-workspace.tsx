@@ -602,16 +602,16 @@ export function RecruiterLeadsWorkspace({
                   <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
-                      <Link key={lead.id} href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                        className="block rounded-md border border-border p-3 hover:bg-surface-secondary">
+                      <div key={lead.id} className="rounded-md border border-border p-3 hover:bg-surface-secondary">
+                        <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
+                          className="block text-primary-text underline-offset-2 hover:underline">
                         <span className="block font-medium">{lead.name}</span>
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
+                        </Link>
                         {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
                          <button type="button" className={buttonStyle+" mt-2"}
-                          disabled={Boolean(invitingId)} onClick={event=>{
-                           event.preventDefault();event.stopPropagation();void createInviteLink(lead);
-                          }}>Create invite link</button>:null}
-                      </Link>
+                          disabled={Boolean(invitingId)} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
+                      </div>
                     ))}
                   </div>
                 </section>
