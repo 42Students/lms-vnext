@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
+import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import {
   PlacementRegistrationError, registerOwnPlacementChoice,
 } from "@/modules/placements/batch-registration-service";
@@ -18,9 +19,9 @@ export async function POST(request:Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
-    const result=await registerOwnPlacementChoice(
-      await getCurrentRequestContext(),await request.json(),
-    );
+    const context=await getCurrentRequestContext();
+    await requireLearnerPlacementAccess(context);
+    const result=await registerOwnPlacementChoice(context,await request.json());
     return NextResponse.json({choice:result.choice,version:result.version},
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {return registrationError(error);}
