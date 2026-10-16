@@ -44,7 +44,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
-      inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK"]),
+      inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK","DRAFT","REJECTED","CANCELLED"]),
       filters.search?or(
         ilike(placementCompanies.name,pattern),
         sql`${placementRecruiterDriveRequests.draft}->>'title' ilike ${pattern}`,
@@ -64,6 +64,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       draft:placementRecruiterDriveRequests.draft,
       company:placementCompanies.name,
       createdAt:placementRecruiterDriveRequests.createdAt,
+      approvedJobId:placementRecruiterDriveRequests.approvedJobId,
     }).from(placementRecruiterDriveRequests)
       .innerJoin(placementCompanyRelationships,and(
         eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
@@ -76,6 +77,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       id:row.id,status:row.status,
       title:typeof row.draft.title==="string"?row.draft.title:"Untitled drive request",
       company:row.company,createdAt:row.createdAt.toISOString(),
+      approvedJobId:row.approvedJobId,
     }));
     return {...pagination,counts,rows:[],requestRows,requestsAvailable:true as const,...common};
   }
@@ -134,6 +136,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
-    requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string}[],
+    requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
   };
 }

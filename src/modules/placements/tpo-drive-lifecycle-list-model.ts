@@ -52,6 +52,9 @@ export const TPO_REQUESTS_COPY = {
   sentBack: "Sent back",
 } as const;
 export function driveRequestStatusLabel(status:string) {
-  return status==="REQUEST"?TPO_REQUESTS_COPY.needsReview:
-    status==="SENT_BACK"?TPO_REQUESTS_COPY.sentBack:"Declined";
+  if(status==="REQUEST")return TPO_REQUESTS_COPY.needsReview;
+  if(status==="SENT_BACK")return TPO_REQUESTS_COPY.sentBack;
+  if(status==="DRAFT")return "Approved, not yet live";
+  if(status==="REJECTED")return "Declined";
+  return "Cancelled";
 }

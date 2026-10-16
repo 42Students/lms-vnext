@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -86,12 +87,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
       <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}/> :
       <section aria-label="Recruiter drive requests" className="space-y-3">
-        <p role="status" className="text-sm">{data.totalMatching} requests awaiting review</p>
+        <p role="status" className="text-sm">{data.totalMatching} recruiter drive requests</p>
         {data.requestRows.length===0?<EmptyState title="No requests" description="No recruiter drive requests need review."/>:
           data.requestRows.map(item=><article key={item.id} className="rounded border border-border bg-surface p-4">
             <h2 className="font-semibold">{item.company} · {item.title}</h2>
             <p className="text-sm">{driveRequestStatusLabel(item.status)}</p>
             <p className="text-xs text-muted-foreground">Request ID: {item.id}</p>
+            {item.status==="REQUEST"||item.status==="SENT_BACK"?
+              <TpoDriveRequestActions requestId={item.id} status={item.status}/>:
+              item.approvedJobId?<Link href={"/tpo/placements/jobs/"+item.approvedJobId}
+                className="text-primary-text underline">Open draft</Link>:null}
           </article>)}
         <nav className="flex justify-between">
           {data.page>1?<Link href={pageHref(data.page-1)}>Previous</Link>:<span/>}
