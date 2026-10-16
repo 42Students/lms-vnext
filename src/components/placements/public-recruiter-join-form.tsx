@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { PublicJoinPreview } from "@/modules/placements/public-join/preview-model";
+import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placements/public-join/client-error-model";
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
 
 export function PublicRecruiterJoinForm({
@@ -22,9 +23,10 @@ export function PublicRecruiterJoinForm({
   const company = preview.kind === "READY" ? preview.companyDomain : "";
 
   async function sendCode() {
+    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
-    if (!parsed.success) {
-      setError("Enter your work email and name before requesting a code.");
+    if (validation || !parsed.success) {
+      setError(validation??"Enter your work email and name before requesting a code.");
       return;
     }
     setPending(true);
@@ -35,7 +37,12 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, email: parsed.data.email }) },
       );
-      if (!response.ok) throw new Error("SEND_FAILED");
+      if (!response.ok){
+        const body:unknown=await response.json().catch(()=>null);
+        const code=body&&typeof body==="object"&&"error" in body
+          ? String((body as {error:unknown}).error):"COULD_NOT_SEND_CODE";
+        setError(publicJoinErrorCopy("SEND",response.status,code,scope,company));return;
+      }
       setSentTo(parsed.data.email);
       setCode("");
     } catch {
@@ -46,9 +53,10 @@ export function PublicRecruiterJoinForm({
   }
 
   async function join() {
+    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
-    if (!parsed.success || !/^[0-9]{6}$/.test(code)) {
-      setError("Enter the 6-digit code");
+    if (validation||!parsed.success||!/^[0-9]{6}$/.test(code)) {
+      setError(validation??"Enter the 6-digit code");
       return;
     }
     setPending(true);
@@ -59,10 +67,15 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, ...parsed.data, code }) },
       );
-      if (!response.ok) throw new Error("JOIN_FAILED");
+      if (!response.ok){
+        const body:unknown=await response.json().catch(()=>null);
+        const code=body&&typeof body==="object"&&"error" in body
+          ? String((body as {error:unknown}).error):"COULD_NOT_JOIN";
+        setError(publicJoinErrorCopy("JOIN",response.status,code,scope,company));return;
+      }
       setJoined(true);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError("Could not confirm joining. Check your connection and try again.");
     } finally {
       setPending(false);
     }
