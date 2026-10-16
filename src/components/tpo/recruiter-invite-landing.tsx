@@ -8,6 +8,7 @@ type Invite = {
   collegeName: string;
   companyName: string | null;
   contactName: string;
+  contactEmail:string|null;
   designation: string | null;
   expiresAt: string;
 };
@@ -26,6 +27,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const [actionError, setActionError] = useState("");
   const [codeSent,setCodeSent]=useState(false);
   const [code,setCode]=useState("");
+  const [name,setName]=useState("");
+  const [designation,setDesignation]=useState("");
+  const [mobile,setMobile]=useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -44,6 +48,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
           return;
         }
         setInvite(data.invite ?? null);
+        setName(data.invite?.contactName??"");
+        setDesignation(data.invite?.designation??"");
         setState("ready");
         // T-S2-03: GET is read-only. A same-origin POST records first open.
         // Best-effort telemetry must not block the visitor's invitation.
@@ -86,11 +92,12 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   async function acceptCode(){
     if(busy||!/^[0-9]{6}$/.test(code))return;
+    if(!name.trim()){setActionError("Enter your name");return;}
     setBusy(true);setActionError("");
     try{
       const response=await fetch("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
         method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({code}),
+        body:JSON.stringify({code,name,designation,mobile}),
       });
       if(!response.ok){
         if(response.status===404){setState("invalid");return;}
@@ -195,6 +202,29 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div>
 
       <div className="mt-5 space-y-3">
+        <label className="block text-sm font-semibold text-foreground">
+          Work email
+          <input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
+            className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-body"/>
+          <span className="mt-1 block text-xs font-normal text-muted-foreground">
+            From your invitation. You'll sign in with it.
+          </span>
+        </label>
+        <label className="block text-sm font-semibold text-foreground">Your name
+         <input required maxLength={150} autoComplete="name" value={name}
+           onChange={event=>setName(event.target.value)}
+           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+        </label>
+        <label className="block text-sm font-semibold text-foreground">Designation (optional)
+         <input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
+           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+        </label>
+        <label className="block text-sm font-semibold text-foreground">Mobile (optional)
+         <input type="tel" autoComplete="tel" maxLength={30} value={mobile}
+           onChange={event=>setMobile(event.target.value)}
+           className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
+         <span className="mt-1 block text-xs font-normal text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</span>
+        </label>
         {!codeSent?(
           <button type="button" className={primary} disabled={busy} onClick={()=>void sendCode()}>
             {busy?"Sending…":"Send me a code"}
