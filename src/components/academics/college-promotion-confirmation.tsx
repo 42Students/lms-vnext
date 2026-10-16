@@ -20,6 +20,7 @@ export function CollegePromotionConfirmation({
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   function submit() {
     startTransition(async () => {
@@ -41,6 +42,10 @@ export function CollegePromotionConfirmation({
             ? String(payload.error) : "PROMOTION_FAILED";
           throw new Error(reason);
         }
+        const payload = await response.json() as { facultySetupIncomplete?: boolean; endedTeachingAssignments?: number };
+        setSuccess(payload.facultySetupIncomplete
+          ? "Batch promoted. Faculty setup is still incomplete."
+          : "Batch promoted successfully.");
         setOpen(false);
         router.refresh();
       } catch (cause) {
@@ -50,6 +55,7 @@ export function CollegePromotionConfirmation({
   }
 
   return <div className="space-y-3">
+    {success && <p role="status" className="text-sm font-semibold text-primary-text">{success}</p>}
     <button type="button" onClick={() => { setError(null); setOpen(true); }}
       className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
       {BATCH_PROMOTION_COPY.promoteButton}
