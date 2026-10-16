@@ -17,8 +17,8 @@ export async function POST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext(),{slotId}=await params;
-  const {courseId,groupId,backedDeliveryId}=await request.json();
-  const offering=await createElectiveOffering(context,{slotId,courseId,groupId,backedDeliveryId});
+  const {courseId,groupId,backedDeliveryId,capacity}=await request.json();
+  const offering=await createElectiveOffering(context,{slotId,courseId,groupId:groupId||undefined,backedDeliveryId,capacity});
   return NextResponse.json({offering},{status:201});
  }catch(error){return apiErrorResponse(error);}
 }
