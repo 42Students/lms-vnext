@@ -4,6 +4,7 @@ import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { notifyActiveProjectMembers } from "./project-notification-service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireProjectReadAccess } from "./access";
@@ -69,7 +70,7 @@ export async function updateLearnerProjectTaskProgress(
         ...(input.status === "BLOCKED" ? { blockerReason: input.blockerNote!.trim() } : { blockerReason: null }),
       }).where(and(eq(projectTasks.id, task.id), eq(projectTasks.projectId, scope.project.id))).returning();
       if (!updated) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-      await recordActivityEventInTransaction(tx, context, {
+      const taskEvent = await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.PROJECTS_TASK_STATUS_CHANGED,
         collegeId: scope.collegeId, organizationId: scope.organizationId,
         subjectType: "project_task", subjectId: updated.id, subjectLabel: updated.title,
@@ -81,6 +82,15 @@ export async function updateLearnerProjectTaskProgress(
         groupKey: "project:" + scope.project.id,
         dedupeKey: "project-task:" + updated.id + ":learner-status:" + randomUUID(),
       });
+      if (input.status === "BLOCKED") {
+        await notifyActiveProjectMembers(tx, taskEvent.id, {
+          projectId: scope.project.id, collegeId: scope.collegeId,
+          roles: ["MENTOR"], title: "Project task blocked",
+          body: "A learner reported a blocker on " + updated.title + ".",
+          actionHref: "/mentor/projects/" + scope.project.id + "?tab=board",
+          exceptUserId: context.user.id,
+        });
+      }
       return updated;
     }
 
