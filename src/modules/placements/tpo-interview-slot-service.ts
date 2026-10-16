@@ -18,7 +18,8 @@ async function scope(context:RequestContext,rawJobId:unknown,rawRoundId:unknown)
  const jobId=placementJobIdSchema.parse(rawJobId),roundId=placementRoundIdSchema.parse(rawRoundId);
  const [round]=await getDb().select({
   id:placementJobRounds.id,jobId:placementJobs.id,jobTitle:placementJobs.title,
-  name:placementJobRounds.name,kind:placementJobRounds.kind,roundStatus:placementJobRounds.status,
+  name:placementJobRounds.name,kind:placementJobRounds.kind,mode:placementJobRounds.mode,
+  meetingUrl:placementJobRounds.meetingUrl,roundStatus:placementJobRounds.status,
   jobStatus:placementJobs.status,
  }).from(placementJobRounds).innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
  .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.id,jobId),
@@ -191,6 +192,59 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     slot.room=input.room;changed++;
    }
    return {changed,skipped,eligible:eligible.length};
+  }
+  if(input.action==="MOVE_REQUEST"){
+   const [request]=await tx.select().from(placementLearnerRequests).where(and(
+    eq(placementLearnerRequests.id,input.requestId),
+    eq(placementLearnerRequests.roundId,info.round.id),
+    eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
+    eq(placementLearnerRequests.status,"PENDING"))).for("update").limit(1);
+   if(!request)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
+   const [application]=await tx.select({id:placementApplications.id})
+    .from(placementApplications).where(and(
+     eq(placementApplications.id,request.applicationId),
+     eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"))).limit(1);
+   if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const [target]=await tx.select().from(placementRoundCandidateSlots).where(and(
+    eq(placementRoundCandidateSlots.id,input.targetSlotId),
+    eq(placementRoundCandidateSlots.roundId,info.round.id))).for("update").limit(1);
+   if(!target||target.status!=="AVAILABLE"||target.startsAt<=new Date())
+    throw Error("The requested new interview slot is no longer available.");
+   const [existing]=await tx.select().from(placementRoundCandidateSlots).where(and(
+    eq(placementRoundCandidateSlots.roundId,info.round.id),
+    eq(placementRoundCandidateSlots.applicationId,request.applicationId),
+    eq(placementRoundCandidateSlots.status,"BOOKED"))).for("update").limit(1);
+   if(existing)await tx.update(placementRoundCandidateSlots).set({
+    applicationId:null,status:"CANCELLED",updatedAt:new Date(),version:existing.version+1,
+   }).where(eq(placementRoundCandidateSlots.id,existing.id));
+   const [booked]=await tx.update(placementRoundCandidateSlots).set({
+    applicationId:request.applicationId,status:"BOOKED",updatedAt:new Date(),
+    confirmedAt:new Date(),version:target.version+1,
+   }).where(eq(placementRoundCandidateSlots.id,target.id)).returning({id:placementRoundCandidateSlots.id});
+   if(!booked)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
+   await tx.insert(placementApplicationRoundExceptions).values({
+    applicationId:request.applicationId,roundId:info.round.id,requestId:request.id,
+    scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+    mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
+    venue:info.round.mode==="VIRTUAL"?null:target.room,
+    meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,
+   }).onConflictDoUpdate({
+    target:[placementApplicationRoundExceptions.applicationId,placementApplicationRoundExceptions.roundId],
+    set:{requestId:request.id,scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+     mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
+     venue:info.round.mode==="VIRTUAL"?null:target.room,
+     meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,updatedAt:new Date()},
+   });
+   const [decided]=await tx.update(placementLearnerRequests).set({
+    status:"APPROVED",decidedByUserId:context.user.id,decidedAt:new Date(),
+    decisionNote:input.reason,updatedAt:new Date(),
+   }).where(and(eq(placementLearnerRequests.id,request.id),
+    eq(placementLearnerRequests.status,"PENDING"))).returning({id:placementLearnerRequests.id});
+   if(!decided)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
+   await notice(tx,context,job,request.applicationId,"PLACEMENTS_TPO_INTERVIEW_RESCHEDULE_APPROVED",
+    "Your interview reschedule was approved. New slot: "+target.startsAt.toISOString()+
+    " ("+target.room+"). "+input.reason);
+   return {moved:1,requestId:request.id};
   }
   const id=input.slotId;
   const [slot]=await tx.select().from(placementRoundCandidateSlots).where(and(
