@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,placementApplications,
- placementApplicationScreenings,placementJobRounds,placementJobs} from "@/db/schema";
+ placementApplicationScreenings,placementJobRounds,placementJobs,users} from "@/db/schema";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
@@ -45,6 +45,7 @@ export async function loadTpoBulkApplicationStages(ctx:RequestContext,jobId:stri
    .from(placementApplications).innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
       eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")))
+   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
    .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .where(and(eq(placementApplications.jobId,jobId),eq(placementJobs.collegeId,collegeId),
      inArray(placementApplications.id,[...ids]))),
@@ -81,6 +82,7 @@ export async function moveTpoBulkApplicationStage(ctx:RequestContext,jobId:strin
    .from(placementApplications).innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
      eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")))
+   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
    .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .where(and(eq(placementApplications.id,applicationId),eq(placementApplications.jobId,jobId),
      eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED")))
