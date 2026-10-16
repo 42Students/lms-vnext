@@ -3,6 +3,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { LearnerPlacementAlerts } from "@/components/placements/learner-placement-alerts";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
+import { LearnerPlacementRegistration } from "@/components/placements/learner-placement-registration";
+import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
@@ -13,15 +15,17 @@ import {learnerPlacementCellOfferEmptyMessage} from "@/modules/placements/learne
 
 export default async function LearnerPlacementCellPage() {
   const context = await getCurrentRequestContext();
-  const [offerRows, requestRead, alertRead] = await Promise.all([
+  const [offerRows, requestRead, alertRead, registration] = await Promise.all([
     listOwnPlacementOffers(context),
     readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context)),
     readOptionalLearnerAlertSource(()=>getOwnLearnerPlacementAlerts(context)),
+    getOwnLearnerRegistration(context),
   ]);
   const requestWorkspace=requestRead.value;
   return (
     <div className="space-y-7">
       <PageHeader eyebrow="My Placements" title="Placement cell" description="Your official offer, request and placement-cell support workspace." />
+      <LearnerPlacementRegistration registration={registration}/>
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling or offer-extension requests. Your placement team owns the final decision.</p>
