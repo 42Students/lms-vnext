@@ -67,14 +67,13 @@ export async function ProjectAdminAtRiskPage({
       <PageHeader
         eyebrow={eyebrow}
         title="At-risk projects"
-        description="Active workspaces with seven days of persisted inactivity or final delivery waiting for review."
+        description="Active workspaces with stalled activity, active task blockers, or final delivery waiting for review."
       />
       {!result.blockerSignalSupported ? (
         <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
-          Legacy also flags a workspace when its explicit
-          blocker text is set. DB07 vNext does not persist
-          that blocker field yet, so this queue does not
-          claim that risk dimension is covered.
+          Active task blockers are included in this queue.
+          The legacy workspace-level blocker field is not yet persisted,
+          so that separate signal is not counted.
         </section>
       ) : null}
       <ProjectAdminFilters query={query} />
@@ -128,6 +127,10 @@ export async function ProjectAdminAtRiskPage({
                     : "s"}
                 </StatusBadge>
               </div>
+              {project.blockerReason ? <div className="mt-3 rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+                <p className="font-semibold">Active blocker</p>
+                <p className="mt-1 whitespace-pre-wrap break-words">{project.blockerReason}</p>
+              </div> : null}
               <div className="mt-3 flex flex-wrap gap-2">
                 {project.riskReasons.map((reason) => (
                   <StatusBadge
