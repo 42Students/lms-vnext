@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {Drawer} from "@/components/ui/drawer";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {tpoBellOpenHref} from "@/modules/activity/tpo-bell-open-model";
@@ -48,9 +49,9 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
    className="min-h-11 rounded border border-border bg-surface px-3 text-sm">
    Notifications {unread>0?"("+unread+" unread)":""}
   </button>
-  {open?<section role="region" aria-label="Notification bell panel" className="absolute right-0 z-30 mt-2 w-[min(90vw,24rem)] max-w-full space-y-3 rounded-xl border border-border bg-surface p-4 shadow-lg">
-   <header className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">Notifications</h2><button type="button" className="text-sm underline" onClick={()=>setOpen(false)}>Close</button></header>
-   <p className="text-xs text-muted-foreground">Most recent notifications from your own college.</p>
+  <Drawer open={open} onOpenChange={setOpen} title="Notifications"
+   description="Most recent notifications from your own college.">
+
    {items.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="max-h-80 space-y-2 overflow-y-auto">
     {items.slice(0,20).map(item=><li key={item.id} className="rounded border border-border p-2 text-sm">
      <p className="font-medium">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-primary"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</p>
@@ -67,6 +68,6 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
    <div className="flex flex-wrap gap-3"><Link className="min-h-10 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50" onClick={()=>void markAll()} disabled={pending||unread===0}>{pending?"Saving…":"Mark all read"}</button></div>
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  </section>:null}
+  </Drawer>
  </div>;
 }
