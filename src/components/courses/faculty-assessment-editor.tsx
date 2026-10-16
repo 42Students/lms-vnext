@@ -80,12 +80,12 @@ export function FacultyAssessmentEditor({
       !Number.isInteger(number) ||
       number < 1 ||
       (assessment.kind === "ASSIGNMENT"
-        ? number > 10000
+        ? number > 1000
         : number > 20)
     ) {
       setError(
         assessment.kind === "ASSIGNMENT"
-          ? "Maximum points must be between 1 and 10000."
+          ? "Enter a whole number from 1 to 1000"
           : "Maximum attempts must be between 1 and 20.",
       );
       return;
@@ -296,7 +296,7 @@ export function FacultyAssessmentEditor({
               max={
                 assessment.kind ===
                 "ASSIGNMENT"
-                  ? 10000
+                  ? 1000
                   : 20
               }
               value={points}
