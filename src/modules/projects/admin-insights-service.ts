@@ -23,6 +23,7 @@ import {
   projectResources,
   projectSprints,
   projectSubmissions,
+  projectSubmissionReviews,
   projectTasks,
   projectTaskSubmissions,
   users,
@@ -665,6 +666,31 @@ const projectSubmissionQueueQuerySchema =
       .optional(),
   });
 
+/** COL-projects-13: whole-college cards reflect the latest delivery only. */
+export async function getProjectAdminSubmissionSummary(context: RequestContext, collegeIdInput: string) {
+  const college = await loadProjectCollegeScope(collegeIdInput);
+  requirePermission(context, "projects.manage", {
+    organizationId: college.organizationId, collegeId: college.id,
+  });
+  const latestStatus = sql<string | null>`(
+    select sub.status from project_submissions sub
+    where sub.project_id = ${projectInstances.id}
+    order by sub.version desc limit 1
+  )`;
+  const [row] = await getDb().select({
+    activeWorkspaces: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE')`.mapWith(Number),
+    pendingReview: sql<number>`count(*) filter (where ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
+    needsStudentAction: sql<number>`count(*) filter (where ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
+    reviewed: sql<number>`count(*) filter (where ${latestStatus} = 'APPROVED')`.mapWith(Number),
+  }).from(projectInstances).where(eq(projectInstances.collegeId, college.id));
+  return {
+    activeWorkspaces: row?.activeWorkspaces ?? 0,
+    pendingReview: row?.pendingReview ?? 0,
+    needsStudentAction: row?.needsStudentAction ?? 0,
+    reviewed: row?.reviewed ?? 0,
+  };
+}
+
 export async function listProjectAdminSubmissionQueue(
   context: RequestContext,
   collegeIdInput: string,
@@ -734,6 +760,9 @@ export async function listProjectAdminSubmissionQueue(
           summary: projectSubmissions.summary,
           sourceUrl: projectSubmissions.sourceUrl,
           demoUrl: projectSubmissions.demoUrl,
+          attachments: projectSubmissions.attachments,
+          reviewedAt: projectSubmissionReviews.reviewedAt,
+          reviewedBy: users.displayName,
           lockedAt: projectSubmissions.lockedAt,
           submittedAt: projectSubmissions.submittedAt,
           updatedAt: projectSubmissions.updatedAt,
@@ -741,11 +770,10 @@ export async function listProjectAdminSubmissionQueue(
         .from(projectSubmissions)
         .innerJoin(
           projectInstances,
-          eq(
-            projectInstances.id,
-            projectSubmissions.projectId,
-          ),
+          eq(projectInstances.id, projectSubmissions.projectId),
         )
+        .leftJoin(projectSubmissionReviews, eq(projectSubmissionReviews.submissionId, projectSubmissions.id))
+        .leftJoin(users, eq(users.id, projectSubmissionReviews.reviewedByUserId))
         .where(where)
         .orderBy(
           desc(projectSubmissions.updatedAt),
