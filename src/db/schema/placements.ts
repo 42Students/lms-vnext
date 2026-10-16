@@ -8,6 +8,7 @@ import {
   jsonb,
   numeric,
   pgTable,
+  smallint,
   text,
   timestamp,
   uniqueIndex,
@@ -491,6 +492,19 @@ export const placementJobs = pgTable(
       .default("DRAFT"),
     /** P-S1-05: persisted dream-drive classification (exempt from held-offer cap). */
     isDream: boolean("is_dream").notNull().default(false),
+    /** REC-home-drives-24/25/26: recruiter drive parity fields copied from an approved request draft. */
+    recruiterDriveMode: varchar("recruiter_drive_mode", { length: 16 })
+      .notNull()
+      .default("ON_CAMPUS"),
+    eligibleBranches: text("eligible_branches")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    eligiblePassingYear: smallint("eligible_passing_year"),
+    ctcLpa: numeric("ctc_lpa", { precision: 8, scale: 2 }),
+    fixedCtcLpa: numeric("fixed_ctc_lpa", { precision: 8, scale: 2 }),
+    variableCtcLpa: numeric("variable_ctc_lpa", { precision: 8, scale: 2 }),
+    stipendPerMonthInr: integer("stipend_per_month_inr"),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     closedAt: timestamp("closed_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
@@ -524,6 +538,22 @@ export const placementJobs = pgTable(
     check(
       "placement_jobs_employment_type_ck",
       sql`${table.employmentType} in ('FULL_TIME', 'INTERNSHIP', 'CONTRACT')`,
+    ),
+    check(
+      "placement_jobs_recruiter_drive_mode_ck",
+      sql`${table.recruiterDriveMode} in ('ON_CAMPUS', 'OFF_CAMPUS')`,
+    ),
+    check(
+      "placement_jobs_recruiter_eligible_passing_year_ck",
+      sql`${table.eligiblePassingYear} is null or ${table.eligiblePassingYear} between 2000 and 2199`,
+    ),
+    check(
+      "placement_jobs_recruiter_ctc_breakdown_ck",
+      sql`(${table.ctcLpa} is null or ${table.ctcLpa} >= 0)
+        and (${table.fixedCtcLpa} is null or ${table.fixedCtcLpa} >= 0)
+        and (${table.variableCtcLpa} is null or ${table.variableCtcLpa} >= 0)
+        and (${table.ctcLpa} is null or coalesce(${table.fixedCtcLpa}, 0) + coalesce(${table.variableCtcLpa}, 0) <= ${table.ctcLpa})
+        and (${table.stipendPerMonthInr} is null or ${table.stipendPerMonthInr} >= 0)`,
     ),
     check(
       "placement_jobs_work_mode_ck",
