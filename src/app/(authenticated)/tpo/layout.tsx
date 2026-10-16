@@ -14,9 +14,10 @@ export default async function TpoLayout({children}:Readonly<{children:React.Reac
  if (!hasTpoTooling(context)) return <div className="min-w-0 space-y-4">{children}</div>;
  const inbox=await getTpoPersonalInbox(context,{view:"all"});
  const recruiterUnread=await countTpoUnreadRecruiterMessages(context);
- const items=inbox.page.items.slice(0,10).map(({notification})=>({
+ const items=inbox.page.items.slice(0,20).map(({notification})=>({
   id:notification.id,title:notification.title,body:notification.body,
   actionHref:notification.actionHref,readAt:notification.readAt?.toISOString()??null,
+  createdAt:notification.createdAt.toISOString(),
  }));
  return <div className="min-w-0 space-y-4">
   <div className="flex min-w-0 flex-wrap items-center justify-end gap-3" aria-label="TPO quick access">
