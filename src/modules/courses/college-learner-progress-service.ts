@@ -56,8 +56,10 @@ export async function listCollegeLearnerProgressChoices(context:RequestContext){
 export async function getCollegeLearnerProgressReport(
  context:RequestContext,raw:unknown,
 ){
- const {offeringId,deliveryId}=selectionSchema.parse(raw);
+ const parsed=selectionSchema.safeParse(raw);
  const choices=await listCollegeLearnerProgressChoices(context);
+ if(!parsed.success)return {choices,report:null};
+ const {offeringId,deliveryId}=parsed.data;
  if(!offeringId||!deliveryId)return {choices,report:null};
  const chosen=choices.find(item=>item.offeringId===offeringId&&item.deliveryId===deliveryId);
  if(!chosen)return {choices,report:null};
