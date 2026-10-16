@@ -5,6 +5,7 @@ export type AdminProgramRow = {
   departmentName: string;
   departmentId: string;
   durationTerms: number;
+  contents?: { semesters: number; batches: number; classes: number } | null;
 };
 
 export function programDurationYearsLabel(durationTerms:number) {
@@ -60,9 +61,10 @@ function quoteCsv(raw: string | number) {
 
 export function adminProgramsCsv(rows: readonly AdminProgramRow[]) {
   const data: (string | number)[][] = [
-    ["ID", "Program", "Code", "Department", "Duration Terms"],
+    ["ID", "Program", "Code", "Department", "Duration Terms", "Semesters", "Batches", "Classes"],
     ...rows.map((row) => [
       row.id, row.name, row.code, row.departmentName, row.durationTerms,
+      row.contents?.semesters ?? "", row.contents?.batches ?? "", row.contents?.classes ?? "",
     ]),
   ];
   return data.map((row) => row.map(quoteCsv).join(",")).join("\r\n") + "\r\n";
