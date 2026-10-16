@@ -5,8 +5,12 @@ import { FacultyAssessmentOverview } from "@/components/courses/faculty-assessme
 import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 
-export default async function FacultyAllQuizzesPage() {
+export default async function FacultyAllQuizzesPage({searchParams}:{
+ searchParams:Promise<{content?:string}>;
+}) {
   const context = await getCurrentRequestContext();
+  const rawId=(await searchParams).content;
+  const initialQuizId=rawId&&/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(rawId)?rawId:null;
   const overview = await getFacultyAssessmentOverview(context);
   return (
     <div className="space-y-6">
@@ -19,7 +23,7 @@ export default async function FacultyAllQuizzesPage() {
       <PageHeader
         title="My Quizzes"
       />
-      <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="QUIZ" />
+      <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="QUIZ" initialQuizId={initialQuizId} />
     </div>
   );
 }
