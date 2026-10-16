@@ -12,7 +12,7 @@ import { LearnerProjectBoardSearch } from "@/components/projects/learner-project
 import { learnerBoardStatusCounts } from "@/modules/projects/learner-board-summary-model";
 import { learnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
 import { learnerBoardSortSchema,sortLearnerBoardTasks } from "@/modules/projects/learner-board-sort-model";
-import { LearnerBoardTaskIndex } from "@/components/projects/learner-board-task-index";
+import { LearnerBoardInteractive } from "@/components/projects/learner-board-interactive";
 import { LearnerProjectGoals } from "@/components/projects/learner-project-goals";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { LearnerBoardTaskDetailDialog } from "@/components/projects/learner-board-task-detail-dialog";
@@ -119,7 +119,9 @@ export default async function LearnerProjectPage({
           shown={boardTasks.length} total={workspace.tasks.length} statusCounts={learnerBoardStatusCounts(workspace.tasks)} priorityCounts={learnerBoardPriorityCounts(workspace.tasks)} />
       ) : null}
       {activeSection === "tasks" ? (
-        <LearnerBoardTaskIndex projectId={projectId} tasks={boardTasks} filters={boardFilters} sprints={workspace.sprints} />
+        <LearnerBoardInteractive projectId={projectId} initialTasks={boardTasks}
+          filters={boardFilters} sprints={workspace.sprints}
+          membershipId={context.membership?.id??null}/>
       ) : null}
       {selectionNotice ? (
         <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface-subtle p-4 text-sm text-body">
