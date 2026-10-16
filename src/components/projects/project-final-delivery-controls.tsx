@@ -13,6 +13,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 
 type Submission = {
   id: string;
@@ -278,6 +279,9 @@ export function LearnerFinalDeliveryControl({
           </label>
           <div className="grid gap-2">
             <p className="m-0 text-sm font-semibold text-body">Additional files &amp; links</p>
+            <ProjectDeliveryFileUploader projectId={projectId}
+              disabled={pending||attachments.length>=10}
+              onUploaded={item=>setAttachments(rows=>rows.length>=10?rows:[...rows,item])}/>
             {attachments.map((item,index)=><div key={index} className="flex items-center gap-2 text-sm">
               <span className="min-w-0 flex-1 break-words">{item.name}</span>
               <Button type="button" size="sm" variant="secondary" disabled={pending}
