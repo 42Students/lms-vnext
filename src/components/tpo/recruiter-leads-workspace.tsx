@@ -12,6 +12,9 @@ import {
   type RecruiterAttentionChip,
 } from "@/modules/placements/tpo-recruiter-attention-model";
 import { RecruiterLeadCsvImport } from "./recruiter-lead-csv-import";
+import {RecruiterRosterDisplayControls} from "./recruiter-roster-display-controls";
+import {ENGAGE_DEFAULT_COLUMNS,normalizeEngageColumns,sortEngageRows,
+ type EngageColumn,type EngageSort} from "@/modules/placements/tpo-recruiter-table-view-model";
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -107,6 +110,21 @@ export function RecruiterLeadsWorkspace({
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
+  const [visibleColumns,setVisibleColumns]=useState<EngageColumn[]>([...ENGAGE_DEFAULT_COLUMNS]);
+  const [rosterSort,setRosterSort]=useState<EngageSort>("LAST_ACTIVITY");
+  const [sortAscending,setSortAscending]=useState(false);
+  useEffect(()=>{
+    try{
+      const stored=window.localStorage.getItem("tpo-engage-visible-columns-v1");
+      if(stored)setVisibleColumns(normalizeEngageColumns(JSON.parse(stored)));
+    }catch{ /* Optional browser preference, never blocks roster */ }
+  },[]);
+  function changeVisibleColumns(next:EngageColumn[]){
+    const normalized=normalizeEngageColumns(next);
+    setVisibleColumns(normalized);
+    try{window.localStorage.setItem("tpo-engage-visible-columns-v1",JSON.stringify(normalized));}
+    catch{ /* Browser storage can be disabled */ }
+  }
   const [exportFeedback,setExportFeedback]=useState("");
   const [actionToast,setActionToast]=useState("");
   const [freshInvite,setFreshInvite]=useState<{leadId:string;url:string}|null>(null);
@@ -243,6 +261,8 @@ export function RecruiterLeadsWorkspace({
     matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
     [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter,
       companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter]);
+  const sortedVisible=useMemo(()=>sortEngageRows(visible,rosterSort,sortAscending),
+    [visible,rosterSort,sortAscending]);
   const filterChips=([
     {key:"stage",label:"Stage",value:stage},
     {key:"owner",label:"Owner",value:ownerFilter},
@@ -700,7 +720,10 @@ export function RecruiterLeadsWorkspace({
               )}
             </section>
           ) : view === "table" ? (
-            <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+            <div className="space-y-3">
+              <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
+                sort={rosterSort} onSort={setRosterSort} ascending={sortAscending} onAscending={setSortAscending}/>
+              <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm" tabIndex={0}
                 onKeyDown={event=>{
                   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"&&selectedIds.length){
@@ -718,11 +741,11 @@ export function RecruiterLeadsWorkspace({
                           [...new Set([...current,...visible.map(row=>row.id)])]:
                           current.filter(id=>!visible.some(row=>row.id===id)))}/>
                     </th>
-                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].map(x =>
+                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].filter(x=>visibleColumns.includes(x as EngageColumn)).map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
-                  {visible.map(lead => (
+                  {sortedVisible.map(lead => (
                     <tr key={lead.id} className="border-b border-border last:border-0">
                       <td className="px-4 py-3">
                         <input type="checkbox" aria-label={"Select "+lead.name}
@@ -730,29 +753,29 @@ export function RecruiterLeadsWorkspace({
                           onChange={event=>setSelectedIds(current=>event.target.checked?
                             [...new Set([...current,lead.id])]:current.filter(id=>id!==lead.id))}/>
                       </td>
-                      <td className="px-4 py-3 font-medium">
+                      <td style={{display:visibleColumns.includes("Contact")?undefined:"none"}} className="px-4 py-3 font-medium">
                         <Link className="text-primary-text underline-offset-2 hover:underline"
                           href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name}</Link>
                       </td>
-                      <td className="px-4 py-3">{lead.companyName || "—"}</td>
-                      <td className="px-4 py-3">{lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"}</td>
-                       <td className="px-4 py-3">{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</td>
-                       <td className="px-4 py-3">{lead.ownerName??"Unassigned"}</td>
-                       <td className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
-                       <td className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
-                       <td className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
-                       <td className="px-4 py-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))}</td>
-                      <td className="px-4 py-3">
+                      <td style={{display:visibleColumns.includes("Company")?undefined:"none"}} className="px-4 py-3">{lead.companyName || "—"}</td>
+                      <td style={{display:visibleColumns.includes("Status")?undefined:"none"}} className="px-4 py-3">{lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"}</td>
+                       <td style={{display:visibleColumns.includes("Stage")?undefined:"none"}} className="px-4 py-3">{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</td>
+                       <td style={{display:visibleColumns.includes("Owner")?undefined:"none"}} className="px-4 py-3">{lead.ownerName??"Unassigned"}</td>
+                       <td style={{display:visibleColumns.includes("Last activity")?undefined:"none"}} className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
+                       <td style={{display:visibleColumns.includes("Next follow-up")?undefined:"none"}} className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
+                       <td style={{display:visibleColumns.includes("Invite")?undefined:"none"}} className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
+                       <td style={{display:visibleColumns.includes("Added")?undefined:"none"}} className="px-4 py-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))}</td>
+                      <td style={{display:visibleColumns.includes("Flags")?undefined:"none"}} className="px-4 py-3">
                         {lead.chips?.map(chip => (
                           <span key={chip} className="mr-1 inline-block rounded border border-border px-1.5 py-0.5 text-xs">
                             {chip === "QUIET" ? `Quiet ${lead.quietDays}d` : RECRUITER_ATTENTION_LABELS[chip]}
                           </span>
                         ))}
                       </td>
-                      <td className="px-4 py-3">{lead.source || "Manual"}</td>
-                      <td className="px-4 py-3">{lead.emailNorm || "—"}</td>
-                      <td className="px-4 py-3">{lead.phoneNorm || "—"}</td>
-                      <td className="px-4 py-3">
+                      <td style={{display:visibleColumns.includes("Source")?undefined:"none"}} className="px-4 py-3">{lead.source || "Manual"}</td>
+                      <td style={{display:visibleColumns.includes("Email")?undefined:"none"}} className="px-4 py-3">{lead.emailNorm || "—"}</td>
+                      <td style={{display:visibleColumns.includes("Phone")?undefined:"none"}} className="px-4 py-3">{lead.phoneNorm || "—"}</td>
+                      <td style={{display:visibleColumns.includes("Actions")?undefined:"none"}} className="px-4 py-3">
                         {!lead.recruiterUserId?(
                           <button type="button" className={buttonStyle}
                             disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
@@ -765,6 +788,8 @@ export function RecruiterLeadsWorkspace({
                   ))}
                 </tbody>
               </table>
+            </div>
+
             </div>
           ) : (
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
