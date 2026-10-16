@@ -186,6 +186,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.application.withdrawn",
   PLACEMENTS_SCREENING_DECIDED:
     "placements.screening.decided",
+  PLATFORM_ADMIN_SESSIONS_REVOKED:
+    "platform.admin.sessions_revoked",
   PLACEMENTS_BULK_RUN:
     "placements.bulk.run",
   PLACEMENTS_ROUND_COMPLETED:
