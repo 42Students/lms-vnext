@@ -10,5 +10,8 @@ export async function ProjectResourceFilesSection({projectId,mode,status,current
   const files=await listProjectFiles(context,projectId);
   const canManage=mode!=="LEARNER"&&status!=="ARCHIVED"&&status!=="COMPLETED"&&
     Boolean(currentMembershipId);
-  return <ProjectResourceFilesPanel projectId={projectId} initialFiles={files} canManage={canManage}/>;
+  const canUpload=Boolean(currentMembershipId)&&
+    (canManage||(mode==="LEARNER"&&status==="ACTIVE"));
+  return <ProjectResourceFilesPanel projectId={projectId} initialFiles={files}
+    canManage={canManage} canUpload={canUpload}/>;
 }
