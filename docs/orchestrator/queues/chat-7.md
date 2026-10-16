@@ -26,6 +26,18 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-7-04-home-drives-s3 | IN-PROGRESS | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
+## FAST-MODE checkpoint — continued round (2026-10-17)
+
+- WP-01 remains **IN-PROGRESS**: S1 learner resume/identity evidence needs private scanner-attested storage; REC-home-drives-38 disclosure requires privacy authorization; REC-home-drives-51 has a staged schema/proposal but no registered write/review path; REC-home-drives-21 trusted auto-approval remains pending.
+- REC-home-drives-24 / -25 / -26 (WP-02): authorized college department names are now supplied as Branch suggestions to the formal request form. Drafts capture pay and drive mode; proposed registered job-field persistence is in `docs/proposed-migrations/chat-7-recruiter-drive-parity-fields.sql`. TPO publish integration is **not** claimed closed.
+- REC-calendar-messages-profile-26 / -30 (WP-03): first and last name input with validation now uses the existing optimistic display-name update; self-revocation notifies authorized TPO members transactionally.
+- LEARNER-profile-misc-13 (WP-03): learner Skills add/edit now calls the existing guarded Skills catalog and offers accessible search suggestions.
+- LEARNER-profile-misc-R02 (WP-02): learner job preferences now persist four typed fields in their current profile document; external placements consumers are not yet wired.
+- REC-home-drives-03 / -06 / -08 (WP-04): recruiter Today separates recorded awaiting-review requests from last-sent conversations, merges visible round/slot/deadline/results events into an eight-day agenda, and retains available panels if optional feeds fail.
+- REC-calendar-messages-profile-15 / -20 (WP-03/05): reply form differentiates success-with-refresh-failure and thread items now display chronologically within each page.
+- LEARNER-profile-misc-21 (WP-03): learner notifications surface announcement college/class/program/department context where the producer exposes its audience.
+- All five WPs remain **IN-PROGRESS** because not all listed behavior is complete. No tests, build, lint, typecheck, or CI were run under FAST MODE. A commit alone is not acceptance proof.
+
 ## FAST-MODE checkpoint — learner verification (2026-10-17)
 
 - LEARNER-profile-misc-14 / -17 (WP-03): Profile now surfaces server-authorized Verified profile / Not verified yet at the top, individual reviewer/date notices, changed-after-verification warning and 15-second status refresh; connected the existing missing-items and verification-status services. Evidence upload gates are still unresolved.
