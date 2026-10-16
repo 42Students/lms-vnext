@@ -133,3 +133,10 @@ IDs continue Round A's prefix with an R.
 | R07 | Two browser sessions as Mentor and Co-Mentor edit the same resource and the same meeting; expect last write wins in vNext, 409 in legacy. |
 | Round A -11, -71, -74 | As listed in Round A section 18 (reviewer-kind member, forced source failures, `/mentor/profile` response). |
 | Legacy dev tip vs prod | Gaps citing dev-only features (Task Allocation, releases, sprint lifecycle, activity date range) rely on dev tip source `lms2-fe@lms-dev-2026` (63fea105); confirm on the deployed old LMS dev site that these are live before treating them as parity targets (decision 7 says dev-only is in scope). |
+
+
+### chat-11 Round 2 implementation checkpoint (2026-10-16; runtime verification pending)
+
+- **MEN-projects-meetings-R01:** Mentor approval now persists `locked_at` in the same mutation as approval, appends an immutable `LOCKED` delivery event and activity entry, and preserves the existing stale-version/role guards. Disposable-PostgreSQL approve → reopen → reject duplicate test added; **not run**.
+- **MEN-projects-meetings-31:** Meeting requests, new schedules, updates, cancellation and mentor rescheduling now generate tenant-checked in-app notifications transactionally; per-role links go to the appropriate project tab. Complete/calendar sync and browser verification remain open; **partial**.
+- **MEN-projects-meetings-41:** Workspace task rows show assignee, due date, task type, point estimate, blocker note and safe submission link. Browser parity not verified; **partial**.
