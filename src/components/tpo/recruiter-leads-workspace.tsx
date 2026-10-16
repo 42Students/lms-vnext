@@ -577,7 +577,14 @@ export function RecruiterLeadsWorkspace({
             )
           ) : view === "table" ? (
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm" tabIndex={0}
+                onKeyDown={event=>{
+                  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"&&selectedIds.length){
+                    const target=event.target;
+                    if(target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement)return;
+                    event.preventDefault();void copyRows();
+                  }
+                }}>
                 <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
                   <tr>
                     <th scope="col" className="px-4 py-3">
