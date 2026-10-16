@@ -66,7 +66,7 @@ const change = scope.extend({
 });
 const bulkInput = z.object({
   collegeId: uuid,
-  changes: z.array(change).min(1).max(2000),
+  changes: z.array(change).min(1).max(5000),
   expectedCohortId: uuid.optional(),
 }).strict();
 const undoInput = z.object({
