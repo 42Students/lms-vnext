@@ -7,3 +7,9 @@ export function assignmentFilesRuntimeEnabled() {
     process.env.R2_PRIVATE_BUCKET?.trim()
   );
 }
+
+/** Opt in only after the multipart SQL proposal has been registered and replayed. */
+export function multipartAssignmentRuntimeEnabled() {
+  return assignmentFilesRuntimeEnabled() &&
+    process.env.DB06_MULTIPART_SUBMISSIONS_READY === "DB06_VERIFIED";
+}
