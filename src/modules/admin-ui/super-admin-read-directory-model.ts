@@ -4,6 +4,7 @@ export const superAdminReadQuerySchema = z.strictObject({
  q: z.string().trim().max(100).default(""),
  status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN","PENDING","SCHEDULED","CANCELLED","HOLD","SHORTLISTED","REJECTED","ISSUED","ACCEPTED","DECLINED","JOINED","DID_NOT_JOIN","DEFERRED","CLOSED","DRAFT","PUBLISHED"]).default("ALL"),
  page: z.coerce.number().int().min(1).max(1000).default(1),
+ jobId: z.string().uuid().optional(),
 });
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;
 export type SuperAdminReadRow = {
@@ -19,12 +20,13 @@ export function superAdminReadPages(total:number) {
 export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
+ if(query.jobId)params.set("jobId",query.jobId);
  if(query.status!=="ALL")params.set("status",query.status);
  if(query.page>1)params.set("page",String(query.page));
  return path+(params.size?"?"+params:"");
 }
 export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
- return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page});
+ return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,jobId:raw.jobId});
 }
 export function scopedSearchLike(q:string) {
  return "%"+q.replace(/[\\%_]/g,"\\$&")+"%";
