@@ -2,7 +2,8 @@ import "server-only";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients,placementTpoLeads} from "@/db/schema";
+import {placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients,placementTpoLeads,placementTpoLeadActivities,placementTpoCompanyCommunication} from "@/db/schema";
+import {tpoCompanyKey} from "@/modules/placements/tpo-company-memory-service";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
@@ -125,7 +126,23 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
   }).where(and(eq(placementTpoEmailCampaignRecipients.id,row.id),
    eq(placementTpoEmailCampaignRecipients.status,"QUEUED"),
    eq(placementTpoEmailCampaignRecipients.collegeId,college.id)));
-  if(result)totals.sent++;else totals.failed++;
+  if(result){
+   await db.transaction(async tx=>{
+    await tx.insert(placementTpoLeadActivities).values({
+     collegeId:college.id,leadId:row.leadId,type:"EMAIL",isSystem:true,
+     note:"Campaign: "+draft.subject.slice(0,180),createdAt:new Date(),
+    });
+    const key=tpoCompanyKey(row.company);
+    if(key){
+     await tx.update(placementTpoCompanyCommunication).set({
+      status:"EMAILED",updatedByUserId:context.user.id,updatedAt:new Date(),
+     }).where(and(eq(placementTpoCompanyCommunication.collegeId,college.id),
+      eq(placementTpoCompanyCommunication.companyKey,key),
+      eq(placementTpoCompanyCommunication.status,"NOT_CONTACTED")));
+    }
+   });
+   totals.sent++;
+  }else totals.failed++;
  }
  await db.update(placementTpoEmailCampaigns).set({status:"SENT"})
  .where(and(eq(placementTpoEmailCampaigns.collegeId,college.id),
