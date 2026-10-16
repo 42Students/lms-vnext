@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeBrandingForm } from "@/components/admin/college-branding-form";
+import { CollegeLogoUploader } from "@/components/admin/college-logo-uploader";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCollegeBranding } from "@/modules/colleges/branding-service";
 import { can } from "@/modules/permissions/policy";
@@ -26,10 +27,12 @@ export default async function CollegeBrandingPage() {
         title="Branding"
         description="Logo, colours and support details shown on your college's sign-in page."
       />
+      <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit}/>
       <CollegeBrandingForm
         collegeId={membership.collegeId}
         collegeName={branding.collegeName}
         canEdit={canEdit}
+        uploadedLogoUrl={branding.uploadedLogoUrl}
         initial={{
           logoUrl: branding.logoUrl,
           faviconUrl: branding.faviconUrl,
