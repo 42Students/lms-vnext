@@ -261,8 +261,9 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                 <tr>
                   <th scope="col" className="px-4 py-3">Batch</th>
                   <th scope="col" className="px-4 py-3">Program</th>
-                  <th scope="col" className="px-4 py-3">Start period</th>
-                  <th scope="col" className="px-4 py-3">Progression</th>
+                  <th scope="col" className="px-4 py-3">Years</th>
+                  <th scope="col" className="px-4 py-3">Academic Year</th>
+                  <th scope="col" className="px-4 py-3">Current Semester</th>
                   <th scope="col" className="px-4 py-3">Active classes / learners</th>
                   <th scope="col" className="px-4 py-3">Status</th>
                   <th scope="col" className="px-4 py-3">Actions</th>
@@ -294,8 +295,14 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                     </td>
                     <td className="px-4 py-4 text-body">{item.programName} ({item.programCode})</td>
                     <td className="px-4 py-4 text-body">
-                      {item.startPeriodName}
-                      <p className="mt-1 text-xs text-muted-foreground">Starts {item.startDate}</p>
+                      <p>Start Date: {item.startDate}</p>
+                      <p>End Date: {item.endDate ?? "Not set"}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{item.startPeriodName}</p>
+                    </td>
+                    <td className="px-4 py-4 text-body">
+                      {item.currentAcademicYearStart !== null
+                        ? `${item.currentAcademicYearStart}-${String((item.currentAcademicYearStart + 1) % 100).padStart(2, "0")}`
+                        : "Not recorded"}
                     </td>
                     <td className="px-4 py-4 text-body">
                       {batchProgressLabel(item.currentTermNumber === null ? null : {
