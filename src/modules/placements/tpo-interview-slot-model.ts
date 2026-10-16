@@ -10,6 +10,12 @@ export const tpoInterviewSlotActionSchema=z.discriminatedUnion("action",[
  z.object({action:z.literal("CLEAR_AVAILABLE"),confirmed:z.literal(true)}).strict(),
  z.object({action:z.literal("CANCEL"),confirmed:z.literal(true),slotId:uuid,expectedVersion:z.number().int().positive(),
   reason:z.string().trim().min(3).max(500)}).strict(),
+ z.object({action:z.literal("ASSIGN_ROOMS_BY_ROLL"),confirmed:z.literal(true),
+  fromRoll:z.string().trim().min(1).max(80),toRoll:z.string().trim().min(1).max(80),
+  room:z.string().trim().min(1).max(160)}).strict(),
+ z.object({action:z.literal("CONFIRM_RECRUITER_PROPOSAL"),confirmed:z.literal(true),
+  proposalId:uuid,expectedVersion:z.number().int().positive(),
+  venue:z.string().trim().min(2).max(300)}).strict(),
  z.object({action:z.literal("ASSIGN_ROOM"),confirmed:z.literal(true),slotId:uuid,expectedVersion:z.number().int().positive(),
   room:z.string().trim().min(1).max(160)}).strict(),
 ]);
