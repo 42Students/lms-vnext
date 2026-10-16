@@ -5,6 +5,9 @@ export const studentCsvRequestSchema = z.object({
   action: z.enum(["PREVIEW", "IMPORT"]),
   csv: z.string().min(1).max(1000000),
   confirm: z.boolean().optional(),
+  programId: z.string().uuid().optional(),
+  cohortId: z.string().uuid().optional(),
+  sectionId: z.string().uuid().optional(),
 }).strict().superRefine((v, ctx) => {
   if (v.action === "IMPORT" && v.confirm !== true) {
     ctx.addIssue({ code: "custom", path: ["confirm"], message: "Explicit confirmation required" });
@@ -17,12 +20,16 @@ const csvRowSchema = z.object({
   email: z.union([personEmailSchema, z.literal("")]).transform(v => v || undefined),
   programId: z.string().uuid(),
   cohortId: z.string().uuid(),
+  sectionId: z.string().uuid().optional(),
+  rollNumber: z.string().trim().max(128).optional(),
 }).strict();
 
 export type StudentCsvRow = z.infer<typeof csvRowSchema>;
 export type StudentCsvResult = { row: number; status: "VALID" | "INVALID" | "IMPORTED" | "FAILED" | "PARTIAL"; detail: string; membershipId?: string; enrollmentId?: string };
 export const STUDENT_CSV_COLUMNS = ["displayName","phoneE164","email","programId","cohortId"] as const;
 export const MAX_STUDENT_CSV_ROWS = 500;
+export const LEGACY_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Mobile Number","Email","Roll Number"] as const;
+export const PICKER_STUDENT_CSV_COLUMNS = ["displayName","phoneE164","email","rollNumber"] as const;
 
 /** Strict CSV tokenizer: quoted commas, escaped double quotes and CRLF only. */
 export function tokenizeStudentCsv(input: string): string[][] {
@@ -56,15 +63,22 @@ export function tokenizeStudentCsv(input: string): string[][] {
   return result;
 }
 
-export function parseStudentCsv(raw: string): {
+export function parseStudentCsv(raw: string, defaults: {programId?: string;cohortId?: string;sectionId?: string} = {}): {
   entries: Array<{ row: number; data?: StudentCsvRow; errors: string[] }>;
   structuralErrors: string[];
 } {
   let rows: string[][];
   try { rows = tokenizeStudentCsv(raw.replace(/^\uFEFF/, "")); }
   catch { return { entries: [], structuralErrors: ["INVALID_CSV_FORMAT"] }; }
-  if (!rows.length || rows[0].join(",") !== STUDENT_CSV_COLUMNS.join(",")) {
+  const header = rows[0]?.map(value => value.trim()) ?? [];
+  const legacy = header.join(",") === LEGACY_STUDENT_CSV_COLUMNS.join(",");
+  const picker = header.join(",") === PICKER_STUDENT_CSV_COLUMNS.join(",");
+  const canonical = header.join(",") === STUDENT_CSV_COLUMNS.join(",");
+  if (!legacy && !picker && !canonical) {
     return { entries: [], structuralErrors: ["INVALID_CSV_HEADER"] };
+  }
+  if ((legacy || picker) && (!defaults.programId || !defaults.cohortId)) {
+    return { entries: [], structuralErrors: ["CHOOSE_PROGRAM_AND_BATCH"] };
   }
   if (rows.length - 1 > MAX_STUDENT_CSV_ROWS) {
     return { entries: [], structuralErrors: ["ROW_LIMIT_EXCEEDED"] };
@@ -73,10 +87,24 @@ export function parseStudentCsv(raw: string): {
   const seenEmails = new Set<string>();
   const entries = rows.slice(1).map((cells, index) => {
     const row = index + 2;
-    if (cells.length !== 5) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
-    const parsed = csvRowSchema.safeParse(Object.fromEntries(
-      STUDENT_CSV_COLUMNS.map((key, i) => [key, cells[i]?.trim() ?? ""]),
-    ));
+    if (cells.length !== (picker ? 4 : 5)) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
+    const record = canonical ? Object.fromEntries(STUDENT_CSV_COLUMNS.map(
+      (key, i) => [key, cells[i]?.trim() ?? ""])) : legacy ? {
+        displayName: [cells[0],cells[1]].map(v=>v?.trim()).filter(Boolean).join(" "),
+        phoneE164: (cells[2]?.trim() ?? "").replace(/^([0-9]{10})$/, "+91$1"),
+        email: cells[3]?.trim() ?? "",
+        rollNumber: cells[4]?.trim() ?? "",
+        programId: defaults.programId, cohortId: defaults.cohortId,
+        sectionId: defaults.sectionId,
+      } : {
+        displayName: cells[0]?.trim() ?? "",
+        phoneE164: cells[1]?.trim() ?? "",
+        email: cells[2]?.trim() ?? "",
+        rollNumber: cells[3]?.trim() ?? "",
+        programId: defaults.programId, cohortId: defaults.cohortId,
+        sectionId: defaults.sectionId,
+      };
+    const parsed = csvRowSchema.safeParse(record);
     if (!parsed.success) {
       return { row, errors: parsed.error.issues.map(issue => issue.path.join(".") + ": " + issue.message) };
     }
