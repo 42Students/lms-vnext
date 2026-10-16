@@ -32,15 +32,16 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
  const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
  requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
  const rows=await getDb().select({userId:users.id,name:users.displayName,email:users.email,
+  membershipId:collegeMemberships.id,status:collegeMemberships.status,
   role:membershipRoles.role}).from(collegeMemberships)
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])))
   .where(and(eq(collegeMemberships.collegeId,collegeId),
-    eq(collegeMemberships.status,"ACTIVE"))).limit(501);
- const map=new Map<string,{userId:string;name:string;email:string|null;roles:string[]}>();
+    inArray(collegeMemberships.status,["ACTIVE","SUSPENDED"]))).limit(501);
+ const map=new Map<string,{userId:string;membershipId:string;status:string;name:string;email:string|null;roles:string[]}>();
  for(const row of rows.slice(0,500)){
-  const item=map.get(row.userId)??{userId:row.userId,name:row.name,email:row.email,roles:[]};
+  const item=map.get(row.userId)??{userId:row.userId,membershipId:row.membershipId,status:row.status,name:row.name,email:row.email,roles:[]};
   if(!item.roles.includes(row.role))item.roles.push(row.role);
   map.set(item.userId,item);
  }
