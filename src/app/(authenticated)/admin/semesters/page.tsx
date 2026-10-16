@@ -1,3 +1,4 @@
+import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
@@ -44,6 +45,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
 
   const data = await listCollegeSemesters(context, parsed.data);
   return <div className="space-y-6">
+      <AcademicSetupSteps step={3} />
     <PageHeader eyebrow="Super Admin" title="Semesters"
       description="Create and manage semesters in the selected college." />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
