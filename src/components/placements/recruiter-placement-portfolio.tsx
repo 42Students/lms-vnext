@@ -8,9 +8,10 @@ type RecruiterJobs = Awaited<
 >;
 
 export function RecruiterPlacementPortfolio({
-  jobs,
+  jobs, returnTo,
 }: {
   jobs: RecruiterJobs;
+  returnTo?: string;
 }) {
   if (jobs.length === 0) {
     return (
@@ -63,10 +64,8 @@ export function RecruiterPlacementPortfolio({
               </p>
             </div>
             <Link
-              href={
-                "/hr/placements/jobs/" +
-                item.job.id
-              }
+              href={"/recruiter/drives/" + item.job.id +
+                (returnTo ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
               className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
             >
               Open hiring flow
