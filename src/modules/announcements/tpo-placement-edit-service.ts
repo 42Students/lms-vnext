@@ -9,12 +9,14 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
+import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 
 export const editTpoNoticeSchema=z.object({
  noticeId:z.string().uuid(),expectedVersion:z.number().int().nonnegative(),
  title:z.string().trim().min(1).max(255),
  message:z.string().trim().min(1).max(10000),
  pinned:z.boolean(),
+ sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict();
 
 /** Author-only, version-locked notice edits; no external email/SMS side effects. */
@@ -30,6 +32,7 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
   });
   const [current]=await tx.select({
    id:db10Announcements.id,version:db10Announcements.version,
+   scheduledAt:db10Announcements.scheduledAt,expiresAt:db10Announcements.expiresAt,
   }).from(db10Announcements).where(and(
    eq(db10Announcements.id,input.noticeId),
    eq(db10Announcements.collegeId,college.id),
@@ -42,8 +45,12 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
   )).for("update").limit(1);
   if(!current)throw new Error("ANNOUNCEMENT_NOT_FOUND");
   if(current.version!==input.expectedVersion)throw new Error("ANNOUNCEMENT_STALE");
+  const schedule=input.sendAt!==undefined||input.showUntil!==undefined?
+   parseTpoNoticeSchedule(input,new Date()):
+   {scheduledAt:current.scheduledAt,expiresAt:current.expiresAt};
   const [updated]=await tx.update(db10Announcements).set({
    title:input.title,message:input.message,isPinned:input.pinned,
+   scheduledAt:schedule.scheduledAt,expiresAt:schedule.expiresAt,
    version:current.version+1,updatedAt:new Date(),
   }).where(and(
    eq(db10Announcements.id,current.id),
@@ -56,7 +63,7 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
    actorUserId:context.user.id,actorMembershipId:membership.id,
    module:"PLACEMENTS",eventType:"placements.tpo_notice.edited",
    subjectType:"announcement",subjectId:updated.id,
-   summary:"TPO college-wide notice edited",
+   summary:"TPO notice content or schedule edited",
    metadata:{noticeId:updated.id,version:updated.version,pinned:input.pinned},
   });
   return updated;
