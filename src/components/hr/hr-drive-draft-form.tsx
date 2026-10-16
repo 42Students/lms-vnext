@@ -30,6 +30,7 @@ const HR_DRAFT_PREVIEW_FIELDS=[
 
 export function HrDriveDraftForm({
   initial,
+  branchSuggestions,
   sourceJobTitle,
   storageKey,
   collegeId,
@@ -39,6 +40,7 @@ export function HrDriveDraftForm({
   editMode="RESUBMIT",
 }: {
   initial: HrDriveDraft;
+  branchSuggestions:readonly string[];
   sourceJobTitle: string | null;
   storageKey:string;
   collegeId:string;
@@ -269,6 +271,9 @@ export function HrDriveDraftForm({
               value={(draft.branches??[]).join(", ")} placeholder="e.g. CSE, ECE, Mechanical"
               onChange={event=>setDraft(current=>({...current,
                 branches:event.target.value.split(",").map(value=>value.trim()).filter(Boolean)}))}/>
+            <datalist id="recruiter-eligible-branches">
+              {branchSuggestions.map(name=><option key={name} value={name}/>)}
+            </datalist>
             <span className="text-xs text-muted-foreground">Separate multiple college branches with commas. The placement cell verifies the final eligibility.</span>
           </label>
           <label className="grid gap-1 text-sm text-body">
