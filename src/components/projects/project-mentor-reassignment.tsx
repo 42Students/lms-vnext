@@ -287,13 +287,10 @@ export function ProjectMentorReassignment({
           remain. Scheduled meetings owned by the
           outgoing mentor are cancelled.
         </p>
-        <div className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm leading-6 text-body">
-          Legacy also clears tasks assigned to the
-          outgoing mentor. The current vNext
-          <code> project_tasks </code>
-          schema has no assignee field, so that side
-          effect remains a DB07 parity blocker.
-        </div>
+        <p className="mt-2 text-sm leading-6 text-body">
+          Tasks assigned to the outgoing mentor will become unassigned. Both mentors
+          and project learners receive a project notification.
+        </p>
 
         {selected.length > 0 && mentorMembershipId ?
           <p className="mt-3 text-sm text-body">
