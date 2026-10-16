@@ -63,6 +63,10 @@ export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeIn
   if(host){
    const now=new Date();
    if(current){
+    // Another verified custom address can be primary while the managed
+    // address exists. Clear it before promoting this address atomically.
+    await tx.update(tenantDomains).set({isPrimary:false,updatedAt:now})
+     .where(and(eq(tenantDomains.collegeId,college.id),eq(tenantDomains.isPrimary,true)));
     await tx.update(tenantDomains).set({host,isVerified:true,verifiedAt:now,
      lastCheckedAt:now,lastCheckResult:"MANAGED_WILDCARD",isPrimary:true,verificationToken:null,updatedAt:now})
      .where(eq(tenantDomains.id,current.id));
