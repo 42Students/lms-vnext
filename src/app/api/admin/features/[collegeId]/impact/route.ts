@@ -6,8 +6,8 @@ export const runtime="nodejs";
 export async function GET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const {collegeId}=await params;
-  const module=new URL(request.url).searchParams.get("module")??"";
-  const result=await readModuleDisableImpact(await getCurrentRequestContext(),collegeId,module);
+  const moduleName=new URL(request.url).searchParams.get("module")??"";
+  const result=await readModuleDisableImpact(await getCurrentRequestContext(),collegeId,moduleName);
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }

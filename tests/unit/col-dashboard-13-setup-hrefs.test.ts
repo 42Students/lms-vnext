@@ -9,7 +9,7 @@ describe("COL-dashboard-13 setup guide routes",()=>{
    "Create Batches":"/college/batches","Create Classes":"/college/classes",
    "Add Faculty":"/college/faculty","Add Students":"/college/students",
   };
-  const steps=COLLEGE_ADMIN_SETUP_PHASES.flatMap(x=>x.steps);
+  const steps=COLLEGE_ADMIN_SETUP_PHASES.flatMap((x): readonly {label:string;href:string}[]=>x.steps);
   for(const [label,href] of Object.entries(expected)){
    expect(steps.find(step=>step.label===label)?.href).toBe(href);
   }

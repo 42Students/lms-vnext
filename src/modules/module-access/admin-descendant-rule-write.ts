@@ -21,7 +21,7 @@ async function collegeScope(ctx:RequestContext,collegeInput:string){
  requirePermission(ctx,"college.manage",{collegeId:college.id,organizationId:college.organizationId});
  return college;
 }
-async function resolveScope(db:ReturnType<typeof getDb>,collegeId:string,scopeType:ScopeType,scopeId:string):Promise<ScopeRow|null>{
+async function resolveScope(db:Pick<ReturnType<typeof getDb>,"execute">,collegeId:string,scopeType:ScopeType,scopeId:string):Promise<ScopeRow|null>{
  const rows=await db.execute<ScopeRow>(sql`
  with scopes as (
  select 'DEPARTMENT'::text as type,d.id,d.name,d.id as department_id,null::uuid as program_id,null::uuid as cohort_id,d.college_id from departments d
@@ -78,7 +78,7 @@ export async function writeDescendantRule(ctx:RequestContext,collegeInput:string
   const [lockedCollege]=await tx.select({id:colleges.id}).from(colleges)
    .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE"))).for("update").limit(1);
   if(!lockedCollege)return null;
-  const scope=await resolveScope(tx as ReturnType<typeof getDb>,college.id,input.scopeType,input.scopeId);
+  const scope=await resolveScope(tx,college.id,input.scopeType,input.scopeId);
   if(!scope)return null;
   const predicate=and(eq(moduleAccessRules.scopeType,input.scopeType),eq(moduleAccessRules.scopeId,input.scopeId),eq(moduleAccessRules.module,input.module));
   const [previous]=await tx.select({id:moduleAccessRules.id,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked})

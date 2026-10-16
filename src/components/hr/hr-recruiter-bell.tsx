@@ -14,6 +14,7 @@ export function HrRecruiterBell(){
   }catch{setError("Couldn't refresh your notifications");}
  },[]);
  useEffect(()=>{
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- initial and 30s polling load.
   void load();
   const id=setInterval(()=>{void load();},30000);
   return ()=>clearInterval(id);

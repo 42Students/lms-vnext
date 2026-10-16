@@ -10,21 +10,21 @@ const id=z.uuid();
 export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:string,moduleRaw:string){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
- const collegeId=id.parse(collegeRaw),module=z.enum(["projects","placements","electives"]).parse(moduleRaw);
+ const collegeId=id.parse(collegeRaw),moduleName=z.enum(["projects","placements","electives"]).parse(moduleRaw);
  const [college]=await getDb().select({id:colleges.id,organizationId:colleges.organizationId}).from(colleges)
   .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).limit(1);
  if(!college)throw new AuthorizationError("college.read");
  requirePermission(ctx,"college.read",{collegeId,organizationId:college.organizationId});
  const db=getDb();
- if(module==="projects"){
+ if(moduleName==="projects"){
   const [row]=await db.select({total:count()}).from(projectMembers)
    .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
    .where(and(eq(projectInstances.collegeId,collegeId),eq(projectInstances.status,"ACTIVE"),
      eq(projectMembers.role,"MENTOR"),eq(projectMembers.isPrimary,true),isNull(projectMembers.endedAt)));
   const counts=[row?.total??0];
-  return {module,counts,summary:moduleDisableImpactSummary(module,counts)};
+  return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
- if(module==="placements"){
+ if(moduleName==="placements"){
   const [drives,applications,offers]=await Promise.all([
    db.select({total:count()}).from(placementJobs)
     .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"))),
@@ -37,7 +37,7 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
     .where(and(eq(placementJobs.collegeId,collegeId),eq(placementOffers.status,"ISSUED"))),
   ]);
   const counts=[drives[0]?.total??0,applications[0]?.total??0,offers[0]?.total??0];
-  return {module,counts,summary:moduleDisableImpactSummary(module,counts)};
+  return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
- return {module,counts:[],summary:moduleDisableImpactSummary(module,[])};
+ return {module:moduleName,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
 }
