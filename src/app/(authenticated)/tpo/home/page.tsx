@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
-import {buildTpoLegacyHomeRows} from "@/modules/placements/tpo-home-legacy-rows";
+import {buildTpoLegacyHomeRows,tpoHomeNeedsLine} from "@/modules/placements/tpo-home-legacy-rows";
 import {buildTpoLegacyNextUp,operationalHomeNeeds} from "@/modules/placements/tpo-home-next-up";
 import {deadlineTpoHomeNeeds} from "@/modules/placements/tpo-home-deadline-signals";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
@@ -72,6 +72,7 @@ export default async function TpoHome(){
  });
  return <main className="min-w-0 space-y-5">
  <PageHeader eyebrow="TPO" title="Home" description="One next action and a quiet overview of the placement cell."/>
+ <p aria-live="polite" className="text-sm font-semibold text-body">{tpoHomeNeedsLine(rows)}</p>
  <section className="min-w-0 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-sm font-medium text-muted-foreground">Next up</h2>
   {next?<div className="mt-2 space-y-2">
