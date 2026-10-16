@@ -28,11 +28,11 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  const [counts,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.name),asc(source.id))
-   .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=counts[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(row=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
   id:row.id,title:row.name||"Unnamed person",subtitle:row.collegeName+" · "+role,
   status:row.status,
   details:["Platform account: "+row.platformStatus,"Joined: "+fmt.format(row.joinedAt)+" IST",
