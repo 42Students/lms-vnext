@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,gte,ilike,or,sql} from "drizzle-orm";
+import {and,asc,desc,eq,gte,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
  placementJobRoleOptions,placementJobs,users} from "@/db/schema";
@@ -9,7 +9,7 @@ import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {tpoApplicantSubmittedSince} from "./tpo-applicant-pipeline-model";
 import {tpoApplicantSearchCondition} from "./tpo-applicant-search";
 import {collectTpoExportPages,projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
- TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
+ TPO_DRIVE_APPLICATION_EXPORT_LIMIT} from "./tpo-drive-applications-export-model";
 export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown,options:{exportAll?:boolean}={}){
  const collegeId=await requireTpoJobCollege(context);
  const {jobId,stage,search,channel,eligibility,sort,submittedWithin}=tpoDriveApplicationsExportQuerySchema.parse(raw);
