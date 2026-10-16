@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { cohorts, collegeMemberships, departments, learnerProgramEnrollments, learnerProfiles, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
@@ -94,9 +94,16 @@ export async function listTpoBatchHistory(ctx:RequestContext,rawId:unknown){
  const events=ready?await getDb().select({id:placementEligibilityEvents.id,actionId:placementEligibilityEvents.actionId,
   reversesActionId:placementEligibilityEvents.reversesActionId,kind:placementEligibilityEvents.eventKind,
   before:placementEligibilityEvents.beforeStatus,after:placementEligibilityEvents.afterStatus,
-  occurredAt:placementEligibilityEvents.occurredAt,scopeType:placementEligibilityEvents.scopeType})
- .from(placementEligibilityEvents).where(and(eq(placementEligibilityEvents.collegeId,collegeId),
-  eq(placementEligibilityEvents.scopeType,"COHORT"),eq(placementEligibilityEvents.scopeId,batch.id)))
+  occurredAt:placementEligibilityEvents.occurredAt,scopeType:placementEligibilityEvents.scopeType,
+  scopeId:placementEligibilityEvents.scopeId, beforeReason:placementEligibilityEvents.beforeReason,
+  afterReason:placementEligibilityEvents.afterReason, actorName:users.displayName})
+ .from(placementEligibilityEvents)
+ .leftJoin(users,eq(users.id,placementEligibilityEvents.actorUserId))
+ .where(and(eq(placementEligibilityEvents.collegeId,collegeId),or(
+  and(eq(placementEligibilityEvents.scopeType,"COHORT"),eq(placementEligibilityEvents.scopeId,batch.id)),
+  and(eq(placementEligibilityEvents.scopeType,"SECTION"),sql`exists(select 1 from sections sc where sc.id=${placementEligibilityEvents.scopeId} and sc.cohort_id=${batch.id})`),
+  and(eq(placementEligibilityEvents.scopeType,"MEMBERSHIP"),sql`exists(select 1 from learner_program_enrollments e where e.membership_id=${placementEligibilityEvents.scopeId} and e.cohort_id=${batch.id})`),
+  )))
  .orderBy(desc(placementEligibilityEvents.sequence)).limit(100):[];
  return {batch,ready,events};
 }
