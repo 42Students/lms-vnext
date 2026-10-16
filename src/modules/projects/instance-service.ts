@@ -43,7 +43,6 @@ import {
   createProjectInstanceInputSchema,
   projectInstanceIdSchema,
   publishableProjectTemplateBlueprintSchema,
-  type CreateProjectInstanceInput,
 } from "./validation";
 
 function mapInstanceConstraint(error: unknown) {
@@ -146,7 +145,7 @@ async function loadProject(
 
 export async function createProjectInstance(
   context: RequestContext,
-  rawInput: CreateProjectInstanceInput,
+  rawInput: unknown,
 ) {
   const input =
     createProjectInstanceInputSchema.parse(rawInput);
