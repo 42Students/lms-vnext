@@ -118,7 +118,7 @@ test("DB02 draft has no duplicate created tables, functions, triggers, or compat
   uniqueNames(/\bCREATE (?:OR REPLACE )?FUNCTION\s+([a-z_][a-z0-9_]*)\s*\(/gi, "functions");
   uniqueNames(/\bCREATE TRIGGER\s+([a-z_][a-z0-9_]*)/gi, "triggers");
 
-  assert.equal([...sql.matchAll(/ADD COLUMN description text/g)].length, 1);
+  assert.equal([...sql.matchAll(/ADD COLUMN (?:IF NOT EXISTS )?description text/g)].length, 1);
   assert.equal([...sql.matchAll(/ADD COLUMN minimum_capacity integer/g)].length, 1);
   assert.equal([...sql.matchAll(/cohorts_lifecycle_date_order_ck/g)].length, 1);
   assert.doesNotMatch(sql, /ADD COLUMN lifecycle_start_date/);
