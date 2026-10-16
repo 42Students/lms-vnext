@@ -488,8 +488,62 @@ export function RecruiterLeadsWorkspace({
                    .sort().map(name=><option key={name} value={name}>{name.replaceAll("_"," ")}</option>)}
                 </select>
               </label>
+              <label className="text-sm">Company
+                <select className={inputStyle+" mt-1"} value={companyFilter}
+                  onChange={e=>updateFilter("company",e.target.value)}>
+                  <option value="ALL">All companies</option>
+                  {[...new Set(rows.map(row=>row.companyName).filter((name):name is string=>Boolean(name)))]
+                    .sort().map(name=><option key={name} value={name}>{name}</option>)}
+                </select>
+              </label>
+              <label className="text-sm">Designation
+                <input className={inputStyle+" mt-1"} value={designationFilter}
+                  placeholder="Search designation" maxLength={100}
+                  onChange={e=>updateFilter("designation",e.target.value)}/>
+              </label>
+              <label className="text-sm">Can be reached by
+                <select className={inputStyle+" mt-1"} value={reachFilter}
+                  onChange={e=>updateFilter("reach",e.target.value)}>
+                  <option value="ALL">Any contact method</option>
+                  <option value="EMAIL">Has an email</option>
+                  <option value="PHONE">Has a phone</option>
+                  <option value="NEITHER">Neither</option>
+                </select>
+              </label>
+              <label className="text-sm">Next follow-up
+                <select className={inputStyle+" mt-1"} value={nextFilter}
+                  onChange={e=>updateFilter("nextFollowup",e.target.value)}>
+                  <option value="ALL">Any date</option>
+                  <option value="OVERDUE">Overdue</option>
+                  <option value="TODAY">Today</option>
+                  <option value="NEXT_7">In the next 7 days</option>
+                  <option value="LATER">Later</option>
+                  <option value="NONE">None set</option>
+                </select>
+              </label>
+              <label className="text-sm">Last activity
+                <select className={inputStyle+" mt-1"} value={activityFilter}
+                  onChange={e=>updateFilter("lastActivity",e.target.value)}>
+                  <option value="ALL">Any activity</option>
+                  <option value="LAST_7">Last 7 days</option>
+                  <option value="LAST_30">Last 30 days</option>
+                  <option value="OVER_30">Over 30 days ago</option>
+                  <option value="NEVER">Never</option>
+                </select>
+              </label>
+              <label className="text-sm">Added
+                <select className={inputStyle+" mt-1"} value={addedFilter}
+                  onChange={e=>updateFilter("added",e.target.value)}>
+                  <option value="ALL">Any date</option>
+                  <option value="LAST_7">Last 7 days</option>
+                  <option value="LAST_30">Last 30 days</option>
+                  <option value="EARLIER">Earlier</option>
+                </select>
+              </label>
               <button type="button" className={buttonStyle} onClick={()=>{
-                for(const key of ["owner","invite","status","source","query"] as const)updateFilter(key,"ALL");
+                for(const key of ["owner","invite","status","source","query","company","designation",
+                  "reach","nextFollowup","lastActivity","added"] as const)updateFilter(key,"ALL");
+                setStage("ALL");setAttention("ALL");setNeed("ALL");
               }}>Clear filters</button>
             </div>:null}
           </div>
