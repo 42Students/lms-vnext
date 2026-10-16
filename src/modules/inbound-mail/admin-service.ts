@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,ilike,or,sql,type SQL} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {inboundMailListQuerySchema} from "./message-model";
 import {z} from "zod";
@@ -44,10 +44,7 @@ export async function listInboundMailForAdmin(
  context:RequestContext,raw:unknown,repository:InboundMailAdminRepository=drizzleInboundMailAdminRepository,
 ):Promise<InboundMailPage>{
  requirePermission(context,"admin-scope.select");
- // Inbound webhook mail has no authoritative tenant mapping until the owner
- // registers the mapping policy. Never expose global mail in a tenant scope.
- if(context.adminScope?.organizationId||context.adminScope?.collegeId)
-  throw new AuthorizationError("admin-scope.select");
+ if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  const input=inboundMailListQuerySchema.parse(raw);
  if(!await repository.tableExists())
   return {available:false,items:[],page:input.page,hasMore:false};
@@ -61,8 +58,7 @@ export async function changeInboundMailStatusForAdmin(
  context:RequestContext,raw:unknown,
 ){
  requirePermission(context,"admin-scope.select");
- if(context.adminScope?.organizationId||context.adminScope?.collegeId)
-  throw new AuthorizationError("admin-scope.select");
+ if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  const input=z.strictObject({
   id:z.uuid(),
   expectedStatus:z.enum(["NEW","TRIAGED","RESOLVED"]),
