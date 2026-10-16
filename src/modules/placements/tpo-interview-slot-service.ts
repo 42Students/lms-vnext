@@ -138,6 +138,39 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    });
    return {confirmed:1};
   }
+  if(input.action==="ASSIGN_ROOMS_BY_ROLL"){
+   const collator=new Intl.Collator("en",{numeric:true,sensitivity:"base"});
+   if(collator.compare(input.fromRoll,input.toRoll)>0)throw Error("Invalid roll range.");
+   const rows=await tx.select({slot:placementRoundCandidateSlots,roll:learnerProfiles.rollNumber})
+    .from(placementRoundCandidateSlots)
+    .innerJoin(placementApplications,eq(placementApplications.id,placementRoundCandidateSlots.applicationId))
+    .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,placementApplications.membershipId))
+    .where(and(eq(placementRoundCandidateSlots.roundId,info.round.id),
+     eq(placementRoundCandidateSlots.status,"BOOKED")));
+   const eligible=rows.filter(r=>r.roll!==null&&
+    collator.compare(r.roll,input.fromRoll)>=0&&collator.compare(r.roll,input.toRoll)<=0);
+   const all=await tx.select().from(placementRoundCandidateSlots).where(and(
+    eq(placementRoundCandidateSlots.roundId,info.round.id),
+    ne(placementRoundCandidateSlots.status,"CANCELLED")));
+   let changed=0;const skipped:Array<{applicationId:string;reason:string}>=[];
+   for(const item of eligible){
+    const slot=item.slot;
+    if(slot.room.toLowerCase()===input.room.toLowerCase())continue;
+    const conflict=all.some(other=>other.id!==slot.id&&other.status!=="CANCELLED"&&
+     other.room.toLowerCase()===input.room.toLowerCase()&&
+     other.startsAt<slot.endsAt&&other.endsAt>slot.startsAt);
+    if(conflict){
+     skipped.push({applicationId:slot.applicationId!,reason:"Room already has an overlapping slot"});continue;
+    }
+    await tx.update(placementRoundCandidateSlots).set({
+     room:input.room,version:slot.version+1,updatedAt:new Date(),
+    }).where(eq(placementRoundCandidateSlots.id,slot.id));
+    await notice(tx,context,job,slot.applicationId!,"PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED",
+     "Your interview room for "+job.title+" is now "+input.room+".");
+    slot.room=input.room;changed++;
+   }
+   return {changed,skipped,eligible:eligible.length};
+  }
   const id=input.slotId;
   const [slot]=await tx.select().from(placementRoundCandidateSlots).where(and(
    eq(placementRoundCandidateSlots.id,id),eq(placementRoundCandidateSlots.roundId,info.round.id)))
