@@ -419,7 +419,7 @@ export function SuperAdminHrAccounts({
   }
 
   async function grantAccess(
-    companyRelationshipId: string,
+    companyRelationshipId: string,validUntil?:string,
   ): Promise<boolean> {
     if (
       !selectedUserId ||
@@ -438,7 +438,7 @@ export function SuperAdminHrAccounts({
           selectedUserId,
         )}/grants`,
         "POST",
-        { companyRelationshipId },
+        { companyRelationshipId,...(validUntil?{validUntil}:{}) },
       );
 
       showToast({
