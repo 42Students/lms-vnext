@@ -80,6 +80,7 @@ function useAcademicMutation() {
 export function ProgramActions({
   program,
   displayDurationYears = false,
+  contents,
 }: {
   program: {
     id: string;
@@ -88,7 +89,10 @@ export function ProgramActions({
     durationTerms: number;
   };
   displayDurationYears?: boolean;
+  contents?: { semesters: number; batches: number; classes: number } | null;
 }) {
+  const programHasLinkedRecords = Boolean(contents &&
+    (contents.semesters > 0 || contents.batches > 0 || contents.classes > 0));
   const [editOpen, setEditOpen] =
     useState(false);
   const [archiveOpen, setArchiveOpen] =
@@ -140,6 +144,10 @@ export function ProgramActions({
         <Button
           size="sm"
           variant="ghost"
+          disabled={programHasLinkedRecords}
+          title={programHasLinkedRecords
+            ? "Remove linked semesters, batches, classes before deleting."
+            : "Archive this program"}
           onClick={() => setArchiveOpen(true)}
         >
           Archive
