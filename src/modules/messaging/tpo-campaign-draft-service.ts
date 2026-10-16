@@ -47,9 +47,11 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
    manualStage:placementTpoLeads.manualStage,
    ownerMembershipId:placementTpoLeads.ownerMembershipId,
   }).from(placementTpoLeads).where(eq(placementTpoLeads.collegeId,college.id));
+  const selectedIds=input.selectedLeadIds?.length?new Set(input.selectedLeadIds):null;
   const subset=contacts.filter(row=>
+    (!selectedIds||selectedIds.has(row.id)) && (
     input.segment==="NEW"?row.manualStage==="NEW":
-    input.segment==="UNASSIGNED"?row.ownerMembershipId===null:true);
+    input.segment==="UNASSIGNED"?row.ownerMembershipId===null:true));
   if(input.body.length>4000){
    const migrated=await tx.execute<{ready:boolean}>(sql`
     select exists(select 1 from pg_constraint
