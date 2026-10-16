@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -48,10 +48,13 @@ export function LearnerFinalDeliveryControl({
   canSubmitDraft: boolean;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
   const draft =
     latest?.status === "DRAFT" ? latest : null;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() =>
+    searchParams.get("tab") === "delivery" && (Boolean(draft) || canCreateDraft)
+  );
   const [summary, setSummary] = useState(
     draft?.summary ?? "",
   );
