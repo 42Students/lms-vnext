@@ -2,14 +2,24 @@
 import Link from "next/link";
 import {useCallback,useEffect,useRef,useState} from "react";
 import {learnerNotificationTarget} from "@/modules/activity/learner-notification-inbox-model";
+type Due={key:string;title:string;body:string;href:string;dueAt:string};
 type Row={notification:{id:string;title:string;body:string;actionHref:string|null;
  readAt:string|null;createdAt:string};event:{module:string}};
 export function LearnerNotificationBell(){
  const [items,setItems]=useState<Row[]>([]);
+ const [due,setDue]=useState<Due[]>([]);
  const [open,setOpen]=useState(false);
  const [error,setError]=useState("");
  const root=useRef<HTMLDivElement|null>(null);
  const [count,setCount]=useState(0);
+ const refreshDue=useCallback(async()=>{
+  try{
+   const response=await fetch("/api/courses/learner/due-notices",{cache:"no-store"});
+   if(!response.ok)return;
+   const payload=await response.json() as {notices?:Due[]};
+   setDue(Array.isArray(payload.notices)?payload.notices:[]);
+  }catch{ /* Existing personal notification inbox remains available. */ }
+ },[]);
  const refresh=useCallback(async()=>{
   try{
    const response=await fetch("/api/notifications?limit=40",{cache:"no-store"});
@@ -36,7 +46,7 @@ export function LearnerNotificationBell(){
  return <div className="relative shrink-0" ref={root}>
   <button type="button" aria-label={count>0?"Notifications, "+count+" new":"Notifications"}
     aria-haspopup="dialog" aria-expanded={open}
-    onClick={()=>{setOpen(value=>!value);if(!open)void refresh();}}
+    onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
     className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface hover:bg-primary-subtle">
     <span aria-hidden="true">🔔</span>
     {count>0?<span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs text-on-primary">
@@ -53,6 +63,19 @@ export function LearnerNotificationBell(){
     <button type="button" className="ml-2 underline" onClick={()=>void refresh()}>Retry</button>
    </div>:null}
    {items.length===0&&!error?<p role="status" className="mt-3 text-sm text-muted-foreground">No notifications yet</p>:null}
+   {due.length>0?<section aria-label="Assignments due soon" className="mt-3">
+    <h3 className="text-sm font-semibold text-foreground">Assignments due within 48 hours</h3>
+    <ul className="mt-2 space-y-2">
+     {due.slice(0,3).map(item=><li key={item.key}>
+      <Link href={item.href} onClick={()=>setOpen(false)}
+       className="block rounded-lg border border-warning p-3 text-sm text-body">
+       {item.body}
+      </Link></li>)}
+    </ul>
+    <p className="mt-1 text-xs text-muted-foreground">
+     Live Course deadlines, not emailed or marked as read.
+    </p>
+   </section>:null}
    <ul className="mt-3 max-h-[55vh] space-y-2 overflow-y-auto">
     {items.slice(0,8).map(row=>{
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
