@@ -2,11 +2,12 @@ import "server-only";
 import {and,desc,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
- placementCompanyRelationships,placementRecruiterCollegeGrants,placementRecruiterDriveRequests,users} from "@/db/schema";
+ placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,placementRecruiterDriveRequests,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {recruiterGrantEffectiveAt} from "./recruiter-grant-expiry-policy";
+import {hrDriveDraftSchema} from "./hr-drive-draft-model";
 import {recruiterDriveRequestInputSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
 import {z} from "zod";
 
@@ -76,10 +77,19 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
    eq(placementRecruiterDriveRequests.submissionId,input.submissionId),
   )).limit(1);
   if(existing){
+   const stored=hrDriveDraftSchema.safeParse(existing.draft);
    if(existing.sourceJobId!==(input.sourceJobId??null)||
-      JSON.stringify(existing.draft)!==JSON.stringify(input.draft))
+      !stored.success||JSON.stringify(stored.data)!==JSON.stringify(input.draft))
     throw new RecruiterDriveRequestError("IDEMPOTENCY_CONFLICT");
    return {request:existing,replayed:true};
+  }
+  if(input.sourceJobId){
+    const [source]=await tx.select({id:placementJobs.id}).from(placementJobs)
+      .where(and(eq(placementJobs.id,input.sourceJobId),
+        eq(placementJobs.collegeId,input.collegeId),
+        eq(placementJobs.companyRelationshipId,scope.relationshipId)))
+      .for("share").limit(1);
+    if(!source)throw new RecruiterDriveRequestError("FORBIDDEN");
   }
   // No auto-approval until the shared TPO-side policy is registered. REQUEST is real/pending.
   const [created]=await tx.insert(placementRecruiterDriveRequests).values({
