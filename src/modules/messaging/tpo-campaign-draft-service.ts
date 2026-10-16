@@ -1,5 +1,6 @@
 import "server-only";
 import {createHmac} from "node:crypto";
+import {z} from "zod";
 import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients}
@@ -87,4 +88,21 @@ export async function listTpoCampaignDrafts(context:RequestContext){
     where d.college_id=${college.id}::uuid
     order by d.created_at desc,d.campaign_id desc limit 100`);
  return {ready:true as const,rows:rows.rows};
+}
+
+/** Read-only detail; no recipient contact data is returned. */
+export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
+ const parsed=z.string().uuid().safeParse(rawId);
+ if(!parsed.success)return null;
+ const college=await scope(context);
+ if(!await tpoCampaignDraftStorageReady())return null;
+ const result=await getDb().execute<{
+   campaign_id:string;title:string;subject:string;body:string;template_key:string;
+   segment:string;status:string;total_recipients:number;created_at:Date;
+ }>(sql`select d.campaign_id,d.title,d.subject,d.body,d.template_key,d.segment,
+   c.status,c.total_recipients,d.created_at from placement_tpo_campaign_drafts d
+   join placement_tpo_email_campaigns c on c.id=d.campaign_id
+    and c.college_id=d.college_id
+   where d.college_id=${college.id}::uuid and d.campaign_id=${parsed.data}::uuid limit 1`);
+ return result.rows[0]??null;
 }
