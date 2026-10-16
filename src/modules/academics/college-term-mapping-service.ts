@@ -1,6 +1,7 @@
 import "server-only";
 
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull } from "drizzle-orm";
+import { z } from "zod";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
@@ -74,6 +75,7 @@ export async function listCollegeTermMappings(context: RequestContext) {
       .where(eq(courses.status, "ACTIVE")).orderBy(asc(courses.name)),
     db.select({
       id: programTermCourses.id, termId: programTerms.id,
+      courseId: programTermCourses.courseId,
       termNumber: programTerms.termNumber, termName: programTerms.name,
       programName: programs.name, courseName: courses.name, courseCode: courses.code,
       type: programTermCourses.type, credits: programTermCourses.credits,
@@ -240,4 +242,51 @@ export async function removeCollegeTermMapping(
       return { id: removed.id };
     });
   } catch(error) { return mapConflict(error); }
+}
+
+/** Atomically add several courses to one semester, preserving display order.
+ * A failed eligibility or duplicate check rolls back all selected courses. */
+export async function addCollegeTermMappings(context: RequestContext, raw: unknown) {
+  const inputs = z.array(collegeTermCourseAddSchema).min(1).max(100).parse(raw);
+  const targetTerm = inputs[0]!.programTermId;
+  if (inputs.some(input => input.programTermId !== targetTerm))
+    throw new CollegeTermMappingError("TERM_BULK_MIXED_SEMESTERS");
+  const courseIds = inputs.map(input => input.courseId);
+  if (new Set(courseIds).size !== courseIds.length)
+    throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
+  const member = await ownCollege(context);
+  try {
+    return await getDb().transaction(async tx => {
+      const term = await lockTerm(tx, targetTerm, member.collegeId);
+      const available = await tx.select({ id: courses.id }).from(courses)
+        .innerJoin(departments, and(eq(departments.id, courses.departmentId),
+          eq(departments.collegeId, member.collegeId), isNull(departments.archivedAt)))
+        .where(and(inArray(courses.id, courseIds), eq(courses.status, "ACTIVE")));
+      if (available.length !== courseIds.length)
+        throw new CollegeTermMappingError("COURSE_NOT_FOUND");
+      const existing = await tx.select({ courseId: programTermCourses.courseId,
+        displayOrder: programTermCourses.displayOrder }).from(programTermCourses)
+        .where(eq(programTermCourses.programTermId, term.id)).for("update");
+      if (existing.some(row => courseIds.includes(row.courseId)))
+        throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
+      let next = nextTermCourseOrder(existing.map(row => row.displayOrder));
+      const inserted = [];
+      for (const input of inputs) {
+        const [row] = await tx.insert(programTermCourses).values({
+          programTermId: term.id, courseId: input.courseId, type: input.type,
+          credits: input.credits, displayOrder: next++,
+        }).returning();
+        if (!row) throw new CollegeTermMappingError("TERM_COURSE_INSERT_FAILED");
+        inserted.push(row);
+      }
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
+        collegeId: member.collegeId, organizationId: member.organizationId,
+        subjectType: "program_term", subjectId: term.id,
+        summary: "Courses mapped to semester",
+        metadata: { courseIds, count: inserted.length },
+      });
+      return inserted;
+    });
+  } catch (error) { return mapConflict(error); }
 }
