@@ -91,3 +91,29 @@ export async function getPublicCollegeLogo(rawId:unknown){
  const image=await getObjectStream(getPrivateR2Config(),key);
  return image&&image.contentType==="image/png"&&image.sizeBytes<=MAX_LOGO_BYTES?image:null;
 }
+
+/** Remove the active cropped logo without changing any other branding field. */
+export async function removeCollegeLogo(ctx:RequestContext,rawId:unknown){
+ const college=await scoped(ctx,rawId);
+ const former=await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  const [current]=await tx.select({logoObjectPath:colleges.logoObjectPath}).from(colleges)
+   .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE"))).for("update").limit(1);
+  if(!current)throw new CollegeLogoError("COLLEGE_NOT_FOUND");
+  if(!current.logoObjectPath)return null;
+  await tx.update(colleges).set({logoObjectPath:null,updatedAt:new Date()})
+   .where(eq(colleges.id,college.id));
+  await recordActivityEventInTransaction(tx,ctx,{
+   eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_BRANDING_UPDATED,
+   collegeId:college.id,organizationId:college.organizationId,
+   subjectType:"college",subjectId:college.id,summary:"College logo removed",
+   metadata:{kind:"logo",action:"REMOVED"},
+  });
+  return current.logoObjectPath;
+ });
+ if(former?.startsWith("branding/"+college.id+"/"))
+  await deleteObject(getPrivateR2Config(),former).catch(()=>{});
+ return {removed:former!==null};
+}
