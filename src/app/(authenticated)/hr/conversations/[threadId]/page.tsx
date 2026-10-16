@@ -10,6 +10,7 @@ import {recruiterProposalMessageMarker} from "@/modules/placements/hr-proposal-m
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {readRecruiterThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
+import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
@@ -29,12 +30,21 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   if(error instanceof TpoMessagingError)notFound();
   throw error;
  }
+ const ownDrives=result.thread.jobId ? await listOwnRecruiterPlacementJobs(context) : [];
+ const matchingDrive=result.thread.jobId
+  ? ownDrives.find(item=>item.job.id===result.thread.jobId&&item.collegeId===result.thread.collegeId)
+  : null;
+ const conversationSubject=result.thread.jobId ? matchingDrive?.job.title??"Drive unavailable" : "General";
  const messages=result.messages.map(message=>({
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
  return <main className="space-y-5">
-  <PageHeader eyebrow="Recruiter · Conversations" title="Placement cell discussion"
-   description="Only messages shared with your currently authorized recruiter account and college are visible."/>
+  <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
+   description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
+  {matchingDrive?<Link href={"/hr/placements/jobs/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
+   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+   Open drive: {matchingDrive.job.title}
+  </Link>:null}
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
    className="inline-flex min-h-11 items-center text-primary-text">Back to conversations</Link>
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
