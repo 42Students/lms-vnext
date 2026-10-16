@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema/colleges";
 import {organizations} from "@/db/schema/organizations";
@@ -18,6 +18,11 @@ export async function listSuperAdminBroadcastColleges(context:RequestContext){
  const conditions=[
   eq(colleges.status,"ACTIVE"),
   eq(organizations.status,"ACTIVE"),
+  // Only active colleges with an active TPO membership receive placement-cell notices.
+  sql`exists(select 1 from college_memberships cm join membership_roles mr
+    on mr.membership_id=cm.id join users u on u.id=cm.user_id
+    where cm.college_id=${colleges.id} and cm.status='ACTIVE'
+      and u.platform_status='ACTIVE' and mr.role='TPO')`,
   ...(context.adminScope?.collegeId?[eq(colleges.id,context.adminScope.collegeId)]:[]),
   ...(context.adminScope?.organizationId?[eq(colleges.organizationId,context.adminScope.organizationId)]:[]),
  ];
@@ -39,6 +44,11 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
  const restrictions=[
   eq(colleges.status,"ACTIVE"),
   eq(organizations.status,"ACTIVE"),
+  // Only active colleges with an active TPO membership receive placement-cell notices.
+  sql`exists(select 1 from college_memberships cm join membership_roles mr
+    on mr.membership_id=cm.id join users u on u.id=cm.user_id
+    where cm.college_id=${colleges.id} and cm.status='ACTIVE'
+      and u.platform_status='ACTIVE' and mr.role='TPO')`,
   ...(context.adminScope?.collegeId?[eq(colleges.id,context.adminScope.collegeId)]:[]),
   ...(context.adminScope?.organizationId?[eq(colleges.organizationId,context.adminScope.organizationId)]:[]),
   ...(input.audienceMode==="SELECTED_COLLEGES"?[inArray(colleges.id,requested)]:[]),
