@@ -24,6 +24,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.sort)?{sort:first(params.sort)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
+  const exportParams=new URLSearchParams({
+    view:data.view,search:data.search,deadline:data.deadline,
+    workMode:data.workMode,employmentType:data.employmentType,
+    sort:data.sort,page:String(data.page),
+    ...(data.season?{seasonId:data.season.id}:{}),
+  });
+  const exportHref=(scope:"ALL"|"PAGE")=>{
+    const q=new URLSearchParams(exportParams);q.set("scope",scope);
+    return "/api/placements/tpo/drives/export?"+q.toString();
+  };
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
@@ -82,6 +92,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </label>
       <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
     </form>
+    <div className="flex flex-wrap gap-3 text-sm">
+      <Link href={exportHref("PAGE")} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+        Export shown page (CSV)
+      </Link>
+      <Link href={exportHref("ALL")} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+        Export all matching drives (CSV)
+      </Link>
+    </div>
     <nav aria-label="Drive status tabs" className="flex flex-wrap gap-2">
       {([["REQUESTS","Requests"],["LIVE","Live"],["DRAFT","Drafts"],["CLOSED","Closed"],["ALL","All jobs"]] as const).map(([view,label])=>
         <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
