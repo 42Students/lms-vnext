@@ -24,3 +24,26 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 2. WP-chat-3-02-people-placements-s2 | TODO | 20 gaps: S2 20
 3. WP-chat-3-03-people-academic-setup-s2 | TODO | 19 gaps: S2 3, S3 16
 4. WP-chat-3-04-verification-misc-people-s3 | TODO | 16 gaps: S3 7, S4 9
+
+
+## Moved in (2026-10-17 reassignments)
+
+Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now exclusively owned by chat-3 per `docs/orchestrator/queues/reassignments.md`.
+
+1. WP-chat-5-02-requests-verification-students-s1 | TODO | 17 gaps (S1 13, S2 4)
+2. WP-chat-5-09-students-requests-verification-s2 | TODO | 20 gaps (S2 20)
+3. WP-chat-5-10-students-placements-s2 | TODO | 23 gaps (S2 12, S3 11)
+4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
+5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
+
+## Fast-mode implementation ledger (source changes, correctness pass deferred)
+
+- COL-attendance-01: pre-existing committed closure.
+- COL-dashboard-01: pre-existing implementation.
+- COL-academic-setup-01: offering create/edit, group capacity and guarded API committed to main.
+- COL-academic-setup-02: eligible student search and manual allocation committed to main.
+- COL-verification-misc-01: profile details, social links, address, contacts and photo URL editor committed to main; actual file upload still requires storage integration.
+- COL-dashboard-03, COL-dashboard-04: Today statistics and last-seven-days attendance-not-taken surface committed to main.
+- COL-academic-setup-03: roster with state/source, move and remove actions committed to main.
+
+Under FAST MODE these entries record source implementation only, not executed acceptance evidence. WP-chat-3-01 remains IN-PROGRESS until all its listed gaps are implemented.
