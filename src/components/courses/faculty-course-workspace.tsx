@@ -535,11 +535,12 @@ export function FacultyCourseWorkspace({
                     ]);
 
                   return (
-                    <section
+                    <details
                       key={lesson.id}
-                      className="rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
+                      open={lessonIndex===0?true:undefined}
+                      className="group rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
                     >
-                      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                      <summary className="mb-4 flex cursor-pointer list-none flex-wrap items-start justify-between gap-3 focus-visible:outline-2 focus-visible:outline-primary">
                         <div>
                           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                             Lesson{" "}
@@ -557,9 +558,9 @@ export function FacultyCourseWorkspace({
                           ) : null}
                         </div>
                         <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                          {itemCount} items
+                          {itemCount} items · Expand lesson
                         </span>
-                      </div>
+                      </summary>
 
                       <FacultyLessonAuthoring
                         lessonId={lesson.id}
@@ -628,7 +629,7 @@ export function FacultyCourseWorkspace({
                           )}
                         </div>
                       )}
-                    </section>
+                    </details>
                   );
                 },
               )}
