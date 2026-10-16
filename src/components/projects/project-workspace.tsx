@@ -1337,6 +1337,28 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
+          {mode==="MENTOR" && workspace.meetings.length ? (() => {
+            const upcoming=workspace.meetings.filter(m=>m.status==="SCHEDULED"&&new Date(m.endsAt)>renderTime)
+              .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
+            return <section aria-label="Upcoming project meetings" className="rounded-xl border border-border bg-surface p-4">
+              <h3 className="text-sm font-semibold">Next meeting</h3>
+              {upcoming[0]?<p className="mt-1 text-sm">{upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}</p>:
+                <p className="mt-1 text-sm text-muted-foreground">No upcoming meeting.</p>}
+              {upcoming.length>1?<details className="mt-2 text-sm">
+                <summary className="cursor-pointer font-semibold text-primary-text">Also scheduled ({upcoming.length-1})</summary>
+                <ul className="mt-2 space-y-1">{upcoming.slice(1).map(m=>
+                  <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}</li>)}</ul>
+              </details>:null}
+              <details className="mt-3 text-sm">
+                <summary className="cursor-pointer font-semibold text-primary-text">Past meetings / Meeting history</summary>
+                <ul className="mt-2 space-y-1">
+                  {workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
+                    (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).map(m=>
+                    <li key={m.id}>{m.title} · {label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime))}</li>)}
+                </ul>
+              </details>
+            </section>;
+          })():null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
