@@ -12,6 +12,8 @@ export type HrGrant = {
   collegeName: string;
   organizationId: string;
   status: string;
+  validUntil: string | null;
+  verificationStatus: string;
 };
 
 export type HrAccount = {
