@@ -1,4 +1,5 @@
 import "server-only";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
@@ -30,6 +31,7 @@ export async function getCollegeApplicationPipeline(context:RequestContext,rawJo
  }))};
 }
 export async function mutateCollegeApplicationStages(context:RequestContext,rawJobId:unknown,raw:unknown){
+ const acting=await resolveActingCollege(context,"placements.manage");
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const input=collegeStageCommandSchema.parse(raw);
  if(input.notifyByEmail)throw Error("Email delivery is not registered for College Admin pipeline moves. Choose in-app notifications.");
@@ -142,8 +144,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      actorUserId:context.user.id,
     });
     const [audit]=await tx.insert(activityEvents).values({
-     organizationId:context.membership!.organizationId,collegeId,
-     actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+     organizationId:acting.organizationId,collegeId,
+     actorUserId:context.user.id,actorMembershipId:context.membership?.collegeId===collegeId?context.membership.id:null,
      module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_APPLICATION_STAGE_MOVED",
      subjectType:"placement_application",subjectId:applicationId,
      summary:"College Admin moved application to "+next,
