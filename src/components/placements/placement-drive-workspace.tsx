@@ -5,6 +5,7 @@ import { listPrograms } from "@/modules/academics/program-service";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { listBulkDriveCandidates } from "@/modules/placements/bulk-drive-service";
 import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
+import { TpoRemindNonApplicants } from "./tpo-remind-non-applicants";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
@@ -592,6 +593,12 @@ export async function PlacementDriveWorkspace({
           }))}
         />
       ) : null}
+      {job.status==="PUBLISHED"?<section aria-label="Registered students who have not applied"
+        className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-2 font-semibold text-foreground">Registered, not applied</h2>
+        <p className="mb-3 text-sm text-body">Remind eligible registered students who have not applied. Once per day, and only before the deadline.</p>
+        <TpoRemindNonApplicants jobId={jobId}/>
+      </section>:null}
       <section id="drive-request-actions">
       <PlacementRequestQueue
         requests={placementRequests.map(
