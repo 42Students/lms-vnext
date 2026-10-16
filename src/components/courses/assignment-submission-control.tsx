@@ -3,6 +3,7 @@
 import {
   type FormEvent,
   useState,
+  useEffect,
   useRef,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -40,6 +41,16 @@ export function AssignmentSubmissionControl({
   const [success, setSuccess] =
     useState(false);
   const flight = useRef(createSubmissionFlightGuard());
+  const unsent=(!success)&&(textContent.trim().length>0||submissionUrl.trim().length>0);
+  useEffect(()=>{
+    if(!unsent&&!submitting)return;
+    const guard=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="";
+    };
+    window.addEventListener("beforeunload",guard);
+    return ()=>window.removeEventListener("beforeunload",guard);
+  },[unsent,submitting]);
 
   async function submit(
     event: FormEvent<HTMLFormElement>,
@@ -240,7 +251,7 @@ export function AssignmentSubmissionControl({
             role="alert"
             className="mt-3 text-sm font-semibold text-error"
           >
-            {error}
+            Assignment was not submitted. {error}
           </p>
         ) : null}
 
@@ -248,7 +259,7 @@ export function AssignmentSubmissionControl({
           <Button type="submit">
             {submitting
               ? "Submitting…"
-              : "Submit"}
+              : error?"Retry":"Submit"}
           </Button>
           <span className="text-xs text-muted-foreground">
             You cannot replace the submission
