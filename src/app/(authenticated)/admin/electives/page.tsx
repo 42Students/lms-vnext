@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
+import { CollegeElectiveOfferingManager } from "@/components/electives/college-elective-offering-manager";
+import { CollegeElectiveLifecycleAction } from "@/components/electives/college-elective-lifecycle-action";
+import { listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot-mutation-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -19,13 +23,17 @@ export default async function SuperAdminElectivesPage({
       action={<Link href="/admin/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
-  const data = await listSuperAdminElectives(context, parsed.data);
+  const [data, options] = await Promise.all([
+    listSuperAdminElectives(context, parsed.data),
+    context.adminScope?.collegeId ? listCollegeElectiveSlotOptions(context) : Promise.resolve(null),
+  ]);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Academics" title="Elective slots"
       description="Read-only elective slot records from the selected college. No learner picks, capacity guarantees or offering availability are inferred." />
     {data.state === "CHOOSE_COLLEGE" ? <EmptyState title="Choose a college"
       description="Use the Super Admin scope selector to choose a college before inspecting its elective slots." /> :
     <>
+      {options ? <CollegeSlotManager options={options} /> : null}
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <input name="q" defaultValue={data.query.q} placeholder="Slot or program"
@@ -76,6 +84,16 @@ export default async function SuperAdminElectivesPage({
             <div><dt className="text-xs text-muted-foreground">Offerings</dt><dd>{item.offerings ?? 0}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Students</dt><dd>{item.students ?? 0}</dd></div>
           </dl>
+          {options ? <div className="mt-3 flex flex-wrap gap-2">
+            <CollegeSlotManager options={options} row={{
+              id:item.id, name:item.name, description:item.description ?? null,
+              version:item.version, credits:item.credits, minPick:item.minPick,
+              maxPick:item.maxPick, status:item.status,
+            }} />
+            {item.status === "ACTIVE" ? <CollegeElectiveOfferingManager slotId={item.id} /> : null}
+            <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
+              status={item.status} version={item.version} />
+          </div> : null}
         </article>)}
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
       {data.truncated ? <p className="text-sm text-muted-foreground">Showing only 200 matching elective slots. Narrow the search for older entries.</p> : null}
