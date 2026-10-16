@@ -41,6 +41,10 @@ export default async function TpoOffersAcceptanceReportPage({
   });
 
   const { totals, byDrive, byCompany } = workspace.details.offers;
+  const acceptanceRate=(accepted:number,declined:number)=>{
+   const answered=accepted+declined;
+   return answered>0?Math.round(accepted/answered*100)+"%":"—";
+  };
 
   return (
     <div className="space-y-6">
@@ -129,6 +133,8 @@ export default async function TpoOffersAcceptanceReportPage({
           "Withdrawn",
           "Outstanding",
           "Expired outstanding",
+          "Waiting for the student",
+          "Acceptance rate",
         ]}
         rows={byCompany.map((row) => [
           row.label,
@@ -138,9 +144,12 @@ export default async function TpoOffersAcceptanceReportPage({
           row.withdrawn,
           row.outstanding,
           row.expiredOutstanding,
+          row.outstanding,
+          acceptanceRate(row.accepted,row.declined),
         ])}
         emptyDescription="No companies have recorded offers for these filters."
       />
+      <p className="text-xs text-muted-foreground">Acceptance rate = accepted / (accepted + declined) among answered offers. Waiting for the student is the currently outstanding status; expired outstanding is presented separately and is not counted twice.</p>
       <TpoReportRecordLinks kind="OFFERS" drives={byDrive} companies={byCompany} />
     </div>
   );
