@@ -1,22 +1,31 @@
 import Link from "next/link";
 import {TpoBatchLifecycleControl} from "@/components/tpo/tpo-batch-lifecycle-control";
+import {TpoBatchInvitationControl} from "@/components/tpo/tpo-batch-invitation-control";
 import {TpoBatchUndoControl} from "@/components/tpo/tpo-batch-undo-control";
 import {actionableBatchHistory} from "@/modules/placements/tpo-batch-history-undo-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getTpoBatch, listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { getTpoBatchEligibilitySummary } from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
+import {getTpoBatchInvitationPreview} from "@/modules/placements/tpo-batch-invitation-service";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params}:{params:Promise<{batchId:string}>}){
  const {batchId}=await params;const context=await getCurrentRequestContext();
- const [{batch,lifecycle,ready},eligibility,history,registrations]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId)]);
+ const [{batch,lifecycle,ready},eligibility,history,registrations,invitePreview]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId),getTpoBatchInvitationPreview(context,batchId)]);
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
  const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department}/>
  <Link href="/tpo/batches" className="text-sm text-primary-text underline">All batches</Link>
  <p className="text-sm">Status: {!ready?"Lifecycle unavailable":lifecycle?.finishedAt?"Finished":lifecycle?.invitedAt?"Invited":"Preparing"}</p>
+ {ready && registrations.available ? <TpoBatchInvitationControl
+  batchId={batchId} invitedAt={lifecycle?.invitedAt?.toISOString() ?? null}
+  finishedAt={lifecycle?.finishedAt?.toISOString() ?? null}
+  deadline={lifecycle?.registrationDeadline?.toISOString() ?? null}
+  expectedVersion={lifecycle?.updatedAt.toISOString() ?? "none"}
+  invitable={invitePreview.invitable}
+  deadlinePassed={registrations.invitation.stage === "DEADLINE_PASSED"} /> : null}
  {ready?<TpoBatchLifecycleControl batchId={batchId} state={lifecycle?{
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
   expectedVersion:lifecycle.updatedAt.toISOString(),
