@@ -102,7 +102,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
         "ALTER TABLE placement_tpo_lead_activities DISABLE TRIGGER db09_lead_activity_no_truncate",
       );
       await client.query(
-        "TRUNCATE placement_tpo_lead_activities, placement_tpo_followups, placement_tpo_leads",
+        "TRUNCATE recruiter_invite_code, placement_tpo_email_campaign_recipients, placement_tpo_lead_activities, placement_tpo_followups, placement_tpo_leads",
       );
       await client.query(
         "ALTER TABLE placement_tpo_lead_activities ENABLE TRIGGER db09_lead_activity_no_truncate",

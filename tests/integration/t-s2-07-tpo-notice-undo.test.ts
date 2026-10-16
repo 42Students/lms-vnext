@@ -1,5 +1,5 @@
 import {randomUUID} from "node:crypto";
-import {afterAll,describe,expect,it} from "vitest";
+import {afterAll,beforeAll,describe,expect,it} from "vitest";
 import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import {createTpoNotice} from "@/modules/announcements/tpo-placement-write-service";
@@ -15,6 +15,10 @@ const tpo:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"seed-facult
  membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
 describe.skipIf(!enabled)("T-S2-07 30-second undo real DB10 notice",()=>{
+ // The seeded faculty membership has no persisted TPO role; the service re-checks it in the transaction.
+ beforeAll(async()=>{
+  await pool?.query("INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",[SEED_IDS.facultyCollegeAMembership]);
+ });
  it("retracts an own authored notice once under optimistic version",async()=>{
   if(!pool)throw new Error("Disposable PostgreSQL required");
   const notice=await createTpoNotice(tpo,{title:"Undo send "+randomUUID(),message:"Short notice"});
