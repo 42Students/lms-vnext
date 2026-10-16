@@ -65,6 +65,16 @@ export function HrDriveDraftForm({
     "TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW",
   ] as const;
 
+  useEffect(()=>{
+    if(fixRequestId||sourceJobId)return;
+    try{
+      const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now());
+      if(!saved)return;
+      // Adopt only a matching college/user browser draft. Never overwrite an edit/resubmit.
+      queueMicrotask(()=>{setDraft(saved);setNotice("We restored your unsent draft");});
+    }catch{/* Browser storage unavailable */ }
+  },[storageKey,fixRequestId,sourceJobId]);
+
   // REC-home-drives-29: scope the draft to this signed-in user and college.
   useEffect(()=>{
     if(fixRequestId)return;
