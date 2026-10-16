@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {TpoRoundResultEntryForm} from "@/components/placements/tpo-round-result-entry-form";
 import {TpoRoundApplyControl} from "@/components/placements/tpo-round-apply-control";
+import {TpoRoundResultsImport} from "@/components/placements/tpo-round-results-import";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoRoundResultTable} from "@/modules/placements/tpo-round-result-table-service";
@@ -30,6 +31,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
+  <TpoRoundResultsImport jobId={jobId} roundId={roundId}/>
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
   <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<p role="status" className="text-sm text-body">Source capped at 500 application records; counts may be incomplete.</p>:null}
