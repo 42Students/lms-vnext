@@ -757,6 +757,13 @@
       "when": 1792179905428,
       "tag": "0107_project_instance_summary",
       "breakpoints": true
+    },
+    {
+      "idx": 108,
+      "version": "7",
+      "when": 1792184000386,
+      "tag": "0108_tpo_application_stages",
+      "breakpoints": true
     }
   ]
 }
