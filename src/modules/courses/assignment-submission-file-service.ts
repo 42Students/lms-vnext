@@ -6,6 +6,7 @@ import { getDb } from "@/db/client";
 import {
   assignmentSubmissionFiles,
   assignmentSubmissions,
+  inAppNotifications,
   courseAssignments,
   collegeMemberships,
   membershipRoles,
@@ -30,6 +31,7 @@ import {
   validateStorageDeclaration,
 } from "@/modules/storage/file-policy";
 import { loadCourseAssignmentScope, loadAssignmentSubmissionScope } from "./assignment-scope";
+import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
 import { postgresConstraintName } from "./errors";
 import {
   requireDeliveryContentMutation,
@@ -400,7 +402,7 @@ export async function submitAssignmentWithFiles(
   try {
     return await getDb().transaction(async (tx) => {
       const [current] = await tx
-        .select({ status: courseAssignments.status, deliveryId: courseAssignments.deliveryId })
+        .select({ status: courseAssignments.status, deliveryId: courseAssignments.deliveryId, dueAt: courseAssignments.dueAt })
         .from(courseAssignments)
         .where(eq(courseAssignments.id, assignmentId))
         .for("share")
@@ -411,6 +413,7 @@ export async function submitAssignmentWithFiles(
       if (current.deliveryId && current.deliveryId !== input.deliveryId) {
         throw new StorageFileError("STORAGE_NOT_FOUND");
       }
+      assertAssignmentSubmissionDeadline(current.dueAt,new Date());
 
       const [persistedMembership] = await tx
         .select({
@@ -488,7 +491,7 @@ export async function submitAssignmentWithFiles(
         });
       }
 
-      await recordActivityEventInTransaction(tx, context, {
+      const submissionEvent=await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_SUBMITTED,
         collegeId: assignment.collegeId,
         organizationId: assignment.organizationId,
@@ -503,6 +506,13 @@ export async function submitAssignmentWithFiles(
         },
         dedupeKey: `assignment-submission:${submission!.id}:submitted`,
       });
+      await tx.insert(inAppNotifications).values({
+        userId:context.user.id,eventId:submissionEvent.id,
+        title:"Assignment submitted",
+        body:"Your assignment submission was recorded. You can review it while waiting for a grade.",
+        actionHref:"/learn/allAssignments/"+encodeURIComponent(assignmentId)+
+          "?deliveryId="+encodeURIComponent(input.deliveryId),
+      }).onConflictDoNothing();
 
       return {
         submission: {
