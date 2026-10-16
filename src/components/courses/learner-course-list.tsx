@@ -59,6 +59,8 @@ export type LearnerCourseListRow = {
   nextDue: {title:string;kind:"Assignment"|"Quiz";dueAt:string} | null;
   readOnly: boolean;
   learningPathReady: boolean;
+  unavailable?: boolean;
+  unavailableLabel?: string;
   nextItem: {
     lessonId: string;
     lessonName: string;
@@ -300,6 +302,12 @@ export function LearnerCourseList({
         </div>
       </section>
 
+      {rows.some(row => row.unavailable) ? (
+        <p role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
+          Some course records have incomplete or duplicate information. Unavailable cards cannot be opened.
+          <button type="button" onClick={() => window.location.reload()} className="ml-2 font-semibold text-primary-text underline">Retry</button>
+        </p>
+      ) : null}
       <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length)}</p>
       {visibleRows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
@@ -325,6 +333,15 @@ export function LearnerCourseList({
                 !previousElective &&
                 coreCount > 0;
 
+              if (row.unavailable) return (
+                <article key={row.course.deliveryId} aria-disabled="true"
+                  className="min-h-72 rounded-xl border border-warning bg-surface p-5">
+                  <StatusBadge tone="warning">Unavailable</StatusBadge>
+                  <h2 className="mt-3 text-lg font-semibold text-foreground">{row.unavailableLabel}</h2>
+                  <p className="mt-2 text-sm text-body">{row.course.courseName || "Course name unavailable"}</p>
+                  <p className="mt-3 text-sm text-muted-foreground">This course cannot be opened right now. Other courses remain available.</p>
+                </article>
+              );
               return (
                 <Fragment key={row.course.deliveryId}>
                   {startsElectiveGroup ? (
