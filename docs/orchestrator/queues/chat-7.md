@@ -26,6 +26,11 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-7-04-home-drives-s3 | IN-PROGRESS | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
+## FAST-MODE checkpoint — learner verification (2026-10-17)
+
+- LEARNER-profile-misc-14 / -17 (WP-03): Profile now surfaces server-authorized Verified profile / Not verified yet at the top, individual reviewer/date notices, changed-after-verification warning and 15-second status refresh; connected the existing missing-items and verification-status services. Evidence upload gates are still unresolved.
+- Source-only FAST-MODE changes are not browser-verified; keep WP-03 IN-PROGRESS.
+
 ## FAST-MODE checkpoint — continuation B (2026-10-17)
 
 - REC-calendar-messages-profile-09 / -10 (WP-03): Messages inbox now uses legacy title and per-page unread summary, team-plus-drive conversation subject, new badge and relative time. Full-text message search is still missing.
