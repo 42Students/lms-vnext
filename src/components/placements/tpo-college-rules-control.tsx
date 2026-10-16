@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {TPO_RULE_LIMITS,tpoRuleBoundsValid} from "@/modules/placements/tpo-rule-limits";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -27,10 +28,8 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       upliftPct: Number(form.upliftPct),
       minResponseHours: Number(form.minResponseHours),
     };
-    if (!Number.isInteger(values.maxHeldOffers) || values.maxHeldOffers < 1 ||
-      !Number.isInteger(values.upliftPct) || values.upliftPct < 0 ||
-      !Number.isInteger(values.minResponseHours) || values.minResponseHours < 1) {
-      setError("Enter valid positive whole-number settings.");
+    if(!tpoRuleBoundsValid(values)){
+      setError("Held offers: 1–5; uplift: 0–200%; response hours: 12–168.");
       return;
     }
     if (!window.confirm(
@@ -70,7 +69,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         {(["maxHeldOffers", "upliftPct", "minResponseHours"] as const).map((key) => (
           <label key={key} className="grid gap-1 text-sm font-semibold text-body">
             {key === "maxHeldOffers" ? "Maximum held offers" : key === "upliftPct" ? "Offer uplift %" : "Minimum response hours"}
-            <input type="number" min={key === "upliftPct" ? 0 : 1}
+            <input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
               value={form[key]} disabled={busy}
               onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
               className="min-h-10 rounded-md border border-border bg-surface px-3" />
