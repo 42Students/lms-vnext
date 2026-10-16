@@ -238,7 +238,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         ):(
           <>
             <label className="block text-sm font-semibold text-foreground">
-              Enter the 6-digit code
+              Code sent to {invite.contactEmail}
               <input type="text" inputMode="numeric" autoComplete="one-time-code"
                 pattern="[0-9]{6}" maxLength={6} value={code} onChange={event=>setCode(event.target.value)}
                 className="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3"/>
@@ -249,7 +249,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
           </>
         )}
         <p className="text-xs text-muted-foreground">
-          We'll send a code to the work email on your invitation. The code proves the email is yours.
+          This proves the email is yours.
         </p>
       </div>
 
