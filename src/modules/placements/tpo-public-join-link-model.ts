@@ -16,7 +16,7 @@ export const tpoPublicJoinLinkChangeSchema = z.discriminatedUnion("scope", [
 export type TpoPublicJoinLinkStatus = {
   ready: boolean;
   domain: string | null;
-  link: { createdAt: string } | null;
+  link: { createdAt: string;opensCount:number;joinsCount:number } | null;
 };
 
 export function publicJoinLinkPath(scope: "COLLEGE" | "COMPANY", token: string) {

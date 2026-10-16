@@ -88,8 +88,7 @@ export function TpoPublicJoinLinkCard({
         <>
           {status.link ? (
             <p className="mt-3 text-sm text-body">
-              Made {new Date(status.link.createdAt).toLocaleDateString("en-IN")}.
-              Opened and joined counts are pending database registration.
+              Made {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(status.link.createdAt))}. Opened {status.link.opensCount} times, {status.link.joinsCount} joined.
             </p>
           ) : null}
           <button

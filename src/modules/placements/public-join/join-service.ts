@@ -198,6 +198,9 @@ export async function acceptPublicRecruiterJoin(
         })),
       ).onConflictDoNothing();
     }
+    if(outcome==="JOINED")await tx.update(placementPublicJoinLinks)
+      .set({joinsCount:sql`${placementPublicJoinLinks.joinsCount} + 1`})
+      .where(eq(placementPublicJoinLinks.id,link.id));
     await tx.update(placementPublicJoinChallenges)
       .set({ verifiedAt: now })
       .where(and(eq(placementPublicJoinChallenges.id, challenge.id),

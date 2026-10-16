@@ -81,11 +81,12 @@ export async function getTpoPublicJoinLinkStatus(
   if (!await publicJoinTablesReady()) return { ready: false, domain, link: null };
   const [row] = await getDb().select({
     createdAt: placementPublicJoinLinks.createdAt,
+    opensCount: placementPublicJoinLinks.opensCount,joinsCount: placementPublicJoinLinks.joinsCount,
   }).from(placementPublicJoinLinks)
     .where(and(linkFilter(college.id, scope, companyId),
       gt(placementPublicJoinLinks.expiresAt, new Date())))
     .orderBy(desc(placementPublicJoinLinks.createdAt)).limit(1);
-  return { ready: true, domain, link: row ? { createdAt: row.createdAt.toISOString() } : null };
+  return { ready: true, domain, link: row ? { createdAt: row.createdAt.toISOString(),opensCount:row.opensCount,joinsCount:row.joinsCount } : null };
 }
 
 /** The one-time URL is returned only from this authenticated, same-origin POST. */
@@ -145,7 +146,7 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
       // The registered table requires an expiry; the legacy link has none.
       // A schema follow-up is proposed before claiming exact lifecycle parity.
       expiresAt: new Date("9999-12-31T00:00:00.000Z"),
-    }).returning({ id: placementPublicJoinLinks.id, createdAt: placementPublicJoinLinks.createdAt });
+    }).returning({ id: placementPublicJoinLinks.id, createdAt: placementPublicJoinLinks.createdAt,opensCount:placementPublicJoinLinks.opensCount,joinsCount:placementPublicJoinLinks.joinsCount });
     if (!link) throw new TpoPublicJoinLinkError("STALE");
     await tx.insert(activityEvents).values({
       organizationId: college.organizationId, collegeId: college.id,
@@ -158,7 +159,7 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
     });
     return {
       path: publicJoinLinkPath(input.scope, token),
-      status: { ready: true, domain, link: { createdAt: link.createdAt.toISOString() } },
+      status: { ready: true, domain, link: { createdAt: link.createdAt.toISOString(),opensCount:link.opensCount,joinsCount:link.joinsCount } },
     };
   });
 }
