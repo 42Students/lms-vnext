@@ -5,6 +5,11 @@ import {z} from "zod";
 export const hrRecruiterNameFieldsSchema=z.strictObject({
  firstName:z.string().trim().min(1,"First name is required").max(100),
  lastName:z.string().trim().max(100),
+}).superRefine((input,ctx)=>{
+ const combined=[input.firstName,input.lastName].filter(Boolean).join(" ");
+ if(combined.length<2||combined.length>160)ctx.addIssue({
+  code:"custom",path:["firstName"],message:"Full name must be between 2 and 160 characters",
+ });
 });
 export function splitHrRecruiterName(displayName:string|null){
  const tokens=(displayName??"").trim().split(/\s+/).filter(Boolean);
