@@ -175,6 +175,13 @@ export function FacultyAssessmentOverview({
                   <p className="mt-1 text-xs text-muted-foreground">
                     {item.academicPeriodName} · Due {formatDate(item.dueAt)}
                   </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Course: {item.courseName} · Lesson: {item.lessonName}
+                    {" · "}{item.dueAt?"Due date set":"Needs due date"}
+                  </p>
+                  {item.status==="DRAFT"?<p className="mt-1 text-xs font-semibold text-warning">
+                    Draft · hidden from students
+                  </p>:null}
                   {item.description ? (
                     <p className="mt-2 line-clamp-2 text-sm text-body">{item.description}</p>
                   ) : null}
