@@ -685,6 +685,15 @@ export function ProjectWorkspace({
                   <h3 className="mt-1 text-base font-semibold text-foreground">
                     {release.title}
                   </h3>
+                  {mode==="MENTOR"?<p className="mt-2 text-xs font-semibold text-body">
+                    {(sprintsByRelease.get(release.id)??[]).filter(s=>s.status==="COMPLETED").length}
+                    {" "}of {(sprintsByRelease.get(release.id)??[]).length} sprints complete ·
+                    {" "}{workspace.tasks.filter(t=>t.sprintId!==null&&
+                      (sprintsByRelease.get(release.id)??[]).some(s=>s.id===t.sprintId))
+                      .reduce((sum,t)=>sum+(t.estimatePoints??0),0)} points ·
+                    {" "}{(sprintsByRelease.get(release.id)??[]).every(s=>s.status==="COMPLETED")?
+                      "Ready to ship":"Work remaining"}
+                  </p>:null}
                   {release.description ? (
                     <p className="mt-1 text-sm leading-6 text-body">
                       {release.description}
