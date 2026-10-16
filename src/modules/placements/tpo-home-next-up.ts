@@ -68,7 +68,11 @@ export function operationalHomeNeeds(queues:readonly {
   EVALUATION_PLAN_MISSING:q=>`Add an evaluation plan for ${q.companyName} · ${q.jobTitle}`,
  };
  return queues.filter(q=>q.count>0&&!!kind[q.code]&&!!titles[q.code]).map(q=>({
-  type:kind[q.code],priority:q.priority==="HIGH"?10:q.priority==="MEDIUM"?20:30,
+  type:kind[q.code],priority:kind[q.code]==="RESULTS_READY"?1:
+    kind[q.code]==="SCREENING_PENDING"?1:
+    kind[q.code]==="JOINING_OUTCOME_PENDING"?1:
+    kind[q.code]==="OFFERS_AWAITING_RESPONSE"?1:
+    q.priority==="HIGH"?1:q.priority==="MEDIUM"?2:3,
   title:titles[q.code](q),count:q.count,
   link:"/tpo/placements/jobs/"+encodeURIComponent(q.jobId),
  }));
