@@ -162,6 +162,8 @@ export const createCourseQuizInputSchema =
       .max(20)
       .optional()
       .default(1),
+    shuffleQuestions: z.boolean().optional().default(false),
+    shuffleOptions: z.boolean().optional().default(false),
     sequence: z
       .number()
       .int()
@@ -195,6 +197,8 @@ export const updateCourseQuizInputSchema =
         .min(0)
         .max(10000)
         .optional(),
+      shuffleQuestions:z.boolean().optional(),
+      shuffleOptions:z.boolean().optional(),
       questions: questionsSchema.optional(),
     })
     .refine(
