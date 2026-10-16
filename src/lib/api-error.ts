@@ -338,7 +338,10 @@ export function apiErrorResponse(error: unknown) {
       error.code === "MEMBERSHIP_NOT_FOUND" ||
       error.code === "DEPARTMENT_NOT_FOUND"
         ? 404
-        : 409;
+        : error.code === "ALTERNATE_PHONE_INVALID" ||
+          error.code === "ALTERNATE_PHONE_SAME_AS_PRIMARY"
+          ? 400
+          : 409;
 
     return NextResponse.json(
       { error: error.code },
