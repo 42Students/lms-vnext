@@ -4,7 +4,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {
  colleges,collegeMemberships,organizations,placementApplications,placementApplicationScreenings,
- placementJobs,users,
+ placementCompanies,placementCompanyRelationships,placementJobs,users,
 } from "@/db/schema";
 import {projectRecruiterVisibleShortlist} from "../tpo-shareable-shortlist-model";
 import {companyShareTablesReady} from "./readiness";
@@ -15,7 +15,8 @@ import {publicApplicantSearchSchema,escapeLiteralApplicantSearch,clampCompanySha
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 export type PublicCompanyApplicantShare =
  | {kind:"UNAVAILABLE"}
- | {kind:"READY";title:string;rows:ReturnType<typeof projectRecruiterVisibleShortlist>;
+ | {kind:"READY";title:string;companyName:string;collegeName:string;
+    sharedAt:string;expiresAt:string;rows:ReturnType<typeof projectRecruiterVisibleShortlist>;
     total:number;page:number;totalPages:number;truncated:boolean;search:string};
 
 /**
@@ -35,10 +36,15 @@ export async function getPublicCompanyApplicantShare(
  return getDb().transaction(async tx=>{
   const [grant]=await tx.select({
    shareId:shares.id,collegeId:shares.collegeId,jobId:shares.jobId,
-   title:placementJobs.title,
+   title:placementJobs.title,companyName:placementCompanies.name,collegeName:colleges.name,
+   sharedAt:shares.createdAt,expiresAt:shares.expiresAt,
   }).from(shares)
    .innerJoin(placementJobs,and(eq(placementJobs.id,shares.jobId),
      eq(placementJobs.collegeId,shares.collegeId)))
+   .innerJoin(placementCompanyRelationships,and(
+     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+     eq(placementCompanyRelationships.collegeId,shares.collegeId)))
+   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .innerJoin(colleges,and(eq(colleges.id,shares.collegeId),eq(colleges.status,"ACTIVE")))
    .innerJoin(organizations,and(
      eq(organizations.id,colleges.organizationId),
@@ -81,7 +87,9 @@ export async function getPublicCompanyApplicantShare(
    shareId:grant.shareId,collegeId:grant.collegeId,eventKind,
   });
   return {
-   kind:"READY" as const,title:grant.title,
+   kind:"READY" as const,title:grant.title,companyName:grant.companyName,
+   collegeName:grant.collegeName,sharedAt:grant.sharedAt.toISOString(),
+   expiresAt:grant.expiresAt.toISOString(),
    rows:projectRecruiterVisibleShortlist(records),
    total,page:isCsv?1:pagination.page,totalPages:pagination.totalPages,
    truncated:isCsv&&total>500,search:search.data,
