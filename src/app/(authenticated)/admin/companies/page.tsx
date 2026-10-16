@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -114,6 +115,8 @@ export default async function SuperAdminCompaniesPage({
           <p className="break-all text-sm font-semibold">{group.domain}</p>
           <ul className="mt-2 space-y-1 text-sm text-body">{group.companies.map(company=>
            <li key={company.id} className="break-words">{company.name}</li>)}</ul>
+          {context.adminScope?.collegeId ? <SuperAdminCompanyMerge companies={group.companies} /> :
+            <p className="text-xs text-muted-foreground">Select one exact college scope to review a merge.</p>}
         </li>)}</ul>}
       {data.truncated?<p className="text-xs text-muted-foreground">Only this 50-row page was checked. Move through pages before concluding there are no duplicate identities.</p>:null}
     </section>
