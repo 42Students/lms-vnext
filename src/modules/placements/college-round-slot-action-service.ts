@@ -1,4 +1,5 @@
 import "server-only";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {and,asc,eq,inArray,ne,lt,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
@@ -66,6 +67,7 @@ export async function getCollegeRoundSlotAppointments(ctx:RequestContext,raw:unk
 
 export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobId:unknown,raw:unknown){
  const {collegeId,job}=await scope(ctx,rawJobId);
+ const acting=await resolveActingCollege(ctx,"placements.manage");
  const cmd=collegeInterviewActionSchema.parse(raw);
  if(job.status!=="PUBLISHED")throw Error("Only an open drive may schedule interviews.");
  return getDb().transaction(async tx=>{
@@ -166,8 +168,8 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
      eq(placementApplications.jobId,job.id),eq(collegeMemberships.collegeId,collegeId))).limit(1);
   if(!learner)throw Error("Candidate is no longer in this college.");
   const [audit]=await tx.insert(activityEvents).values({
-   organizationId:ctx.membership!.organizationId,collegeId,
-   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+   organizationId:acting.organizationId,collegeId,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.collegeId===collegeId?ctx.membership.id:null,
    module:"PLACEMENTS",eventType,
    subjectType:"placement_round_candidate_slot",subjectId:booked.id,
    summary:message,metadata:{jobId:job.id,applicationId:learnerApplicationId,
