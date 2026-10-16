@@ -15,11 +15,12 @@ export function learnerBoardStatusCounts(tasks:readonly {status:string}[]):Learn
  return counts;
 }
 export function learnerBoardStatusFilterHref(projectId:string, filters:{
- taskSearch:string;priority:string;status:string;sprintId:string;releaseId:string;taskSort?:string;
+ taskSearch:string;priority:string;status:string;sprintId:string;releaseId:string;taskSort?:string;mine?:boolean;
 },next:Status):string {
  const q=new URLSearchParams({tab:"board",taskStatus:next});
  if(filters.taskSearch)q.set("taskSearch",filters.taskSearch.slice(0,100));
  if(filters.priority)q.set("priority",filters.priority);
+ if(filters.mine)q.set("assignee","mine");
  if(filters.sprintId)q.set("sprintId",filters.sprintId);
  if(filters.releaseId)q.set("releaseId",filters.releaseId);
  if(filters.taskSort&&filters.taskSort!=="DEFAULT")q.set("taskSort",filters.taskSort);
