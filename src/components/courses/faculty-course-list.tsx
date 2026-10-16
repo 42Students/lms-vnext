@@ -51,8 +51,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
   if (scopeCount === 0) {
     return (
       <EmptyState
-        title="No active teaching Courses"
-        description="A Course appears here after an active teaching assignment is attached to one of its Section deliveries."
+        title="No teaching assignments found. Please contact your administrator."
+        description="Your teaching courses will appear after your administrator assigns a class."
       />
     );
   }
@@ -92,8 +92,8 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods}: {
       </form>
       {rows.length === 0 ? (
         <EmptyState
-          title="No courses match your filters"
-          description="Try a different Course name, academic period or teaching role."
+          title={query.q?"No courses match “"+query.q+"”":"No teaching assignments in this section."}
+          description="Try changing the filters to see your courses."
         />
       ) : (
       <div data-testid="teacher.courses.grid" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
