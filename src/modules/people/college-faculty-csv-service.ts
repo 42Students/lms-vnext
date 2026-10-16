@@ -27,7 +27,12 @@ export async function runCollegeFacultyCsv(context:RequestContext,raw:unknown) {
   requirePermission(context,"people.manage",{
     collegeId:member.collegeId,organizationId:member.organizationId,
   });
-  const rows=tokenizeStudentCsv(input.csv.replace(/^\uFEFF/,""));
+  let rows:string[][];
+  try { rows=tokenizeStudentCsv(input.csv.replace(/^\uFEFF/,"")); }
+  catch {
+    return {preview:true,valid:0,invalid:0,structuralErrors:["INVALID_CSV_FORMAT"],
+      results:[] as FacultyImportResult[]};
+  }
   if(rows.length===0||rows[0]?.map(cell=>cell.trim()).join(",")!==FACULTY_CSV_COLUMNS.join(",")){
     return {preview:true,valid:0,invalid:0,structuralErrors:["INVALID_CSV_HEADER"],
       results:[] as FacultyImportResult[]};
