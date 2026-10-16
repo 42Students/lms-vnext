@@ -250,6 +250,37 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     })).rejects.toMatchObject({ code: "DB08_ACTION_STALE" });
   });
 
+  it("enforces optimistic deadline changes, preserves rules, and can clear the deadline", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const initial = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2026-12-10T18:29:59.999Z",
+      rulesOverride: { maxOffers: 1 }, expectedVersion: "none",
+    });
+    await expect(upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: null, rulesOverride: null,
+      expectedVersion: "none",
+    })).rejects.toMatchObject({ code: "DB08_ACTION_STALE" });
+    const cleared = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: null, rulesOverride: initial.rulesOverride,
+      expectedVersion: initial.updatedAt.toISOString(),
+    });
+    expect(cleared.registrationDeadline).toBeNull();
+    expect(cleared.rulesOverride).toEqual({ maxOffers: 1 });
+    await expect(markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+    })).rejects.toMatchObject({ code: "DB08_ACTION_INVALID" });
+    const reopened = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2027-01-01T18:29:59.999Z",
+      rulesOverride: cleared.rulesOverride,
+      expectedVersion: cleared.updatedAt.toISOString(),
+    });
+    expect(reopened.registrationDeadline).not.toBeNull();
+  });
+
   it("keeps batch settings and finish state separate for each cohort", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
     const b = await makeAcademicFixture(SEED_IDS.collegeA);

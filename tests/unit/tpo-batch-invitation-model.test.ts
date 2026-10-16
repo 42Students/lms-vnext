@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   registrationDeadlineAtEndOfDay, TpoBatchInvitationError,
-  tpoBatchInvitationSchema, TPO_INVITATION_COPY,
+  tpoBatchInvitationSchema, tpoBatchDeadlineSchema, TPO_INVITATION_COPY,
 } from "@/modules/placements/tpo-batch-invitation-model";
 
 describe("TPO-batches-18 invitation date and exact legacy copy", () => {
@@ -22,9 +22,18 @@ describe("TPO-batches-18 invitation date and exact legacy copy", () => {
       deadline: "2026-10-17", expectedVersion: "none", other: true,
     }).success).toBe(false);
   });
+  it("permits clearing a deadline but rejects arbitrary update fields", () => {
+    expect(tpoBatchDeadlineSchema.safeParse({ deadline: null, expectedVersion: "none" }).success).toBe(true);
+    expect(tpoBatchDeadlineSchema.safeParse({ deadline: "", expectedVersion: "none" }).success).toBe(false);
+    expect(tpoBatchDeadlineSchema.safeParse({
+      deadline: null, expectedVersion: "none", rulesOverride: {},
+    }).success).toBe(false);
+  });
   it("preserves the exact legacy controls", () => {
     expect(TPO_INVITATION_COPY.dateLabel).toBe("Register by");
     expect(TPO_INVITATION_COPY.invitation).toBe("Invite");
     expect(TPO_INVITATION_COPY.pickDate).toBe("Pick the date first");
+    expect(TPO_INVITATION_COPY.move).toBe("Move");
+    expect(TPO_INVITATION_COPY.reopenAndTell).toBe("Reopen and tell them");
   });
 });

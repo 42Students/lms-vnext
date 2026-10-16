@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const tpoBatchDeadlineSchema = z.object({
+  deadline: z.iso.date().nullable(),
+  expectedVersion: z.string().min(1).max(80),
+}).strict();
+
 export const tpoBatchInvitationSchema = z.object({
   deadline: z.iso.date(),
   expectedVersion: z.string().min(1).max(80),
@@ -29,6 +34,9 @@ export function registrationDeadlineAtEndOfDay(value: string, now: Date): Date {
 export const TPO_INVITATION_COPY = {
   dateLabel: "Register by",
   invitation: "Invite",
+  move: "Move",
+  reopenAndTell: "Reopen and tell them",
+  clear: "Clear deadline",
   pickDate: "Pick the date first",
   markFinished: "This batch is finished",
 } as const;
