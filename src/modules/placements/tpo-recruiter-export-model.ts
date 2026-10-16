@@ -23,3 +23,50 @@ export function recruiterLeadsCsv(rows:readonly RecruiterExportRow[]){
  }
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
+
+/** The columns currently shown in the Engage table; exclude selection/actions. */
+export const RECRUITER_TABLE_HEADERS=[
+ "Contact","Company","Status","Stage","Owner","Last activity",
+ "Next follow-up","Invite","Added","Flags","Source","Email","Phone",
+] as const;
+export type RecruiterTableExportRow=RecruiterExportRow&{
+ recruiterUserId?:string|null;unsubscribedAt?:string|null;
+ chips?:readonly string[];quietDays?:number;
+};
+function exportDate(date:string|null){
+ if(!date)return "";
+ return new Intl.DateTimeFormat("en-GB",{
+  day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+ }).format(new Date(date));
+}
+const stageLabels:Record<string,string>={
+ NEW:"New",CONTACTED:"Contacted",INVITED:"Invited",JOINED:"Joined",
+ DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",NOT_NOW:"Not now",
+};
+export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[]){
+ return {
+  headers:[...RECRUITER_TABLE_HEADERS],
+  values:rows.map(row=>[
+   row.name,row.companyName??"",
+   row.recruiterUserId?"Joined":row.unsubscribedAt?"Unsubscribed":"Not joined",
+   stageLabels[row.stage]??row.stage,row.ownerName??"Unassigned",
+   exportDate(row.lastActivityAt),exportDate(row.nextFollowupAt),
+   row.inviteStatus,exportDate(row.createdAt),
+   (row.chips??[]).map(chip=>chip==="QUIET"?"Quiet "+(row.quietDays??0)+"d":chip).join("; "),
+   row.source??"Manual",row.emailNorm??"",row.phoneNorm??"",
+  ]),
+ };
+}
+export function recruiterTableExportCsv(rows:readonly RecruiterTableExportRow[]){
+ const grid=recruiterTableExportGrid(rows);
+ return "\uFEFF"+[grid.headers,...grid.values].map(row=>
+  row.map(recruiterCsvCell).join(",")).join("\r\n")+"\r\n";
+}
+export function recruiterTableExportTsv(rows:readonly RecruiterTableExportRow[]){
+ const grid=recruiterTableExportGrid(rows);
+ // Literal text clipboard, not formulas: sanitize spreadsheet trigger characters.
+ return [grid.headers,...grid.values].map(row=>row.map(value=>{
+  const safe=/^[\s]*[=+\-@]/.test(value)?"'"+value:value;
+  return safe.replace(/[\t\r\n]/g," ");
+ }).join("\t")).join("\r\n");
+}
