@@ -50,6 +50,8 @@ export async function getLearnerPlacementJourney(
             title:
               placementJobRoleOptions.title,
             driveTitle: placementJobs.title,
+            driveStatus: placementJobs.status,
+            closedAt: placementJobs.closedAt,
           },
           company: {
             id: placementCompanies.id,
