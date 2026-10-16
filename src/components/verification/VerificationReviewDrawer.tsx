@@ -11,8 +11,11 @@ import {verificationDecisionConfirmation} from "@/modules/verification/review-co
 import {canEditVerificationDecision} from "@/modules/verification/review-edit-guard";
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 
+type HistoryItem={id:string;action:string;actorKind:string;actorName:string|null;
+ note:string|null;occurredAt:string;priorVersion:number;nextVersion:number};
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
- documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;decidedAt:string|null;}};
+ documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;
+ decidedAt:string|null;history:HistoryItem[];}};
 export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId,sequenceProgress,onNext,onFinish}:{
  row:VerificationQueueCard;onClose:()=>void;onSaved:(action?:"VERIFY"|"SEND_BACK")=>void;apiBase?:string;collegeId?:string;sequenceProgress?:string;onNext?:()=>void;onFinish?:()=>void;
 }){
@@ -107,6 +110,26 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      <h3 className="font-semibold">Recorded decision history</h3>
      <p className="text-sm">Last decision: {verificationDecisionHistory(detail.review).decidedAt??"Not yet decided"}</p>
      <p className="mt-1 whitespace-pre-wrap break-words text-sm">Last reviewer note: {verificationDecisionHistory(detail.review).note??"No note recorded"}</p>
+    </section>
+    <section aria-label="Verification history" className="space-y-2 rounded-md border p-3">
+      <h3 className="font-semibold">History</h3>
+      {detail.review.history?.length===0&&<p className="text-sm text-muted-foreground">No recorded verification events.</p>}
+      <ol className="space-y-3 border-l border-border pl-4 text-sm">
+        {(detail.review.history??[]).map(item=><li key={item.id} className="space-y-1">
+          <p className="font-semibold">{item.action==="SUBMITTED"?"Sent by the student"
+            :item.action==="UPDATE_SUBMITTED"?"Update sent by the student"
+            :item.action==="VERIFIED"?"Verified by "+(item.actorName??item.actorKind)
+            :item.action==="SENT_BACK"?"Sent back by "+(item.actorName??item.actorKind)
+            :item.action.replaceAll("_"," ")}</p>
+          <p className="text-xs text-muted-foreground">
+            {new Date(item.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}
+          </p>
+          {item.note&&<p className="whitespace-pre-wrap break-words">{item.note}</p>}
+        </li>)}
+      </ol>
+      {detail.review.history?.length===100&&<p className="text-xs text-muted-foreground">
+        Showing the latest 100 history events.
+      </p>}
     </section>
     <section><h3 className="font-semibold">Submitted versus previously verified</h3>
      <dl className="mt-3 space-y-3">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
