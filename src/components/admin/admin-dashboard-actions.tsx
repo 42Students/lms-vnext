@@ -5,6 +5,7 @@ import {
   COLLEGE_SETUP_GUIDE_COPY,
   SUPER_ADMIN_GLOBAL_LINKS,
   SUPER_ADMIN_COLLEGE_LINKS,
+  SUPER_ADMIN_COLLEGE_QUICK_ACTIONS,
 } from "@/modules/admin-ui/admin-dashboard-navigation";
 
 function ActionLink({
@@ -120,6 +121,10 @@ export function SuperAdminCollegeDashboardActions() {
   return <section aria-label="Selected college quick actions" className="space-y-3">
     <h2 className="m-0 text-lg font-semibold text-foreground">Selected college quick actions</h2>
     <p className="text-sm text-body">These pages enforce the college selected in the Super Admin scope selector.</p>
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {SUPER_ADMIN_COLLEGE_QUICK_ACTIONS.map(item=><ActionLink key={"quick:"+item.label} label={item.label} href={item.href}/>)}
+    </div>
+    <h3 className="pt-3 text-sm font-semibold text-body">Other college workspaces</h3>
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {SUPER_ADMIN_COLLEGE_LINKS.map(item => <ActionLink key={item.label} label={item.label} href={item.href} />)}
     </div>
