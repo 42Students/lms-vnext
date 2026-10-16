@@ -7,6 +7,8 @@ import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-ten
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { listTenantDomainsWithRuntime } from "@/modules/tenant-domains/runtime";
 import { requirePermission } from "@/modules/permissions/policy";
+import {ManagedCollegeSubdomain} from "@/components/admin/managed-college-subdomain";
+import {getManagedCollegeSubdomain} from "@/modules/tenant-domains/managed-subdomain-service";
 
 export default async function CollegeWebAddress({ params }: {
  params: Promise<{collegeId: string}>;
@@ -17,7 +19,7 @@ export default async function CollegeWebAddress({ params }: {
  try { college = await getSuperAdminTenantLifecycleDetail(context,collegeId); }
  catch(error) { if(error instanceof CollegeServiceError && error.code==="COLLEGE_NOT_FOUND") notFound(); throw error; }
  requirePermission(context,"college.manage",{organizationId:college.organizationId,collegeId:college.id});
- const rows = await listTenantDomainsWithRuntime(context,college.id);
+ const [rows,managed]=await Promise.all([listTenantDomainsWithRuntime(context,college.id),getManagedCollegeSubdomain(context,college.id)]);
  const domains: TenantDomainClientRow[] = rows.map(domain=>({
   id:domain.id,host:domain.host,isPrimary:domain.isPrimary,isVerified:domain.isVerified,
   verificationToken:domain.verificationToken,
@@ -29,6 +31,7 @@ export default async function CollegeWebAddress({ params }: {
    <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">← College setup</Link>
    <PageHeader eyebrow="Super Admin · Web address" title={college.name}
      description="Manage this college's verified web addresses, including its subdomain. Only a verified address can become primary." />
+   <ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>
    <TenantDomainManager collegeId={college.id} domains={domains}/>
    <p className="text-xs text-muted-foreground">Moving an address between colleges is not supported by this manager. Remove it from the previous college after confirming the migration plan; do not bypass host ownership checks.</p>
  </div>;
