@@ -49,6 +49,18 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} tasks</p>
    </div>
   </div>
+  {!readOnly?<button type="button" disabled={busy||unassigned===0||!learners.length}
+     className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+     onClick={async()=>{
+       if(!window.confirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
+       setBusy(true);setError("");setNotice("");
+       try{
+        const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
+          "/tasks/auto-assign","POST") as {assigned:number};
+        setNotice(result.assigned+" task(s) auto-assigned.");router.refresh();
+       }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
+       finally{setBusy(false);}
+     }}>Auto-assign {unassigned} unassigned task(s)</button>:null}
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
    <label className="text-sm font-semibold">Release
     <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");}}
