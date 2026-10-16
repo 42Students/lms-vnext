@@ -20,6 +20,7 @@ import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
 import {RecruiterBulkInviteControls} from "./recruiter-bulk-invite-controls";
 import {RecruiterSavedViewControls} from "./recruiter-saved-view-controls";
 import {RecruiterInlineStage} from "./recruiter-inline-stage";
+import {RecruiterInlineOwner} from "./recruiter-inline-owner";
 import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory-export-model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -844,7 +845,7 @@ export function RecruiterLeadsWorkspace({
                       <td style={{display:visibleColumns.includes("Company")?undefined:"none"}} className="px-4 py-3">{lead.companyName || "—"}</td>
                       <td style={{display:visibleColumns.includes("Status")?undefined:"none"}} className="px-4 py-3">{lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"}</td>
                        <td style={{display:visibleColumns.includes("Stage")?undefined:"none"}} className="px-4 py-3"><RecruiterInlineStage lead={lead} onUpdated={()=>void load()}/></td>
-                       <td style={{display:visibleColumns.includes("Owner")?undefined:"none"}} className="px-4 py-3">{lead.ownerName??"Unassigned"}</td>
+                       <td style={{display:visibleColumns.includes("Owner")?undefined:"none"}} className="px-4 py-3"><RecruiterInlineOwner lead={lead} onUpdated={()=>void load()}/></td>
                        <td style={{display:visibleColumns.includes("Last activity")?undefined:"none"}} className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
                        <td style={{display:visibleColumns.includes("Next follow-up")?undefined:"none"}} className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
                        <td style={{display:visibleColumns.includes("Invite")?undefined:"none"}} className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
