@@ -89,3 +89,7 @@ Totals: CONFIRMED 41, WRONG 1, SEVERITY-CHANGE 1.
 | U4 | Real behaviour of `-R01`: after rewinding and pausing at 2:00 on a video previously watched to 20:00, reload and read the resume point. | Dev site, any VIDEO item, check `learner_content_progress.last_position_seconds` before and after. |
 | U5 | Multi-material legacy resources in the migrated data (gates `course-detail-07` severity). | Count legacy `lesson_contents` of type `resource` whose `content_data_dto.resource_materials` has more than one element on the old LMS dev DB; compare with what the migration wrote to `lesson_content_materials`. |
 | U6 | Whether the owner wants late assignment submission (`course-detail-01`): vNext comments say "legacy parity" but both legacy branches reject. | Owner decision; evidence is in section 1. |
+
+## LEARNER-home-courses-R01 implementation note (2026-10-17)
+
+The course list enrichments are now settled per authorized delivery, so failure of one workspace/instructor/thumbnail lookup no longer rejects the entire page. Healthy courses continue to render; failed ones show a non-openable unavailable card with legacy warning and Retry link without exposing internal exceptions. Focused unit tests added; browser, database and performance tests are not run yet. Full final VERIFIED closure remains pending.

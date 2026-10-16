@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerCourseList,
   type LearnerCourseListRow,
 } from "@/components/courses/learner-course-list";
 import { learnerCourseInstructorLabels } from "@/modules/courses/learner-course-instructor-labels-model";
+import {partitionLearnerCourseLoads, LEARNER_UNAVAILABLE_COURSE_COPY} from "@/modules/courses/learner-course-load-isolation-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import { selectLearnerOverdueAssignment } from "@/modules/courses/learner-course-overdue-link-model";
@@ -21,8 +23,9 @@ export default async function LearnerCoursesPage() {
     { includeHistorical: true },
   );
 
-  const rows: LearnerCourseListRow[] = await Promise.all(
-    courses.map(async (course) => {
+  // LEARNER-home-courses-R01: one failed delivery never hides the others.
+  const results = await Promise.allSettled(
+    courses.map(async (course): Promise<LearnerCourseListRow> => {
       const [workspace, instructors, display] = await Promise.all([
         getLearnerCourseWorkspace(
           context,
@@ -84,13 +87,32 @@ export default async function LearnerCoursesPage() {
       };
     }),
   );
+  const {loaded:rows,failed:unavailable} = partitionLearnerCourseLoads(courses,results);
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Courses"
-      />
-      <LearnerCourseList rows={rows} />
+      <PageHeader title="Courses" />
+      {unavailable.length ? (
+        <section aria-label="Unavailable course records" className="space-y-3">
+          <div role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">
+            {LEARNER_UNAVAILABLE_COURSE_COPY}
+          </div>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {unavailable.map((course,index)=>(
+              <article key={course.deliveryId}
+                className="rounded-xl border border-border bg-surface p-5 text-sm">
+                <h2 className="font-semibold text-foreground">
+                  {course.courseName.trim() || "Invalid course record "+(index+1)}
+                </h2>
+                <p className="mt-1 text-xs text-body">{course.academicPeriodName}</p>
+                <p className="mt-3 text-body">Course details temporarily unavailable.</p>
+                <Link href="/learn/courses" className="mt-3 inline-flex min-h-11 items-center text-primary-text underline">Retry</Link>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+      {rows.length || !courses.length ? <LearnerCourseList rows={rows} /> : null}
     </div>
   );
 }
