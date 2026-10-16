@@ -30,8 +30,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     await getSuperAdminPlatformSettings(context);
   const sections=filterPlatformInventory(allSections,parsed);
   const editorScope=context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
-  const editorData=context.adminScope?.organizationId&&!context.adminScope.collegeId
-   ?null:await listAdminTenantSettings(context,editorScope,context.adminScope?.collegeId??undefined);
+  const editorData=editorScope==="GLOBAL"&&!context.adminScope?.organizationId
+   ?await listAdminTenantSettings(context,"GLOBAL"):null;
   const attendancePolicy=context.adminScope?.collegeId
     ?await getCollegeAttendancePolicy(context,context.adminScope.collegeId):null;
 
@@ -64,7 +64,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
        <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
-        Choose a college in the Super Admin scope selector or clear the organization selection to edit global settings.
+        The two college-scoped attendance values are edited below. Clear the Super Admin safety scope to access global setting overrides.
        </p>)}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
         collegeId={attendancePolicy.college.id}
