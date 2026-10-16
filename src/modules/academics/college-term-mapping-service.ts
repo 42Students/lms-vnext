@@ -101,6 +101,7 @@ export async function listCollegeTermMappings(context: RequestContext) {
     deliveries: sql<number>`count(distinct ${courseSectionDeliveries.id})::int`,
     missing: sql<number>`count(distinct case when ${courseTeachingAssignments.id}
       is null then ${courseSectionDeliveries.id} end)::int`,
+    uncoveredClasses: sql<string | null>`string_agg(distinct case when ${courseTeachingAssignments.id} is null then ${sections.name} end, ', ')`,
   }).from(courses)
     .innerJoin(departments, eq(departments.id, courses.departmentId))
     .innerJoin(courseOfferings, eq(courseOfferings.courseId, courses.id))
@@ -127,7 +128,8 @@ export async function listCollegeTermMappings(context: RequestContext) {
         : staffing.missing === 0 ? null
         : staffing.missing === staffing.deliveries ? "No faculty assigned"
         : `No faculty for ${staffing.missing} of ${staffing.deliveries} classes`;
-      return { ...row, staffingWarning: warning };
+      return { ...row, staffingWarning: warning,
+        staffingTooltip: staffing?.uncoveredClasses || (!staffing ? "No active class deliveries" : null) };
     }),
   };
 }
