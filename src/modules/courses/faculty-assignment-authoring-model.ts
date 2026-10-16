@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { updateCourseAssignmentInputSchema } from "./assignment-validation";
+import {assignmentMethodsSchema} from "./assignment-submission-methods";
 
 export const facultyAssignmentParamsSchema=z.object({
   deliveryId:z.string().uuid(),
@@ -11,6 +12,7 @@ const common=z.object({
   description:text.nullable(),
   dueAt:z.iso.datetime({offset:true}).nullable(),
   maxPoints:z.number().int().min(1).max(1000),
+  allowedMethods:assignmentMethodsSchema.optional(),
 }).strict();
 const expected=z.iso.datetime({offset:true});
 export const facultyAssignmentCommandSchema=z.discriminatedUnion("action",[
@@ -67,6 +69,7 @@ export function facultyAssignmentLegacyEdit(current: {
     description: input.description === undefined ? current.description : input.description,
     dueAt: input.dueAt === undefined ? current.dueAt?.toISOString() ?? null : input.dueAt,
     maxPoints: input.maxPoints ?? current.maxPoints,
+    allowedMethods:undefined,
     expectedUpdatedAt: input.expectedUpdatedAt, confirmed: input.confirmed,
   });
 }
