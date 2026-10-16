@@ -33,7 +33,7 @@ import {
 import { loadCourseAssignmentScope, loadAssignmentSubmissionScope } from "./assignment-scope";
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
 import { multipartAssignmentRuntimeEnabled } from "./assignment-file-readiness";
-import {assignmentSubmissionLinks} from "@/db/schema/assignment-submission-links-staged";
+import {assignmentSubmissionLinks} from "@/db/schema/assignment-submission-links";
 import { postgresConstraintName,CoursesServiceError } from "./errors";
 import {allowedAssignmentMixedParts} from "./assignment-method-policy";
 import {
