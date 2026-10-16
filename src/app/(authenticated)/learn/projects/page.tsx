@@ -141,6 +141,7 @@ export default async function LearnerProjectsPage({
       <ProjectList
         items={rows.map((row) => {
           const projectAttention = attentionByProject.get(row.project.id);
+          const blocked = learnerProjectHasBlockedTasks(row.project.status, progressByProject.get(row.project.id));
           return {
             id: row.project.id,
             title: row.project.title,
@@ -156,16 +157,20 @@ export default async function LearnerProjectsPage({
               ? String(progressByProject.get(row.project.id)!.completedTasks) +
                 " of " + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks done"
               : undefined,
+            actionLine: projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
+              projectAttention === "DRAFT" ? "Finish your draft submission" :
+              blocked ? "Open blocked work" : "Open project",
+            blockedHref: blocked ? "/learn/projects/" + row.project.id + "?tab=board&taskStatus=BLOCKED" : undefined,
             attention:
               projectAttention === "CHANGES_REQUESTED"
                 ? ["Changes requested"]
                 : projectAttention === "DRAFT"
                   ? ["Draft submission"]
-                  : [],
+                  : blocked ? ["Blocked"] : [],
             href:
               "/learn/projects/" +
               row.project.id +
-              (projectAttention ? "?tab=delivery" : ""),
+              (projectAttention ? "?tab=delivery" : blocked ? "?tab=board&taskStatus=BLOCKED" : ""),
           };
         })}
         basePath="/learn/projects"
