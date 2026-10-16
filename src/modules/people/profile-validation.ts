@@ -308,11 +308,13 @@ const educationSchema = z
       )
       .default({}),
   })
-  .strict()
-  .superRefine((entry,ctx)=>{
-    const problem=learnerEducationValidationProblem(entry);
-    if(problem)ctx.addIssue({code:"custom",path:[problem.field],message:problem.message});
-  });
+  .strict();
+export const learnerProfileEducationWriteSchema=z.array(educationSchema).max(30).superRefine((items,ctx)=>{
+ for(const [index,entry] of items.entries()){
+  const problem=learnerEducationValidationProblem(entry);
+  if(problem)ctx.addIssue({code:"custom",path:[index,problem.field],message:problem.message});
+ }
+});
 
 const skillSchema = z
   .object({
