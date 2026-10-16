@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 import {RecruiterConversationReadControl} from "@/components/hr/recruiter-conversation-read-control";
+import {RecruiterConversationAutoRead} from "@/components/hr/recruiter-conversation-auto-read";
 import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
@@ -49,7 +50,10 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
    className="inline-flex min-h-11 items-center text-primary-text">Back to conversations</Link>
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
-  {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
+  {result.unread>0?<>
+    <RecruiterConversationAutoRead threadId={result.thread.id}/>
+    <RecruiterConversationReadControl threadId={result.thread.id}/>
+  </>:null}
   <ol aria-label="Employer and placement cell messages" className="space-y-3">
    {messages.map(message=><li key={message.id}
     className="rounded-xl border border-border bg-surface p-4">

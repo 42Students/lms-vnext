@@ -238,3 +238,7 @@ Team rows now show a name/email avatar initial, a recorded drive/request count f
 ## REC-calendar-messages-profile-35 report parity source — 2026-10-17
 
 Recruiter Reports now presents the legacy five columns (Applied, Offered, Accepted, Declined, Joined), with drive link/status combined and the legacy no-reports empty wording. Offered projects issued+accepted+declined rather than only outstanding offers; missing values show Unavailable. The former Withdrawn/Submitted rows remain available in aggregate analytics but no longer distort the legacy drive table. Unit tests authored; full browser/DB verification not yet executed.
+
+## REC-calendar-messages-profile-14 source parity — 2026-10-17
+
+An unread thread now mounts a one-shot client-side POST to the existing recruiter-authorized read acknowledgement route. Only the confirmed redirect triggers refresh, and the explicit manual button remains available on failures. The server GET remains read-only. Focused success/denial tests authored; browser, accessibility and DB checks remain unrun.
