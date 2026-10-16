@@ -5,7 +5,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships, learnerProfiles, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementJobs, users,
-  cohorts, departments, learnerProgramEnrollments, programs,
+  cohorts, departments, learnerProgramEnrollments, programs, colleges,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
@@ -42,6 +42,8 @@ export async function listCollegeDriveApplications(
     id: placementApplications.id,
     name: users.displayName,
     email: users.email,
+    collegeName: colleges.name,
+    ageDays: sql<number>`greatest(0,floor(extract(epoch from (now() - ${placementApplications.submittedAt}))/86400))::integer`.as("age_days"),
     source: placementApplications.channel,
     rollNumber: learnerProfiles.rollNumber,
     roleTitle: placementJobRoleOptions.title,
@@ -57,6 +59,7 @@ export async function listCollegeDriveApplications(
       eq(collegeMemberships.collegeId, collegeId),
     ))
     .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
     .innerJoin(placementJobRoleOptions, and(
       eq(placementJobRoleOptions.id, placementApplications.roleOptionId),
       eq(placementJobRoleOptions.jobId, jobId),
@@ -113,14 +116,14 @@ export async function exportCollegeDriveApplicationsCsv(
   context: RequestContext, jobId: unknown, raw: unknown,
 ) {
   const data = await listCollegeDriveApplications(context, jobId, raw, { exportAll: true });
-  const headings = ["Student name","Email","Roll number","Role option","Source","Pipeline stage","Application status","Screening status","Submitted at"];
+  const headings = ["Student name","Email","College","Roll number","Role option","Source","Pipeline stage","Application status","Screening status","Submitted at","Age (days)"];
   const rows: (string | number | null)[][] = data.items.map(item => [
-    item.name ?? "",item.email,item.rollNumber,item.roleTitle,item.source,item.stage,item.status,
-    item.screening ?? "Not recorded",item.submittedAt.toISOString(),
+    item.name ?? "",item.email,item.collegeName,item.rollNumber,item.roleTitle,item.source,item.stage,item.status,
+    item.screening ?? "Not recorded",item.submittedAt.toISOString(),item.ageDays,
   ]);
   if (data.truncated) {
     rows.push(["TRUNCATED — export capped at " + DRIVE_APPLICATION_EXPORT_CAP + " of " + data.total + " matching rows",
-      "", "", "", "", "", "", "", "", ""]);
+      "", "", "", "", "", "", "", "", "", "", ""]);
   }
   return { csv: "\uFEFF" + placementReportCsv(headings, rows),
     truncated: data.truncated, exported: data.items.length, total: data.total };
