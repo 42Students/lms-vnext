@@ -86,4 +86,5 @@ export type CollegeAssessmentAggregateItem = {
   /** Currently eligible learners with a graded assignment submission. */
   gradedLearners: number;
   resultsPublished: boolean | null;
+  resultsReleaseReady:boolean;
 };
