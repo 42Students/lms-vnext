@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,eq,inArray,isNull} from "drizzle-orm";
 import {
   collegeMemberships, inAppNotifications, learnerProgramEnrollments,
   membershipRoles, placementBatchRegistrations, placementCandidatePreferences,
@@ -9,6 +9,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getDb} from "@/db/client";
 import {isDebarmentActive} from "./batch-registration-policy";
 import {evaluatePlacementEligibility} from "./eligibility-service";
+import {findUnchosenEligibleBatchStudents} from "./batch-participation-service";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 export function collegeDate(now:Date){
   const values=new Intl.DateTimeFormat("en-US",{
@@ -48,6 +49,7 @@ export async function previewEligiblePublishedDrive(
 ){
   const registrations=await tx.select({
     membershipId:collegeMemberships.id,userId:users.id,
+    cohortId:placementBatchRegistrations.cohortId,
     notify:placementCandidatePreferences.notifyMatchingJobs,
   }).from(placementBatchRegistrations)
     .innerJoin(learnerProgramEnrollments,and(
@@ -67,9 +69,27 @@ export async function previewEligiblePublishedDrive(
       eq(placementCandidatePreferences.membershipId,collegeMemberships.id))
     .where(and(eq(placementBatchRegistrations.collegeId,job.collegeId),
       eq(placementBatchRegistrations.choice,"PLACEMENTS")));
+  const enrolledCohorts=[...new Set(registrations.map(row=>row.cohortId))];
+  const eligibleUsers=new Set<string>();
+  for(const cohortId of enrolledCohorts){
+    const allowed=await findUnchosenEligibleBatchStudents(
+      tx,job.collegeId,cohortId,true,
+    );
+    for(const userId of allowed)eligibleUsers.add(userId);
+  }
+  const activeBans=registrations.length?await tx.select()
+    .from(placementDebarments).where(and(
+      eq(placementDebarments.collegeId,job.collegeId),
+      isNull(placementDebarments.liftedAt),
+      inArray(placementDebarments.membershipId,
+        [...new Set(registrations.map(row=>row.membershipId))]),
+    )):[];
+  const barred=new Set(activeBans.filter(row=>isDebarmentActive(row,collegeDate(new Date())))
+    .map(row=>row.membershipId));
   const recipients:string[]=[];
   for(const learner of registrations){
-    if(learner.notify===false)continue;
+    if(learner.notify===false||!eligibleUsers.has(learner.userId)||
+        barred.has(learner.membershipId))continue;
     const eligibility=await evaluatePlacementEligibility(
       context,job.id,learner.membershipId,tx,
     );
