@@ -2,6 +2,7 @@
 
 import {
   type FormEvent,
+  useEffect,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -105,6 +106,13 @@ export function FacultyLessonAuthoring({
   const [success, setSuccess] =
     useState<string | null>(null);
 
+  useEffect(()=>{
+    if(!mode||!draftDirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[mode,draftDirty]);
+
   function reset() {
     setTitle("");
     setNotes("");
@@ -118,7 +126,11 @@ export function FacultyLessonAuthoring({
     setQuestions([initialQuestion()]);
   }
 
+  const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||startsAt||
+    endsAt||dueAt||durationSeconds!=="300"||maxPoints!=="10"||maxAttempts!=="1"||
+    questions.some(question=>question.prompt.trim()||question.options.some(option=>option.text.trim())));
   function close() {
+    if(draftDirty&&!window.confirm("Discard this content draft?"))return;
     setMode(null);
     setError(null);
     setSuccess(null);
