@@ -415,6 +415,11 @@ export function LearnerApplicationsBrowse({
         </>}>
         {selected ? (
           <div className="space-y-5">
+            {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-lg border border-warning p-3 text-sm text-body">
+              <p className="font-semibold text-foreground">This drive was cancelled</p>
+              <p>Review placement cell notices for any published reason. Your saved application history remains available.</p>
+              <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">College notices</Link>
+            </div>:selected.driveStatus==="CLOSED"?<p role="status" className="rounded-lg border border-border p-3 text-sm text-body">This drive has closed. Previously recorded results remain visible.</p>:null}
             <dl className="grid gap-3 sm:grid-cols-2">
               <div><dt className="text-xs font-semibold text-muted-foreground">Applied</dt>
                 <dd className="mt-1 text-sm text-foreground">{formatDate(selected.submittedAt)}</dd></div>
