@@ -12,7 +12,7 @@ type Cohort = { id: string; name: string; code: string; programName: string };
 type Period = { id: string; name: string; code: string };
 type ClassRow = {
   id: string; name: string; code: string;
-  capacity: number | null; status: "ACTIVE" | "ARCHIVED"; activeLearners: number;
+  capacity: number | null; description?: string | null; status: "ACTIVE" | "ARCHIVED"; activeLearners: number;
 };
 
 async function requestWrite(method: "POST" | "PATCH", url: string, input: unknown) {
@@ -41,13 +41,14 @@ export function CollegeClassCreate({ cohorts, periods }: {
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [capacity, setCapacity] = useState("");
+  const [description, setDescription] = useState("");
   const [notice, setNotice] = useState("");
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
     const result = createCollegeSectionSchema.safeParse({
-      cohortId, academicPeriodId, name, code, capacity: capacityInput(capacity),
+      cohortId, academicPeriodId, name, code, capacity: capacityInput(capacity), description: description.trim() || null,
     });
     if (!result.success) {
       setNotice(result.error.issues[0]?.message ?? "Enter valid class details.");
@@ -57,7 +58,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
     startTransition(async () => {
       try {
         await requestWrite("POST", "/api/college/classes", result.data);
-        setName(""); setCode(""); setCapacity("");
+        setName(""); setCode(""); setCapacity(""); setDescription("");
         setNotice("Class created.");
         router.refresh();
       } catch (error) {
@@ -107,6 +108,10 @@ export function CollegeClassCreate({ cohorts, periods }: {
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
+        <label className="grid gap-1 text-sm font-medium text-body sm:col-span-2 lg:col-span-5">Description (optional)
+          <textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
+            className="rounded-md border border-border bg-surface p-3 text-foreground" />
+        </label>
         <div className="sm:col-span-2 lg:col-span-5">
           <button disabled={pending} type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
@@ -128,9 +133,10 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   const [name, setName] = useState(row.name);
   const [code, setCode] = useState(row.code);
   const [capacity, setCapacity] = useState(row.capacity === null ? "" : String(row.capacity));
+  const [description, setDescription] = useState(row.description ?? "");
   const [notice, setNotice] = useState("");
-  const draft = { name, code, capacity: capacityInput(capacity) };
-  const changed = sectionIdentityChanged(row, draft) || row.capacity !== draft.capacity;
+  const draft = { name, code, capacity: capacityInput(capacity), description: description.trim() || null };
+  const changed = sectionIdentityChanged(row, draft) || row.capacity !== draft.capacity || (row.description ?? null) !== draft.description;
 
   function cancel() {
     if (changed && !window.confirm("Discard unsaved class changes?")) return;
@@ -184,6 +190,10 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
           <input type="number" min={1} max={10000} step={1} value={capacity}
             onChange={e => setCapacity(e.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+        </label>
+        <label className="grid gap-1 text-sm font-medium text-body">Description
+          <textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
+            className="rounded-md border border-border bg-surface p-3 text-foreground" />
         </label>
         <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
