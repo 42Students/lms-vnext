@@ -5,12 +5,12 @@ import {HR_BELL_EMPTY,HR_BELL_EMPTY_HELP,relativeHrBellTime,type HrBellResponse}
 export function HrRecruiterBell(){
  const [state,setState]=useState<HrBellResponse|null>(null),[open,setOpen]=useState(false),
  [loading,setLoading]=useState(false),[error,setError]=useState(""),[saveError,setSaveError]=useState("");
- const [now]=useState(()=>Date.now());
+ const [now,setNow]=useState(()=>Date.now());
  const load=useCallback(async()=>{
   try{
    const res=await fetch("/api/placements/recruiter/bell",{cache:"no-store"});
    if(!res.ok)throw Error("Unable to load");
-   const data=await res.json() as HrBellResponse;setState(data);setError("");
+   const data=await res.json() as HrBellResponse;setState(data);setNow(Date.now());setError("");
   }catch{setError("Couldn't refresh your notifications");}
  },[]);
  useEffect(()=>{
@@ -40,7 +40,8 @@ export function HrRecruiterBell(){
     <button type="button" onClick={()=>setOpen(false)} className="text-sm text-primary-text">Close</button>
    </div>
    {error?<p role="alert" className="mt-3 text-sm text-error">{state?error:"Couldn't load your notifications"}</p>:null}
-   {state?.status!=="READY"?<p className="mt-3 text-sm text-body">Choose a college to view your notifications.</p>:
+   {!state&&!error?<p role="status" className="mt-3 text-sm text-body">Loading notifications…</p>:
+    state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<div className="mt-3 text-sm"><p className="font-semibold">{HR_BELL_EMPTY}</p>
      <p className="text-muted-foreground">{HR_BELL_EMPTY_HELP}</p></div>:
     <ul className="mt-3 max-h-80 divide-y divide-border overflow-auto">{state.items.map(item=><li key={item.id} className="py-2">
