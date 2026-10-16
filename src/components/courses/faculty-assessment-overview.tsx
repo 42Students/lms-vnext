@@ -24,15 +24,21 @@ export function FacultyAssessmentOverview({
   overview,
   kind,
   filesEnabled,
+  initialQuizId=null,
 }: {
   filesEnabled: boolean;
+  initialQuizId?:string|null;
   overview: Overview;
   kind: "ASSIGNMENT" | "QUIZ";
 }) {
   const [courseId, setCourseId] = useState("");
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(()=>{
+    if(kind!=="QUIZ"||!initialQuizId)return 1;
+    const index=overview.quizzes.findIndex(item=>item.id===initialQuizId);
+    return index<0?1:Math.floor(index/PAGE_SIZE)+1;
+  });
   const items: Assessment[] =
     kind === "ASSIGNMENT" ? overview.assignments : overview.quizzes;
 
@@ -237,6 +243,7 @@ export function FacultyAssessmentOverview({
                   </p>
                   <FacultyQuizReview
                     quizId={item.id}
+                    autoOpen={kind==="QUIZ"&&initialQuizId===item.id}
                     deliveryId={item.deliveryId}
                     status={item.status}
                     resultsPublished={item.resultsPublished}
