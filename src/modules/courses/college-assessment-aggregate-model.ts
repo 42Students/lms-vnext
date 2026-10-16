@@ -76,6 +76,7 @@ export type CollegeAssessmentAggregateItem = {
   status: string;
   dueAt: Date | null;
   deliverySpecific: boolean;
+  deliveryId: string | null;
   points: number;
   activityCount: number;
   /** Distinct active learners currently eligible for this assessment audience. */
