@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {listPlatformPlacementPolicy} from "@/modules/placements/platform-placement-policy-service";
+import {SuperAdminPlatformPlacementPolicy} from "@/components/placements/super-admin-platform-placement-policy";
 import {SuperAdminPlacementOversightNav} from "@/components/admin/super-admin-placement-oversight-nav";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
@@ -9,6 +11,7 @@ export default async function AdminPlacementsPage() {
   const context = await getCurrentRequestContext();
   const collegeId =
     context.adminScope?.collegeId ?? null;
+  const policy = await listPlatformPlacementPolicy(context);
   if (!collegeId) {
     return (
       <div className="space-y-6">
@@ -18,6 +21,8 @@ export default async function AdminPlacementsPage() {
           description="Placement administration requires a college safety scope."
         />
         <SuperAdminPlacementOversightNav />
+      <SuperAdminPlatformPlacementPolicy initial={policy} />
+        <SuperAdminPlatformPlacementPolicy initial={policy} />
         <Link href="/admin/placements/drives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open All drives table →</Link>
       <Link href="/admin/companies" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse companies across your current scope →</Link>
         <EmptyState
