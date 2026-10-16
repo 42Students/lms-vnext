@@ -33,6 +33,9 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
 
   return getDb().transaction(async (tx) => {
     if (input.action === "GRANT") {
+      await tx.insert(placementTpoCollegeSettings)
+        .values({collegeId})
+        .onConflictDoNothing();
       const [duration] = await tx.select({
         months: placementTpoCollegeSettings.recruiterAccessMonths,
       }).from(placementTpoCollegeSettings)
