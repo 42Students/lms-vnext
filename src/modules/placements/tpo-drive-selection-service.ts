@@ -6,6 +6,7 @@ import { placementDriveSelections } from "@/db/schema/placement-drive-selections
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { issuePlacementOffer, listPlacementOfferCandidates } from "./offer-service";
+import {listPlacementRoleOptions} from "./role-option-service";
 import { placementTableExists } from "./staged-tables";
 import { auditTpoJobChange, requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
 import { placementJobIdSchema } from "./validation";
@@ -34,7 +35,10 @@ async function requireRegisteredSelections() {
 export async function getTpoSelectionWorkspace(context: RequestContext, rawJobId: unknown) {
   const job = await scopedJob(context, rawJobId);
   const storageReady = await placementTableExists("placement_drive_selections");
-  const candidates = await listPlacementOfferCandidates(context, job.id);
+  const [candidates, roleOptions] = await Promise.all([
+    listPlacementOfferCandidates(context, job.id),
+    listPlacementRoleOptions(context, job.id),
+  ]);
   const rows = storageReady ? await getDb().select({
     id: placementDriveSelections.id,
     jobId: placementDriveSelections.jobId,
@@ -49,10 +53,14 @@ export async function getTpoSelectionWorkspace(context: RequestContext, rawJobId
     .orderBy(placementDriveSelections.recordedAt) : [];
   const candidateMap = new Map(candidates.map(row => [row.applicationId, row]));
   return { job, storageReady, pendingMessage: storageReady ? null : pendingCode,
+    roleOptions: roleOptions.filter(r => r.status === "ACTIVE").map(r => ({
+      id:r.id,title:r.title,annualCtcInr:r.maximumAnnualCtcInr ?? r.minimumAnnualCtcInr,
+    })),
     candidates: candidates.map(row => ({
       applicationId: row.applicationId,
       name: row.displayName ?? "Learner",
       roleTitle: row.roleTitle,
+      email: row.email,
       offerReady: row.offerReady,
       alreadyOffered: Boolean(row.offer && ["ISSUED","ACCEPTED"].includes(row.offer.status)),
     })),
@@ -72,7 +80,8 @@ export async function recordTpoDriveSelections(context: RequestContext, rawJobId
   await requireRegisteredSelections();
   const input = recordSelectionsSchema.parse(raw);
   const candidates = await listPlacementOfferCandidates(context, job.id);
-  const ready = new Map(candidates.filter(item => item.offerReady && !item.offer)
+  const ready = new Map(candidates.filter(item => item.offerReady &&
+    !(item.offer && ["ISSUED","ACCEPTED"].includes(item.offer.status)))
     .map(item => [item.applicationId, item]));
   if (input.entries.some(entry => !ready.has(entry.applicationId))) {
     throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
