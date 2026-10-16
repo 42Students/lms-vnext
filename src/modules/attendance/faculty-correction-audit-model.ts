@@ -15,7 +15,7 @@ export function facultyAttendanceConfirmation(
 ): string | null {
   const absentCount = new Set(nextAbsent).size;
   if (!Number.isInteger(rosterCount) || rosterCount < 1 || absentCount > rosterCount) return null;
-  if (!marked) return `Confirm attendance: ${rosterCount - absentCount} present, ${absentCount} absent.`;
+  if (!marked) return `Submit Attendance — Mark ${absentCount} student(s) absent and ${rosterCount - absentCount} student(s) present?`;
   const delta = facultyCorrectionDelta(previousAbsent, nextAbsent);
   if (!delta.changed) return null;
   return `Confirm correction: ${delta.movedToAbsent} changed to absent, ${delta.movedToPresent} changed to present. Your explanation will be retained in the activity audit.`;
