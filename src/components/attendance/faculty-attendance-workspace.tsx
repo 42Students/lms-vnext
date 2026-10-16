@@ -392,9 +392,9 @@ export function FacultyAttendanceWorkspace({
       );
       if (!response.ok) {
         setError(
-          await errorMessage(
+          "No attendance marks were saved. " + await errorMessage(
             response,
-            "Could not save attendance.",
+            "Retry the same roster after checking the error.",
           ),
         );
         return;
@@ -404,7 +404,7 @@ export function FacultyAttendanceWorkspace({
       router.refresh();
     } catch {
       setError(
-        "Could not save attendance. Check your connection and try again.",
+        "Unable to confirm attendance save. Refresh the roster before retrying to avoid duplicate changes.",
       );
     } finally {
       submitLock.current = false;
