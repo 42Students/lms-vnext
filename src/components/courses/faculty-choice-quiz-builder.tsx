@@ -235,7 +235,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
      </select></label>
     <label className="grid min-w-0 gap-1 text-sm">Points
-     <input type="number" min={1} max={1000} value={q.points}
+     <input type="number" min={1} max={100} value={q.points}
       onChange={e=>updateQuestion(i,old=>({...old,points:Number(e.target.value)}))}
       className="min-h-10 w-24 rounded border border-border p-2"/></label>
    </div>
