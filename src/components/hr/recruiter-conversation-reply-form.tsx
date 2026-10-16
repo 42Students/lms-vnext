@@ -38,7 +38,16 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   }
   if(confirmed){
    setBody("");
-   setNotice("Message sent");
+   // Confirm that the current authorized thread remains readable before
+   // claiming the refreshed conversation is visible to the recruiter.
+   try{
+    const latest=await fetch(window.location.pathname,{method:"GET",
+      credentials:"same-origin",cache:"no-store"});
+    if(!latest.ok)throw new Error("REFRESH_FAILED");
+    setNotice("Message sent");
+   }catch{
+    setNotice("Message sent, but the conversation could not refresh. Retry to load the latest messages.");
+   }
    router.refresh();
   }else setNotice("Could not send. "+feedback);
   setSending(false);
