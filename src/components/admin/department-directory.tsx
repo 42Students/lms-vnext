@@ -54,9 +54,10 @@ export function DepartmentDirectory({
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [refreshing, startRefresh] = useTransition();
   const filtered = filterDepartmentRows(rows, search);
-  const result = pageDepartmentRows(filtered, page);
+  const result = pageDepartmentRows(filtered, page, pageSize);
   const exportHref = "data:text/csv;charset=utf-8," +
     encodeURIComponent("\ufeff" + departmentRowsCsv(filtered));
 
@@ -78,7 +79,15 @@ export function DepartmentDirectory({
             }}
           />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-end gap-2">
+          <label htmlFor="department-directory-page-size" className="grid gap-1 text-xs font-semibold text-body">
+            Rows per page
+            <select id="department-directory-page-size" value={pageSize}
+              onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
+              className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
+              {[10, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+            </select>
+          </label>
           {filtered.length ? (
             <a
               href={exportHref}
@@ -125,7 +134,7 @@ export function DepartmentDirectory({
       {result.total > 0 ? (
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
           <span>
-            Showing {(result.page - 1) * 10 + 1}–{Math.min(result.page * 10, result.total)} of {result.total}
+            Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}
           </span>
           <div className="flex items-center gap-3">
             <Button
