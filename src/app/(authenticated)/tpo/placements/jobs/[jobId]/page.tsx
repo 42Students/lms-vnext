@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { ZodError } from "zod";
+import { getPlacementJob } from "@/modules/placements/job-service";
+import { PlacementsServiceError } from "@/modules/placements/errors";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {tpoDriveTabs} from "@/modules/placements/tpo-drive-tab-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
@@ -18,6 +22,17 @@ export default async function TpoPlacementDrivePage({
     redirect("/dashboard");
   }
   const { jobId } = await params;
+  // Unknown ids, other colleges' drives and malformed ids all render the same Not Found page.
+  try {
+    await getPlacementJob(context, jobId);
+  } catch (error) {
+    if (
+      error instanceof ZodError ||
+      error instanceof AuthorizationError ||
+      (error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND")
+    ) notFound();
+    throw error;
+  }
   return (
     <div className="min-w-0 space-y-4">
       <nav aria-label="Drive workspace sections"
