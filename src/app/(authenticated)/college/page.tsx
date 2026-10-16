@@ -7,6 +7,7 @@ import { CollegeDashboardCards } from "@/components/admin/college-dashboard-card
 import { CollegeAdminQuickActions } from "@/components/admin/admin-dashboard-actions";
 import { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-cards-service";
 import { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashboard-attendance-service";
+import { getCollegeDashboardLowAttendance } from "@/modules/admin-ui/college-dashboard-risk-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listColleges } from "@/modules/colleges/service";
@@ -36,9 +37,10 @@ export default async function CollegeOverviewPage() {
     );
   }
 
-  const [dashboard, attendance] = await Promise.all([
+  const [dashboard, attendance, lowAttendance] = await Promise.all([
     getCollegeDashboardCards(context, {}),
     getCollegeDashboardAttendance(context),
+    getCollegeDashboardLowAttendance(context),
   ]);
 
   return (
@@ -154,6 +156,37 @@ export default async function CollegeOverviewPage() {
           <p className="text-xs text-muted-foreground">Showing the 20 most recent sessions. Open attendance to review more.</p>}
       </section>
 
+      <section aria-label="Low attendance" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-foreground">
+            Under {lowAttendance.threshold}% attendance
+          </h2>
+          <Link href="/college/attendance"
+            className="font-semibold text-primary-text hover:underline">Review attendance</Link>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Last 30 days · marked sessions only · {lowAttendance.rows.length} learner(s) shown
+        </p>
+        {lowAttendance.rows.length === 0
+          ? <p className="text-sm text-muted-foreground">No learners below the attendance threshold.</p>
+          : <div className="max-h-72 overflow-auto">
+            <table className="w-full text-left text-sm">
+              <thead><tr className="border-b border-border">
+                <th scope="col" className="py-2">Student</th>
+                <th scope="col" className="py-2">Attendance</th>
+                <th scope="col" className="py-2">Sessions attended</th>
+              </tr></thead>
+              <tbody>{lowAttendance.rows.map(row => <tr key={row.membershipId}
+                className="border-b border-border">
+                <td className="py-2 font-semibold">{row.displayName ?? row.membershipId}</td>
+                <td className="py-2">{row.percent}%</td>
+                <td className="py-2">{row.attended} / {row.marked}</td>
+              </tr>)}</tbody>
+            </table>
+          </div>}
+        {lowAttendance.rows.length === 200 &&
+          <p className="text-xs text-muted-foreground">Showing first 200 at-risk learners. Open attendance for full reports.</p>}
+      </section>
       <CollegeAdminQuickActions />
       <CollegeSetupChecklist phases={dashboard.setup.phases} />
     </div>
