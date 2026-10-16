@@ -11,7 +11,7 @@ type MappingRead = {
   courses: readonly { id: string; name: string; code: string; departmentId: string }[];
   mapped: readonly {
     id: string; termId: string; courseId: string; termName: string; termNumber: number; programName: string;
-    courseName: string; courseCode: string; type: string; credits: number | null; displayOrder: number; staffingWarning: string | null;
+    courseName: string; courseCode: string; type: string; credits: number | null; displayOrder: number; staffingWarning: string | null; staffingTooltip?: string | null;
   }[];
 };
 
@@ -168,7 +168,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <tbody>{currentMappings.map(row => <tr key={row.id} className="border-t border-border">
           <td className="px-2 py-2">
             <span className="font-semibold">{row.courseName}</span>
-            {row.staffingWarning && <p role="status" className="mt-1 text-xs font-semibold text-amber-700">
+            {row.staffingWarning && <p role="status" title={row.staffingTooltip ?? undefined} className="mt-1 text-xs font-semibold text-warning">
               {row.staffingWarning}
             </p>}
           </td>
