@@ -13,7 +13,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
       className="flex flex-wrap gap-2 rounded-lg border border-border bg-surface p-3">
       {tpoDriveTabs(jobId).map((tab) => {
         const active = tab.href === root
-          ? pathname === root || pathname === root + "/rounds"
+          ? pathname === root
           : pathname === tab.href || (
             tab.href !== root + "/applicants" &&
             pathname.startsWith(tab.href + "/")
