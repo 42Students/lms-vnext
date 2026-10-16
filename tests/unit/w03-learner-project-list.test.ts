@@ -47,6 +47,9 @@ describe("W03 learner project discovery and attention contract", () => {
   });
 
   it("does not fabricate the missing workspace blocker signal", () => {
-    expect(listPage).toContain("does not yet persist that blocker field");
+    // Blocked is derived only from persisted task blockers (migration 0090), never inferred
+    // from unrelated task states, and the old developer-facing note is no longer rendered.
+    expect(listPage).toContain("learnerProjectHasBlockedTasks");
+    expect(listPage).not.toContain("does not yet persist that blocker field");
   });
 });

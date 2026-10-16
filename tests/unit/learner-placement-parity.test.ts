@@ -27,7 +27,7 @@ describe("learner placement route parity", () => {
       path.join(process.cwd(), "src/components/placements/learner-placements-tabs.tsx"),
       "utf8",
     );
-    for (const label of ["Dashboard", "Drives", "Applications", "Assessments", "Interviews", "Career Calendar", "Placement cell"]) {
+    for (const label of ["Home", "Drives", "Applications", "Schedule", "Offers", "Notices", "Placement cell"]) {
       expect(tabs).toContain(label);
     }
   });
