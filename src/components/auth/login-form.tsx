@@ -319,8 +319,11 @@ export function LoginForm({
                   const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
                   if (!keys.includes(event.key)) return;
                   event.preventDefault();
-                  const other = value === "PHONE" ? "EMAIL" : "PHONE";
-                  const next = allowedChannels.includes(other)?other:value;
+                  const channels = (["EMAIL", "PHONE"] as const).filter(method => allowedChannels.includes(method));
+                  const currentIndex = channels.indexOf(value);
+                  const next = event.key === "Home" ? channels[0] :
+                    event.key === "End" ? channels[channels.length - 1] :
+                    channels[(currentIndex + (event.key === "ArrowLeft" ? channels.length - 1 : 1)) % channels.length];
                   setChannel(next);
                   setContact("");
                   setContactError(null);
