@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
+import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases} from "@/modules/projects/college-readiness-releases-service";
+import {z} from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -65,10 +67,14 @@ export async function ProjectAdminReadinessPage({
       one(searchParams.pageSize) ?? 25,
     ),
   };
-  const [result, activeOverrides] = await Promise.all([
+  const [result, activeOverrides, workspaceChoices] = await Promise.all([
     listProjectAdminSnapshots(context, collegeId, query),
     listCollegeActiveReadinessOverrides(context, collegeId),
+    listCollegeReadinessWorkspaceChoices(context,collegeId),
   ]);
+  const chosenId=z.string().uuid().safeParse(one(searchParams.workspaceId)).data;
+  const selected=chosenId && workspaceChoices.some(item=>item.id===chosenId)?chosenId:null;
+  const releaseContext=selected?await listCollegeReadinessReleases(context,collegeId,selected):[];
   const readinessPath =
     basePath + "/readiness";
 
@@ -117,6 +123,44 @@ export async function ProjectAdminReadinessPage({
             </tbody>
           </table>
         </div>}
+      </section>
+      <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-base font-semibold">Select workspace</h2>
+        <form method="get" action={readinessPath} className="flex flex-wrap items-end gap-3">
+          <label className="min-w-64 flex-1 text-sm font-semibold">
+            Workspace
+            <select name="workspaceId" defaultValue={selected??""}
+              className="mt-1 min-h-11 w-full rounded-md border border-border bg-background px-3">
+              <option value="">Choose a workspace</option>
+              {workspaceChoices.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
+            </select>
+          </label>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">View readiness</button>
+        </form>
+        {selected ? <>
+          <Link href={basePath+"/"+selected+"/readiness"} className="text-sm font-semibold text-primary-text underline">
+            Manage override
+          </Link>
+          <h3 className="text-sm font-semibold">Releases</h3>
+          {!releaseContext.length ? <p className="text-sm text-muted-foreground">No releases recorded.</p> :
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead><tr className="border-b border-border text-muted-foreground">
+                  <th className="p-2">Release</th><th className="p-2">Status</th>
+                  <th className="p-2">Sprints</th><th className="p-2">Points</th>
+                  <th className="p-2">Target date</th>
+                </tr></thead>
+                <tbody>{releaseContext.map(release=><tr key={release.id} className="border-b border-border">
+                  <td className="p-2 font-semibold">{release.title}</td>
+                  <td className="p-2">{release.status==="SHIPPED"?"Shipped":
+                    release.status==="IN_PROGRESS"?"In progress":"Planned"}</td>
+                  <td className="p-2">{release.completedSprints}/{release.sprintCount}</td>
+                  <td className="p-2">{release.points}</td>
+                  <td className="p-2">{release.targetDate??"—"}</td>
+                </tr>)}</tbody>
+              </table>
+            </div>}
+        </> : null}
       </section>
       <ProjectAdminFilters query={query} />
 
