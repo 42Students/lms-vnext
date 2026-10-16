@@ -1,3 +1,4 @@
+import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminScopedReadPage } from "@/components/admin/admin-scoped-read-page";
@@ -27,6 +28,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   const periods = periodRows.filter(row => row.status !== "CLOSED")
     .map(row => ({ id: row.id, name: row.name, code: row.code }));
   return <div className="space-y-6">
+      <AcademicSetupSteps step={5} />
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
       <section aria-label="Manage batches" className="space-y-3 rounded-xl border border-border bg-surface p-4">
