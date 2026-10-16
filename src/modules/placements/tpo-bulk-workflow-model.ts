@@ -41,7 +41,10 @@ export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExten
   selections:bulkActionCommandSchema.shape.selections,
   previewToken:z.string().min(10).max(256),
   confirmed:z.literal(true),
+  acknowledged:z.boolean().default(false),
 }).superRefine((value,ctx)=>{
+  if(["INELIGIBLE","REJECTED","SEND_MESSAGE"].includes(value.action) && !value.acknowledged)
+    ctx.addIssue({code:"custom",path:["acknowledged"],message:"Acknowledge the consequences before applying."});
   if(value.selections.length>200)
     ctx.addIssue({code:"custom",message:"Too many selected records"});
 });
