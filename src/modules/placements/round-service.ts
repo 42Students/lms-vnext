@@ -13,11 +13,15 @@ import {
   placementJobRoundEvents,
   placementJobRounds,
   placementJobs,
+  placementRoundResults,
+  placementRoundAttendance,
+  placementApplicationRoundExceptions,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import {requireAvailableRoundVenue} from "./round-venue-booking-service";
+import { roundReorderLockMessage } from "./tpo-round-reorder-model";
 import {
   createPlacementRoundInputSchema,
   placementJobIdSchema,
@@ -514,6 +518,52 @@ export async function actOnPlacementRound(
   });
 }
 
+/**
+ * TPO-drive-workspace-37: deny reordering even when all round statuses remain
+ * PENDING but a student already has an attendance entry, result or exception.
+ * These are real persisted execution artifacts, not candidate projections.
+ */
+async function findRoundOrderLock(tx: ReturnType<typeof getDb>, jobId: string): Promise<string | null> {
+  const [result] = await tx.select({id: placementRoundResults.id})
+    .from(placementRoundResults)
+    .innerJoin(placementJobRounds, eq(placementJobRounds.id,placementRoundResults.roundId))
+    .where(eq(placementJobRounds.jobId,jobId)).limit(1);
+  if (result) return "RESULT";
+  const [attendance] = await tx.select({id:placementRoundAttendance.id})
+    .from(placementRoundAttendance)
+    .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundAttendance.roundId))
+    .where(eq(placementJobRounds.jobId,jobId)).limit(1);
+  if (attendance) return "ATTENDANCE";
+  const [exception] = await tx.select({id:placementApplicationRoundExceptions.id})
+    .from(placementApplicationRoundExceptions)
+    .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementApplicationRoundExceptions.roundId))
+    .where(eq(placementJobRounds.jobId,jobId)).limit(1);
+  if (exception) return "ASSIGNMENT";
+  return null;
+}
+
+export async function getTpoRoundReorderReadiness(context:RequestContext, jobIdInput:string) {
+  const jobId=placementJobIdSchema.parse(jobIdInput);
+  const job=await loadJob(jobId);
+  await requirePlacementManageScope(context,job.collegeId);
+  const db=getDb();
+  return db.transaction(async(tx)=>{
+    const rounds=await tx.select({
+      id:placementJobRounds.id,name:placementJobRounds.name,
+      status:placementJobRounds.status,sequence:placementJobRounds.sequence,
+    }).from(placementJobRounds)
+      .where(and(eq(placementJobRounds.jobId,jobId),ne(placementJobRounds.status,"CANCELLED")))
+      .orderBy(asc(placementJobRounds.sequence),asc(placementJobRounds.id));
+    const executionLock=await findRoundOrderLock(tx,jobId);
+    const blocked=roundReorderLockMessage({
+      jobStatus:job.status,
+      roundStatuses:rounds.map(r=>r.status),
+      hasExecutionArtifacts:Boolean(executionLock),
+    });
+    return {allowed:blocked===null,reason:blocked,rounds};
+  },{accessMode:"read only"});
+}
+
 export async function reorderPlacementRounds(
   context: RequestContext,
   jobIdInput: string,
@@ -569,6 +619,14 @@ export async function reorderPlacementRounds(
       throw new PlacementsServiceError(
         "PLACEMENT_ROUND_REORDER_INVALID",
       );
+    }
+
+    if (roundReorderLockMessage({
+      jobStatus:lockedJob.status,
+      roundStatuses:active.map(round=>round.status),
+      hasExecutionArtifacts:Boolean(await findRoundOrderLock(tx,job.id)),
+    }) !== null) {
+      throw new PlacementsServiceError("PLACEMENT_ROUND_REORDER_INVALID");
     }
 
     const activeIds = new Set(
