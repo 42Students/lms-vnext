@@ -43,7 +43,7 @@ export function quizOverviewActionState(
     return {
       label: "Results published",
       tone: "success" as const,
-      action: "View Result",
+      action: "View answers",
       review: true,
     };
   }
@@ -51,7 +51,7 @@ export function quizOverviewActionState(
     return {
       label: "Submitted",
       tone: "info" as const,
-      action: "Review attempt",
+      action: "Review quiz",
       review: true,
     };
   }
@@ -67,7 +67,7 @@ export function quizOverviewActionState(
     return {
       label: "Missed",
       tone: "error" as const,
-      action: "View quiz",
+      action: item.resultsPublished ? "Review quiz" : "Unavailable",
       review: true,
     };
   }
@@ -75,7 +75,7 @@ export function quizOverviewActionState(
     return {
       label: "Closed",
       tone: "neutral" as const,
-      action: "View quiz",
+      action: "Unavailable",
       review: true,
     };
   }
