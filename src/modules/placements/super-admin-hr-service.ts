@@ -211,6 +211,8 @@ async function loadAccountGrants(
       collegeName: colleges.name,
       organizationId: colleges.organizationId,
       status: placementRecruiterCollegeGrants.status,
+      validUntil: placementRecruiterCollegeGrants.validUntil,
+      verificationStatus: placementRecruiterCollegeGrants.verificationStatus,
       createdAt: placementRecruiterCollegeGrants.createdAt,
     })
     .from(placementRecruiterCollegeGrants)
@@ -937,6 +939,13 @@ export async function grantSuperAdminHrCollegeAccess(
       rawInput,
     );
 
+  // Unspecified expiry uses a clearly disclosed, fail-closed three-month grant.
+  const now=new Date();
+  const expiration=input.validUntil?new Date(input.validUntil):
+    new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+3,now.getUTCDate(),now.getUTCHours()));
+  if(!Number.isFinite(expiration.getTime())||expiration<=now||
+      expiration.getTime()>now.getTime()+5*366*24*60*60*1000)
+    throw new Error("GRANT_EXPIRY_INVALID");
   const relationship =
     await loadActiveRelationship(
       input.companyRelationshipId,
@@ -1044,6 +1053,7 @@ export async function grantSuperAdminHrCollegeAccess(
         companyRelationshipId:
           relationship.relationshipId,
         grantedByUserId: context.user.id,
+        validUntil: expiration,
       })
       .onConflictDoNothing()
       .returning();
@@ -1079,7 +1089,12 @@ export async function grantSuperAdminHrCollegeAccess(
       );
     }
 
-    return existing;
+    // Grant exists already; never return an expired/non-authorizing row as
+    // if fresh access had been created. Refresh its explicit expiry.
+    const [renewed]=await tx.update(placementRecruiterCollegeGrants)
+      .set({validUntil:expiration,updatedAt:new Date()})
+      .where(eq(placementRecruiterCollegeGrants.id,existing.id)).returning();
+    return renewed??existing;
   });
 }
 
