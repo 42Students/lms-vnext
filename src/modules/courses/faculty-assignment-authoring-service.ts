@@ -86,7 +86,7 @@ export async function commandFacultyAssignment(
         const [submission]=await tx.select({id:assignmentSubmissions.id}).from(assignmentSubmissions)
           .where(eq(assignmentSubmissions.assignmentId,current.id)).limit(1);
         if(input.action==="EDIT"){
-          if(current.status!=="DRAFT"||submission)
+          if(!["DRAFT","PUBLISHED"].includes(current.status)||submission)
             throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
           changedFields=assignmentFieldsChanged(current,input);
           if(!changedFields.length)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
