@@ -19,12 +19,13 @@ export function AcademicModuleScopeInventory({scopes}:{scopes:readonly AcademicM
    <table className="w-full min-w-[44rem] text-left text-sm">
     <thead className="sticky top-0 bg-surface-subtle text-muted-foreground">
      <tr><th className="p-3">Level</th><th className="p-3">Academic path</th>
-      <th className="p-3">Projects</th><th className="p-3">Electives</th><th className="p-3">Students in scope</th></tr>
+      <th className="p-3">Projects</th><th className="p-3">Placements</th><th className="p-3">Electives</th><th className="p-3">Students in scope</th></tr>
     </thead>
     <tbody>{visible.map(scope=><tr key={scope.scopeType+":"+scope.scopeId} className="border-t border-border">
      <td className="p-3">{scope.scopeType==="COHORT"?"Batch":scope.scopeType}</td>
      <td className="p-3">{scope.label}</td>
      <td className="p-3">{scope.projectsRule}</td>
+     <td className="p-3">{scope.placementsRule}</td>
      <td className="p-3">{scope.electivesRule}</td>
      <td className="p-3">—</td>
     </tr>)}</tbody>

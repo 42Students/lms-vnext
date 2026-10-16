@@ -2,7 +2,7 @@ import {z} from "zod";
 export const descendantTypes=["DEPARTMENT","PROGRAM","COHORT","SECTION"] as const;
 export const academicModuleRuleInput=z.strictObject({
  scopeType:z.enum(descendantTypes),scopeId:z.uuid(),
- module:z.enum(["projects","electives"]),
+ module:z.enum(["projects","placements","electives"]),
  action:z.enum(["SET","INHERIT"]),
  enabled:z.boolean().optional(),locked:z.boolean().optional(),
  expected:z.strictObject({enabled:z.boolean(),locked:z.boolean()}).nullable(),
