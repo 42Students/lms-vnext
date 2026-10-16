@@ -19,6 +19,7 @@ import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-w
 import { hrDriveSessionStorageKey } from "@/modules/placements/hr-unsent-draft-storage-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
+import {listRecruiterCollegeBranches} from "@/modules/placements/recruiter-college-branch-service";
 
 export default async function RecruiterRequestDrivePage({
   searchParams,
@@ -83,6 +84,7 @@ export default async function RecruiterRequestDrivePage({
     </div>;
   }
   const grant = grants.find((item) => item.collegeId === collegeId)!;
+  const branchSuggestions=await listRecruiterCollegeBranches(context,collegeId);
   const requestId=query.fix??query.edit??query.copy;
   const request=requestId
     ? (await listOwnRecruiterDriveRequests(context,collegeId)).find(item=>item.id===requestId)
@@ -112,7 +114,7 @@ export default async function RecruiterRequestDrivePage({
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Record an outside-platform drive
     </Link>
-    <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
+    <HrDriveDraftForm initial={initial} branchSuggestions={branchSuggestions} sourceJobTitle={fromJob?.job.title ?? null}
       storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
       collegeId={collegeId} sourceJobId={fromJob?.job.id??null}
       fixRequestId={query.copy?null:request?.id??null} fixUpdatedAt={query.copy?null:request?.updatedAt.toISOString()??null}
