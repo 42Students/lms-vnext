@@ -30,11 +30,11 @@ export async function listSuperAdminJoining(context:RequestContext,raw:unknown):
  const [totals,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.applicant),asc(source.id))
-  .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+  .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=totals[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(r=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(r=>({
   id:r.id,title:r.applicant||"Unnamed applicant",subtitle:r.jobTitle+" · "+r.offerRole,
   status:r.status,details:["Joining date: "+(r.joiningDate??"Not recorded"),
    "Outcome recorded: "+(r.recordedAt?fmt.format(r.recordedAt)+" IST":"Not recorded"),
