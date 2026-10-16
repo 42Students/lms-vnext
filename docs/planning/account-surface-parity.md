@@ -1,6 +1,6 @@
 # LMS vNext — Account Surface Parity Matrix v2
 
-**2026-10-16 phase 2 audit note (no rows changed here).** The matrix has no phase-2 section yet, so this note sits at the top. The Round A page audits in `docs/audit/pages/` (45 pages, 1,744 gap rows after 11 Round R reviews; see `docs/audit/gap-register.md` and `PROGRESS.md`) contradict many rows marked DONE above and below. Treat every row below as a REOPEN CANDIDATE until the named gap IDs are closed or a review marks them WRONG; the status cells have not been edited. Only S1 gaps are listed (all open S2 gaps are in the register). Gap IDs shorten the page prefix: `TPO-x-NN` is in `docs/audit/pages/tpo/x.md`, and so on.
+**2026-10-16 phase 2 audit note (no rows changed here).** The matrix has no phase-2 section yet, so this note sits at the top. The Round A page audits in `docs/audit/pages/` (45 pages, 1,786 gap rows after 17 Round R reviews; see `docs/audit/gap-register.md` and `PROGRESS.md`) contradict many rows marked DONE above and below. Treat every row below as a REOPEN CANDIDATE until the named gap IDs are closed or a review marks them WRONG; the status cells have not been edited. Only S1 gaps are listed (all open S2 gaps are in the register). Gap IDs shorten the page prefix: `TPO-x-NN` is in `docs/audit/pages/tpo/x.md`, and so on.
 
 REOPEN CANDIDATES (matrix row currently DONE, audit says otherwise):
 
@@ -15,9 +15,9 @@ REOPEN CANDIDATES (matrix row currently DONE, audit says otherwise):
 | Applicants tab, Export applicants, Rounds tab, Offers tab, Drive Day tab, Cancel / Close drive, Extend deadline, Student detail drawer (6.2) | TPO-drive-workspace-02, -17 (close does not end open applicants), -18 (cancel), -25, -28, -33, -40, -42, -44, -47, -48, -53, -60, -62, -65 (company share: code gate, columns); TPO-drive-workspace-R01 (bulk actions gated by `DB09_TPO_API_READY`) |
 | Messages inbox (6.3) | TPO-inbox-team-01 (cannot read a recruiter message), -02 (cannot write), -15, -43 |
 | Placement Rules, Trusted Companies/domains, TPO Audit Log (6.4, 6.5) | TPO-settings-audit-53 and TPO-settings-audit-R01 (missing `placement_tpo_college_settings` row blocks grants, public-link join and invite accept); other settings rows have S2 gaps only |
-| Public join link and campaign unsubscribe surfaces (6.1, 8) | TPO-campaigns-public-01, -02 (campaign send), -13 (wrong token family), -18, -19, -20, -26, -29, -31 (public join and Recruit from us are stubs), -21, -32 |
-| HR Drives list, Drive Overview, Selection list / Offer / LOI workflow (7.1) | REC-home-drives-12 (requests and unpublished drives invisible), -21 (request a drive does not create a request), -51 (send a selection list) |
-| Recruiter join and invite acceptance (7.2, 8) | REC-calendar-messages-profile-38, -44; PUB-auth-public-40, -41, -42 (Join disabled, no send-code, accept needs a session) |
+| Public join link and campaign unsubscribe surfaces (6.1, 8) | TPO-campaigns-public-01, -02 (campaign send), -13 (wrong token family), -29, -31 (Recruit from us is a placeholder), -21, -32 (the college and company join forms and APIs, -18, -19, -20, -26, were built after the audit: review WRONG verdicts) |
+| HR Drives list, Drive Overview, Selection list / Offer / LOI workflow (7.1) | REC-home-drives-12 (requests and unpublished drives invisible), -21 (request a drive does not create a request), -38, -51 (send a selection list) |
+| Recruiter join and invite acceptance (7.2, 8) | REC-calendar-messages-profile-38; PUB-auth-public-40, -41, -42 (Join disabled, no send-code, accept needs a session; REC-calendar-messages-profile-44 for `/company-join` was built after the audit, so re-check these three in the public review) |
 | Learner All Assignments (1) | LEARNER-learning-misc-01 (file submission needs R2 env) |
 | Learner Placement Cell / registration, Self Profile (1) | LEARNER-placements-50 (no registration choice UI), LEARNER-profile-misc-01 (resume upload), -03 (identity and marksheet upload) |
 | Faculty All Assignments / All Quizzes (2) | FAC-assessments-01 (assignment authoring lacks resources and submission method) |

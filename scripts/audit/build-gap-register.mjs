@@ -201,7 +201,7 @@ for (const account of ACCOUNTS) {
         const V = verdict.toUpperCase();
         if (V.startsWith("WRONG")) {
           rev.counted.wrong++;
-          const closed = /closed|stale|since|fixed|built|works|already/i.test(verdict) || /^(Stale|Closed|Fixed|Built|Commit)/i.test(note) || /commits? `?[0-9a-f]{7,}|`[0-9a-f]{9}`/i.test(note);
+          const closed = !/\bno gap\b/i.test(note) && (/closed|stale|since|fixed|built|works|already|\bexists?\b|\bnow\b|\bresiduals?\b|\brenders\b/i.test(verdict) || /^(Stale|Closed|Fixed|Built|Commit)/i.test(note) || /\bcommits? `?[0-9a-f]{7}|`[0-9a-f]{9}`|\bexists?\b|\bnow\b|\bresiduals?\b|\brenders\b/i.test(note.slice(0, 400)));
           g.status = closed ? "CLOSED-SINCE" : "WRONG";
           g.review_note = clean(`${verdict}: ${note}`);
         } else if (V.startsWith("SEVERITY-CHANGE")) {

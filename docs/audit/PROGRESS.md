@@ -8,17 +8,17 @@ Rounds: Round 0 done; Round A done for all accounts; Round R (independent advers
 
 | Account | Pages audited | Pages reviewed | Rows | Round A | MISSED | S1 | S2 | S3 | S4 | OPEN | UNCONFIRMED | CLOSED-SINCE | WRONG | Open + unconfirmed |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| tpo | 12 | 11 | 684 | 617 | 67 | 73 | 284 | 265 | 62 | 617 | 51 | 15 | 1 | 668 |
-| recruiter | 2 | 0 | 104 | 104 | 0 | 5 | 28 | 55 | 16 | 94 | 10 | 0 | 0 | 104 |
-| learner | 6 | 0 | 208 | 208 | 0 | 4 | 46 | 103 | 55 | 171 | 37 | 0 | 0 | 208 |
-| faculty | 3 | 0 | 87 | 87 | 0 | 1 | 13 | 41 | 32 | 78 | 9 | 0 | 0 | 87 |
+| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 621 | 52 | 20 | 1 | 673 |
+| recruiter | 2 | 2 | 116 | 104 | 12 | 6 | 28 | 64 | 18 | 102 | 10 | 4 | 0 | 112 |
+| learner | 6 | 2 | 220 | 208 | 12 | 5 | 54 | 103 | 58 | 183 | 36 | 0 | 1 | 219 |
+| faculty | 3 | 1 | 95 | 87 | 8 | 2 | 12 | 46 | 35 | 84 | 9 | 0 | 2 | 93 |
 | college | 9 | 0 | 215 | 215 | 0 | 15 | 84 | 82 | 34 | 186 | 29 | 0 | 0 | 215 |
 | superadmin | 9 | 0 | 301 | 301 | 0 | 13 | 104 | 148 | 36 | 266 | 35 | 0 | 0 | 301 |
 | mentor | 2 | 0 | 77 | 77 | 0 | 0 | 16 | 45 | 16 | 75 | 2 | 0 | 0 | 77 |
 | public | 2 | 0 | 68 | 68 | 0 | 3 | 24 | 23 | 18 | 61 | 7 | 0 | 0 | 68 |
-| **all** | 45 | 11 | 1744 | 1677 | 67 | 114 | 599 | 762 | 269 | 1548 | 180 | 15 | 1 | 1728 |
+| **all** | 45 | 17 | 1786 | 1677 | 109 | 115 | 610 | 783 | 278 | 1578 | 180 | 24 | 4 | 1758 |
 
-Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 105, S2 595, S3 759, S4 269.
+Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 101, S2 603, S3 780, S4 274.
 
 ## Per page
 
@@ -26,7 +26,7 @@ Severity counts are after review severity changes and include every row regardle
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | tpo | batches | yes | yes | 71 | 5 | 25 | 30 | 11 | 69 | 12.7% |  |
 | tpo | calendar-reports | yes | yes | 61 | 2 | 18 | 27 | 14 | 59 | 21.3% | YES |
-| tpo | campaigns-public | yes | no | 37 | 11 | 17 | 7 | 2 | 37 |  |  |
+| tpo | campaigns-public | yes | yes | 47 | 9 | 21 | 14 | 3 | 42 | 44.7% | YES |
 | tpo | companies | yes | yes | 35 | 2 | 15 | 14 | 4 | 33 | 22.9% | YES |
 | tpo | drive-workspace | yes | yes | 80 | 18 | 35 | 24 | 3 | 80 | 10.0% |  |
 | tpo | drives | yes | yes | 58 | 2 | 28 | 26 | 2 | 57 | 13.8% |  |
@@ -36,17 +36,17 @@ Severity counts are after review severity changes and include every row regardle
 | tpo | requests-verification | yes | yes | 41 | 6 | 15 | 17 | 3 | 38 | 19.5% | YES |
 | tpo | settings-audit | yes | yes | 63 | 2 | 33 | 24 | 4 | 62 | 14.3% |  |
 | tpo | students | yes | yes | 62 | 6 | 28 | 26 | 2 | 62 | 17.7% | YES |
-| recruiter | calendar-messages-profile | yes | no | 48 | 2 | 12 | 26 | 8 | 48 |  |  |
-| recruiter | home-drives | yes | no | 56 | 3 | 16 | 29 | 8 | 56 |  |  |
+| recruiter | calendar-messages-profile | yes | yes | 52 | 2 | 13 | 29 | 8 | 48 | 17.3% | YES |
+| recruiter | home-drives | yes | yes | 64 | 4 | 15 | 35 | 10 | 64 | 18.8% | YES |
 | learner | course-detail | yes | no | 20 | 0 | 7 | 8 | 5 | 20 |  |  |
 | learner | home-courses | yes | no | 23 | 0 | 2 | 11 | 10 | 23 |  |  |
 | learner | learning-misc | yes | no | 41 | 1 | 8 | 22 | 10 | 41 |  |  |
-| learner | placements | yes | no | 58 | 1 | 18 | 30 | 9 | 58 |  |  |
+| learner | placements | yes | yes | 66 | 1 | 24 | 30 | 11 | 65 | 16.7% | YES |
 | learner | profile-misc | yes | no | 26 | 2 | 4 | 11 | 9 | 26 |  |  |
-| learner | projects | yes | no | 40 | 0 | 7 | 21 | 12 | 40 |  |  |
+| learner | projects | yes | yes | 44 | 1 | 9 | 21 | 13 | 44 | 13.6% |  |
 | faculty | assessments | yes | no | 30 | 1 | 6 | 13 | 10 | 30 |  |  |
 | faculty | attendance-grades | yes | no | 22 | 0 | 2 | 8 | 12 | 22 |  |  |
-| faculty | courses | yes | no | 35 | 0 | 5 | 20 | 10 | 35 |  |  |
+| faculty | courses | yes | yes | 43 | 1 | 4 | 25 | 13 | 41 | 27.9% | YES |
 | college | academic-setup | yes | no | 41 | 2 | 17 | 15 | 7 | 41 |  |  |
 | college | attendance | yes | no | 17 | 1 | 1 | 9 | 6 | 17 |  |  |
 | college | course-tabs | yes | no | 27 | 7 | 8 | 9 | 3 | 27 |  |  |
@@ -73,27 +73,26 @@ Severity counts are after review severity changes and include every row regardle
 ## Pages whose discrepancy rate is above 15%
 
 - tpo/calendar-reports: 21.3% (Discrepancy rate = (8 + 2 + 3) / (53 + 8) = 13 / 61 = 21.3%.)
+- tpo/campaigns-public: 44.7% (Round A gaps 37: CONFIRMED 26, WRONG 5, SEVERITY-CHANGE 6; MISSED 10. Discrepancy rate = (10 + 5 + 6) / (37 + 10) = 21 / 47 = 44.7%.)
 - tpo/companies: 22.9% (Round A gaps: 30. CONFIRMED 27, WRONG 2 (01, 30), SEVERITY-CHANGE 1 (02). MISSED 5 (TPO-companies-R01 to R05). Discrepancy rate = (5 + 2 + 1) / (30 + 5) = 8/35 = 22.9%.)
 - tpo/home: 26.9% (Discrepancy rate = (8 MISSED + 5 WRONG + 1 SEVERITY-CHANGE) / (44 + 8) = 14 / 52 = 26.9%.)
 - tpo/requests-verification: 19.5% (Round A gaps 38: CONFIRMED 33, WRONG 3 (19, 20, 31: already closed on current main), SEVERITY-CHANGE 2 (21, 25), MISSED 3 (R01 to R03). Discrepancy rate = (3 + 3 + 2) / (38 + 3) = 8 / 41 = 19.5%. Roun)
 - tpo/students: 17.7% (Discrepancy rate = (8 MISSED + 0 WRONG + 3 SEVERITY-CHANGE) / (54 + 8) = 11 / 62 = 17.7%.)
+- recruiter/calendar-messages-profile: 17.3% (Discrepancy rate = (4 + 4 + 1) / (48 + 4) = 9 / 52 = 17.3%.)
+- recruiter/home-drives: 18.8% (Discrepancy rate = (8 MISSED + 0 WRONG + 4 SEVERITY-CHANGE) / (56 + 8) = 12 / 64 = 18.8%.)
+- learner/placements: 16.7% (Discrepancy rate = (MISSED 8 + WRONG 1 + SEVERITY-CHANGE 2) / (58 + 8) = 11 / 66 = 16.7%.)
+- faculty/courses: 27.9% (Summary: Round A gaps 35 -> CONFIRMED 31, WRONG 2, SEVERITY-CHANGE 2. MISSED 8 (`FAC-courses-R01` to `R08`). Discrepancy rate = (8 + 2 + 2) / (35 + 8) = 12 / 43 = 27.9%.)
 
-Reviews received: 11 of 45 pages. Mean discrepancy rate across received reviews: 17.0%.
+Reviews received: 17 of 45 pages. Mean discrepancy rate across received reviews: 19.2%.
 
 ## Reviews still pending
 
-- tpo/campaigns-public
-- recruiter/calendar-messages-profile
-- recruiter/home-drives
 - learner/course-detail
 - learner/home-courses
 - learner/learning-misc
-- learner/placements
 - learner/profile-misc
-- learner/projects
 - faculty/assessments
 - faculty/attendance-grades
-- faculty/courses
 - college/academic-setup
 - college/attendance
 - college/course-tabs
