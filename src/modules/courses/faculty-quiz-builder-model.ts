@@ -185,6 +185,7 @@ const savedQuizSchema=z.object({quiz:z.object({
  id:z.string().uuid(),lessonId:z.string().uuid(),
  title:z.string(),description:z.string().nullable(),dueAt:z.string().nullable(),
  maxAttempts:z.number().int(),sequence:z.number().int(),
+ shuffleQuestions:z.boolean().optional(),shuffleOptions:z.boolean().optional(),
  status:z.enum(["DRAFT","PUBLISHED","CLOSED","ARCHIVED"]),
  updatedAt:z.iso.datetime({offset:true}),
 })}).passthrough();
