@@ -257,12 +257,12 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="status")setStatusFilter(value);
    else if(kind==="source")setSourceFilter(value);
    else if(kind==="company")setCompanyFilter(value);
-   else if(kind==="designation")setDesignationFilter(value);
+   else if(kind==="designation")setDesignationFilter(value==="ALL"?"":value);
    else if(kind==="reach")setReachFilter(value);
    else if(kind==="nextFollowup")setNextFilter(value);
    else if(kind==="lastActivity")setActivityFilter(value);
    else if(kind==="added")setAddedFilter(value);
-   else setQuery(value);
+   else setQuery(value==="ALL"?"":value);
   }
 
   async function createInviteLink(lead:Lead){
