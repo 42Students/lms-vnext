@@ -15,6 +15,7 @@ import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attent
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
+import { listMyLearnerProjectDueStates } from "@/modules/projects/learner-project-due-service";
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
 import { learnerProjectMatchesSearch } from "@/modules/projects/learner-project-search-model";
@@ -85,6 +86,8 @@ export default async function LearnerProjectsPage({
     allRows.filter(row => row.memberRole === "LEARNER").map(row => row.project.id),
   );
   const progressByProject = new Map(projectProgress.map(row => [row.projectId, row]));
+  const dueStates = await listMyLearnerProjectDueStates(context, allRows.filter(row => row.memberRole === "LEARNER").map(row => row.project.id));
+  const dueByProject = new Map(dueStates.map(row => [row.projectId, row]));
 
   const attentionByProject = new Map<
     string,
@@ -153,6 +156,8 @@ export default async function LearnerProjectsPage({
             mentorName: teamsByProject.get(row.project.id)?.mentorName ?? null,
             memberCount: teamsByProject.get(row.project.id)?.memberCount,
             progressPercent: progressByProject.get(row.project.id)?.percentage ?? undefined,
+            dueState: dueByProject.get(row.project.id)?.state,
+            dueDate: dueByProject.get(row.project.id)?.date,
             progressDetail: progressByProject.has(row.project.id)
               ? String(progressByProject.get(row.project.id)!.completedTasks) +
                 " of " + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks done"
