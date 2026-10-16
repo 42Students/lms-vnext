@@ -1,4 +1,6 @@
 import "server-only";
+import {recordActivityEvent} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {getAuthConfig} from "@/modules/auth/config";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -79,6 +81,19 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
      throw error;
    }
  }
+ const updated=outcomes.filter(item=>item.status==="updated").length;
+ const skipped=outcomes.filter(item=>item.status==="skipped").length;
+ const failed=outcomes.filter(item=>item.status==="failed").length;
+ await recordActivityEvent(context,{
+   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_BULK_RUN,
+   collegeId:context.membership!.collegeId,
+   organizationId:context.membership!.organizationId,
+   subjectType:plan.target==="APPLICATIONS"?"placement_job":"placement_college",
+   subjectId:plan.jobId??context.membership!.collegeId,
+   summary:"Placement bulk action: "+plan.action+" — "+updated+" updated, "+skipped+" skipped",
+   metadata:{target:plan.target,action:plan.action,selected:plan.ids.length,
+    updated,skipped,failed,jobId:plan.jobId??null},
+ });
  return {outcomes,counts:{
    updated:outcomes.filter(item=>item.status==="updated").length,
    skipped:outcomes.filter(item=>item.status==="skipped").length,
