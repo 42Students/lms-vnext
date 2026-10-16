@@ -22,6 +22,7 @@ import {
   projectInstances,
   projectMeetings,
   projectMembers,
+  projectTasks,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -466,6 +467,17 @@ export async function reassignProjectPrimaryMentor(
           });
       }
 
+      if (currentPrimary && currentPrimary.membershipId !== mentorMembershipId) {
+        // COL-people-23: ownership of the outgoing mentor's tasks must not
+        // remain on a membership which is no longer in this workspace.
+        await tx.update(projectTasks)
+          .set({ assigneeMembershipId: null, updatedAt: now })
+          .where(and(
+            eq(projectTasks.projectId, project.id),
+            eq(projectTasks.assigneeMembershipId, currentPrimary.membershipId),
+          ));
+      }
+
       if (
         currentPrimary &&
         currentPrimary.membershipId !==
@@ -647,11 +659,7 @@ export async function bulkReassignProjectMentor(
     reassignedCount,
     skippedCount,
     failures,
-    // Legacy also clears task assignees belonging to
-    // the outgoing mentor. vNext project_tasks has no
-    // assignee column yet, so that side effect remains
-    // an explicit DB07 parity blocker.
-    taskAssignmentClearingSupported: false,
+    taskAssignmentClearingSupported: true,
   };
 }
 
