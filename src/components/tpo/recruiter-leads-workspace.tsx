@@ -812,7 +812,7 @@ export function RecruiterLeadsWorkspace({
             {duplicate ? <p role="alert" className="text-sm text-destructive">
               Contact already exists: <Link className="underline" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
-            <label className="block text-sm">Company<input className={inputStyle + " mt-1"} maxLength={150}
+            <label className="block text-sm">Company *<input className={inputStyle + " mt-1"} required maxLength={150}
               value={form.companyName} onChange={e => field("companyName", e.target.value)} /></label>
             <label className="block text-sm">Designation<input className={inputStyle + " mt-1"} maxLength={100}
               value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
