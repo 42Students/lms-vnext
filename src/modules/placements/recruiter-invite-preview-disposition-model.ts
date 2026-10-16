@@ -5,3 +5,6 @@ export function recruiterInvitePreviewDisposition(status:number,hasInvite:boolea
  if(status>=200 && status<300 && hasInvite)return "ready";
  return "load_error";
 }
+
+/** Exact legacy error copy; use interpolation rather than JSX literal escapes. */
+export const RECRUITER_INVITE_LOAD_ERROR_HEADING="We couldn't load this invitation";
