@@ -72,3 +72,4 @@ export * from "./placement-outside-drives";
 export * from "./storage-files";
 export * from "./placement-drive-requests";
 export * from "./tpo-campaign-drafts";
+export * from "./placement-recruiter-public-contacts";
