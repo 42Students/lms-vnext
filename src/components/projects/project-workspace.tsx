@@ -11,6 +11,7 @@ import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
+import {MentorReleaseEditor} from "./mentor-release-editor";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -599,6 +600,7 @@ export function ProjectWorkspace({
             Release → sprint → task state from normalized
             Project records.
           </p>
+          {mode==="MENTOR"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
         <div className="space-y-4">
           {workspace.releases.map((release) => (
@@ -624,6 +626,9 @@ export function ProjectWorkspace({
                   <StatusBadge tone={tone(release.status)}>
                     {label(release.status)}
                   </StatusBadge>
+                  {mode==="MENTOR"&&!readOnly?<MentorReleaseEditor
+                    projectId={workspace.project.id} release={release}
+                    linkedSprints={(sprintsByRelease.get(release.id)??[]).length}/>:null}
                   {mode === "MENTOR" && !readOnly && release.status !== "SHIPPED" ? (
                     <MentorSprintCreate projectId={workspace.project.id}
                       releaseId={release.id} />
