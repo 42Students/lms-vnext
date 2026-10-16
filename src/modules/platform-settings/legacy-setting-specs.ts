@@ -297,5 +297,5 @@ export const LEGACY_TENANT_SETTING_SPECS=[
 export type LegacyTenantSettingKey=typeof LEGACY_TENANT_SETTING_SPECS[number]["key"];
 export type LegacyTenantSettingSpec=typeof LEGACY_TENANT_SETTING_SPECS[number];
 export const LEGACY_TENANT_SETTING_MAP=new Map<string,LegacyTenantSettingSpec>(
- LEGACY_TENANT_SETTING_SPECS.map(spec=>[spec.key,spec]),
+ LEGACY_TENANT_SETTING_SPECS.map(spec=>[spec.key,spec] as const),
 );
