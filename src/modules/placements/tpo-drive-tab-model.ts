@@ -12,6 +12,7 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
   {label:"Offers",href:root+"/offers"},
   {label:"Waitlist",href:root+"/waitlist"},
   {label:"Joining",href:root+"/joining"},
+  {label:"Change requests",href:root+"/change-requests"},
   {label:"Company sharing",href:root+"/share-preview"},
  ];
 }
