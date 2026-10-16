@@ -75,9 +75,25 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
         className="font-semibold text-primary-text underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
-    {!data.storageReady?<p role="status" className="rounded border border-border bg-surface p-5 text-sm">
-      Application stage actions are awaiting migration registration. The existing scoped applicant register remains available.</p>:
-      <CollegeApplicationPipelineControls jobId={jobId} rows={data.items}/>}
+    {!data.storageReady?<section className="space-y-3">
+      <p role="status" className="rounded border border-border bg-surface p-5 text-sm">
+        Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
+      </p>
+      <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+       <table className="min-w-full text-left text-sm">
+        <thead><tr className="border-b border-border bg-muted"><th className="p-3">Student</th><th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Application</th><th className="p-3">Screening</th></tr></thead>
+        <tbody>{data.items.map(row=><tr key={row.id} className="border-b border-border">
+         <td className="p-3">{row.name??"Unnamed learner"}</td>
+         <td className="p-3">{row.rollNumber??"Not recorded"}</td>
+         <td className="p-3">{row.roleTitle}</td>
+         <td className="p-3">{row.status}</td>
+         <td className="p-3">{row.screening??"Not recorded"}</td>
+        </tr>)}</tbody>
+       </table>
+      </div>
+      {!data.items.length?<p className="text-sm text-body">No applications match these filters.</p>:null}
+     </section>:
+     <CollegeApplicationPipelineControls jobId={jobId} rows={data.items}/>}
     <nav aria-label="Application pagination" className="flex justify-between gap-3 text-sm">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex gap-3">
         {query.page>1?<Link href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
