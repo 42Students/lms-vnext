@@ -207,10 +207,12 @@ export async function changeTpoDriveLifecycle(
     let notifiedCount=0;
     let debarmentCounted=0;
     if(input.action==="PUBLISH"){
+      // Reach is decided before a drive-count ban is advanced. The last
+      // barred drive must not notify its own excluded learner prematurely.
+      notifiedCount=await notifyEligiblePublishedDrive(tx,context,updated,event.id);
       debarmentCounted=await countPublishedDriveDebarments(
         tx,context,updated.id,collegeId,now,
       );
-      notifiedCount=await notifyEligiblePublishedDrive(tx,context,updated,event.id);
     }
     return {
       id: updated.id,
