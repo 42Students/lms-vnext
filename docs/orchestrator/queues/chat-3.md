@@ -36,6 +36,17 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
 
+## WP-chat-3-02 source-implemented gap IDs (FAST MODE, unverified)
+
+- COL-people-08: Student Suspend/Reactivate and Faculty Suspend Faculty/Reactivate Faculty on role directories.
+- COL-people-17: Read-only People Directory routes to contact tabs; membership management moved to /college/people/manage.
+- COL-verification-misc-03: Review one by one, count, Next, Finish and auto advance.
+- COL-verification-misc-04: Verify without opening risk acknowledgement, missing-marksheet exclusion; quick send-back reason presets still open.
+- COL-verification-misc-05: Bounded immutable event timeline, education values table, private resume receipt link.
+- COL-verification-misc-07: decision-specific feedback; outbound notification delivery remains unverified.
+- COL-verification-misc-11: Important (HIGH/CRITICAL) default, Academic setup / People & access / Teaching / Projects / Everything filters and aligned CSV export.
+- WP-chat-3-02 remains IN-PROGRESS: faculty/student CRUD/import and College Admin placements gaps remain. COL-verification-misc-17 SKIP per OD-22.
+
 ## Continuation 2026-10-17: source closure IDs (not tested)
 
 - WP-chat-3-01 source implementation on main: COL-academic-setup-01, -02, -03, -04, -06, -07, -08, -09, -28, -31, -33, -35; COL-attendance-01 (earlier); COL-courses-content-11; COL-dashboard-01 (earlier), -03, -04, -05, -06, -07, -08; COL-verification-misc-01.
