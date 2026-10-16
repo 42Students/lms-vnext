@@ -39,10 +39,12 @@ export async function PlacementDriveWorkspace({
   context,
   jobId,
   eyebrow,
+  openPublish = false,
 }: {
   context: RequestContext;
   jobId: string;
   eyebrow: string;
+  openPublish?: boolean;
 }) {
   const [
     driveDay,
@@ -638,7 +640,7 @@ export async function PlacementDriveWorkspace({
       />
       </section>
       {lifecycleReadiness ? (
-        <TpoDriveLifecycleControls readiness={lifecycleReadiness} />
+        <TpoDriveLifecycleControls readiness={lifecycleReadiness} initialPublish={openPublish} />
       ) : (
         <PlacementJobLifecycleControls
           jobId={jobId}
