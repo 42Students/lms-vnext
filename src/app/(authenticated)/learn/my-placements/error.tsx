@@ -12,10 +12,10 @@ export default function LearnerPlacementsError({
   return (
     <section role="alert" className="rounded-xl border border-border bg-surface p-8 text-center">
       <h1 className="m-0 text-lg font-semibold text-foreground">
-        Unable to load your placement dashboard
+        We could not load your placements
       </h1>
       <p className="mt-2 text-sm text-body">
-        We could not load your placement information. This is a loading error, not an empty account.
+        Your data is safe. Check your connection and try again. This is a loading problem, not an empty account.
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Retry</Button>
