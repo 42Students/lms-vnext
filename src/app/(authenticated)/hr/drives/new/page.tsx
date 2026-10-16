@@ -11,11 +11,13 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import {
   emptyHrDriveDraft,
+  hrDriveDraftSchema,
   hrDriveDraftQuerySchema,
   hrDraftFromAuthorizedJob,
 } from "@/modules/placements/hr-drive-draft-model";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
 import { hrDriveSessionStorageKey } from "@/modules/placements/hr-unsent-draft-storage-model";
+import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 
 export default async function RecruiterRequestDrivePage({
@@ -40,15 +42,6 @@ export default async function RecruiterRequestDrivePage({
   if (!parsed.success) notFound();
   const query = parsed.data;
   const grants = context.recruiter.grants;
-  if (query.fix) {
-    return <div className="space-y-6">
-      <PageHeader eyebrow="Recruiter" title="Fix and Resend"
-        description="The request approval and requested-changes persistence is not registered." />
-      <ErrorState title="Cannot safely reopen this request"
-        description="The original requested changes cannot be verified or saved yet. No request has been modified." />
-      <Link href="/hr/drives" className="text-sm font-semibold text-primary-text">Back to drives</Link>
-    </div>;
-  }
 
   let fromJob: Awaited<ReturnType<typeof getRecruiterPlacementWorkspace>> | null = null;
   if (query.from) {
@@ -86,13 +79,19 @@ export default async function RecruiterRequestDrivePage({
     </div>;
   }
   const grant = grants.find((item) => item.collegeId === collegeId)!;
-  const initial = fromJob
+  const request= query.fix
+    ? (await listOwnRecruiterDriveRequests(context,collegeId)).find(item=>item.id===query.fix)
+    : null;
+  if(query.fix && (!request||!(request.status==="SENT_BACK"||request.status==="REQUEST")))notFound();
+  const originalDraft=request?hrDriveDraftSchema.safeParse(request.draft):null;
+  if(originalDraft&&!originalDraft.success)notFound();
+  const initial = originalDraft?.success?originalDraft.data:fromJob
     ? hrDraftFromAuthorizedJob(fromJob.job, fromJob.rounds)
     : emptyHrDriveDraft();
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="Recruiter" title={fromJob ? "Hire Again · discussion proposal" : "Request a drive"}
-      description={context.recruiter.companyName + " · " + grant.collegeName + ". This can send a private discussion proposal; structured request approval is not available."} />
+    <PageHeader eyebrow="Recruiter" title={request ? "Fix and Resend" : fromJob ? "Hire again" : "Request a drive"}
+      description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
       className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
       ← Back to drives
@@ -107,6 +106,7 @@ export default async function RecruiterRequestDrivePage({
     </Link>
     <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
       storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
-      collegeId={collegeId} sourceJobId={fromJob?.job.id??null} />
+      collegeId={collegeId} sourceJobId={fromJob?.job.id??null}
+      fixRequestId={request?.id??null} fixUpdatedAt={request?.updatedAt.toISOString()??null} />
   </div>;
 }
