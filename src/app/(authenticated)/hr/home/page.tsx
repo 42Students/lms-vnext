@@ -24,6 +24,7 @@ import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-service";
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
+import {recruiterTodayWaitingRequests} from "@/modules/placements/recruiter-today-waiting-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -85,9 +86,9 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     unreadConversations:conversationSignals?.unread??[],
   });
   // Pending formal requests count as drives, even before publication.
-  const requestCount = actionQueue.length === 0
-    ? (await listOwnRecruiterDriveRequests(context, selectedId)).length
-    : 0;
+  const requests = await listOwnRecruiterDriveRequests(context,selectedId);
+  const requestCount=requests.length;
+  const waitingRequests=recruiterTodayWaitingRequests(requests);
   const profile = await getRecruiterSelfProfile(context);
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
   const actions = [
@@ -222,8 +223,23 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </p>}
     </section>
     <section className="rounded-xl border border-border bg-surface p-5">
-      <h2 className="font-semibold text-foreground">Waiting</h2>
-      <p className="mt-2 text-sm text-body">These conversations were last updated by you. A reply might still be needed; no pending approval or reply is inferred.</p>
+      <h2 className="font-semibold text-foreground">With the placement cell</h2>
+      <p className="mt-2 text-sm text-body">Formal requests awaiting a college decision. Results and selections require recorded submissions.</p>
+      {waitingRequests.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {waitingRequests.map(request=><li key={request.id}>
+          <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=WAITING"}
+            className="block rounded-md border border-border p-4 text-sm text-primary-text">
+            <span className="block font-semibold">{request.title}</span>
+            <span className="mt-1 block text-xs text-body">
+              {request.status==="REQUEST"?"Sent for review":"Needs your changes"}
+            </span>
+          </Link>
+        </li>)}
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+        No formal drive requests are waiting at this college.
+      </p>}
+      <h3 className="mt-4 font-semibold text-foreground">Conversations waiting for a reply</h3>
+      <p className="mt-1 text-sm text-body">These conversations were last updated by you. This does not prove a reply is due.</p>
       {conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {conversationSignals.waiting.map(row=><li key={row.id}>
           <Link href={row.href} className="block rounded-md border border-border p-4 text-sm text-primary-text">
