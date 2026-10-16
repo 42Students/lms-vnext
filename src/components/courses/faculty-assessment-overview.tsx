@@ -62,8 +62,8 @@ export function FacultyAssessmentOverview({
       <div className="space-y-5">
         <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
         <EmptyState
-          title={kind === "QUIZ" ? "No quizzes in your teaching sections" : "No assignments in your teaching sections"}
-          description="Choose a teaching lesson above to create a private assessment draft."
+          title={kind === "QUIZ" ? "No quizzes yet" : "No assignments yet"}
+          description={kind==="QUIZ"?"Create your first quiz to get started.":"Create your first assignment to get started."}
         />
       </div>
     );
@@ -142,7 +142,7 @@ export function FacultyAssessmentOverview({
 
       {filtered.length === 0 ? (
         <EmptyState
-          title="No matching assessments"
+          title={kind==="QUIZ"?"No matching quizzes":"No matching assignments"}
           description="Change Course / Section or Status to see other assessments."
         />
       ) : (
@@ -156,7 +156,7 @@ export function FacultyAssessmentOverview({
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge tone={item.status === "PUBLISHED" ? "success" : item.status === "DRAFT" ? "warning" : "neutral"}>
-                      {item.status}
+                      {item.status==="DRAFT"&&item.kind==="QUIZ"&&!item.dueAt?"Needs due date":item.status==="DRAFT"?"Draft":item.status==="PUBLISHED"?"Open":item.status==="CLOSED"?"Closed":"Archived"}
                     </StatusBadge>
                     <StatusBadge tone="info">
                       {item.authoredDeliveryId ? "This Section" : "Shared Offering"}
