@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 
 import { and, eq, or } from "drizzle-orm";
 import { z } from "zod";
@@ -37,6 +38,7 @@ import {
 } from "./tpo-participation-model";
 import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
+import { placementEligibilityEvents } from "@/db/schema/placement-batches";
 
 const uuid = z.string().uuid();
 type Client = ReturnType<typeof getDb>;
@@ -212,6 +214,7 @@ export async function decideTpoLearnerParticipation(
   await getTpoLearnerParticipation(context, membershipId);
 
   const desired = canonicalTpoParticipationChange(input);
+  const historyReady = await placementTableExists("placement_eligibility_events");
   return getDb().transaction(async (tx: Tx) => {
     const [locked] = await tx.select({ id: colleges.id })
       .from(colleges).where(eq(colleges.id, college.id))
@@ -320,6 +323,15 @@ export async function decideTpoLearnerParticipation(
       });
     }
 
+    const actionId = historyReady ? randomUUID() : null;
+    if (actionId) await tx.insert(placementEligibilityEvents).values({
+      collegeId: college.id, actionId, eventKind:"DECIDE",
+      scopeType:"MEMBERSHIP", scopeId:membershipId,
+      beforeStatus:before.status, beforeReason:before.reason, beforeNote:before.note,
+      afterStatus:desired.status, afterReason:desired.reason, afterNote:desired.note,
+      actorUserId:context.user.id,
+    });
+
     // The registered activity log is durable and transactionally atomic
     // with the decision. Never copy free-text reason/note to activity metadata.
     await tx.insert(activityEvents).values({
@@ -344,6 +356,7 @@ export async function decideTpoLearnerParticipation(
 
     return {
       changed: true,
+      actionId,
       direct: desired.status === null
         ? snapshotTpoMembershipDecision(null)
         : snapshotTpoMembershipDecision({
