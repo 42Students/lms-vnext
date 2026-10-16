@@ -73,6 +73,11 @@ export function RecruiterPlacementPortfolio({
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
                 {item.job.description}
               </p>
+              <p className="mt-2 text-sm text-body">
+                Next: {item.job.status==="CLOSED"
+                  ? "Hire again with a new request."
+                  : "Review the shared applicant list and follow up with the placement cell."}
+              </p>
             </div>
             <Link
               href={"/recruiter/drives/" + item.job.id +
