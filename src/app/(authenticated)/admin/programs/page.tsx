@@ -5,6 +5,7 @@ import { AdminProgramDirectory } from "@/components/admin/admin-program-director
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listPrograms } from "@/modules/academics/program-service";
+import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listDepartments } from "@/modules/departments/service";
 
 export default async function SuperAdminProgramsPage() {
@@ -27,6 +28,7 @@ export default async function SuperAdminProgramsPage() {
     listPrograms(context, collegeId),
     listDepartments(context, collegeId),
   ]);
+  const contents = await listProgramContents(context, collegeId, programs.map(program => program.id));
 
   return (
     <div className="space-y-6">
@@ -48,6 +50,7 @@ export default async function SuperAdminProgramsPage() {
           departmentId: program.departmentId,
           departmentName: program.departmentName,
           durationTerms: program.durationTerms,
+          contents: contents.get(program.id) ?? null,
         }))}
         departments={departments.map((department) => ({
           id: department.id,
