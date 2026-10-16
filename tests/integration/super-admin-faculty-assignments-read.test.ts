@@ -17,12 +17,12 @@ const ids={period:randomUUID(),program:randomUUID(),cohort:randomUUID(),course:r
 const name="admin-teach-"+ids.assignment.slice(0,8);
 describe.skipIf(!enabled)("Super Admin faculty assignment PostgreSQL",()=>{
  beforeAll(async()=>{
-  await pool!.query("insert into academic_periods(id,college_id,name,code,start_date,end_date) values ($1,$2,$3,$3,'2026-07-01','2026-12-31')",[ids.period,SEED_IDS.collegeA,name]);
-  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3,$3,8)",[ids.program,SEED_IDS.departmentA,name]);
-  await pool!.query("insert into cohorts(id,program_id,name,code,start_period_id) values ($1,$2,$3,$3,$4)",[ids.cohort,ids.program,name,ids.period]);
-  await pool!.query("insert into courses(id,department_id,name,code) values ($1,$2,$3,$3)",[ids.course,SEED_IDS.departmentA,name]);
+  await pool!.query("insert into academic_periods(id,college_id,name,code,start_date,end_date) values ($1,$2,$3,$4,'2026-07-01','2026-12-31')",[ids.period,SEED_IDS.collegeA,name,name]);
+  await pool!.query("insert into programs(id,department_id,name,code,duration_terms) values ($1,$2,$3,$4,8)",[ids.program,SEED_IDS.departmentA,name,name]);
+  await pool!.query("insert into cohorts(id,program_id,name,code,start_period_id) values ($1,$2,$3,$4,$5)",[ids.cohort,ids.program,name,name,ids.period]);
+  await pool!.query("insert into courses(id,department_id,name,code) values ($1,$2,$3,$4)",[ids.course,SEED_IDS.departmentA,name,name]);
   await pool!.query("insert into course_offerings(id,course_id,cohort_id,academic_period_id) values ($1,$2,$3,$4)",[ids.offering,ids.course,ids.cohort,ids.period]);
-  await pool!.query("insert into sections(id,cohort_id,academic_period_id,name,code) values ($1,$2,$3,$4,$4)",[ids.section,ids.cohort,ids.period,name]);
+  await pool!.query("insert into sections(id,cohort_id,academic_period_id,name,code) values ($1,$2,$3,$4,$5)",[ids.section,ids.cohort,ids.period,name,name]);
   await pool!.query("insert into course_section_deliveries(id,offering_id,section_id) values ($1,$2,$3)",[ids.delivery,ids.offering,ids.section]);
   await pool!.query("insert into course_teaching_assignments(id,delivery_id,membership_id,role) values ($1,$2,$3,'PRIMARY')",
    [ids.assignment,ids.delivery,SEED_IDS.facultyCollegeAMembership]);
