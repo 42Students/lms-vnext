@@ -384,6 +384,46 @@ export async function PlacementDriveWorkspace({
           ) : null}
         </section>
       ) : null}
+      {isTpo && driveDay.rounds.length > 0 ? (
+        <section aria-label="Round journey" className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="text-base font-semibold text-foreground">Rounds</h2>
+          <p className="mt-1 text-sm text-body">Round status, schedule and outcome progress. Open a round to see who has reached it.</p>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {driveDay.rounds.map(round => {
+              const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
+              const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
+              return (
+                <article key={round.id} className="rounded-lg border border-border bg-surface-subtle p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-semibold text-foreground">{round.sequence}. {round.name}</h3>
+                    <span className="rounded-md border border-border px-2 py-1 text-xs font-semibold">{round.status}</span>
+                  </div>
+                  <dl className="mt-3 grid gap-2 text-sm text-body sm:grid-cols-2">
+                    <div><dt className="font-semibold">When</dt><dd>{round.scheduledAt
+                      ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST"
+                      : "Date to be decided"}</dd></div>
+                    <div><dt className="font-semibold">Mode and place</dt><dd>{round.mode} · {round.venue ?? (round.meetingUrl ? "Online" : "Venue to be told")}</dd></div>
+                    <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
+                    <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply</dd></div>
+                    <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
+                      ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.resultsDueAt)+" IST"
+                      : "Not set"}</dd></div>
+                    <div><dt className="font-semibold">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes+" minutes" : "Not specified"}</dd></div>
+                  </dl>
+                  {round.platform ? <p className="mt-2 text-sm text-body">Platform: {round.platform}</p> : null}
+                  {round.whatToBring ? <p className="mt-1 text-sm text-body">Bring: {round.whatToBring}</p> : null}
+                  <div className="mt-3 flex flex-wrap gap-4 text-sm">
+                    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
+                      className="font-semibold text-primary-text underline">See who reached this round →</Link>
+                    {round.kind !== "TALK" ? <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
+                      className="font-semibold text-primary-text underline">Enter results →</Link> : null}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
       {isTpo && driveDay.rounds.length>0 ? (
         <section aria-label="Round result entry" className="rounded-xl border border-border bg-surface p-5">
           <h2 className="font-semibold text-foreground">Enter round results</h2>

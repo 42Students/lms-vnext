@@ -11,8 +11,8 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
   dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
 });
 export default async function TpoCandidateSchedulePage({
-  params,
-}: { params: Promise<{ jobId: string }> }) {
+  params, searchParams,
+}: { params: Promise<{ jobId: string }>; searchParams: Promise<{roundId?:string|string[]}> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const { jobId } = await params;
@@ -25,6 +25,10 @@ export default async function TpoCandidateSchedulePage({
     throw error;
   }
   const { drive, readiness, warning } = result;
+  const query = await searchParams;
+  const roundId = typeof query.roundId === "string" ? query.roundId : null;
+  const selectedRound = roundId ? drive.rounds.find(round => round.id === roundId) : null;
+  const displayed = roundId ? readiness.displayed.filter(row => row.roundId === roundId) : readiness.displayed;
   return <div className="space-y-5">
     <Link href={"/tpo/placements/jobs/" + encodeURIComponent(drive.job.id)}
       className="text-sm font-semibold text-primary-text">← Back to drive</Link>
@@ -58,17 +62,27 @@ export default async function TpoCandidateSchedulePage({
             <li key={entry.roundId + "-" + i}>{message}</li>))}
         </ul> : null}
     </section>
+    {roundId ? (
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        {selectedRound ? <p className="font-semibold text-foreground">Round: {selectedRound.name}</p>
+          : <p role="alert" className="font-semibold text-error">That round is not part of this drive.</p>}
+        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/candidate-schedule"}
+          className="font-semibold text-primary-text underline">Show all rounds</Link>
+      </div>
+    ) : null}
     {drive.rounds.length === 0 ?
       <p role="status" className="rounded-xl border border-border p-5 text-sm text-body">
         No persisted rounds exist for this drive.
-      </p> : readiness.total === 0 ?
+      </p> : roundId && !selectedRound ?
+      <p role="status" className="rounded-xl border border-border p-5 text-sm text-body">No candidates shown for an unknown round.</p>
+      : readiness.total === 0 ?
       <p role="status" className="rounded-xl border border-border p-5 text-sm text-body">
         No progression-eligible round participants are currently recorded.
         This does not imply slots were assigned.
       </p> : <>
         <p className="text-sm text-body">
-          {readiness.total} round-candidate combinations found.
-          {readiness.limited ? " Only the first 1,000 are displayed; this is incomplete." : ""}
+          {roundId ? displayed.length+" candidate entries shown for this round." : readiness.total+" round-candidate combinations found."}
+          {readiness.limited ? " Only the first 1,000 combined round entries were loaded; the selected round may be incomplete." : ""}
         </p>
         <div className="overflow-x-auto rounded-xl border border-border bg-surface">
           <table className="w-full min-w-[50rem] text-left text-sm">
@@ -76,7 +90,7 @@ export default async function TpoCandidateSchedulePage({
               <tr>{["Candidate", "Round", "Shared start (IST)", "Round venue", "Candidate slot", "Panel"].map(label =>
                 <th key={label} scope="col" className="px-4 py-3">{label}</th>)}</tr>
             </thead>
-            <tbody>{readiness.displayed.map(item =>
+            <tbody>{displayed.map(item =>
               <tr key={item.roundId + ":" + item.applicationId} className="border-t border-border">
                 <td className="px-4 py-3">{item.name}</td>
                 <td className="px-4 py-3">{item.roundName}</td>
