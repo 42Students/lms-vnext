@@ -10,7 +10,7 @@ export function learnerNotificationAssessmentAction(raw:string|null|undefined){
  const app=uri.searchParams.getAll("applicationId");
  const round=uri.searchParams.getAll("roundId");
  if(app.length===0&&round.length===0)return {
-   href:"/learn/my-placements/assessments",label:"View assessments",
+   href:"/learn/my-placements/assessments",label:"Take Assessment",
  };
  if(app.length!==1||round.length!==1)return null;
  const applicationId=app[0],roundId=round[0];
@@ -20,6 +20,6 @@ export function learnerNotificationAssessmentAction(raw:string|null|undefined){
  return {
    href:"/learn/my-placements/assessments?applicationId="+encodeURIComponent(applicationId)+
      "&roundId="+encodeURIComponent(roundId),
-   label:"View assessment details",
+   label:"Take Assessment",
  };
 }
