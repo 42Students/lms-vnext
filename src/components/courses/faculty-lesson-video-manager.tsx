@@ -34,6 +34,7 @@ export function FacultyLessonVideoManager({
   const [duration,setDuration]=useState("");
   const [file,setFile]=useState<File|null>(null);
   const [durationDraft,setDurationDraft]=useState<Record<string,string>>({});
+  const [titleDraft,setTitleDraft]=useState<Record<string,string>>({});
   const [previewId,setPreviewId]=useState<string|null>(null);
   const controllerRef=useRef<AbortController|null>(null);
   const locked=useRef(false);
@@ -169,6 +170,12 @@ export function FacultyLessonVideoManager({
       }
     });
   }
+  function saveTitle(video:ManagedVideo){
+    const next=(titleDraft[video.id]??video.title).trim();
+    if(!next||next.length>255){setError("Enter a video title (1–255 characters).");return;}
+    if(next===video.title){setInfo("Video title is unchanged.");return;}
+    change(video,{title:next});
+  }
   function saveDuration(video:ManagedVideo){
     const value=Number(durationDraft[video.id]??video.durationSeconds??"");
     if(!Number.isInteger(value)||value<1||value>86400){setError("Enter a duration between 1 second and 24 hours.");return;}
@@ -247,6 +254,15 @@ export function FacultyLessonVideoManager({
             </Button>
           </div>
           <div className="flex flex-wrap gap-3">
+            <label className="text-xs font-semibold text-body">Video title
+              <Input className="mt-1 min-w-44" maxLength={255}
+                disabled={busy||!canEdit}
+                value={titleDraft[video.id]??video.title}
+                onChange={event=>setTitleDraft(old=>({...old,[video.id]:event.target.value}))}/>
+              <Button size="sm" variant="secondary" type="button"
+                disabled={busy||!canEdit}
+                onClick={()=>saveTitle(video)}>Update Video</Button>
+            </label>
             <label className="text-xs font-semibold text-body">Replace video
               <input type="file" className="mt-1 block min-h-11 max-w-full text-xs" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
                 accept={acceptAttributeFor("lesson-video")}
