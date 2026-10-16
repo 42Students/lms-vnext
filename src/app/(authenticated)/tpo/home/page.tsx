@@ -15,6 +15,8 @@ import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-serv
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
 import {listTpoLeads,listDueTpoFollowups} from "@/modules/placements/tpo-crm-service";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
+import {getCollegePlacementRules} from "@/modules/placements/tpo-policy-service";
+import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
@@ -32,6 +34,10 @@ export default async function TpoHome(){
   getTpoStudentsIntelligence(ctx,{collegeId:ctx.membership!.collegeId,page:1,pageSize:1}),
   countTpoUnreadRecruiterMessages(ctx),
   tpoCrmTablesReady(),
+ ]);
+ const [collegeRules,placementTeam]=await Promise.all([
+  getCollegePlacementRules(ctx,ctx.membership!.collegeId),
+  getTpoPlacementTeam(ctx,ctx.membership!.collegeId),
  ]);
  const [recruiters,dueFollowups]=crmReady?await Promise.all([
   listTpoLeads(ctx,ctx.membership!.collegeId),
@@ -86,7 +92,14 @@ export default async function TpoHome(){
   ],
   batches:inviteReady?[{batchId:inviteCandidate!.id,name:inviteCandidate!.name,
    eligible:candidateEligible!,registered:candidateRegistered!,invitedAt:null}]:[],
-  checklist:[],
+  checklist:[
+   {label:"Decide who is in placements",done:batches.ready&&batches.batches.length>0,link:"/tpo/batches"},
+   {label:"Import academic details",done:studentStats.summary.activeLearners>0,link:"/tpo/students"},
+   {label:"Choose the placement rules",done:collegeRules.updatedAt!==null,link:"/tpo/settings/rules"},
+   {label:"Invite a batch to register",done:batches.batches.some(batch=>Boolean(batch.invitedAt)),link:"/tpo/batches"},
+   {label:"Add your first recruiter",done:(recruiters?.length??0)>0,link:"/tpo/recruiters"},
+   {label:"Pick your team",done:placementTeam.summary.total>1,link:"/tpo/settings/team"},
+  ],
  });
  return <main className="min-w-0 space-y-5">
  <PageHeader eyebrow="TPO" title="Home" description="One next action and a quiet overview of the placement cell."/>
