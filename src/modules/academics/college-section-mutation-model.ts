@@ -5,6 +5,7 @@ const name = z.string().trim().min(1).max(255);
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid class code");
 const capacity = z.number().int().min(1).max(10000).nullable();
+const description = z.string().trim().max(2000).nullable().optional();
 
 export const collegeSectionIdSchema = uuid;
 export const createCollegeSectionSchema = z.object({
@@ -13,12 +14,14 @@ export const createCollegeSectionSchema = z.object({
   name,
   code,
   capacity,
+  description,
 }).strict();
 
 export const updateCollegeSectionSchema = z.object({
   name,
   code,
   capacity,
+  description,
   confirm: z.literal(true),
 }).strict();
 
