@@ -3,7 +3,7 @@ import {check,index,pgTable,text,timestamp,uuid,varchar} from "drizzle-orm/pg-co
 import {placementJobs} from "./placements";
 import {users} from "./users";
 
-/** Proposed persisted college ↔ company changes and discussion, not direct job mutation. */
+/** Registered 0114: college ↔ company changes and discussion, never implicit drive mutation. */
 export const placementDriveChangeRequests=pgTable("placement_drive_change_requests",{
  id:uuid("id").defaultRandom().primaryKey(),
  jobId:uuid("job_id").notNull().references(()=>placementJobs.id),
