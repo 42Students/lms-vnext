@@ -38,6 +38,7 @@ export async function getSuperAdminCollegeBrandingPreview(
       name: colleges.name,
       code: colleges.code,
       status: colleges.status,
+      logoObjectPath: colleges.logoObjectPath,
     })
     .from(colleges)
     .where(eq(colleges.id, collegeId))
@@ -67,7 +68,7 @@ export async function getSuperAdminCollegeBrandingPreview(
     .where(eq(collegeBranding.collegeId, college.id))
     .limit(1);
 
-  return describeAdminCollegeBranding({
+  const result=describeAdminCollegeBranding({
     college: {
       id: college.id,
       name: college.name,
@@ -76,4 +77,7 @@ export async function getSuperAdminCollegeBrandingPreview(
     },
     branding: branding ?? null,
   });
+  return college.logoObjectPath?.startsWith("branding/"+college.id+"/")
+   ? {...result,logoUrl:"/api/colleges/"+college.id+"/branding/logo",brandingStored:true}
+   : result;
 }
