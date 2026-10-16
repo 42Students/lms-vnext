@@ -15,7 +15,7 @@ export const tpoBulkPreviewRequestSchema = z.object({
 }).strict().superRefine((value,ctx)=>{
   if(value.target==="STUDENTS"){
     if(value.jobId || !["ELIGIBLE","INELIGIBLE","CLEAR_OVERRIDE"].includes(value.action) ||
-       (value.action==="INELIGIBLE" ? value.note.length < 3 : value.note.length > 0))
+       (value.action==="INELIGIBLE" ? value.note.length < 3 || value.note.length > 200 : value.note.length > 0))
       ctx.addIssue({code:"custom",message:"Invalid student action"});
   } else {
     if(!value.jobId||!["SHORTLISTED","REJECTED"].includes(value.action))
