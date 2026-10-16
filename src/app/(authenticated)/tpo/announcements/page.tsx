@@ -86,9 +86,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
       <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
-    <button type="submit" disabled={!query.success||!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)}
+    <button type="submit" disabled={!query.success||!audience||audience.potentiallyVisibleMemberships===0||!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)}
       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-      {query.success&&query.data.audience!=="COLLEGE"?"Publish to selected audience":"Publish college notice"}
+      {audience?"Send to "+audience.potentiallyVisibleMemberships+" members":
+       query.success&&query.data.audience!=="COLLEGE"?"Publish to selected audience":"Publish college notice"}
     </button>
    </form>
   </section>:null}
