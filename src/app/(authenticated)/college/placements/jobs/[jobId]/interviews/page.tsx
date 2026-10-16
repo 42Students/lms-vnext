@@ -5,6 +5,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
+import { getCollegeInterviewAppointments } from "@/modules/placements/college-interview-action-service";
+import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -16,10 +18,13 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const query=driveInterviewsParams(await searchParams);
   if(!query) return <ErrorState title="Invalid interview filters"
     description="Round kind, status or page is invalid. No records were loaded." />;
-  const data=await listCollegeDriveInterviews(context,jobId,query);
+  const [data,appointments]=await Promise.all([
+    listCollegeDriveInterviews(context,jobId,query),
+    getCollegeInterviewAppointments(context,jobId),
+  ]);
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Interviews · "+data.job.title}
-      description="Read-only scheduled interview and group-discussion rounds sourced from this drive."
+      description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-4 rounded-xl border border-border p-4">
       <label className="grid gap-1 text-sm">Round kind
@@ -35,6 +40,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
+    {!appointments.storageReady?<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm">
+      Candidate interview scheduling awaits registration of the proposed college interview migration. The shared round schedule remains available below.
+    </p>:<CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
+      candidates={appointments.candidates} appointments={appointments.interviews}/>}
     <section aria-label="Persisted interview rounds" className="overflow-x-auto rounded-xl border border-border">
       <p className="p-3 text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
       {data.items.length?<table className="w-full min-w-[48rem] text-left text-sm">
@@ -62,8 +71,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </div>
     </nav>
     <p className="text-xs text-muted-foreground">
-      Round-level schedule, venue and timezone are persisted; per-candidate interview slots are not represented by a registered table.
-      Meeting links, schedule mutations and interview results are intentionally excluded.
+      Shared interview rounds are shown below. Candidate-specific appointment details and outcomes are managed above when interview storage is registered.
     </p>
   </div>;
 }
