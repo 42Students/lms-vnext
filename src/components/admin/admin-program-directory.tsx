@@ -58,9 +58,10 @@ export function AdminProgramDirectory({
   const [durationYears, setDurationYears] = useState("4");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const filtered = filterAdminPrograms(programs, search);
-  const result = paginateAdminPrograms(filtered, page);
+  const result = paginateAdminPrograms(filtered, page, pageSize);
   const csvHref = "data:text/csv;charset=utf-8," +
     encodeURIComponent("\ufeff" + adminProgramsCsv(filtered));
 
@@ -158,7 +159,15 @@ export function AdminProgramDirectory({
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search program, code or department" />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-end gap-2">
+            <label htmlFor="admin-program-page-size" className="grid gap-1 text-xs font-semibold text-body">
+              Rows per page
+              <select id="admin-program-page-size" value={pageSize}
+                onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
+                className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
+                {[10, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+              </select>
+            </label>
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
@@ -182,7 +191,7 @@ export function AdminProgramDirectory({
           </p>} />
         {result.total > 0 ? (
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
-            <span>Showing {(result.page - 1) * 10 + 1}–{Math.min(result.page * 10, result.total)} of {result.total}</span>
+            <span>Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
             <div className="flex items-center gap-3">
               <Button size="sm" variant="secondary" disabled={result.page === 1}
                 onClick={() => setPage(result.page - 1)}>Previous</Button>
