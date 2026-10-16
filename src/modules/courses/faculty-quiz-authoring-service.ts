@@ -62,6 +62,7 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
     const [created]=await tx.insert(courseQuizzes).values({
      lessonId:input.lessonId,deliveryId,title:input.title,description:input.description,
      dueAt:input.dueAt?new Date(input.dueAt):null,maxAttempts:input.maxAttempts,
+     shuffleQuestions:input.shuffleQuestions??false,shuffleOptions:input.shuffleOptions??false,
      totalPoints:sumQuizPoints(input.questions),sequence:input.sequence,
      status:"DRAFT",createdByUserId:context.user.id,
     }).returning();
@@ -84,6 +85,10 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      (input.action==="CLOSE" && current.status!=="PUBLISHED") ||
      (input.action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(current.status)))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    if(input.action==="EDIT" && current.status!=="DRAFT" && (
+      (input.shuffleQuestions!==undefined&&input.shuffleQuestions!==current.shuffleQuestions)||
+      (input.shuffleOptions!==undefined&&input.shuffleOptions!==current.shuffleOptions)
+    ))throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
     if(input.action==="EDIT" && facultyQuizAttemptLimitLocked(
       current.status,current.maxAttempts,input.maxAttempts,
     ))throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
@@ -122,6 +127,8 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      const [edited]=await tx.update(courseQuizzes).set({
       title:input.title,description:input.description,
       dueAt:input.dueAt?new Date(input.dueAt):null,maxAttempts:input.maxAttempts,
+      ...(input.shuffleQuestions!==undefined?{shuffleQuestions:input.shuffleQuestions}:{}),
+      ...(input.shuffleOptions!==undefined?{shuffleOptions:input.shuffleOptions}:{}),
       ...(input.questions?{totalPoints:sumQuizPoints(input.questions)}:{}),updatedAt:now,
      }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId),
       eq(courseQuizzes.status,current.status),
