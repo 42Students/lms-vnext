@@ -8,6 +8,7 @@ import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-se
 import {hrConversationsHref} from "@/modules/placements/hr-conversation-urls-model";
 import {listOwnRecruiterDecisionNotices} from "@/modules/placements/recruiter-decision-notice-service";
 import {RecruiterDecisionReadButton} from "@/components/hr/recruiter-decision-read-button";
+import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[]};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -24,6 +25,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  const decisionNotices=result.status==="READY"
   ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
  return <main className="space-y-5">
+  <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Messages" title="Conversations"
    description="Private employer conversations with the placement cell. Notifications remain a separate inbox."/>
   <Link href="/hr/messages" className="inline-flex min-h-11 items-center text-primary-text">Notification inbox</Link>
