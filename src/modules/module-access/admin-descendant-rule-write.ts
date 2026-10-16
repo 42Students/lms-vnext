@@ -42,7 +42,8 @@ export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string
 };
 /** Active learners only, deduplicated by membership; completed/withdrawn
  * enrollments and foreign-college sections cannot inflate the tree. */
-export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeIdInput:string):Promise<AcademicModuleScope[]>{
+export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeIdInput:string,page=1):Promise<AcademicModuleScope[]>{
+ const safePage=Number.isSafeInteger(page)?Math.max(1,Math.min(page,10000)):1;
  const college=await collegeScope(ctx,collegeIdInput);if(!college)return [];
  const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string;departmentId:string|null;programId:string|null;cohortId:string|null}>(sql`
  select 'DEPARTMENT'::text as "scopeType", d.id::text as "scopeId",d.name::text as label,
@@ -54,7 +55,7 @@ export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeId
  from cohorts c join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
  union all select 'SECTION',s.id::text,(d.name||' / '||p.name||' / '||c.name||' / '||s.name)::text,d.id::text,p.id::text,c.id::text
  from sections s join cohorts c on c.id=s.cohort_id join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
- order by "scopeType",label limit 500
+ order by "scopeType",label limit 500 offset ${(safePage-1)*500}
  `);
  if(result.rows.length===0)return [];
  const ids=[...new Set([
