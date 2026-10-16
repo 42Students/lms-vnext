@@ -6,5 +6,8 @@ describe("Super Admin organization directory",()=>{
   expect(page).toContain("organizations.length===0");
   expect(page).toContain("No organizations in this scope");
  });
- it("does not expose create form without permission",()=>expect(page).toContain("canCreate ? <OrganizationCreateForm /> : null"));
+ it("does not expose create form without permission",()=>{
+  expect(page).toContain("canCreate ? <section");
+  expect(page).toContain("<OrganizationCreateForm />");
+ });
 });

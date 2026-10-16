@@ -11,8 +11,9 @@ describe("PR-S2-04 0090 UI registered task fields and comments",()=>{
   for(const label of ["Estimate","Type","Due date","Blocker reason"]){
     expect(legacy).toContain(label);
     expect(create).toContain(label);
-    expect(editor).toContain(label);
   }
+  // Mentor edit form uses the shorter legacy labels (see commit d428bbd92).
+  for(const label of ["Estimate","Type","Due","Blocker note"]) expect(editor).toContain(label);
   expect(create).not.toContain("estimate and workload tracking are unavailable");
   expect(workspace).toContain("<ProjectTaskComments");
   expect(workspace).toContain("taskType={task.taskType}");
