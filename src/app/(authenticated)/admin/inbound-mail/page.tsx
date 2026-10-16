@@ -21,6 +21,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <div role="status" className="rounded-xl border border-border bg-surface p-5">
    Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.
   </div></div>;
+ const totalPages=data.total===null?null:Math.max(1,Math.ceil(data.total/50));
+ const pageNumbers=totalPages===null?[]:Array.from(
+  {length:Math.min(totalPages,7)},(_,i)=>Math.max(1,Math.min(data.page-3,totalPages-6))+i);
  const next=(page:number)=>{
   const url=new URLSearchParams();
   if(parsed.data.status!=="ALL")url.set("status",parsed.data.status);
@@ -47,7 +50,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    toAddress:x.toAddress,subject:x.subject,bodyPlain:x.bodyPlain,status:x.status,version:x.version,
   }))}/>
   <nav aria-label="Inbox pages" className="flex flex-wrap justify-between gap-3 text-sm">
-   <span>Page {data.page}</span><div className="flex flex-wrap gap-3">
+   <span>{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span><div className="flex flex-wrap gap-3">
+   {pageNumbers.map(n=><Link key={n} href={next(n)} aria-current={n===data.page?"page":undefined}
+     className={n===data.page?"min-h-10 rounded border border-primary bg-primary-subtle px-3 py-2 text-primary-text":"min-h-10 rounded border border-border px-3 py-2"}>{n}</Link>)}
    {data.page>1?<Link className="inline-flex min-h-10 items-center rounded-md border px-3" href={next(data.page-1)}>Previous</Link>:null}
    {data.hasMore?<Link className="inline-flex min-h-10 items-center rounded-md border px-3" href={next(data.page+1)}>Next</Link>:null}
    </div>
