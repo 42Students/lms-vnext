@@ -122,6 +122,19 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               <option value="ARCHIVED">Archived</option>
             </select>
           </label>
+          <label className="grid min-w-48 gap-1 text-sm font-semibold text-body">
+            Section
+            <select name="deliveryId" defaultValue={data.query.deliveryId??""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">Showing every section&apos;s content together</option>
+              {data.sectionOptions.map(option=><option key={option.deliveryId} value={option.deliveryId}>
+                {option.courseCode} · {option.courseName} · {option.sectionName} ({option.sectionCode})
+              </option>)}
+            </select>
+            <span className="text-xs font-normal text-muted-foreground">
+              The order this section&apos;s students see includes shared and selected section content.
+            </span>
+          </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">
             Audience scope
             <select name="scope" defaultValue={data.query.scope}
