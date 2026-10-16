@@ -3,8 +3,10 @@ import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { createProjectInstance, getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
 import {
   createProjectTemplate, getProjectTemplateDetail, reviseProjectTemplate,
+  publishProjectTemplate, assignProjectTemplateToCollege,
 } from "@/modules/projects/template-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -82,6 +84,24 @@ describe.skipIf(!enabled)("SA-placements-projects-83 / SA-placements-projects-84
     await expect(reviseProjectTemplate(scoped, created.template.id, {
       expectedVersion: 2, title: "Unauthorised", blueprint: newBlueprint,
     })).rejects.toBeInstanceOf(AuthorizationError);
+
+    // Saving a template estimate must change what future learners see.
+    await publishProjectTemplate(admin, created.template.id);
+    await assignProjectTemplateToCollege(scoped, created.template.id, SEED_IDS.collegeA);
+    const collegeAdmin: RequestContext = {
+      user: { id: SEED_IDS.collegeAdminUser, identityUid: "template-plan-college",
+        platformStatus: "ACTIVE", systemRoles: [] },
+      membership: { id: SEED_IDS.collegeAdminMembership, collegeId: SEED_IDS.collegeA,
+        organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["COLLEGE_ADMIN"] },
+    };
+    const key = randomUUID().slice(0, 12);
+    const workspace = await createProjectInstance(collegeAdmin, {
+      collegeId: SEED_IDS.collegeA, templateId: created.template.id,
+      title: "Template task estimate " + key, slug: "template-estimate-" + key,
+    });
+    const materialized = await getProjectInstanceWorkspace(collegeAdmin, workspace.id);
+    expect(materialized.tasks.find(row => row.templateKey === "task-1")?.estimatePoints).toBe(13);
+    expect(materialized.tasks.find(row => row.templateKey === "task-2")?.estimatePoints).toBeNull();
   });
 
   it("rejects invalid sprint pointers and out-of-range estimates before persistence", async () => {
