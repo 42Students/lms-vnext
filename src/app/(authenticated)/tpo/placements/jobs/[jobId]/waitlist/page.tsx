@@ -1,0 +1,24 @@
+import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
+import {PageHeader} from "@/components/ui/page-header";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {TpoWaitlistPromotionControl} from "@/components/placements/tpo-waitlist-promotion-control";
+import {getTpoWaitlistPreview} from "@/modules/placements/tpo-waitlist-promotion-service";
+import {PlacementsServiceError} from "@/modules/placements/errors";
+export const dynamic="force-dynamic";
+export default async function TpoWaitlistPage({params}:{params:Promise<{jobId:string}>}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const {jobId}=await params;let data:Awaited<ReturnType<typeof getTpoWaitlistPreview>>;
+ try{data=await getTpoWaitlistPreview(context,jobId);}
+ catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw e;}
+ return <div className="space-y-5">
+  <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Waitlist"} description="Review ranked applied waitlist results and release the next available offer seat exactly once."/>
+  <div className="flex gap-4 text-sm"><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/offers"}
+   className="font-semibold text-primary-text underline">Offer register</Link>
+   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"}
+    className="font-semibold text-primary-text underline">Round results</Link></div>
+  <TpoWaitlistPromotionControl jobId={jobId} preview={data}/>
+ </div>;
+}
