@@ -6,6 +6,7 @@ const common = {
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
+  pageSize: z.coerce.number().int().refine(n => [10,25,50,100].includes(n)).default(10),
 };
 
 export const collegeSemesterDirectoryBaseSchema = z.object({
@@ -81,18 +82,19 @@ export function academicDirectoryHref(
   if ("activeClassState" in query && query.activeClassState && query.activeClassState !== "ALL") params.set("activeClassState",query.activeClassState);
   if ("activeLearnerState" in query && query.activeLearnerState && query.activeLearnerState !== "ALL") params.set("activeLearnerState",query.activeLearnerState);
   if (query.page !== 1) params.set("page", String(query.page));
+  if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
   return params.size ? base + "?" + params.toString() : base;
 }
 
-export function academicDirectoryPageCount(total: number): number {
-  return Math.max(1, Math.ceil(total / COLLEGE_ACADEMIC_PAGE_SIZE));
+export function academicDirectoryPageCount(total: number, pageSize = COLLEGE_ACADEMIC_PAGE_SIZE): number {
+  return Math.max(1, Math.ceil(total / pageSize));
 }
 
 export function academicDirectorySearchParams(
   params: Record<string, string | string[] | undefined>,
 ): Record<string, string> | null {
   const result: Record<string, string> = {};
-  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "startOnOrBefore", "activeClassState", "activeLearnerState", "page"] as const) {
+  for (const key of ["q", "programId", "termNumber", "minimumCredits", "maximumCredits", "yearStart","creditState",  "currentTerm", "progression", "status", "programStatus", "mappingState", "expectedEndState", "academicYearState", "startOnOrAfter", "startOnOrBefore", "activeClassState", "activeLearnerState", "page", "pageSize"] as const) {
     const value = params[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && (key !== "startOnOrAfter" || value !== "") && (key !== "startOnOrBefore" || value !== "") && (key !== "programId" && key !== "termNumber" && key !== "minimumCredits" && key !== "maximumCredits" && key !== "yearStart" && key !== "currentTerm" || value !== "")) {
