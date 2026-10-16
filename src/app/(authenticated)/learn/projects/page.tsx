@@ -10,6 +10,7 @@ import { ProjectList } from "@/components/projects/project-list";
 import { LearnerProjectMobileFilters } from "@/components/projects/learner-project-mobile-filters";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attention-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
@@ -49,6 +50,11 @@ export default async function LearnerProjectsPage({
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "LEARNER")) {
     redirect("/dashboard");
+  }
+
+  // LEARNER-projects-24/25: deny bookmark/direct-route access if disabled.
+  if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
+    redirect("/learn/courses");
   }
 
   const params = await searchParams;
