@@ -89,16 +89,7 @@ export async function getPublicCollegeBranding(collegeId: string) {
     loadBranding(collegeId),
   ]);
   if (!college) return null;
-  if(!row)throw new Error("BRANDING_SAVE_FAILED");
-  await recordActivityEventInTransaction(tx,context,{
-   eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_BRANDING_UPDATED,
-   collegeId:college.id,organizationId:college.organizationId,
-   subjectType:"college",subjectId:college.id,subjectLabel:college.name,
-   summary:"College branding updated",
-   metadata:{version:row.version},
-  });
   return { collegeName: college.name, ...toView(row) };
- });
 }
 
 export async function getCollegeBranding(
@@ -140,5 +131,17 @@ export async function saveCollegeBranding(
     })
     .returning();
 
-  return { collegeName: college.name, ...toView(row) };
+   if (!row) throw new Error("BRANDING_SAVE_FAILED");
+   await recordActivityEventInTransaction(tx, context, {
+    eventType: ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_BRANDING_UPDATED,
+    collegeId: college.id,
+    organizationId: college.organizationId,
+    subjectType: "college",
+    subjectId: college.id,
+    subjectLabel: college.name,
+    summary: "College branding updated",
+    metadata: { version: row.version },
+   });
+   return { collegeName: college.name, ...toView(row) };
+  });
 }

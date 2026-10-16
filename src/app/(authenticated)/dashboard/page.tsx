@@ -152,7 +152,7 @@ async function SuperAdminDashboard({
           <h2 className="font-semibold">At a glance</h2>
           <Link href="/dashboard" className="text-sm text-primary-text underline">Retry</Link>
         </div>
-        {!glance?<p role="alert" className="text-sm text-error">Couldn't load college summary</p>:
+        {!glance?<p role="alert" className="text-sm text-error">Couldn&apos;t load college summary</p>:
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {([{label:"Students",value:glance.students,href:"/admin/people"},
             {label:"Faculty",value:glance.faculty,href:"/admin/people"},
