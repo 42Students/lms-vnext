@@ -11,6 +11,7 @@ type Lead = {
   emailNorm: string | null;
   phoneNorm: string | null;
   companyName: string | null;
+  companyRelationshipId:string|null;
   source: string | null;
   manualStage: string;
   stage: string;
@@ -239,6 +240,10 @@ export function RecruiterLeadDetailWorkspace({
   }
 
   async function createInviteLink() {
+    if(!lead?.emailNorm||!lead.companyRelationshipId){
+      setActionError("Add a work email and link a company before inviting.");
+      return;
+    }
     setSaving(true);
     setActionError("");
     setInviteNotice("");
@@ -336,13 +341,13 @@ export function RecruiterLeadDetailWorkspace({
                   <button
                     type="button"
                     className={button}
-                    disabled={saving}
+                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId}
                     onClick={() => void createInviteLink()}
                   >
                     {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}
                   </button>
                   <p className="text-xs text-muted-foreground">
-                    Creating a new link immediately invalidates the previous one. Email delivery is not claimed until the shared outbox is verified.
+                    Add a work email and link a company before inviting. Creating a new link immediately invalidates the previous one. Email delivery is not claimed until the shared outbox is verified.
                   </p>
                   {inviteLink ? (
                     <label className="block text-xs">

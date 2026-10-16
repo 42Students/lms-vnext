@@ -30,7 +30,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   Buffer.byteLength(secret,"utf8")<32||
   typeof rawToken!=="string"||!isRecruiterInviteTokenShape(rawToken)||
   !recruiterInviteOtpSchema.safeParse(rawCode).success)throw invalid();
- const details=recruiterInviteAcceptanceBodySchema.parse({code:rawCode,...(typeof rawDetails==="object"&&rawDetails!==null?rawDetails:{})});
+ const details=recruiterInviteAcceptanceBodySchema.parse({...(typeof rawDetails==="object"&&rawDetails!==null?rawDetails:{}),code:rawCode});
  const token=rawToken,code=rawCode as string,hash=recruiterInviteTokenHash(token);
  const decision=await getDb().transaction(async tx=>{
   const now=new Date();
