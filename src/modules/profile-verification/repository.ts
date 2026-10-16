@@ -1,6 +1,6 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, colleges, learnerProfiles, membershipRoles, users,
@@ -15,6 +15,7 @@ import {
 import { evaluateVerificationEvidence, usablePrivateReceipt, validateSubmittedEvidence, type Receipt } from "./evidence";
 import { postgresLockedVerificationTransition } from "./transaction-writer";
 import { saltedIdentityFingerprint, stableIdentitySalt } from "./identity-fingerprint";
+import {effectiveTpoVerifierSetting,tpoVerifierGrantAllowed} from "@/modules/verification/switch-state";
 import type { VerificationTransactionRepository } from "./service";
 
 type ObjectEvidenceVerifier = (receipt: Receipt) => Promise<boolean>;
@@ -123,22 +124,23 @@ export function createProfileVerificationRepository(
       return row?.displayName ?? null;
     },
     async isTpoAdministrator(userId,collegeId) {
-      const [row] = await getDb().select({id:profileVerificationTpoGrants.membershipId})
-        .from(profileVerificationTpoGrants)
-        .innerJoin(collegeMemberships, eq(collegeMemberships.id,profileVerificationTpoGrants.membershipId))
+      const [row] = await getDb().select({revokedAt:profileVerificationTpoGrants.revokedAt})
+        .from(collegeMemberships)
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
         .innerJoin(membershipRoles,and(
           eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+        .leftJoin(profileVerificationTpoGrants,eq(profileVerificationTpoGrants.membershipId,collegeMemberships.id))
         .where(and(eq(collegeMemberships.userId,userId),
           eq(collegeMemberships.collegeId,collegeId),
           eq(collegeMemberships.status,"ACTIVE"),
-          isNull(profileVerificationTpoGrants.revokedAt))).limit(1);
-      return !!row;
+          eq(users.platformStatus,"ACTIVE"))).limit(1);
+      return !!row && tpoVerifierGrantAllowed(row);
     },
     async isTpoVerificationEnabled(collegeId) {
       const [row] = await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
         .from(profileVerificationSettings)
         .where(eq(profileVerificationSettings.collegeId,collegeId)).limit(1);
-      return row?.enabled ?? true; // exact legacy default
+      return effectiveTpoVerifierSetting(row); // exact legacy default
     },
     readCurrentSectionForSubmission:async (membershipId,section,priorSnapshot) =>
       prepare(membershipId,section,priorSnapshot),

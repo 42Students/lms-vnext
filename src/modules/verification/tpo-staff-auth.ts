@@ -1,11 +1,11 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,colleges,membershipRoles,users} from "@/db/schema";
 import {profileVerificationSettings,profileVerificationTpoGrants} from "@/db/schema/profile-verification";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-import {effectiveTpoVerifierSetting} from "./switch-state";
+import {effectiveTpoVerifierSetting,tpoVerifierGrantAllowed} from "./switch-state";
 import {requireVerificationTables} from "./staff-auth";
 
 /** Never trust a session role, client college ID, or grant flag for private documents. */
@@ -28,14 +28,13 @@ export async function requireTpoVerificationActor(context:RequestContext){
   throw new AuthorizationError("profile-verification.review");
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
   .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,actor.collegeId)).limit(1);
- const [grant]=await getDb().select({id:profileVerificationTpoGrants.membershipId})
+ const [grant]=await getDb().select({revokedAt:profileVerificationTpoGrants.revokedAt})
   .from(profileVerificationTpoGrants)
-  .where(and(eq(profileVerificationTpoGrants.membershipId,membership.id),
-    isNull(profileVerificationTpoGrants.revokedAt))).limit(1);
+  .where(eq(profileVerificationTpoGrants.membershipId,membership.id)).limit(1);
  requirePermission(context,"profile-verification.review",{
   collegeId:actor.collegeId,organizationId:actor.organizationId,
   tpoVerificationEnabled:effectiveTpoVerifierSetting(setting),
-  tpoVerificationAdministrator:!!grant,
+  tpoVerificationAdministrator:tpoVerifierGrantAllowed(grant),
  });
  return actor;
 }
