@@ -71,6 +71,12 @@ export function RecruiterPlacementPortfolio({
               Open hiring flow
             </Link>
           </div>
+          {item.job.status === "CLOSED" ? <div className="mt-4 border-t border-border pt-3">
+            <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+              Hire again
+            </Link>
+          </div> : null}
         </article>
       ))}
     </div>
