@@ -55,8 +55,10 @@ export function DepartmentDirectory({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [nameOrder, setNameOrder] = useState<"ASC" | "DESC">("ASC");
   const [refreshing, startRefresh] = useTransition();
-  const filtered = filterDepartmentRows(rows, search);
+  const ordered = filterDepartmentRows(rows, search);
+  const filtered = nameOrder === "DESC" ? [...ordered].reverse() : ordered;
   const result = pageDepartmentRows(filtered, page, pageSize);
   const exportHref = "data:text/csv;charset=utf-8," +
     encodeURIComponent("\ufeff" + departmentRowsCsv(filtered));
@@ -114,7 +116,14 @@ export function DepartmentDirectory({
         {result.total} of {rows.length} {rows.length === 1 ? "result" : "results"}
       </p>
       <DataTable
-        columns={columns}
+        columns={columns.map(column => column.key === "name" ? {
+          ...column,
+          header: <button type="button" aria-label="Sort Department Name"
+            onClick={() => { setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC"); setPage(1); }}
+            className="inline-flex items-center gap-2 font-semibold">
+            Department Name {nameOrder === "ASC" ? "↑" : "↓"}
+          </button>,
+        } : column)}
         rows={result.items}
         getRowKey={(row) => row.id}
         empty={
