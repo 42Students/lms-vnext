@@ -9,6 +9,7 @@ import { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-c
 import { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashboard-attendance-service";
 import { getCollegeDashboardLowAttendance } from "@/modules/admin-ui/college-dashboard-risk-service";
 import { getCollegeDashboardUnstaffedCourses } from "@/modules/admin-ui/college-dashboard-staffing-service";
+import { getCollegeDashboardPendingGrades } from "@/modules/admin-ui/college-dashboard-grading-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listColleges } from "@/modules/colleges/service";
@@ -38,11 +39,12 @@ export default async function CollegeOverviewPage() {
     );
   }
 
-  const [dashboard, attendance, lowAttendance, unstaffed] = await Promise.all([
+  const [dashboard, attendance, lowAttendance, unstaffed, pendingGrades] = await Promise.all([
     getCollegeDashboardCards(context, {}),
     getCollegeDashboardAttendance(context),
     getCollegeDashboardLowAttendance(context),
     getCollegeDashboardUnstaffedCourses(context),
+    getCollegeDashboardPendingGrades(context),
   ]);
 
   return (
@@ -212,6 +214,27 @@ export default async function CollegeOverviewPage() {
               className="font-semibold text-primary-text hover:underline">Assign faculty</Link>
           </li>)}
         </ul>}
+      </section>
+      <section aria-label="Waiting to be graded" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-foreground">Waiting to be graded</h2>
+          <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">
+            Review assignments
+          </Link>
+        </div>
+        {pendingGrades.length === 0
+          ? <p className="text-sm text-muted-foreground">No assignment submissions awaiting a grade.</p>
+          : <ul className="divide-y divide-border">
+            {pendingGrades.map(item => <li key={item.courseId} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
+              <div>
+                <p className="font-semibold">{item.courseName} ({item.courseCode})</p>
+                <p className="text-muted-foreground">
+                  {item.pending} submission(s) · Oldest: {item.oldest?.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) ?? "—"}
+                </p>
+              </div>
+              <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">Review</Link>
+            </li>)}
+          </ul>}
       </section>
       <CollegeAdminQuickActions />
       <CollegeSetupChecklist phases={dashboard.setup.phases} />
