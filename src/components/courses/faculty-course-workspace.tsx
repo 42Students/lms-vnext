@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import { FacultyLessonVideoManager } from "./faculty-lesson-video-manager";
 import { FacultyContentEditor } from "./faculty-content-editor";
+import { facultyContentExternalHref, facultyYouTubeEmbed } from "@/modules/courses/faculty-content-preview-model";
 import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
@@ -87,6 +88,8 @@ function ContentItem({
     status: item.status,
     kind: "CONTENT",
   });
+  const externalHref=facultyContentExternalHref(item.contentType,item.externalUrl);
+  const youtubeEmbed=facultyYouTubeEmbed(item.contentType==="YOUTUBE"?item.externalUrl:null);
   const available = [
     ...(actions.canPublish
       ? (["PUBLISH"] as const)
@@ -129,6 +132,16 @@ function ContentItem({
           {item.notes}
         </p>
       ) : null}
+      {youtubeEmbed?<div className="mt-3 aspect-video w-full max-w-2xl overflow-hidden rounded-lg border border-border">
+        <iframe title={"Preview "+item.title} src={youtubeEmbed}
+          className="h-full w-full" loading="lazy" referrerPolicy="strict-origin-when-cross-origin"
+          allow="encrypted-media; picture-in-picture" allowFullScreen/>
+      </div>:null}
+      {externalHref?<a href={externalHref} target="_blank" rel="noopener noreferrer"
+        className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+        {item.contentType==="LIVE_CLASS"?"Join Meeting":
+         item.contentType==="RESOURCE"?"Open":"Watch on YouTube"}
+      </a>:null}
       {item.deliveryId ? (
         <div className="mt-3 flex flex-wrap items-start gap-2">
           {item.contentType !== "VIDEO" ? (
