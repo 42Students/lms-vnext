@@ -8,6 +8,7 @@ export type TpoCalendarLeadOption = {
   id: string;
   name: string;
   companyName: string | null;
+  email?: string | null;
 };
 
 async function submitFollowup(
@@ -47,6 +48,14 @@ export function TpoCalendarCreateFollowup({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [leadQuery, setLeadQuery] = useState("");
+  const [leadId, setLeadId] = useState("");
+  const search = leadQuery.trim().toLowerCase();
+  const matchingLeads = search.length < 2 ? [] : leads.filter((lead) =>
+    [lead.name, lead.companyName, lead.email].some(
+      (part) => part?.toLowerCase().includes(search),
+    ),
+  ).slice(0, 50);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,6 +70,8 @@ export function TpoCalendarCreateFollowup({
         note: String(data.get("note") ?? "").trim() || null,
       });
       form.reset();
+      setLeadQuery("");
+      setLeadId("");
       setMessage("Follow-up created. The calendar is refreshing.");
       router.refresh();
     } catch (error) {
@@ -76,10 +87,9 @@ export function TpoCalendarCreateFollowup({
       <p className="mt-1 text-sm text-body">
         Schedule for an existing recruiter lead. Enter the due date and time in IST.
       </p>
-      {totalLeads > leads.length ? (
+      {totalLeads > 0 ? (
         <p className="mt-2 text-xs text-muted-foreground">
-          Showing the {leads.length} most recently updated leads. Use the recruiter leads workspace
-          to manage follow-ups for older leads.
+          Search all {totalLeads} recruiter leads by name, company or email (at least two characters).
         </p>
       ) : null}
       {leads.length === 0 ? (
@@ -90,13 +100,22 @@ export function TpoCalendarCreateFollowup({
         <form onSubmit={onSubmit} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Recruiter lead
-            <select name="leadId" required className={inputClass}>
-              {leads.map((lead) => (
+            <input type="search" value={leadQuery} className={inputClass}
+              placeholder="Search name, company or email" aria-label="Search recruiter leads"
+              onChange={(event) => { setLeadQuery(event.target.value); setLeadId(""); }} />
+            <select name="leadId" required value={leadId} disabled={matchingLeads.length===0}
+              onChange={(event) => setLeadId(event.target.value)} className={inputClass}>
+              <option value="">Select a matching lead</option>
+              {matchingLeads.map((lead) => (
                 <option key={lead.id} value={lead.id}>
                   {lead.name} · {lead.companyName || "Unspecified company"}
+                  {lead.email ? " · " + lead.email : ""}
                 </option>
               ))}
             </select>
+            {search.length>=2&&matchingLeads.length===0 ? (
+              <span role="status" className="text-xs text-muted-foreground">No matching recruiter leads.</span>
+            ) : null}
           </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Due date and time (IST)
@@ -107,7 +126,7 @@ export function TpoCalendarCreateFollowup({
             <input name="note" maxLength={500} className={inputClass} />
           </label>
           <div className="flex items-end">
-            <button type="submit" disabled={busy} className="min-h-10 w-full rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+            <button type="submit" disabled={busy || !leadId} className="min-h-10 w-full rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Saving…" : "Create follow-up"}
             </button>
           </div>
