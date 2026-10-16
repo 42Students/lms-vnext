@@ -186,6 +186,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.application.withdrawn",
   PLACEMENTS_SCREENING_DECIDED:
     "placements.screening.decided",
+  PLACEMENTS_BULK_RUN:
+    "placements.bulk.run",
   PLACEMENTS_ROUND_COMPLETED:
     "placements.round.completed",
   PLACEMENTS_RESULT_STAGED:
