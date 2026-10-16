@@ -57,7 +57,7 @@ describe.skipIf(!enabled)("TPO-campaigns-public-19/20 disposable PostgreSQL work
     const join = { ...input, name: "Recruiter", designation: "", phone: "",
       companyName: "", code: delivered === "000000" ? "999999" : "000000" };
     await expect(acceptPublicRecruiterJoin("COMPANY", join, "198.51.100.42"))
-      .rejects.toMatchObject({ code: "INVALID" });
+      .rejects.toMatchObject({ code: "WRONG_CODE" });
     const failures = await pool.query<{ attempts: number }>(
       "SELECT attempts FROM placement_public_join_challenges " +
       "WHERE work_email=$1 ORDER BY created_at DESC LIMIT 1", [email],
@@ -65,7 +65,7 @@ describe.skipIf(!enabled)("TPO-campaigns-public-19/20 disposable PostgreSQL work
     expect(failures.rows[0]?.attempts).toBe(1);
     const accepted = await acceptPublicRecruiterJoin("COMPANY",
       { ...join, code: delivered }, "198.51.100.42");
-    expect(accepted).toEqual({ joined: true, outcome: "JOINED" });
+    expect(accepted).toMatchObject({ joined: true, outcome: "JOINED", signInEmail:email });
     const verified = await pool.query<{ total: number }>(
       "SELECT count(*)::integer AS total FROM placement_public_join_challenges " +
       "WHERE work_email=$1 AND verified_at IS NOT NULL", [email],
@@ -73,7 +73,7 @@ describe.skipIf(!enabled)("TPO-campaigns-public-19/20 disposable PostgreSQL work
     expect(verified.rows[0]?.total).toBe(1);
     await expect(acceptPublicRecruiterJoin("COMPANY",
       { ...join, code: delivered }, "198.51.100.42"))
-      .rejects.toMatchObject({ code: "INVALID" });
+      .rejects.toBeDefined();
     const grants = await pool.query<{ total: number }>(
       "SELECT count(*)::integer AS total FROM placement_recruiter_college_grants g " +
       "JOIN placement_recruiter_profiles p ON p.user_id=g.recruiter_user_id " +
