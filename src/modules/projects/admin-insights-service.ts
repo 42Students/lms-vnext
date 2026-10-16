@@ -576,6 +576,7 @@ export async function listProjectAdminRiskQueue(
     .select({
       projectId: projectMembers.projectId,
       displayName: users.displayName,
+      membershipId: projectMembers.membershipId,
       isPrimary: projectMembers.isPrimary,
     })
     .from(projectMembers)
@@ -638,6 +639,7 @@ export async function listProjectAdminRiskQueue(
         blockerReason: project.blockerSummary,
         mentorName:
           mentor?.displayName ?? null,
+        mentorMembershipId: mentor?.membershipId ?? null,
       };
     }),
     total,
