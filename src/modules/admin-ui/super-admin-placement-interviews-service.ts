@@ -28,11 +28,11 @@ export async function listSuperAdminInterviews(context:RequestContext,raw:unknow
  const [totals,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.jobTitle),asc(source.sequence),asc(source.id))
-   .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=totals[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
- return {query,total,totalPages:superAdminReadPages(total),items:rows.map(row=>({
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
   id:row.id,title:row.roundName,subtitle:row.jobTitle+" · Round "+row.sequence,
   status:row.roundStatus,details:["Type: "+row.roundKind,"Mode: "+(row.mode??"Not scheduled"),
    "Schedule: "+(row.scheduledAt?fmt.format(row.scheduledAt)+" IST":"Not scheduled")],
