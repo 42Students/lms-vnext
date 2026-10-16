@@ -18,5 +18,5 @@ export const stagedTpoCampaignDrafts=pgTable("placement_tpo_campaign_drafts",{
  foreignKey({name:"tpo_campaign_draft_campaign_scope_fk",columns:[t.collegeId,t.campaignId],
   foreignColumns:[placementTpoEmailCampaigns.collegeId,placementTpoEmailCampaigns.id]}).onDelete("restrict"),
  check("tpo_campaign_draft_segment_ck",sql`${t.segment} IN ('ALL_ELIGIBLE','NEW','UNASSIGNED')`),
- check("tpo_campaign_draft_body_ck",sql`length(trim(${t.body})) BETWEEN 2 AND 4000`),
+ check("tpo_campaign_draft_body_ck",sql`length(trim(${t.body})) BETWEEN 2 AND 10000`),
 ]);

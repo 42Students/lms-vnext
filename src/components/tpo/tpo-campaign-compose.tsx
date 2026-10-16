@@ -3,7 +3,7 @@ import Link from "next/link";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE,CAMPAIGN_DRAFT_UNAVAILABLE,
-  tpoCampaignDraftSchema} from "@/modules/messaging/tpo-campaign-draft-model";
+  tpoCampaignDraftSchema,previewTpoCampaignText} from "@/modules/messaging/tpo-campaign-draft-model";
 const field="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
 const SEGMENTS=[
  {value:"ALL_ELIGIBLE",label:"All eligible contacts"},
@@ -54,9 +54,19 @@ export function TpoCampaignCompose(){
      onChange={e=>setSubject(e.target.value)}/>
    </label>
    <label className="block text-sm font-semibold">Message
-    <textarea value={body} maxLength={4000} required rows={6}
+    <textarea value={body} maxLength={10000} required rows={6}
      className={field} onChange={e=>setBody(e.target.value)}/>
    </label>
+   <p className="text-xs text-muted-foreground">
+     Write {`{name}`} or {`{company}`} and each person sees their own. This preview uses example text;
+     sending, signature and unsubscribe-link delivery have not been enabled.
+   </p>
+   <section className="rounded-md border border-border bg-surface p-3" aria-label="Message preview">
+     <h3 className="text-sm font-semibold">Preview</h3>
+     <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">
+       {previewTpoCampaignText(body,{name:"Sample recruiter",company:"Example company"})}
+     </p>
+   </section>
    <label className="block text-sm font-semibold">Approved campaign template key
     <input value={templateKey} maxLength={160} required className={field}
      placeholder="tpo-campaign-general" onChange={e=>setTemplateKey(e.target.value)}/>
