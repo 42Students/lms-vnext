@@ -4,6 +4,7 @@ import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-s
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import {buildTpoLegacyHomeRows} from "@/modules/placements/tpo-home-legacy-rows";
 import {buildTpoLegacyNextUp,operationalHomeNeeds} from "@/modules/placements/tpo-home-next-up";
+import {deadlineTpoHomeNeeds} from "@/modules/placements/tpo-home-deadline-signals";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
@@ -50,6 +51,7 @@ export default async function TpoHome(){
    ...(inviteReady?[{type:"REGISTRATION_CLOSED",priority:0,
       title:"Invite the batch to register",count:batchEligible!,
       link:"/tpo/batches/"+uninvitedBatch!.id}]:[]),
+   ...deadlineTpoHomeNeeds(operations.jobs.map(item=>item.job)),
    ...operationalHomeNeeds(operations.workQueue),
    ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
       count:pendingRequestCount,link:"/tpo/requests"}]:[]),
@@ -68,7 +70,7 @@ export default async function TpoHome(){
    <Link href={next.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">{next.action}</Link>
   </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
    <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Open</Link>
-  </div>:<p className="mt-2 text-sm">Nothing is waiting on you in the currently supported queues.</p>}
+  </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
  </section>
  {pendingRequests?<section aria-label="Pending placement requests" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface p-4"><p className="text-sm font-semibold">{pendingRequests.label}</p><Link href={pendingRequests.href} className="inline-flex min-h-11 items-center text-primary-text underline">Open decision inbox</Link></section>:null}
  {!batches.ready?<p className="text-xs text-muted-foreground">Batch attention is unavailable until its lifecycle migration is registered.</p>:null}
