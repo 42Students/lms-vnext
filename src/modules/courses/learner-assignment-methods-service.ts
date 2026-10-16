@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {courseAssignments} from "@/db/schema";
@@ -19,10 +19,8 @@ export async function getLearnerAssignmentMethods(context:RequestContext,rawId:u
  const access=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
  if(access!=="LEARNER"||!context.membership?.roles.includes("LEARNER"))
   throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
- if(process.env.DB06_MULTIPART_SUBMISSIONS_READY!=="DB06_VERIFIED")
-  return normalizeAssignmentMethods(null);
  const [row]=await getDb().select({
-  methods:sql<unknown>`allowed_submission_methods`,
+  methods:courseAssignments.allowedSubmissionMethods,
  }).from(courseAssignments).where(and(eq(courseAssignments.id,assignmentId),
   eq(courseAssignments.status,"PUBLISHED"))).limit(1);
  if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
