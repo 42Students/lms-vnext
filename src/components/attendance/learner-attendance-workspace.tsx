@@ -520,12 +520,8 @@ export function LearnerAttendanceWorkspace({
                   <th className="px-4 py-3">
                     Date
                   </th>
-                  <th className="px-4 py-3">
-                    Class
-                  </th>
-                  <th className="px-4 py-3">
-                    Faculty / location
-                  </th>
+                  <th className="px-4 py-3">Day</th>
+                  <th className="px-4 py-3">Class Start Time</th>
                   <th className="px-4 py-3">
                     Status
                   </th>
@@ -549,22 +545,12 @@ export function LearnerAttendanceWorkspace({
                         )}
                       </p>
                     </td>
-                    <td className="px-4 py-3">
-                      <p className="m-0 font-semibold text-foreground">
-                        {row.title}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {row.courseCode}
-                      </p>
+                    <td className="px-4 py-3 text-body">
+                      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(new Date(row.startsAt))}
                     </td>
                     <td className="px-4 py-3 text-body">
-                      {[
-                        row.facultyName,
-                        row.location,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ") ||
-                        "Not specified"}
+                      <p className="font-semibold">{timeLabel(row.startsAt)}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{row.title} · {row.courseCode}</p>
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge
