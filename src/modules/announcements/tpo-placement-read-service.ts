@@ -27,7 +27,8 @@ export async function listTpoPlacementAnnouncements(
    message:db10Announcements.message,isPinned:db10Announcements.isPinned,
    version:db10Announcements.version,deletedAt:db10Announcements.deletedAt,
    senderUserId:db10Announcements.senderUserId,
-   createdAt:db10Announcements.createdAt,expiresAt:db10Announcements.expiresAt,
+   createdAt:db10Announcements.createdAt,scheduledAt:db10Announcements.scheduledAt,
+   expiresAt:db10Announcements.expiresAt,
   }).from(db10Announcements).where(and(
    eq(db10Announcements.organizationId,college.organizationId),
    eq(db10Announcements.collegeId,college.id),
@@ -37,7 +38,7 @@ export async function listTpoPlacementAnnouncements(
    ...(tab==="deleted"?
     [isNotNull(db10Announcements.deletedAt),eq(db10Announcements.senderUserId,context.user.id)]:
     [isNull(db10Announcements.deletedAt)]),
-   ...(tab==="deleted"?[]:[
+   ...(tab==="deleted"||tab==="yours"?[]:[
     or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
     or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
    ]),
