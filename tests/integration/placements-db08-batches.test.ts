@@ -100,6 +100,7 @@ beforeEach(() => {
 afterEach(async () => {
   // TRUNCATE the immutable audit log only on this EXPLICIT isolated test database.
   await pool.query("TRUNCATE TABLE placement_eligibility_events");
+  await pool.query("TRUNCATE TABLE placement_batch_registration_events");
   if (f.memberships.length) {
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='MEMBERSHIP' AND scope_id = ANY($1::uuid[])", [f.memberships]);
   }
@@ -107,6 +108,7 @@ afterEach(async () => {
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='SECTION' AND scope_id = ANY($1::uuid[])", [f.sections]);
   }
   if (f.cohorts.length) {
+    await pool.query("DELETE FROM placement_batch_registrations WHERE cohort_id = ANY($1::uuid[])",[f.cohorts]);
     await pool.query(
       "DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE event_type IN ('BATCH_INVITED','BATCH_REGISTRATION_REOPENED') AND subject_id = ANY($1::text[]))",
       [f.cohorts],
@@ -331,9 +333,6 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     expect(result.invitedAt).toBeTruthy();
     expect(result.registrationDeadline?.toISOString()).toBe(deadline.toISOString());
     expect(result.notifiedCount).toBe(0);
-    await pool.query(
-      "DELETE FROM placement_batch_registrations WHERE cohort_id=$1",[a.cohortId],
-    );
   });
 
   it("TPO-batches-R02 rolls back deadline and invitation together when none is eligible", async () => {
@@ -413,6 +412,11 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
 
   it("keeps batch settings and finish state separate for each cohort", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const learner = await makeLearner(SEED_IDS.collegeA,a);
+    await decidePlacementParticipation(admin,{
+      collegeId:SEED_IDS.collegeA,
+      changes:[{scopeType:"MEMBERSHIP",scopeId:learner,status:"ELIGIBLE"}],
+    });
     const b = await makeAcademicFixture(SEED_IDS.collegeA);
     await upsertPlacementBatchSettings(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,

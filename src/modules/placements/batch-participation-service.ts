@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { formatBatchRegistrationNotice } from "./tpo-batch-notification-model";
 import {
   and,
   asc,
@@ -511,12 +512,16 @@ export async function upsertPlacementBatchSettings(
         },
       }).returning({ id: activityEvents.id });
       if (!event) throw new PlacementBatchError("DB08_ACTION_INVALID");
+      const [cohort] = await tx.select({name:cohorts.name})
+        .from(cohorts).where(eq(cohorts.id,input.cohortId)).limit(1);
+      if(!cohort)throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
+      const notice = formatBatchRegistrationNotice(cohort.name,row.registrationDeadline!,true);
       for (let offset = 0; offset < recipientUserIds.length; offset += 200) {
         await tx.insert(inAppNotifications).values(
           recipientUserIds.slice(offset, offset + 200).map(userId => ({
             userId, eventId: event.id,
-            title: "Placement registration is open",
-            body: "Your placement cell reopened registration. Please record your choice before the new deadline.",
+            title: notice.title,
+            body: notice.body,
             actionHref: "/learn/placements",
           })),
         ).onConflictDoNothing();
@@ -671,12 +676,16 @@ export async function markPlacementBatchInvited(
       },
     }).returning({ id: activityEvents.id });
     if (!invitationEvent) throw new PlacementBatchError("DB08_ACTION_INVALID");
+    const [cohort] = await tx.select({name:cohorts.name})
+      .from(cohorts).where(eq(cohorts.id,input.cohortId)).limit(1);
+    if(!cohort)throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
+    const notice = formatBatchRegistrationNotice(cohort.name,deadline,false);
     for (let offset = 0; offset < recipientUserIds.length; offset += 200) {
       await tx.insert(inAppNotifications).values(
         recipientUserIds.slice(offset, offset + 200).map(userId => ({
           userId, eventId: invitationEvent.id,
-          title: "Placement registration is open",
-          body: "Your placement cell has invited you to register for placements.",
+          title: notice.title,
+          body: notice.body,
           actionHref: "/learn/placements",
         })),
       ).onConflictDoNothing();
