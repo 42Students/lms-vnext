@@ -1,0 +1,25 @@
+.page-layout {
+  padding: 3px 8px 5px 8px;
+}
+
+/* .text-terms-size {
+  padding: 0px 100px;
+
+  @include media-breakpoint("xs") {
+    padding: 0px 0px;
+  }
+} */
+.text-terms-size p {
+  font-size: 16px;
+}
+
+ul li,
+ol li {
+  font-size: 16px;
+}
+
+.text-600 {
+  font-weight: 800;
+  font-size: 20px;
+  padding-top: 20px;
+}
