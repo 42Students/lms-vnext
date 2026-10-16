@@ -314,7 +314,15 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                       {item.activeSections} classes / {item.activeEnrolledLearners} learners
                     </td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
-                    <td className="px-4 py-4"><CollegeCohortRowActions row={item} periods={batchPeriods} /></td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        <Link href={"/college/batches/" + encodeURIComponent(item.id) + "/students"}
+                          className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                          Students
+                        </Link>
+                        <CollegeCohortRowActions row={item} periods={batchPeriods} />
+                      </div>
+                    </td>
                   </tr>
                 ))}
             </tbody>
@@ -341,7 +349,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
       <p className="text-xs leading-5 text-muted-foreground">
         {semesters
           ? "Mapped course counts include registered curriculum mappings within this college only. Deletion is denied when mappings or non-archived batches exist; editing never changes the assigned program or semester number."
-          : "Learner counts include currently active program enrollments with active college membership; class counts include active sections. No graduation, promotion preview, derived batch end date or student move is implied."}
+          : "Learner counts include currently active program enrollments with active college membership; class counts include active sections. Manage each batch’s students and recorded progression using the available actions."}
         Exact legacy workflows, browser checks and disposable-PostgreSQL execution remain open.
       </p>
     </div>
