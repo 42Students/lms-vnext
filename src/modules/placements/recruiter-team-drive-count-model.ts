@@ -6,7 +6,7 @@ export function recruiterTeamDriveCounts(
  jobs:readonly {id:string;createdByUserId:string}[],
  requests:readonly {id:string;recruiterUserId:string;approvedJobId:string|null}[],
 ):Map<string,number>{
- const byUser=new Map(team.map(member=>[member.userId,new Set<string>()]));
+ const byUser=new Map<string,Set<string>>(team.map(member=>[member.userId,new Set<string>()] as const));
  for(const job of jobs)byUser.get(job.createdByUserId)?.add("job:"+job.id);
  for(const req of requests)byUser.get(req.recruiterUserId)?.add(
   req.approvedJobId?"job:"+req.approvedJobId:"request:"+req.id);
