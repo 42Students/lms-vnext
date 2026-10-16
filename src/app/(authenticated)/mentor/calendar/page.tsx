@@ -40,8 +40,8 @@ export default async function MentorCalendarPage({searchParams}:{
           defaultValue={parsed.data.search}
           placeholder="Meeting or project" className="min-h-10 rounded-md border border-border bg-background px-3"/>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Action needed
-        <select name="attention" defaultValue={parsed.data.attention} className="min-h-10 rounded-md border border-border bg-background px-3">
+      <label className="grid min-w-0 max-w-full gap-1 text-sm font-semibold text-body">Action needed
+        <select name="attention" defaultValue={parsed.data.attention} className="min-h-10 w-full max-w-full rounded-md border border-border bg-background px-3">
           <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
           <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
           <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
