@@ -72,10 +72,10 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   }
   setBusy(true);invalidate();
   try{
-   const checks=await Promise.all(options.filter(option=>option.value!=="INELIGIBLE").map(async option=>{
+   const checks=await Promise.all(options.filter(option=>option.value!=="INELIGIBLE"||note.trim().length>=3).map(async option=>{
     const result=await post("preview",{
      target,...(target==="APPLICATIONS"?{jobId}:{}),
-     action:option.value,note:target==="APPLICATIONS"?note.trim():"",ids:safeSelected,
+     action:option.value,note:target==="APPLICATIONS"||option.value==="INELIGIBLE"?note.trim():"",ids:safeSelected,
     }) as PreviewResponse;
     if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Could not verify action counts.");
     return {action:option.value,label:option.label,ready:result.counts.ready,
@@ -163,6 +163,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   <section aria-label="Actions window" className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
    <h3 className="font-semibold">Actions</h3>
    <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
+   {target==="STUDENTS"&&note.trim().length<3?<p className="text-xs text-muted-foreground">To include “Make ineligible” in the action counts, enter an ineligibility reason of at least 3 characters. No eligibility is changed while checking counts.</p>:null}
    <button type="button" disabled={busy||safeSelected.length===0}
      onClick={()=>void compareActions()}
      className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
