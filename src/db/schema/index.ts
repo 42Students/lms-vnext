@@ -70,3 +70,4 @@ export * from "./placement-company-shares";
 export * from "./placement-hr-interview-slots";
 export * from "./placement-outside-drives";
 export * from "./storage-files";
+export * from "./placement-drive-requests";
