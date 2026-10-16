@@ -70,6 +70,18 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </label>
       <button type="submit" className="min-h-10 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
+    <nav aria-label="Application pipeline stages" className="flex flex-wrap gap-2">
+      {(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>
+        <Link key={stage} href={driveApplicationsHref(jobId,{...query,stage,page:1})}
+          aria-current={query.stage===stage?"page":undefined}
+          className={"inline-flex min-h-10 items-center gap-2 rounded-md border px-3 text-sm font-semibold "+
+            (query.stage===stage?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>
+          {stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase()}
+          <span className="tabular-nums">{stage==="ALL"?
+            Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):
+            data.stageCounts[stage]??0}</span>
+        </Link>)}
+    </nav>
     <div className="flex flex-wrap justify-between gap-3 text-sm">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
