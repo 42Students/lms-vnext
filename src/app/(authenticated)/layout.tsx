@@ -9,6 +9,7 @@ import {
 } from "@/modules/identity/context-service";
 import { AppShell } from "@/components/shell/app-shell";
 import { MembershipRecovery } from "@/components/auth/membership-recovery";
+import { SessionResponseGuard } from "@/components/auth/session-response-guard";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listAdminScopeChoices } from "@/modules/admin-scope/service";
 
@@ -132,6 +133,7 @@ export default async function AuthenticatedLayout({
       memberships={shellData.memberships}
       adminScopeChoices={shellData.adminScopeChoices}
     >
+      <SessionResponseGuard />
       {children}
     </AppShell>
   );
