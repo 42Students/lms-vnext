@@ -437,3 +437,9 @@ Q12. Student photos (`student_image`) and Aadhaar/PAN field `identity`: skip ent
 Q13. Timezone confirmation: please confirm class schedule and deadline times in the legacy UI are shown as IST wall clock (evidence supports this) so we can convert naive IST to UTC.
 
 Unverified items (I did not read legacy Java for every rule): exact shape of `learner.identity`, `faculty.metadata`, `learner.metadata`, JSON `content_data` variants beyond the types counted, and whether `student_assignment.student_id` is always a learner id. The parity audit file lists which logic differences were verified in code.
+
+---------------------------------------------------------------------------
+
+## 8. Stage 1 update (2026-10-16): schema prerequisites
+
+See `nsrit-schema-prereqs.md` for the full need table. Now REAL in `drizzle/`: 0096 offer/role-option pay breakdown (typed nullable columns), 0097 `data_import_batches` + college-scoped `legacy_id_map` (batch id, source hash, same-college composite FK, RUNNING-batch guard), 0098 section min size/description, progress first completion/attempt, submission attempt/previous points, quiz shuffle flags. Migrations 0080-0095 (landed after this plan was written) also closed several section 4 items (project task/resource/delivery fields, recruiter grant validity, external offers, TPO email campaigns). Section 4A staged tables (lesson content settings/materials/sequences, course display facets, learner profile children, project audit tables) are intentionally NOT registered: profile detail goes to `profile_document`, audit history is skipped, and the remainder is a documented fidelity loss. Remaining gaps are listed in section 3 of the prereqs doc. The ETL has not been started. Migrations 0000-0098 apply cleanly on a fresh local Postgres.
