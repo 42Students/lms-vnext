@@ -10,6 +10,8 @@ type Person = {
   email: string | null;
   phone: string | null;
   stage: string;
+  inviteSentAt:string|null;inviteClickedAt:string|null;
+  recruiterUserId:string|null;inviteBouncedAt:string|null;
   source: string | null;
   updatedAt: string;
 };
@@ -219,8 +221,14 @@ export function TpoCompanyMemoryWorkspace({
                       <p className="text-sm text-muted-foreground">
                         {[person.designation, person.email].filter(Boolean).join(" · ") || "No contact details"}
                       </p>
+                      <p className="text-xs text-muted-foreground">
+                        {person.recruiterUserId?"Joined · has not signed in yet":
+                          person.inviteBouncedAt?"Invite bounced":
+                          person.inviteClickedAt?"Invite opened, not joined yet":
+                          person.inviteSentAt?"Invite sent, not opened":"No invite sent"}
+                      </p>
                     </div>
-                    <span className="rounded-full border border-border px-2 py-1 text-xs">{person.stage.replaceAll("_", " ")}</span>
+                    <span className="rounded-full border border-border px-2 py-1 text-xs">{person.stage==="DRIVE_PLANNED"?"Drive planned":person.stage==="NOT_NOW"?"Not now":person.stage==="RECRUITED"?"Recruited":person.stage==="JOINED"?"Joined":person.stage==="INVITED"?"Invited":person.stage==="CONTACTED"?"Contacted":"New"}</span>
                   </div>
                 ))}
               </div>
