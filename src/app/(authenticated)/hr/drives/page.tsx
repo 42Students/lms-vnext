@@ -13,6 +13,8 @@ import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-
 import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
+import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
+import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
@@ -84,6 +86,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
        Proposals are private messages, not approved or published drives.
       </span>
     </nav>
+    <HrUnsentDriveAlert collegeId={selectedCollege}
+      storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
       <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
         className={selectedCollege === grant.collegeId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{grant.collegeName}</Link>)}</nav> : null}
