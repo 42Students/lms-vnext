@@ -15,7 +15,7 @@ import { requireCollegePlacementAdmin } from "./college-drive-read-service";
 import { collegeDriveIdSchema } from "./college-drive-read-model";
 import {
   driveApplicationsQuerySchema, DRIVE_APPLICATIONS_PAGE_SIZE,
-  DRIVE_APPLICATION_EXPORT_CAP,
+  DRIVE_APPLICATION_EXPORT_CAP, DRIVE_APPLICATION_BULK_CAP,
 } from "./college-drive-applications-model";
 
 function pattern(value: string) {
@@ -26,7 +26,7 @@ export async function listCollegeDriveApplications(
   context: RequestContext,
   jobIdInput: unknown,
   raw: unknown,
-  options: { exportAll?: boolean } = {},
+  options: { exportAll?: boolean; bulkAll?: boolean } = {},
 ) {
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
   const query = driveApplicationsQuerySchema.parse(raw);
@@ -96,8 +96,8 @@ export async function listCollegeDriveApplications(
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
     db.select().from(source).orderBy(asc(source.name), asc(source.id))
-      .limit(options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : DRIVE_APPLICATIONS_PAGE_SIZE)
-      .offset(options.exportAll ? 0 : (query.page - 1) * DRIVE_APPLICATIONS_PAGE_SIZE),
+      .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : DRIVE_APPLICATIONS_PAGE_SIZE)
+      .offset(options.exportAll || options.bulkAll ? 0 : (query.page - 1) * DRIVE_APPLICATIONS_PAGE_SIZE),
     db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   ]);
   const total = totalRows[0]?.total ?? 0;
