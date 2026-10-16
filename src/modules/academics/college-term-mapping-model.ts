@@ -6,6 +6,21 @@ export const collegeTermCourseAddSchema = z.object({
   type: z.enum(["CORE", "ELECTIVE"]),
   credits: z.number().int().min(0).max(30).nullable(),
 }).strict();
+export const collegeTermCourseUpdateSchema = z.object({
+  credits: z.number().int().min(0).max(30).nullable(),
+  position: z.number().int().min(1).max(100000),
+}).strict();
+
+/** 1-indexed reordering contract shared by the service and regression tests. */
+export function reorderTermCourseIds(ids: readonly string[], movingId: string, position: number) {
+  if (!ids.includes(movingId) || position < 1 || position > ids.length || !Number.isInteger(position)) {
+    throw new Error("TERM_COURSE_POSITION_INVALID");
+  }
+  const next = ids.filter(id => id !== movingId);
+  next.splice(position - 1, 0, movingId);
+  return next;
+}
+
 export const collegeTermCourseUnmapSchema = z.object({ confirm: z.literal(true) }).strict();
 export const collegeTermCourseIdSchema = z.string().uuid();
 
@@ -20,6 +35,7 @@ export function collegeTermMappingErrorMessage(code: string) {
     case "TERM_COURSE_DUPLICATE": return "This course is already mapped to the selected semester.";
     case "TERM_COURSE_IN_USE": return "A current active batch offering is using this semester-course mapping.";
     case "TERM_COURSE_NOT_FOUND": return "This semester-course mapping is not available.";
+    case "TERM_COURSE_POSITION_INVALID": return "Choose a position within this semester course list.";
     default: return "Mapping update was not saved. Refresh and review the values.";
   }
 }
