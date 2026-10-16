@@ -7,6 +7,7 @@ import {parseTpoEligibilitySheetCsv} from "@/modules/placements/tpo-eligibility-
 type ImportRow=ReturnType<typeof parseTpoEligibilitySheetCsv>[number];
 type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
  index:number;status:"matched"|"unusable";reason:string|null;membershipId:string|null;expectedVersion:string|null;
+ studentName?:string|null;rollNumber?:string|null;currentStatus?:string|null;proposedStatus?:string|null;
 }[]};
 export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const router=useRouter(),[csv,setCsv]=useState("studentCode,decision,reason\n");
@@ -97,7 +98,9 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
     .map(({row,i})=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
     <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy||row.status!=="matched"}/>Include</label>
-    Row {i+1}: {row.status==="matched"?"Will update":"Skipped"} {preview.rows[i]?.studentCode}{row.reason?" — "+row.reason:""}
+    <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
+    <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
+    <p>{row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
    </li>)}</ul>
    <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
    <button type="button" disabled={busy||preview.ready===0} onClick={()=>void commit()}
