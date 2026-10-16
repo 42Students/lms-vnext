@@ -1,0 +1,51 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+type Company = { id: string; name: string };
+export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]}) {
+  const router=useRouter();
+  const [keep,setKeep]=useState(companies[0]?.id??"");
+  const [source,setSource]=useState(companies[1]?.id??"");
+  const [busy,setBusy]=useState(false);
+  const [error,setError]=useState("");
+  const [result,setResult]=useState("");
+  async function merge(){
+    if(busy||!keep||!source||keep===source)return;
+    const survivor=companies.find(c=>c.id===keep)?.name??keep;
+    const duplicate=companies.find(c=>c.id===source)?.name??source;
+    if(!window.confirm(`Merge "${duplicate}" into "${survivor}"? Jobs and recruiter grants are reassigned. The duplicate identity is archived for audit. This cannot be undone.`))return;
+    setBusy(true);setError("");setResult("");
+    try{
+      const response=await fetch("/api/admin/companies/merge",{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({keepCompanyId:keep,mergeCompanyId:source,confirm:true}),
+      });
+      const payload=await response.json().catch(()=>null);
+      if(!response.ok)throw Error(payload?.error??"Company merge was rejected.");
+      setResult("Company merged. Canonical company retained; duplicate archived.");
+      router.refresh();
+    }catch(cause){setError(cause instanceof Error?cause.message:"Unable to merge companies");}
+    finally{setBusy(false);}
+  }
+  return <div className="mt-3 space-y-2">
+    <label className="grid gap-1 text-xs font-semibold text-body">Keep company
+      <select className="min-h-10 rounded border border-border bg-surface px-2 text-foreground"
+        value={keep} onChange={e=>setKeep(e.target.value)}>
+        {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
+      </select>
+    </label>
+    <label className="grid gap-1 text-xs font-semibold text-body">Merge duplicate
+      <select className="min-h-10 rounded border border-border bg-surface px-2 text-foreground"
+        value={source} onChange={e=>setSource(e.target.value)}>
+        {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
+      </select>
+    </label>
+    <button type="button" disabled={busy||keep===source} onClick={merge}
+      className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+      {busy?"Merging…":"Review and merge"}
+    </button>
+    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {result?<p role="status" className="text-sm text-body">{result}</p>:null}
+  </div>;
+}
