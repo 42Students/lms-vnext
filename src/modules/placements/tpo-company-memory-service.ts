@@ -333,6 +333,10 @@ export async function getTpoCompanyMemory(
     email: lead.emailNorm,
     phone: lead.phoneNorm,
     stage: deriveOwnRecruiterLeadStage(lead, linkedJobs, driveRows),
+    inviteSentAt: lead.inviteSentAt,
+    inviteClickedAt: lead.inviteClickedAt,
+    recruiterUserId: lead.recruiterUserId,
+    inviteBouncedAt: lead.inviteBouncedAt,
     source: lead.source,
     updatedAt: lead.updatedAt,
   }));
