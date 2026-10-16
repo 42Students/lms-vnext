@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {recruiterXlsxToCsv} from "@/modules/placements/tpo-lead-xlsx-import-model";
 import { useState } from "react";
 import {
   previewTpoLeadCsv,
@@ -41,19 +42,19 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setError("");
     setFileName(file?.name ?? "");
     if (!file) return;
-    if (file.size > TPO_LEAD_CSV_MAX_CHARACTERS * 4) {
+    if (file.size > 10_000_000) {
       setError("CSV file is too large (limit: 2,000,000 characters).");
       return;
     }
     try {
-      const content = await file.text();
+      const content = /\.xlsx$/i.test(file.name)?await recruiterXlsxToCsv(file):await file.text();
       const parsed = previewTpoLeadCsv(content);
       setPreview(parsed);
       setCsv(content);
     } catch (cause) {
       setError(
         cause instanceof Error && cause.message.startsWith("CSV_")
-          ? "Invalid CSV format: " + cause.message.replaceAll("_", " ")
+          ? "Invalid import format: " + cause.message.replaceAll("_", " ")
           : "Could not read or validate the CSV file.",
       );
     }
@@ -120,7 +121,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
               <div>
                 <h2 className="text-xl font-semibold text-foreground">Import recruiter leads</h2>
                 <p className="mt-2 text-sm text-body">
-                  Upload a six-column CSV, with headers in this exact order:
+                  Upload CSV or Excel (.xlsx), with the required headings:
                   name, email, phone, companyName, designation, source.
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
@@ -137,11 +138,11 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
               Download CSV template
             </a>
             <label className="block text-sm font-semibold text-foreground">
-              Choose CSV file
+              Choose CSV or Excel file
               <input
                 className={inputClass + " mt-2"}
                 type="file"
-                accept=".csv,text/csv"
+                accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 disabled={busy}
                 onChange={event => void chooseFile(event.target.files?.[0])}
               />
