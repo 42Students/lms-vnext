@@ -8,6 +8,8 @@ import {
 } from "@/db/schema";
 import {projectRecruiterVisibleShortlist} from "../tpo-shareable-shortlist-model";
 import {companyShareTablesReady} from "./readiness";
+import {placementTableExists} from "../staged-tables";
+import {placementCompanyShareSelections as selectedShares} from "@/db/schema/placement-company-share-selection";
 import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "@/db/schema/placement-company-shares";
 import {companyShareTokenSchema,hashCompanyShareToken} from "./token-model";
 import {publicApplicantSearchSchema,escapeLiteralApplicantSearch,clampCompanySharePage} from "./public-filter-model";
@@ -55,8 +57,13 @@ export async function getPublicCompanyApplicantShare(
       inArray(placementJobs.status,["PUBLISHED","CLOSED"])))
    .limit(1).for("share",{of:shares});
   if(!grant)return {kind:"UNAVAILABLE" as const};
+  const selectionReady=await placementTableExists("placement_company_share_selections");
+  const selected=selectionReady?await tx.select({applicationId:selectedShares.applicationId})
+    .from(selectedShares).where(eq(selectedShares.shareId,grant.shareId)):[];
+  const selectedIds=selected.map(item=>item.applicationId);
   const filter=and(
    eq(placementApplications.jobId,grant.jobId),
+   selectedIds.length?inArray(placementApplications.id,selectedIds):undefined,
    eq(placementApplications.status,"SUBMITTED"),
    eq(placementApplicationScreenings.status,"SHORTLISTED"),
    eq(collegeMemberships.collegeId,grant.collegeId),
