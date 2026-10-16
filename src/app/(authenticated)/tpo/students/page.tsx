@@ -7,6 +7,7 @@ import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/t
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
@@ -28,6 +29,7 @@ import {
 type SearchParams = {
   journeyState?: string | string[];
   branchId?: string | string[];
+  batchId?: string | string[];
   search?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
@@ -50,6 +52,7 @@ function studentsHref(
   filters: {
     journeyState?: string;
     branchId?: string;
+    batchId?: string;
     search?: string;
     page?: number;
     pageSize?: number;
@@ -66,6 +69,7 @@ function studentsHref(
   if (filters.branchId) {
     params.set("branchId", filters.branchId);
   }
+  if(filters.batchId)params.set("batchId",filters.batchId);
 
   if (filters.search) {
     params.set("search", filters.search);
@@ -128,6 +132,7 @@ export default async function TpoStudentsPage({
     collegeId: context.membership.collegeId,
     journeyState: first(raw.journeyState) || undefined,
     branchId: first(raw.branchId) || undefined,
+    batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
     pageSize: first(raw.pageSize) || undefined,
@@ -169,9 +174,10 @@ export default async function TpoStudentsPage({
     requirePermission(context, "placements.manage", { collegeId });
     await requirePlacementManageScope(context, collegeId);
   }
-  const [data, managedJobs] = await Promise.all([
+  const [data, managedJobs, batchDirectory] = await Promise.all([
     getTpoStudentsIntelligence(context, query),
     manageAllowed ? listPlacementJobs(context, collegeId) : Promise.resolve([]),
+    listTpoBatches(context),
   ]);
   const bulkDriveChoices = managedJobs.filter((item) =>
     item.job.status === "PUBLISHED" &&
@@ -193,7 +199,9 @@ export default async function TpoStudentsPage({
     PLACED: summary.placed,
   };
 
-  const exportHref = studentsHref(
+  const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
+    studentsHref({...filters,batchId:query.batchId},exportCsv);
+  const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
       branchId: query.branchId,
@@ -206,6 +214,7 @@ export default async function TpoStudentsPage({
     columns:first(raw.columns)?.slice(0,800),
     journeyState: query.journeyState,
     branchId: query.branchId,
+    batchId: query.batchId,
     search: query.search,
     pageSize: query.pageSize,
   };
@@ -245,6 +254,20 @@ export default async function TpoStudentsPage({
         }
       />
 
+      <form action="/tpo/students" method="get"
+        className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
+        <label className="text-sm font-semibold">Batch
+          <select name="batchId" defaultValue={query.batchId??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Current students</option>
+            {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
+        </label>
+        <button className="min-h-11 rounded border border-border px-4">Show students</button>
+      </form>
+      {query.batchId?<p className="text-sm text-muted-foreground">
+        Students from a finished batch include completed enrollments for follow-up and reporting.
+      </p>:null}
       <nav
         aria-label="Students workspace tabs"
         className="flex flex-wrap gap-2 border-b border-border pb-3"
@@ -319,7 +342,7 @@ export default async function TpoStudentsPage({
             return (
               <Link
                 key={state}
-                href={studentsHref(tpoJourneyDrillFilters({
+                href={scopedHref(tpoJourneyDrillFilters({
                   branchId:query.branchId,
                   search:query.search,
                   columns:first(raw.columns)?.slice(0,800),
@@ -423,7 +446,7 @@ export default async function TpoStudentsPage({
                   >
                     <td className="px-4 py-3">
                       <Link
-                        href={studentsHref(tpoBranchDrillFilters({
+                        href={scopedHref(tpoBranchDrillFilters({
                           journeyState:query.journeyState,
                           search:query.search,
                           columns:first(raw.columns)?.slice(0,800),
@@ -566,7 +589,7 @@ export default async function TpoStudentsPage({
               : "No students match these filters. Try another journey, branch or search term."}
             <div className="mt-3">
               <Link
-                href={roster.total>0?studentsHref({
+                href={roster.total>0?scopedHref({
                   ...currentFilters,
                   page: 1,
                 }):tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
@@ -609,7 +632,7 @@ export default async function TpoStudentsPage({
           >
             {roster.page > 1 ? (
               <Link
-                href={studentsHref({
+                href={scopedHref({
                   ...currentFilters,
                   page: roster.page - 1,
                 })}
@@ -621,7 +644,7 @@ export default async function TpoStudentsPage({
 
             {roster.page < roster.totalPages ? (
               <Link
-                href={studentsHref({
+                href={scopedHref({
                   ...currentFilters,
                   page: roster.page + 1,
                 })}

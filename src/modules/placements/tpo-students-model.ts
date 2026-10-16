@@ -44,6 +44,7 @@ export type TpoStudentSource = {
   programName: string;
   cohortId: string;
   cohortName: string;
+  fromFinishedBatch?: boolean;
   registrationChoice: string | null;
   participation: ResolvedPlacementParticipation;
   academicEvidence: {
@@ -75,6 +76,7 @@ export type TpoStudentRow = {
   programName: string;
   cohortId: string;
   cohortName: string;
+  fromFinishedBatch?: boolean;
   registrationChoice: string | null;
   registeredForPlacements: boolean;
   participationStatus: ResolvedPlacementParticipation["status"];
@@ -267,6 +269,7 @@ export function deriveTpoStudent(
     programName: source.programName,
     cohortId: source.cohortId,
     cohortName: source.cohortName,
+    fromFinishedBatch: Boolean(source.fromFinishedBatch),
     registrationChoice: source.registrationChoice,
     registeredForPlacements,
     participationStatus: source.participation.status,
