@@ -54,7 +54,7 @@ Open work is OPEN + UNCONFIRMED + IN-BRANCH. Closed percentage is (FIXED-ON-MAIN
 
 Commits of type `docs`, `chore` or `audit`, and commits touching only `docs/` or `scripts/audit/`, are ignored as citations: they list gap IDs without fixing them.
 
-Lane in the tracker is the lane branch that carried the latest citing commit when that can be found, otherwise the proposed lane from the register.
+Lane in the tracker is the lane branch for IN-BRANCH gaps and the proposed lane from the register otherwise (lane branches merge main back in, so the lane of a commit on main cannot be derived).
 
 ## How lanes must cite gap IDs
 

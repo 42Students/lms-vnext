@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-16T14:29:42.301Z",
+ "generatedAt": "2026-10-16T14:30:37.570Z",
  "since": "2026-10-15",
  "mainRef": "origin/main",
  "statuses": [
@@ -13,11 +13,11 @@
  ],
  "total": 1843,
  "byStatus": {
-  "OPEN": 1574,
-  "IN-BRANCH": 14,
+  "OPEN": 1571,
+  "IN-BRANCH": 19,
   "FIXED-ON-MAIN": 2,
   "VERIFIED": 57,
-  "UNCONFIRMED": 176,
+  "UNCONFIRMED": 174,
   "WRONG": 9,
   "CLOSED-SINCE": 11,
   "total": 1843
@@ -25,11 +25,11 @@
  "closedPercent": "3.8%",
  "byAccount": {
   "tpo": {
-   "OPEN": 589,
-   "IN-BRANCH": 8,
+   "OPEN": 586,
+   "IN-BRANCH": 13,
    "FIXED-ON-MAIN": 2,
    "VERIFIED": 38,
-   "UNCONFIRMED": 50,
+   "UNCONFIRMED": 48,
    "WRONG": 1,
    "CLOSED-SINCE": 6,
    "total": 694
@@ -107,18 +107,18 @@
  },
  "bySeverity": {
   "S1": {
-   "OPEN": 66,
-   "IN-BRANCH": 5,
+   "OPEN": 65,
+   "IN-BRANCH": 8,
    "FIXED-ON-MAIN": 1,
    "VERIFIED": 26,
-   "UNCONFIRMED": 14,
+   "UNCONFIRMED": 12,
    "WRONG": 0,
    "CLOSED-SINCE": 1,
    "total": 113
   },
   "S2": {
-   "OPEN": 527,
-   "IN-BRANCH": 7,
+   "OPEN": 525,
+   "IN-BRANCH": 9,
    "FIXED-ON-MAIN": 1,
    "VERIFIED": 25,
    "UNCONFIRMED": 59,
@@ -149,51 +149,51 @@
  },
  "byLane": {
   "chat-2": {
-   "OPEN": 172,
-   "IN-BRANCH": 6,
-   "FIXED-ON-MAIN": 2,
-   "VERIFIED": 45,
+   "OPEN": 169,
+   "IN-BRANCH": 9,
+   "FIXED-ON-MAIN": 1,
+   "VERIFIED": 12,
    "UNCONFIRMED": 14,
    "WRONG": 0,
    "CLOSED-SINCE": 2,
-   "total": 241
+   "total": 207
   },
   "chat-5": {
    "OPEN": 273,
-   "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 0,
-   "VERIFIED": 0,
-   "UNCONFIRMED": 22,
+   "IN-BRANCH": 4,
+   "FIXED-ON-MAIN": 1,
+   "VERIFIED": 12,
+   "UNCONFIRMED": 20,
    "WRONG": 1,
    "CLOSED-SINCE": 1,
-   "total": 299
+   "total": 312
   },
   "chat-7": {
    "OPEN": 521,
    "IN-BRANCH": 6,
    "FIXED-ON-MAIN": 0,
-   "VERIFIED": 0,
+   "VERIFIED": 12,
    "UNCONFIRMED": 59,
    "WRONG": 7,
    "CLOSED-SINCE": 3,
-   "total": 596
+   "total": 608
   },
   "chat-9": {
    "OPEN": 608,
    "IN-BRANCH": 0,
    "FIXED-ON-MAIN": 0,
-   "VERIFIED": 12,
+   "VERIFIED": 21,
    "UNCONFIRMED": 81,
    "WRONG": 1,
    "CLOSED-SINCE": 5,
-   "total": 707
+   "total": 716
   }
  },
  "fixedLast24h": {
-  "chat-2": 53,
-  "chat-5": 2,
-  "chat-7": 6,
-  "chat-9": 12
+  "chat-2": 22,
+  "chat-5": 17,
+  "chat-7": 18,
+  "chat-9": 21
  },
  "parseProblems": 0
 }
