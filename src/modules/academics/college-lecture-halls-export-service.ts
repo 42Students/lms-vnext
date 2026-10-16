@@ -1,21 +1,17 @@
 import "server-only";
 import type {RequestContext} from "@/modules/identity/context";
-import {hasMembershipRole} from "@/modules/identity/context";
-import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {listLectureHalls} from "./lecture-hall-service";
-import {LECTURE_HALLS_EXPORT_CAP,lectureHallsCsvSchema,renderLectureHallsCsv}
+import {LECTURE_HALLS_EXPORT_CAP,lectureHallsCsvSchema,renderLectureHallsCsv,renderSuperAdminLectureHallsCsv}
  from "./college-lecture-halls-export-model";
-export async function exportCollegeLectureHalls(context:RequestContext,raw:unknown){
+export async function exportCollegeLectureHalls(
+ context:RequestContext,raw:unknown,format:"college"|"superadmin"="college",
+){
  const query=lectureHallsCsvSchema.parse(raw);
- const member=context.membership;
- if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-   !hasMembershipRole(context,"COLLEGE_ADMIN")||
-   !can(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
-   throw new AuthorizationError("academics.manage");
- requirePermission(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
+ const actingCollege=await resolveActingCollege(context,"academics.manage");
  const limit=200;
  const filters={
-  collegeId:member.collegeId,q:query.q||undefined,
+  collegeId:actingCollege.collegeId,q:query.q||undefined,
   status:query.status==="ALL"?undefined:query.status,
   roomType:query.roomType==="ALL"?undefined:query.roomType,
   departmentId:query.departmentId,minimumCapacity:query.minimumCapacity,
@@ -29,6 +25,8 @@ export async function exportCollegeLectureHalls(context:RequestContext,raw:unkno
   rows.push(...page.items);
  }
  const truncated=first.pagination.total>LECTURE_HALLS_EXPORT_CAP;
- return {csv:renderLectureHallsCsv(rows.slice(0,LECTURE_HALLS_EXPORT_CAP),truncated),
+ return {csv:format==="superadmin"
+   ? renderSuperAdminLectureHallsCsv(rows.slice(0,LECTURE_HALLS_EXPORT_CAP),truncated)
+   : renderLectureHallsCsv(rows.slice(0,LECTURE_HALLS_EXPORT_CAP),truncated),
   truncated,cap:LECTURE_HALLS_EXPORT_CAP,exported:Math.min(rows.length,LECTURE_HALLS_EXPORT_CAP)};
 }
