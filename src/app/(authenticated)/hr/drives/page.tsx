@@ -148,7 +148,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
           </p>:null}
           <p className="mt-2 text-xs text-muted-foreground">Requested {req.createdAt.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
-          {editable?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&fix="+encodeURIComponent(req.id)}
+          {editable?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&"+(req.status==="SENT_BACK"?"fix":"edit")+"="+encodeURIComponent(req.id)}
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             {req.status==="SENT_BACK"?"Fix and Resend":"Edit your request"}
           </Link>:null}

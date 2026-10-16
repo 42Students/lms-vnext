@@ -27,6 +27,7 @@ export default async function RecruiterRequestDrivePage({
     collegeId?: string | string[];
     from?: string | string[];
     fix?: string | string[];
+    edit?: string | string[];
   }>;
 }) {
   const context = await getCurrentRequestContext();
@@ -38,6 +39,7 @@ export default async function RecruiterRequestDrivePage({
     collegeId: first(raw.collegeId) || undefined,
     from: first(raw.from) || undefined,
     fix: first(raw.fix) || undefined,
+    edit: first(raw.edit) || undefined,
   });
   if (!parsed.success) notFound();
   const query = parsed.data;
@@ -79,10 +81,11 @@ export default async function RecruiterRequestDrivePage({
     </div>;
   }
   const grant = grants.find((item) => item.collegeId === collegeId)!;
-  const request= query.fix
-    ? (await listOwnRecruiterDriveRequests(context,collegeId)).find(item=>item.id===query.fix)
+  const requestId=query.fix??query.edit;
+  const request=requestId
+    ? (await listOwnRecruiterDriveRequests(context,collegeId)).find(item=>item.id===requestId)
     : null;
-  if(query.fix && (!request||!(request.status==="SENT_BACK"||request.status==="REQUEST")))notFound();
+  if(requestId && (!request || (query.fix?request.status!=="SENT_BACK":request.status!=="REQUEST")))notFound();
   const originalDraft=request?hrDriveDraftSchema.safeParse(request.draft):null;
   if(originalDraft&&!originalDraft.success)notFound();
   const initial = originalDraft?.success?originalDraft.data:fromJob
@@ -90,7 +93,7 @@ export default async function RecruiterRequestDrivePage({
     : emptyHrDriveDraft();
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="Recruiter" title={request ? "Fix and Resend" : fromJob ? "Hire again" : "Request a drive"}
+    <PageHeader eyebrow="Recruiter" title={query.fix ? "Fix and Resend" : query.edit ? "Edit your request" : fromJob ? "Hire again" : "Request a drive"}
       description={context.recruiter.companyName + " · " + grant.collegeName + ". Your request will be saved for placement-cell review."} />
     <Link href={"/hr/drives?collegeId=" + encodeURIComponent(collegeId)}
       className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
@@ -107,6 +110,7 @@ export default async function RecruiterRequestDrivePage({
     <HrDriveDraftForm initial={initial} sourceJobTitle={fromJob?.job.title ?? null}
       storageKey={hrDriveSessionStorageKey(context.user.id,collegeId,fromJob?.job.id)}
       collegeId={collegeId} sourceJobId={fromJob?.job.id??null}
-      fixRequestId={request?.id??null} fixUpdatedAt={request?.updatedAt.toISOString()??null} />
+      fixRequestId={request?.id??null} fixUpdatedAt={request?.updatedAt.toISOString()??null}
+      editMode={query.edit?"EDIT":"RESUBMIT"} />
   </div>;
 }

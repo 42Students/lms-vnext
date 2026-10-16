@@ -129,7 +129,9 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
   if(!original)throw new RecruiterDriveRequestError("NOT_FOUND");
   if(original.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new RecruiterDriveRequestError("STALE");
-  if(input.action==="RESUBMIT" && (!canRecruiterResubmit(original.status as "REQUEST"|"SENT_BACK"|"DRAFT"|"REJECTED"|"CANCELLED")||!input.draft))
+  if(input.action==="EDIT" && (original.status!=="REQUEST"||!input.draft))
+   throw new RecruiterDriveRequestError("INVALID_STATE");
+  if(input.action==="RESUBMIT" && (original.status!=="SENT_BACK"||!input.draft))
    throw new RecruiterDriveRequestError("INVALID_STATE");
   if(input.action==="CANCEL" && !["REQUEST","SENT_BACK"].includes(original.status))
    throw new RecruiterDriveRequestError("INVALID_STATE");
@@ -139,7 +141,7 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
    decisionNote:null,decidedAt:null,decidedByUserId:null,updatedAt:new Date(),
   }).where(eq(placementRecruiterDriveRequests.id,original.id)).returning();
   if(!updated)throw new RecruiterDriveRequestError("STALE");
-  if(input.action==="RESUBMIT")await informPlacementCell(tx,context,{
+  if(input.action==="RESUBMIT"||input.action==="EDIT")await informPlacementCell(tx,context,{
    collegeId:input.collegeId,organizationId:scope.organizationId},updated.id,
    String(input.draft?.title??"Updated drive request"));
   return updated;
