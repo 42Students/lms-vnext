@@ -22,6 +22,9 @@ export async function commandFacultyAssignment(
 ){
   const {deliveryId}=facultyAssignmentParamsSchema.parse(rawParams);
   const input=facultyAssignmentCommandSchema.parse(rawInput);
+  if((input.action==="CREATE"||input.action==="EDIT") && input.allowedMethods!==undefined &&
+    process.env.DB06_MULTIPART_SUBMISSIONS_READY!=="DB06_VERIFIED")
+    throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
@@ -89,6 +92,7 @@ export async function commandFacultyAssignment(
           if(!["DRAFT","PUBLISHED"].includes(current.status)||submission)
             throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
           changedFields=assignmentFieldsChanged(current,input);
+          if(input.allowedMethods!==undefined)changedFields.push("allowedMethods");
           if(!changedFields.length)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
           eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
         }else if(input.action==="PUBLISH"){
@@ -114,6 +118,12 @@ export async function commandFacultyAssignment(
         )).returning();
         if(!updated)throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
         result=updated;
+      }
+      if((input.action==="CREATE"||input.action==="EDIT")&&input.allowedMethods!==undefined){
+        // DB06 integration. Execute only after the registered column is verified.
+        await tx.execute(sql`update course_assignments
+          set allowed_submission_methods=${JSON.stringify(input.allowedMethods)}::jsonb
+          where id=${result.id} and delivery_id=${deliveryId}`);
       }
       await recordActivityEventInTransaction(tx,context,{
         eventType:eventType as typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES],
