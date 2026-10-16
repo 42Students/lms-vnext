@@ -1,6 +1,8 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
+import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
 import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue,facultyAssignmentCommandError,facultyAssignmentCanSaveDraft} from "@/modules/courses/faculty-assignment-editor-ui-model";
@@ -8,9 +10,10 @@ type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
 };
-export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
+export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsEnabled=false}:{
  deliveryId:string;lessons:readonly {id:string;name:string}[];
  assignments:readonly Existing[];
+ methodsEnabled?:boolean;
 }){
  const router=useRouter();
  const mutationLock=useRef(false);
@@ -24,6 +27,9 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
  const [dueAt,setDueAt]=useState("");
  const [maxPoints,setMaxPoints]=useState(10);
  const [confirmed,setConfirmed]=useState(false);
+ const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
+ const [methodsDirty,setMethodsDirty]=useState(false);
+ const [methodsLoaded,setMethodsLoaded]=useState(true);
  const existing=assignments.find(x=>x.id===selected);
  function choose(id:string){
   if(pending||mutationLock.current)return;
@@ -34,6 +40,20 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
   setDueAt(authoringLocalDateTime(row?.dueAt??null));
   setMaxPoints(row?.maxPoints??10);setLessonId(row?.lessonId??lessons[0]?.id??"");
   setConfirmed(false);setError(null);setSuccess(null);
+  setAllowedMethods(ALL_ASSIGNMENT_METHODS);setMethodsDirty(false);
+  setMethodsLoaded(!methodsEnabled||!row);
+  if(methodsEnabled&&row){
+   void fetch("/api/courses/faculty/assignments/"+encodeURIComponent(deliveryId)+
+     "/methods?assignmentId="+encodeURIComponent(row.id),{cache:"no-store"})
+    .then(async response=>{
+      if(!response.ok)throw new Error("Unable to load permitted submission methods.");
+      return response.json();
+    }).then(data=>{
+      setAllowedMethods(normalizeAssignmentMethods(data?.methods));setMethodsLoaded(true);
+    }).catch(()=>{
+      setError("Unable to load permitted submission methods. Re-select this assignment to retry.");
+    });
+  }
  }
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"ARCHIVE"){
   if(!facultyAssignmentMaySubmit(pending,mutationLock.current))return;
@@ -49,8 +69,8 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
     const publishIssue=facultyAssignmentPublishIssue(existing.dueAt,new Date());
     if(publishIssue){setError(publishIssue);return;}
   }
-  if(action==="PUBLISH" && existing && facultyAssignmentDraftDirty(existing,
-    {title,description,dueAt,maxPoints})){
+  if(action==="PUBLISH" && existing && (methodsDirty||facultyAssignmentDraftDirty(existing,
+    {title,description,dueAt,maxPoints}))){
     setError("Save the draft changes first. Publish uses only the last saved revision.");
     return;
   }
@@ -63,9 +83,11 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
    const body=action==="CREATE"?{
     ...base,lessonId,sequence:Math.max(0,...assignments.filter(x=>x.lessonId===lessonId).map(x=>x.sequence+1)),
     title,description:description||null,dueAt:authoringDueInstant(dueAt),maxPoints,
+    ...(methodsEnabled?{allowedMethods}:{}),
    }:action==="EDIT"?{
     ...base,assignmentId:existing?.id,expectedUpdatedAt:existing?.updatedAt,
     title,description:description||null,dueAt:authoringDueInstant(dueAt),maxPoints,
+    ...(methodsEnabled&&methodsDirty?{allowedMethods}:{}),
    }:{...base,assignmentId:existing?.id,expectedUpdatedAt:existing?.updatedAt};
    const response=await fetch("/api/courses/faculty/assignments/"+encodeURIComponent(deliveryId)+"/command",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
@@ -77,7 +99,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
    const receipt:unknown=await response.json().catch(()=>null);
    if(!facultyAssignmentCommandReceipt(receipt,{action,deliveryId,
       assignmentId:existing?.id,title,maxPoints}))throw new Error("Assignment save status is uncertain. Reload the Section before retrying.");
-   setConfirmed(false);setSuccess("Assignment "+action.toLowerCase()+" completed. Refresh if another author changed this Section.");router.refresh();
+   setConfirmed(false);setMethodsDirty(false);setSuccess("Assignment "+action.toLowerCase()+" completed. Refresh if another author changed this Section.");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save changes.");}
   finally{mutationLock.current=false;setPending(false);}
  }
@@ -109,6 +131,10 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
    <input type="number" min={1} max={1000} value={maxPoints}
     onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
+  {methodsEnabled?<FacultyAssignmentMethodPicker methods={allowedMethods}
+   disabled={pending||!methodsLoaded||existing?.status==="ARCHIVED"}
+   onChange={next=>{setAllowedMethods(next);setMethodsDirty(true);setConfirmed(false);}}/>:null}
+  {methodsEnabled&&!methodsLoaded?<p role="status" className="text-xs">Loading allowed methods…</p>:null}
   <label className="flex gap-2 text-sm">
    <input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)} />
    I confirm this Section assignment change; archive does not erase history.
@@ -119,7 +145,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments}:{
    {!existing?<button type="button" disabled={pending||!lessonId||!confirmed}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>
    : <>
-    <button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,confirmed)}
+    <button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||!confirmed||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,confirmed))}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>
     <button type="button" disabled={pending||!confirmed||existing.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
