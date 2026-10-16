@@ -5,6 +5,7 @@ export type RecruiterSelfGrantFact = {
   grantStatus: string;
   relationshipStatus: string;
   grantedAt: Date;
+  validUntil?: Date | null;
 };
 
 export type RecruiterSelfGrantRow = {
@@ -15,6 +16,8 @@ export type RecruiterSelfGrantRow = {
   relationshipStatus: "ACTIVE";
   grantedAtIso: string;
   grantedAtLabel: string;
+  accessUntilIso: string | null;
+  accessUntilLabel: string;
 };
 
 const dateFormatter = new Intl.DateTimeFormat(
@@ -56,6 +59,10 @@ export function buildRecruiterSelfGrantRows(
         fact.grantedAt.toISOString(),
       grantedAtLabel:
         dateFormatter.format(fact.grantedAt),
+      accessUntilIso: fact.validUntil?.toISOString() ?? null,
+      accessUntilLabel: fact.validUntil
+        ? "Access until " + dateFormatter.format(fact.validUntil) + ". The placement cell can extend it."
+        : "Access has no end date",
     }))
     .sort(
       (left, right) =>
