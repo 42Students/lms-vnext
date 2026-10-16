@@ -1,10 +1,11 @@
 import {describe,expect,it} from "vitest";
-import {existsSync,readFileSync} from "node:fs";
+import {existsSync} from "node:fs";
 import {join} from "node:path";
 import {
  SUPER_ADMIN_LEGACY_GROUPS,superAdminLegacyGroupForPath,
  superAdminLegacyTabActive,
 } from "@/modules/people/super-admin-legacy-tabs-model";
+import {legacySidebarItemActive} from "@/components/shell/legacy-sidebar-active-model";
 import {superAdminItems} from "@/components/shell/shell-model";
 describe("Super Admin 13-row sidebar grouped page reachability",()=>{
  const root=join(process.cwd(),"src/app/(authenticated)");
@@ -39,8 +40,8 @@ describe("Super Admin 13-row sidebar grouped page reachability",()=>{
    .toEqual([3,7,10]);
   for(const row of superAdminItems)
    expect(existsSync(join(root,row.href.slice(1),"page.tsx")),row.href).toBe(true);
-  const source=readFileSync(join(process.cwd(),"src/components/shell/sidebar-nav.tsx"),"utf8");
-  expect(source).toContain('item.label==="Module Access"&&isFeatureDetail');
-  expect(source).toContain('item.label==="Feature Controls"&&isFeatureDetail');
+  const row=(label:string)=>superAdminItems.find(r=>r.label===label)!;
+  expect(legacySidebarItemActive("/admin/features/x",row("Module Access"),null,null)).toBe(true);
+  expect(legacySidebarItemActive("/admin/features/x",row("Feature Controls"),null,null)).toBe(false);
  });
 });

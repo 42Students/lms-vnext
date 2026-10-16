@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
-import {readFileSync} from "node:fs";
-import {join} from "node:path";
+import {legacySidebarItemActive} from "@/components/shell/legacy-sidebar-active-model";
+import {superAdminItems} from "@/components/shell/shell-model";
 import {superAdminLegacyGroupForPath,superAdminLegacyTabActive} from
  "@/modules/people/super-admin-legacy-tabs-model";
 describe("Super Admin retained recruiter and audit deep links",()=>{
@@ -10,8 +10,8 @@ describe("Super Admin retained recruiter and audit deep links",()=>{
   expect(superAdminLegacyTabActive("/admin/hr","/admin/placements")).toBe(false);
  });
  it("retains the Activity Log sidebar row when opening Audit Findings",()=>{
-  const source=readFileSync(join(process.cwd(),"src/components/shell/sidebar-nav.tsx"),"utf8");
-  expect(source).toContain('item.label==="Activity Log"');
-  expect(source).toContain('pathname.startsWith("/tracker/audit-findings/")');
+  const row=superAdminItems.find(r=>r.label==="Activity Log")!;
+  expect(legacySidebarItemActive("/tracker/audit-findings",row,null,null)).toBe(true);
+  expect(legacySidebarItemActive("/tracker/audit-findings/abc",row,null,null)).toBe(true);
  });
 });
