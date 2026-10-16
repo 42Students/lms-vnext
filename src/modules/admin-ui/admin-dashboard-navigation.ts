@@ -3,7 +3,7 @@
  * Legacy source: lms2-fe/prod-2026,
  * src/components/admin/dashboard/config.js and college-admin/dashboard.js.
  *
- * A null href deliberately means the exact legacy job is NOT yet ported.
+ * A null href means the exact legacy job is NOT yet ported.
  * Never quietly map "Faculty" to a generic People table, or "Semesters" to
  * Academics, unless the original workflow/tab is actually available.
  */
@@ -32,26 +32,26 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
     title: "Courses",
     steps: [
       { label: "Create Courses", key: "course-list", href: "/college/courses" },
-      { label: "Add Lessons", key: "lessons", href: null },
-      { label: "Add Lesson Content", key: "lesson-content", href: null },
+      { label: "Add Lessons", key: "lessons", href: "/college/lessons" },
+      { label: "Add Lesson Content", key: "lesson-content", href: "/college/videos" },
     ],
   },
   {
     title: "Academic Structure",
     steps: [
       { label: "Setup Programs", key: "programs", href: "/college/programs" },
-      { label: "Create Semesters", key: "semesters", href: null },
-      { label: "Map Semester-Courses", key: "semester-courses", href: null },
-      { label: "Create Batches", key: "batches", href: null },
-      { label: "Create Classes", key: "classes", href: null },
+      { label: "Create Semesters", key: "semesters", href: "/college/semesters" },
+      { label: "Map Semester-Courses", key: "semester-courses", href: "/college/semester-courses" },
+      { label: "Create Batches", key: "batches", href: "/college/batches" },
+      { label: "Create Classes", key: "classes", href: "/college/classes" },
     ],
   },
   {
     title: "People",
     steps: [
-      { label: "Register Faculty", key: "faculty", href: null },
+      { label: "Register Faculty", key: "faculty", href: "/college/faculty" },
       { label: "Assign Faculty", key: "faculty-assignment", href: "/college/faculty-assignment" },
-      { label: "Register Students", key: "students", href: null },
+      { label: "Register Students", key: "students", href: "/college/students" },
     ],
   },
   {
