@@ -21,6 +21,7 @@ export type NotificationListItem = {
   source?: "ANNOUNCEMENT";
   pinned?: boolean;
   actionLabel?:string;
+  contextLine?:string;
 };
 
 function formatWhen(value: string) {
@@ -118,6 +119,7 @@ export function NotificationList({
                       </button>
                     ) : item.title}
                   </h3>
+                  {item.contextLine?<p className="mt-1 text-xs font-semibold text-muted-foreground">{item.contextLine}</p>:null}
                   <p className="mt-1 text-sm leading-6 text-body">{item.body}</p>
                   <p className="mt-2 text-xs text-muted-foreground">
                     {formatWhen(item.createdAt)}
