@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { recruiterInvitePreviewDisposition } from "@/modules/placements/recruiter-invite-preview-disposition-model";
 
 type Invite = {
   collegeName: string;
@@ -10,7 +11,7 @@ type Invite = {
   designation: string | null;
   expiresAt: string;
 };
-type State = "loading" | "ready" | "invalid" | "declined";
+type State = "loading" | "ready" | "invalid" | "load_error" | "declined";
 
 const button =
   "inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-4 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
@@ -19,6 +20,7 @@ const secondary = button + " bg-surface text-foreground hover:bg-surface-seconda
 
 export function RecruiterInviteLanding({ token }: { token: string }) {
   const [state, setState] = useState<State>("loading");
+  const [retrySequence,setRetrySequence] = useState(0);
   const [invite, setInvite] = useState<Invite | null>(null);
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState("");
@@ -34,8 +36,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
           invite?: Invite;
           error?: string;
         };
-        if (!response.ok || !data.invite) {
-          setState("invalid");
+        const outcome=recruiterInvitePreviewDisposition(response.status,Boolean(data.invite));
+        if(outcome!=="ready") {
+          setState(outcome);
           return;
         }
         setInvite(data.invite);
@@ -48,10 +51,10 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         ).catch(() => undefined);
       })
       .catch(() => {
-        if (!controller.signal.aborted) setState("invalid");
+        if (!controller.signal.aborted) setState("load_error");
       });
     return () => controller.abort();
-  }, [token]);
+  }, [token,retrySequence]);
 
   async function answer(kind: "not-hiring" | "unsubscribe") {
     setBusy(true);
@@ -95,6 +98,16 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         <div className="h-4 w-5/6 animate-pulse rounded bg-border" />
       </div>,
     );
+  }
+
+  if(state === "load_error") {
+    return shell(<div className="space-y-4 text-center">
+      <h1 className="text-xl font-semibold text-foreground">We couldn\u0027t load this invitation</h1>
+      <p className="text-sm text-muted-foreground">Check your connection and try again. Your invitation has not been consumed.</p>
+      <button type="button" className={primary} onClick={()=>{
+        setState("loading");setRetrySequence(i=>i+1);
+      }}>Retry</button>
+    </div>);
   }
 
   if (state === "invalid" || !invite) {
