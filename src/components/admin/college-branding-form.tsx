@@ -50,11 +50,13 @@ export function CollegeBrandingForm({
   collegeName,
   initial,
   canEdit,
+  uploadedLogoUrl,
 }: {
   collegeId: string;
   collegeName: string;
   initial: BrandingFormValues;
   canEdit: boolean;
+  uploadedLogoUrl?:string|null;
 }) {
   const { showToast } = useToast();
   const [values, setValues] = useState<BrandingFormValues>(initial);
@@ -200,10 +202,10 @@ export function CollegeBrandingForm({
           Sign-in preview
         </p>
         <div className="rounded-xl border border-border bg-surface p-5 shadow-sm">
-          {values.logoUrl && /^https:\/\//.test(values.logoUrl) ? (
+          {(uploadedLogoUrl || (values.logoUrl && /^https:\/\//.test(values.logoUrl))) ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={values.logoUrl}
+              src={uploadedLogoUrl||values.logoUrl||""}
               alt=""
               referrerPolicy="no-referrer"
               className="h-10 w-auto max-w-[180px] object-contain"
