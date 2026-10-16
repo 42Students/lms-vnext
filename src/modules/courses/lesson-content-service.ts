@@ -9,7 +9,7 @@ import {
 import { getDb } from "@/db/client";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { lessonContentOrderRuntimeEnabled } from "./lesson-content-order-readiness";
-import { filterStagedStudentVisibleLessonContents } from "./faculty-lesson-visibility-staged";
+// Learner-only visibility helper is dynamically loaded below; browser seed uses this service without it.
 import { courseLessons, courseSectionDeliveries, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -374,7 +374,7 @@ export async function listLessonContents(
   // Until the optional migration exists, all previously published rows retain
   // their legacy default. Once registered, the admin visibility flag is real.
   const visibleRows = access === "LEARNER"
-    ? await filterStagedStudentVisibleLessonContents(lessonId, rows)
+    ? await (await import("./faculty-lesson-visibility-staged")).filterStagedStudentVisibleLessonContents(lessonId, rows)
     : rows;
   if (!deliveryId || visibleRows.length <= 1 || !lessonContentOrderRuntimeEnabled()) {
     return visibleRows;
