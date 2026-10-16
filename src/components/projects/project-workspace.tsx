@@ -390,6 +390,7 @@ export function ProjectWorkspace({
               canSubmitDraft={
                 readiness.finalSubmission.canSubmitDraft
               }
+              review={workspace.finalDelivery.reviews.at(-1)??null}
             /> : null}
           </div>
         </section>
