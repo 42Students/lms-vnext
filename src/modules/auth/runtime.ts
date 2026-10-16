@@ -4,6 +4,8 @@ import { randomUUID } from "node:crypto";
 import { createExotelSmsProvider } from "@/modules/notifications/exotel-sms";
 import { createZeptoMailEmailProvider } from "@/modules/notifications/zeptomail-email";
 import { getAuthConfig } from "./config";
+import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
+import {LoginError} from "./login-service";
 import { drizzleLoginRepository } from "./login-repository";
 import {
   sendEmailFallback,
@@ -24,15 +26,20 @@ function dependencies(): LoginDependencies {
   };
 }
 
-export function startLoginWithRuntime(
+export async function startLoginWithRuntime(
   input: Parameters<typeof startLogin>[0],
 ) {
+  const channels=await effectiveCollegeSignInCapabilities(input.tenantCollegeId);
+  if(input.channel==="EMAIL"&&!channels.email || input.channel==="PHONE"&&!channels.phone)
+   throw new LoginError("CHANNEL_DISABLED");
   return startLogin(input, dependencies());
 }
 
-export function sendEmailFallbackWithRuntime(
+export async function sendEmailFallbackWithRuntime(
   input: Parameters<typeof sendEmailFallback>[0],
 ) {
+  if(!(await effectiveCollegeSignInCapabilities(input.tenantCollegeId)).email)
+   throw new LoginError("CHANNEL_DISABLED");
   return sendEmailFallback(input, dependencies());
 }
 
