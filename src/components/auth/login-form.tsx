@@ -79,6 +79,7 @@ export function LoginForm({
   const [attempt, setAttempt] = useState<StartResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
 
@@ -91,6 +92,7 @@ export function LoginForm({
   function fail(errorCode: string | undefined) {
     const known = errorCode ? ERROR_MESSAGES[errorCode] : undefined;
     setError(known ?? "Something went wrong. Please try again.");
+    setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
       setAttempt(null);
       setCode("");
@@ -103,6 +105,7 @@ export function LoginForm({
     if (busy) return;
     setBusy(true);
     setError(null);
+    setErrorCode(null);
     setNotice(null);
     try {
       const result = await post<StartResult>("/api/auth/login/start", {
@@ -171,6 +174,7 @@ export function LoginForm({
     setCode("");
     setSecondCode("");
     setError(null);
+    setErrorCode(null);
     setNotice(null);
   }
 
@@ -192,6 +196,14 @@ export function LoginForm({
         >
           {error}
         </div>
+      ) : null}
+      {collegeName && (errorCode === "NO_ACCOUNT_FOR_DOMAIN" || errorCode === "WRONG_TENANT") ? (
+        <p className="mt-2 text-sm text-body">
+          This account may belong to another college.{" "}
+          <a href="https://42lms.com/" className="font-semibold text-primary-text underline">
+            Use the main sign-in page (42lms.com)
+          </a>
+        </p>
       ) : null}
       {notice ? (
         <div
@@ -257,14 +269,7 @@ export function LoginForm({
           >
             {busy ? "Sending code…" : "Send code"}
           </Button>
-          <p className="text-xs leading-5 text-muted-foreground">
-            By continuing, you agree to the{" "}
-            <a className="text-primary-text underline" href="/assets/static/terms-and-conditions-view.html"
-              target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
-            {" "}and acknowledge the{" "}
-            <a className="text-primary-text underline" href="/assets/static/privacy-policy-view.html"
-              target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
-          </p>
+          <LoginConsent />
         </form>
       ) : (
         <form onSubmit={verify} className="mt-5 space-y-4" noValidate>
@@ -377,8 +382,21 @@ export function LoginForm({
           >
             Use a different {channel === "PHONE" ? "number" : "email"}
           </button>
+          <LoginConsent />
         </form>
       )}
     </div>
+  );
+}
+
+function LoginConsent() {
+  return (
+    <p className="text-xs leading-5 text-muted-foreground">
+      By continuing, you agree to the{" "}
+      <a href="/assets/static/terms-and-conditions-view.html"
+        className="text-primary-text underline" target="_blank" rel="noopener noreferrer">Terms of Use</a>
+      {" "}and{" "}
+      <a href="/privacy-policy" className="text-primary-text underline">Privacy Policy</a>.
+    </p>
   );
 }
