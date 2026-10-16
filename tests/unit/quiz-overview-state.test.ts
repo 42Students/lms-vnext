@@ -56,11 +56,11 @@ describe("W02 legacy QuizzesContent expired row parity", () => {
       action: "View Result", review: true,
     });
   });
-  it("the exact deadline instant is still allowed, and no deadline is unlimited", () => {
+  it("the exact deadline instant is still allowed, and an unconfigured deadline is unavailable (legacy)", () => {
     expect(quizOverviewActionState({
       ...base, dueAt: "2026-10-10T08:00:00.000Z",
     }, now).review).toBe(false);
-    expect(quizOverviewActionState({ ...base, dueAt: null }, now).review).toBe(false);
+    expect(quizOverviewActionState({ ...base, dueAt: null }, now).review).toBe(true);
   });
 });
 
@@ -72,11 +72,11 @@ describe("zero remaining learner quiz attempts",()=>{
 });
 
 describe("unknown learner quiz deadlines",()=>{
- it("fails closed on malformed persisted timestamps but not a real null deadline",()=>{
+ it("fails closed on malformed persisted timestamps and an unconfigured deadline is unavailable too",()=>{
   expect(quizOverviewActionState({...base,dueAt:"not-a-date"},now)).toMatchObject({
    label:"Deadline unavailable",review:true,
   });
-  expect(quizOverviewActionState({...base,dueAt:null},now).review).toBe(false);
+  expect(quizOverviewActionState({...base,dueAt:null},now).review).toBe(true);
  });
 });
 

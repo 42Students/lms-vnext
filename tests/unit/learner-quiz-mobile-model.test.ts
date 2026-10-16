@@ -2,7 +2,7 @@ import {describe,expect,it} from "vitest";
 import {learnerQuizMobileState} from "@/modules/courses/learner-quiz-mobile-model";
 const now=Date.parse("2026-10-14T12:00:00Z");
 const own={status:"PUBLISHED" as const,resultsPublished:false,attemptsUsed:0,
-  attemptsRemaining:2,maxAttempts:2,dueAt:null};
+  attemptsRemaining:2,maxAttempts:2,dueAt:"2026-10-20T12:00:00Z"};
 describe("learner quiz mobile attempt state",()=>{
   it("shows only remaining authorized attempts",()=>{
     expect(learnerQuizMobileState(own,now)).toEqual({

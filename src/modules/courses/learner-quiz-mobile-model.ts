@@ -9,6 +9,9 @@ export function learnerQuizMobileState(
   if(quiz.resultsPublished && quiz.attemptsUsed>0){
     return {label:"Results available",detail:"Open attempt history to review published results",urgent:false};
   }
+  if(quiz.dueAt===null && quiz.attemptsUsed===0) return {
+    label:"Unavailable",detail:"Quiz deadline is not configured",urgent:false,
+  };
   const date=quiz.dueAt===null?null:Date.parse(quiz.dueAt);
   const deadlinePassed=date!==null&&Number.isFinite(date)&&date<nowMs;
   if(quiz.status==="CLOSED"||deadlinePassed){

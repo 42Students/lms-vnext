@@ -164,7 +164,7 @@ describe("recruiter calendar projection", () => {
     expect(events).toEqual([]);
   });
 
-  it("excludes cancelled, pending and unscheduled rounds", () => {
+  it("excludes cancelled and unscheduled rounds but keeps pending (legacy)", () => {
     const events = project(
       [{ ...job, applicationDeadline: null }],
       [
@@ -191,10 +191,10 @@ describe("recruiter calendar projection", () => {
       ],
     );
 
-    expect(events).toHaveLength(1);
-    expect(events[0]?.id).toBe(
+    expect(events.map((event) => event.id).sort()).toEqual([
       "round:completed",
-    );
+      "round:pending",
+    ]); // legacy: pending rounds are shown, only cancelled and unscheduled are not
   });
 
   it("uses inclusive start and exclusive end boundaries", () => {
