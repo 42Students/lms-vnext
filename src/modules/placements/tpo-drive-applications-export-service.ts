@@ -7,6 +7,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {tpoApplicantSubmittedSince} from "./tpo-applicant-pipeline-model";
+import {tpoApplicantSearchCondition} from "./tpo-applicant-search";
 import {collectTpoExportPages,projectTpoDriveApplicationsExport,tpoDriveApplicationsExportQuerySchema,
  TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown,options:{exportAll?:boolean}={}){
@@ -43,8 +44,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
     sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
      when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
      then ${placementApplicationScreenings.status}::text else 'PENDING' end = ${stage}::text`,
-   search?or(ilike(users.displayName,tpoApplicantExportSearchPattern(search)),
-    ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(search))):undefined,
+   search?tpoApplicantSearchCondition(search,collegeId):undefined,
   ))
   .orderBy(sort==="OLDEST"?asc(placementApplications.submittedAt):
     sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
