@@ -41,8 +41,7 @@ function QuizListActions({item}:{item:CollegeAssessmentAggregateItem}){
  return <div className="space-y-2">
   <FacultyItemActions transitionUrl={"/api/courses/quizzes/"+encodeURIComponent(item.id)+"/transition"}
    actions={actions}/>
-  {(item.status==="CLOSED" || (item.status==="PUBLISHED" &&
-    item.dueAt!==null && item.dueAt.getTime()<=Date.now()))?
+  {item.resultsReleaseReady?
    <AdminQuizResultsActions quizId={item.id}
     status={item.status==="CLOSED"?"CLOSED":"PUBLISHED"}
     deadlineReached={item.status==="PUBLISHED"}
