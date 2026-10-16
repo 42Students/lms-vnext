@@ -2,14 +2,18 @@
  * Read-only verification that the loaded NSRIT data shows up through vNext's
  * own services (not raw SQL): course list, course workspace (lessons, content,
  * assignments, quizzes, progress), attendance workspace, assessment overview,
- * discussion, faculty course list, gradebook. Counts only; no names, phones or
- * e-mails are printed.
+ * discussion, faculty course list, gradebook; and (stage 2b-ii) the learner
+ * applications, offers, journey, notification history and projects services, the
+ * college drive list/overview/applications/placement report, the project admin
+ * snapshots and a project workspace. Counts only; no names, phones or e-mails
+ * are printed.
  *
  *   DATABASE_URL=postgresql://...@127.0.0.1:.../<db> \
  *   NODE_OPTIONS=--conditions=react-server \
  *   tsx scripts/migrate/nsrit/verify.ts [--snapshot=<dir>] [--out=<report dir>]
  *
- * The target must be a loopback database (same guard as the loader). The
+ * The target must be a loopback database (same guard as the loader; a dev cluster
+ * database needs --allow-remote-dev and ALLOW_NSRIT_REMOTE_DEV). The
  * script only reads: it builds request contexts from existing rows and calls
  * read services. A service that throws or returns less than the database
  * holds is reported as a finding (a vNext defect or an explained filter).
@@ -29,7 +33,8 @@ function arg(name: string): string | undefined {
 }
 
 async function main() {
-  const target = assertTargetAllowed(process.env.DATABASE_URL, { allowRemoteDev: false, env: process.env });
+  // Read-only, but the same target rules as the loader: loopback unless --allow-remote-dev plus the dev acknowledgement.
+  const target = assertTargetAllowed(process.env.DATABASE_URL, { allowRemoteDev: process.argv.includes("--allow-remote-dev"), env: process.env });
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
   const q = async <R extends Record<string, unknown>>(sql: string, params: unknown[] = []) => {
@@ -274,6 +279,188 @@ async function main() {
     add({ actor: "faculty", check: "course list", status: "EMPTY_UNEXPECTED", detail: "no active teaching assignment loaded" });
   }
   void adminRow;
+
+  // ================= stage 2b-ii: placements, projects, notifications =================
+  const has2bii = Number((await q<{ n: string }>(`SELECT count(*) AS n FROM legacy_id_map WHERE college_id = $1 AND new_entity_type = 'placement_jobs'`, [nsritCollege]))[0]?.n ?? 0) > 0;
+  if (!has2bii) {
+    add({ actor: "all", check: "stage 2b-ii services", status: "EMPTY_EXPECTED", detail: "stage 2b-ii is not applied in this database" });
+  } else {
+    const { listOwnPlacementApplications } = await import("../../../src/modules/placements/application-service");
+    const { getOwnLearnerOfferBrowse } = await import("../../../src/modules/placements/learner-offers-browse-service");
+    const { getLearnerPlacementJourney } = await import("../../../src/modules/placements/learner-journey-service");
+    const { getOwnLearnerNotificationHistory } = await import("../../../src/modules/activity/learner-notification-history-service");
+    const { listMyProjectInstances } = await import("../../../src/modules/projects/member-service");
+    const { getProjectInstanceWorkspace } = await import("../../../src/modules/projects/instance-service");
+    const { listProjectAdminSnapshots } = await import("../../../src/modules/projects/admin-insights-service");
+    const { listCollegeDrives } = await import("../../../src/modules/placements/college-drive-read-service");
+    const { getCollegeDriveOverview } = await import("../../../src/modules/placements/college-drive-overview-service");
+    const { listCollegeDriveApplications } = await import("../../../src/modules/placements/college-drive-applications-service");
+    const { getPlacementReportWorkspace } = await import("../../../src/modules/placements/report-service");
+    const len = (value: unknown): number => (Array.isArray(value) ? value.length : 0);
+
+    const pick = async (sql: string, params: unknown[] = [nsritCollege]) => (await q<{ membership_id: string }>(sql, params))[0]?.membership_id ?? null;
+    const learners2 = [
+      ["learner (most applications)", await pick(`SELECT a.membership_id FROM placement_applications a JOIN college_memberships cm ON cm.id = a.membership_id AND cm.college_id = $1 GROUP BY a.membership_id ORDER BY count(*) DESC, a.membership_id LIMIT 1`)],
+      ["learner (has an offer)", await pick(`SELECT a.membership_id FROM placement_offers o JOIN placement_applications a ON a.id = o.application_id JOIN college_memberships cm ON cm.id = a.membership_id AND cm.college_id = $1 ORDER BY a.membership_id LIMIT 1`)],
+      ["learner (most notifications)", await pick(`SELECT cm.id AS membership_id FROM in_app_notifications n JOIN college_memberships cm ON cm.user_id = n.user_id AND cm.college_id = $1 GROUP BY cm.id ORDER BY count(*) DESC, cm.id LIMIT 1`)],
+      ["learner (project member)", await pick(`SELECT pm.membership_id FROM project_members pm JOIN project_instances i ON i.id = pm.project_id AND i.college_id = $1 JOIN membership_roles mr ON mr.membership_id = pm.membership_id AND mr.role = 'LEARNER' WHERE pm.ended_at IS NULL ORDER BY pm.membership_id LIMIT 1`)],
+    ] as [string, string | null][];
+    const seen2 = new Set<string>();
+    for (const [label, membershipId] of learners2) {
+      if (!membershipId || seen2.has(membershipId)) continue;
+      seen2.add(membershipId);
+      const ctx = await contextFor(membershipId);
+      const [want] = await q<{ apps: string; offers: string; notifications: string; unread: string; projects: string }>(
+        `SELECT (SELECT count(*) FROM placement_applications WHERE membership_id = $1) AS apps,
+                (SELECT count(*) FROM placement_offers o JOIN placement_applications a ON a.id = o.application_id WHERE a.membership_id = $1) AS offers,
+                (SELECT count(*) FROM in_app_notifications n JOIN college_memberships cm ON cm.user_id = n.user_id WHERE cm.id = $1) AS notifications,
+                (SELECT count(*) FROM in_app_notifications n JOIN college_memberships cm ON cm.user_id = n.user_id WHERE cm.id = $1 AND n.read_at IS NULL) AS unread,
+                (SELECT count(*) FROM project_members WHERE membership_id = $1 AND ended_at IS NULL) AS projects`,
+        [membershipId],
+      );
+      await guard(
+        label,
+        "applications (listOwnPlacementApplications)",
+        () => listOwnPlacementApplications(ctx),
+        (rows) =>
+          rows.length === Number(want.apps)
+            ? { status: rows.length === 0 ? "EMPTY_EXPECTED" : "OK", detail: `${rows.length} applications (database ${want.apps})` }
+            : { status: rows.length === 0 ? "EMPTY_UNEXPECTED" : "MISMATCH", detail: `${rows.length} applications, database ${want.apps}` },
+      );
+      await guard(
+        label,
+        "offers (getOwnLearnerOfferBrowse)",
+        () => getOwnLearnerOfferBrowse(ctx, "all"),
+        (r) => {
+          const n = len((r as unknown as { rows?: unknown }).rows) || len((r as unknown as { items?: unknown }).items) || len((r as unknown as { offers?: unknown }).offers);
+          return Number(want.offers) === 0
+            ? { status: "EMPTY_EXPECTED", detail: "no offers for this learner" }
+            : { status: n === Number(want.offers) ? "OK" : n === 0 ? "EMPTY_UNEXPECTED" : "MISMATCH", detail: `service ${n} offers, database ${want.offers}` };
+        },
+      );
+      await guard(
+        label,
+        "journey (getLearnerPlacementJourney)",
+        () => getLearnerPlacementJourney(ctx),
+        (j) => ({ status: "OK", detail: `keys: ${Object.keys(j as object).join(",")}` }),
+      );
+      await guard(
+        label,
+        "notifications (getOwnLearnerNotificationHistory)",
+        () => getOwnLearnerNotificationHistory(ctx, {}),
+        (h) => {
+          const n = len((h as unknown as { items?: unknown }).items);
+          const expected = Math.min(40, Number(want.notifications));
+          return Number(want.notifications) === 0
+            ? { status: "EMPTY_EXPECTED", detail: "no notifications for this learner" }
+            : { status: n === expected ? "OK" : n === 0 ? "EMPTY_UNEXPECTED" : "MISMATCH", detail: `first page ${n} (database ${want.notifications}, unread ${want.unread})` };
+        },
+      );
+      await guard(
+        label,
+        "projects (listMyProjectInstances)",
+        () => listMyProjectInstances(ctx),
+        (rows) =>
+          Number(want.projects) === 0
+            ? { status: "EMPTY_EXPECTED", detail: "not a project member" }
+            : { status: rows.length === Number(want.projects) ? "OK" : rows.length === 0 ? "EMPTY_UNEXPECTED" : "MISMATCH", detail: `${rows.length} projects (database ${want.projects})` },
+      );
+    }
+
+    // mentor of a loaded project: list + a full workspace
+    const mentor = await pick(`SELECT pm.membership_id FROM project_members pm JOIN project_instances i ON i.id = pm.project_id AND i.college_id = $1 WHERE pm.is_primary AND pm.ended_at IS NULL GROUP BY pm.membership_id ORDER BY count(*) DESC, pm.membership_id LIMIT 1`);
+    if (mentor) {
+      const ctx = await contextFor(mentor);
+      const [want] = await q<{ projects: string }>(`SELECT count(*) AS projects FROM project_members WHERE membership_id = $1 AND ended_at IS NULL`, [mentor]);
+      let firstProject: string | null = null;
+      await guard(
+        "mentor (primary mentor of the most projects)",
+        "projects (listMyProjectInstances)",
+        () => listMyProjectInstances(ctx),
+        (rows) => {
+          firstProject = rows[0]?.project.id ?? null;
+          return { status: rows.length === Number(want.projects) ? "OK" : "MISMATCH", detail: `${rows.length} projects (database ${want.projects})` };
+        },
+      );
+      const [biggest] = await q<{ id: string; releases: string; sprints: string; tasks: string; resources: string }>(
+        `SELECT i.id, (SELECT count(*) FROM project_releases WHERE project_id = i.id) AS releases, (SELECT count(*) FROM project_sprints WHERE project_id = i.id) AS sprints,
+                (SELECT count(*) FROM project_tasks WHERE project_id = i.id) AS tasks, (SELECT count(*) FROM project_resources WHERE project_id = i.id) AS resources
+           FROM project_instances i JOIN project_members pm ON pm.project_id = i.id AND pm.membership_id = $1 AND pm.ended_at IS NULL
+          ORDER BY 4 DESC, i.id LIMIT 1`,
+        [mentor],
+      );
+      void firstProject;
+      if (biggest) {
+        await guard(
+          "mentor (primary mentor of the most projects)",
+          "project workspace (getProjectInstanceWorkspace)",
+          () => getProjectInstanceWorkspace(ctx, biggest.id),
+          (w) => {
+            const ws = w as unknown as { releases?: unknown; sprints?: unknown; tasks?: unknown; resources?: unknown };
+            const got = [len(ws.releases), len(ws.sprints), len(ws.tasks), len(ws.resources)];
+            const want2 = [biggest.releases, biggest.sprints, biggest.tasks, biggest.resources].map(Number);
+            return { status: got.every((v, i) => v === want2[i]) ? "OK" : "MISMATCH", detail: `service ${got.join("/")} (releases/sprints/tasks/resources), database ${want2.join("/")}` };
+          },
+        );
+      }
+    } else {
+      add({ actor: "mentor", check: "project services", status: "EMPTY_UNEXPECTED", detail: "no primary mentor loaded for any project" });
+    }
+
+    // college admin: drives list, drive overview and applications, placement report, project snapshots
+    if (adminRow[0]) {
+      const ctx = await contextFor(adminRow[0].membership_id);
+      const [want] = await q<{ jobs: string; topJob: string | null; apps: string; projects: string }>(
+        `SELECT (SELECT count(*) FROM placement_jobs WHERE college_id = $1) AS jobs,
+                (SELECT j.id FROM placement_jobs j LEFT JOIN placement_applications a ON a.job_id = j.id WHERE j.college_id = $1 GROUP BY j.id ORDER BY count(a.id) DESC, j.id LIMIT 1) AS "topJob",
+                (SELECT count(*) FROM placement_applications a JOIN placement_jobs j ON j.id = a.job_id WHERE j.college_id = $1) AS apps,
+                (SELECT count(*) FROM project_instances WHERE college_id = $1) AS projects`,
+        [nsritCollege],
+      );
+      await guard(
+        "college admin",
+        "drives (listCollegeDrives)",
+        () => listCollegeDrives(ctx, {}),
+        (r) => ({ status: r.total === Number(want.jobs) ? "OK" : "MISMATCH", detail: `${r.total} drives (database ${want.jobs})` }),
+      );
+      if (want.topJob) {
+        await guard("college admin", "drive overview (getCollegeDriveOverview)", () => getCollegeDriveOverview(ctx, want.topJob), (o) => ({ status: o ? "OK" : "EMPTY_UNEXPECTED", detail: `keys: ${Object.keys(o as object).join(",")}` }));
+        await guard(
+          "college admin",
+          "drive applications (listCollegeDriveApplications)",
+          () => listCollegeDriveApplications(ctx, want.topJob, {}),
+          (r) => {
+            const rr = r as unknown as { total?: number; rows?: unknown[]; items?: unknown[] };
+            const n = rr.total ?? rr.rows?.length ?? rr.items?.length ?? 0;
+            return { status: n > 0 ? "OK" : "EMPTY_UNEXPECTED", detail: `${n} applications on the busiest drive` };
+          },
+        );
+      }
+      await guard(
+        "college admin",
+        "placement report (getPlacementReportWorkspace)",
+        () => getPlacementReportWorkspace(ctx, { collegeId: nsritCollege }),
+        (r) => ({ status: r ? "OK" : "EMPTY_UNEXPECTED", detail: `keys: ${Object.keys(r as object).join(",")}` }),
+      );
+      await guard(
+        "college admin",
+        "project snapshots (listProjectAdminSnapshots)",
+        () => listProjectAdminSnapshots(ctx, nsritCollege, {}),
+        (r) => {
+          const n = len(r) || len((r as unknown as { items?: unknown }).items) || len((r as unknown as { snapshots?: unknown }).snapshots);
+          return { status: n === Number(want.projects) ? "OK" : n === 0 ? "EMPTY_UNEXPECTED" : "MISMATCH", detail: `${n} projects (database ${want.projects})` };
+        },
+      );
+    }
+    // Recruiter pipeline: only meaningful when a recruiter account passed the real-data filter.
+    const [recruiters] = await q<{ n: string }>(`SELECT count(*) AS n FROM placement_recruiter_college_grants g JOIN placement_company_relationships r ON r.id = g.company_relationship_id WHERE r.college_id = $1`, [nsritCollege]);
+    add({
+      actor: "recruiter",
+      check: "recruiter pipeline (getHrJobRead)",
+      status: "EMPTY_EXPECTED",
+      detail: Number(recruiters.n) === 0 ? "no recruiter grant loaded: both legacy recruiter accounts were rejected as test data" : `${recruiters.n} grants loaded; recruiter services need the recruiter session and are exercised by the e2e suites`,
+    });
+  }
 
   // ---- optional comparison with the legacy attendance percent
   const snapshotDir = arg("snapshot");
