@@ -29,7 +29,7 @@ async function scope(context:RequestContext,rawJobId:unknown,rawRoundId:unknown)
 }
 export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:unknown,roundId:unknown){
  const info=await scope(context,jobId,roundId);
- const storageReady=await placementTableExists("placement_round_candidate_slots");
+ const storageReady=true; // registered in 0116
  const roster=await getDb().select({
   applicationId:placementApplications.id,
   name:users.displayName,roll:learnerProfiles.rollNumber,
@@ -99,8 +99,6 @@ async function notice(tx:TpoJobTx,context:RequestContext,job:{id:string;title:st
 }
 export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:unknown,rawRoundId:unknown,raw:unknown){
  const info=await scope(context,rawJobId,rawRoundId);
- if(!await placementTableExists("placement_round_candidate_slots"))
-  throw Error("Interview slot storage has not been registered yet.");
  const input=tpoInterviewSlotActionSchema.parse(raw);
  if(input.action==="KEEP_REQUEST"){
   const [inScope]=await getDb().select({id:placementLearnerRequests.id})
