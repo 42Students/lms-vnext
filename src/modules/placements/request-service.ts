@@ -23,6 +23,7 @@ import {
   placementJobRounds,
   placementJobs,
   placementLearnerRequests,
+  inAppNotifications,
   placementOffers,
   placementRoundResults,
   users,
@@ -993,7 +994,7 @@ export async function actOnPlacementRequest(
       );
     }
 
-    await recordActivityEventInTransaction(
+    const decisionEvent = await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -1020,6 +1021,26 @@ export async function actOnPlacementRequest(
           `placement-request:${request.id}:${nextStatus.toLowerCase()}`,
       },
     );
+
+    if (nextStatus !== "CANCELLED") {
+      const [learner] = await tx.select({ userId: collegeMemberships.userId })
+        .from(collegeMemberships)
+        .where(and(
+          eq(collegeMemberships.id, current.application.membershipId),
+          eq(collegeMemberships.collegeId, current.job.collegeId),
+        )).limit(1);
+      if (learner) {
+        const decisionText = nextStatus === "APPROVED" ? "approved" : "rejected";
+        await tx.insert(inAppNotifications).values({
+          userId: learner.userId,
+          eventId: decisionEvent.id,
+          title: "Your request was answered",
+          body: "Your request was " + decisionText + "." +
+            (updated.decisionNote ? " " + updated.decisionNote : ""),
+          actionHref: "/learn/my-placements/support",
+        }).onConflictDoNothing();
+      }
+    }
 
     return updated;
   });
