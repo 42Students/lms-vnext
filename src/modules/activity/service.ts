@@ -4,6 +4,7 @@ import {
   eq,
   gte,
   ilike,
+  inArray,
   lt,
   lte,
   or,
@@ -70,6 +71,7 @@ const activityFilterSchema = z
     importance: z
       .enum(ACTIVITY_IMPORTANCE)
       .optional(),
+    importantOnly: z.boolean().optional(),
     actorUserId:
       z.string().uuid().optional(),
     eventType: z
@@ -544,6 +546,9 @@ export async function listActivityEvents(
         input.importance,
       ),
     );
+  }
+  if (input.importantOnly && !input.importance) {
+    conditions.push(inArray(activityEvents.importance, ["HIGH", "CRITICAL"]));
   }
   if (input.actorUserId) {
     conditions.push(
