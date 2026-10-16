@@ -149,6 +149,25 @@ export function TpoCalendarMoveFollowup({
     }
   }
 
+  async function onDone() {
+    if (busy) return;
+    setBusy(true);
+    setMessage("");
+    try {
+      await submitFollowup(
+        `/api/placements/tpo/calendar/follow-ups/${encodeURIComponent(followupId)}/complete`,
+        "POST",
+        {},
+      );
+      setMessage("Follow-up marked done. The calendar is refreshing.");
+      router.refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not mark follow-up done.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <form onSubmit={onSubmit} className="mt-4 flex flex-wrap items-end gap-2 border-t border-border pt-4">
       <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-semibold text-body">
@@ -168,6 +187,14 @@ export function TpoCalendarMoveFollowup({
         className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
       >
         {busy ? "Moving…" : "Reschedule"}
+      </button>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => void onDone()}
+        className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
+      >
+        {busy ? "Saving…" : "Done"}
       </button>
       <p role="status" aria-live="polite" className="w-full text-xs text-body">{message}</p>
     </form>
