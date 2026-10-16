@@ -709,16 +709,29 @@ export function RecruiterLeadsWorkspace({
                     <option value="NONE">No drives yet</option>
                   </select>
                 </label>
+                <label className="text-sm">Communication
+                  <select className={inputStyle+" mt-1"} value={companyCommunicationFilter}
+                    onChange={e=>setCompanyCommunicationFilter(e.target.value)}>
+                    <option value="ALL">All communication</option>
+                    <option value="NOT_CONTACTED">Not contacted</option>
+                    <option value="EMAILED">Emailed</option>
+                    <option value="REPLIED">Replied</option>
+                    <option value="MEETING_SET">Meeting set</option>
+                    <option value="NOT_INTERESTED">Not interested</option>
+                  </select>
+                </label>
                 <label className="flex items-center gap-2 text-sm">
                   <input type="checkbox" checked={companyAliases}
                     onChange={e=>setCompanyAliases(e.target.checked)}/>
                   Typed more than one way
                 </label>
                 <button type="button" className={buttonStyle} onClick={()=>{
-                  setCompanySearch("");setCompanyContacts("ALL");setCompanyHistory("ALL");setCompanyAliases(false);
+                  setCompanySearch("");setCompanyContacts("ALL");setCompanyHistory("ALL");setCompanyAliases(false);setCompanyCommunicationFilter("ALL");
                 }}>Clear company filters</button>
               </div>
               <p role="status" className="text-xs text-body">{visibleCompanies.length} of {companies.length} companies</p>
+              {!communicationReady?<p role="status" className="text-xs text-muted-foreground">Communication changes are unavailable until company status storage is registered.</p>:null}
+              {communicationError?<p role="alert" className="text-sm text-warning">{communicationError}</p>:null}
               {companiesPhase !== "ready" ? (
                 <p role="alert" className="text-sm text-body">
                   {companiesPhase==="loading"?"Loading companies…":companiesError}
@@ -731,7 +744,7 @@ export function RecruiterLeadsWorkspace({
                 <div className="overflow-x-auto rounded-lg border border-border bg-surface">
                   <table className="w-full text-left text-sm">
                     <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                      <tr>{["Company","People","Drives that ran","Accepted-offer drives","Students placed"].map(label=>
+                      <tr>{["Company","Communication","People","Drives that ran","Accepted-offer drives","Students placed"].map(label=>
                         <th key={label} scope="col" className="px-4 py-3">{label}</th>)}</tr>
                     </thead>
                     <tbody>{visibleCompanies.map(company=>(
@@ -739,6 +752,19 @@ export function RecruiterLeadsWorkspace({
                         <td className="px-4 py-3">
                           <Link className="text-primary-text underline" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>{company.name}</Link>
                           {company.aliases.length?<p className="text-xs text-muted-foreground">Also typed as {company.aliases.join(", ")}</p>:null}
+                        </td>
+                        <td className="px-4 py-3">
+                          <select aria-label={"Communication for "+company.name}
+                            className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm"
+                            value={communication[company.key]??"NOT_CONTACTED"}
+                            disabled={!communicationReady}
+                            onChange={e=>void changeCompanyCommunication(company.key,e.target.value)}>
+                            <option value="NOT_CONTACTED">Not contacted</option>
+                            <option value="EMAILED">Emailed</option>
+                            <option value="REPLIED">Replied</option>
+                            <option value="MEETING_SET">Meeting set</option>
+                            <option value="NOT_INTERESTED">Not interested</option>
+                          </select>
                         </td>
                         <td className="px-4 py-3">
                           {company.people?.length?company.people.map(person=>
