@@ -265,6 +265,7 @@ export async function listTpoCompanies(
       name: group.name,
       aliases: [...group.aliases].filter((name) => name !== group.name),
       contacts: group.leads.length,
+      people: group.leads.map(lead=>({id:lead.id,name:lead.name})),
       activeContacts: group.leads.filter(
         (lead) => !["NOT_NOW"].includes(deriveOwnRecruiterLeadStage(lead, linkedJobs, driveRows)),
       ).length,
