@@ -1,12 +1,17 @@
 import "server-only";
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   cohortProgressionState,
   cohorts,
+  courseOfferings,
+  courseSectionDeliveries,
+  courseTeachingAssignments,
   departments,
   learnerProgramEnrollments,
+  programTermCourses,
+  programTerms,
   programs,
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -79,6 +84,58 @@ export async function executeCollegeBatchPromotion(
     if (!promotionPreviewMatches(input,preview))
       throw new CollegePromotionExecuteError("PROMOTION_PREVIEW_CHANGED");
 
+    // Deactivate the previous numbered term's teaching assignments before
+    // recording progression. An offering of a course also mapped in the new
+    // term stays active; those roles are shared with the destination term.
+    const previousCourses = await tx.select({ courseId: programTermCourses.courseId })
+      .from(programTermCourses)
+      .innerJoin(programTerms, eq(programTerms.id, programTermCourses.programTermId))
+      .where(and(eq(programTerms.programId, batch.programId),
+        eq(programTerms.termNumber, previous.currentTermNumber)));
+    const targetCourses = await tx.select({ courseId: programTermCourses.courseId })
+      .from(programTermCourses)
+      .innerJoin(programTerms, eq(programTerms.id, programTermCourses.programTermId))
+      .where(and(eq(programTerms.programId, batch.programId),
+        eq(programTerms.termNumber, preview.plan.targetTermNumber)));
+    const targetCourseSet = new Set(targetCourses.map(course => course.courseId));
+    const oldOnly = previousCourses.map(course => course.courseId)
+      .filter(courseId => !targetCourseSet.has(courseId));
+    let endedTeachingAssignments = 0;
+    if (oldOnly.length) {
+      const currentRoles = await tx.select({ id: courseTeachingAssignments.id })
+        .from(courseTeachingAssignments)
+        .innerJoin(courseSectionDeliveries,
+          eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
+        .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .where(and(eq(courseOfferings.cohortId, batch.id),
+          inArray(courseOfferings.courseId, oldOnly),
+          eq(courseOfferings.status, "ACTIVE"),
+          isNull(courseSectionDeliveries.endedAt),
+          isNull(courseTeachingAssignments.endedAt)))
+        .for("update", { of: courseTeachingAssignments });
+      if (currentRoles.length) {
+        const ended = await tx.update(courseTeachingAssignments).set({
+          endedAt: new Date(), updatedAt: new Date(),
+        }).where(and(inArray(courseTeachingAssignments.id, currentRoles.map(row => row.id)),
+          isNull(courseTeachingAssignments.endedAt)))
+          .returning({ id: courseTeachingAssignments.id });
+        endedTeachingAssignments = ended.length;
+      }
+    }
+    const targetMappedCourses = targetCourses.length;
+    const activeTargetStaff = targetMappedCourses === 0 ? [] :
+      await tx.select({ courseId: courseOfferings.courseId })
+        .from(courseTeachingAssignments)
+        .innerJoin(courseSectionDeliveries,
+          eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
+        .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .where(and(eq(courseOfferings.cohortId, batch.id),
+          inArray(courseOfferings.courseId, [...targetCourseSet]),
+          isNull(courseTeachingAssignments.endedAt),
+          isNull(courseSectionDeliveries.endedAt)))
+        .groupBy(courseOfferings.courseId);
+    const facultySetupIncomplete = targetMappedCourses === 0 ||
+      activeTargetStaff.length < targetCourseSet.size;
     const [updated] = await tx.update(cohortProgressionState).set({
       currentTermNumber: preview.plan.targetTermNumber,
       currentAcademicYearStart: preview.plan.academicYearStart,
@@ -108,6 +165,7 @@ export async function executeCollegeBatchPromotion(
         version: updated.version,
         academicYearStart: updated.currentAcademicYearStart,
         learnerCount: preview.checkedLearners,
+        endedTeachingAssignments, facultySetupIncomplete,
       },
     });
     return {
@@ -116,6 +174,7 @@ export async function executeCollegeBatchPromotion(
       academicYearStart: updated.currentAcademicYearStart,
       version: updated.version,
       checkedLearners: preview.checkedLearners,
+      endedTeachingAssignments, facultySetupIncomplete,
     };
     });
   } catch (error) {
