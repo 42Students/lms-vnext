@@ -103,6 +103,15 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
   throw Error("Interview slot storage has not been registered yet.");
  const input=tpoInterviewSlotActionSchema.parse(raw);
  if(input.action==="KEEP_REQUEST"){
+  const [inScope]=await getDb().select({id:placementLearnerRequests.id})
+   .from(placementLearnerRequests)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementLearnerRequests.applicationId))
+   .where(and(eq(placementLearnerRequests.id,input.requestId),
+    eq(placementLearnerRequests.roundId,info.round.id),
+    eq(placementApplications.jobId,info.round.jobId),
+    eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
+    eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+  if(!inScope)throw new PlacementsServiceError("PLACEMENT_REQUEST_NOT_FOUND");
   const result=await actOnPlacementRequest(context,input.requestId,{
    action:"REJECT",note:"Keep existing interview slot. "+input.reason,
   });
