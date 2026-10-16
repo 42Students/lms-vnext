@@ -1,5 +1,5 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -14,6 +14,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  const router=useRouter();
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),[sprint,setSprint]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  const learners=members.filter(member=>member.role==="LEARNER");
  const filtered=useMemo(()=>tasks.filter(task=>{
   const linked=sprints.find(item=>item.id===task.sprintId);
