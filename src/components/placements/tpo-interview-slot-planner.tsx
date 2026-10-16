@@ -4,14 +4,18 @@ import {useRouter} from "next/navigation";
 type Slot={id:string;startsAt:string;endsAt:string;room:string;panel:string|null;status:string;
  applicationId:string|null;version:number};
 type Learner={applicationId:string;name:string|null;roll:string|null};
-export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster}:{
- jobId:string;roundId:string;slots:Slot[];roster:Learner[];
+type Proposal={id:string;startsAt:string;endsAt:string;mode:string;meetingLocation:string|null;panelLabel:string|null;version:number};
+export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterProposals}:{
+ jobId:string;roundId:string;slots:Slot[];roster:Learner[];recruiterProposals:Proposal[];
 }){
  const router=useRouter();const [date,setDate]=useState("");const [rooms,setRooms]=useState("Room 1");
  const [minutes,setMinutes]=useState(30);const [gap,setGap]=useState(5);const [count,setCount]=useState(8);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [message,setMessage]=useState("");
  const [pick,setPick]=useState<Record<string,string>>({});const [move,setMove]=useState<Record<string,string>>({});
  const [roomChange,setRoomChange]=useState<Record<string,string>>({});
+ const [fromRoll,setFromRoll]=useState("");const [toRoll,setToRoll]=useState("");
+ const [bulkRoom,setBulkRoom]=useState("");
+ const [venue,setVenue]=useState<Record<string,string>>({});
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/interview-slots";
  async function action(body:Record<string,unknown>){
   if(busy)return;
@@ -57,6 +61,43 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster}:{
      Clear {free.length} unbooked slot(s)</button>
    </div>
   </div>
+  <div className="rounded-xl border border-border bg-surface p-5">
+   <h2 className="font-semibold">Assign rooms by roll range</h2>
+   <p className="mt-1 text-sm text-body">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
+   <div className="mt-3 grid gap-3 sm:grid-cols-3">
+    <label className="grid gap-1 text-sm">From roll<input value={fromRoll} onChange={e=>setFromRoll(e.target.value)}
+     className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+    <label className="grid gap-1 text-sm">To roll<input value={toRoll} onChange={e=>setToRoll(e.target.value)}
+     className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+    <label className="grid gap-1 text-sm">New room<input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
+     className="min-h-11 rounded border border-border bg-surface px-3"/></label>
+   </div>
+   {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm">
+    {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
+     r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
+   </p>:null}
+   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom} onClick={()=>void action({
+    action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom,
+   })} className="mt-3 min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+    Previewed · Assign room
+   </button>
+  </div>
+  {recruiterProposals.length?<div className="space-y-3 rounded-xl border border-border bg-surface p-5">
+   <h2 className="font-semibold">Recruiter-proposed interview slots</h2>
+   {recruiterProposals.map(p=><div key={p.id} className="grid gap-3 rounded border border-border p-3 sm:grid-cols-2">
+    <p className="text-sm">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
+    <label className="grid gap-1 text-sm">Venue or meeting link
+     <input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
+      className="min-h-11 rounded border border-border bg-surface px-3"/>
+    </label>
+    <button type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
+     onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
+      venue:(venue[p.id]??p.meetingLocation??"").trim()})}
+     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     Confirm recruiter proposal
+    </button>
+   </div>)}
+  </div>:null}
   <div className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Interview slots · {booked.length} booked · {free.length} available · {waiting.length} students unassigned</h2>
    <p className="mt-1 text-sm text-body">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
