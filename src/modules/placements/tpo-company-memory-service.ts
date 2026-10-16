@@ -25,6 +25,7 @@ import { deriveTpoRecruiterLeadStage } from "./tpo-recruiter-lead-policy";
 import { requirePlacementManageScope } from "./scope";
 import { tpoCrmCollegeIdSchema } from "./tpo-crm-validation";
 import {listCompanyShareHistory} from "./company-share/company-history-service";
+import {getCompanyDriveCounts} from "./tpo-company-drive-counts-service";
 
 export class TpoCompanyMemoryError extends Error {
   constructor(
@@ -300,6 +301,7 @@ export async function getTpoCompanyMemory(
   const jobIds = group.jobs.map((row) => row.job.id);
   const driveRows = await loadDriveFacts(jobIds);
   const shareHistory=await listCompanyShareHistory(rows.collegeId,jobIds);
+  const driveCounts=await getCompanyDriveCounts(rows.collegeId,jobIds);
   const facts = deriveCompanyDriveFacts(driveRows);
   const linkedJobs = group.jobs.map((row) => ({
     jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
@@ -364,6 +366,8 @@ export async function getTpoCompanyMemory(
       jobTitle: job.title,
       companyName,
       status: job.status,
+      applied: driveCounts.get(job.id)?.applied??0,
+      offers: driveCounts.get(job.id)?.offers??0,
       createdAt: job.createdAt,
     })),
     drivesRan: facts.plannedDriveCount,
