@@ -139,7 +139,34 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
        {item.changed&&<dd className="text-xs font-medium">Changed</dd>}
       </div>)}</dl>
     </section>
+    {row.section==="EDUCATION"&&Array.isArray(detail.review.submittedSnapshot.education)&&
+      <section className="space-y-2">
+        <h3 className="font-semibold">Education</h3>
+        <div className="overflow-x-auto rounded-md border">
+          <table className="w-full min-w-[460px] text-left text-sm">
+            <thead><tr className="border-b">
+              {["Level","Institution","Year","Marks","Marksheet"].map(label=>
+                <th key={label} className="p-2 font-semibold">{label}</th>)}
+            </tr></thead>
+            <tbody>{detail.review.submittedSnapshot.education.map((entry,index)=>{
+              if(!entry||typeof entry!=="object"||Array.isArray(entry))return null;
+              const string=(key:string)=>typeof entry[key]==="string"?String(entry[key]).slice(0,200):"—";
+              const hasProof=typeof entry.marksheetDocumentId==="string";
+              return <tr key={index} className="border-b">
+                <td className="p-2">{string("educationType")}</td>
+                <td className="p-2">{string("institutionName")!=="—"?string("institutionName"):string("institution")}</td>
+                <td className="p-2">{string("endYear")}</td>
+                <td className="p-2">{string("grade")}</td>
+                <td className="p-2">{hasProof?"Submitted":"Missing"}</td>
+              </tr>;
+            })}</tbody>
+          </table>
+        </div>
+      </section>}
     <section><h3 className="font-semibold">Private supporting documents</h3>
+     {detail.review.documents.some(doc=>doc.purpose==="RESUME")&&<p className="mb-2 text-sm font-semibold">
+       Resume available: open the private signed link below.
+     </p>}
      {detail.review.documents.length===0?<p className="text-sm">No submitted document references.</p>:
       <ul className="mt-2 space-y-2">{detail.review.documents.map(doc=>
        <li key={doc.receiptId} className="break-words">
