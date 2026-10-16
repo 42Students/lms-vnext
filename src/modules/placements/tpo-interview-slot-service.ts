@@ -196,7 +196,10 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     }).where(eq(placementRoundCandidateSlots.id,slot.id));
     await notice(tx,context,job,slot.applicationId!,"PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED",
      "Your interview room for "+job.title+" is now "+input.room+".");
-    slot.room=input.room;changed++;
+    slot.room=input.room;
+    const tracked=all.find(existing=>existing.id===slot.id);
+    if(tracked)tracked.room=input.room;
+    changed++;
    }
    return {changed,skipped,eligible:eligible.length};
   }
@@ -272,6 +275,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    await tx.update(placementRoundCandidateSlots).set({
     room:input.room,updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,id));
+   if(slot.applicationId&&slot.status==="BOOKED")await notice(tx,context,job,slot.applicationId,
+    "PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED","Your interview for "+job.title+" has moved to room "+input.room+".");
    return {changed:1};
   }
   if(input.action==="BOOK"){
