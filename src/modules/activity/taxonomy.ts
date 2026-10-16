@@ -190,6 +190,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "platform.admin.sessions_revoked",
   PLACEMENTS_BULK_RUN:
     "placements.bulk.run",
+  PLACEMENTS_APPLICANT_STAGE_MOVED:
+    "placements.applicant.stage_moved",
   PLACEMENTS_ROUND_COMPLETED:
     "placements.round.completed",
   PLACEMENTS_RESULT_STAGED:
