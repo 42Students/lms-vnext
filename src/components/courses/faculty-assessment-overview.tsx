@@ -81,7 +81,7 @@ export function FacultyAssessmentOverview({
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           { label: kind === "QUIZ" ? "Quizzes" : "Assignments", value: items.length },
-          { label: "Published", value: items.filter((item) => item.status === "PUBLISHED").length },
+          { label: "Courses", value: new Set(items.map(item=>item.courseCode)).size },
           { label: "Sections", value: new Set(items.map((item) => item.deliveryId)).size },
         ].map((metric) => (
           <div key={metric.label} className="rounded-xl border border-border bg-surface p-4">
@@ -91,6 +91,18 @@ export function FacultyAssessmentOverview({
         ))}
       </div>
 
+      <details className="rounded-lg border border-border bg-surface p-3">
+        <summary className="cursor-pointer text-sm font-semibold">
+          {kind==="QUIZ"?"Quizzes by Course":"Assignments by Course"}
+        </summary>
+        <ul className="mt-3 grid gap-2 text-sm text-body sm:grid-cols-2">
+          {Array.from(new Set(items.map(item=>item.courseCode))).sort().map(code=>
+            <li key={code} className="flex justify-between gap-3 rounded border border-border px-3 py-2">
+              <span>{items.find(item=>item.courseCode===code)?.courseName??code}</span>
+              <strong>{items.filter(item=>item.courseCode===code).length}</strong>
+            </li>)}
+        </ul>
+      </details>
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-sm font-semibold text-body">
           Course / Section
