@@ -5,12 +5,12 @@ import {collegeMemberships,learnerProgramEnrollments,learnerProfiles,membershipR
 import {placementEligibilityDecisions} from "@/db/schema/placement-access";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
-import {eligibilityImportInputSchema,previewEligibilityImport} from "./tpo-eligibility-import-model";
+import {tpoSheetInputSchema,previewTpoEligibilitySheet} from "./tpo-eligibility-sheet-model";
 
 /** Exact roll or membership UUID matching only against active learners in the authorized batch. */
 export async function getBatchEligibilityImportPreview(ctx:RequestContext,rawBatchId:unknown,raw:unknown){
  const {batch,collegeId}=await getTpoBatch(ctx,rawBatchId);
- const {rows}=eligibilityImportInputSchema.parse(raw);
+ const {rows}=tpoSheetInputSchema.parse(raw);
  // All candidates are restricted to this exact active batch; never match by name/email.
  const candidates=await getDb().select({membershipId:collegeMemberships.id,rollNumber:learnerProfiles.rollNumber})
  .from(learnerProgramEnrollments)
@@ -30,7 +30,7 @@ export async function getBatchEligibilityImportPreview(ctx:RequestContext,rawBat
  const existing=new Map(stored.map(row=>[row.id,row.updatedAt.toISOString()]));
  const roster=candidates.map(r=>({studentCode:r.membershipId,rollNumber:r.rollNumber,membershipId:r.membershipId,
   expectedVersion:existing.get(r.membershipId)??"none"}));
- const preview=previewEligibilityImport(rows,roster);
+ const preview=previewTpoEligibilitySheet(rows,roster);
  return {batchId:batch.id,rows,preview,ready:preview.filter(r=>r.status==="matched").length,
   skipped:preview.filter(r=>r.status==="unusable").length};
 }
