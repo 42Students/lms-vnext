@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SuperAdminContentAuthoring } from "@/components/courses/super-admin-content-authoring";
+import { listSuperAdminContentAuthoringLessons } from "@/modules/courses/super-admin-content-authoring-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -30,11 +32,12 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <EmptyState title="Choose a college scope" description="Select a college before browsing persisted course content."/>
  </div>;
- const data=await listSuperAdminContentDirectory(context,kind,parsed.data);
+ const [data, lessons]=await Promise.all([listSuperAdminContentDirectory(context,kind,parsed.data),listSuperAdminContentAuthoringLessons(context)]);
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}
-   description="Read-only registered lesson content inside the selected college. No file downloads or private meeting links are exposed."/>
+   description="Manage lesson content in the selected college. Uploaded files and private meeting links remain access controlled."/>
+  <SuperAdminContentAuthoring kind={kind} lessons={lessons} />
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -62,7 +65,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     {item.startsAt?<p className="text-sm text-body">Starts: {ist(item.startsAt)}</p>:null}
     {item.endsAt?<p className="text-sm text-body">Ends: {ist(item.endsAt)}</p>:null}
     {item.offeringStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-     className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open offering →</Link>:null}
+     className="inline-flex min-h-10 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content records" description="No matching authored content exists in this college or filter."/>}
   <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
