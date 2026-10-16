@@ -7,8 +7,9 @@ import {
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   collegeDepartmentArchiveSchema, collegeDepartmentCreateSchema,
   collegeDepartmentIdSchema, collegeDepartmentRenameSchema,
@@ -25,16 +26,9 @@ export class CollegeDepartmentMutationError extends Error {
 }
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
-function own(context: RequestContext) {
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "department.manage", {
-      collegeId: member.collegeId, organizationId: member.organizationId,
-    })) throw new AuthorizationError("department.manage");
-  requirePermission(context, "department.manage", {
-    collegeId: member.collegeId, organizationId: member.organizationId,
-  });
-  return member;
+// SA-academics-people-05: selected Super Admin college and College Admin membership share scoped mutations.
+async function own(context: RequestContext) {
+  return resolveActingCollege(context, "department.manage");
 }
 async function liveCollege(tx: Tx, collegeId: string, organizationId: string) {
   const [row] = await tx.select({ id: colleges.id })
@@ -71,7 +65,7 @@ function mapConstraint(error: unknown): never {
 
 export async function createCollegeDepartment(context: RequestContext, raw: unknown) {
   const input = collegeDepartmentCreateSchema.parse(raw);
-  const member = own(context);
+  const member = await own(context);
   try {
     return await getDb().transaction(async tx => {
       await liveCollege(tx, member.collegeId, member.organizationId);
@@ -96,7 +90,7 @@ export async function renameCollegeDepartment(
 ) {
   const id = collegeDepartmentIdSchema.parse(idRaw);
   const input = collegeDepartmentRenameSchema.parse(raw);
-  const member = own(context);
+  const member = await own(context);
   try {
     return await getDb().transaction(async tx => {
       await liveCollege(tx, member.collegeId, member.organizationId);
@@ -125,7 +119,7 @@ export async function archiveCollegeDepartment(
 ) {
   const id = collegeDepartmentIdSchema.parse(idRaw);
   collegeDepartmentArchiveSchema.parse(raw);
-  const member = own(context);
+  const member = await own(context);
   return getDb().transaction(async tx => {
     await liveCollege(tx, member.collegeId, member.organizationId);
     const current = await lockDepartment(tx, id, member.collegeId);
