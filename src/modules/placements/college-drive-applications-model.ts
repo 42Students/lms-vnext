@@ -4,6 +4,7 @@ export const driveApplicationsQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL","SUBMITTED","WITHDRAWN"]).default("ALL"),
   source: z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
+  stage: z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"]).default("ALL"),
   departmentId: z.string().uuid().optional(),
   programId: z.string().uuid().optional(),
   cohortId: z.string().uuid().optional(),
@@ -16,7 +17,7 @@ export const DRIVE_APPLICATION_EXPORT_CAP = 1000;
 
 export function driveApplicationsParams(raw: Record<string,string|string[]|undefined>) {
   const input: Record<string,string> = {};
-  for (const key of ["q","status","source","departmentId","programId","cohortId","screening","page"] as const) {
+  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","page"] as const) {
     const value = raw[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && value !== "") input[key] = value;
@@ -29,6 +30,7 @@ export function driveApplicationsHref(jobId: string, query: DriveApplicationsQue
   if (query.q) params.set("q",query.q);
   if (query.status !== "ALL") params.set("status",query.status);
   if (query.source !== "ALL") params.set("source",query.source);
+  if (query.stage !== "ALL") params.set("stage",query.stage);
   if (query.departmentId) params.set("departmentId",query.departmentId);
   if (query.programId) params.set("programId",query.programId);
   if (query.cohortId) params.set("cohortId",query.cohortId);
