@@ -1,4 +1,8 @@
 import Link from "next/link";
+import {eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {profileVerificationSettings} from "@/db/schema/profile-verification";
+import {TpoVerificationSwitch} from "@/components/verification/TpoVerificationSwitch";
 import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -46,9 +50,12 @@ export default async function AdminCollegeVerification({
    <Link className="text-primary-text underline" href={base}>Retry</Link>
   </div>;
  }
+ const [policy]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+  .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,college.id)).limit(1);
  const query:Record<string,string>={};
  for(const [k,v] of Object.entries(data.filter)){if(v!==undefined&&v!==null)query[k]=String(v);}
  return <div className="min-w-0 space-y-5">{header}
+   <TpoVerificationSwitch collegeId={college.id} initialEnabled={policy?.enabled??true}/>
    <SuperAdminVerificationPanel collegeId={college.id} rows={data.rows}
     counts={data.counts} activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
     page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>
