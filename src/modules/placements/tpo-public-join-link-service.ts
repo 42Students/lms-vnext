@@ -14,7 +14,7 @@ import { placementCompanyDomainSchema } from "./validation";
 import { requirePlacementManageScope } from "./scope";
 import { publicJoinTablesReady } from "./public-join/readiness";
 import {
-  publicJoinLinkPath, tpoPublicJoinLinkChangeSchema,
+  publicJoinLinkPath, tpoPublicJoinLinkChangeSchema,tpoPublicJoinLinkToggleSchema,
   type TpoPublicJoinLinkStatus,
 } from "./tpo-public-join-link-model";
 
@@ -82,11 +82,12 @@ export async function getTpoPublicJoinLinkStatus(
   const [row] = await getDb().select({
     createdAt: placementPublicJoinLinks.createdAt,
     opensCount: placementPublicJoinLinks.opensCount,joinsCount: placementPublicJoinLinks.joinsCount,
+    enabled:placementPublicJoinLinks.enabled,
   }).from(placementPublicJoinLinks)
     .where(and(linkFilter(college.id, scope, companyId),
       gt(placementPublicJoinLinks.expiresAt, new Date())))
     .orderBy(desc(placementPublicJoinLinks.createdAt)).limit(1);
-  return { ready: true, domain, link: row ? { createdAt: row.createdAt.toISOString(),opensCount:row.opensCount,joinsCount:row.joinsCount } : null };
+  return { ready: true, domain, link: row ? { createdAt: row.createdAt.toISOString(),opensCount:row.opensCount,joinsCount:row.joinsCount,enabled:row.enabled } : null };
 }
 
 /** The one-time URL is returned only from this authenticated, same-origin POST. */
@@ -159,7 +160,35 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
     });
     return {
       path: publicJoinLinkPath(input.scope, token),
-      status: { ready: true, domain, link: { createdAt: link.createdAt.toISOString(),opensCount:link.opensCount,joinsCount:link.joinsCount } },
+      status: { ready: true, domain, link: { createdAt: link.createdAt.toISOString(),opensCount:link.opensCount,joinsCount:link.joinsCount,enabled:true } },
     };
   });
+}
+
+/** Explicit TPO opt-in switch: college-scoped, permission-checked and audited. */
+export async function setTpoPublicJoinLinkEnabled(context:RequestContext,raw:unknown) {
+ const input=tpoPublicJoinLinkToggleSchema.parse(raw);
+ const {college,membership}=await requireTpoLinkScope(context);
+ if(!await publicJoinTablesReady())throw new TpoPublicJoinLinkError("NOT_REGISTERED");
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const filter=linkFilter(college.id,input.scope,input.scope==="COMPANY"?input.companyId:undefined);
+  const [row]=await tx.select({id:placementPublicJoinLinks.id})
+   .from(placementPublicJoinLinks).where(and(filter,gt(placementPublicJoinLinks.expiresAt,new Date())))
+   .orderBy(desc(placementPublicJoinLinks.createdAt)).for("update").limit(1);
+  if(!row)throw new TpoPublicJoinLinkError("NOT_FOUND");
+  await tx.update(placementPublicJoinLinks).set({enabled:input.enabled})
+   .where(eq(placementPublicJoinLinks.id,row.id));
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId:college.id,
+   actorUserId:context.user.id,actorMembershipId:membership.id,
+   module:"PLACEMENTS",eventType:"PLACEMENTS_PUBLIC_JOIN_LINK_ENABLED",
+   subjectType:"placement_public_join_link",subjectId:row.id,
+   summary:input.enabled?"Public join link enabled":"Public join link disabled",
+   metadata:{scope:input.scope,enabled:input.enabled},
+  });
+  return {enabled:input.enabled};
+ });
 }

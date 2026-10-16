@@ -12,7 +12,7 @@ export async function recordPublicJoinOpen(token:string,scope:"COLLEGE"|"COMPANY
  const [row]=await getDb().update(placementPublicJoinLinks)
   .set({opensCount:sql`${placementPublicJoinLinks.opensCount} + 1`})
   .where(and(eq(placementPublicJoinLinks.tokenHash,hash),eq(placementPublicJoinLinks.scope,scope),
-   isNull(placementPublicJoinLinks.revokedAt),gt(placementPublicJoinLinks.expiresAt,now),
+   isNull(placementPublicJoinLinks.revokedAt),eq(placementPublicJoinLinks.enabled,true),gt(placementPublicJoinLinks.expiresAt,now),
    sql`EXISTS (SELECT 1 FROM colleges c JOIN organizations o ON o.id=c.organization_id
        WHERE c.id=${placementPublicJoinLinks.collegeId} AND c.status='ACTIVE' AND o.status='ACTIVE')`))
   .returning({id:placementPublicJoinLinks.id});
