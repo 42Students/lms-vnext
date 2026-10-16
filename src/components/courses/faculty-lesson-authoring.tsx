@@ -773,6 +773,11 @@ export function FacultyLessonAuthoring({
               </label>
             ) : null}
 
+            {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
+              <label className="mt-4 flex min-h-10 items-center gap-2 text-sm text-body">
+                <input type="checkbox" checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
+                Publish now — make this learning item visible to eligible students
+              </label>:null}
             {mode === "LIVE_CLASS" ? (
               <div className="mt-4 grid gap-4 lg:grid-cols-2">
                 <label className="block">
@@ -818,7 +823,7 @@ export function FacultyLessonAuthoring({
             mode === "QUIZ" ? (
               <label className="mt-4 block">
                 <FieldLabel>
-                  Due date (IST, optional)
+                  Due date (IST, required before publishing)
                 </FieldLabel>
                 <Input
                   type="datetime-local"
