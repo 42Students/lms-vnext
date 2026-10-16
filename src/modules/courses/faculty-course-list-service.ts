@@ -11,6 +11,8 @@ export async function getFacultyCourseList(context: RequestContext, rawQuery: un
   });
   const courses = await listFacultyCourseDeliveries(context);
   const periods = new Map(courses.map(course => [course.academicPeriodId, course.academicPeriodName]));
+  const sections = new Map(courses.map(course => [course.sectionId,course.sectionName]));
   return {query, scopeCount:courses.length, ...pageFacultyCourseList(courses,query),
-    periods:[...periods].map(([id,name]) => ({id,name}))};
+    periods:[...periods].map(([id,name]) => ({id,name})),
+    sections:[...sections].map(([id,name])=>({id,name,count:courses.filter(course=>course.sectionId===id).length}))};
 }
