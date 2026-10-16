@@ -25,8 +25,10 @@ export function ProjectMentorReassignment({
   collegeId,
   workspaces,
   mentors,
+  matchingWorkspaces,
 }: {
   collegeId: string;
+  matchingWorkspaces: { id: string; mentorMembershipId: string | null }[];
   workspaces: Workspace[];
   mentors: Mentor[];
 }) {
@@ -52,8 +54,9 @@ export function ProjectMentorReassignment({
     taskAssignmentClearingSupported: boolean;
   } | null>(null);
 
+  const selectedMentors = new Map(matchingWorkspaces.map(row => [row.id, row.mentorMembershipId]));
   const skippedSelection = selected.filter(projectId =>
-    workspaces.some(row => row.id === projectId && row.mentorMembershipId === mentorMembershipId)
+    selectedMentors.get(projectId) === mentorMembershipId
   );
   const actionableSelection = selected.filter(projectId => !skippedSelection.includes(projectId));
 
@@ -101,24 +104,32 @@ export function ProjectMentorReassignment({
     setPending(true);
     setResult(null);
     try {
-      const response = (await projectMutation(
-        "/api/projects/reassign-mentor",
-        "POST",
-        {
-          collegeId,
-          projectIds: actionableSelection,
-          mentorMembershipId,
-          roleLabel,
-        },
-      )) as {
-        reassignedCount: number;
-        skippedCount: number;
-        failures: {
-          projectId: string;
-          code: string;
-        }[];
-        taskAssignmentClearingSupported: boolean;
+      const response = {
+        reassignedCount: 0,
+        skippedCount: skippedSelection.length,
+        failures: [] as { projectId: string; code: string }[],
+        taskAssignmentClearingSupported: true,
       };
+      for (let offset = 0; offset < actionableSelection.length; offset += 100) {
+        const chunk = actionableSelection.slice(offset, offset + 100);
+        try {
+          const partial = (await projectMutation("/api/projects/reassign-mentor", "POST", {
+            collegeId, projectIds: chunk, mentorMembershipId, roleLabel,
+          })) as {
+            reassignedCount: number; skippedCount: number;
+            failures: { projectId: string; code: string }[];
+            taskAssignmentClearingSupported: boolean;
+          };
+          response.reassignedCount += partial.reassignedCount;
+          response.skippedCount += partial.skippedCount;
+          response.failures.push(...partial.failures);
+          response.taskAssignmentClearingSupported &&= partial.taskAssignmentClearingSupported;
+        } catch {
+          response.failures.push(...chunk.map(projectId => ({
+            projectId, code: "PROJECT_REASSIGNMENT_FAILED",
+          })));
+        }
+      }
       setResult(response);
       if (response.reassignedCount > 0) {
         showToast({
@@ -163,6 +174,19 @@ export function ProjectMentorReassignment({
         <h2 className="m-0 text-base font-semibold text-foreground">
           Select workspaces
         </h2>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <button type="button" disabled={pending || !matchingWorkspaces.length}
+            onClick={() => setSelected(matchingWorkspaces.map(row => row.id))}
+            className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
+            Select all {matchingWorkspaces.length} matching workspaces
+          </button>
+          <button type="button" disabled={pending || !selected.length}
+            onClick={() => setSelected([])}
+            className="rounded-md border border-border px-3 py-2 text-sm font-semibold">
+            Clear selection
+          </button>
+          <span className="text-sm text-body">{selected.length} selected across pages</span>
+        </div>
         {!workspaces.length ? (
           <p className="mb-0 mt-3 text-sm text-muted-foreground">
             No non-archived workspaces are available.
