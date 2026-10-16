@@ -41,12 +41,12 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
       </div>
       <p className="mt-1 break-all text-sm text-body">{row.fromAddress}</p>
       <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-      <button type="button" onClick={()=>setSelected(row)}
+      <button type="button" onClick={()=>{setMessage("");setSelected(row);}}
        className="mt-3 min-h-10 rounded-md border border-border px-4 text-sm font-semibold">Read message</button>
     </article>)}
    </div>}
   {selected?<Drawer open onOpenChange={open=>{if(!open)setSelected(null)}} title={selected.subject||"(No subject)"}
-    description="Private inbound message · read-only">
+    description="Private inbound message">
     <dl className="grid min-w-0 gap-3 text-sm">
      <div><dt className="font-semibold">From</dt><dd className="m-0 break-all">{selected.fromAddress}</dd></div>
      <div><dt className="font-semibold">To</dt><dd className="m-0 break-all">{selected.toAddress}</dd></div>
