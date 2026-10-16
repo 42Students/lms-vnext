@@ -10,6 +10,7 @@ export const TPO_LEAD_CSV_HEADERS = [
 export const confirmedTpoLeadImportSchema = z.object({
   confirmed: z.literal(true),
   csv: z.string().min(1).max(TPO_LEAD_CSV_MAX_CHARACTERS),
+  skipRows:z.array(z.number().int().min(2).max(TPO_LEAD_CSV_MAX_ROWS+1)).max(TPO_LEAD_CSV_MAX_ROWS).optional(),
 }).strict();
 
 export const tpoLeadCsvRowSchema = z.object({
@@ -40,7 +41,7 @@ export type TpoLeadCsvPreviewRow = {
 
 export type TpoLeadImportRowResult = {
   row: number;
-  status: "created" | "duplicate" | "invalid";
+  status: "created" | "duplicate" | "invalid" | "skipped";
   reason: string | null;
   leadId: string | null;
 };
@@ -132,9 +133,8 @@ export function previewTpoLeadCsv(csv: string) {
    designation:"designation",title:"designation",source:"source",foundThrough:"source",
   };
   const normalized=header?.map(value=>headerAliases[value]??"");
-  if(!normalized||normalized.length!==TPO_LEAD_CSV_HEADERS.length||
-   new Set(normalized).size!==TPO_LEAD_CSV_HEADERS.length||
-   TPO_LEAD_CSV_HEADERS.some(expected=>!normalized.includes(expected))){
+  if(!normalized||TPO_LEAD_CSV_HEADERS.some(expected=>
+   normalized.filter(actual=>actual===expected).length!==1)){
     throw new Error("CSV_HEADER_MISMATCH");
   }
   const column=(cells:string[],key:(typeof TPO_LEAD_CSV_HEADERS)[number])=>
@@ -143,8 +143,8 @@ export function previewTpoLeadCsv(csv: string) {
   const rows: TpoLeadCsvPreviewRow[] = records.slice(1).map((cells, index) => {
     const row = index + 2;
     const name = column(cells,"name").trim();
-    if (cells.length !== TPO_LEAD_CSV_HEADERS.length) {
-      return { row, name, lead: null, error: "Expected exactly six columns" };
+    if (cells.length !== header.length) {
+      return { row, name, lead: null, error: "The row has a different number of columns than the headings" };
     }
     const value = {
       name: column(cells,"name"),
@@ -165,6 +165,7 @@ export function previewTpoLeadCsv(csv: string) {
   });
   return {
     rows,
+    ignoredHeaders:header.filter((_,index)=>!normalized[index]),
     total: rows.length,
     valid: rows.filter(row => row.lead !== null).length,
     invalid: rows.filter(row => row.lead === null).length,
@@ -177,5 +178,6 @@ export function summarizeTpoLeadImport(rows: readonly TpoLeadImportRowResult[]) 
     created: rows.filter(row => row.status === "created").length,
     duplicate: rows.filter(row => row.status === "duplicate").length,
     invalid: rows.filter(row => row.status === "invalid").length,
+    skipped: rows.filter(row=>row.status==="skipped").length,
   };
 }
