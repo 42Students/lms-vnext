@@ -13,6 +13,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
+  membershipRoles,
   placementApplicationRoundExceptions,
   placementApplications,
   placementApplicationScreenings,
@@ -494,7 +495,7 @@ export async function createPlacementRequest(
 
     if (!request) return null;
 
-    await recordActivityEventInTransaction(
+    const submittedEvent = await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -525,6 +526,30 @@ export async function createPlacementRequest(
           `placement-request:${request.id}:submitted`,
       },
     );
+
+    // Notify active placement-cell members as part of the request transaction.
+    const tpoRecipients = await tx.select({ userId: collegeMemberships.userId })
+      .from(collegeMemberships)
+      .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .where(and(
+        eq(collegeMemberships.collegeId, current.job.collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+        eq(membershipRoles.role, "TPO"),
+        eq(users.platformStatus, "ACTIVE"),
+      ));
+    const distinctRecipients = [...new Set(tpoRecipients.map(row => row.userId))];
+    for (let index = 0; index < distinctRecipients.length; index += 200) {
+      await tx.insert(inAppNotifications).values(
+        distinctRecipients.slice(index, index + 200).map(userId => ({
+          userId,
+          eventId: submittedEvent.id,
+          title: "New " + input.requestType.toLowerCase().replaceAll("_", " ") + " request",
+          body: "A learner has requested a decision for " + current.roleOption.title + ".",
+          actionHref: "/tpo/requests",
+        })),
+      ).onConflictDoNothing();
+    }
 
     return request;
   });
