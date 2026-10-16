@@ -729,6 +729,13 @@
       "when": 1792163893256,
       "tag": "0103_tpo_campaign_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 104,
+      "version": "7",
+      "when": 1792163937202,
+      "tag": "0104_placement_recruiter_public_contacts",
+      "breakpoints": true
     }
   ]
 }
