@@ -214,7 +214,13 @@ export async function requestProjectMeeting(
     });
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,
-      roles:["MENTOR","LEARNER"],exceptUserId:context.user.id,
+      roles:["MENTOR"],exceptUserId:context.user.id,
+      title:"Meeting requested",body:"A meeting has been requested for your project.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["LEARNER"],exceptUserId:context.user.id,
       title:"Meeting requested",body:"A meeting has been requested for your project.",
       actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
     });
@@ -443,12 +449,15 @@ export async function transitionProjectMeeting(
     metadata:{projectId:scope.project.id,meetingId:cancelled.id,status:"CANCELLED"},
     groupKey:"project:"+scope.project.id+":meetings",
   });
-  await notifyActiveProjectMembers(tx,event.id,{
-    projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER","MENTOR"],
-    exceptUserId:context.user.id,
-    title:"Project meeting",body:"A project meeting has been cancelled.",
-    actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
-  });
+  for (const role of ["LEARNER","MENTOR"] as const) {
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,roles:[role],
+      exceptUserId:context.user.id,
+      title:"Project meeting",body:"A project meeting has been cancelled.",
+      actionHref:(role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+
+        scope.project.id+"?tab=meetings",
+    });
+  }
   return cancelled;
   });
 }
