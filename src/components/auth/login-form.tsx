@@ -18,6 +18,7 @@ type StartResult = {
 };
 
 const RESEND_SECONDS = 30;
+const EMAIL_RESEND_SECONDS = 60;
 const ATTEMPT_KEY = "42lms-login-attempt-v1";
 type SavedAttempt = { attempt: StartResult; expiresAt: number; nextResendAt: number };
 function saveLoginAttempt(value: SavedAttempt | null) {
@@ -113,6 +114,7 @@ export function LoginForm({
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
+  const [emailCooldown, setEmailCooldown] = useState(0);
 
   useEffect(() => {
     const stored = loadLoginAttempt();
@@ -128,6 +130,12 @@ export function LoginForm({
     const timer = setTimeout(() => setCooldown((value) => value - 1), 1000);
     return () => clearTimeout(timer);
   }, [cooldown]);
+
+  useEffect(() => {
+    if(emailCooldown<=0)return;
+    const timer=setTimeout(()=>setEmailCooldown(value=>Math.max(0,value-1)),1000);
+    return ()=>clearTimeout(timer);
+  },[emailCooldown]);
 
   function fail(errorCode: string | undefined) {
     const known = errorCode ? ERROR_MESSAGES[errorCode] : undefined;
@@ -222,7 +230,8 @@ export function LoginForm({
         { attemptId: attempt.attemptId },
       );
       if (!result.ok) return fail((result.data as { error?: string }).error);
-      setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}.`);
+      setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 15 minutes.`);
+      setEmailCooldown(EMAIL_RESEND_SECONDS);
       setCooldown(RESEND_SECONDS);
       if (attempt) saveLoginAttempt({
         attempt,
@@ -463,10 +472,10 @@ export function LoginForm({
               <button
                 type="button"
                 onClick={() => void sendEmailCode()}
-                disabled={busy || cooldown > 0}
+                disabled={busy || emailCooldown > 0}
                 className="font-medium text-primary-text underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
               >
-                Email me the code instead
+                {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Email me the code instead"}
               </button>
             ) : null}
           </div>
