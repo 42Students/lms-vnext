@@ -102,7 +102,7 @@ export function LearnerJobsBrowse({
               value={search}
               maxLength={100}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search opportunities…"
+              placeholder="Search by title, company, location…"
               className={selectClass}
             />
           </label>
@@ -133,7 +133,7 @@ export function LearnerJobsBrowse({
           {([
             ["all","All published"],
             ["open","Open to apply"],
-            ["not-open","Not open to apply"],
+            ["not-open","Not open to you"],
             ["closed","Deadline passed"],
           ] as const).map(([key,label])=>(
             <button type="button" key={key} aria-pressed={filters.availability===key}
@@ -175,8 +175,8 @@ export function LearnerJobsBrowse({
               onChange={(event) => updateQuery({ sort: event.target.value })}
               className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
               <option value="deadline">Deadline soonest</option>
-              <option value="newest">Newest published</option>
-              <option value="ctc">Highest CTC</option>
+              <option value="newest">Newest first</option>
+              <option value="ctc">Highest pay</option>
               <option value="title">Role A–Z</option>
             </select>
           </label>
