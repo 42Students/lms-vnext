@@ -151,6 +151,10 @@ export function RecruiterLeadsWorkspace({
   const [view, setView] = useState<"table" | "board" | "companies">(initialView);
   const [companies, setCompanies] = useState<CompanySummary[]>([]);
   const [companySearch,setCompanySearch]=useState("");
+  const [communication,setCommunication]=useState<Record<string,string>>({});
+  const [communicationReady,setCommunicationReady]=useState(false);
+  const [communicationError,setCommunicationError]=useState("");
+  const [companyCommunicationFilter,setCompanyCommunicationFilter]=useState("ALL");
   const [companyContacts,setCompanyContacts]=useState("ALL");
   const [companyHistory,setCompanyHistory]=useState("ALL");
   const [companyAliases,setCompanyAliases]=useState(false);
@@ -226,6 +230,16 @@ export function RecruiterLeadsWorkspace({
       }
       if (signal?.aborted) return;
       setCompanies(Array.isArray(data.companies) ? data.companies : []);
+      try{
+       const states=await fetch("/api/placements/tpo/companies/communication",{
+        cache:"no-store",credentials:"same-origin",signal,
+       });
+       if(states.ok){
+        const snapshot=await states.json() as {ready:boolean;items:{company_key:string;status:string}[]};
+        setCommunicationReady(snapshot.ready);
+        setCommunication(Object.fromEntries((snapshot.items??[]).map(x=>[x.company_key,x.status])));
+       }else setCommunicationReady(false);
+      }catch{if(!signal?.aborted)setCommunicationReady(false);}
       setCompaniesPhase("ready");
     } catch {
       if (signal?.aborted) return;
@@ -244,6 +258,22 @@ export function RecruiterLeadsWorkspace({
     };
   }, [view, loadCompanies]);
 
+  async function changeCompanyCommunication(key:string,status:string){
+    if(!communicationReady)return;
+    setCommunicationError("");
+    const previous=communication[key];
+    setCommunication(current=>({...current,[key]:status}));
+    try{
+     const response=await fetch("/api/placements/tpo/companies/communication",{
+      method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({key,status}),
+     });
+     if(!response.ok)throw new Error("Couldn't save");
+    }catch{
+     setCommunication(current=>({...current,[key]:previous??"NOT_CONTACTED"}));
+     setCommunicationError("Couldn't save. Retry this company status.");
+    }
+  }
   const visibleCompanies=useMemo(()=>companies.filter(company=>{
     const needle=companySearch.trim().toLowerCase();
     if(needle&&!([company.name,...(company.people??[]).map(person=>person.name)]
@@ -253,8 +283,10 @@ export function RecruiterLeadsWorkspace({
     if(companyHistory==="HAS"&&company.drivesRan===0)return false;
     if(companyHistory==="NONE"&&company.drivesRan>0)return false;
     if(companyAliases&&company.aliases.length===0)return false;
+    if(companyCommunicationFilter!=="ALL"&&
+      (communication[company.key]??"NOT_CONTACTED")!==companyCommunicationFilter)return false;
     return true;
-  }),[companies,companySearch,companyContacts,companyHistory,companyAliases]);
+  }),[companies,companySearch,companyContacts,companyHistory,companyAliases,companyCommunicationFilter,communication]);
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
