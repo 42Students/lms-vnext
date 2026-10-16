@@ -45,7 +45,11 @@ export function sortTpoRequestRows<T extends {id:string;requestedAt:Date;status?
    const diff=rank(a)-rank(b);
    if(diff!==0)return diff;
    const left=a.nextRoundAt?.getTime(),right=b.nextRoundAt?.getTime();
-   if(rank(a)===0&&left!==undefined&&right!==undefined&&left!==right)return left-right;
+   if(rank(a)===0){
+    if(left!==undefined&&right!==undefined&&left!==right)return left-right;
+    if(left!==undefined&&right===undefined)return -1;
+    if(left===undefined&&right!==undefined)return 1;
+   }
    return a.requestedAt.getTime()-b.requestedAt.getTime()||a.id.localeCompare(b.id);
   });
  }
