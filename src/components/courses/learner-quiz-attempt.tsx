@@ -237,6 +237,7 @@ export function LearnerQuizAttempt() {
   }
 
   function leaveQuiz() {
+    if(attemptable && !window.confirm("Are you sure you want to cancel this quiz? Your unsent answers will remain in this browser, but this attempt has not been submitted."))return;
     if (
       typeof window !== "undefined" &&
       window.history.length > 1
@@ -536,7 +537,9 @@ export function LearnerQuizAttempt() {
           <div className="mt-7 flex flex-wrap justify-between gap-2">
             <Button variant="secondary" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>
             {step < questions.length - 1 ? (
-              <Button onClick={() => setStep((value) => Math.min(questions.length - 1, value + 1))}>Next</Button>
+              <Button disabled={!current || (answers[current.id]??[]).length===0}
+                title={!current || (answers[current.id]??[]).length===0?"Answer this question or use the question numbers to skip.":undefined}
+                onClick={() => setStep((value) => Math.min(questions.length - 1, value + 1))}>Next</Button>
             ) : (
               <Button disabled={submitting} onClick={() => void submit()}>{submitting ? "Submitting…" : "Submit"}</Button>
             )}
