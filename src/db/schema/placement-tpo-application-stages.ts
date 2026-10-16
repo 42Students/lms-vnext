@@ -1,5 +1,4 @@
-/** Proposed durable applicant progression within a college-scoped hiring drive.
- * Registered migration is required before any stage actions become available. */
+/** Registered in migration 0108: durable applicant progression in a college drive. */
 import {sql} from "drizzle-orm";
 import {check,foreignKey,index,integer,pgTable,timestamp,uuid,varchar} from "drizzle-orm/pg-core";
 import {placementApplications,placementJobs,placementJobRounds} from "./placements";
