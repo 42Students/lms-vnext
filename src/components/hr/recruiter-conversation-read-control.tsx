@@ -1,11 +1,23 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 export function RecruiterConversationReadControl({threadId}:{threadId:string}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
  const [notice,setNotice]=useState("");
+ const acknowledgedOnOpen=useRef(false);
+ useEffect(()=>{
+  if(acknowledgedOnOpen.current)return;
+  acknowledgedOnOpen.current=true;
+  // The GET stays read-only. An explicit client POST acknowledges when opened.
+  void fetch("/api/placements/recruiter/conversations/"+encodeURIComponent(threadId)+"/acknowledge",{
+    method:"POST",credentials:"same-origin",
+  }).then(response=>{
+    if(response.ok)router.refresh();
+    else setNotice("Read status could not be saved. Use the button below to retry.");
+  }).catch(()=>setNotice("Read status could not be saved. Use the button below to retry."));
+ },[threadId,router]);
  async function acknowledge(){
   if(busy)return;
   setBusy(true);
