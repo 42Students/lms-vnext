@@ -444,10 +444,22 @@ export async function listVisibleAnnouncementsForMembership(
     )!);
   }
 
+  const schemaCheck=await getDb().execute<{audiences:boolean;recipients:boolean}>(sql`
+   select to_regclass('public.placement_tpo_notice_audiences') is not null as audiences,
+    to_regclass('public.placement_tpo_notice_recipients') is not null as recipients`);
+  if(schemaCheck.rows[0]?.audiences&&!schemaCheck.rows[0]?.recipients)return [];
+  const targetedGuard=schemaCheck.rows[0]?.audiences?sql`
+   (not exists(select 1 from placement_tpo_notice_audiences ta
+      where ta.announcement_id=${db10Announcements.id})
+    or exists(select 1 from placement_tpo_notice_recipients tr
+      where tr.announcement_id=${db10Announcements.id}
+       and tr.membership_id=${membership.id}::uuid))`:undefined;
+
   return getDb()
     .select()
     .from(db10Announcements)
     .where(and(
+      targetedGuard,
       eq(db10Announcements.collegeId, membership.collegeId),
       isNull(db10Announcements.deletedAt),
       or(isNull(db10Announcements.scheduledAt), lt(db10Announcements.scheduledAt, now), eq(db10Announcements.scheduledAt, now)),
