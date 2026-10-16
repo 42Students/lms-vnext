@@ -6,7 +6,10 @@ export const facultyLiveMutationParamsSchema=z.object({
 const httpsMeeting=z.string().url().max(1200).refine(value=>{
   try {
     const parsed=new URL(value);
-    return parsed.protocol==="https:" && !!parsed.hostname &&
+    const allowed=["zoom.us","teams.microsoft.com","meet.google.com","webex.com","whereby.com"];
+    const host=parsed.hostname.toLowerCase();
+    return allowed.some(domain=>host===domain||host.endsWith("."+domain)) &&
+      parsed.protocol==="https:" && !!parsed.hostname &&
       !parsed.username && !parsed.password &&
       parsed.hostname!=="localhost" && !parsed.hostname.endsWith(".localhost");
   }catch{return false;}
@@ -31,14 +34,19 @@ export const facultyLiveMutationSchema=z.discriminatedUnion("action",[
     expectedUpdatedAt:time,confirm:z.literal(true),
   }).strict(),
 ]).superRefine((data,ctx)=>{
-  if(data.action!=="CANCEL" && new Date(data.endsAt)<=new Date(data.startsAt))
-    ctx.addIssue({code:"custom",path:["endsAt"],message:"End must follow start"});
+  if(data.action==="CANCEL")return;
+  const starts=new Date(data.startsAt),ends=new Date(data.endsAt);
+  if(ends<=starts)ctx.addIssue({code:"custom",path:["endsAt"],message:"End time must be after start time"});
+  if(ends.getTime()-starts.getTime()>12*60*60*1000)
+    ctx.addIssue({code:"custom",path:["endsAt"],message:"A live class can be at most 12 hours. Check the end date and AM/PM."});
+  if(data.action==="CREATE"&&starts.getTime()<=Date.now())
+    ctx.addIssue({code:"custom",path:["startsAt"],message:"Start time must be in the future."});
 });
 export function facultyLiveWindow(when:{startsAt:string;endsAt:string},
   period:{startDate:string;endDate:string}) {
   const start=new Date(when.startsAt),end=new Date(when.endsAt);
-  const lo=Date.parse(period.startDate+"T00:00:00+05:30");
-  const hi=Date.parse(period.endDate+"T00:00:00+05:30")+86400000;
-  return Number.isFinite(start.getTime())&&Number.isFinite(end.getTime())&&
-    end>start && start.getTime()>=lo && end.getTime()<=hi;
+  // Keep period as metadata; legacy live scheduling is not restricted by
+  // academic period dates, which may be unset while classes are planned.
+  void period;
+  return Number.isFinite(start.getTime())&&Number.isFinite(end.getTime())&&end>start;
 }
