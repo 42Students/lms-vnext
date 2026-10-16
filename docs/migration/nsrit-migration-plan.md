@@ -443,3 +443,70 @@ Unverified items (I did not read legacy Java for every rule): exact shape of `le
 ## 8. Stage 1 update (2026-10-16): schema prerequisites
 
 See `nsrit-schema-prereqs.md` for the full need table. Now REAL in `drizzle/`: 0096 offer/role-option pay breakdown (typed nullable columns), 0097 `data_import_batches` + college-scoped `legacy_id_map` (batch id, source hash, same-college composite FK, RUNNING-batch guard), 0098 section min size/description, progress first completion/attempt, submission attempt/previous points, quiz shuffle flags. Migrations 0080-0095 (landed after this plan was written) also closed several section 4 items (project task/resource/delivery fields, recruiter grant validity, external offers, TPO email campaigns). Section 4A staged tables (lesson content settings/materials/sequences, course display facets, learner profile children, project audit tables) are intentionally NOT registered: profile detail goes to `profile_document`, audit history is skipped, and the remainder is a documented fidelity loss. Remaining gaps are listed in section 3 of the prereqs doc. The ETL has not been started. Migrations 0000-0098 apply cleanly on a fresh local Postgres.
+
+---------------------------------------------------------------------------
+
+## 9. Stage 2a update (2026-10-16): foundation and people loader (dry-run and local rehearsal only)
+
+Code: `scripts/migrate/nsrit/` (export, loader, planner, guards, reports). Tests: `tests/unit/nsrit-migration-*.test.ts` (synthetic data only). Nothing has been run against the vNext dev cluster database; stage 2a was rehearsed only on a disposable local Postgres. Output of every run (snapshot, reports) stays outside the repository (a scratchpad or other private directory; `.gitignore` also blocks `scripts/migrate/nsrit/snapshot|reports`).
+
+### 9.1 What stage 2a loads
+
+Owner defaults (decision item 14) applied: college 6 only, real data only, IST naive times converted to UTC, no hosts (`tenant_domains` left out per Q8), no photos, no Aadhaar/PAN, no OTP/verification tables, no outbox.
+
+| vNext table | Legacy source | NSRIT rows in snapshot -> loaded (rehearsal) |
+| --- | --- | --- |
+| `organizations`, `colleges` | `organization`, `college` (code = `unique_id`) | 1 -> 1, 1 -> 1 |
+| `departments` | `department` | 80 -> 4 |
+| `programs` | `new_program` (not legacy `program`); `duration_terms` = years x 2, raised to the highest legacy term | 8 -> 3 |
+| `academic_periods` (derived) | distinct `batch.academic_year`, 1 July to 30 June; closed periods block cohorts and sections in vNext, so past years load ACTIVE | derived 2 |
+| `cohorts` (+ progression state by trigger) | `batch` | 3 -> 3 |
+| `sections` | `class` where `class_type = SECTION`; `upper_limit` 0 = unlimited (null capacity), `lower_limit` -> `min_size` | 27 -> 3 (6 elective-backed deferred, rest test data) |
+| `program_terms` | `semester` | 5 -> 4 |
+| `lecture_halls` | `lecture_hall` (`room_type` ordinal -> enum) | 47 -> 1 |
+| `users`, `college_memberships`, `membership_roles` | `learner` (LEARNER), `faculty` (FACULTY + COLLEGE_ADMIN / MENTOR / TPO from the ordinal; employment type or title for the rest) | 151 learners -> 148, 11 faculty -> 5 |
+| `learner_profiles` | `learner` + `qualification`: roll number, `unique_id` as registration number, `profile_document` jsonb in the vNext profile schema (education from `qualification`, skills, hobbies, links, address, certifications, achievements, languages, projects, experiences; identity numbers always empty) | 148 profiles; 10 education entries |
+| `faculty_profiles` | `faculty` (primary department, employment type, title) | 5 |
+| `learner_program_enrollments`, `section_enrollments` | `learner.class_id` -> section -> cohort -> program | 148, 148 |
+| `data_import_batches`, `legacy_id_map` | provenance for every mapped row | 777 map rows |
+
+Identity rules: `identity_uid = legacy:<learner|faculty>:<id>`, phone = E.164 `+91` + last 10 digits, e-mail lower-cased, display name = first + last. Soft-deleted people and rows with unusable phone and no e-mail are rejected. Suspended people load as SUSPENDED memberships.
+
+Real-data-only rules (documented in `filters.ts`, nine named rules): E2E tokens, whole-word test/testing/dummy/sample/probe/demo/smoke/qa, audit-fix and slot-cap elective smoke names, HTML or script payloads, 8+ repeated characters, names over 120 characters, a reviewed list of placeholder names, reserved or test e-mail domains (example.*, testing.com, test.com, student.com, mailinator.com, .test and similar), test-token e-mail local parts, and soft delete. Free-text descriptions are NOT screened (a real cohort description may say "demo").
+
+Rejections on the NSRIT snapshot: departments 76 (66 E2E, 7 repeated characters, 2 soft deleted, 1 placeholder), programs 5 (4 E2E, 1 duplicate AIML), semesters 1 (parent rejected), classes 18 test data + 6 deferred, lecture halls 46, learners 3 (2 reserved e-mail domain, 1 placeholder name), faculty 6 (4 E2E name, 1 reserved domain, 1 test-word name), recruiters 2 (test names). Note: the single NSRIT faculty of type TPO matched a test-name rule and was rejected, so the rehearsal has no TPO account; the owner should name a real TPO account if one exists.
+
+Shared contacts: the review list covers every account in scope (including rejected test accounts). It found 1 group (one loaded faculty account sharing a phone with a rejected test learner and a rejected test recruiter), so nothing was blocked on the real data; the loader logic (oldest account loaded, later ones `BLOCKED_DUPLICATE`, no merge, plus `BLOCKED_DUPLICATE_EXISTING` for contacts already held by users the loader does not own) is unit tested.
+
+### 9.2 How to run
+
+```
+# 1. Export (needs the legacy MySQL copy; start only mysqld on 3310, read-only, stop it afterwards)
+tsx scripts/migrate/nsrit/export.ts --out=<private snapshot dir>
+
+# 2. Dry run (default): everything inside one transaction that is rolled back
+DATABASE_URL=postgresql://...@127.0.0.1:.../<db> tsx scripts/migrate/nsrit/load.ts --snapshot=<dir>
+
+# 3. Apply / rollback (require ALLOW_NSRIT_IMPORT=I_ACCEPT)
+tsx scripts/migrate/nsrit/load.ts --snapshot=<dir> --apply
+tsx scripts/migrate/nsrit/load.ts --snapshot=<dir> --rollback=<batch-id>
+```
+
+Reports (`--out`, default `<snapshot>/reports`): `reconciliation-<mode>-<time>.md/json`, `rejected-rows-report.md`, `contact-review-list.md/csv`. All contain counts, reason codes, legacy numeric ids and masked references only.
+
+Safety: the snapshot manifest (per-file sha256, row counts, overall digest) is verified before any connection; the target must be loopback unless `--allow-remote-dev` plus `ALLOW_NSRIT_REMOTE_DEV` are both set (never for production names); every write statement is checked against a table allowlist (no outbox, notification or messaging tables), covered by a static test; error text never echoes row values. Loader runs create a `data_import_batches` row (RUNNING, then COMPLETED or FAILED) and attach every mapped row in `legacy_id_map` with a source hash. Re-runs with the same snapshot are exact no-ops. `--rollback` deletes the rows mapped under a batch in reverse dependency order and marks the batch ROLLED_BACK; the organization and college rows are kept because batch rows reference the college (a later `--apply` reuses them). Rows updated by a later batch move to that batch, so roll back the batch that last touched them.
+
+### 9.3 Local rehearsal (disposable embedded Postgres, migrations 0000-0098)
+
+Export 6.5 s; dry-run 1.4 s load (7.6 s with process start); first apply 1.7 s (153 users, 777 map rows); second apply wrote nothing (every table `unchanged`, 0.5 s); rollback 2.6 s (all 777 map rows and the loaded rows removed, college kept); apply again 1.6 s with identical counts. Validation queries all passed (no row outside the NSRIT college, no membership without a role, no enrollment without a section enrollment, no duplicate roll numbers, mapped counts equal planned counts).
+
+### 9.4 What stage 2b still needs
+
+* Courses (`courses`, `course_offerings`, `course_section_deliveries`, learning paths, lessons, `lesson_contents`, `program_term_courses`) and teaching assignments (`course_teaching_assignments`, `section_faculty_assignments`): offering and delivery derivation per course and class.
+* Academics activity: schedule events, attendance (legacy stores only absentees: expand present learners for marked sessions), learner content progress, assignments and submissions (round points half up, see schema prerequisites 4.2), quizzes, questions, options, attempts, answers, announcements, classroom messages.
+* Electives: the 6 deferred elective-backed classes and their groups, slots and offerings (all current data is archived or smoke data; decide whether any is real).
+* Placements: companies and recruiter profiles (2 recruiters were rejected as test accounts, the loader reports accepted ones as deferred), grants, jobs, rounds, applications, screenings, offers (`bond_amount` stays null, see 4.1), seasons, registrations, eligibility, TPO collaboration.
+* Projects: workspaces, templates, sprints, tasks, members, resources, meetings, deliveries.
+* Notifications (learner in-app only, via synthesized `PLATFORM` activity events, never the outbox) and files (R2 dev prefix for keys, public video URLs kept). `resume_url` and `video_intro_url` are in the snapshot but not loaded.
+* Cohort progression: batches whose legacy `current_semester` is above 1 (1 of 3) load at term 1, because the vNext progression trigger only allows one-term promotions through its writer; advance them with the promotion workflow after review.
+* Before any run on the dev cluster: migrations through 0098 applied by the migrate Job, the `OUTBOUND_ALLOWLIST_ONLY` messaging switch in place (the real people now exist as contactable users), a database backup, and the owner's go-ahead for the dev target flags.
