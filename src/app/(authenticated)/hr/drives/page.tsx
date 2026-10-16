@@ -14,9 +14,18 @@ import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 
-type Params = { collegeId?: string | string[]; view?: string | string[]; q?: string | string[];
+type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
+function legacyDriveTab(value:string|undefined){
+ switch(value?.toLowerCase()){
+  case "all":return "ALL";
+  case "live":return "LIVE";
+  case "waiting":return "WAITING";
+  case "closed":return "CLOSED";
+  default:return undefined;
+ }
+}
 
 export default async function HrDrivesPage({ searchParams }: { searchParams: Promise<Params> }) {
   const context = await getCurrentRequestContext();
@@ -24,7 +33,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   const raw = await searchParams;
   const query = recruiterDriveListQuerySchema.safeParse({
     collegeId: first(raw.collegeId) || undefined,
-    view: first(raw.view) || undefined, q: first(raw.q) || undefined,
+    view: first(raw.view) || legacyDriveTab(first(raw.tab)), q: first(raw.q) || undefined,
     employment:first(raw.employment)||undefined,mode:first(raw.mode)||undefined,
     deadline:first(raw.deadline)||undefined,page:first(raw.page)||undefined,
     sort:first(raw.sort)||undefined,
