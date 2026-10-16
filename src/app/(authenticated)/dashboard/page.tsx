@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {getSuperAdminCollegeAtGlance} from "@/modules/colleges/admin-college-at-glance-service";
 import {CollegeAtGlancePanel} from "@/components/admin/college-at-glance-panel";
+import {getSuperAdminTodayBoard} from "@/modules/colleges/admin-today-attention-service";
+import {SuperAdminTodayBoard} from "@/components/admin/super-admin-today-board";
 import {
   CollegeAdminDashboardActions,
   SuperAdminGlobalDashboardActions,
@@ -101,6 +103,7 @@ async function SuperAdminDashboard({
 
   const glance=collegeId
     ?await getSuperAdminCollegeAtGlance(context,collegeId).catch(()=>null):null;
+  const today=collegeId?await getSuperAdminTodayBoard(context,collegeId).catch(()=>null):null;
   const scopeLabel = collegeId
     ? `College scope · ${colleges.find((item) => item.id === collegeId)?.name ?? "Selected college"}`
     : context.adminScope?.organizationId
@@ -149,6 +152,7 @@ async function SuperAdminDashboard({
         />
       </div>
       {collegeId?<CollegeAtGlancePanel collegeId={collegeId} initial={glance}/>:null}
+      {collegeId?<SuperAdminTodayBoard data={today}/>:null}
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Safety scope
