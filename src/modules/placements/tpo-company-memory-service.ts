@@ -61,23 +61,32 @@ export function tpoCompanyKey(name: string | null | undefined) {
 
 type LeadRow = typeof placementTpoLeads.$inferSelect;
 
-/**
- * T-S1-02: a recruiter contact inherits stage evidence only from drives
- * belonging to its explicit college-company relationship. Similar company
- * spellings and unrelated recruiters do not establish this recruiter's facts.
+/** TPO-recruiters-08: prefer an explicit company relationship. Only allow a
+ * name-based fallback when the normalized name maps to exactly one verified
+ * college-scoped relationship. Ambiguous names cannot grant hiring evidence.
  */
+export function resolveRecruiterLeadRelationship(
+ lead:{companyRelationshipId:string|null;companyName?:string|null},
+ jobs:readonly {relationshipId:string;companyName?:string|null}[],
+):string|null{
+ if(lead.companyRelationshipId)return lead.companyRelationshipId;
+ const key=tpoCompanyKey(lead.companyName);
+ if(!key)return null;
+ const matches=new Set(jobs.filter(row=>tpoCompanyKey(row.companyName)===key)
+   .map(row=>row.relationshipId));
+ return matches.size===1?[...matches][0]:null;
+}
+
+/** Strictly college-scoped facts only; relationship association is checked first. */
 export function deriveOwnRecruiterLeadStage(
   lead: Pick<LeadRow, "manualStage" | "recruiterUserId" |
-    "inviteSentAt" | "inviteClickedAt" | "companyRelationshipId">,
-  jobs: readonly { jobId: string; relationshipId: string }[],
+    "inviteSentAt" | "inviteClickedAt" | "companyRelationshipId"> & {companyName?:string|null},
+  jobs: readonly { jobId: string; relationshipId: string;companyName?:string|null }[],
   driveRows: readonly DriveFactRow[],
 ) {
-  const ownJobIds = new Set(
-    lead.companyRelationshipId
-      ? jobs.filter((job) => job.relationshipId === lead.companyRelationshipId)
-          .map((job) => job.jobId)
-      : [],
-  );
+  const relationshipId=resolveRecruiterLeadRelationship(lead,jobs);
+  const ownJobIds=new Set(relationshipId?
+    jobs.filter(row=>row.relationshipId===relationshipId).map(row=>row.jobId):[]);
   const facts = deriveCompanyDriveFacts(
     driveRows.filter((row) => ownJobIds.has(row.jobId)),
   );
@@ -177,7 +186,7 @@ export async function getTpoRecruiterLeadStages(
 ): Promise<Map<string, ReturnType<typeof deriveTpoRecruiterLeadStage>>> {
   const source = await loadCompanySourceRows(context, rawCollegeId);
   const jobs = source.jobs.map(row => ({
-    jobId: row.job.id, relationshipId: row.relationshipId,
+    jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
   }));
   const driveRows = await loadDriveFacts(jobs.map(row => row.jobId));
   return new Map(source.leads.map(lead => [
@@ -241,7 +250,7 @@ export async function listTpoCompanies(
     const driveRows = await loadDriveFacts(group.jobs.map((row) => row.job.id));
     const facts = deriveCompanyDriveFacts(driveRows);
     const linkedJobs = group.jobs.map((row) => ({
-      jobId: row.job.id, relationshipId: row.relationshipId,
+      jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
     }));
     out.push({
       key: group.key,
@@ -282,7 +291,7 @@ export async function getTpoCompanyMemory(
   const driveRows = await loadDriveFacts(jobIds);
   const facts = deriveCompanyDriveFacts(driveRows);
   const linkedJobs = group.jobs.map((row) => ({
-    jobId: row.job.id, relationshipId: row.relationshipId,
+    jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
   }));
   const linkedRelationshipId=group.leads.find(lead=>lead.companyRelationshipId)?.companyRelationshipId;
   const [relatedCompany]=linkedRelationshipId?await getDb().select({
