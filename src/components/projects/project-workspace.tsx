@@ -431,6 +431,18 @@ export function ProjectWorkspace({
               </ul>
             </section>
           </div>:null}
+          {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 rounded-lg border border-border p-3">
+            <h3 className="font-semibold">Task progress</h3>
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+              {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
+                <div key={lane.id} className="rounded-lg bg-muted p-2 text-center">
+                  <p className="text-xl font-bold tabular-nums">{lane.tasks.length}</p>
+                  <p className="text-xs text-body">{lane.label}</p>
+                </div>)}
+            </div>
+            <p className="mt-2 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
+              {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>
+          </section>:null}
           {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-lg border border-border p-3">
             <h3 className="font-semibold text-foreground">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
