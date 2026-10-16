@@ -12,8 +12,13 @@ type Lead = {
   emailNorm: string | null;
   phoneNorm: string | null;
   companyName: string | null;
+  companyRelationshipId:string|null;
   source: string | null;
   manualStage: string;
+  stage: string;
+  ownerName: string|null;
+  inviteStatus: string;
+  recruiterLastLoginAt: string|null;
   notNowReason: string | null;
   notNowUntil: string | null;
   inviteSentAt: string | null;
@@ -240,6 +245,10 @@ export function RecruiterLeadDetailWorkspace({
 
   async function createInviteLink() {
     if (!window.confirm("Create an invitation valid for 7 days? Any previous link will stop working.")) return;
+    if(!lead?.emailNorm||!lead.companyRelationshipId){
+      setActionError("Add a work email and link a company before inviting.");
+      return;
+    }
     setSaving(true);
     setActionError("");
     setInviteNotice("");
@@ -304,7 +313,11 @@ export function RecruiterLeadDetailWorkspace({
                 {lead.companyName || "Company not provided"}
                 {lead.designation ? " · " + lead.designation : ""}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.manualStage.replace("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.stage.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Invite: {lead.inviteStatus.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
+                formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button type="button" className={button} onClick={openEdit}>Edit details</button>
@@ -347,7 +360,7 @@ export function RecruiterLeadDetailWorkspace({
                   <button
                     type="button"
                     className={button}
-                    disabled={saving}
+                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId}
                     onClick={() => void createInviteLink()}
                   >
                     {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}

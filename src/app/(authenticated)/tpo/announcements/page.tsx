@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
+import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo-notice-audience-snapshot-model";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -60,6 +61,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <p className="mt-1 text-sm text-body">{audience.potentiallyVisibleMemberships} active memberships with active platform accounts.</p>
      <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. Publishing is still college-wide; this preview does not change recipients.</p>
    </div>:null}
+   {query.success&&!canPublishTpoNoticeWithCurrentStorage(query.data.audience)?
+    <p role="alert" className="mt-4 rounded-md border border-border p-3 text-sm">
+      Targeted announcement publishing is not ready. This audience preview cannot be published
+      until fixed recipient storage is registered. Choose COLLEGE only to publish to the whole college.
+    </p>:null}
    <form action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
     <label className="grid gap-1 text-sm font-semibold">Title
      <input name="title" required maxLength={255} className="min-h-11 rounded-md border border-border bg-surface px-3" />
