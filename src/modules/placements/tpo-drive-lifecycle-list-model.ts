@@ -9,6 +9,7 @@ export const tpoDriveLifecycleQuerySchema = z.object({
   minApplied:z.coerce.number().int().min(0).max(100000).optional(),
   minOffers:z.coerce.number().int().min(0).max(100000).optional(),
   payCategory:z.enum(["ALL","REGULAR","DREAM"]).default("ALL"),
+  attention:z.enum(["ALL","NO_APPLICANTS","NO_DEADLINE","DUE_SOON","OVERDUE"]).default("ALL"),
   sort:z.enum(["COMPANY","DEADLINE_ASC","DEADLINE_DESC"]).default("COMPANY"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
 }).strict();
