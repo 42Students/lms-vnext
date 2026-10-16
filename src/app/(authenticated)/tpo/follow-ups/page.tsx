@@ -1,3 +1,4 @@
+import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -22,7 +23,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
   const q=(Array.isArray(raw.q)?raw.q[0]:raw.q)?.trim().slice(0,100)??"";
   const inputPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
   const page=inputPage&&/^[1-9]\d{0,3}$/.test(inputPage)?Number(inputPage):1;
-  const ready = process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
+  const ready = await tpoCrmTablesReady();
   const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window,q,page}) : null;
   return (
     <div className="space-y-6">
