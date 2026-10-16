@@ -6,6 +6,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import {MentorTaskAllocation} from "@/components/projects/mentor-task-allocation";
 import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
+import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
+import {projectBacklogSchemaReady} from "@/modules/projects/mentor-backlog-service";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -108,9 +110,14 @@ export default async function MentorProjectPage({
           Recorded project activity →
         </Link>
       </div> : null}
-      {tab==="board"?<MentorLaneBoard projectId={projectId}
-        initialTasks={workspace.tasks} sprints={workspace.sprints} releases={workspace.releases}
-        members={workspace.members} readOnly={access.access==="OBSERVER"}/>:
+      {tab==="board"?<div className="space-y-5">
+        <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
+          sprints={workspace.sprints} ready={projectBacklogSchemaReady()}
+          readOnly={access.access==="OBSERVER"}/>
+        <MentorLaneBoard projectId={projectId}
+          initialTasks={workspace.tasks} sprints={workspace.sprints} releases={workspace.releases}
+          members={workspace.members} readOnly={access.access==="OBSERVER"}/>
+      </div>:
       tab==="performance"?<MentorTaskAllocation
         projectId={projectId} initialTasks={workspace.tasks}
         members={workspace.members} sprints={workspace.sprints} releases={workspace.releases}
