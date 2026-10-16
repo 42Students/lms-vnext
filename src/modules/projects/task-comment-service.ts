@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {projectInstances,projectTaskComments,projectTasks} from "@/db/schema";
+import {projectInstances,projectTaskComments,projectTasks,collegeMemberships,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
@@ -17,8 +17,16 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
  const [task]=await getDb().select({id:projectTasks.id}).from(projectTasks)
   .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,taskId))).limit(1);
  if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
- return getDb().select().from(projectTaskComments).where(and(
+ return getDb().select({
+   id:projectTaskComments.id,body:projectTaskComments.body,
+   authorMembershipId:projectTaskComments.authorMembershipId,
+   createdAt:projectTaskComments.createdAt,authorName:users.displayName,
+ }).from(projectTaskComments)
+ .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectTaskComments.authorMembershipId))
+ .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .where(and(
    eq(projectTaskComments.projectId,scope.project.id),eq(projectTaskComments.taskId,taskId),
+   eq(collegeMemberships.collegeId,scope.collegeId),
  )).orderBy(asc(projectTaskComments.createdAt),asc(projectTaskComments.id));
 }
 export async function postProjectTaskComment(context:RequestContext,projectId:string,taskIdInput:string,raw:unknown){
