@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];page?:string|string[] };
+type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -22,10 +22,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.workMode)?{workMode:first(params.workMode)}:{}),
     ...(first(params.employmentType)?{employmentType:first(params.employmentType)}:{}),
     ...(first(params.sort)?{sort:first(params.sort)}:{}),
+    ...(first(params.minApplied)?{minApplied:first(params.minApplied)}:{}),
+    ...(first(params.minOffers)?{minOffers:first(params.minOffers)}:{}),
+    ...(first(params.payCategory)?{payCategory:first(params.payCategory)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
+    payCategory:data.payCategory,
+    ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
+    ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
     workMode:data.workMode,employmentType:data.employmentType,
     sort:data.sort,page:String(data.page),
     ...(data.season?{seasonId:data.season.id}:{}),
@@ -37,7 +43,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
-   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,page,
+   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
+   ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
+   ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
   }};}
   return <div className="space-y-6">
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
@@ -88,6 +96,21 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="COMPANY">Company name</option><option value="DEADLINE_ASC">Earliest recorded deadline</option>
           <option value="DEADLINE_DESC">Latest recorded deadline</option>
+        </select>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. applied
+        <input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
+        <input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
+      <label className="min-w-36 flex-1 text-sm font-semibold text-body">Pay category
+        <select name="payCategory" defaultValue={data.payCategory}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="ALL">All categories</option><option value="REGULAR">Regular</option>
+          <option value="DREAM">Dream</option>
         </select>
       </label>
       <button type="submit" className="min-h-11 rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
