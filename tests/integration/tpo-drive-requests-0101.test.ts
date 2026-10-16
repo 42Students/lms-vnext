@@ -4,6 +4,7 @@ import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoDriveLifecycleList} from "@/modules/placements/tpo-drive-lifecycle-list-service";
+import {decideTpoRecruiterDriveRequest} from "@/modules/placements/tpo-drive-request-decision-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 
@@ -20,9 +21,18 @@ const tpo:RequestContext={
 };
 const fixture={company:randomUUID(),relationship:randomUUID(),request:randomUUID(),
   submission:randomUUID()};
+const jobs:string[]=[];
 async function cleanup(){
   if(!pool)return;
+  await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1)",[fixture.request]);
+  await pool.query("DELETE FROM activity_events WHERE subject_id=$1",[fixture.request]);
   await pool.query("DELETE FROM placement_recruiter_drive_requests WHERE id=$1",[fixture.request]);
+  for(const id of jobs){
+    await pool.query("DELETE FROM placement_job_eligibility_policies WHERE job_id=$1",[id]);
+    await pool.query("DELETE FROM placement_job_rounds WHERE job_id=$1",[id]);
+    await pool.query("DELETE FROM placement_job_role_options WHERE job_id=$1",[id]);
+    await pool.query("DELETE FROM placement_jobs WHERE id=$1",[id]);
+  }
   await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[fixture.relationship]);
   await pool.query("DELETE FROM placement_companies WHERE id=$1",[fixture.company]);
 }
@@ -57,6 +67,8 @@ describe.skipIf(!enabled)("TPO-drives-02 TPO-requests-verification-33 on registe
       [fixture.request],
     );
     const draft=await getTpoDriveLifecycleList(tpo,{view:"REQUESTS"});
-    expect(draft.requestRows.some(row=>row.id===fixture.request)).toBe(false);
+    expect(draft.requestRows).toEqual(expect.arrayContaining([
+      expect.objectContaining({id:fixture.request,status:"DRAFT"}),
+    ]));
   });
 });
