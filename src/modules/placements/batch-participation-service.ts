@@ -105,7 +105,8 @@ export class PlacementBatchError extends Error {
     | "DB08_ACTION_INVALID"
     | "DB08_DUPLICATE_SCOPE"
     | "DB08_ACCESS_DENIED"
-    | "DB08_AMBIGUOUS_ENROLLMENT") {
+    | "DB08_AMBIGUOUS_ENROLLMENT"
+    | "DB08_BATCH_FINISHED") {
     super(code);
     this.name = "PlacementBatchError";
   }
@@ -304,6 +305,14 @@ export async function decidePlacementParticipation(
 
   return getDb().transaction(async (tx) => {
     await lockCollege(tx, input.collegeId);
+    if (input.expectedCohortId) {
+      const [lifecycle] = await tx.select({ finishedAt: placementBatchLifecycles.finishedAt })
+        .from(placementBatchLifecycles)
+        .where(and(eq(placementBatchLifecycles.collegeId, input.collegeId),
+          eq(placementBatchLifecycles.cohortId, input.expectedCohortId)))
+        .limit(1);
+      if (lifecycle?.finishedAt) throw new PlacementBatchError("DB08_BATCH_FINISHED");
+    }
     let changedCount = 0;
     for (const item of changes) {
       await assertTargetCollege(tx, input.collegeId, item);
