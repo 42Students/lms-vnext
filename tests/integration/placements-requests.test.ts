@@ -328,6 +328,19 @@ describe("Placement learner requests and exceptions", () => {
       "APPROVED",
     );
 
+    // TPO-requests-verification-04: decision notice shares the update transaction.
+    const approvedNotices = await pool.query<{
+      title: string; body: string; action_href: string;
+    }>(
+      "select title,body,action_href from in_app_notifications where user_id=$1 and title=$2",
+      [SEED_IDS.learnerUser,"Your request was answered"],
+    );
+    expect(approvedNotices.rows).toContainEqual({
+      title:"Your request was answered",
+      body:"Your request was approved. Learner confirmed the withdrawal",
+      action_href:"/learn/my-placements/support",
+    });
+
     const applicationRow =
       await pool.query<{
         status: string;
