@@ -1,6 +1,8 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
+import {z} from "zod";
+import {normalizeAssignmentMethods} from "./assignment-submission-methods";
 import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assignmentSubmissions,courseAssignments,courseSectionDeliveries,
@@ -144,4 +146,24 @@ export async function commandFacultyAssignment(
       throw new CoursesServiceError("ASSIGNMENT_SEQUENCE_CONFLICT");
     throw error;
   }
+}
+
+/** Read a faculty-owned assignment's configured submission methods, never
+ * exposing assignment metadata from another teaching Section. */
+export async function getFacultyAssignmentMethods(
+ context:RequestContext,rawParams:unknown,assignmentIdInput:unknown,
+){
+ const {deliveryId}=facultyAssignmentParamsSchema.parse(rawParams);
+ const assignmentId=z.string().uuid().parse(assignmentIdInput);
+ const actor=await requireDeliveryContentMutation(context,deliveryId);
+ if(actor!=="FACULTY")throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+ const [row]=await getDb().select({
+  id:courseAssignments.id,
+  methods:sql<unknown>`allowed_submission_methods`,
+ }).from(courseAssignments).where(and(
+  eq(courseAssignments.id,assignmentId),
+  eq(courseAssignments.deliveryId,deliveryId),
+ )).limit(1);
+ if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+ return normalizeAssignmentMethods(row.methods);
 }
