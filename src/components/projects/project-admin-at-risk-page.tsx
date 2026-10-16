@@ -43,7 +43,9 @@ export async function ProjectAdminAtRiskPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
+  const bucket = one(searchParams.riskBucket);
   const query: ProjectAdminCollectionQuery = {
+    riskBucket: bucket === "STALLED" || bucket === "BLOCKER" || bucket === "REVIEW" ? bucket : undefined,
     q: one(searchParams.q),
     status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
     page: Number(one(searchParams.page) ?? 1),
@@ -76,6 +78,19 @@ export async function ProjectAdminAtRiskPage({
           so that separate signal is not counted.
         </section>
       ) : null}
+      <div className="grid gap-3 sm:grid-cols-3">
+        {([
+          ["Stalled", result.buckets.stalled, "STALLED"],
+          ["Active blocker", result.buckets.blocker, "BLOCKER"],
+          ["Pending review", result.buckets.review, "REVIEW"],
+        ] as const).map(([title, value, key]) =>
+          <Link key={key} href={basePath + "/at-risk?riskBucket=" + key}
+            className={"rounded-xl border bg-surface p-4 hover:border-primary " +
+              (query.riskBucket === key ? "border-primary" : "border-border")}>
+            <p className="text-sm font-semibold text-body">{title}</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
+          </Link>)}
+      </div>
       <ProjectAdminFilters query={query} />
 
       {!result.items.length ? (
