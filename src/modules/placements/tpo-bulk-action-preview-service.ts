@@ -13,7 +13,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 
 import {tpoBulkApplicationReady,tpoBulkStudentReady,tpoBulkStudentVersion} from "./tpo-bulk-decision-model";
 import {listTpoApplicantNotes} from "./applicant-notes-service";
-import {listTpoApplicantNotes} from "./applicant-notes-service";
+import {loadTpoBulkApplicationStages} from "./tpo-bulk-application-stage-service";
 
 export type TpoBulkCurrent={version:string;ready:boolean;reason?:string};
 /** Read only; only current college-scoped records are projected, never person names. */
@@ -35,6 +35,9 @@ export async function loadTpoBulkCurrent(context:RequestContext,plan:TpoBulkPrev
        if(!(error instanceof AuthorizationError))throw error;
      }
    }
+ } else if(plan.action==="MOVE_TEST"||plan.action==="MOVE_INTERVIEW"){
+   if(!plan.jobId)return current;
+   return loadTpoBulkApplicationStages(context,plan.jobId,plan.ids,plan.action);
  } else {
    const records=await getDb().select({
      id:placementApplications.id,
