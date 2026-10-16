@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  registrationDeadlineAtEndOfDay, TpoBatchInvitationError,
+  formatTpoBatchInviteSuccess, registrationDeadlineAtEndOfDay, TpoBatchInvitationError,
   tpoBatchInvitationSchema, tpoBatchDeadlineSchema, TPO_INVITATION_COPY,
 } from "@/modules/placements/tpo-batch-invitation-model";
 
@@ -28,6 +28,12 @@ describe("TPO-batches-18 invitation date and exact legacy copy", () => {
     expect(tpoBatchDeadlineSchema.safeParse({
       deadline: null, expectedVersion: "none", rulesOverride: {},
     }).success).toBe(false);
+  });
+  it("uses the exact singular and plural invitation success wording", () => {
+    expect(formatTpoBatchInviteSuccess(1, "2026-10-17"))
+      .toBe("Invited 1 student to register by 17 Oct");
+    expect(formatTpoBatchInviteSuccess(12, "2026-12-01"))
+      .toBe("Invited 12 students to register by 1 Dec");
   });
   it("preserves the exact legacy controls", () => {
     expect(TPO_INVITATION_COPY.dateLabel).toBe("Register by");

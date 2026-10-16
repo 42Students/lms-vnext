@@ -1,7 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { TPO_INVITATION_COPY } from "@/modules/placements/tpo-batch-invitation-model";
+import {
+  formatTpoBatchInviteSuccess,
+  TPO_INVITATION_COPY,
+} from "@/modules/placements/tpo-batch-invitation-model";
 
 type Props = {
   batchId: string;
@@ -13,13 +16,13 @@ type Props = {
   deadlinePassed: boolean;
 };
 const errors: Record<string, string> = {
-  DEADLINE_REQUIRED: "Pick the date first",
-  DEADLINE_PASSED: "The registration deadline must be in the future.",
-  NO_ELIGIBLE_STUDENTS: "No eligible students to invite.",
+  DEADLINE_REQUIRED: "Set the registration deadline",
+  DEADLINE_PASSED: "The registration deadline has to be in the future",
+  NO_ELIGIBLE_STUDENTS: "Nobody in this batch is eligible yet. Decide who is in placements first.",
   ELIGIBILITY_INCOMPLETE: "Review the student decisions before inviting.",
   EVERYONE_REGISTERED: "Everyone has chosen already",
-  BATCH_ALREADY_INVITED: "This batch is already invited.",
-  BATCH_FINISHED: "This batch is finished",
+  BATCH_ALREADY_INVITED: "Registration is open",
+  BATCH_FINISHED: "This batch is finished. Reopen it first.",
 };
 export function TpoBatchInvitationControl(props: Props) {
   const router = useRouter();
@@ -39,11 +42,12 @@ export function TpoBatchInvitationControl(props: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deadline: date, expectedVersion: props.expectedVersion }),
       });
-      const body = await response.json() as { error?: string };
+      const body = await response.json() as { error?: string; notifiedCount?: number };
       if (!response.ok)
         throw new Error(response.status === 409 ? "Batch changed. Refresh before inviting." :
           errors[body.error ?? ""] ?? "Could not invite this batch.");
-      setMessage("Registration is open. In-app invitations are recorded; email delivery is not enabled.");
+      setMessage(formatTpoBatchInviteSuccess(body.notifiedCount ?? props.invitable, date) +
+        ". In-app only; email delivery is not enabled.");
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not invite this batch.");
@@ -67,9 +71,7 @@ export function TpoBatchInvitationControl(props: Props) {
       if (!response.ok)
         throw new Error(response.status === 409 ? "Batch changed. Refresh before saving." :
           errors[body.error ?? ""] ?? "Could not save the deadline.");
-      setMessage(props.deadlinePassed && !clear
-        ? "Deadline moved. Eligible students who have not registered were told in the app."
-        : "Deadline saved.");
+      setMessage(clear ? "Deadline removed" : "Deadline moved");
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save the deadline.");
@@ -110,7 +112,7 @@ export function TpoBatchInvitationControl(props: Props) {
       className="min-h-11 rounded border border-border bg-surface px-3" />
     <button type="button" onClick={() => void invite()}
       disabled={busy || !ready} className="min-h-11 rounded border border-border px-4 disabled:opacity-50">
-      {busy ? "Inviting…" : TPO_INVITATION_COPY.invitation}
+      {busy ? "Inviting…" : TPO_INVITATION_COPY.invitation + " " + props.invitable}
     </button>
     {props.invitable === 0 ? <p className="text-sm">No eligible students remain to invite.</p> : null}
     {message ? <p role="status" className="text-sm">{message}</p> : null}

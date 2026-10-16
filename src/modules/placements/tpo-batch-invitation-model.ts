@@ -40,3 +40,14 @@ export const TPO_INVITATION_COPY = {
   pickDate: "Pick the date first",
   markFinished: "This batch is finished",
 } as const;
+
+/** Exact visible legacy toast for the first invitation, with a date-only IST picker. */
+export function formatTpoBatchInviteSuccess(count: number, date: string) {
+  const parsed = z.iso.date().parse(date);
+  const [, monthText, dayText] = parsed.split("-");
+  const monthIndex = Number(monthText) - 1;
+  const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][monthIndex];
+  return "Invited " + count + " " + (count === 1 ? "student" : "students") +
+    " to register by " + Number(dayText) + " " + month;
+}
