@@ -3,8 +3,9 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { academicPeriods, sectionScheduleEvents, sections } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { collegePeriodLifecycleSchema, periodLifecycleBlocker } from "./college-period-lifecycle-model";
@@ -28,13 +29,9 @@ export async function changeCollegePeriodLifecycle(
 ) {
   const periodId = academicPeriodIdSchema.parse(periodIdInput);
   const input = collegePeriodLifecycleSchema.parse(raw);
-  const m = context.membership;
-  if (!m || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-      !can(context, "academics.manage", {collegeId: m.collegeId, organizationId: m.organizationId}))
-    throw new AuthorizationError("academics.manage");
-  requirePermission(context, "academics.manage", {
-    collegeId: m.collegeId, organizationId: m.organizationId,
-  });
+  // College Admin membership or explicitly selected Super Admin college;
+  // never fabricate a membership to satisfy a platform administrator.
+  const acting = await resolveActingCollege(context, "academics.manage");
   return getDb().transaction(async tx => {
     const [period] = await tx.select({
       id: academicPeriods.id,
@@ -42,7 +39,7 @@ export async function changeCollegePeriodLifecycle(
       status: academicPeriods.status,
     }).from(academicPeriods).where(and(
       eq(academicPeriods.id, periodId),
-      eq(academicPeriods.collegeId, m.collegeId),
+      eq(academicPeriods.collegeId, acting.collegeId),
     )).for("update").limit(1);
     if (!period) throw new CollegePeriodLifecycleError("PERIOD_NOT_FOUND");
     const from = input.action === "CLOSE" ? "ACTIVE" : "CLOSED";
@@ -77,7 +74,7 @@ export async function changeCollegePeriodLifecycle(
       status: to, updatedAt: new Date(),
     }).where(and(
       eq(academicPeriods.id, period.id),
-      eq(academicPeriods.collegeId, m.collegeId),
+      eq(academicPeriods.collegeId, acting.collegeId),
       eq(academicPeriods.status, from),
     )).returning({id: academicPeriods.id, status: academicPeriods.status});
     if (!updated) throw new CollegePeriodLifecycleError("PERIOD_STALE");
@@ -85,8 +82,8 @@ export async function changeCollegePeriodLifecycle(
       eventType: input.action === "CLOSE"
         ? ACTIVITY_EVENT_TYPES.ACADEMICS_PERIOD_CLOSED
         : ACTIVITY_EVENT_TYPES.ACADEMICS_PERIOD_REOPENED,
-      collegeId: m.collegeId,
-      organizationId: m.organizationId,
+      collegeId: acting.collegeId,
+      organizationId: acting.organizationId,
       subjectType: "ACADEMIC_PERIOD", subjectId: period.id,
       subjectLabel: period.name,
       summary: input.action === "CLOSE"
