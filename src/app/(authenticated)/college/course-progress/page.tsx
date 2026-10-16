@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
+import { CollegeLearnerProgressReport } from "@/components/courses/college-learner-progress-report";
+import { getCollegeLearnerProgressReport } from "@/modules/courses/college-learner-progress-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeProgressQuerySchema } from "@/modules/courses/college-learning-directory-model";
@@ -55,7 +57,12 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
         action={<Link href="/college/course-progress" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>
   );
+  const report=await getCollegeLearnerProgressReport(context,{
+    offeringId:first(params.offeringId)||undefined,
+    deliveryId:first(params.deliveryId)||undefined,
+  });
   return <div className="space-y-4">
+    <CollegeLearnerProgressReport data={report}/>
     <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export recorded course activity CSV
