@@ -436,6 +436,10 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                         {electiveOptions && item.status === "ACTIVE" ? <>
                           <CollegeSlotManager options={electiveOptions} row={item} />
                           <CollegeElectiveOfferingManager slotId={item.id}/>
+                          <Link href={"/college/electives/" + encodeURIComponent(item.id) + "/allocate"}
+                            className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+                            Eligible students
+                          </Link>
                         </> : null}
                         <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
                           version={item.version} status={item.status} />
