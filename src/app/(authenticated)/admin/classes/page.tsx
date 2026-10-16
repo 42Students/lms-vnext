@@ -1,3 +1,4 @@
+import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminScopedReadPage } from "@/components/admin/admin-scoped-read-page";
@@ -25,6 +26,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       ])
     : [null, null];
   return <div className="space-y-6">
+      <AcademicSetupSteps step={6} />
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
       <section aria-label="Manage classes" className="space-y-3 rounded-xl border border-border bg-surface p-4">
