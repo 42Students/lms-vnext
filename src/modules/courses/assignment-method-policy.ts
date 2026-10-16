@@ -1,0 +1,26 @@
+import {normalizeAssignmentMethods,type AssignmentMethod} from "./assignment-submission-methods";
+
+export type SubmittedPart={kind:"TEXT"|"LINK"|"FILE";fileMimeTypes?:readonly string[]};
+export function allowedAssignmentSubmissionPart(
+ methodsRaw:unknown,part:SubmittedPart,
+):boolean{
+ const methods=new Set(normalizeAssignmentMethods(methodsRaw));
+ if(part.kind==="TEXT")return methods.has("WRITTEN_RESPONSE");
+ if(part.kind==="LINK")return methods.has("REPOSITORY_LINK")||methods.has("EXTERNAL_LINK");
+ const allowedAny=methods.has("FILE_UPLOAD"),pdfOnly=methods.has("PDF_UPLOAD");
+ if(!allowedAny&&!pdfOnly)return false;
+ if(!allowedAny && (part.fileMimeTypes??[]).some(mime=>mime!=="application/pdf"))return false;
+ return true;
+}
+export function allowedAssignmentMixedParts(methods:unknown,{
+ hasWrittenResponse,links,fileMimeTypes,
+}:{
+ hasWrittenResponse:boolean;
+ links:readonly {kind:"REPOSITORY_LINK"|"EXTERNAL_LINK"}[];
+ fileMimeTypes:readonly string[];
+}):boolean{
+ const allowed=new Set<AssignmentMethod>(normalizeAssignmentMethods(methods));
+ if(hasWrittenResponse&&!allowed.has("WRITTEN_RESPONSE"))return false;
+ if(links.some(link=>!allowed.has(link.kind)))return false;
+ return allowedAssignmentSubmissionPart(methods,{kind:"FILE",fileMimeTypes});
+}
