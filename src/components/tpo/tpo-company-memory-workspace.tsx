@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Person = {
@@ -250,6 +251,18 @@ export function TpoCompanyMemoryWorkspace({
         <div className="space-y-5">
           <section className="rounded-lg border border-border bg-surface p-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
+            <button type="button" className={buttonStyle+" mt-3"}
+              disabled={visibleDrives.length===0}
+              onClick={()=>{
+                const blob=new Blob([companyDriveCsv(visibleDrives)],{type:"text/csv;charset=utf-8"});
+                const url=URL.createObjectURL(blob);
+                const link=document.createElement("a");
+                link.href=url;
+                link.download=company.name.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,70)+"-drives.csv";
+                document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+              }}>
+              Export drives CSV
+            </button>
             <label className="mt-3 block text-sm text-body">Search drives
               <input className="mt-1 min-h-10 w-full rounded-md border border-border bg-surface px-3"
                 type="search" value={driveSearch} onChange={e=>setDriveSearch(e.target.value)}
