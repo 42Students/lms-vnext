@@ -11,7 +11,8 @@ export default async function SuperAdminElectivesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
-  const parsed = adminElectiveQuerySchema.safeParse({ q: params.q, status: params.status });
+  const parsed = adminElectiveQuerySchema.safeParse({ q: params.q, status: params.status,
+    programId: params.programId || undefined, semesterNumber: params.semesterNumber || undefined });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Academics" title="Electives" />
     <ErrorState title="Invalid elective filters" description="Search and status must use supported values."
@@ -25,7 +26,7 @@ export default async function SuperAdminElectivesPage({
     {data.state === "CHOOSE_COLLEGE" ? <EmptyState title="Choose a college"
       description="Use the Super Admin scope selector to choose a college before inspecting its elective slots." /> :
     <>
-      <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+      <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
         <label className="grid gap-1 text-sm font-semibold text-body">Search
           <input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -36,11 +37,27 @@ export default async function SuperAdminElectivesPage({
             <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Program
+          <select name="programId" defaultValue={data.query.programId ?? ""}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">All programs</option>
+            {data.programs.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Semester
+          <select name="semesterNumber" defaultValue={data.query.semesterNumber ?? ""}
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            <option value="">All semesters</option>
+            {Array.from({length:12},(_,i)=>i+1).map(n=><option key={n} value={n}>{n}</option>)}
+          </select>
+        </label>
         <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
       </form>
       <form method="get" action="/admin/electives" aria-label="Refresh elective directory">
         {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
         <input type="hidden" name="status" value={data.query.status} />
+        {data.query.programId?<input type="hidden" name="programId" value={data.query.programId}/>:null}
+        {data.query.semesterNumber?<input type="hidden" name="semesterNumber" value={data.query.semesterNumber}/>:null}
         <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
@@ -56,6 +73,8 @@ export default async function SuperAdminElectivesPage({
             <div><dt className="text-xs text-muted-foreground">Credits</dt><dd>{item.credits}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Minimum picks</dt><dd>{item.minPick}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Maximum picks</dt><dd>{item.maxPick}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Offerings</dt><dd>{item.offerings ?? 0}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Students</dt><dd>{item.students ?? 0}</dd></div>
           </dl>
         </article>)}
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
