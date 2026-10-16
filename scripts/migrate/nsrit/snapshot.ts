@@ -6,7 +6,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { sha256Hex } from "./common";
-import { snapshotDigest, type Manifest } from "./export-lib";
+import { STAGE_2B_TABLES, snapshotDigest, type Manifest } from "./export-lib";
 import type { Row } from "./mappers";
 
 export class SnapshotIntegrityError extends Error {
@@ -59,7 +59,13 @@ export function readSnapshot(dir: string): Snapshot {
     throw new SnapshotIntegrityError(`Unsupported snapshot format ${String(manifest.format)}`);
   }
   const tables: Record<string, Row[]> = {};
-  for (const name of REQUIRED_TABLES) {
+  // Stage 2b-i tables are optional so a stage 2a snapshot still loads;
+  // the academics planner refuses to run without them.
+  const wanted = [
+    ...REQUIRED_TABLES,
+    ...STAGE_2B_TABLES.filter((name) => manifest.tables[name] !== undefined),
+  ];
+  for (const name of wanted) {
     const entry = manifest.tables[name];
     if (!entry) throw new SnapshotIntegrityError(`Snapshot has no table ${name}`);
     const file = path.join(dir, entry.file);

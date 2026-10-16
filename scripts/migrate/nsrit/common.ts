@@ -7,6 +7,8 @@ import { createHash } from "node:crypto";
 
 /** Bump when the mapping rules change so source hashes change with them. */
 export const LOADER_VERSION = "nsrit-2a-1";
+/** Stage 2b-i (academics) rows hash with their own version, so 2a rows stay no-ops. */
+export const LOADER_VERSION_2B = "nsrit-2b-1";
 export const SOURCE_SYSTEM = "LMS_LEGACY";
 
 /** Fixed v5 namespace for every NSRIT legacy id. Never change. */
@@ -54,8 +56,8 @@ export function stableStringify(value: unknown): string {
     .join(",")}}`;
 }
 
-export function sourceHash(value: unknown): string {
-  return sha256Hex(`${LOADER_VERSION}|${stableStringify(value)}`);
+export function sourceHash(value: unknown, version: string = LOADER_VERSION): string {
+  return sha256Hex(`${version}|${stableStringify(value)}`);
 }
 
 const IST_OFFSET_MINUTES = 330;

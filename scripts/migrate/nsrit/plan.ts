@@ -46,7 +46,23 @@ export type Reason =
   | "UNKNOWN_ENUM"
   | "NO_CONTACT"
   | "INVALID_PHONE_NO_EMAIL"
-  | "NO_ACCEPTED_COHORT";
+  | "NO_ACCEPTED_COHORT"
+  // Stage 2b-i reasons
+  | "COURSE_INACTIVE"
+  | "ZERO_POINTS"
+  | "NO_QUESTIONS"
+  | "NOT_SUBMITTED"
+  | "ARCHIVED_ELECTIVE"
+  | "NO_MEDIA_REFERENCE"
+  | "PERSON_NOT_LOADED"
+  | "LEARNER_NOT_ACTIVE"
+  | "LEARNER_NOT_IN_SECTION"
+  | "NO_DELIVERY"
+  | "UNSUPPORTED_RECEIVER"
+  | "NO_MARKER"
+  | "DUPLICATE_SOURCE"
+  | "NO_VNEXT_TARGET"
+  | "SESSION_NOT_HELD";
 
 export type Rejection = { entity: string; legacyId: string; reason: Reason };
 export type Deferral = { entity: string; legacyId: string; reason: string };
@@ -64,6 +80,8 @@ export type Planned<T> = {
   newId: string;
   hash: string;
   data: T;
+  /** Optional non-PII legacy facts stored on the legacy_id_map row (metadata.unmapped). */
+  metadata?: Record<string, unknown>;
 };
 
 export type OrgData = { name: string; createdAt: string | null; updatedAt: string | null };
@@ -213,7 +231,7 @@ export type PlanOptions = {
 
 const idOf = (row: Row) => String(row.id);
 
-class Collector {
+export class Collector {
   rejections: Rejection[] = [];
   deferred: Deferral[] = [];
   blocked: Blocked[] = [];
