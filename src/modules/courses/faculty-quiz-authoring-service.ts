@@ -89,6 +89,14 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
     ))throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     const [attempt]=await tx.select({id:quizAttempts.id}).from(quizAttempts)
      .where(eq(quizAttempts.quizId,current.id)).limit(1);
+    // FAC-assessments-R02: published deadline is an immutable learner contract
+    // after any attempt or once this Quiz has closed, including released results.
+    // Check under the same quiz row lock as the update to avoid stale author edits.
+    if(input.action==="EDIT" &&
+      (attempt || current.status==="CLOSED") &&
+      (current.dueAt?.getTime()??null)!==
+        (input.dueAt?new Date(input.dueAt).getTime():null))
+      throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
     // Once a learner has attempted, the question bank, allowed attempt count
     // and history cannot be rewritten. Only title, text and deadline metadata
     // can change with a current optimistic version; closing still works.
