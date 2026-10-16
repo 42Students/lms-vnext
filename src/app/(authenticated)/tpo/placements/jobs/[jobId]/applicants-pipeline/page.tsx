@@ -63,7 +63,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     <select name="stage" defaultValue={data.stage} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}
     </select></label>
-   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Student or role
+   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Name, roll, branch, batch, email, phone or role
     <input name="search" defaultValue={data.search} maxLength={100}
      className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Application channel
