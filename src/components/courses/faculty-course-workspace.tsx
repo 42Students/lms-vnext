@@ -332,6 +332,7 @@ function QuizItem({
         deliveryId={deliveryId}
         status={item.status}
         resultsPublished={item.resultsPublished}
+        deadlineReached={Boolean(item.dueAt && new Date(item.dueAt).getTime()<=Date.now())}
         updatedAt={new Date(item.updatedAt).toISOString()}
         deliveryOwned={item.deliveryId !== null}
       />
