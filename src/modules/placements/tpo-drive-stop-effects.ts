@@ -3,6 +3,7 @@ import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   activityEvents,collegeMemberships,inAppNotifications,placementApplications,
+  placementApplicationScreenings,placementApplicationScreeningHistory,placementOffers,
   placementApplicationStatusHistory,placementLearnerRequests,users,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -79,4 +80,80 @@ export async function settleDriveWithdrawalRequests(
     }))).onConflictDoNothing();
   }
   return settled;
+}
+
+/**
+ * End only unplaced applicants' open screening journeys. Accepted offers and
+ * their applications are retained. History CHECK currently supports PENDING
+ * and HOLD -> REJECTED; SHORTLISTED terminal state has a drive-level audit
+ * event until its own history transition is registered.
+ */
+export async function endDriveApplicants(
+  tx:Tx,ctx:RequestContext,jobId:string,collegeId:string,
+  mode:"CLOSED"|"CANCELLED",reason:string,
+){
+  const rows=await tx.select({
+    id:placementApplications.id,
+    membershipId:placementApplications.membershipId,
+    status:placementApplications.status,
+    userId:users.id,
+  }).from(placementApplications)
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,placementApplications.membershipId),
+      eq(collegeMemberships.collegeId,collegeId)))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(eq(placementApplications.jobId,jobId));
+  const accepted=await tx.select({applicationId:placementOffers.applicationId})
+    .from(placementOffers).innerJoin(placementApplications,
+      eq(placementApplications.id,placementOffers.applicationId))
+    .where(and(eq(placementApplications.jobId,jobId),
+      eq(placementOffers.status,"ACCEPTED")));
+  const protectedIds=new Set(accepted.map(row=>row.applicationId));
+  const visibleMessage=mode==="CANCELLED"?
+    "This drive was cancelled. "+reason:
+    "This drive has closed. You were not selected. "+reason;
+  const timestamp=new Date();
+  let rejected=0;
+  for(const row of rows){
+    if(row.status!=="SUBMITTED"||protectedIds.has(row.id))continue;
+    const [old]=await tx.select({status:placementApplicationScreenings.status})
+      .from(placementApplicationScreenings)
+      .where(eq(placementApplicationScreenings.applicationId,row.id)).limit(1);
+    if(old?.status==="REJECTED")continue;
+    const [saved]=await tx.insert(placementApplicationScreenings).values({
+      applicationId:row.id,status:"REJECTED",
+      decidedByUserId:ctx.user.id,decidedAt:timestamp,
+      candidateMessage:visibleMessage,
+    }).onConflictDoUpdate({
+      target:placementApplicationScreenings.applicationId,
+      set:{status:"REJECTED",decidedByUserId:ctx.user.id,decidedAt:timestamp,
+        candidateMessage:visibleMessage,updatedAt:timestamp},
+    }).returning({id:placementApplicationScreenings.applicationId});
+    if(!saved)throw new Error("PLACEMENT_APPLICATION_STOP_FAILED");
+    if(!old||old.status==="PENDING"||old.status==="HOLD"){
+      await tx.insert(placementApplicationScreeningHistory).values({
+        applicationId:row.id,fromStatus:old?.status??"PENDING",toStatus:"REJECTED",
+        actorUserId:ctx.user.id,candidateMessage:visibleMessage,
+      });
+    }
+    rejected++;
+  }
+  const [event]=await tx.insert(activityEvents).values({
+    organizationId:ctx.membership!.organizationId,collegeId,
+    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+    module:"PLACEMENTS",eventType:"DRIVE_APPLICANTS_ENDED",
+    subjectType:"placement_job",subjectId:jobId,
+    summary:mode==="CANCELLED"?"TPO cancelled a drive":"TPO closed a drive",
+    metadata:{mode,reason,rejected,acceptedOffersRetained:accepted.length},
+  }).returning({id:activityEvents.id});
+  if(!event)throw new Error("PLACEMENT_APPLICANT_STOP_AUDIT_FAILED");
+  const recipients=[...new Set(rows.map(row=>row.userId))];
+  for(let i=0;i<recipients.length;i+=200){
+    await tx.insert(inAppNotifications).values(recipients.slice(i,i+200).map(userId=>({
+      userId,eventId:event.id,
+      title:mode==="CANCELLED"?"This drive was cancelled":"This drive has closed",
+      body:visibleMessage,actionHref:"/learn/my-placements/applications",
+    }))).onConflictDoNothing();
+  }
+  return {rejected,notified:recipients.length,acceptedOffersRetained:accepted.length};
 }
