@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import type { MembershipRole } from "@/modules/identity/constants";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { exportCollegeLectureHalls } from "@/modules/academics/college-lecture-halls-export-service";
+import { getCollegeHallAvailability } from "@/modules/academics/college-hall-availability-service";
 import {
   createLectureHall,
   listLectureHalls,
@@ -156,6 +157,53 @@ describe.skipIf(!enabled)("College Admin lecture hall directory scoped PostgreSQ
         capacity: 99,
       })).rejects.toBeInstanceOf(AuthorizationError);
     }
+  });
+
+  it("SA-academics-people-26 SA-academics-people-27 enforce selected college for availability and CSV", async () => {
+    const hall = await createLectureHall(own, {
+      collegeId: SEED_IDS.collegeA,
+      name: hallName + "-SA",
+      capacity: 42,
+      roomType: "LECTURE_HALL",
+      description: "Super Admin scoped room",
+    });
+    createdIds.push(hall.id);
+    const sa: RequestContext = {
+      user: {
+        id: SEED_IDS.collegeAdminUser,
+        identityUid: "test-super-admin-hall",
+        platformStatus: "ACTIVE",
+        systemRoles: ["SUPER_ADMIN"],
+      },
+      membership: null,
+      adminScope: { organizationId: SEED_IDS.organization, collegeId: SEED_IDS.collegeA },
+    };
+    const dates = { hallId: hall.id, from: "2026-10-01", to: "2026-10-31" };
+    const [superAdminRead, collegeRead] = await Promise.all([
+      getCollegeHallAvailability(sa, dates),
+      getCollegeHallAvailability(own, dates),
+    ]);
+    expect(superAdminRead.hall).toMatchObject({ id: hall.id, name: hallName + "-SA" });
+    expect(collegeRead.hall.id).toBe(hall.id);
+    const csv = await exportCollegeLectureHalls(sa, {q:hallName + "-SA"}, "superadmin");
+    expect(csv.csv).toContain('"id","name","capacity","roomType","departmentId","description"');
+    expect(csv.csv).toContain(hallName + "-SA");
+
+    await expect(getCollegeHallAvailability({
+      ...sa,
+      adminScope: {organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB},
+    }, dates)).rejects.toMatchObject({ code: "NOT_FOUND" });
+    await expect(getCollegeHallAvailability({
+      ...sa,
+      adminScope: {organizationId:SEED_IDS.organization,collegeId:null},
+    }, dates)).rejects.toBeInstanceOf(AuthorizationError);
+    await expect(exportCollegeLectureHalls({
+      ...sa,
+      adminScope: {organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB},
+    }, {q:hallName + "-SA"}, "superadmin")).resolves.toMatchObject({
+      exported: 0,
+    });
+    await expect(getCollegeHallAvailability(learner, dates)).rejects.toBeInstanceOf(AuthorizationError);
   });
 
   it("rejects unbounded or malformed name queries before an authorized read", async () => {
