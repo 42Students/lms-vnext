@@ -14,7 +14,7 @@ describe("Learner assignments dev legacy list and ViewAssignmentModal copy",()=>
   }
  });
  it("preserves exact submission actions View/Submit and privacy-dependent grade states",()=>{
-  const pending={submittedAt:null,dueAt:null,gradePublished:false,pointsAwarded:null,maxPoints:10};
+  const pending={submittedAt:null,dueAt:"2030-01-01T00:00:00Z",gradePublished:false,pointsAwarded:null,maxPoints:10};
   expect(assignmentOverviewState(pending,0)).toMatchObject({label:"Not submitted",action:"Submit"});
   expect(assignmentOverviewState({...pending,submittedAt:"2026-10-16T10:00:00Z"},0)).toMatchObject({label:"Submitted · awaiting grade",action:"View"});
   expect(assignmentOverviewState({...pending,submittedAt:"2026-10-16T10:00:00Z",gradePublished:true,pointsAwarded:8},0)).toMatchObject({label:"Graded · 8/10",action:"View"});

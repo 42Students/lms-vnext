@@ -77,7 +77,10 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const conversationSignals = conversations.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
     : null;
-  const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,unread:unreadAction?.value??0});
+  const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,
+    unread:unreadAction?.value??0,resultsDue:dueResults,
+    unreadConversations:conversationSignals?.unread??[],
+  });
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
@@ -204,7 +207,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <div className="flex flex-wrap gap-4 text-sm"><Link className="text-primary-text" href={"/hr/drives?collegeId=" + encodeURIComponent(selectedId)}>Browse drives</Link>
       <Link className="text-primary-text" href={"/hr/company?collegeId=" + encodeURIComponent(selectedId)}>Company & Team</Link>
-      <Link className="text-primary-text" href={"/hr/messages?collegeId="+encodeURIComponent(selectedId)}>Messages</Link>
+      <Link className="text-primary-text" href={"/recruiter/messages?collegeId="+encodeURIComponent(selectedId)}>Messages</Link>
       <Link className="text-primary-text" href={"/hr/activity?collegeId="+encodeURIComponent(selectedId)}>Hiring activity</Link>
       <Link className="text-primary-text" href="/hr/profile">Your profile</Link></div>
   </div>;

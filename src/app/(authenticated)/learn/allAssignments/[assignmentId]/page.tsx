@@ -80,12 +80,14 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           <p className="mt-2 whitespace-pre-wrap break-words">{item.feedback || "No written feedback was provided."}</p>
         </div> : <p>Grade and feedback are not published yet.</p>}
       </div> : <div className="mt-3">
-        {item.dueAt && item.dueAt.getTime() < overview.snapshotNowMs ? (
+        {!item.dueAt || item.dueAt.getTime() <= overview.snapshotNowMs ? (
           <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">
-            The deadline has passed; this published assignment accepts late submissions.
+            {item.dueAt ? "Submissions are closed" : "Submission unavailable · deadline missing"}
           </p>
         ) : null}
-        <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
+        {item.dueAt && item.dueAt.getTime() > overview.snapshotNowMs ? (
+          <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
+        ) : <p className="mt-2 text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>}
       </div>}
     </section>
   </div>;

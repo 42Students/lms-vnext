@@ -42,7 +42,7 @@ describe("Phase 2 legacy exact sidebar contract (legacy-copy-B.md)", () => {
       "Today", "Drives", "Calendar", "Messages", "Company & Team",
     ]);
     expect(items.map(item => item.href)).toEqual([
-      "/hr/home", "/hr/drives", "/hr/calendar", "/hr/messages", "/hr/company",
+      "/hr/home", "/hr/drives", "/hr/calendar", "/hr/conversations", "/hr/company",
     ]);
     expect(items.some(item => item.label === "Dashboard" || item.label === "More" || item.label === "Companies")).toBe(false);
   });

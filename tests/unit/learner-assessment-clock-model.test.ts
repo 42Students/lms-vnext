@@ -15,10 +15,10 @@ describe("one snapshot-anchored assessment clock", () => {
     expect(learnerQuizMobileState(quiz, now).label).toBe("Closed");
     expect(quiz.resultsPublished).toBe(false);
   });
-  it("keeps late assignment submission allowed when the clock passes its deadline", () => {
+  it("closes assignment submission when the clock passes its deadline", () => {
     const now = learnerAssessmentClock(Date.parse("2026-10-14T10:00:00Z"), 2000);
     expect(assignmentOverviewState({ dueAt: "2026-10-14T10:00:01Z", submittedAt: null,
-      pointsAwarded: null, maxPoints: 10, gradePublished: false }, now)).toMatchObject({ action: "Submit", label: "Overdue · late submission allowed" });
+      pointsAwarded: null, maxPoints: 10, gradePublished: false }, now)).toMatchObject({ action: "View", label: "Closed · not submitted" });
   });
   it("rejects invalid or backward elapsed time without reading the device clock", () => {
     expect(learnerAssessmentClock(1000, -10)).toBe(1000);

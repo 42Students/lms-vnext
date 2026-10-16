@@ -130,6 +130,7 @@ export default async function LearnerProjectPage({
       {selectedTask ? (
         <LearnerBoardTaskDetailDialog projectId={projectId} filters={boardFilters}
           task={selectedTask}
+          currentMembershipId={context.membership?.id??null}
           sprintTitle={workspace.sprints.find(sprint=>sprint.id===selectedTask.sprintId)?.title??null} />
       ) : null}
       {goals ? <LearnerProjectGoals overview={goals} /> : null}

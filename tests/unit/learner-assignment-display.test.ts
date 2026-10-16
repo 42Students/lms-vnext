@@ -9,9 +9,9 @@ const input = {
 };
 
 describe("learner aggregate assignment display", () => {
-  it("keeps overdue assignments actionable for late submission", () => {
+  it("closes overdue assignments to new submissions", () => {
     const state = assignmentOverviewState({ ...input, dueAt: "2026-10-12T10:00:00Z" }, now);
-    expect(state).toMatchObject({ label: "Overdue · late submission allowed", action: "Submit" });
+    expect(state).toMatchObject({ label: "Closed · not submitted", action: "View" });
   });
   it("shows due soon before 48 hours, otherwise not submitted", () => {
     expect(assignmentOverviewState({ ...input, dueAt: "2026-10-14T10:00:00Z" }, now).label).toBe("Due soon");
