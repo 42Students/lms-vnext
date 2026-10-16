@@ -29,12 +29,12 @@ export default async function LearnerProjectPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; taskStatus?: string; taskSort?: string; sprintId?: string; releaseId?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[]; activityBeforeTime?: string | string[]; activityBeforeId?: string | string[] }>;
+  searchParams: Promise<{ tab?: string; taskSearch?: string; priority?: string; taskStatus?: string; taskSort?: string; sprintId?: string; releaseId?: string; assignee?: string; taskId?: string; activityCategory?: string | string[]; activityFrom?: string | string[]; activityTo?: string | string[]; activityBeforeTime?: string | string[]; activityBeforeId?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
   if (!projectInstanceIdSchema.safeParse(projectId).success) notFound();
-  const { tab, taskSearch, priority: priorityInput, taskStatus: taskStatusInput, taskSort: taskSortInput, sprintId: sprintInput, releaseId: releaseInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
+  const { tab, taskSearch, priority: priorityInput, taskStatus: taskStatusInput, taskSort: taskSortInput, sprintId: sprintInput, releaseId: releaseInput, assignee: assigneeInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
   const activeSection =
     tab === "board" || tab === "tasks"
       ? "tasks"
@@ -90,14 +90,15 @@ export default async function LearnerProjectPage({
   const taskSort=learnerBoardSortSchema.catch("DEFAULT").parse(taskSortInput??"DEFAULT");
   const sprintId = learnerBoardSprintSchema.safeParse(sprintInput).data ?? "";
   const releaseId = learnerBoardReleaseSchema.safeParse(releaseInput).data ?? "";
+  const mine = assigneeInput === "mine";
   const sprintReleaseById = new Map(workspace.sprints.map(sprint => [sprint.id,sprint.releaseId]));
   const boardTasks = activeSection === "tasks"
-    ? sortLearnerBoardTasks(filterLearnerBoardTasks(workspace.tasks, search, {priority,status,sprintId,releaseId,sprintReleaseById}),taskSort)
+    ? sortLearnerBoardTasks(filterLearnerBoardTasks(workspace.tasks, search, {priority,status,sprintId,releaseId,sprintReleaseById,mineMembershipId:mine ? context.membership?.id ?? "__missing__" : undefined}),taskSort)
     : workspace.tasks;
   const selectedTask=activeSection==="tasks"
     ? findOwnLearnerBoardTask(boardTasks,taskId)
     : null;
-  const boardFilters={taskSearch:search,priority,status,sprintId,releaseId,taskSort};
+  const boardFilters={taskSearch:search,priority,status,sprintId,releaseId,taskSort,mine};
   const selectionNotice = activeSection === "tasks"
     ? learnerBoardTaskSelectionNotice(taskId, Boolean(selectedTask)) : null;
   const shownWorkspace = activeSection === "tasks"
@@ -114,7 +115,7 @@ export default async function LearnerProjectPage({
         </Link>
       ) : null}
       {activeSection === "tasks" ? (
-        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} status={status} taskSort={taskSort} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
+        <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} status={status} taskSort={taskSort} mine={mine} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
           shown={boardTasks.length} total={workspace.tasks.length} statusCounts={learnerBoardStatusCounts(workspace.tasks)} priorityCounts={learnerBoardPriorityCounts(workspace.tasks)} />
       ) : null}
       {activeSection === "tasks" ? (
