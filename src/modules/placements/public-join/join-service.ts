@@ -11,7 +11,7 @@ import {
   placementPublicJoinChallenges, placementRecruiterProfiles,
   placementRecruiterCollegeGrants, placementTpoCollegeSettings, users,
 } from "@/db/schema";
-import { workEmailDomain } from "../public-college-join-model";
+import { registrableWorkDomain,matchesCompanyDomain } from "./domain-model";
 import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
 import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
@@ -67,8 +67,8 @@ export async function acceptPublicRecruiterJoin(
         eq(colleges.status, "ACTIVE"), eq(organizations.status, "ACTIVE")))
       .for("update").limit(1);
     if (!link) return "DENIED";
-    const emailDomain = workEmailDomain(email);
-    if (!emailDomain || (scope === "COMPANY" && emailDomain !== link.companyDomain)) return "DENIED";
+    const emailDomain = registrableWorkDomain(email);
+    if (!emailDomain || (scope === "COMPANY" && !matchesCompanyDomain(email,link.companyDomain??""))) return "DENIED";
     const hourAgo = new Date(now.getTime() - 60 * 60_000);
     const counts = await tx.execute<{ n: number }>(sql`
       select count(*)::integer as n from placement_public_join_rate_events
