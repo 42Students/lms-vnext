@@ -340,6 +340,7 @@ export async function createProjectInstance(
             acceptanceCriteria:
               task.acceptanceCriteria ?? null,
             priority: task.priority,
+            estimatePoints: task.estimatePoints ?? null,
             sequence: task.sequence,
           };
         });
