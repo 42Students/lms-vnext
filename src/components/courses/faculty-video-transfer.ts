@@ -39,7 +39,7 @@ async function completeVideoUpload(videoId:string,lessonId:string,thumbnail:bool
 }
 
 export async function uploadFacultyLessonVideo(args:{
- lessonId:string;deliveryId:string;title:string;durationSeconds:number|null;file:File;
+ lessonId:string;deliveryId:string|null;title:string;durationSeconds:number|null;file:File;
  replaceVideoId?:string; signal:AbortSignal;onProgress:(n:number)=>void;
 },fetcher:typeof fetch=fetch,putBytes:PutBytes=putStagedAssignmentBytes):Promise<ManagedVideo>{
  const declared=checkedFacultyVideoFile(args.file,"lesson-video");
@@ -65,7 +65,7 @@ export async function uploadFacultyLessonThumbnail(args:{
  const declared=checkedFacultyVideoFile(args.file,"lesson-video-thumbnail");
  const result=await postJson(`/api/courses/videos/${encodeURIComponent(args.video.id)}/thumbnail`,declared,args.signal,fetcher);
  const {grant}=parseFacultyVideoUploadGrant(result,Date.now(),{
-  lessonId:args.video.lessonId,deliveryId:args.video.deliveryId ?? "",fileName:args.file.name,
+  lessonId:args.video.lessonId,deliveryId:args.video.deliveryId,fileName:args.file.name,
   contentType:declared.contentType,sizeBytes:args.file.size,
  },args.video.id);
  await putBytes(grant.uploadUrl,grant.requiredHeaders,args.file,args.signal,args.onProgress);
