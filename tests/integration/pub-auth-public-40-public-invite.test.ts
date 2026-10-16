@@ -23,6 +23,8 @@ const tpo:RequestContext={
 };
 async function fixture(){
  if(!pool)throw new Error("Disposable database is required");
+ await pool.query("insert into membership_roles(membership_id,role) values($1,'TPO') on conflict do nothing",
+    [SEED_IDS.facultyCollegeAMembership]);
  const nonce=randomUUID(),email="new-"+nonce+"@invited.example";
  const [company]=(await pool.query<{id:string}>(
   "insert into placement_companies(name,created_by_user_id) values($1,$2) returning id",
