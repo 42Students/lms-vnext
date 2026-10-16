@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import {buildTpoLegacyHomeRows} from "@/modules/placements/tpo-home-legacy-rows";
+import {buildTpoLegacyNextUp,operationalHomeNeeds} from "@/modules/placements/tpo-home-next-up";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
@@ -37,15 +38,23 @@ export default async function TpoHome(){
   messages:null,teamAsks:null,teamMentions:null,teamUnread:null,
   upcoming:operations.upcomingRounds.map(round=>({startsAt:round.scheduledAt,title:round.name})),
  });
- const next=operations.workQueue[0];
+ const next=buildTpoLegacyNextUp({
+  needsYou:[
+   ...operationalHomeNeeds(operations.workQueue),
+   ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
+      count:Number.parseInt(pendingRequests.label,10),link:"/tpo/requests"}]:[]),
+  ],
+  batches:[],checklist:[],
+ });
  return <main className="min-w-0 space-y-5">
  <PageHeader eyebrow="TPO" title="Home" description="One next action and a quiet overview of the placement cell."/>
  <section className="min-w-0 rounded-xl border border-border bg-surface p-5">
-  <h2 className="text-lg font-semibold">Next up</h2>
-  {next?<div className="mt-2 space-y-2"><p className="break-words text-sm">{next.jobTitle} · {next.companyName}</p>
-   <p className="text-xs text-muted-foreground">{next.count} {next.code.toLowerCase().replaceAll("_"," ")}</p>
-   <Link href={"/tpo/placements/jobs/"+next.jobId} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Open drive</Link>
-  </div>:pendingRequests?<div className="mt-2 space-y-2"><p className="text-sm">{pendingRequests.label}</p><Link href={pendingRequests.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Review requests</Link></div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
+  <h2 className="text-sm font-medium text-muted-foreground">Next up</h2>
+  {next?<div className="mt-2 space-y-2">
+   <p className="break-words font-semibold">{next.title}</p>
+   <p className="text-sm text-muted-foreground">{next.text}</p>
+   <Link href={next.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">{next.action}</Link>
+  </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
    <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Open</Link>
   </div>:<p className="mt-2 text-sm">Nothing is waiting on you in the currently supported queues.</p>}
  </section>
