@@ -76,6 +76,7 @@ export function LoginForm({
 }) {
   const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [contact, setContact] = useState("");
+  const [contactError, setContactError] = useState<string | null>(null);
   const [code, setCode] = useState("");
   const [secondCode, setSecondCode] = useState("");
   const [attempt, setAttempt] = useState<StartResult | null>(null);
@@ -105,6 +106,20 @@ export function LoginForm({
   async function start(event?: React.FormEvent) {
     event?.preventDefault();
     if (busy) return;
+    const input = contact.trim();
+    const phone = input.replace(/[\s()-]/g, "");
+    const validation = channel === "PHONE"
+      ? !input ? "Enter your mobile number"
+        : !(/^[0-9]{10}$/.test(phone) || /^91[0-9]{10}$/.test(phone) || /^\+[1-9][0-9]{7,14}$/.test(phone))
+          ? "Enter a valid 10-digit mobile number" : null
+      : !input ? "Enter your email"
+        : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)
+          ? "Enter a valid email address" : null;
+    if (validation) {
+      setContactError(validation);
+      return;
+    }
+    setContactError(null);
     setBusy(true);
     setError(null);
     setErrorCode(null);
@@ -236,6 +251,7 @@ export function LoginForm({
                 onClick={() => {
                   setChannel(value);
                   setContact("");
+                  setContactError(null);
                   setError(null);
                   setErrorCode(null);
                 }}
@@ -248,6 +264,7 @@ export function LoginForm({
                     : value === "PHONE" ? "EMAIL" : "PHONE";
                   setChannel(next);
                   setContact("");
+                  setContactError(null);
                   setError(null);
                   setErrorCode(null);
                   event.currentTarget.parentElement
@@ -272,8 +289,10 @@ export function LoginForm({
             </span>
             <Input
               name="contact"
+              aria-invalid={Boolean(contactError)}
+              aria-describedby={contactError ? "login-contact-error" : undefined}
               value={contact}
-              onChange={(event) => setContact(event.target.value)}
+              onChange={(event) => { setContact(event.target.value); setContactError(null); }}
               type={channel === "PHONE" ? "tel" : "email"}
               inputMode={channel === "PHONE" ? "tel" : "email"}
               autoComplete={channel === "PHONE" ? "tel" : "email"}
@@ -283,13 +302,16 @@ export function LoginForm({
               required
               autoFocus
             />
+            {contactError ? (
+              <span role="alert" id="login-contact-error" className="mt-1 block text-sm text-error">{contactError}</span>
+            ) : null}
           </label>
           </div>
 
           <Button
             type="submit"
             className="w-full"
-            disabled={busy || contact.trim().length < 3}
+            disabled={busy}
           >
             {busy ? "Sending code…" : "Send code"}
           </Button>
