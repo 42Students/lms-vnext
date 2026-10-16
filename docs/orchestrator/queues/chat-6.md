@@ -31,10 +31,10 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 Reassigned in `docs/orchestrator/queues/reassignments.md`; original work packages live in `docs/audit/work-packages/chat-5/`.
 
-1. WP-chat-5-04-batches-placements-s2 | TODO | moved from chat-5
+1. WP-chat-5-04-batches-placements-s2 | IN-PROGRESS (TPO-batches-08/10/21/23 improved; remaining batch workflow and parity gaps open) | moved from chat-5
 2. WP-chat-5-05-batches-calendar-reports-s2 | TODO | moved from chat-5
-3. WP-chat-5-11-batches-placements-s3 | TODO | moved from chat-5
-4. WP-chat-5-16-batches-placements-s4 | TODO | moved from chat-5
+3. WP-chat-5-11-batches-placements-s3 | IN-PROGRESS (TPO-batches-06/10/29/43/48 implemented or partly implemented; other S3 open) | moved from chat-5
+4. WP-chat-5-16-batches-placements-s4 | IN-PROGRESS (TPO-batches-30/62 navigation implemented; other S4 open) | moved from chat-5
 
 ## Chat-6 FAST-mode status (2026-10-17)
 
@@ -68,3 +68,27 @@ Additional S1/S2 audit review: SA-academics-people-R02 completed on main (period
 - SA-academics-people-59 remains NOT CLOSED pending actor-owned binary storage protocol and registered schema migration. Proposed migration file created; current strict ownerMembershipId protocol must never be bypassed.
 - SA-placements-projects-25 remains PARTIAL: exact selected-college duplicate merge, with source shared across colleges deliberately rejected. Global merge across tenant relationships remains a separate safe workflow.
 - Not all gaps of any work package have been closed; none should be marked DONE on the strength of these changes alone. No runtime validation performed in FAST MODE.
+
+## Chat-6 FAST continuation — subsequent round (2026-10-17)
+
+Direct-to-main implementation commits use the required `[chat-6]` prefix. No tests, typecheck, lint or CI were run.
+
+- `PUB-auth-public-13`: 5-minute host-origin sessionStorage resume of an OTP attempt ID and masked challenge metadata, preserving the code screen across reloads; OTP secrets and codes are not persisted. UI implemented, not runtime validated.
+- `PUB-auth-public-51`: email fallback now advertises the 15-minute code window and uses its own 60-second resend countdown. Original auth endpoint/rate-limit code untouched.
+- `TPO-batches-29/30/62`: legacy `?tab=` deep links and a persistent, responsive tab strip on the overview, Students, Registrations, Rules, History pages.
+- `TPO-batches-48`: finished-batch UI hides inline decisions, bulk panel, import and batch decision forms; learner override mutation rejects updates to a finished batch when lifecycle storage is available. Other bulk/import mutation routes still need a finish-state guard before this gap is fully closed.
+- `TPO-batches-43`: ineligible learner-decision reason chips with 3-character minimum. Undo-toast and row-event semantics remain open.
+- `TPO-batches-23/21`: whole-batch decision and inherited-override warning on overview; state-specific next-step panel with registered/unrecorded counts and route links.
+- `TPO-batches-06/10`: selected-college count of learners without active class, clickable batch name, persisted academic year range, and department/program ordering.
+- `TPO-batches-08`: state-specific action destination from batch cards, with conservative legacy-compatible labels pending complete journey counts.
+- `SA-placements-projects-10`: new /admin/placements/drives page filters by company/title and status, 10/20/50/100 page sizes, GET URL state, status/deadline/posted/applicant columns, direct workspace action. Table navigation mounted in oversight and landing.
+- `SA-placements-projects-03`: placement overview shows active, closed/draft and total drives plus outstanding-work count.
+- `SA-academics-people-80/93/116`: Faculty/Students tabs now expose the existing, college-scoped role-forced onboarding dialogs and a direct People management link. Legacy demographics, faculty-type and student class-at-create parity remain unresolved.
+- Existing `SA-academics-people-59` file-video owner migration remains blocked by schema/attestation; `SA-placements-projects-25` cross-tenant global company merging remains guarded and incomplete.
+- No work package in this queue is fully complete. WPs remain IN-PROGRESS or TODO; do not mark DONE without closing every assigned gap.
+
+### Auth-layer items deliberately not changed
+
+- `src/auth/**` and `src/security/**` were not edited.
+- Login channel policy enforcement, credential/rate-limit logic, cross-host handoff/session issuance, silent refresh-token semantics, OTP device/session revocation, and unusual historic college-specific Roll/PIN sign-in require separately approved auth-layer work or owner decisions.
+- Login attempt persistence is UI-only and does not extend or override the server challenge lifetime.
