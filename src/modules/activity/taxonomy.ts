@@ -40,6 +40,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "identity.membership.roles_changed",
   IDENTITY_LEARNER_PROFILE_SECTION_UPDATED: "identity.learner_profile_section.updated",
   IDENTITY_LEARNER_CONTACT_UPDATED: "identity.learner_contact.updated",
+  IDENTITY_COLLEGE_PERSON_PROFILE_UPDATED: "identity.college_person_profile.updated",
   IDENTITY_MENTOR_NOTIFICATION_ACKNOWLEDGED: "identity.mentor_notification.acknowledged",
   IDENTITY_TPO_NOTIFICATION_ACKNOWLEDGED: "identity.tpo_notification.acknowledged",
   IDENTITY_MEMBERSHIP_SUSPENDED:
