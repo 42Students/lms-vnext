@@ -34,15 +34,6 @@ function first(
   return Array.isArray(value) ? value[0] : value;
 }
 
-function formatDate(value: Date | null) {
-  if (!value) return "Not recorded";
-
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
-}
-
 export default async function RecruiterCompanyReportsPage({
   searchParams,
 }: {
