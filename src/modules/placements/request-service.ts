@@ -10,6 +10,8 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
+import { learnerPlacementRequestDecisionNotice } from "./learner-request-decision-notice";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
@@ -993,7 +995,7 @@ export async function actOnPlacementRequest(
       );
     }
 
-    await recordActivityEventInTransaction(
+    const decisionEvent = await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -1021,6 +1023,21 @@ export async function actOnPlacementRequest(
       },
     );
 
+    if (input.action !== "CANCEL") {
+      const [learner] = await tx.select({userId:collegeMemberships.userId})
+        .from(collegeMemberships)
+        .where(and(
+          eq(collegeMemberships.id,current.application.membershipId),
+          eq(collegeMemberships.collegeId,current.job.collegeId),
+        )).limit(1);
+      if (!learner) throw new PlacementsServiceError("PLACEMENT_REQUEST_TARGET_MISMATCH");
+      await deliverInAppNotificationInTransaction(
+        tx,
+        decisionEvent.id,
+        [learner.userId],
+        learnerPlacementRequestDecisionNotice(input.action, input.note),
+      );
+    }
     return updated;
   });
 }
