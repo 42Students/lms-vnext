@@ -28,13 +28,9 @@ async function scope(context:RequestContext){
   throw new AuthorizationError("placements.manage");
  return requirePlacementManageScope(context,context.membership.collegeId);
 }
-async function available(db:ReturnType<typeof getDb>){
- const result=await db.execute<{ready:boolean}>(sql`SELECT to_regclass('public.placement_tpo_recruiter_saved_views') is not null as ready`);
- return result.rows[0]?.ready===true;
-}
 export async function listTpoRecruiterSavedViews(context:RequestContext){
  const college=await scope(context),db=getDb();
- if(!await available(db))return {ready:false as const,views:[]};
+
  const result=await db.execute<{
   id:string;name:string;note:string|null;query_json:Record<string,string>;
   columns_json:string[];pinned:boolean;updated_at:Date;
@@ -45,7 +41,7 @@ export async function listTpoRecruiterSavedViews(context:RequestContext){
 }
 export async function changeTpoRecruiterSavedView(context:RequestContext,raw:unknown){
  const input=viewBody.parse(raw),college=await scope(context),db=getDb();
- if(!await available(db))throw new TpoSavedViewError("STORAGE_PENDING");
+
  return db.transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
