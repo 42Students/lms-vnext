@@ -111,7 +111,7 @@ export default async function MentorProjectPage({
       </div> : null}
       {tab==="board"?<div className="space-y-5">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
-          sprints={workspace.sprints} ready={true}
+          sprints={workspace.sprints}
           readOnly={access.access==="OBSERVER"}/>
         <MentorLaneBoard projectId={projectId}
           initialTasks={workspace.tasks} sprints={workspace.sprints} releases={workspace.releases}
