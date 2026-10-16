@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,isNull,lte,lt,inArray} from "drizzle-orm";
+import {and,eq,gt,isNull,lte,inArray,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents,collegeMemberships,users} from "@/db/schema";
@@ -26,22 +26,11 @@ export async function deliverDueTpoNotices(now=new Date()){
   eq(db10Announcements.receiverType,"COLLEGE"),
   isNull(db10Announcements.deletedAt),
   lte(db10Announcements.createdAt,cutoff),
-  lte(db10Announcements.scheduledAt,now),
-  gt(db10Announcements.expiresAt,now),
- )).limit(100);
- // Handle unscheduled/never-expiring notices separately in the next selection.
- const unbounded=await db.select({
-  id:db10Announcements.id,collegeId:db10Announcements.collegeId,
-  title:db10Announcements.title,message:db10Announcements.message,
- }).from(db10Announcements).where(and(
-  eq(db10Announcements.senderType,"TPO"),
-  eq(db10Announcements.receiverType,"COLLEGE"),
-  isNull(db10Announcements.deletedAt),
-  lte(db10Announcements.createdAt,cutoff),
-  isNull(db10Announcements.scheduledAt),
+  or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
+  or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
  )).limit(100);
  let delivered=0,scanned=0;
- for(const notice of new Map([...due,...unbounded].map(row=>[row.id,row])).values()){
+ for(const notice of new Map(due.map(row=>[row.id,row])).values()){
   scanned++;
   const result=await db.transaction(async tx=>{
    const [active]=await tx.select({
@@ -79,7 +68,7 @@ export async function deliverDueTpoNotices(now=new Date()){
      tx,event.id,members.slice(offset,offset+250).map(row=>row.userId),{
       title:notice.title.slice(0,240),
       body:notice.message.slice(0,2000),
-      actionHref:"/learner/notices?notice="+encodeURIComponent(notice.id),
+      actionHref:"/learn/my-placements/announcements?notice="+encodeURIComponent(notice.id),
      });
     done+=result.delivered;
    }
