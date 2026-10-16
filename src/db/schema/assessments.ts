@@ -149,6 +149,9 @@ export const assignmentSubmissions = pgTable(
       .notNull()
       .defaultNow(),
     pointsAwarded: integer("points_awarded"),
+    // Legacy fidelity (migration 0098): resubmission counter and prior grade.
+    attemptNumber: integer("attempt_number").notNull().default(1),
+    previousPoints: integer("previous_points"),
     feedback: text("feedback"),
     gradingStatus:
       assignmentGradingStatusEnum(
@@ -222,6 +225,10 @@ export const assignmentSubmissions = pgTable(
     // FILE submissions carry their files in assignment_submission_files; a
     // deferred constraint trigger (migration 0080) requires at least one
     // READY file at commit time.
+    check(
+      "assignment_submissions_attempt_ck",
+      sql`${table.attemptNumber} >= 1 and (${table.previousPoints} is null or ${table.previousPoints} >= 0)`,
+    ),
     check(
       "assignment_submissions_points_ck",
       sql`${table.pointsAwarded} is null or ${table.pointsAwarded} >= 0`,
