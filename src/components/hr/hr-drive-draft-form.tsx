@@ -21,6 +21,7 @@ const HR_DRAFT_PREVIEW_FIELDS=[
  ["bondAmountInr","Bond amount"],
  ["minimumCgpa","Minimum CGPA"],
  ["maximumActiveBacklogs","Maximum active backlogs"],
+ ["passingYear","Passing year"],
 ] as const;
 
 export function HrDriveDraftForm({
@@ -202,6 +203,22 @@ export function HrDriveDraftForm({
                 onChange={(event) => setDraft((current) => ({ ...current, [field]: event.target.value }))} />
             </label>
           ))}
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="grid gap-1 text-sm text-body">
+            Branches
+            <input className={inputClass} list="recruiter-eligible-branches"
+              value={(draft.branches??[]).join(", ")} placeholder="e.g. CSE, ECE, Mechanical"
+              onChange={event=>setDraft(current=>({...current,
+                branches:event.target.value.split(",").map(value=>value.trim()).filter(Boolean)}))}/>
+            <span className="text-xs text-muted-foreground">Separate multiple college branches with commas. The placement cell verifies the final eligibility.</span>
+          </label>
+          <label className="grid gap-1 text-sm text-body">
+            Passing year
+            <input className={inputClass} inputMode="numeric" maxLength={4}
+              value={draft.passingYear??""} placeholder="YYYY"
+              onChange={event=>setDraft(current=>({...current,passingYear:event.target.value}))}/>
+          </label>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
           Compensation and eligibility values are submitted as part of the formal request; the placement cell decides whether to approve.
