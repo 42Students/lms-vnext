@@ -27,6 +27,9 @@ export function AdminScopeSwitcher({
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [search,setSearch]=useState("");
+  const visibleColleges=choices.colleges.filter(college=>
+    (college.name+" "+college.organizationName).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN")));
   const [pending, startTransition] = useTransition();
 
   function switchScope(value: string) {
@@ -67,6 +70,9 @@ export function AdminScopeSwitcher({
       <label className="sr-only" htmlFor="admin-scope-switcher">
         Super Admin scope
       </label>
+      <label htmlFor="admin-college-search" className="sr-only">Search colleges</label>
+      <input id="admin-college-search" type="search" value={search} onChange={event=>setSearch(event.target.value)}
+       placeholder="Search colleges" aria-label="Search colleges" className="mb-1 min-h-10 w-full rounded-md border border-border bg-surface px-2 text-sm text-foreground"/>
       <Select
         id="admin-scope-switcher"
         value={selectedValue(scope)}
@@ -89,7 +95,7 @@ export function AdminScopeSwitcher({
         ) : null}
         {choices.colleges.length > 0 ? (
           <optgroup label="Colleges">
-            {choices.colleges.map((college) => (
+            {visibleColleges.map((college) => (
               <option
                 key={college.id}
                 value={`college:${college.id}`}
@@ -100,6 +106,8 @@ export function AdminScopeSwitcher({
           </optgroup>
         ) : null}
       </Select>
+      {!scope?.collegeId && !scope?.organizationId ? <p className="mt-1 text-xs text-muted-foreground">Showing all colleges — data may be large.</p> : null}
+      {search.trim() && visibleColleges.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">No matching colleges.</p>:null}
       {error ? (
         <p role="alert" className="mt-1 text-xs font-medium text-error">
           {error}
