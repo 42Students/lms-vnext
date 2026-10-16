@@ -6,7 +6,7 @@ export const outboundSendSchema = z.strictObject({
   channel: outboundChannelSchema,
   recipient: z.string().trim().min(1).max(320),
   templateKey: z.string().trim().min(1).max(160).regex(/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/),
-  variables: z.record(z.string(), z.string().max(4000)).superRefine((values, ctx) => {
+  variables: z.record(z.string(), z.string().max(10000)).superRefine((values, ctx) => {
     const entries = Object.entries(values);
     if (entries.length > 25 || entries.some(([key]) => !/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)) ||
         entries.reduce((size, [key, value]) => size + key.length + value.length, 0) > 12000) {
@@ -15,6 +15,15 @@ export const outboundSendSchema = z.strictObject({
   }),
   purpose: z.string().trim().min(1).max(160)
     .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid outbound purpose"}),
+}).superRefine((value,ctx)=>{
+  // Legacy 10k bodies are allowed only for verified TPO recruiter campaign emails.
+  // Other templates, channels and merge variables retain the 4k bound.
+  for(const [key,text] of Object.entries(value.variables)){
+    if(text.length>4000 && !(key==="body" && value.channel==="EMAIL" &&
+       value.purpose.startsWith("tpo-recruiter-campaign:"))){
+      ctx.addIssue({code:"custom",path:["variables",key],message:"VARIABLE_TOO_LONG"});
+    }
+  }
 });
 export type OutboundSendRequest = z.infer<typeof outboundSendSchema>;
 export type OutboundStatus = z.infer<typeof outboundStatusSchema>;
