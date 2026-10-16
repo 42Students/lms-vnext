@@ -155,7 +155,12 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         <section className="rounded-xl border border-border bg-surface p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-foreground">{result.company.name}</h2>
+              <div className="flex items-center gap-3">
+                <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface-secondary font-bold text-foreground">
+                  {result.company.name.trim().charAt(0).toUpperCase()}
+                </span>
+                <h2 className="text-lg font-semibold text-foreground">{result.company.name}</h2>
+              </div>
               <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
             <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">Employer relationship</span>
@@ -163,13 +168,17 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <dl className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
-              <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl ?? "Not provided"}</dd>
+              <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
+                ? <a href={result.company.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary-text underline">{result.company.websiteUrl}</a>
+                : "Not provided"}</dd>
             </div>
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Primary domain</dt>
-              <dd className="mt-1 text-sm text-foreground">{result.company.primaryDomain ?? "Not provided"}</dd>
+              <dd className="mt-1 text-sm text-foreground">{result.company.primaryDomain ? "@"+result.company.primaryDomain.replace(/^@/,"") : "Not provided"}</dd>
             </div>
           </dl>
+          <p className="mt-3 text-sm text-body">Industry not set</p>
+          <p className="mt-2 text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
           <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-5">
             <h3 className="text-base font-semibold text-foreground">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
