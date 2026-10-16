@@ -22,6 +22,7 @@ export async function listSuperAdminInterviews(context:RequestContext,raw:unknow
  .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),scope.organizationId?eq(colleges.organizationId,scope.organizationId):undefined))
  .where(and(
   query.status==="ALL"?undefined:eq(placementJobRounds.status,query.status),
+  query.jobId?eq(placementJobRounds.jobId,query.jobId):undefined,
   query.q?or(ilike(placementJobRounds.name,scopedSearchLike(query.q)),ilike(placementJobs.title,scopedSearchLike(query.q))):undefined,
  )).as("super_admin_interview_rounds");
  const [totals,rows]=await Promise.all([
