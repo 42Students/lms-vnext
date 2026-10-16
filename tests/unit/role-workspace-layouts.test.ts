@@ -13,7 +13,7 @@ const roleLayouts = [
   },
   {
     path: "src/app/(authenticated)/tpo/layout.tsx",
-    guard: 'hasMembershipRole(\n      context,\n      "TPO",',
+    guard: "canOpenTpoWorkspace(context)",
   },
   {
     path: "src/app/(authenticated)/hr/layout.tsx",

@@ -6,9 +6,16 @@ import { buildTpoHomeAttention } from "@/modules/placements/tpo-home-attention-m
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
+ if(!hasTpoTooling(ctx)) return <main className="min-w-0 space-y-5">
+  <PageHeader eyebrow="Placement cell" title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
+  <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-10 inline-flex items-center text-sm text-primary-text underline">{label}</Link></li>)}
+  </ul>
+ </main>;
  const batches=await listTpoBatches(ctx);
  const operations=await getPlacementTpoOperations(ctx,ctx.membership!.collegeId);
  const pendingRequests=pendingTpoRequestsAction(await getPendingTpoRequestsCount(ctx));
