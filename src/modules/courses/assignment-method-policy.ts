@@ -7,7 +7,9 @@ export function allowedAssignmentSubmissionPart(
  const methods=new Set(normalizeAssignmentMethods(methodsRaw));
  if(part.kind==="TEXT")return methods.has("WRITTEN_RESPONSE");
  if(part.kind==="LINK")return part.linkKind?methods.has(part.linkKind):
-  methods.has("REPOSITORY_LINK")||methods.has("EXTERNAL_LINK");
+  // Old clients omit linkKind. They must not bypass a narrowed policy:
+  // accept unspecified kind only when both link methods are allowed.
+  methods.has("REPOSITORY_LINK")&&methods.has("EXTERNAL_LINK");
  const allowedAny=methods.has("FILE_UPLOAD"),pdfOnly=methods.has("PDF_UPLOAD");
  if(!allowedAny&&!pdfOnly)return false;
  if(!allowedAny && (part.fileMimeTypes??[]).some(mime=>mime!=="application/pdf"))return false;
