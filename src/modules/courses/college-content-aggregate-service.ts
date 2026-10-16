@@ -10,6 +10,8 @@ import {
   courseLearningPaths,
   courseLessons,
   courseOfferings,
+  courseSectionDeliveries,
+  sections,
   courses,
   departments,
   lessonContents,
@@ -40,7 +42,7 @@ export async function listCollegeContentAggregate(
 ) {
   const live = kind === "LIVE_CLASS" ? collegeLiveClassQuerySchema.parse(rawQuery) : null;
   const query = collegeContentQuerySchema.parse(live ? {
-    q:live.q,courseCode:live.courseCode,status:live.status,scope:live.scope,page:live.page,format:"ALL",visibility:"ALL",
+    q:live.q,courseCode:live.courseCode,status:live.status,scope:live.scope,deliveryId:live.deliveryId,page:live.page,format:"ALL",visibility:"ALL",
   } : rawQuery);
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
@@ -57,6 +59,24 @@ export async function listCollegeContentAggregate(
   });
 
   const db = getDb();
+  const sectionOptions=await db.select({
+    deliveryId:courseSectionDeliveries.id,offeringId:courseOfferings.id,
+    sectionName:sections.name,sectionCode:sections.code,
+    courseCode:courses.code,courseName:courses.name,
+  }).from(courseSectionDeliveries)
+    .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+    .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+      eq(departments.collegeId,collegeId)))
+    .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),
+      eq(sections.cohortId,courseOfferings.cohortId),
+      eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
+    .where(and(isNull(courseSectionDeliveries.endedAt),eq(sections.status,"ACTIVE")))
+    .orderBy(asc(courses.code),asc(sections.name)).limit(2000);
+  const selectedSection=query.deliveryId?
+    sectionOptions.find(item=>item.deliveryId===query.deliveryId):null;
+  if(query.deliveryId&&!selectedSection)
+    throw new AuthorizationError("courses.read");
   const scoped = db.select({
     id: aliasedColumn(lessonContents.id, "content_id"),
     title: aliasedColumn(lessonContents.title, "content_title"),
@@ -112,6 +132,9 @@ export async function listCollegeContentAggregate(
       kind !== "LIVE_CLASS" && query.lessonStatus && query.lessonStatus!=="ALL" ? eq(courseLessons.status,query.lessonStatus) : undefined,
       kind !== "LIVE_CLASS" && query.pathStatus && query.pathStatus!=="ALL" ? eq(courseLearningPaths.status,query.pathStatus) : undefined,
       kind !== "LIVE_CLASS" && query.visibility !== "ALL" ? eq(lessonContents.visibleToStudents,query.visibility === "VISIBLE") : undefined,
+      selectedSection?eq(courseOfferings.id,selectedSection.offeringId):undefined,
+      selectedSection?or(isNull(lessonContents.deliveryId),
+        eq(lessonContents.deliveryId,selectedSection.deliveryId)):undefined,
       query.scope === "SHARED" ? isNull(lessonContents.deliveryId) : undefined,
       query.scope === "SECTION" ? isNotNull(lessonContents.deliveryId) : undefined,
       live?.view === "UPCOMING" ? gte(lessonContents.endsAt,new Date()) : undefined,
@@ -134,7 +157,7 @@ export async function listCollegeContentAggregate(
   ]);
   const total = counts[0]?.total ?? 0;
   return {
-    kind, query, view:live?.view??"ALL", from:live?.from, to:live?.to, items, total,
+    kind, query, sectionOptions, view:live?.view??"ALL", from:live?.from, to:live?.to, items, total,
     totalPages: collegeContentPageCount(total),
   };
 }
