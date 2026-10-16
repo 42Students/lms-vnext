@@ -115,6 +115,7 @@ const textSubmissionSchema = z.object({
 const linkSubmissionSchema = z.object({
   deliveryId: courseSectionDeliveryIdSchema,
   submissionType: z.literal("LINK"),
+  linkKind:z.enum(["REPOSITORY_LINK","EXTERNAL_LINK"]).optional(),
   submissionUrl: z
     .string()
     .trim()
