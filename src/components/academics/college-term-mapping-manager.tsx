@@ -25,6 +25,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [editing, setEditing] = useState<{ id: string; credits: string; position: string } | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
 
   async function send() {
     if (!confirm) return;
@@ -165,7 +166,19 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           <th scope="col" className="px-2 py-2">Order</th>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.actions}</th>
         </tr></thead>
-        <tbody>{currentMappings.map(row => <tr key={row.id} className="border-t border-border">
+        <tbody>{currentMappings.map(row => <tr key={row.id} className="border-t border-border"
+          draggable={!pending} onDragStart={event => { setDraggedId(row.id); event.dataTransfer.effectAllowed = "move"; }}
+          onDragEnd={() => setDraggedId(null)}
+          onDragOver={event => { if (draggedId && draggedId !== row.id) event.preventDefault(); }}
+          onDrop={event => {
+            event.preventDefault();
+            const source = currentMappings.find(item => item.id === draggedId);
+            if (source && source.termId === row.termId && source.id !== row.id) {
+              const index = orderedPeers(row).findIndex(item => item.id === row.id) + 1;
+              updateMapping(source.id, String(source.credits ?? 3), index);
+            }
+            setDraggedId(null);
+          }}>
           <td className="px-2 py-2">
             <span className="font-semibold">{row.courseName}</span>
             {row.staffingWarning && <p role="status" title={row.staffingTooltip ?? undefined} className="mt-1 text-xs font-semibold text-warning">
