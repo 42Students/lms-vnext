@@ -1,14 +1,13 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { AdminScopedReadPage } from "@/components/admin/admin-scoped-read-page";
 import { CollegeCohortCreateForm, CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
-import { listAdminBatches } from "@/modules/admin-ui/super-admin-batches-service";
 import { listCollegeBatches } from "@/modules/academics/college-academic-directory-service";
 import { listAcademicPeriods } from "@/modules/academics/period-service";
-import { collegeBatchDirectorySchema } from "@/modules/academics/college-academic-directory-model";
+import { collegeBatchDirectorySchema, academicDirectoryHref } from "@/modules/academics/college-academic-directory-model";
 
-const statuses = ["ALL", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"] as const;
+const statuses = ["ALL", "ACTIVE", "INACTIVE", "COMPLETED", "PLANNED", "ARCHIVED"] as const;
+const pageUrl = (query: Parameters<typeof academicDirectoryHref>[1]) => academicDirectoryHref("BATCHES", query).replace("/college/batches", "/admin/batches");
 type Params = Record<string, string | string[] | undefined>;
 export default async function SuperAdminBatchesPage({ searchParams }: {
   searchParams: Promise<Params>;
@@ -17,7 +16,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   const raw = await searchParams;
   const selected = context.adminScope?.collegeId;
   const controls = collegeBatchDirectorySchema.safeParse({
-    q: raw.q, programId: raw.programId || undefined, status: raw.status, page: raw.page,
+    q: raw.q, programId: raw.programId || undefined, status: raw.status, page: raw.page, pageSize: raw.pageSize,
   });
   const data = selected && controls.success
     ? await listCollegeBatches(context, controls.data)
@@ -50,7 +49,12 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             Status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-              {statuses.map(status => <option key={status} value={status}>{status}</option>)}
+              {statuses.map(status => <option key={status} value={status}>{status === "INACTIVE" ? "Inactive (planned / archived)" : status}</option>)}
+            </select>
+          </label>
+          <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
+            <select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              {[10,25,50,100].map(n=><option value={n} key={n}>{n}</option>)}
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
@@ -71,14 +75,17 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               <td className="p-2"><CollegeCohortRowActions row={row} periods={periods} /></td>
             </tr>)}</tbody>
           </table></div>}
+        <nav aria-label="Batch pages" className="flex items-center justify-between gap-3 text-sm">
+          <span>{data.total} batches · Page {data.query.page} of {data.totalPages}</span>
+          <div className="flex gap-3">
+            {data.query.page>1?<Link href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
+            {data.query.page<data.totalPages?<Link href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
+          </div>
+        </nav>
         <Link href="/admin/batch-promotion" className="inline-flex min-h-10 items-center font-semibold text-primary-text">
           Batch Promotion →
         </Link>
       </section>
     </> : null}
-    <AdminScopedReadPage title="Batches" path="/admin/batches" statuses={statuses}
-      exportPath="/api/admin/batches/export" exportFilename="super-admin-batches-ist.csv"
-      description="Manage college-owned batches in the selected safety scope. Promotion and student moves are separate workflows."
-      searchParams={Promise.resolve(raw)} loader={query => listAdminBatches(context, query)} />
   </div>;
 }
