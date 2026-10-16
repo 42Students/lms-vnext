@@ -1,0 +1,74 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
+ outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};previewToken:string;
+ rows:Array<{resultId:string;student:string;outcome:string;status:string}>;
+ skippedUnrecordedNote:string};
+type ApplyReport={applied:number;skipped:number;unchanged:number;
+ results:Array<{resultId:string;student:string;outcome:string;status:string;reason?:string}>};
+export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:string}){
+ const router=useRouter();const [preview,setPreview]=useState<Preview|null>(null);
+ const [report,setReport]=useState<ApplyReport|null>(null);const [busy,setBusy]=useState(false);
+ const [error,setError]=useState("");
+ const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/apply-all";
+ async function load(){
+  setBusy(true);setError("");setReport(null);
+  try{const res=await fetch(url,{credentials:"same-origin",cache:"no-store"});
+   const value=await res.json() as Preview&{error?:string};
+   if(!res.ok)throw Error(value.error??"Could not load round preview");
+   setPreview(value);
+  }catch(e){setError(e instanceof Error?e.message:"Could not preview results");}finally{setBusy(false);}
+ }
+ async function apply(){
+  if(!preview||!preview.ready||!preview.staged||busy)return;
+  setBusy(true);setError("");
+  try{const res=await fetch(url,{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+   body:JSON.stringify({confirmed:true,expectedPreviewToken:preview.previewToken})});
+   const value=await res.json() as ApplyReport&{error?:string};
+   if(!res.ok)throw Error(value.error??"Results could not be applied");
+   setReport(value);setPreview(null);router.refresh();
+  }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
+ }
+ return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  <h2 className="font-semibold text-foreground">Apply results for the whole round</h2>
+  <p className="text-sm text-body">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
+  <button type="button" disabled={busy} onClick={()=>void load()}
+   className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   {busy?"Working…":"Preview applying round results"}</button>
+  {preview?<div role="dialog" aria-modal="false" aria-label="Round application preview" className="space-y-3 rounded-lg border border-border bg-surface-subtle p-4">
+   <h3 className="font-semibold">Consequence preview</h3>
+   <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
+   <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+    <div><dt>Cleared</dt><dd className="font-semibold">{preview.outcomes.PASS}</dd></div>
+    <div><dt>Not cleared</dt><dd className="font-semibold">{preview.outcomes.FAIL}</dd></div>
+    <div><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
+    <div><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
+   </dl>
+   <div className="max-h-60 overflow-y-auto rounded border border-border p-2">
+    {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm">
+     <span>{r.student}</span><span>{r.outcome} · {r.status}</span>
+    </div>)}
+   </div>
+   <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
+   {!preview.ready?<p role="alert" className="text-sm text-error">Complete this evaluation round before applying results.</p>:null}
+   <div className="flex flex-wrap gap-3">
+    <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
+     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+     Confirm and apply {preview.staged} result(s)</button>
+    <button type="button" disabled={busy} onClick={()=>setPreview(null)}
+     className="min-h-11 rounded border border-border px-4 text-sm">Not yet</button>
+   </div>
+  </div>:null}
+  {report?<div role="status" className="space-y-2 text-sm">
+   <p className="font-semibold">{report.applied} applied · {report.skipped} skipped · {report.unchanged} already applied.</p>
+   <div className="max-h-44 overflow-y-auto">{report.results.map(x=><p key={x.resultId}>
+    {x.student}: {x.status} ({x.outcome}) {x.reason?"· "+x.reason:""}
+   </p>)}</div>
+   <button type="button" className="min-h-11 rounded border border-border px-4" onClick={()=>navigator.clipboard?.writeText(
+    report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].join(",")).join("\n")
+   )}>Copy results</button>
+  </div>:null}
+  {error?<p role="alert" className="text-sm text-error">{error} Refresh the preview before retrying.</p>:null}
+ </section>;
+}
