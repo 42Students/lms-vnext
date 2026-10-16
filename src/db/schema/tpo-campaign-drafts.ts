@@ -24,11 +24,6 @@ export const placementTpoCampaignDrafts = pgTable(
     title: varchar("title", { length: 160 }).notNull(),
     subject: varchar("subject", { length: 200 }).notNull(),
     body: text("body").notNull(),
-    senderName: varchar("sender_name", { length: 200 }).notNull(),
-    suppressedCounts: jsonb("suppressed_counts")
-      .$type<Record<string, number>>()
-      .notNull()
-      .default({}),
     /** TPO-campaigns-public-02: saved suppression summary (counts only; never addresses or tokens). */
     suppressionCounts: jsonb("suppression_counts")
       .$type<Record<string, number>>()
@@ -62,7 +57,7 @@ export const placementTpoCampaignDrafts = pgTable(
     ),
     check(
       "tpo_campaign_draft_body_ck",
-      sql`length(trim(${t.body})) BETWEEN 2 AND 10000`,
+      sql`length(trim(${t.body})) BETWEEN 2 AND 4000`,
     ),
   ],
 );
