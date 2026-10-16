@@ -1,0 +1,35 @@
+import Link from "next/link";
+
+const steps = [
+  { label: "Departments", href: "/admin/departments" },
+  { label: "Programs", href: "/admin/programs" },
+  { label: "Semesters", href: "/admin/semesters" },
+  { label: "Semester–Course Mapping", href: "/admin/semester-courses" },
+  { label: "Batches", href: "/admin/batches" },
+  { label: "Classes", href: "/admin/classes" },
+] as const;
+
+/** Legacy Super Admin Academic Setup: the first six daily-use setup steps. */
+export function AcademicSetupSteps({ step }: { step: 1 | 2 | 3 | 4 | 5 | 6 }) {
+  const before = steps[step - 2];
+  const after = steps[step];
+  return (
+    <nav aria-label="Academic setup steps"
+      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+      <div>
+        <p className="m-0 text-sm font-semibold text-foreground">Academic setup · Step {step} of 6</p>
+        <p className="mt-1 text-xs text-muted-foreground">{steps[step - 1].label}</p>
+      </div>
+      <div className="flex flex-wrap gap-2 text-sm">
+        {before ? <Link href={before.href}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          ← Previous: {before.label}
+        </Link> : <span aria-disabled="true" className="inline-flex min-h-10 items-center px-4 text-muted-foreground">Previous</span>}
+        {after ? <Link href={after.href}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+          Next: {after.label} →
+        </Link> : <span aria-disabled="true" className="inline-flex min-h-10 items-center px-4 text-muted-foreground">Next</span>}
+      </div>
+    </nav>
+  );
+}
