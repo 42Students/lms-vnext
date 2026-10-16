@@ -1,0 +1,45 @@
+import "server-only";
+import {and,asc,eq,inArray,sql} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
+import type {RequestContext} from "@/modules/identity/context";
+import {requirePermission} from "@/modules/permissions/policy";
+import {loadProjectCollegeScope} from "./scope";
+
+export async function listCollegeReadinessWorkspaceChoices(context:RequestContext,collegeId:string){
+ const college=await loadProjectCollegeScope(z.string().uuid().parse(collegeId));
+ requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
+ return getDb().select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
+  .from(projectInstances).where(eq(projectInstances.collegeId,college.id))
+  .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(1000);
+}
+
+/** COL-projects-12: release readiness is derived from registered sprint/task data. */
+export async function listCollegeReadinessReleases(context:RequestContext,collegeId:string,projectId:string){
+ const college=await loadProjectCollegeScope(z.string().uuid().parse(collegeId));
+ requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
+ const id=z.string().uuid().parse(projectId);
+ const [owned]=await getDb().select({id:projectInstances.id}).from(projectInstances)
+  .where(and(eq(projectInstances.id,id),eq(projectInstances.collegeId,college.id))).limit(1);
+ if(!owned)return [];
+ const db=getDb();
+ const releases=await db.select({id:projectReleases.id,title:projectReleases.title,
+  status:projectReleases.status,sequence:projectReleases.sequence})
+  .from(projectReleases).where(eq(projectReleases.projectId,id)).orderBy(asc(projectReleases.sequence));
+ if(!releases.length)return [];
+ const ids=releases.map(r=>r.id);
+ const sprints=await db.select({id:projectSprints.id,releaseId:projectSprints.releaseId,
+  status:projectSprints.status}).from(projectSprints).where(and(
+   eq(projectSprints.projectId,id),inArray(projectSprints.releaseId,ids)));
+ const points=await db.select({sprintId:projectTasks.sprintId,points:sql<number>`coalesce(sum(${projectTasks.estimatePoints}),0)::int`})
+  .from(projectTasks).where(eq(projectTasks.projectId,id)).groupBy(projectTasks.sprintId);
+ const bySprint=new Map(points.map(row=>[row.sprintId,row.points]));
+ return releases.map(release=>{
+  const included=sprints.filter(s=>s.releaseId===release.id);
+  return {...release,sprintCount:included.length,
+   completedSprints:included.filter(s=>s.status==="COMPLETED").length,
+   points:included.reduce((sum,s)=>sum+(bySprint.get(s.id)??0),0),
+   targetDate:null as string|null};
+ });
+}
