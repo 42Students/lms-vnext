@@ -66,6 +66,7 @@ export function FacultyQuizReview({
   resultsPublished,
   deliveryOwned,
   updatedAt,
+  deadlineReached = false,
 }: {
   quizId: string;
   deliveryId: string;
@@ -77,12 +78,14 @@ export function FacultyQuizReview({
   resultsPublished: boolean;
   deliveryOwned: boolean;
   updatedAt:string;
+  deadlineReached?:boolean;
 }) {
   const router = useRouter();
   const actions = quizReviewActions({
     deliveryOwned,
     status,
     resultsPublished,
+    deadlineReached,
   });
   const [open, setOpen] = useState(false);
   const [attempts, setAttempts] =
