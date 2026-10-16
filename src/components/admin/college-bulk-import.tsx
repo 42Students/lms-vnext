@@ -1,10 +1,12 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {useToast} from "@/components/ui/toast";
+import {collegeBulkImportToast} from "@/modules/colleges/bulk-import-feedback-model";
 import {parseCollegeImportCsv} from "@/modules/colleges/bulk-import-model";
-type Result={line:number;code:string;status:string;message:string};
+type Result={line:number;code:string;status:"CREATED"|"SKIPPED"|"FAILED";message:string};
 export function CollegeBulkImport({organizations}:{organizations:readonly {id:string;name:string}[]}){
- const router=useRouter(),[open,setOpen]=useState(false),[organizationId,setOrganizationId]=useState(organizations[0]?.id??""),
+ const router=useRouter(),{showToast}=useToast(),[open,setOpen]=useState(false),[organizationId,setOrganizationId]=useState(organizations[0]?.id??""),
  [csv,setCsv]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[results,setResults]=useState<Result[]>([]);
  let valid=0,validation="";
  try{if(csv.trim())valid=parseCollegeImportCsv(csv).length;}
@@ -17,8 +19,11 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     headers:{"content-type":"application/json"},body:JSON.stringify({organizationId,csv})});
    if(!response.ok)throw Error("Bulk Import could not be completed.");
    const payload=await response.json() as {results:Result[]};
-   setResults(payload.results);router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:"Import failed");}
+   setResults(payload.results);
+   const feedback=collegeBulkImportToast(payload.results);
+   showToast({title:feedback.title,tone:feedback.tone});router.refresh();
+  }catch(cause){setError(cause instanceof Error?cause.message:"Import failed");
+   showToast({title:"Bulk Import failed",tone:"error"});}
   finally{setBusy(false);}
  }
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">

@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readDescendantRule,writeDescendantRule} from "@/modules/module-access/admin-descendant-rule-write";
-const query=z.strictObject({scopeType:z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION"]),scopeId:z.uuid(),module:z.enum(["projects","electives"])});
+const query=z.strictObject({scopeType:z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION"]),scopeId:z.uuid(),module:z.enum(["projects","placements","electives"])});
 export async function GET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const {collegeId}=await params;

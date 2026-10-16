@@ -5,8 +5,9 @@ import {getDb} from "@/db/client";
 import {activityEvents,colleges,moduleAccessRules} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-import {academicModuleRuleInput,descendantRuleMatches} from "./admin-descendant-rule-model";
+import {academicModuleRuleInput,descendantRuleMatches,academicScopeStudents} from "./admin-descendant-rule-model";
 import {StudentRuleConflict} from "./admin-student-rule-write";
+import {resolveModuleAccessFromRules,type ModuleAccessRule,type ModuleAccessScope} from "./service";
 
 const uuid=z.uuid();
 type ScopeType="DEPARTMENT"|"PROGRAM"|"COHORT"|"SECTION";
@@ -34,35 +35,99 @@ async function resolveScope(db:Pick<ReturnType<typeof getDb>,"execute">,collegeI
  `);
  return rows.rows[0]??null;
 }
-export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;projectsRule:string;electivesRule:string};
+export type AcademicModuleScope={scopeType:ScopeType;scopeId:string;label:string;
+ projectsRule:string;placementsRule:string;electivesRule:string;studentsInScope:number;
+ projectsEffective:string;placementsEffective:string;electivesEffective:string;
+ projectsShadowed:boolean;placementsShadowed:boolean;electivesShadowed:boolean;
+};
+/** Active learners only, deduplicated by membership; completed/withdrawn
+ * enrollments and foreign-college sections cannot inflate the tree. */
 export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeIdInput:string):Promise<AcademicModuleScope[]>{
  const college=await collegeScope(ctx,collegeIdInput);if(!college)return [];
- const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string}>(sql`
- select 'DEPARTMENT'::text as "scopeType", d.id::text as "scopeId",d.name::text as label
+ const result=await getDb().execute<{scopeType:ScopeType;scopeId:string;label:string;departmentId:string|null;programId:string|null;cohortId:string|null}>(sql`
+ select 'DEPARTMENT'::text as "scopeType", d.id::text as "scopeId",d.name::text as label,
+  d.id::text as "departmentId",null::text as "programId",null::text as "cohortId"
  from departments d where d.college_id=${college.id}::uuid
- union all select 'PROGRAM',p.id::text,(d.name||' / '||p.name)::text
+ union all select 'PROGRAM',p.id::text,(d.name||' / '||p.name)::text,d.id::text,p.id::text,null::text
  from programs p join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
- union all select 'COHORT',c.id::text,(d.name||' / '||p.name||' / '||c.name)::text
+ union all select 'COHORT',c.id::text,(d.name||' / '||p.name||' / '||c.name)::text,d.id::text,p.id::text,c.id::text
  from cohorts c join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
- union all select 'SECTION',s.id::text,(d.name||' / '||p.name||' / '||c.name||' / '||s.name)::text
+ union all select 'SECTION',s.id::text,(d.name||' / '||p.name||' / '||c.name||' / '||s.name)::text,d.id::text,p.id::text,c.id::text
  from sections s join cohorts c on c.id=s.cohort_id join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid
  order by "scopeType",label limit 500
  `);
  if(result.rows.length===0)return [];
- const ids=result.rows.map(row=>row.scopeId);
+ const ids=[...new Set([
+  college.id,college.organizationId,...result.rows.flatMap(row=>
+   [row.scopeId,row.departmentId,row.programId,row.cohortId].filter((x):x is string=>x!==null)),
+ ])];
  const stored=await getDb().select({
   scopeType:moduleAccessRules.scopeType,scopeId:moduleAccessRules.scopeId,
   module:moduleAccessRules.module,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked,
- }).from(moduleAccessRules).where(and(inArray(moduleAccessRules.scopeId,ids),
-  inArray(moduleAccessRules.module,["projects","electives"])));
+ }).from(moduleAccessRules).where(and(or(isNull(moduleAccessRules.scopeId),inArray(moduleAccessRules.scopeId,ids)),
+  inArray(moduleAccessRules.module,["projects","placements","electives"])));
+ const studentRows=await getDb().execute<{scopeType:ScopeType;scopeId:string;studentsInScope:number}>(sql`
+ WITH active AS (
+  SELECT enrollment.id AS enrollment_id,enrollment.membership_id AS member_id,
+   enrollment.program_id,enrollment.cohort_id,program.department_id
+  FROM learner_program_enrollments enrollment
+  JOIN college_memberships membership ON membership.id=enrollment.membership_id
+  JOIN users person ON person.id=membership.user_id
+  JOIN membership_roles role ON role.membership_id=membership.id AND role.role='LEARNER'
+  JOIN programs program ON program.id=enrollment.program_id
+  JOIN departments department ON department.id=program.department_id
+  WHERE enrollment.status='ACTIVE' AND membership.status='ACTIVE'
+   AND person.platform_status='ACTIVE' AND membership.college_id=${college.id}::uuid
+   AND department.college_id=${college.id}::uuid
+ ), scoped AS (
+  SELECT 'DEPARTMENT'::text AS scope_type,department_id AS scope_id,member_id FROM active
+  UNION ALL SELECT 'PROGRAM',program_id,member_id FROM active
+  UNION ALL SELECT 'COHORT',cohort_id,member_id FROM active
+  UNION ALL SELECT 'SECTION',section_enrollment.section_id,active.member_id
+   FROM active
+   JOIN section_enrollments section_enrollment
+     ON section_enrollment.learner_enrollment_id=active.enrollment_id
+     AND section_enrollment.status='ACTIVE'
+   JOIN sections section ON section.id=section_enrollment.section_id
+     AND section.cohort_id=active.cohort_id AND section.status='ACTIVE'
+ )
+ SELECT scope_type AS "scopeType",scope_id::text AS "scopeId",
+  count(DISTINCT member_id)::int AS "studentsInScope"
+ FROM scoped GROUP BY scope_type,scope_id
+ `);
+ const students=academicScopeStudents(studentRows.rows);
  const describe=(scopeType:string,scopeId:string,module:string)=>{
   const entry=stored.find(row=>row.scopeType===scopeType&&row.scopeId===scopeId&&row.module===module);
   return entry?(entry.enabled?"On":"Off")+(entry.locked?" · Locked":""):"Inherit";
  };
- return result.rows.map(row=>({...row,projectsRule:describe(row.scopeType,row.scopeId,"projects"),
-  electivesRule:describe(row.scopeType,row.scopeId,"electives")}));
+ return result.rows.map(row=>{
+  const chain:ModuleAccessScope[]=[
+   {scopeType:row.scopeType,scopeId:row.scopeId},
+   ...(row.scopeType==="SECTION"&&row.cohortId?[{scopeType:"COHORT" as const,scopeId:row.cohortId}]:[]),
+   ...((row.scopeType==="SECTION"||row.scopeType==="COHORT")&&row.programId?
+     [{scopeType:"PROGRAM" as const,scopeId:row.programId}]:[]),
+   ...(row.scopeType!=="DEPARTMENT"&&row.departmentId?
+     [{scopeType:"DEPARTMENT" as const,scopeId:row.departmentId}]:[]),
+   {scopeType:"COLLEGE",scopeId:college.id},
+   {scopeType:"ORGANIZATION",scopeId:college.organizationId},
+   {scopeType:"GLOBAL",scopeId:null},
+  ];
+  const decision=resolveModuleAccessFromRules(chain,stored as ModuleAccessRule[]);
+  const effective=(module:"projects"|"placements"|"electives")=>
+   (decision[module].enabled?"On":"Off")+" · "+decision[module].level;
+  const shadowed=(module:"projects"|"placements"|"electives")=>
+   describe(row.scopeType,row.scopeId,module)!=="Inherit"&&decision[module].scopeId!==row.scopeId;
+  return {...row,projectsRule:describe(row.scopeType,row.scopeId,"projects"),
+   placementsRule:describe(row.scopeType,row.scopeId,"placements"),
+   electivesRule:describe(row.scopeType,row.scopeId,"electives"),
+   projectsEffective:effective("projects"),placementsEffective:effective("placements"),
+   electivesEffective:effective("electives"),
+   projectsShadowed:shadowed("projects"),placementsShadowed:shadowed("placements"),
+   electivesShadowed:shadowed("electives"),
+   studentsInScope:students.get(row.scopeType+":"+row.scopeId)??0};
+ });
 }
-export async function readDescendantRule(ctx:RequestContext,collegeInput:string,scopeType:ScopeType,scopeIdInput:string,module:"projects"|"electives"){
+export async function readDescendantRule(ctx:RequestContext,collegeInput:string,scopeType:ScopeType,scopeIdInput:string,module:"projects"|"placements"|"electives"){
  const college=await collegeScope(ctx,collegeInput);if(!college)return null;
  const scopeId=uuid.parse(scopeIdInput);
  if(!await resolveScope(getDb(),college.id,scopeType,scopeId))return null;
