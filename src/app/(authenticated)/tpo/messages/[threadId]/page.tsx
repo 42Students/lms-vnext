@@ -3,6 +3,7 @@ import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
 import {hasMembershipRole} from "@/modules/identity/context";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-thread-detail-service";
 
 export default async function TpoRecruiterConversationPage({params}:{
@@ -10,6 +11,17 @@ export default async function TpoRecruiterConversationPage({params}:{
 }){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const [threadsReady,messagesReady]=await Promise.all([
+  placementTableExists("placement_tpo_message_threads"),
+  placementTableExists("placement_tpo_messages"),
+ ]);
+ if(!threadsReady||!messagesReady)return <main className="space-y-3">
+  <h1 className="text-xl font-semibold">Recruiter conversations unavailable</h1>
+  <p role="alert" className="text-sm text-body">
+   Recruiter messaging tables are not registered. No messages were loaded.
+  </p>
+  <Link href="/tpo/messages" className="text-primary-text underline">Back to messages</Link>
+ </main>;
  const {threadId}=await params;
  const data=await getTpoRecruiterThreadDetail(context,threadId);
  if(!data)notFound();
