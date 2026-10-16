@@ -107,6 +107,16 @@ export default async function TpoUnplacedReportPage({
       </section>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
+      <div className="rounded-xl border border-border bg-surface p-4">
+       <Link href="/tpo/students?journeyState=READY_NOT_APPLYING"
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+        Act on them on Students
+       </Link>
+       <p className="mt-2 text-xs text-muted-foreground">
+        The Students view shows readiness and applications. This shortcut targets ready students
+        who have not applied; it is not an exhaustive filter of every unplaced student.
+       </p>
+      </div>
 
       <ReportTable
         title="Registered learners without an accepted offer"
