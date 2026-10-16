@@ -34,13 +34,21 @@ export default async function CampaignHistory({searchParams}:PageProps){
   <p className="text-sm text-body">
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
+  <form method="get" action="/tpo/recruiters/campaigns" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-3">
+   <label className="text-sm">Purpose
+    <input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
+     placeholder="Filter by purpose" className="mt-1 block min-h-10 rounded border border-border px-3"/>
+   </label>
+   <button type="submit" className="min-h-10 rounded border border-border px-3 text-sm">Apply</button>
+   <Link href="/tpo/recruiters/campaigns" className="text-sm text-primary-text underline">Clear</Link>
+  </form>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
     className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
     New email campaign
    </Link>
    <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-primary-text">Back to Engage</Link>
-   <Link href={"/api/placements/tpo/campaigns/history/export?page="+result.page}
+   <Link href={"/api/placements/tpo/campaigns/history/export?page="+result.page+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")}
      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Export this page as CSV</Link>
   </nav>
   <section aria-label="Email campaigns" className="space-y-3">
@@ -86,8 +94,8 @@ export default async function CampaignHistory({searchParams}:PageProps){
     </li>)}
   </ol>:<p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No recorded batches for this college. This does not mean a campaign was delivered.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
-    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link>:null}
-    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link>:null}
+    {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link>:null}
+    {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link>:null}
   </nav>
  </main>;
 }
