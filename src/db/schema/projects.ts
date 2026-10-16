@@ -7,6 +7,7 @@ import {
   index,
   integer,
   jsonb,
+  smallint,
   pgTable,
   text,
   timestamp,
@@ -19,6 +20,7 @@ import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 import { lmsGroups } from "./groups";
+import { sections } from "./academics";
 
 export const projectTemplates = pgTable(
   "project_templates",
@@ -192,6 +194,17 @@ export const projectInstances = pgTable(
     status: varchar("status", { length: 32 })
       .notNull()
       .default("PLANNED"),
+    progressPercent: smallint("progress_percent").notNull().default(0),
+    phase: varchar("phase", { length: 120 }),
+    dueLabel: varchar("due_label", { length: 160 }),
+    courseLabel: varchar("course_label", { length: 160 }),
+    sectionId: uuid("section_id").references(() => sections.id, { onDelete: "restrict" }),
+    blocker: text("blocker"),
+    nextAction: text("next_action"),
+    startDate: date("start_date"),
+    endDate: date("end_date"),
+    sprintLengthWeeks: integer("sprint_length_weeks"),
+    estimationUnit: varchar("estimation_unit", { length: 32 }).default("POINTS"),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -234,6 +247,22 @@ export const projectInstances = pgTable(
     check(
       "project_instances_status_ck",
       sql`${table.status} in ('PLANNED', 'ACTIVE', 'COMPLETED', 'ARCHIVED')`,
+    ),
+    index("project_instances_section_idx")
+      .on(table.sectionId)
+      .where(sql`${table.sectionId} is not null`),
+    check("project_instances_progress_percent_ck", sql`${table.progressPercent} between 0 and 100`),
+    check(
+      "project_instances_sprint_length_weeks_ck",
+      sql`${table.sprintLengthWeeks} is null or ${table.sprintLengthWeeks} between 1 and 104`,
+    ),
+    check(
+      "project_instances_dates_ck",
+      sql`${table.endDate} is null or ${table.startDate} is null or ${table.endDate} >= ${table.startDate}`,
+    ),
+    check(
+      "project_instances_estimation_unit_ck",
+      sql`${table.estimationUnit} is null or ${table.estimationUnit} in ('POINTS','HOURS','TASKS')`,
     ),
   ],
 );
