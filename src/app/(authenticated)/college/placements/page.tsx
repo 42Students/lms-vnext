@@ -32,7 +32,10 @@ export default async function CollegePlacementsPage() {
           </Link>
         }
       />
+      <nav aria-label="Placement workspaces" className="flex flex-wrap gap-3">
+      <Link href="/college/placements/interviews" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Interviews</Link>
       <Link href="/college/placements/drives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse drives</Link>
+      </nav>
       <PlacementOperationsWorkspace
         context={context}
         collegeId={context.membership.collegeId}
