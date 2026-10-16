@@ -469,7 +469,7 @@ export async function reviewProjectSubmission(
           "PROJECT_SUBMISSION_NOT_FOUND",
         );
       }
-      if (submission.status !== "SUBMITTED") {
+      if (submission.status !== "SUBMITTED" || submission.lockedAt) {
         throw new ProjectsServiceError(
           "PROJECT_SUBMISSION_INVALID_STATE",
         );
