@@ -28,6 +28,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .where(and(
   query.status==="ALL"?undefined:eq(placementApplications.status,query.status as "SUBMITTED"|"WITHDRAWN"),
+  query.jobId?eq(placementApplications.jobId,query.jobId):undefined,
   query.q?or(ilike(placementJobs.title,scopedSearchLike(query.q)),
    ilike(placementJobRoleOptions.title,scopedSearchLike(query.q)),
    ilike(users.displayName,scopedSearchLike(query.q))):undefined,
