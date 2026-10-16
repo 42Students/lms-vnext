@@ -1,7 +1,14 @@
 import { z } from "zod";
 
 export const hrApplicantFilterSchema = z.strictObject({
-  tab: z.enum(["overview", "applicants", "offers", "rounds"]).default("overview"),
+  tab: z.preprocess(value=>{
+    if(typeof value!=="string")return value;
+    const aliases:Record<string,string>={
+      interviews:"rounds",results:"rounds",selections:"offers",
+      messages:"overview",requests:"overview",
+    };
+    return aliases[value.toLowerCase()]??value;
+  },z.enum(["overview","applicants","offers","rounds"]).default("overview")),
   stage: z.enum(["ALL", "SHORTLISTED", "WITHDRAWN"]).default("ALL"),
   applicant: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(10000).default(1),
