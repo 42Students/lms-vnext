@@ -49,8 +49,8 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
     expect(COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps])
       .find((step) => step.key === "faculty-assignment")?.href)
       .toBe("/college/faculty-assignment");
-    expect(missing).toContain("semester-courses");
-    expect(missing).toContain("classes");
+    expect(missing).not.toContain("semester-courses");
+    expect(missing).not.toContain("classes");
   });
 
   it("does not erroneously restore a full setup guide to Super Admin", () => {
