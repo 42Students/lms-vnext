@@ -111,6 +111,7 @@ export async function getRecruiterSelfGrantOverview(
         placementCompanyRelationships.status,
       grantedAt:
         placementRecruiterCollegeGrants.createdAt,
+      validUntil: placementRecruiterCollegeGrants.validUntil,
     })
     .from(placementRecruiterCollegeGrants)
     .innerJoin(

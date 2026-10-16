@@ -22,7 +22,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 2. WP-chat-7-02-home-drives-home-courses-s2 | TODO | 20 gaps: S2 15, S3 5
 3. WP-chat-7-03-calendar-messages-prof-profile-misc-s3 | IN-PROGRESS | 16 gaps: S3 16
 4. WP-chat-7-04-home-drives-s3 | TODO | 19 gaps: S3 19
-5. WP-chat-7-05-home-drives-profile-misc-s3 | TODO | 15 gaps: S3 2, S4 13
+5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
 ## Builder chat-7 checkpoint (after latest main merge, 2026-10-16)
 
@@ -36,3 +36,6 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - REC-home-drives-R06: legacy recruiter tab URL implementation committed with focused unit tests; browser/typecheck not run.
 - REC-calendar-messages-profile-15: recruiter composer exact validation/failure copy authored with focused unit tests; API/browser checks not run.
 - WP01 remains IN-PROGRESS pending owner security/schema policy work and real PostgreSQL verification. WP03 and WP05 contain source work but remain not acceptance-closed.
+
+- REC-calendar-messages-profile-R02: thread now identifies its scoped drive or General and links to the drive; unit tests authored, runtime verification outstanding.
+- REC-calendar-messages-profile-29: active recruiter grant expiry is projected to Profile; exact legacy copy unit-tested, runtime verification outstanding.
