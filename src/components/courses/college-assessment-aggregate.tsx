@@ -2,6 +2,8 @@ import Link from "next/link";
 import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, collegeStatusLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { FacultyItemActions } from "./faculty-item-actions";
+import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import {
   collegeAssessmentHref,
   collegeAssessmentSummary,
@@ -29,6 +31,23 @@ function formatDue(value: Date | null) {
   }).format(value) + " IST";
 }
 
+function QuizListActions({item}:{item:CollegeAssessmentAggregateItem}){
+ if(item.status==="ARCHIVED")return null;
+ const actions=item.status==="DRAFT"?["PUBLISH"] as const:
+  item.status==="PUBLISHED"?["CLOSE"] as const:[] as const;
+ return <div className="space-y-2">
+  <FacultyItemActions transitionUrl={"/api/courses/quizzes/"+encodeURIComponent(item.id)+"/transition"}
+   actions={actions}/>
+  {item.status==="CLOSED"?
+   <AdminQuizResultsActions quizId={item.id} status="CLOSED"
+    resultsPublished={Boolean(item.resultsPublished)}/>:
+   item.status==="PUBLISHED"?
+   <p className="text-xs text-muted-foreground" title="Results can be released after the quiz deadline">
+    Close the quiz after the deadline before releasing or withholding results.
+   </p>:null}
+ </div>;
+}
+
 export function CollegeAssessmentAggregate({ data }: { data: Data }) {
   const isAssignment = data.kind === "ASSIGNMENT";
   const name = isAssignment ? "Assignments" : "Quizzes";
@@ -41,8 +60,8 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         title={name}
         description={
           "College-wide persisted " + name.toLowerCase() +
-          " across all course offerings and lessons. Read-only oversight; " +
-          "course authoring and review remain in their offering workspaces."
+          " across all course offerings and lessons. " +
+          "Course authoring and detailed review remain in their offering workspaces."
         }
         actions={
           <div className="flex flex-wrap gap-2">
@@ -183,6 +202,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                   <div><dt className="font-semibold text-muted-foreground">{isAssignment?"Submissions":"Attempts"}</dt><dd>{item.activityCount}</dd></div>
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
                 </dl>
+                {!isAssignment?<QuizListActions item={item}/>:null}
               </article>)}
             </div>
             <div className="hidden overflow-x-auto sm:block">
@@ -196,6 +216,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                 {!isAssignment ? <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.results}</th> : null}
                 <th scope="col" className="px-4 py-3">Due (IST)</th>
                 <th scope="col" className="px-4 py-3">{isAssignment ? "Submissions" : "Attempts"}</th>
+                {!isAssignment?<th scope="col" className="px-4 py-3">Actions</th>:null}
               </tr>
             </thead>
             <tbody>
@@ -223,6 +244,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                   {!isAssignment ? <td className="px-4 py-4 text-body">{collegeResultsLabel(Boolean(item.resultsPublished))}</td> : null}
                   <td className="px-4 py-4 text-body">{formatDue(item.dueAt)}</td>
                   <td className="px-4 py-4 tabular-nums text-body">{item.activityCount}</td>
+                  {!isAssignment?<td className="px-4 py-4"><QuizListActions item={item}/></td>:null}
                 </tr>
               ))}
             </tbody>
