@@ -5,6 +5,7 @@ export const tpoCampaignDraftSchema=z.strictObject({
  subject:z.string().trim().min(2).max(200),
  body:z.string().trim().min(2).max(10000),
  segment:z.enum(["ALL_ELIGIBLE","UNASSIGNED","NEW"]),
+ selectedLeadIds:z.array(z.string().uuid()).max(100).optional(),
  templateKey:z.string().trim().min(2).max(160)
   .refine(isCampaignTemplateKey,"Use a provisioned, non-OTP campaign template"),
 });
