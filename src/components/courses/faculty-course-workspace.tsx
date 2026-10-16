@@ -18,6 +18,8 @@ import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
 import { CourseDisplayReadOnly } from "./course-display-read-only";
 import { FacultyContentOrderEditor } from "./faculty-content-order-editor";
 import { lessonContentOrderRuntimeEnabled } from "@/modules/courses/lesson-content-order-readiness";
+import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
+import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 import type { CourseDisplayContentView } from "@/modules/courses/course-display-service";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import {
@@ -80,9 +82,10 @@ function Metric({
 }
 
 function ContentItem({
-  item,
+  item,materialsEnabled,
 }: {
   item: Workspace["lessons"][number]["contents"][number];
+  materialsEnabled:boolean;
 }) {
   const actions = facultyOwnedItemActions({
     deliveryId: item.deliveryId,
@@ -143,6 +146,8 @@ function ContentItem({
         {item.contentType==="LIVE_CLASS"?"Join Meeting":
          item.contentType==="RESOURCE"?"Open":"Watch on YouTube"}
       </a>:null}
+      {item.contentType==="RESOURCE"&&materialsEnabled?<LessonResourceMaterialsControl
+        contentId={item.id} deliveryId={item.deliveryId} editable={Boolean(item.deliveryId)}/>:null}
       {item.deliveryId ? (
         <div className="mt-3 flex flex-wrap items-start gap-2">
           {item.contentType !== "VIDEO" ? (
@@ -601,6 +606,7 @@ export function FacultyCourseWorkspace({
                               <ContentItem
                                 key={item.id}
                                 item={item}
+                                materialsEnabled={resourceMaterialsRuntimeEnabled()}
                               />
                             ),
                           )}
