@@ -119,7 +119,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
       </div>;
     })()}
-    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility.get(b.id))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready)}</Link>
+    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility.get(b.id),journey.get(b.id))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready,eligibility.get(b.id),journey.get(b.id))}</Link>
    </li>)}</ul>}
  </main>;
 }
