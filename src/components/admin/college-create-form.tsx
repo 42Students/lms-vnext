@@ -27,6 +27,10 @@ export function CollegeCreateForm({
   );
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
+  const [city,setCity]=useState(""),[state,setState]=useState(""),
+   [addressLine1,setAddressLine1]=useState(""),[addressLine2,setAddressLine2]=useState(""),
+   [landmark,setLandmark]=useState(""),[postalCode,setPostalCode]=useState(""),
+   [country,setCountry]=useState("India");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -38,7 +42,8 @@ export function CollegeCreateForm({
       const response = await fetch("/api/colleges", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ organizationId, name, code }),
+        body: JSON.stringify({ organizationId, name, code,
+          city,state,addressLine1,addressLine2,landmark,postalCode,country }),
       });
 
       if (!response.ok) {
@@ -69,6 +74,8 @@ export function CollegeCreateForm({
       }
       setName("");
       setCode("");
+      setCity("");setState("");setAddressLine1("");setAddressLine2("");
+      setLandmark("");setPostalCode("");setCountry("India");
       router.refresh();
     });
   }
@@ -129,6 +136,23 @@ export function CollegeCreateForm({
           maxLength={64}
           placeholder="e.g., nsrit or eng-college"
         />
+      </div>
+      <div className="space-y-3 lg:col-span-4">
+       <details className="rounded-md border border-border p-3">
+        <summary className="cursor-pointer text-sm font-semibold">Address details (optional)</summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+         {([
+          ["City",city,setCity,128],["State",state,setState,128],
+          ["Address",addressLine1,setAddressLine1,255],["Address line 2",addressLine2,setAddressLine2,255],
+          ["Landmark",landmark,setLandmark,255],["Pin Code",postalCode,setPostalCode,32],
+          ["Country",country,setCountry,128],
+         ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-1 text-xs font-semibold">
+          {label}<input value={value} onChange={e=>setter(e.target.value)} maxLength={maxLength}
+           className="min-h-10 rounded border border-border bg-background px-2 text-sm"/>
+         </label>)}
+        </div>
+       </details>
+       <p className="text-xs text-muted-foreground">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
       </div>
       <Button
         type="submit"
