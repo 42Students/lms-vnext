@@ -141,6 +141,13 @@ export async function requireProjectReadAccess(
     );
   }
 
+  // LEARNER-projects-24/25: hiding the sidebar is not an authorization gate.
+  // Check the effective learner Projects flag on direct URL/API reads as well.
+  if (member.role === "LEARNER" &&
+      !(await resolveOptionalModuleAccess(context)).projects.enabled) {
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
+
   return {
     ...scope,
     member,
