@@ -63,7 +63,7 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
   .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")));
  if(recipients.length) await tx.insert(inAppNotifications).values(recipients.map(recipient=>({
   userId:recipient.userId,eventId:event.id,title:"New drive request from "+context.recruiter!.companyName,
-  body:"Review the recruiter drive request in the placement cell.",actionHref:"/tpo/requests",
+  body:"A recruiter sent a formal drive request. Review handling awaits the placement-cell request workflow.",actionHref:"/tpo/notifications",
  }))).onConflictDoNothing();
 }
 /** REC-home-drives-21: writes registered 0101 table and TPO bell transactionally. */
