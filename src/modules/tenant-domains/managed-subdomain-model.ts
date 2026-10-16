@@ -1,0 +1,30 @@
+import {z} from "zod";
+import {availableSubdomainLabel,subdomainLabelSchema} from "./college-subdomain-model";
+import {normalizeTenantHost} from "./validation";
+export const managedSubdomainRequest=z.strictObject({
+ action:z.enum(["ALLOT","CHANGE","REMOVE"]),
+ label:subdomainLabelSchema.optional(),
+ expectedHost:z.string().nullable(),
+}).superRefine((value,ctx)=>{
+ if(value.action!=="REMOVE"&&(!value.label||!availableSubdomainLabel(value.label)))
+  ctx.addIssue({code:"custom",path:["label"],message:"Choose an available subdomain name"});
+ if(value.action==="REMOVE"&&value.label!==undefined)
+  ctx.addIssue({code:"custom",path:["label"],message:"Remove does not accept a new address"});
+});
+export function managedBaseDomain(base:string|undefined,wildcardReady:boolean):string|null{
+ if(!base||!wildcardReady)return null;
+ try{
+  const host=normalizeTenantHost("test."+base);
+  if(!host.startsWith("test."))return null;
+  const suffix=host.slice(5);
+  if(suffix.split(".").length<2||suffix==="localhost")return null;
+  return suffix;
+ }catch{return null;}
+}
+export function managedHost(label:string,base:string){
+ if(!availableSubdomainLabel(label))throw new Error("SUBDOMAIN_RESERVED_OR_INVALID");
+ return normalizeTenantHost(label+"."+base);
+}
+export function isManagedHost(host:string,base:string){
+ return host.endsWith("."+base)&&host.split(".").length===base.split(".").length+1;
+}
