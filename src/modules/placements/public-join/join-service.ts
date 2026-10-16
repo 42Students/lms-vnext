@@ -1,3 +1,4 @@
+import { recruiterAccessMonthsOrDefault } from "@/modules/placements/recruiter-access-defaults";
 import "server-only";
 
 import { createHash } from "node:crypto";
@@ -99,7 +100,8 @@ export async function acceptPublicRecruiterJoin(
     }).from(placementTpoCollegeSettings)
       .where(eq(placementTpoCollegeSettings.collegeId, link.collegeId))
       .for("share").limit(1);
-    if (!settings || settings.months < 1 || settings.months > 60) return "NOT_CONFIGURED";
+    const accessMonths = recruiterAccessMonthsOrDefault(settings?.months);
+    if (accessMonths < 1 || accessMonths > 60) return "NOT_CONFIGURED";
     // Reuse a real user for this verified work email. Never relabel an existing identity.
     await tx.insert(users).values({
       identityUid: "public-recruiter-email:" + createHash("sha256").update(email).digest("hex"),
@@ -164,7 +166,7 @@ export async function acceptPublicRecruiterJoin(
         recruiterUserId: user.id,
         companyRelationshipId: relationship.id,
         grantedByUserId: user.id,
-        validUntil: recruiterGrantValidUntil(now, settings.months),
+        validUntil: recruiterGrantValidUntil(now, accessMonths),
         capabilities: ["DRIVES"], verificationStatus: "VERIFIED",
       });
       const [event] = await tx.insert(activityEvents).values({
