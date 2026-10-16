@@ -77,3 +77,4 @@ export * from "./placement-recruiter-public-contacts";
 export * from "./placement-tpo-application-stages";
 export * from "./placement-tpo-recruiter-saved-views";
 export * from "./assignment-submission-links-staged";
+export * from "./placement-college-application-stages";
