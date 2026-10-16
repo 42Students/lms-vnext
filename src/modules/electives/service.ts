@@ -27,8 +27,9 @@ const slotInput = z.object({
 const offeringInput = z.object({
   slotId: uuid,
   courseId: uuid,
-  groupId: uuid,
+  groupId: uuid.optional(),
   backedDeliveryId: uuid,
+  capacity: z.number().int().min(1).max(100000),
 });
 
 export class ElectivesServiceError extends Error {
@@ -96,20 +97,24 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
     }
     requirePermission(context, "academics.manage", { collegeId: slot.collegeId });
     await assertPersistedGroupActor(tx, context, { collegeId: slot.collegeId, mode: "MANUAL" });
-    const [group] = await tx.select().from(lmsGroups)
-      .where(eq(lmsGroups.id, input.groupId)).for("update");
-    if (!group || group.ownerScope !== "COLLEGE" ||
-        group.collegeId !== slot.collegeId || group.kind !== "ELECTIVE" ||
-        group.deletedAt || !["DRAFT","ACTIVE"].includes(group.status)) {
-      throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
-    }
-    // A group may only be attached as a new elective before enrollment.
-    // Locking slot then group makes this safe against concurrent joins.
-    const [roster] = await tx.select({ total: count() }).from(lmsGroupMembers)
-      .where(and(eq(lmsGroupMembers.groupId, group.id),
-        inArray(lmsGroupMembers.state, ["ACTIVE", "WAITLISTED"])));
-    if (group.activeCount !== 0 || (roster?.total ?? 0) !== 0) {
-      throw new ElectivesServiceError("ELECTIVE_GROUP_HAS_MEMBERS");
+    // Lock the slot first, then the group, matching the group kernel's order.
+    // An unlinked course can be offered without requiring admins to create an
+    // empty elective group separately.
+    let group: typeof lmsGroups.$inferSelect | undefined;
+    if (input.groupId) {
+      [group] = await tx.select().from(lmsGroups)
+        .where(eq(lmsGroups.id, input.groupId)).for("update");
+      if (!group || group.ownerScope !== "COLLEGE" ||
+          group.collegeId !== slot.collegeId || group.kind !== "ELECTIVE" ||
+          group.deletedAt || !["DRAFT", "ACTIVE"].includes(group.status)) {
+        throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
+      }
+      const [roster] = await tx.select({ total: count() }).from(lmsGroupMembers)
+        .where(and(eq(lmsGroupMembers.groupId, group.id),
+          inArray(lmsGroupMembers.state, ["ACTIVE", "WAITLISTED", "REQUESTED"])));
+      if (group.activeCount !== 0 || (roster?.total ?? 0) !== 0) {
+        throw new ElectivesServiceError("ELECTIVE_GROUP_HAS_MEMBERS");
+      }
     }
     const [course] = await tx.select({
       id: courses.id,
@@ -121,6 +126,22 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
     if (!course || course.collegeId !== slot.collegeId || course.status !== "ACTIVE") {
       throw new ElectivesServiceError("ELECTIVE_COURSE_COLLEGE_MISMATCH");
     }
+    if (!group) {
+      const [created] = await tx.insert(lmsGroups).values({
+        ownerScope: "COLLEGE", collegeId: slot.collegeId,
+        kind: "ELECTIVE", status: "ACTIVE",
+        name: (slot.name + " · " + input.courseId.slice(0, 8)).slice(0, 150),
+        capacity: input.capacity, createdByUserId: context.user.id,
+        createdByType: context.user.systemRoles.includes("SUPER_ADMIN") ? "SUPER_ADMIN" : "COLLEGE_ADMIN",
+      }).returning();
+      group = created;
+    } else if (group.capacity !== input.capacity) {
+      const [updated] = await tx.update(lmsGroups).set({
+        capacity: input.capacity, version: group.version + 1, updatedAt: new Date(),
+      }).where(eq(lmsGroups.id, group.id)).returning();
+      group = updated;
+    }
+    if (!group) throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
     {
       const [delivery] = await tx.select({
         id: courseSectionDeliveries.id,
@@ -156,7 +177,7 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
       const [offering] = await tx.insert(electiveOfferings).values({
         slotId: slot.id, courseId: course.id, groupId: group.id,
         backedDeliveryId: input.backedDeliveryId,
-        capacity: group.capacity,
+        capacity: input.capacity,
       }).returning();
       return offering!;
     } catch (error) {
@@ -187,10 +208,14 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
     groupId: electiveOfferings.groupId,
     backedDeliveryId: electiveOfferings.backedDeliveryId,
     capacity: electiveOfferings.capacity,
+    version: electiveOfferings.version,
+    courseName: courses.name,
+    courseCode: courses.code,
     status: electiveOfferings.status,
     activeMembers: lmsGroups.activeCount,
   }).from(electiveOfferings)
     .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
+    .innerJoin(courses, eq(courses.id, electiveOfferings.courseId))
     .where(and(eq(electiveOfferings.slotId, slotId),
       eq(electiveOfferings.status, "ACTIVE"),
       isNull(electiveOfferings.deletedAt)));
@@ -198,3 +223,99 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
 
 /** Same-slot administrative transfer is transactional in the group kernel. */
 export { moveElectiveMember as moveElectiveSelection } from "@/modules/groups/service";
+
+const offeringEditInput = z.object({
+  courseId: uuid,
+  backedDeliveryId: uuid,
+  capacity: z.number().int().min(1).max(100000),
+  expectedVersion: z.number().int().min(0),
+});
+
+/** Edit an offered course or its capacity without changing any enrolled learner's course.
+ * Changing the course is forbidden once the roster has requests or enrollments. */
+export async function updateCollegeElectiveOffering(
+  context: RequestContext, rawSlotId: string, rawOfferingId: string, raw: unknown,
+) {
+  const slotId = uuid.parse(rawSlotId), offeringId = uuid.parse(rawOfferingId);
+  const input = offeringEditInput.parse(raw);
+  return getDb().transaction(async tx => {
+    const [slot] = await tx.select().from(electiveSlots)
+      .where(eq(electiveSlots.id, slotId)).for("update").limit(1);
+    if (!slot || slot.status !== "ACTIVE" || slot.deletedAt)
+      throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
+    requirePermission(context, "academics.manage", { collegeId: slot.collegeId });
+    await assertPersistedGroupActor(tx, context, { collegeId: slot.collegeId, mode: "MANUAL" });
+    const [offering] = await tx.select().from(electiveOfferings)
+      .where(and(eq(electiveOfferings.id, offeringId), eq(electiveOfferings.slotId, slot.id),
+        eq(electiveOfferings.status, "ACTIVE"), isNull(electiveOfferings.deletedAt)))
+      .for("update").limit(1);
+    if (!offering) throw new ElectivesServiceError("ELECTIVE_OFFERING_NOT_FOUND");
+    if (offering.version !== input.expectedVersion)
+      throw new ElectivesServiceError("ELECTIVE_OFFERING_STALE");
+    const [group] = await tx.select().from(lmsGroups)
+      .where(eq(lmsGroups.id, offering.groupId)).for("update").limit(1);
+    if (!group || group.collegeId !== slot.collegeId || group.deletedAt)
+      throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
+    if (input.capacity < group.activeCount)
+      throw new ElectivesServiceError("ELECTIVE_CAPACITY_BELOW_ENROLLMENT");
+    const courseChanged = offering.courseId !== input.courseId ||
+      offering.backedDeliveryId !== input.backedDeliveryId;
+    if (courseChanged) {
+      const [roster] = await tx.select({ total: count() }).from(lmsGroupMembers)
+        .where(and(eq(lmsGroupMembers.groupId, group.id),
+          inArray(lmsGroupMembers.state, ["ACTIVE", "WAITLISTED", "REQUESTED"])));
+      if ((roster?.total ?? 0) > 0)
+        throw new ElectivesServiceError("ELECTIVE_COURSE_CHANGE_HAS_MEMBERS");
+    }
+    const [delivery] = await tx.select({
+      courseId: courseOfferings.courseId,
+      collegeId: departments.collegeId,
+      offeringPeriodId: courseOfferings.academicPeriodId,
+      offeringCohortId: courseOfferings.cohortId,
+      offeringProgramId: cohorts.programId,
+      offeringType: courseOfferings.type,
+      offeringStatus: courseOfferings.status,
+      sectionCohortId: sections.cohortId,
+      sectionPeriodId: sections.academicPeriodId,
+      sectionStatus: sections.status,
+      courseStatus: courses.status,
+      endedAt: courseSectionDeliveries.endedAt,
+    }).from(courseSectionDeliveries)
+      .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+      .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+      .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
+      .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(eq(courseSectionDeliveries.id, input.backedDeliveryId)).limit(1);
+    if (!delivery || delivery.courseId !== input.courseId ||
+        delivery.collegeId !== slot.collegeId || delivery.offeringProgramId !== slot.programId ||
+        delivery.offeringType !== "ELECTIVE" || delivery.offeringStatus !== "ACTIVE" ||
+        delivery.courseStatus !== "ACTIVE" || delivery.sectionStatus !== "ACTIVE" ||
+        delivery.endedAt !== null || delivery.sectionCohortId !== delivery.offeringCohortId ||
+        delivery.sectionPeriodId !== delivery.offeringPeriodId ||
+        (slot.academicPeriodId !== null && slot.academicPeriodId !== delivery.offeringPeriodId))
+      throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
+    if (group.capacity !== input.capacity) {
+      await tx.update(lmsGroups).set({
+        capacity: input.capacity, version: group.version + 1, updatedAt: new Date(),
+      }).where(eq(lmsGroups.id, group.id));
+    }
+    try {
+      const [saved] = await tx.update(electiveOfferings).set({
+        courseId: input.courseId, backedDeliveryId: input.backedDeliveryId,
+        capacity: input.capacity, version: offering.version + 1, updatedAt: new Date(),
+      }).where(and(eq(electiveOfferings.id, offering.id),
+        eq(electiveOfferings.version, input.expectedVersion))).returning();
+      if (!saved) throw new ElectivesServiceError("ELECTIVE_OFFERING_STALE");
+      return saved;
+    } catch (error) {
+      const constraint = postgresConstraintName(error);
+      if (constraint === "elective_offerings_slot_active_course_uq")
+        throw new ElectivesServiceError("ELECTIVE_COURSE_ALREADY_OFFERED");
+      if (constraint === "elective_offerings_delivery_uq")
+        throw new ElectivesServiceError("ELECTIVE_DELIVERY_ALREADY_USED");
+      throw error;
+    }
+  });
+}
