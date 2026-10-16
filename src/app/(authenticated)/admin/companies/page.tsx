@@ -141,6 +141,10 @@ export default async function SuperAdminCompaniesPage({
         </div>
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
         <Link className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline"
+          href={`/admin/companies/${encodeURIComponent(row.companyId)}/drives`}>
+          Drive history →
+        </Link>
+        <Link className="mt-2 ml-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline"
           href={"/admin/companies?" + new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL"}).toString()}>
           Review this employer&apos;s relationships →
         </Link>
