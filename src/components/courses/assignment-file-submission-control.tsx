@@ -17,9 +17,9 @@ import {
 } from "./assignment-staged-file-transfer";
 
 export function AssignmentFileSubmissionControl({
-  assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,
+  assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,
 }: { assignmentId: string; deliveryId: string; onBusyChange: (busy: boolean) => void; onSubmitted: () => void;
- multipartEnabled?:boolean }) {
+ multipartEnabled?:boolean;pdfOnly?:boolean }) {
   const [selected, setSelected] = useState<File[]>([]);
   const [files, setFiles] = useState<SubmissionFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,6 +87,9 @@ export function AssignmentFileSubmissionControl({
       setSelected([]); return;
     }
     for (const file of next) {
+      if(pdfOnly && (file.name.split(".").at(-1)?.toLowerCase()!=="pdf" || (file.type && file.type!=="application/pdf"))){
+        setError("Only PDF files are allowed.");setSelected([]);return;
+      }
       const checked = checkedAssignmentFileDeclaration(file, deliveryId);
       if (!checked.ok) {
         setError(storageErrorMessage(checked.error)); setSelected([]); return;
@@ -166,7 +169,7 @@ export function AssignmentFileSubmissionControl({
     <h3 className="text-sm font-semibold text-foreground">File Upload</h3>
     <p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>
     <label className="block text-sm font-semibold text-body">Choose a file to upload
-      <input type="file" multiple accept={acceptAttributeFor("assignment-submission")}
+      <input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}
         disabled={loading || busy || staged.length >= MAX_ASSIGNMENT_FILES_PER_SUBMISSION}
         className="mt-2 block min-h-11 w-full max-w-full text-sm"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
