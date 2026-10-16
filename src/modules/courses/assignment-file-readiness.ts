@@ -8,8 +8,7 @@ export function assignmentFilesRuntimeEnabled() {
   );
 }
 
-/** Opt in only after the multipart SQL proposal has been registered and replayed. */
+/** Migration 0111 is registered; file uploads only require private storage. */
 export function multipartAssignmentRuntimeEnabled() {
-  return assignmentFilesRuntimeEnabled() &&
-    process.env.DB06_MULTIPART_SUBMISSIONS_READY === "DB06_VERIFIED";
+  return assignmentFilesRuntimeEnabled();
 }
