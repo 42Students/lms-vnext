@@ -19,7 +19,8 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
    eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
- const readPage=(offset:number,limit:number)=>db.select({
+ const records=await db.transaction(async tx=>{
+ const readPage=async(offset:number,limit:number)=>await tx.select({
   applicationId:placementApplications.id,studentName:users.displayName,
   roleTitle:placementJobRoleOptions.title,status:placementApplications.status,
   screeningStatus:placementApplicationScreenings.status,
@@ -49,9 +50,10 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
     sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
     placementApplications.id)
   .limit(limit).offset(offset);
- const records=options.exportAll
+ return options.exportAll
   ? await collectTpoExportPages(readPage)
   : await readPage(0,TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
+ },{isolationLevel:"repeatable read",accessMode:"read only"});
  return {job,stage,search,channel,eligibility,sort,submittedWithin,...projectTpoDriveApplicationsExport(records.map(r=>({
   ...r,submittedAt:r.submittedAt.toISOString(),
  })),job.title,options)};
