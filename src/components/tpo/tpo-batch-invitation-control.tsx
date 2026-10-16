@@ -45,7 +45,7 @@ export function TpoBatchInvitationControl(props: Props) {
       if (!response.ok)
         throw new Error(response.status === 409 ? "Batch changed. Refresh before inviting." :
           errors[body.error ?? ""] ?? "Could not invite this batch.");
-      setMessage("Registration is open. Outbound invitation delivery has not been sent.");
+      setMessage("Registration is open. In-app invitations are recorded; email delivery is not enabled.");
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not invite this batch.");

@@ -107,6 +107,14 @@ afterEach(async () => {
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='SECTION' AND scope_id = ANY($1::uuid[])", [f.sections]);
   }
   if (f.cohorts.length) {
+    await pool.query(
+      "DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE event_type='BATCH_INVITED' AND subject_id = ANY($1::text[]))",
+      [f.cohorts],
+    );
+    await pool.query(
+      "DELETE FROM activity_events WHERE event_type='BATCH_INVITED' AND subject_id = ANY($1::text[])",
+      [f.cohorts],
+    );
     await pool.query("DELETE FROM placement_eligibility_decisions WHERE scope_type='COHORT' AND scope_id = ANY($1::uuid[])", [f.cohorts]);
     await pool.query("DELETE FROM placement_batch_lifecycles WHERE cohort_id = ANY($1::uuid[])", [f.cohorts]);
   }
@@ -248,6 +256,31 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     await expect(undoPlacementParticipation(admin, {
       collegeId: SEED_IDS.collegeA, actionId: ev.rows[0].action_id,
     })).rejects.toMatchObject({ code: "DB08_ACTION_STALE" });
+  });
+
+  it("sends in-app invitation to eligible unregistered learners only, once", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const eligible = await makeLearner(SEED_IDS.collegeA, a);
+    const ineligible = await makeLearner(SEED_IDS.collegeA, a);
+    await decidePlacementParticipation(admin, {
+      collegeId: SEED_IDS.collegeA, changes: [
+        { scopeType: "MEMBERSHIP", scopeId: eligible, status: "ELIGIBLE" },
+        { scopeType: "MEMBERSHIP", scopeId: ineligible,
+          status: "INELIGIBLE", reason: "Not participating" },
+      ],
+    });
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2027-01-01T18:29:59.999Z", rulesOverride: null,
+    });
+    await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    await markPlacementBatchInvited(admin, { collegeId: SEED_IDS.collegeA, cohortId: a.cohortId });
+    const results = await pool.query(
+      "SELECT a.metadata, n.user_id FROM activity_events a LEFT JOIN in_app_notifications n ON n.event_id=a.id WHERE a.event_type='BATCH_INVITED' AND a.subject_id=$1",
+      [a.cohortId],
+    );
+    expect(results.rows).toHaveLength(1);
+    expect(results.rows[0].metadata.appRecipients).toBe(1);
   });
 
   it("enforces optimistic deadline changes, preserves rules, and can clear the deadline", async () => {
