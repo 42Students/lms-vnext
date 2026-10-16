@@ -281,6 +281,12 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     );
     expect(results.rows).toHaveLength(1);
     expect(results.rows[0].metadata.appRecipients).toBe(1);
+    const delivered = await pool.query(
+      "SELECT user_id,title FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1 AND event_type='BATCH_INVITED')",
+      [a.cohortId],
+    );
+    expect(delivered.rows).toHaveLength(1);
+    expect(delivered.rows[0].title).toBe("Placement registration is open");
   });
 
   it("enforces optimistic deadline changes, preserves rules, and can clear the deadline", async () => {

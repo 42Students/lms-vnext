@@ -9,9 +9,7 @@ type Props = {
   finishedAt: string | null;
   deadline: string | null;
   expectedVersion: string;
-  eligible: number;
-  complete: boolean;
-  unrecorded: number;
+  invitable: number;
   deadlinePassed: boolean;
 };
 const errors: Record<string, string> = {
@@ -29,7 +27,7 @@ export function TpoBatchInvitationControl(props: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const ready = props.complete && props.eligible > 0 && props.unrecorded > 0 &&
+  const ready = props.invitable > 0 &&
     !props.invitedAt && !props.finishedAt;
   async function invite() {
     setError(""); setMessage("");
@@ -103,7 +101,7 @@ export function TpoBatchInvitationControl(props: Props) {
     </section>;
   }
   return <section className="space-y-3 rounded border border-border bg-surface p-4" aria-label="Invite batch">
-    <h2 className="font-semibold">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
+    <h2 className="font-semibold">Invite {props.invitable} eligible {props.invitable === 1 ? "student" : "students"} to register</h2>
     <label className="block text-sm" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
     <input id="batch-register-by" aria-label="Registration deadline" type="date" value={date}
       onChange={event => setDate(event.target.value)}
@@ -112,9 +110,7 @@ export function TpoBatchInvitationControl(props: Props) {
       disabled={busy || !ready} className="min-h-11 rounded border border-border px-4 disabled:opacity-50">
       {busy ? "Inviting…" : TPO_INVITATION_COPY.invitation}
     </button>
-    {!props.complete ? <p className="text-sm text-muted-foreground">Review the student decisions before inviting.</p> : null}
-    {props.eligible === 0 ? <p className="text-sm">No eligible students to invite.</p> : null}
-    {props.unrecorded === 0 ? <p className="text-sm">Everyone has chosen already</p> : null}
+    {props.invitable === 0 ? <p className="text-sm">No eligible students remain to invite.</p> : null}
     {message ? <p role="status" className="text-sm">{message}</p> : null}
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
   </section>;

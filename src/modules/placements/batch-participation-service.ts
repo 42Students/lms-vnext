@@ -486,7 +486,7 @@ export async function upsertPlacementBatchSettings(
  * applied to a drive receive the first invite. The college row lock used by
  * DB08 decisions/registrations is already held by the caller.
  */
-async function findUnchosenEligibleBatchStudents(tx: Tx, collegeId: string, cohortId: string) {
+export async function findUnchosenEligibleBatchStudents(tx: Tx, collegeId: string, cohortId: string) {
   const roster = await tx.select({
     membershipId: collegeMemberships.id,
     enrollmentId: learnerProgramEnrollments.id,
