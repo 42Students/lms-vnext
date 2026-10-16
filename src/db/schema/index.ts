@@ -79,3 +79,4 @@ export * from "./placement-tpo-recruiter-saved-views";
 export * from "./assignment-submission-links-staged";
 export * from "./placement-college-application-stages";
 export * from "./placement-waitlist-promotions";
+export * from "./placement-drive-change-requests";
