@@ -8,6 +8,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {z} from "zod";
+import {notifyProjectMemberships} from "./project-notification-service";
 
 export const assignProjectTaskInputSchema=z.object({
   assigneeMembershipId:z.string().uuid().nullable(),
@@ -48,7 +49,7 @@ export async function assignProjectTask(context:RequestContext,projectIdInput:st
       .where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
         sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`)).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-    await recordActivityEventInTransaction(tx,context,{
+    const event = await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_task",subjectId:updated.id,subjectLabel:updated.title,
@@ -56,6 +57,22 @@ export async function assignProjectTask(context:RequestContext,projectIdInput:st
       metadata:{projectId:scope.project.id,assigneeMembershipId:updated.assigneeMembershipId},
       groupKey:"project:"+scope.project.id,
     });
+    if(updated.assigneeMembershipId&&updated.assigneeMembershipId!==task.assigneeMembershipId){
+      await notifyProjectMemberships(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,
+        membershipIds:[updated.assigneeMembershipId],
+        title:"New task assigned",body:"You have been assigned "+updated.title+".",
+        actionHref:"/learn/projects/"+scope.project.id,
+      });
+    }
+    if(task.assigneeMembershipId&&task.assigneeMembershipId!==updated.assigneeMembershipId){
+      await notifyProjectMemberships(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,
+        membershipIds:[task.assigneeMembershipId],
+        title:"Task removed",body:"You are no longer assigned to "+updated.title+".",
+        actionHref:"/learn/projects/"+scope.project.id,
+      });
+    }
     return updated;
   });
 }

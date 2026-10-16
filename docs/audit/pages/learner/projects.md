@@ -195,3 +195,8 @@ Sources. Legacy FE `lms-dev-2026` (worktree `42lms\lms-dev-2026-frontend`): `src
 - Existing: `tests/integration/chat7-learner-project-team.test.ts`, pure-model tests for list sorting, blocked filter, task dialog, activity filters (see `docs/parity/learner.md` Projects entries), `ProjectTaskSubmissionControl` and meeting-request service tests (`src/modules/projects`).
 - Needed (`scripts/verify/pages/learner-projects.mjs`): list filters and deep links; overview content with due/blocker/next step; request and withdraw meeting; task submit for review; learner task create/move/blocker (once built); final submission with file upload, autosave, locked and changes-requested states; archived workspace read-only behaviour; 1280 and 375 px layouts.
 - UNCONFIRMED (verify with seeded data): -06, -07, -11, -19, -30, -34, -38.
+
+
+### chat-11 WP-01 implementation checkpoint (2026-10-16; verification pending)
+
+- **LEARNER-projects-25:** Own assigned-task Start work, Report blocker with required note, Move to To Do and Move up/down controls, with learner server authorization, active-sprint/project guards, stale row checks, a collision-safe three-update sequence swap and activity recording. Added unit and disposable PostgreSQL integration tests; **not executed** here. Browser verification at mobile and desktop remains open.
