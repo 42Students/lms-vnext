@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
+import {MentorTaskAllocation} from "@/components/projects/mentor-task-allocation";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
@@ -106,6 +107,10 @@ export default async function MentorProjectPage({
           Recorded project activity →
         </Link>
       </div> : null}
+      {tab==="performance"?<MentorTaskAllocation
+        projectId={projectId} initialTasks={workspace.tasks}
+        members={workspace.members} sprints={workspace.sprints} releases={workspace.releases}
+        readOnly={access.access==="OBSERVER"}/>:
       <ProjectWorkspace
         workspace={workspace}
         backHref="/mentor/projects"
@@ -118,7 +123,7 @@ export default async function MentorProjectPage({
           context.membership?.id ?? null
         }
         activeSection={activeSection}
-      />
+      />}
     </div>
   );
 }
