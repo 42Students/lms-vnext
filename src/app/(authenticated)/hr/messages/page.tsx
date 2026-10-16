@@ -6,6 +6,8 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrNotificationsQuerySchema} from "@/modules/placements/hr-notifications-model";
 import {HrNotificationReadButton} from "@/components/hr/hr-notification-read-button";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
+import {listOwnRecruiterDecisionNotices} from "@/modules/placements/recruiter-decision-notice-service";
+import {RecruiterDecisionReadButton} from "@/components/hr/recruiter-decision-read-button";
 import {groupHrNotificationPage} from "@/modules/placements/hr-notification-groups-model";
 export default async function HrMessagesPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[];q?:string|string[]}>
@@ -23,6 +25,8 @@ export default async function HrMessagesPage({searchParams}:{
   <p role="alert">Invalid inbox filter.</p><Link href="/hr/messages" className="text-primary-text">Reset</Link>
  </div>;
  const result=await listHrNotifications(context,query.data);
+ const decisionNotices=result.status==="READY"
+  ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
  const time=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(d);
@@ -38,6 +42,21 @@ export default async function HrMessagesPage({searchParams}:{
     href={"/hr/messages?collegeId="+encodeURIComponent(grant.collegeId)}
     className="block rounded-md border border-border p-3 text-primary-text">{grant.collegeName}</Link>)}
   </section>:<>
+   {decisionNotices.length>0?<section className="rounded-xl border border-border bg-surface p-4"
+      aria-label="Drive request decisions">
+     <h2 className="font-semibold text-foreground">Drive request decisions</h2>
+     <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
+     <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
+       className="rounded-lg border border-border p-3">
+       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
+       <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
+       <p className="mt-1 text-xs text-muted-foreground">{time(item.createdAt)} IST</p>
+       <Link href={item.href} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">
+         View your drive request
+       </Link>
+       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
+     </li>)}</ul>
+   </section>:null}
    <nav aria-label="Inbox filters" className="flex flex-wrap gap-2">
     {result.choices.length>1?result.choices.map(grant=><Link key={grant.id}
      href={"/hr/messages?collegeId="+encodeURIComponent(grant.collegeId)}
