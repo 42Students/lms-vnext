@@ -16,6 +16,8 @@ import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
+import {TpoMobileFooter} from "./tpo-mobile-footer";
+import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
 import {HrRecruiterBell} from "@/components/hr/hr-recruiter-bell";
 import { ToastProvider } from "@/components/ui/toast";
@@ -155,9 +157,10 @@ export async function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
         </main>
+        {canOpenTpoWorkspace(context)?<TpoMobileFooter/>:null}
       </div>
     </div>
     </ToastProvider>
