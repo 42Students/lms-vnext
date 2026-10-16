@@ -669,7 +669,7 @@ export function ProjectWorkspace({
             Release → sprint → task state from normalized
             Project records.
           </p>
-          {mode==="MENTOR"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
+          {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
         <div className="space-y-4">
           {workspace.releases.map((release) => (
@@ -704,10 +704,10 @@ export function ProjectWorkspace({
                   <StatusBadge tone={tone(release.status)}>
                     {label(release.status)}
                   </StatusBadge>
-                  {mode==="MENTOR"&&!readOnly?<MentorReleaseEditor
+                  {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor
                     projectId={workspace.project.id} release={release}
                     linkedSprints={(sprintsByRelease.get(release.id)??[]).length}/>:null}
-                  {mode === "MENTOR" && !readOnly && release.status !== "SHIPPED" ? (
+                  {mode !== "LEARNER" && !readOnly && release.status !== "SHIPPED" ? (
                     <MentorSprintCreate projectId={workspace.project.id}
                       releaseId={release.id} />
                   ) : null}
