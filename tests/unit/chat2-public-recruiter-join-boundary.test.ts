@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { publicJoinAcceptSchema } from "@/modules/placements/public-join/join-service";
+import { publicJoinAcceptSchema } from "@/modules/placements/public-join/form-model";
 
 const valid = {
   token: "A".repeat(43), code: "005501", email: "recruiter@company.example",

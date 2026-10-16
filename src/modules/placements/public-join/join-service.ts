@@ -2,7 +2,6 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
-import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   activityEvents, colleges, organizations, placementCompanies,
@@ -10,19 +9,14 @@ import {
   placementPublicJoinChallenges, placementRecruiterProfiles,
   placementRecruiterCollegeGrants, placementTpoCollegeSettings, users,
 } from "@/db/schema";
-import { publicCollegeJoinTokenSchema, publicCollegeJoinCodeSchema,
-  publicRecruiterWorkEmailSchema, workEmailDomain } from "../public-college-join-model";
-import { publicJoinFormSchema } from "./form-model";
+import { workEmailDomain } from "../public-college-join-model";
+import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
 import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
 import { publicJoinTablesReady } from "./readiness";
 import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruiter-grant-expiry-policy";
 
 type Scope = "COLLEGE" | "COMPANY";
-export const publicJoinAcceptSchema = publicJoinFormSchema.extend({
-  token: publicCollegeJoinTokenSchema, code: publicCollegeJoinCodeSchema,
-}).strict();
-
 export class PublicJoinAcceptError extends Error {
   constructor(readonly code: "INVALID" | "REMOVED" | "NOT_CONFIGURED" |
     "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY") {
@@ -41,6 +35,7 @@ export async function acceptPublicRecruiterJoin(
   const input = publicJoinAcceptSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinAcceptError("INVALID");
   const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
+  if (Buffer.byteLength(secret, "utf8") < 32) throw new PublicJoinAcceptError("NOT_CONFIGURED");
   let ipTag: string;
   try { ipTag = opaqueNetworkTag(verifiedClientIp ?? "", secret); }
   catch { throw new PublicJoinAcceptError("NETWORK_GUARD_NOT_READY"); }
@@ -110,57 +105,57 @@ export async function acceptPublicRecruiterJoin(
     }).onConflictDoNothing();
     const [user] = await tx.select().from(users)
       .where(sql`lower(${users.email}) = ${email}`).for("update").limit(1);
-    if (!user || user.platformStatus !== "ACTIVE") return "DENIED";
+    if (!user || user.platformStatus !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
     let companyId = link.companyId;
     if (companyId) {
       const [company] = await tx.select({ id: placementCompanies.id })
         .from(placementCompanies)
         .where(and(eq(placementCompanies.id, companyId),
           eq(placementCompanies.status, "ACTIVE"))).limit(1);
-      if (!company) return "DENIED";
+      if (!company) throw new PublicJoinAcceptError("INVALID");
     } else {
       const [existingCompany] = await tx.select({ id: placementCompanies.id,
         status: placementCompanies.status })
         .from(placementCompanies)
         .where(sql`lower(${placementCompanies.primaryDomain}) = ${emailDomain}`)
         .limit(1);
-      if (existingCompany && existingCompany.status !== "ACTIVE") return "DENIED";
+      if (existingCompany && existingCompany.status !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
       if (existingCompany) companyId = existingCompany.id;
       else {
-        if (companyName.trim().length < 2) return "DENIED";
+        if (companyName.trim().length < 2) throw new PublicJoinAcceptError("INVALID");
         const [sameName] = await tx.select({ id: placementCompanies.id }).from(placementCompanies)
           .where(sql`lower(${placementCompanies.name}) = lower(${companyName})`).limit(1);
-        if (sameName) return "DENIED";
+        if (sameName) throw new PublicJoinAcceptError("INVALID");
         const [created] = await tx.insert(placementCompanies).values({
           name: companyName, primaryDomain: emailDomain, createdByUserId: user.id,
         }).returning({ id: placementCompanies.id });
-        if (!created) return "DENIED";
+        if (!created) throw new PublicJoinAcceptError("INVALID");
         companyId = created.id;
       }
     }
-    if (!companyId) return "DENIED";
+    if (!companyId) throw new PublicJoinAcceptError("INVALID");
     await tx.insert(placementCompanyRelationships).values({
       collegeId: link.collegeId, companyId, createdByUserId: user.id,
     }).onConflictDoNothing();
     const [relationship] = await tx.select().from(placementCompanyRelationships)
       .where(and(eq(placementCompanyRelationships.collegeId, link.collegeId),
         eq(placementCompanyRelationships.companyId, companyId))).for("update").limit(1);
-    if (!relationship || relationship.status !== "ACTIVE") return "DENIED";
+    if (!relationship || relationship.status !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
     await tx.insert(placementRecruiterProfiles).values({
       userId: user.id, companyId, title: designation || null, createdByUserId: user.id,
     }).onConflictDoNothing();
     const [profile] = await tx.select().from(placementRecruiterProfiles)
       .where(eq(placementRecruiterProfiles.userId, user.id)).for("update").limit(1);
-    if (!profile || profile.companyId !== companyId || profile.status !== "ACTIVE") return "DENIED";
+    if (!profile || profile.companyId !== companyId || profile.status !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
     const [grant] = await tx.select().from(placementRecruiterCollegeGrants)
       .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId, user.id),
         eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.id)))
       .orderBy(desc(placementRecruiterCollegeGrants.createdAt))
       .for("update").limit(1);
-    if (grant && grant.status === "REVOKED") return "REMOVED";
+    if (grant && grant.status === "REVOKED") throw new PublicJoinAcceptError("REMOVED");
     let outcome: "JOINED" | "ALREADY_JOINED" = "JOINED";
     if (grant) {
-      if (!recruiterGrantEffectiveAt(grant, now, "DRIVES")) return "REMOVED";
+      if (!recruiterGrantEffectiveAt(grant, now, "DRIVES")) throw new PublicJoinAcceptError("REMOVED");
       outcome = "ALREADY_JOINED";
     } else {
       await tx.insert(placementRecruiterCollegeGrants).values({

@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { publicRecruiterWorkEmailSchema } from "../public-college-join-model";
+import { publicCollegeJoinCodeSchema, publicCollegeJoinTokenSchema,
+  publicRecruiterWorkEmailSchema } from "../public-college-join-model";
 
 export const publicJoinFormSchema = z.strictObject({
   email: publicRecruiterWorkEmailSchema,
@@ -8,3 +9,9 @@ export const publicJoinFormSchema = z.strictObject({
   phone: z.string().trim().max(20),
   companyName: z.string().trim().max(200),
 });
+
+/** Shared public join inputs, no caller-supplied college or company IDs. */
+export const publicJoinAcceptSchema = publicJoinFormSchema.extend({
+  token: publicCollegeJoinTokenSchema,
+  code: publicCollegeJoinCodeSchema,
+}).strict();
