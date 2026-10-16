@@ -30,6 +30,7 @@ import {
 import {
   buildRecruiterCalendarEvents,
   buildRecruiterResultsDueItems,
+  recruiterRoundEndTime,
   type RecruiterCalendarJob,
 } from "./recruiter-calendar-model";
 import {
@@ -176,6 +177,7 @@ export async function listRecruiterCalendarEvents(
             status: placementJobRounds.status,
             scheduledAt:
               placementJobRounds.scheduledAt,
+            durationMinutes:placementJobRounds.durationMinutes,
             timezone:
               placementJobRounds.timezone,
             venue: placementJobRounds.venue,
@@ -219,6 +221,10 @@ export async function listRecruiterCalendarEvents(
       gte(hrInterviewSlots.startAt,startsAt),lt(hrInterviewSlots.startAt,endsBefore)))
     .orderBy(asc(hrInterviewSlots.startAt),asc(hrInterviewSlots.id));
 
+  const roundEndsById=new Map(rounds.flatMap(round=>{
+    const end=recruiterRoundEndTime(round.scheduledAt,round.durationMinutes);
+    return end?[["round:"+round.id,end] as const]:[];
+  }));
   const resultsDue = buildRecruiterResultsDueItems({jobs,rounds,startsAt,endsBefore});
 
   const events = buildRecruiterCalendarEvents({
@@ -234,6 +240,7 @@ export async function listRecruiterCalendarEvents(
     to: input.to,
     events,
     resultsDue,
+    roundEndsById,
     days: groupPlacementCalendarEvents(events),
     summary: summarizePlacementCalendar(
       events,

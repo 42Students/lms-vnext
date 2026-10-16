@@ -246,3 +246,7 @@ An unread thread now mounts a one-shot client-side POST to the existing recruite
 ## REC-calendar-messages-profile-09 and -10 inbox source checkpoint (2026-10-17)
 
 Recruiter Messages now shows the legacy heading/unread summary, conversation count and new-message chip, company · job subjects, relative update time, exact search and empty copy, and searches authorized last-message text in addition to drive names. The Notifications link now uses `/hr/notifications` rather than looping back to Messages. Focused unit tests added; browser, auth/DB and performance validation unrun.
+
+## REC-calendar-messages-profile-03 round times source — 2026-10-17
+
+The recruiter Calendar now selects existing `placement_job_rounds.duration_minutes` and shows known positive durations as start-to-end ranges in agenda/event cards and compact week/month entries. Rounds without a persisted duration retain start-only display rather than inventing an end time. Source unit tests authored; browser and real PostgreSQL verification remain open.

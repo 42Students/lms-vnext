@@ -144,9 +144,10 @@ function eventKindLabel(event: PlacementCalendarEvent) {
 }
 
 function RecruiterCalendarEventCard({
-  event,
+  event,endsAt,
 }: {
   event: PlacementCalendarEvent;
+  endsAt?:Date|null;
 }) {
   const href = eventHref(event);
 
@@ -172,6 +173,7 @@ function RecruiterCalendarEventCard({
             <time dateTime={event.startsAt.toISOString()}>
               {eventDateTime(event.startsAt)} IST
             </time>
+            {endsAt ? " to "+eventTime(endsAt)+" IST" : null}
           </p>
 
           {event.venue ? (
@@ -556,7 +558,7 @@ export default async function HrCalendarPage({
                     <h3 className="text-sm font-semibold text-foreground">{dateLabel(day.day)}</h3>
                     <div className="grid gap-3">
                       {day.events.map((event) => (
-                        <RecruiterCalendarEventCard key={event.id} event={event} />
+                        <RecruiterCalendarEventCard key={event.id} event={event} endsAt={calendar.roundEndsById.get(event.id)}/>
                       ))}
                       {day.resultsDue.map((item) => (
                         <Link key={"due:"+item.id} href={hrResultsDueHref(item.jobId,item.id)}
@@ -640,13 +642,14 @@ export default async function HrCalendarPage({
                             <Link
                               key={event.id}
                               href={href}
-                              title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
+                              title={`${eventTime(event.startsAt)}${calendar.roundEndsById.get(event.id)?" to "+eventTime(calendar.roundEndsById.get(event.id)!):""} IST · ${event.companyName} · ${event.title}`}
                               className="block rounded-md bg-primary-subtle px-2 py-2 text-xs text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
                             >
                               <span className="block font-semibold">
-                                {eventTime(
-                                  event.startsAt,
-                                )}
+                                {eventTime(event.startsAt)}
+                                {calendar.roundEndsById.get(event.id)
+                                  ?" to "+eventTime(calendar.roundEndsById.get(event.id)!)
+                                  :""}
                               </span>
 
                               <span className="mt-1 block break-words">

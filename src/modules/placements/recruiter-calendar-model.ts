@@ -167,3 +167,11 @@ export function buildRecruiterResultsDueItems(input: {
       roundName:round.name, dueAt:due, status:round.status }];
   }).sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id));
 }
+
+/** REC-calendar-messages-profile-03: show an end only with a persisted
+ * positive duration. Never invent 60 or 90 minutes for undated rounds. */
+export function recruiterRoundEndTime(start:Date|null,durationMinutes:number|null|undefined):Date|null{
+ if(!start||!Number.isFinite(start.getTime())||durationMinutes==null||
+  !Number.isInteger(durationMinutes)||durationMinutes<=0||durationMinutes>24*60)return null;
+ return new Date(start.getTime()+durationMinutes*60000);
+}
