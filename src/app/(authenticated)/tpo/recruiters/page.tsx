@@ -11,6 +11,17 @@ type PageProps = {
     company?: string | string[];
     page?: string | string[];
     purpose?: string | string[];
+    q?: string | string[];
+    stage?: string | string[];
+    owner?: string | string[];
+    invite?: string | string[];
+    status?: string | string[];
+    source?: string | string[];
+    reach?: string | string[];
+    designation?: string | string[];
+    nextFollowup?: string | string[];
+    lastActivity?: string | string[];
+    added?: string | string[];
   }>;
 };
 
@@ -38,6 +49,15 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
       initialView={initialView}
       initialAdd={first(query.add) === "1"}
       initialCompany={first(query.company)?.trim() ?? ""}
+      initialFilters={{
+        q:first(query.q)??"",stage:first(query.stage)??"ALL",
+        owner:first(query.owner)??"ALL",invite:first(query.invite)??"ALL",
+        status:first(query.status)??"ALL",source:first(query.source)??"ALL",
+        company:first(query.company)??"ALL",reach:first(query.reach)??"ALL",
+        designation:first(query.designation)??"",
+        nextFollowup:first(query.nextFollowup)??"ALL",
+        lastActivity:first(query.lastActivity)??"ALL",added:first(query.added)??"ALL",
+      }}
     />
   );
 }
