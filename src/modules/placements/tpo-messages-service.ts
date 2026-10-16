@@ -128,6 +128,12 @@ async function loadRecruiterThreads(
       lastMessageAt: sql<Date | null>`
         max(${placementTpoMessages.createdAt})
       `,
+      lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_messages m
+         where m.thread_id=placement_tpo_message_threads.id
+         order by m.created_at desc,m.id desc limit 1)`,
+      lastSender:sql<string|null>`(select m.sender_type from placement_tpo_messages m
+         where m.thread_id=placement_tpo_message_threads.id
+         order by m.created_at desc,m.id desc limit 1)`,
       messageCount: sql<number>`
         count(${placementTpoMessages.id})::integer
       `,
@@ -197,6 +203,8 @@ async function loadRecruiterThreads(
       jobId: row.jobId,
       messageCount,
       unreadCount: unreadRecruiterMessages,
+      lastPreview:row.lastPreview,
+      waitingForYou:row.lastSender==="RECRUITER",
     };
   });
 }
