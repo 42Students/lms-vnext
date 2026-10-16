@@ -6,6 +6,7 @@ import { LearnerCareerCalendar } from "@/components/placements/learner-career-ca
 import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule } from "@/modules/placements/learner-placement-schedule-model";
+import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
 import {listOwnAppliedPlacementResults} from "@/modules/placements/result-service";
 
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
@@ -63,6 +64,9 @@ export default async function LearnerPlacementSchedulePage() {
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
           {details(row)}
+          <LearnerScheduleReschedule applicationId={row.applicationId} roundId={row.roundId}
+            mode={row.exception?.mode??row.mode} venue={row.exception?.venue??row.venue}
+            meetingUrl={row.exception?.meetingUrl??row.meetingUrl}/>
           <Link className="text-sm font-semibold text-primary-text underline" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
         </article>)}
         {ahead.length === 0 ? <Link className="text-sm font-semibold text-primary-text underline" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
