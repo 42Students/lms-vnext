@@ -109,3 +109,7 @@ IDs are `TPO-drive-workspace-NN`.
 5. Is there any UI to reorder evaluation-plan rounds (-37)? A component search found none; check the plan editor visually.
 6. Held 30-second notice window and undo semantics for bulk moves (-26): shortlist two applicants, undo, and check whether the learner saw anything.
 7. Legacy backend permissions (TPO admin or college admin) and audit action names were not re-read; confirm against `TpoDriveService` if -11 or the activity gap (-68) is prioritised.
+
+## Chat-5 implementation follow-up (2026-10-17)
+
+- **TPO-drive-workspace-R02**: pipeline and export now use the same authorized-college search predicate over learner name, role, roll/registration, email, phone, branch and cohort. Academic search uses correlated `EXISTS` to preserve one result per application. Search UI is relabeled, and unit and isolated PostgreSQL tests are committed. **Source implemented; tests/browser acceptance not executed in this session.**
