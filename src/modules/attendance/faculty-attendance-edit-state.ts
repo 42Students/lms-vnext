@@ -41,3 +41,12 @@ export function resolveFacultyAttendanceDeepLink(
   if (typeof requested !== "string") return null;
   return sessions.some((session) => session.id === requested) ? requested : null;
 }
+
+/** Compare absence sets by roster identity, never by Set iteration order. */
+export function facultyAttendanceMarksDirty(
+ roster:readonly {membershipId:string}[],
+ persisted:ReadonlySet<string>,
+ edited:ReadonlySet<string>,
+):boolean {
+ return roster.some(member=>persisted.has(member.membershipId)!==edited.has(member.membershipId));
+}
