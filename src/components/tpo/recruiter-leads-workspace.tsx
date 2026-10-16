@@ -363,7 +363,7 @@ export function RecruiterLeadsWorkspace({
               <RecruiterBulkOwnerControls rows={visible} onUpdated={() => void load()} />
             </div>
           ) : null}
-          {visible.length === 0 ? (
+          {view !== "companies" && visible.length === 0 ? (
             <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
               {rows.length ? "No leads match your filters." : "No recruiter leads yet. Add your first contact."}
             </div>
@@ -459,12 +459,12 @@ export function RecruiterLeadsWorkspace({
               </table>
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
-                <section key={column} className="rounded-lg border border-border bg-surface p-4">
+                <section key={column} className="w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4">
                   <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
-                    {visible.filter(x => x.manualStage === column).map(lead => (
+                    {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
                       <Link key={lead.id} href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
                         className="block rounded-md border border-border p-3 hover:bg-surface-secondary">
                         <span className="block font-medium">{lead.name}</span>
