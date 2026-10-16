@@ -37,6 +37,11 @@ describe("TPO-drive-workspace-02 next step", () => {
     expect(result.primary.label).toBe("Applicants");
     expect(result.more).toEqual([]);
   });
+  it("prioritizes the first deadline for a published drive without one",()=>{
+    const result=projectTpoDriveNextStep({...base,status:"PUBLISHED",deadlineMissing:true});
+    expect(result.primary).toMatchObject({label:"Set deadline",href:"#drive-deadline-actions"});
+    expect(result.more[0]?.label).toBe("Applicants");
+  });
   it("never suggests a lifecycle change on a cancelled or closed drive", () => {
     for (const status of ["CLOSED", "CANCELLED", "ARCHIVED"]) {
       const view = projectTpoDriveNextStep({...base,status,closeAllowed:true});

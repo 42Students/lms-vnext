@@ -15,6 +15,7 @@ export type TpoDriveNextStepInput = {
   closeAllowed: boolean;
   shortlistCount: number | null;
   pendingRequests: number;
+  deadlineMissing?: boolean;
   stagedRounds: Array<{ id: string; name: string; pendingCount: number }>;
 };
 export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
@@ -39,6 +40,10 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       href: root + "/edit",
     });
   } else if (input.status === "PUBLISHED") {
+    if(input.deadlineMissing) actions.push({
+      label:"Set deadline",description:"This drive has no application deadline. Set one so students know when applications close.",
+      href:"#drive-deadline-actions",
+    });
     const pending = input.stagedRounds
       .filter(round => round.pendingCount > 0)
       .sort((a, b) => b.pendingCount - a.pendingCount);

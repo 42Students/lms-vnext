@@ -6,7 +6,8 @@ describe("TPO deadline extension policy",()=>{
   expect(evaluateTpoDriveDeadline("PUBLISHED","ACTIVE",before,"2026-10-20T08:00:00Z",now)).toBe("ALLOW");
   expect(evaluateTpoDriveDeadline("DRAFT","ACTIVE",before,"2026-10-20T08:00:00Z",now)).toBe("READ_ONLY");
   expect(evaluateTpoDriveDeadline("PUBLISHED","CLOSED",before,"2026-10-20T08:00:00Z",now)).toBe("READ_ONLY");
-  expect(evaluateTpoDriveDeadline("PUBLISHED","ACTIVE",null,"2026-10-20T08:00:00Z",now)).toBe("NO_OLD_DEADLINE");
+  expect(evaluateTpoDriveDeadline("PUBLISHED","ACTIVE",null,"2026-10-20T08:00:00Z",now)).toBe("ALLOW");
+  expect(evaluateTpoDriveDeadline("PUBLISHED","ACTIVE",null,"2026-10-12T08:00:00Z",now)).toBe("IN_PAST");
   expect(evaluateTpoDriveDeadline("PUBLISHED","ACTIVE",before,before,now)).toBe("NOT_LATER");
   expect(evaluateTpoDriveDeadline("PUBLISHED","ACTIVE",before,"2026-10-12T08:00:00Z",now)).toBe("IN_PAST");
  });
