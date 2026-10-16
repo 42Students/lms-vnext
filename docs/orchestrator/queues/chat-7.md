@@ -26,6 +26,23 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-7-04-home-drives-s3 | IN-PROGRESS | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
+## FAST-MODE checkpoint — learner continuation C (2026-10-17)
+
+**Learner source pushes (all [chat-7] direct-main, no tests or runtime checks):**
+- LEARNER-placements-24 / -31: carry authoritative drive status to own application and journey views, with CANCELLED/CLOSED banners, history access and college notice link. College-specific cancellation reasons are not inferred.
+- LEARNER-projects-25: own-assigned tasks can reorder through existing guarded active-sprint PATCH; learner drag lanes and self-assigned task form/delete were already on main from other lanes (discarded duplicate form).
+- LEARNER-projects-38: final delivery dialog now includes recorded remaining release/sprint/task counts, persisted mentor feedback, team-sharing copy and accepted state.
+- LEARNER-placements-27 / -37 / -40: application drawer has booked round selection track, venue/mode/rescheduled cue and schedule link; own applied outcome chips show on Schedule, with safe join/test links.
+- LEARNER-placements-29 / -R05: application self-withdraw and request paths now diverge for booked shortlist rounds, with the server disallowing direct booked-round withdrawal under the own-membership transaction. Offers remain separately guarded.
+- LEARNER-placements-36 / -38: scheduled round reschedule request form uses registered request endpoint; Schedule has Coming up/Past/Calendar URL views and IST today/tomorrow captions.
+- LEARNER-placements-35: removed misleading attendance-confirmation promise; full learner RSVP is **not** registered. Proposal: `docs/proposed-migrations/chat-7-learner-saved-jobs-round-confirmations.sql` (also LEARNER-placements-13 saved jobs). Neither is marked implemented.
+- LEARNER-placements-42 / -44: offer tabs distinguish Needs your reply/Earlier offers and link to rules and extension request.
+- LEARNER-learning-misc-20 / -21 / -22: quiz attempt cancellation confirmation, Next gated to current answered question (question-number navigation still skips), submitted receipt uses saved published score or pending-result wording.
+- LEARNER-learning-misc-14, LEARNER-placements-12: assignment list and placement error boundaries now distinguish load failure from empty records.
+- LEARNER-profile-misc-19 / -20: notification action labels (applications/interviews/assessments/courses), category-specific empty/recovery language.
+
+**WP states:** WP-chat-7-01 through WP-chat-7-05 remain **IN-PROGRESS** because full package gap lists contain unresolved behavior. Remaining S1 private resume/identity scans, TPO/recruiter consent, registered selection-list workflow and trusted auto-approval are NOT closed; remaining Learner S2 includes round RSVP schema registration, saved-job service activation, multipart/file handling, program academic data and privacy review. Do not mark an entire WP DONE based on these source-only commits. No test/build/typecheck/lint/CI evidence is claimed.
+
 ## FAST-MODE checkpoint — learner expansion (2026-10-17)
 
 Owner extended chat-7 into Learner placements, projects, courses and learning-misc beyond the original work-package scope. Relevant audit sources: `docs/audit/pages/learner/*.md` and review files.
