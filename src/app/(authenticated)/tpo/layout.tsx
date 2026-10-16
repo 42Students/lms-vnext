@@ -7,11 +7,12 @@ import {TpoHeaderIndicators} from "@/components/tpo/tpo-header-indicators";
 import { countTpoUnreadRecruiterMessages } from "@/modules/placements/tpo-recruiter-unread-count-service";
 import { TPO_TOPBAR_QUICK_LINKS } from "@/modules/placements/tpo-topbar-links";
 import { TpoFindShortcut } from "@/components/tpo/tpo-find-shortcut";
+import {TpoMobileFooter} from "@/components/tpo/tpo-mobile-footer";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 export default async function TpoLayout({children}:Readonly<{children:React.ReactNode}>){
  const context=await getCurrentRequestContext();
  if (!canOpenTpoWorkspace(context)) redirect("/dashboard");
- if (!hasTpoTooling(context)) return <div className="min-w-0 space-y-4">{children}</div>;
+ if (!hasTpoTooling(context)) return <div className="min-w-0 space-y-4 pb-20 md:pb-0">{children}</div>;
  const inbox=await getTpoPersonalInbox(context,{view:"all"});
  const recruiterUnread=await countTpoUnreadRecruiterMessages(context);
  const items=inbox.page.items.slice(0,20).map(({notification})=>({
@@ -34,5 +35,6 @@ export default async function TpoLayout({children}:Readonly<{children:React.Reac
    <TpoHeaderIndicators initial={{messages:recruiterUnread,unread:inbox.unreadCount,items}}/>
   </div>
   {children}
+  <TpoMobileFooter/>
  </div>;
 }
