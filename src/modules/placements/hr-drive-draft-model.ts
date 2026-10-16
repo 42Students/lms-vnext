@@ -27,6 +27,8 @@ export const hrDriveDraftSchema = z.strictObject({
   bondMonths: z.string().regex(/^\d{0,3}$/),
   bondAmountInr: z.string().regex(/^\d{0,9}$/),
   maximumActiveBacklogs: z.string().regex(/^\d{0,2}$/),
+  branches: z.array(z.string().trim().min(1).max(120)).max(30).default([]),
+  passingYear: z.string().regex(/^(?:|20\d{2})$/,"Enter a valid passing year").default(""),
   rounds: z.array(round).min(1).max(12),
 }).superRefine((data, ctx) => {
   const uniqueRoundNames = new Set<string>();
@@ -68,7 +70,7 @@ export function emptyHrDriveDraft(): HrDriveDraft {
     employmentType: "FULL_TIME", workMode: "ONSITE",
     minimumAnnualCtcInr: "", maximumAnnualCtcInr: "", minimumCgpa: "",
     fixedAnnualCtcInr: "", variableAnnualCtcInr: "", bondMonths: "",
-    bondAmountInr: "", maximumActiveBacklogs: "",
+    bondAmountInr: "", maximumActiveBacklogs: "", branches: [], passingYear: "",
     rounds: [{ kind: "INTERVIEW", name: "Interview" }],
   };
 }
