@@ -43,7 +43,8 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
          continue;
        }
        const response=await decideTpoLearnerParticipation(context,selected.id,{
-         status:plan.action==="ELIGIBLE"?"ELIGIBLE":"NOT_DECIDED",
+         status:plan.action==="ELIGIBLE"?"ELIGIBLE":plan.action==="INELIGIBLE"?"INELIGIBLE":"NOT_DECIDED",
+         ...(plan.action==="INELIGIBLE"?{reason:plan.note}:{}),
          expected:record.direct,
        });
        outcomes.push({id:selected.id,status:response.changed?"updated":"skipped",reason:null});

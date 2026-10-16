@@ -6,6 +6,7 @@ import {tpoEligibilityImportScaffoldHref} from "@/modules/placements/tpo-eligibi
 import {TpoAcademicImportPreview} from "@/components/tpo/tpo-academic-import-preview";
 import {TpoBatchEligibilityImport} from "@/components/tpo/tpo-batch-eligibility-import";
 import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision";
+import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
 import { z } from "zod";
@@ -31,6 +32,13 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  </div>
  <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Download blank eligibility import CSV (this page)</a>
  <TpoBatchEligibilityImport batchId={batchId}/>
+ <TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
+   target="STUDENTS" rows={visible.map(student=>({
+    id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),
+   }))} />
+ <p className="text-xs text-muted-foreground">Bulk changes apply only to selected learners on this page.
+  Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
+  Every change is confirmed and audited. Review skipped learners before retrying.</p>
  <TpoAcademicImportPreview activeIds={result.students.map(s=>s.membershipId)}/>
  <Link href={"/tpo/batches/"+batchId+"/nudge-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Prepare follow-up for unrecorded choices</Link>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>

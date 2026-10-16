@@ -10,6 +10,7 @@ export function tpoBulkStudentVersion(snapshot:TpoMembershipDecisionSnapshot){
 export function tpoBulkStudentReady(action:TpoBulkPreviewRequest["action"],
   status:TpoMembershipDecisionSnapshot["status"]){
   return action==="ELIGIBLE"?status!=="ELIGIBLE":
+    action==="INELIGIBLE"?status!=="INELIGIBLE":
     action==="CLEAR_OVERRIDE"?status!==null:false;
 }
 export function tpoBulkApplicationReady(action:TpoBulkPreviewRequest["action"],
