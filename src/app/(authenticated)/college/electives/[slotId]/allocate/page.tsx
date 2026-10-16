@@ -110,7 +110,7 @@ export default async function CollegeElectiveAllocatePage({
     if (!target) notFound();
     const explicit = formData.getAll("membershipId").map(String).filter(v => uuid.safeParse(v).success);
     const identifiers = String(formData.get("identifiers") ?? "")
-      .split(/[\\s,;]+/).map(t => t.trim()).filter(Boolean).slice(0, 100);
+      .split(/[\s,;]+/).map(t => t.trim()).filter(Boolean).slice(0, 100);
     const ids = identifiers.filter(t => uuid.safeParse(t).success);
     const rolls = identifiers.filter(t => !uuid.safeParse(t).success).slice(0, 100);
     const matches = identifiers.length ? await getDb().select({
