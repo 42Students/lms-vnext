@@ -22,6 +22,8 @@ import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model"
 import { buildRecruiterActionQueue } from "@/modules/placements/hr-today-action-queue-model";
 import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
+import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-service";
+import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -86,6 +88,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const requestCount = actionQueue.length === 0
     ? (await listOwnRecruiterDriveRequests(context, selectedId)).length
     : 0;
+  const profile = await getRecruiterSelfProfile(context);
+  const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
@@ -98,8 +102,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     ...(unreadAction ? [unreadAction] : []),
   ];
   return <div className="space-y-6">
-    <PageHeader eyebrow="Recruiter" title="Today"
-      description={recruiter.companyName + " · " + grant.collegeName + ". Your live employer hiring activity."}
+    <PageHeader title={greeting.title}
+      description={greeting.subtitle}
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedId})}
         className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Request a drive
