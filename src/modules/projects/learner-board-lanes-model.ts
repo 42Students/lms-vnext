@@ -7,8 +7,9 @@ export const LEARNER_BOARD_LANES=[
  {id:"DONE",label:"Completed"},
 ] as const;
 export type LearnerBoardLane=(typeof LEARNER_BOARD_LANES)[number]["id"];
-/** Legacy board backlog is tasks in a not-yet-active sprint, not arbitrary TODO. */
-export function learnerTaskLane(task:{status:string;sprintId:string},sprints:ReadonlyMap<string,string>):LearnerBoardLane{
+/** Registered 0110: unscheduled tasks belong to the product backlog; planned sprint tasks are also not yet active. */
+export function learnerTaskLane(task:{status:string;sprintId:string|null},sprints:ReadonlyMap<string,string>):LearnerBoardLane{
+ if(task.sprintId===null)return "BACKLOG";
  if(task.status==="TODO" && sprints.get(task.sprintId)!=="ACTIVE")return "BACKLOG";
  if(task.status==="TODO"||task.status==="IN_PROGRESS"||task.status==="IN_REVIEW"||
     task.status==="BLOCKED"||task.status==="DONE")return task.status;
