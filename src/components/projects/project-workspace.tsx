@@ -424,6 +424,36 @@ export function ProjectWorkspace({
               </div>
             </div>
           ) : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
+          {mode === "LEARNER" ? (
+            <div className="mt-4 space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg bg-muted p-3 text-sm">
+                  <p className="font-semibold text-foreground">Mentor</p>
+                  <p className="mt-1 text-body">{workspace.members.find(member =>
+                    member.role === "MENTOR" && member.isPrimary)?.displayName ??
+                    workspace.members.find(member => member.role === "MENTOR")?.displayName ??
+                    "Not assigned"}</p>
+                </div>
+                <div className="rounded-lg bg-muted p-3 text-sm">
+                  <p className="font-semibold text-foreground">Next step</p>
+                  <Link href={"/learn/projects/" + workspace.project.id + "?tab=board"}
+                    className="mt-1 inline-flex min-h-10 items-center font-semibold text-primary-text hover:underline">
+                    Open the Board →
+                  </Link>
+                </div>
+              </div>
+              {workspace.tasks.some(task => task.status === "BLOCKED") ? (
+                <div className="rounded-lg border border-warning-border bg-warning-subtle p-3">
+                  <h3 className="text-sm font-semibold">Requires attention</h3>
+                  <p className="mt-1 text-sm text-body">One or more tasks are blocked.</p>
+                  <Link href={"/learn/projects/" + workspace.project.id + "?tab=board&taskStatus=BLOCKED"}
+                    className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                    Open blocked work
+                  </Link>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
           {workspace.project.summary ? (
             <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">{workspace.project.summary}</p>
           ) : null}
