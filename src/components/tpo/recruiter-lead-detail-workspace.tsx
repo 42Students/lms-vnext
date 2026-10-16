@@ -13,6 +13,10 @@ type Lead = {
   companyName: string | null;
   source: string | null;
   manualStage: string;
+  stage: string;
+  ownerName: string|null;
+  inviteStatus: string;
+  recruiterLastLoginAt: string|null;
   notNowReason: string | null;
   notNowUntil: string | null;
   inviteSentAt: string | null;
@@ -290,7 +294,11 @@ export function RecruiterLeadDetailWorkspace({
                 {lead.companyName || "Company not provided"}
                 {lead.designation ? " · " + lead.designation : ""}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.manualStage.replace("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.stage.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Invite: {lead.inviteStatus.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
+                formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button type="button" className={button} onClick={openEdit}>Edit details</button>

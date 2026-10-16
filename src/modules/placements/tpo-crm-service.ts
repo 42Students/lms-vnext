@@ -25,7 +25,7 @@ import {
   leadNotNowAuditNote,
 } from "./tpo-crm-confirmed-write-model";
 import { requirePlacementManageScope } from "./scope";
-import { inferLegacyRecruiterCompanyName } from "./tpo-recruiter-lead-policy";
+import { inferLegacyRecruiterCompanyName,deriveTpoRecruiterInviteStatus } from "./tpo-recruiter-lead-policy";
 import { recruiterAttentionFromPersistedFacts } from "./tpo-recruiter-attention-model";
 import { getTpoRecruiterLeadStages } from "./tpo-company-memory-service";
 import {
@@ -616,7 +616,27 @@ export async function getTpoLead(
     ))
     .limit(1);
   if (!lead) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
-  return tpoLeadView(lead);
+  const [stages, owner, lastLogin]=await Promise.all([
+    getTpoRecruiterLeadStages(context,collegeId),
+    lead.ownerMembershipId
+      ?getDb().select({name:users.displayName}).from(collegeMemberships)
+       .innerJoin(users,eq(users.id,collegeMemberships.userId)).where(and(
+        eq(collegeMemberships.id,lead.ownerMembershipId),
+        eq(collegeMemberships.collegeId,collegeId),
+       )).limit(1).then(rows=>rows[0]??null)
+      :Promise.resolve(null),
+    lead.recruiterUserId
+      ?getDb().select({latest:max(identityDeviceSessions.createdAt)})
+        .from(identityDeviceSessions).where(eq(identityDeviceSessions.userId,lead.recruiterUserId))
+        .then(rows=>rows[0]?.latest??null)
+      :Promise.resolve(null),
+  ]);
+  return {
+    ...tpoLeadView(lead,undefined,stages.get(lead.id)),
+    ownerName:owner?.name??null,
+    recruiterLastLoginAt:lastLogin?.toISOString()??null,
+    inviteStatus:deriveTpoRecruiterInviteStatus(lead),
+  };
 }
 
 /** Full follow-up list for a recruiter lead detail page (not only overdue). */
