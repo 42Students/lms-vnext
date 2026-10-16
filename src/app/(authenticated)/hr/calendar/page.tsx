@@ -137,6 +137,7 @@ function eventHref(event: PlacementCalendarEvent) {
 }
 
 function eventKindLabel(event: PlacementCalendarEvent) {
+  if (event.kind === "INTERVIEW_SLOT") return "Interview slot";
   if (event.kind === "APPLICATION_DEADLINE") {
     return "Deadline";
   }
@@ -202,7 +203,8 @@ function RecruiterCalendarEventCard({
                 : "neutral"
             }
           >
-            {event.status.replaceAll("_", " ")}
+            {event.status === "PROPOSED" && event.kind === "INTERVIEW_SLOT"
+              ? "Waiting for the cell" : event.status.replaceAll("_", " ")}
           </StatusBadge>
         </div>
       </div>
@@ -406,7 +408,7 @@ export default async function HrCalendarPage({
                   aria-current={category===option?"page":undefined}
                   className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">
                   {option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
-                    option==="DEADLINES"?"Deadlines":"Rounds"}
+                    option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds"}
                 </Link>)}
               </nav>
               <nav

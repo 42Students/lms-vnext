@@ -1,1 +1,1 @@
-export { default } from "@/app/(authenticated)/hr/messages/page";
+export { default } from "@/app/(authenticated)/hr/conversations/page";

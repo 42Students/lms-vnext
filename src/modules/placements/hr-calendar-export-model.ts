@@ -14,7 +14,8 @@ export function buildHrCalendarCsv(events:readonly HrCalendarCsvEvent[],
  dues:readonly HrCalendarCsvDue[],category:HrCalendarCategory){
  const rows=[
   ...events.filter(e=>category==="ALL"||(category==="ROUNDS"?e.kind==="ROUND":
-   category==="DEADLINES"?e.kind==="APPLICATION_DEADLINE":false))
+   category==="DEADLINES"?e.kind==="APPLICATION_DEADLINE":
+   category==="SLOTS"?e.kind==="INTERVIEW_SLOT":false))
    .map(e=>({job:e.jobTitle??"",item:e.title,type:e.kind,
      timestamp:e.startsAt,status:e.status})),
   ...(category==="ALL"||category==="RESULTS_DUE"?dues.map(e=>({
