@@ -69,10 +69,22 @@ export default async function TpoDriveRoundsPage({
               <div><dt className="text-body">Students in round</dt><dd className="font-semibold">{round.participants.length}</dd></div>
               <div><dt className="text-body">Results</dt><dd className="font-semibold">{applied} applied · {staged} waiting to apply</dd></div>
               <div><dt className="text-body">Results expected</dt><dd>{date(round.resultsDueAt)}</dd></div>
+              {round.kind==="INTERVIEW"?<>
+               <div><dt className="text-body">Booked interview slots</dt>
+                <dd className="font-semibold">{countFor(bookings,round.id)}</dd></div>
+               <div><dt className="text-body">Recruiter slot proposals</dt>
+                <dd className="font-semibold">{countFor(proposals,round.id)} pending</dd></div>
+               <div><dt className="text-body">Reschedule requests</dt>
+                <dd className="font-semibold">{countFor(requests,round.id)} waiting for TPO</dd></div>
+              </>:null}
               <div><dt className="text-body">Venue</dt><dd>{round.venue || "Venue to be told"}</dd></div>
               <div><dt className="text-body">Platform</dt><dd>{round.platform || "Not specified"}</dd></div>
               <div><dt className="text-body">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes + " minutes" : "Not specified"}</dd></div>
             </dl>
+            {round.kind==="INTERVIEW"?<Link href={root+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
+              className="mt-3 inline-flex min-h-10 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+              Slots and rooms · {countFor(proposals,round.id)+countFor(requests,round.id)} need review
+            </Link>:null}
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}
             {round.meetingUrl ? <a href={round.meetingUrl} target="_blank" rel="noopener noreferrer"
               className="mt-3 inline-block text-sm font-semibold text-primary-text underline">Meeting link</a> : null}
