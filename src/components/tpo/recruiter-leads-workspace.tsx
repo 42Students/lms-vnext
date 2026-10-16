@@ -250,12 +250,13 @@ export function RecruiterLeadsWorkspace({
   }
 
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
-     "reach"|"nextFollowup"|"lastActivity"|"added",value:string){
+     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage",value:string){
    const params=new URLSearchParams(window.location.search);
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
    else params.delete(kind==="query"?"q":kind);
    window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
-   if(kind==="owner")setOwnerFilter(value);
+   if(kind==="stage")setStage(STAGES.includes(value as (typeof STAGES)[number])?value as (typeof STAGES)[number]:"ALL");
+   else if(kind==="owner")setOwnerFilter(value);
    else if(kind==="invite")setInviteFilter(value);
    else if(kind==="status")setStatusFilter(value);
    else if(kind==="source")setSourceFilter(value);
@@ -437,7 +438,7 @@ export function RecruiterLeadsWorkspace({
             <label className="min-w-40 text-sm">
               Stage
               <select className={inputStyle + " mt-1"} value={stage}
-                onChange={e => setStage(e.target.value as typeof stage)}>
+                onChange={e => updateFilter("stage",e.target.value)}>
                 {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </select>
             </label>
@@ -546,7 +547,7 @@ export function RecruiterLeadsWorkspace({
               <button type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
                   "reach","nextFollowup","lastActivity","added"] as const)updateFilter(key,"ALL");
-                setStage("ALL");setAttention("ALL");setNeed("ALL");
+                updateFilter("stage","ALL");setAttention("ALL");setNeed("ALL");
               }}>Clear filters</button>
             </div>:null}
           </div>
