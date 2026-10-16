@@ -3,7 +3,7 @@ import {check, index, pgTable, text, timestamp, uniqueIndex, uuid, varchar, fore
 import {placementApplications,placementJobRounds,placementJobs} from "./placements";
 import {users} from "./users";
 
-/** Staged candidate interview slot table; register proposed migration before enabling UI writes. */
+/** Registered 0116: candidate interview slot inventory and bookings (TPO-drive-workspace-44). */
 export const placementRoundCandidateSlots=pgTable("placement_round_candidate_slots",{
  id:uuid("id").defaultRandom().primaryKey(),
  jobId:uuid("job_id").notNull().references(()=>placementJobs.id),
