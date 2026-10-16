@@ -70,7 +70,7 @@ export default async function SuperAdminLectureHallAvailability({
           <h3 className="font-semibold">{row.title}{row.hasConflict ? " · Potential conflict" : ""}</h3>
           <p className="text-sm">{inIst(row.startsAt)} – {inIst(row.endsAt)} · {row.sectionName}</p>
           <p className="text-xs text-muted-foreground">Class capacity: {row.sectionCapacity ?? "Unknown"};
-            hall capacity: {result.hall.capacity}</p>
+            hall capacity: {result?.hall.capacity ?? "Unknown"}</p>
           {row.overlapsAnother ? <p className="text-sm text-error">Overlapping scheduled booking</p> : null}
           {row.overConfiguredCapacity ? <p className="text-sm text-error">Class capacity exceeds hall capacity</p> : null}
         </li>)}</ul>
