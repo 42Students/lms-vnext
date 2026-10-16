@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import {tpoBulkFailedLines,tpoBulkFailedSummary} from "@/modules/placements/tpo-bulk-failed-result-model";
 
 type LeadChoice = {
   id: string;
@@ -34,6 +35,7 @@ export function RecruiterBulkOwnerControls({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [results, setResults] = useState<Result[]>([]);
+  const [copyNotice,setCopyNotice]=useState("");
 
   const assignable = rows;
   const selections = assignable
@@ -72,6 +74,12 @@ export function RecruiterBulkOwnerControls({
       : current.filter((value) => value !== id));
   }
 
+  async function copyFailed(){
+    try{
+      await navigator.clipboard.writeText(tpoBulkFailedSummary(results));
+      setCopyNotice("Failed recruiters copied. Refresh leads before retrying.");
+    }catch{setCopyNotice("Couldn't copy failed results.");}
+  }
   async function submit() {
     if (!canSubmit) return;
     const owner = owners.find((item) => item.membershipId === ownerId);
@@ -202,6 +210,12 @@ export function RecruiterBulkOwnerControls({
       {results.length > 0 ? (
         <section aria-live="polite">
           <h3 className="text-sm font-semibold text-foreground">Per-lead results</h3>
+          <p className="text-xs text-body">Updated: {results.filter(row=>row.status==="updated").length};
+            unchanged: {results.filter(row=>row.status==="unchanged").length};
+            ineligible: {results.filter(row=>row.status==="ineligible").length}.</p>
+          {tpoBulkFailedLines(results).length>0?<button type="button"
+            className={fieldClass+" mt-2"} onClick={()=>void copyFailed()}>Copy failed</button>:null}
+          {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
           <ul className="mt-2 max-h-36 overflow-auto text-xs text-body">
             {results.map((item) => (
               <li key={item.leadId}>

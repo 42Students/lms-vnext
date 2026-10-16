@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import {tpoBulkFailedLines,tpoBulkFailedSummary} from "@/modules/placements/tpo-bulk-failed-result-model";
 
 type LeadChoice = {
   id: string;
@@ -34,6 +35,7 @@ export function RecruiterBulkStageControls({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [results, setResults] = useState<BulkResult[]>([]);
+  const [copyNotice,setCopyNotice]=useState("");
 
   const available = rows.filter((row) =>
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
@@ -54,6 +56,12 @@ export function RecruiterBulkStageControls({
     );
   }
 
+  async function copyFailed(){
+    try{
+      await navigator.clipboard.writeText(tpoBulkFailedSummary(results));
+      setCopyNotice("Failed recruiters copied. Refresh leads before retrying.");
+    }catch{setCopyNotice("Couldn't copy failed results.");}
+  }
   async function apply() {
     if (!isValid || busy) {
       setError("Select up to 100 leads and provide a reason for Not Now.");
@@ -118,7 +126,7 @@ export function RecruiterBulkStageControls({
         <h2 className="font-semibold text-foreground">Bulk lead stage updates</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Select up to 100 filtered contacts. Manual stage is distinct from
-          recruiter conversion; joined and unsubscribed leads are excluded.
+          recruiter conversion; joined and unsubscribed leads remain eligible for staff updates.
           Each changed lead receives an immutable activity record.
         </p>
       </div>
@@ -203,6 +211,11 @@ export function RecruiterBulkStageControls({
       {results.length ? (
         <section aria-live="polite">
           <h3 className="font-semibold text-foreground">Per-lead results</h3>
+          {tpoBulkFailedLines(results).length>0?(
+            <button type="button" className={fieldClass+" mt-2"}
+              onClick={()=>void copyFailed()}>Copy failed</button>
+          ):null}
+          {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
           <p className="text-sm text-body">
             Updated: {results.filter((item) => item.status === "updated").length};
             unchanged: {results.filter((item) => item.status === "unchanged").length};
