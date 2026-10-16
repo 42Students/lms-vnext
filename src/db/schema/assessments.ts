@@ -4,6 +4,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -45,6 +46,17 @@ export const courseAssignments = pgTable(
     status: courseAssignmentStatusEnum("status")
       .notNull()
       .default("DRAFT"),
+    /** FAC-assessments-01/02: allowed learner submission methods (JSON array, 1-5 entries). */
+    allowedSubmissionMethods: jsonb("allowed_submission_methods")
+      .$type<string[]>()
+      .notNull()
+      .default([
+        "WRITTEN_RESPONSE",
+        "PDF_UPLOAD",
+        "FILE_UPLOAD",
+        "REPOSITORY_LINK",
+        "EXTERNAL_LINK",
+      ]),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -114,6 +126,10 @@ export const courseAssignments = pgTable(
     check(
       "course_assignments_sequence_ck",
       sql`${table.sequence} >= 0`,
+    ),
+    check(
+      "course_assignments_methods_shape_ck",
+      sql`jsonb_typeof(${table.allowedSubmissionMethods}) = 'array' and jsonb_array_length(${table.allowedSubmissionMethods}) between 1 and 5`,
     ),
   ],
 );
@@ -217,9 +233,7 @@ export const assignmentSubmissions = pgTable(
           and ${table.submissionUrl} is not null
           and ${table.textContent} is null)
         or
-        (${table.submissionType} = 'FILE'
-          and ${table.textContent} is null
-          and ${table.submissionUrl} is null)
+        (${table.submissionType} = 'FILE')
       )`,
     ),
     // FILE submissions carry their files in assignment_submission_files; a
