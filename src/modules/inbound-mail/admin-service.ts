@@ -31,7 +31,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
   if(input.q) {
    const escaped=input.q.replace(/[\\%_]/g,"\\$&");
    const pattern="%"+escaped+"%";
-   conditions.push(or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern))!);
+   conditions.push(or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern))!);
   }
   return getDb().select({
    id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,toAddress:t.toAddress,
