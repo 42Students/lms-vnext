@@ -6,6 +6,8 @@ import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import {VerificationExportControl} from "./VerificationExportControl";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
+import {verificationSelectionKey} from "@/modules/verification/selection-model";
+import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 
 export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,initialKind,page,total,hasMore,query}:{
  collegeId:string;
@@ -15,6 +17,32 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
 }){
  const router=useRouter();
  const [selected,setSelected]=useState<VerificationQueueCard|null>(null);
+ const [selectedKeys,setSelectedKeys]=useState<string[]>([]);
+ const [bulkAction,setBulkAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
+ const [reason,setReason]=useState("");
+ const [acknowledged,setAcknowledged]=useState(false);
+ const [bulkBusy,setBulkBusy]=useState(false);
+ const [bulkMessage,setBulkMessage]=useState("");
+ const candidates=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
+ const chosen=candidates.filter(row=>selectedKeys.includes(verificationSelectionKey(row)));
+ const skipped=bulkAction==="VERIFY"?chosen.filter(row=>row.missingMarksheet):[];
+ const applicable=bulkAction==="VERIFY"?chosen.filter(row=>!row.missingMarksheet):chosen;
+ async function submitBulk(){
+  if(!bulkAction||bulkBusy||applicable.length===0||bulkAction==="VERIFY"&&!acknowledged||
+    bulkAction==="SEND_BACK"&&reason.trim().length<3)return;
+  setBulkBusy(true);setBulkMessage("");
+  try{
+   const payload=collegeBulkReviewPayload(applicable,bulkAction,reason);
+   const response=await fetch("/api/admin/verification/bulk-review",{method:"POST",credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify({collegeId,...payload})});
+   if(!response.ok)throw Error(response.status===503?"Verification storage unavailable.":"Bulk review was not accepted.");
+   const result=await response.json() as {summary:{succeeded:number;failed:number;attempted:number}};
+   setBulkMessage(result.summary.succeeded+" verified or sent back; "+result.summary.failed+" not applied. Refresh for current row states.");
+   setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);router.refresh();
+  }catch(error){setBulkMessage(error instanceof Error?error.message:"Could not finish bulk review.");}
+  finally{setBulkBusy(false);}
+ }
+
  const base=`/admin/colleges/${encodeURIComponent(collegeId)}/verification`;
  const navigate=(changes:Record<string,string>)=>{
   const params=new URLSearchParams(query);
@@ -26,6 +54,46 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
    <button type="button" onClick={()=>router.refresh()} className="min-h-10 rounded-md border px-3 text-sm">Refresh</button>
   </div>
+  {activeTab==="WAITING"&&candidates.length>0?<section aria-label="Super Admin bulk verification" className="space-y-3 rounded-xl border border-border p-4">
+   <h2 className="font-semibold">Act on selected verification requests</h2>
+   <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
+   <div className="flex flex-wrap gap-2">
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
+     className="min-h-10 rounded border px-3 text-sm">Select first 20 waiting</button>
+    <button type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
+     className="min-h-10 rounded border px-3 text-sm">Clear selection</button>
+    <button type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setBulkAction("VERIFY");setAcknowledged(false);}}
+     className="min-h-10 rounded border px-3 text-sm">Verify without opening</button>
+    <button type="button" disabled={bulkBusy||!chosen.length} onClick={()=>setBulkAction("SEND_BACK")}
+     className="min-h-10 rounded border px-3 text-sm">Send back</button>
+   </div>
+   <ul className="max-h-44 space-y-2 overflow-y-auto">
+    {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
+      <label className="flex items-center gap-2 text-sm">
+       <input type="checkbox" disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
+        checked={selectedKeys.includes(verificationSelectionKey(row))}
+        onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?[...current,key]:current.filter(k=>k!==key));setBulkAction(null);}}/>
+       {row.learnerName} · {row.section} {row.missingMarksheet?"(missing document)":""}
+      </label>
+    </li>)}
+   </ul>
+   {bulkAction?<div className="space-y-2 rounded-md border border-border p-3">
+    <p className="text-sm">{applicable.length} ready, {skipped.length} left out because proof is missing. Decisions are individually rechecked by the server.</p>
+    {skipped.length?<p className="text-xs text-warning-text">Skipped: {skipped.map(r=>r.learnerName).join(", ")}</p>:null}
+    {bulkAction==="SEND_BACK"?<label className="block text-sm">Reason for sending back
+     <textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
+      className="mt-2 w-full rounded border bg-background p-2"/></label>:
+     <label className="flex items-start gap-2 text-sm">
+      <input type="checkbox" checked={acknowledged} onChange={e=>setAcknowledged(e.target.checked)}/>
+      I have checked their documents by another method. Each verification will be recorded with my name.
+     </label>}
+    <button type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
+     onClick={()=>void submitBulk()} className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
+     {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
+    </button>
+   </div>:null}
+   {bulkMessage?<p role="status" className="text-sm">{bulkMessage}</p>:null}
+  </section>:null}
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={filters=>navigate({...filters,page:"1"})}/>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    initialTab={activeTab} initialKind={initialKind}
