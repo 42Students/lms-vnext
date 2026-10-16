@@ -3,7 +3,9 @@ import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoCampaignDraft,tpoCampaignDraftStorageReady} from "@/modules/messaging/tpo-campaign-draft-service";
-import {CAMPAIGN_DRAFT_UNAVAILABLE,CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
+import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
+import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
+import {TpoCampaignSendControl} from "@/components/tpo/tpo-campaign-send-control";
 export const dynamic="force-dynamic";
 export default async function TpoCampaignDraftDetail({params}:{params:Promise<{campaignId:string}>}){
  const context=await getCurrentRequestContext();
@@ -11,6 +13,7 @@ export default async function TpoCampaignDraftDetail({params}:{params:Promise<{c
  const ready=await tpoCampaignDraftStorageReady();
  const {campaignId}=await params;
  const draft=ready?await getTpoCampaignDraft(context,campaignId):null;
+ const deliveryReady=ready?await tpoCampaignDispatchReady():false;
  if(ready&&!draft)notFound();
  return <main className="space-y-5">
   <Link href="/tpo/recruiters/campaigns" className="text-sm text-primary-text underline">
@@ -31,7 +34,8 @@ export default async function TpoCampaignDraftDetail({params}:{params:Promise<{c
     <section><h2 className="text-sm font-semibold text-muted-foreground">Message</h2>
      <p className="mt-1 whitespace-pre-wrap break-words text-foreground">{draft.body}</p></section>
     <p className="text-xs text-muted-foreground">Template: {draft.template_key}</p>
-    <p role="status" className="text-sm text-body">{CAMPAIGN_DELIVERY_UNAVAILABLE}</p>
+    <TpoCampaignSendControl campaignId={campaignId} ready={deliveryReady}
+      recipients={draft.total_recipients} status={draft.status}/>
    </article>:null}
  </main>;
 }
