@@ -3,22 +3,20 @@ import "server-only";
 import { and, asc, count, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { collegeDriveListQuerySchema, COLLEGE_DRIVE_PAGE_SIZE } from "./college-drive-read-model";
 
 export async function requireCollegePlacementAdmin(context: RequestContext) {
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "placements.manage", { organizationId: member.organizationId, collegeId: member.collegeId })) {
-    throw new AuthorizationError("placements.manage");
-  }
-  requirePermission(context, "placements.manage", {
-    organizationId: member.organizationId, collegeId: member.collegeId,
-  });
-  await requirePlacementManageScope(context, member.collegeId);
-  return member.collegeId;
+ // The existing College Admin pathway is unchanged; a Super Admin uses only
+ // the persisted selected-college scope and never impersonates a membership.
+ if(!isSuperAdmin(context)&&(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN")))
+  throw new AuthorizationError("placements.manage");
+ const acting=await resolveActingCollege(context,"placements.manage");
+ await requirePlacementManageScope(context,acting.collegeId);
+ return acting.collegeId;
 }
 
 function pattern(value: string) {
