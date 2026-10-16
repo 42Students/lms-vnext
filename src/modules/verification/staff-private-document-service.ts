@@ -8,11 +8,12 @@ import {VerificationStateError,type VerificationSection} from "@/modules/profile
 import {getCollegeVerificationDetail} from "./staff-review-detail-service";
 import {requireCollegeVerificationActor} from "./staff-auth";
 import {requireSuperAdminVerificationCollege} from "./super-admin-scope";
+import {requireTpoVerificationActor} from "./tpo-staff-auth";
 
 export async function openCollegeVerificationDocument(context:RequestContext,
- membershipId:string,section:VerificationSection,receiptId:string,superAdminCollegeId?:string){
- const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
- const detail=await getCollegeVerificationDetail(context,membershipId,section,superAdminCollegeId);
+ membershipId:string,section:VerificationSection,receiptId:string,superAdminCollegeId?:string,allowTpo=false){
+ const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : allowTpo ? await requireTpoVerificationActor(context) : await requireCollegeVerificationActor(context);
+ const detail=await getCollegeVerificationDetail(context,membershipId,section,superAdminCollegeId,allowTpo);
  if(!detail.documents.some(doc=>doc.receiptId===receiptId))
    throw new VerificationStateError("NOT_ALLOWED");
  const [receipt]=await getDb().select().from(profilePrivateDocumentReceipts)
