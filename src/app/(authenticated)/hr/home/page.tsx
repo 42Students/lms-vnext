@@ -122,8 +122,15 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       {actionQueue.length ? <ul className="grid gap-3 sm:grid-cols-2">
         {actionQueue.map(task => <li key={task.key}>
           <Link href={task.href} className="block min-w-0 rounded-lg border border-border p-4 hover:border-primary">
-            <span className="block break-words font-semibold text-primary-text">{task.label}</span>
+            <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
+              <span aria-hidden="true" className={task.tone==="SOON"?"size-2 rounded-full bg-warning":"size-2 rounded-full bg-primary"}/>
+              {task.tone==="SOON"?"Soon":"When you can"}
+            </span>
+            <span className="mt-2 block break-words font-semibold text-primary-text">{task.label}</span>
             <span className="mt-1 block text-xs text-body">{task.description}</span>
+            {task.at?<span className="mt-1 block text-xs text-muted-foreground">
+              Recorded for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
+            </span>:null}
           </Link>
         </li>)}
       </ul> : collegeJobs.length===0 && requestCount===0 ? (
