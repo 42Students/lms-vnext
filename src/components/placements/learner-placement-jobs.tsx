@@ -283,7 +283,7 @@ function JobActions({
             disabled={pendingAction !== null}
             onClick={() => setConfirmation("WITHDRAW")}
           >
-            Request withdrawal
+            Ask to withdraw
           </Button>
         </div>
         <Dialog
@@ -356,7 +356,7 @@ function JobActions({
     const missing=item.eligibility.checks.filter(check=>check.status==="MISSING");
     const failed=item.eligibility.checks.filter(check=>check.status==="FAIL");
     return <div role="status" className="space-y-2 rounded-lg border border-border bg-surface-subtle p-3 text-sm">
-      <p className="font-semibold text-foreground">You cannot apply to this drive yet</p>
+      <p className="font-semibold text-foreground">You can’t apply to this drive</p>
       <p className="text-body">{item.eligibility.status==="NEEDS_DATA"
         ?"Some academic evidence is missing."
         :failed.length?"One or more college eligibility rules are not met.":"The placement cell has not cleared this application."}</p>
@@ -388,7 +388,7 @@ function JobActions({
         >
           {pendingAction === "INTERNAL"
             ? "Applying…"
-            : "Apply in LMS"}
+            : "Apply to this role"}
         </Button>
       ) : null}
       {externalAvailable ? (
