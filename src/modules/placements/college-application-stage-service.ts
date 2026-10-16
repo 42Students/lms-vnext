@@ -60,7 +60,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     if(!screening)throw new PlacementsServiceError("PLACEMENT_SCREENING_NOT_FOUND");
     const from=old?.stage??(screening.status==="SHORTLISTED"?"SHORTLISTED":
      screening.status==="REJECTED"?"REJECTED":"APPLIED");
-    const next=input.action==="REINSTATE"?old?.previousStage??"APPLIED":input.stage!;
+    const next=input.action==="REINSTATE"?
+     (old?.previousStage==="SHORTLISTED"?"SHORTLISTED":"APPLIED"):input.stage!;
     if(input.action==="REINSTATE"&&from!=="REJECTED")
      throw Error("Only a rejected application can be reinstated.");
     if(next===from)return from;
@@ -75,13 +76,30 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      if(next==="HIRED"&&!offers.some(o=>o.status==="ACCEPTED"&&o.joining==="JOINED"))
       throw Error("Confirm an accepted offer's joining outcome before marking Hired.");
     }
-    // Keep underlying screening authoritative: do not fake a reinstate when its
-    // immutable history constraint cannot represent REJECTED -> PENDING.
-    if(input.action==="REINSTATE"&&screening.status==="REJECTED")
-     throw Error("Screening reinstate needs the audited correction transition registered before continuing.");
+    let screeningStatus=screening.status;
+    if(input.action==="REINSTATE"){
+     if(screeningStatus!=="REJECTED")
+      throw Error("Reinstatement requires a rejected screening.");
+     const openOffers=await tx.select({status:placementOffers.status})
+      .from(placementOffers).where(and(eq(placementOffers.applicationId,applicationId),
+       inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
+     if(openOffers.length)throw Error("Resolve active offers before reinstatement.");
+     // REJECTED -> PENDING is permitted only after the proposed history
+     // constraint migration is registered. Otherwise SQL rolls back.
+     await tx.update(placementApplicationScreenings).set({
+      status:"PENDING",candidateMessage:null,internalReason:input.reason,
+      decidedByUserId:context.user.id,decidedAt:new Date(),updatedAt:new Date(),
+     }).where(and(eq(placementApplicationScreenings.applicationId,applicationId),
+      eq(placementApplicationScreenings.status,"REJECTED")));
+     await tx.insert(placementApplicationScreeningHistory).values({
+      applicationId,fromStatus:"REJECTED",toStatus:"PENDING",
+      internalReason:input.reason,candidateMessage:null,actorUserId:context.user.id,
+     });
+     screeningStatus="PENDING";
+    }
     const target=next==="SHORTLISTED"?"SHORTLISTED":next==="REJECTED"?"REJECTED":null;
-    if(target&&screening.status!==target){
-     const allowed=(screening.status==="PENDING"||screening.status==="HOLD")&&
+    if(target&&screeningStatus!==target){
+     const allowed=(screeningStatus==="PENDING"||screeningStatus==="HOLD")&&
       (target==="SHORTLISTED"||target==="REJECTED");
      if(!allowed)throw Error("The screening decision cannot be changed from its current state.");
      await tx.update(placementApplicationScreenings).set({
@@ -90,7 +108,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       updatedAt:new Date(),
      }).where(eq(placementApplicationScreenings.applicationId,applicationId));
      await tx.insert(placementApplicationScreeningHistory).values({
-      applicationId,fromStatus:screening.status,toStatus:target,
+      applicationId,fromStatus:screeningStatus,toStatus:target,
       candidateMessage:target==="REJECTED"?input.reason:null,
       internalReason:input.reason,actorUserId:context.user.id,
      });
