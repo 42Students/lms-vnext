@@ -9,6 +9,7 @@ import {placementCollegeApplicationStages,placementCollegeApplicationStageHistor
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {listCollegeDriveApplications} from "./college-drive-applications-service";
+import {DRIVE_APPLICATION_BULK_CAP} from "./college-drive-applications-model";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeStageCommandSchema,COLLEGE_APPLICATION_TRANSITIONS} from "./college-stage-action-model";
 import {PlacementsServiceError} from "./errors";
@@ -32,9 +33,18 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const input=collegeStageCommandSchema.parse(raw);
  if(input.notifyByEmail)throw Error("Email delivery is not registered for College Admin pipeline moves. Choose in-app notifications.");
+ let applicationIds=input.applicationIds;
+ if(input.matchingFilter){
+  const matching=await listCollegeDriveApplications(context,jobId,
+   {...input.matchingFilter,page:1},{bulkAll:true});
+  if(matching.total>DRIVE_APPLICATION_BULK_CAP)
+   throw Error("More than 3,000 applications match this filter. Narrow your filters.");
+  applicationIds=matching.items.map(row=>row.id);
+  if(applicationIds.length===0)throw Error("No matching applications to update.");
+ }
  const results:Array<{applicationId:string;status:"moved"|"skipped";reason?:string;stage?:string}>=[];
- // Batch deliberately reports each row; no successful row is represented as unprocessed on retry.
- for(const applicationId of input.applicationIds){
+ // A bounded read is followed by per-row transactions; each failure is explicit.
+ for(const applicationId of applicationIds){
   try{
    const stage=await getDb().transaction(async tx=>{
     const [job]=await tx.select({id:placementJobs.id,status:placementJobs.status})
@@ -64,7 +74,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      (old?.previousStage==="SHORTLISTED"?"SHORTLISTED":"APPLIED"):input.stage!;
     if(input.action==="REINSTATE"&&from!=="REJECTED")
      throw Error("Only a rejected application can be reinstated.");
-    if(next===from)return from;
+    if(next===from)throw Error("Application is already in the selected stage.");
     if(input.action==="MOVE" && !(COLLEGE_APPLICATION_TRANSITIONS[from]??[]).includes(next))
      throw Error(`Invalid transition: ${from} to ${next}`);
     if(["OFFERED","HIRED"].includes(next)){
