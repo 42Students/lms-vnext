@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,ilike,or,sql,type SQL} from "drizzle-orm";
+import {and,count,desc,eq,ilike,or,sql,type SQL} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
@@ -12,17 +12,31 @@ export type InboundMailItem={
  subject:string;bodyPlain:string;status:string;version:number;
 };
 export type InboundMailPage={
- available:boolean;items:readonly InboundMailItem[];page:number;hasMore:boolean;
+ available:boolean;items:readonly InboundMailItem[];page:number;hasMore:boolean;total:number|null;
 };
 type InboundMailFilters={status:"ALL"|"NEW"|"TRIAGED"|"RESOLVED";q:string;page:number;recipient?:string};
 export interface InboundMailAdminRepository {
  tableExists():Promise<boolean>;
  list(input:InboundMailFilters):Promise<readonly InboundMailItem[]>;
+ count?(input:InboundMailFilters):Promise<number>;
 }
 export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
  async tableExists(){
   const result=await getDb().execute(sql<{found:boolean}>`SELECT to_regclass('public.inbound_mail_messages') IS NOT NULL AS found`);
   return result.rows[0]?.found===true;
+ },
+ async count(input){
+  const t=inboundMailMessagesStaged,conditions:SQL[]=[];
+  if(input.status!=="ALL")conditions.push(eq(t.status,input.status));
+  if(input.recipient)conditions.push(sql`lower(${t.toAddress}) = ${input.recipient}::text`);
+  if(input.q){
+   const escaped=input.q.replace(/[\\%_]/g,"\\ async list(input){
+  const t=inboundMailMessagesStaged,conditions:SQL[]=[];");
+   const pattern="%"+escaped+"%";
+   conditions.push(or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern))!);
+  }
+  const [row]=await getDb().select({total:count()}).from(t).where(conditions.length?and(...conditions):undefined);
+  return row?.total??0;
  },
  async list(input){
   const t=inboundMailMessagesStaged,conditions:SQL[]=[];
@@ -47,9 +61,9 @@ export async function listInboundMailForAdmin(
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  const input=inboundMailListQuerySchema.parse(raw);
  if(!await repository.tableExists())
-  return {available:false,items:[],page:input.page,hasMore:false};
- const items=await repository.list(input);
- return {available:true,items:items.slice(0,50),page:input.page,hasMore:items.length>50};
+  return {available:false,items:[],page:input.page,hasMore:false,total:null};
+ const [items,total]=await Promise.all([repository.list(input),repository.count?repository.count(input):Promise.resolve(null)]);
+ return {available:true,items:items.slice(0,50),page:input.page,hasMore:items.length>50,total};
 }
 
 /** Version-checked inbound triage mutation. Global Super Admin only: incoming
