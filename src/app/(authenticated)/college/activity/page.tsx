@@ -31,7 +31,7 @@ export default async function CollegeActivityPage({
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
-  for (const key of ["module", "importance", "eventType", "q", "actorUserId", "actorName", "subjectType", "subjectId", "from", "to"] as const) {
+  for (const key of ["view", "category", "module", "importance", "eventType", "q", "actorUserId", "actorName", "subjectType", "subjectId", "from", "to"] as const) {
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
