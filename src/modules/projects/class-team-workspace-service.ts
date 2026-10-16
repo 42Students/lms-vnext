@@ -1,4 +1,4 @@
-import { and, eq, isNull, asc } from "drizzle-orm";
+import { and, eq, isNull, asc, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, cohorts, departments, learnerProfiles, learnerProgramEnrollments,
@@ -57,6 +57,8 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
       let groups: ReturnType<typeof verifyClassTeamPreview>;
       try { groups=verifyClassTeamPreview(input.teams,members.map(m=>m.membershipId)); }
       catch { throw new ProjectsServiceError("PROJECT_TEAM_PREVIEW_INVALID"); }
+      if(input.cohortMode && groups.some(group=>group.membershipIds.length!==1))
+        throw new ProjectsServiceError("PROJECT_TEAM_PREVIEW_INVALID");
       const capacity=classTeamCapacity(groups);
       if (!capacity.balanced) throw new ProjectsServiceError("PROJECT_TEAM_UNBALANCED");
       const plans=planClassTeamWorkspaceNames(input.baseTitle,input.baseSlug,groups);
@@ -80,9 +82,17 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
             eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))).for("share").limit(1);
         if (!mentor) throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       }
-      const created: {projectId:string;teamGroupId:string;title:string;memberCount:number}[]=[];
+      const covered=input.cohortMode?new Set((await tx.select({membershipId:projectMembers.membershipId})
+        .from(projectMembers).innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
+        .where(and(eq(projectInstances.collegeId,scope.id),
+          eq(projectInstances.sectionId,section.id),eq(projectInstances.templateId,input.templateId),
+          ne(projectInstances.status,"ARCHIVED"),eq(projectMembers.role,"LEARNER"),
+          isNull(projectMembers.endedAt),inArray(projectMembers.membershipId,members.map(m=>m.membershipId)))))
+        .map(row=>row.membershipId)):new Set<string>();
+      const created: {projectId:string;teamGroupId:string;title:string;memberCount:number;learnerMembershipId:string}[]=[];
       for (let index=0;index<plans.length;index++) {
         const plan=plans[index],group=groups[index];
+        if(input.cohortMode && covered.has(group.membershipIds[0]))continue;
         const [team]=await tx.insert(lmsGroups).values({
           kind:"PROJECT_TEAM",ownerScope:"COLLEGE",collegeId:scope.id,
           name:(input.baseTitle.slice(0,20)+" · "+group.name),status:"ACTIVE",
@@ -97,7 +107,7 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         })));
         const [project]=await tx.insert(projectInstances).values({
           collegeId:scope.id,templateId:assigned.templateId,templateVersionId:assigned.versionId,
-          teamGroupId:team.id,slug:plan.slug,title:plan.title,summary:assigned.summary,
+          teamGroupId:team.id,sectionId:section.id,slug:plan.slug,title:plan.title,summary:assigned.summary,
           createdByUserId:context.user.id,
         }).returning({id:projectInstances.id,title:projectInstances.title});
         if (!project) throw new Error("Workspace insert failed");
@@ -137,9 +147,11 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
           metadata:{projectId:project.id,classId:section.id,teamGroupId:team.id,memberCount:group.membershipIds.length},
           groupKey:"project:"+project.id,dedupeKey:"project:"+project.id+":created",
         });
-        created.push({projectId:project.id,teamGroupId:team.id,title:project.title,memberCount:group.membershipIds.length});
+        created.push({projectId:project.id,teamGroupId:team.id,title:project.title,
+          memberCount:group.membershipIds.length,learnerMembershipId:group.membershipIds[0]});
       }
-      return {created,teamCount:created.length,learnerCount:members.length};
+      return {created,teamCount:created.length,learnerCount:members.length,
+        alreadyCovered:covered.size,requested:groups.length};
     },{isolationLevel:"serializable"});
   } catch(error) {
     if(postgresConstraintName(error)==="project_instances_college_slug_uq")throw new ProjectsServiceError("PROJECT_SLUG_CONFLICT");
