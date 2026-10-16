@@ -1,4 +1,4 @@
-/** Staged, typed Super Admin configuration overrides. No credential values are stored. */
+/** Registered in 0119: typed Super Admin setting overrides. No credentials stored. */
 import {sql} from "drizzle-orm";
 import {check,integer,pgTable,primaryKey,timestamp,uuid,varchar} from "drizzle-orm/pg-core";
 import {users} from "./users";
