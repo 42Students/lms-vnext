@@ -4,7 +4,11 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementJobCreateWorkspace } from "@/components/placements/placement-job-create-workspace";
 import { hasMembershipRole } from "@/modules/identity/context";
 
-export default async function TpoNewPlacementPage() {
+export default async function TpoNewPlacementPage({searchParams}:{
+ searchParams:Promise<{company?:string|string[]}>
+}) {
+  const raw=await searchParams;
+  const company=Array.isArray(raw.company)?raw.company[0]:raw.company;
   const context = await getCurrentRequestContext();
   if (
     !context.membership ||
@@ -25,6 +29,7 @@ export default async function TpoNewPlacementPage() {
         collegeId={context.membership.collegeId}
         eyebrow="TPO"
         basePath="/tpo/placements"
+        initialCompanyName={company?.trim().slice(0,150)??""}
       />
     </div>
   );
