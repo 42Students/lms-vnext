@@ -320,7 +320,7 @@ export default async function TpoMessagesPage({
               defaultValue={query.q}
               placeholder={
                 isRecruiterInbox
-                  ? "Recruiter name or job"
+                  ? "Recruiter, subject or message"
                   : "TPO name or event type"
               }
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
@@ -423,11 +423,13 @@ export default async function TpoMessagesPage({
                   >
                     <td className="px-4 py-4 font-semibold text-foreground">
                       {item.participantName}
+                       {item.waitingForYou?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">Waiting for you</span>:null}
                     </td>
 
                     <td className="px-4 py-4 text-body">
                       {isRecruiterInbox ? <Link className="font-semibold text-primary-text hover:underline"
                         href={"/tpo/messages/" + encodeURIComponent(item.id)}>{item.subject} →</Link> : item.subject}
+                       {item.lastPreview?<p className="mt-1 max-w-sm truncate text-xs text-muted-foreground">{item.lastPreview}</p>:null}
                     </td>
 
                     <td className="px-4 py-4">
