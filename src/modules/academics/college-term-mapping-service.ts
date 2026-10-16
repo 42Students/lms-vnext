@@ -1,11 +1,12 @@
 import "server-only";
 
-import { and, asc, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
-  cohortProgressionState, cohorts, courseOfferings, courses, departments,
+  academicPeriods, cohortProgressionState, cohorts, courseOfferings, courses, departments,
+  courseSectionDeliveries, courseTeachingAssignments, sections,
   programTermCourses, programTerms, programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -93,7 +94,42 @@ export async function listCollegeTermMappings(context: RequestContext) {
       ))
       .orderBy(asc(programs.name), asc(programTerms.termNumber), asc(programTermCourses.displayOrder)),
   ]);
-  return { terms, courses: courseChoices, mapped };
+  // Current academic-period offerings give a genuine course-by-course staffing
+  // warning; a course without active deliveries has no assigned teacher.
+  const staffingRows = await db.select({
+    courseId: courses.id,
+    deliveries: sql<number>`count(distinct ${courseSectionDeliveries.id})::int`,
+    missing: sql<number>`count(distinct case when ${courseTeachingAssignments.id}
+      is null then ${courseSectionDeliveries.id} end)::int`,
+  }).from(courses)
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .innerJoin(courseOfferings, eq(courseOfferings.courseId, courses.id))
+    .innerJoin(academicPeriods, eq(academicPeriods.id, courseOfferings.academicPeriodId))
+    .innerJoin(courseSectionDeliveries, and(
+      eq(courseSectionDeliveries.offeringId, courseOfferings.id),
+      isNull(courseSectionDeliveries.endedAt)))
+    .innerJoin(sections, and(eq(sections.id, courseSectionDeliveries.sectionId),
+      eq(sections.status, "ACTIVE")))
+    .leftJoin(courseTeachingAssignments, and(
+      eq(courseTeachingAssignments.deliveryId, courseSectionDeliveries.id),
+      isNull(courseTeachingAssignments.endedAt)))
+    .where(and(eq(departments.collegeId, membership.collegeId),
+      eq(academicPeriods.collegeId, membership.collegeId),
+      eq(academicPeriods.status, "ACTIVE"),
+      eq(courseOfferings.status, "ACTIVE"), eq(courses.status, "ACTIVE")))
+    .groupBy(courses.id);
+  const staffByCourse = new Map(staffingRows.map(row => [row.courseId, row]));
+  return { terms, courses: courseChoices,
+    mapped: mapped.map(row => {
+      const staffing = staffByCourse.get(row.courseId);
+      const warning = !staffing || staffing.deliveries === 0
+        ? "No faculty assigned"
+        : staffing.missing === 0 ? null
+        : staffing.missing === staffing.deliveries ? "No faculty assigned"
+        : `No faculty for ${staffing.missing} of ${staffing.deliveries} classes`;
+      return { ...row, staffingWarning: warning };
+    }),
+  };
 }
 
 export async function addCollegeTermMapping(context: RequestContext, raw: unknown) {
