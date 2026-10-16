@@ -127,7 +127,6 @@ export async function recordTpoDriveSelections(context: RequestContext, rawJobId
 export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJobId:unknown,raw:unknown){
   const job=await scopedJob(context,rawJobId);
   if(job.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
-  await requireRegisteredSelections();
   const input=releaseSelectionsSchema.parse(raw);
   const candidateMap=new Map((await listPlacementOfferCandidates(context,job.id))
     .map(c=>[c.applicationId,c]));
