@@ -1,7 +1,7 @@
 import "server-only";
-import { and, eq, gt, lt, or, sql } from "drizzle-orm";
+import { and, eq, gt, isNull, lt, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { academicPeriods, cohorts, collegeMemberships, departments, lectureHalls, membershipRoles, programs, sectionScheduleEvents, sections } from "@/db/schema";
+import { academicPeriods, cohorts, collegeMemberships, departments, lectureHalls, membershipRoles, programs, sectionScheduleEvents, sections, courseSectionDeliveries, courseOfferings, courses, sectionScheduleEventCourses } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -58,6 +58,19 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
         .for("share",{of:collegeMemberships}).limit(1);
       if (!faculty) throw new CollegeRecurringExecutionError("NOT_FOUND");
     }
+    if (input.deliveryId) {
+      const [delivery] = await tx.select({ id: courseSectionDeliveries.id })
+        .from(courseSectionDeliveries)
+        .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+        .innerJoin(departments, eq(departments.id, courses.departmentId))
+        .where(and(eq(courseSectionDeliveries.id, input.deliveryId),
+          eq(courseSectionDeliveries.sectionId, input.sectionId),
+          eq(departments.collegeId, member.collegeId),
+          eq(courseOfferings.status, "ACTIVE"), eq(courses.status, "ACTIVE"),
+          isNull(courseSectionDeliveries.endedAt))).for("share",{of:courseSectionDeliveries}).limit(1);
+      if (!delivery) throw new CollegeRecurringExecutionError("NOT_FOUND");
+    }
     const first=new Date(slots[0].startsAt),last=new Date(slots[slots.length-1].endsAt);
     const existing=await tx.select({
       sectionId:sectionScheduleEvents.sectionId,
@@ -70,13 +83,25 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
         input.facultyMembershipId?eq(sectionScheduleEvents.facultyMembershipId,input.facultyMembershipId):undefined,
         input.lectureHallId?eq(sectionScheduleEvents.lectureHallId,input.lectureHallId):undefined),
     ));
-    if(slots.some(slot=>findPreviewConflicts(slot,input,existing).length))
-      throw new CollegeRecurringExecutionError("SCHEDULE_CONFLICT");
-    const created=await tx.insert(sectionScheduleEvents).values(slots.map(slot=>({
-      sectionId:input.sectionId,title:input.title,
-      startsAt:new Date(slot.startsAt),endsAt:new Date(slot.endsAt),
-      facultyMembershipId:input.facultyMembershipId??null,lectureHallId:input.lectureHallId??null,
-    }))).returning({id:sectionScheduleEvents.id});
+    const resolved = slots.map(slot => ({
+      ...slot, conflicts: findPreviewConflicts(slot, input, existing),
+    }));
+    const free = resolved.filter(slot => slot.conflicts.length === 0);
+    const skipped = resolved.filter(slot => slot.conflicts.length > 0).map(slot => ({
+      localDate: slot.localDate, reasons: slot.conflicts,
+    }));
+    if (!free.length) throw new CollegeRecurringExecutionError("SCHEDULE_CONFLICT");
+    const created = await tx.insert(sectionScheduleEvents).values(free.map(slot => ({
+      sectionId: input.sectionId, title: input.title,
+      startsAt: new Date(slot.startsAt), endsAt: new Date(slot.endsAt),
+      facultyMembershipId: input.facultyMembershipId ?? null,
+      lectureHallId: input.lectureHallId ?? null,
+    }))).returning({id: sectionScheduleEvents.id});
+    if (input.deliveryId) {
+      await tx.insert(sectionScheduleEventCourses).values(created.map(row => ({
+        scheduleEventId: row.id, deliveryId: input.deliveryId!,
+      })));
+    }
     // Advance the optimistic section token after creating this series.
     await tx.update(sections).set({
       updatedAt: sql<Date>`greatest(${sections.updatedAt} + interval '1 millisecond', clock_timestamp())`,
@@ -87,8 +112,8 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
       organizationId:member.organizationId,collegeId:member.collegeId,
       subjectType:"section",subjectId:section.id,
       summary:"College Admin created recurring class sessions",
-      metadata:{count:created.length,from:input.from,to:input.to},
+      metadata:{count:created.length,skippedCount:skipped.length,from:input.from,to:input.to,deliveryId:input.deliveryId??null},
     });
-    return {...recurringExecutionSummary(created.length,slots.length),sessionIds:created.map(row=>row.id)};
+    return {...recurringExecutionSummary(created.length,slots.length), skipped, sessionIds:created.map(row=>row.id)};
   });
 }
