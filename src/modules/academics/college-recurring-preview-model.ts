@@ -15,6 +15,7 @@ export const recurringPreviewSchema = z.object({
   endTime: timeSchema,
   facultyMembershipId: z.string().uuid().nullable().optional(),
   lectureHallId: z.string().uuid().nullable().optional(),
+  deliveryId: z.string().uuid().nullable().optional(),
 }).strict().superRefine((v, ctx) => {
   if (v.from > v.to) ctx.addIssue({ code: "custom", path: ["to"], message: "End date precedes start" });
   const days = Math.round((Date.parse(v.to + "T00:00:00Z") -
