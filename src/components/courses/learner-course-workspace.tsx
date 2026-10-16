@@ -18,6 +18,8 @@ import {AssignmentSubmissionLinks} from "./assignment-submission-links";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { QuizAttemptControl } from "./quiz-attempt-control";
 import { ResourceProgressControl } from "./resource-progress-control";
+import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
+import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
 import { LearnerVideoPlayer } from "./learner-video-player";
 import {
@@ -156,11 +158,13 @@ function ContentCard({
   lessonId,
   deliveryId,
   readOnly,
+  materialsEnabled,
 }: {
   content: Workspace["lessons"][number]["contents"][number];
   lessonId: string;
   deliveryId: string;
   readOnly: boolean;
+  materialsEnabled:boolean;
 }) {
   const start = formatDateTime(content.startsAt);
   const end = formatDateTime(content.endsAt);
@@ -334,6 +338,8 @@ function ContentCard({
         </p>
       ) : null}
 
+      {content.type==="RESOURCE"&&materialsEnabled&&!scheduled?<LessonResourceMaterialsControl
+        contentId={content.id} deliveryId={deliveryId} editable={false}/>:null}
       {!readOnly &&
       interaction.canMarkComplete &&
       !scheduled &&
@@ -931,7 +937,8 @@ export function LearnerCourseWorkspace({
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
-                            <ContentCard content={content} lessonId={lesson.id} deliveryId={deliveryId} readOnly={readOnly} />
+                            <ContentCard content={content} lessonId={lesson.id} deliveryId={deliveryId} readOnly={readOnly}
+                            materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
                           </LearnerRoadmapItemDialog>
                         ) : null;
                       }
