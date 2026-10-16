@@ -327,7 +327,7 @@ export function RecruiterLeadDetailWorkspace({
               <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
                {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
                <button type="button" className={button} onClick={openEdit}>Edit details</button>
-              {lead.manualStage !== "CONTACTED" ? (
+              {lead.manualStage === "NEW" ? (
                 <button type="button" className={button} disabled={saving} onClick={() => void mutate(
                   base + "/contacted", "POST", { collegeId },
                 )}>Mark contacted</button>
