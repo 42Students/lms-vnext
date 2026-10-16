@@ -7,7 +7,6 @@ import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promot
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {issuePlacementOffer} from "./offer-service";
-import {placementTableExists} from "./staged-tables";
 import {requireTpoJobCollege,requireTpoJobActor,auditTpoJobChange} from "./tpo-job-write-base";
 import {placementJobIdSchema} from "./validation";
 import {tpoWaitlistPromotionSchema,waitlistPreviewToken} from "./tpo-waitlist-promotion-model";
@@ -19,7 +18,7 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
   openings:placementJobs.openings,updatedAt:placementJobs.updatedAt,
  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
- const storageReady=await placementTableExists("placement_waitlist_promotions");
+ const storageReady=true; // registered in 0113
  const rounds=await getDb().select({
   id:placementJobRounds.id,sequence:placementJobRounds.sequence,status:placementJobRounds.status,
  }).from(placementJobRounds).where(and(eq(placementJobRounds.jobId,jobId),
@@ -72,8 +71,7 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
   if(!existing&&freeSeats!==null&&freeSeats<1)reasons.push("No open offer seat");
   if(!existing&&promotions.some(p=>p.applicationId===w.applicationId))reasons.push("Already promoted");
   if(job.status!=="PUBLISHED")reasons.push("Drive is not live");
-  if(!storageReady)reasons.push("Waitlist promotion storage is not registered");
-  return {applicationId:w.applicationId,name:w.name??"Learner",roleTitle:w.roleTitle,
+   return {applicationId:w.applicationId,name:w.name??"Learner",roleTitle:w.roleTitle,
    annualCtcInr:w.annualCtcInr,rank:w.rank??0,reason:existing?.reason??null,
    promotionStatus:existing?.status??null,reasons,canPromote:reasons.length===0};
  });
@@ -88,7 +86,6 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
 export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unknown,raw:unknown){
  const input=tpoWaitlistPromotionSchema.parse(raw);
  const preview=await getTpoWaitlistPreview(context,rawJobId);
- if(!preview.storageReady)throw Error("Waitlist promotion migration has not been registered.");
  if(input.expectedPreviewToken!==preview.previewToken)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
  const next=preview.next;
  if(!next||!preview.lastRoundId)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
