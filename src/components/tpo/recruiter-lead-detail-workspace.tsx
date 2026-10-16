@@ -352,7 +352,7 @@ export function RecruiterLeadDetailWorkspace({
            {lead.manualStage === "NOT_NOW" ? (
             <div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
               Not now: {lead.notNowReason || "No reason recorded"}.
-              {lead.notNowUntil ? " Revisit on " + lead.notNowUntil : ""}
+              {lead.notNowUntil ? " Revisit on " + new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(lead.notNowUntil+"T12:00:00+05:30")) : ""}
             </div>
           ) : null}
           {actionToast?<p role="status" className="rounded-md border border-border p-3 text-sm">{actionToast}</p>:null}
