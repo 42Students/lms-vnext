@@ -76,6 +76,7 @@ export default async function HrPlacementJobPage({
     throw error;
   }
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
+  if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const reviewMode = z.enum(["1"]).optional().safeParse(query.review);
   if (!reviewMode.success) notFound();
   const focused = reviewMode.data === "1" && filters.tab === "applicants";
