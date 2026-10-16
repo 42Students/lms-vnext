@@ -8,9 +8,9 @@ import type { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-dri
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
 
-export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness }) {
+export function TpoDriveLifecycleControls({ readiness, initialPublish = false }: { readiness: Readiness; initialPublish?: boolean }) {
   const router = useRouter();
-  const [action, setAction] = useState<Action | null>(null);
+  const [action, setAction] = useState<Action | null>(initialPublish ? "PUBLISH" : null);
   const [reason, setReason] = useState("");
   const [pending, setPending] = useState(false);
   const [notifyByEmail,setNotifyByEmail]=useState(false);
