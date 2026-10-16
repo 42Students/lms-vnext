@@ -78,8 +78,6 @@ export default async function TpoNotificationsPage({
         unreadCount={inbox.unreadCount}
         baseHref={TPO_NOTIFICATIONS_PATH}
         markAllEndpoint="/api/tpo/notifications/read-all"
-        confirmMarkAll
-        confirmMessage="Mark all unread TPO notifications in this college as read?"
       />
       {inbox.cursor.invalid ? (
         <div role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-foreground">
