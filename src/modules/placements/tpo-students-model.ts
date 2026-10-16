@@ -443,3 +443,11 @@ export function filterTpoStudentRoster(
     ),
   };
 }
+
+/** A finished batch stays reachable for institutional outcomes, never in the default view. */
+export function selectTpoStudentWorkingSet(
+  rows:readonly TpoStudentRow[],explicitBatch:boolean,
+):TpoStudentRow[]{
+  return rows.filter(row=>row.participationStatus==="ELIGIBLE" ||
+    Boolean(explicitBatch && row.fromFinishedBatch));
+}
