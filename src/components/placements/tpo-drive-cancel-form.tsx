@@ -15,17 +15,17 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const rows = [
-    ["Submitted applications (retained)", preview.impact.submittedApplications],
+    ["Submitted applications (informed)", preview.impact.submittedApplications],
     ["Open rounds that will be cancelled", preview.impact.openRounds],
-    ["Issued offers (retained, not withdrawn)", preview.impact.issuedOffers],
-    ["Accepted offers (block cancellation)", preview.impact.acceptedOffers],
+    ["Issued offers that will be withdrawn", preview.impact.issuedOffers],
+    ["Accepted offers (kept)", preview.impact.acceptedOffers],
   ] as const;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return;
     const reason = String(new FormData(event.currentTarget).get("reason") ?? "");
-    if (!window.confirm("Cancel this drive? It will be closed and its open rounds cancelled. This is audited and cannot be undone here.")) return;
+    if (!window.confirm("Cancel this drive? New applications stop, pending rounds are cancelled, and issued offers are withdrawn. Accepted offers are kept.")) return;
     setPending(true);
     setError(null);
     try {
@@ -62,7 +62,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
     <form onSubmit={(e) => void submit(e)} className="space-y-4 rounded-xl border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
       <p className="text-sm text-body">
-        Cancelling closes the drive to new applications and cancels every pending or scheduled round. Applications and offers are never deleted.
+        Cancelling stops new applications, cancels pending or scheduled rounds, withdraws issued offers and keeps accepted offers. Records are never deleted.
       </p>
       <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {rows.map(([label, n]) => (
@@ -72,12 +72,6 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
           </div>
         ))}
       </dl>
-      {preview.blockedByAcceptedOffers ? (
-        <p role="status" className="text-sm text-error">
-          Accepted offers exist. Resolve them before cancelling this drive.
-        </p>
-      ) : (
-        <>
           <label className="block text-sm font-semibold text-body">
             Reason for cancellation (audited)
             <textarea required name="reason" minLength={10} maxLength={1000} rows={3} className="mt-2 w-full rounded-md border border-border bg-surface p-3 text-foreground" />
@@ -87,8 +81,6 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
           <button type="submit" disabled={pending} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </button>
-        </>
-      )}
     </form>
   );
 }
