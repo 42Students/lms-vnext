@@ -7,6 +7,12 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {managedBaseDomain,managedHost,isManagedHost,managedSubdomainRequest} from "./managed-subdomain-model";
 import {TenantDomainServiceError} from "./service";
 import {z} from "zod";
+export class ManagedSubdomainError extends Error{
+ constructor(readonly code:"MANAGED_WILDCARD_NOT_READY"|"SUBDOMAIN_STALE"|
+  "SUBDOMAIN_ALREADY_ALLOTTED"|"SUBDOMAIN_MISSING"|"SUBDOMAIN_CONFLICT"){
+  super(code);this.name="ManagedSubdomainError";
+ }
+}
 function configuredDomain(){
  return managedBaseDomain(process.env.TENANT_MANAGED_BASE_DOMAIN,
   process.env.TENANT_MANAGED_WILDCARD_READY==="true");
@@ -33,7 +39,7 @@ export async function getManagedCollegeSubdomain(ctx:RequestContext,collegeInput
 export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeInput:string,raw:unknown){
  const college=await checkedCollege(ctx,collegeInput);
  const base=configuredDomain();
- if(!base)throw new Error("MANAGED_WILDCARD_NOT_READY");
+ if(!base)throw new ManagedSubdomainError("MANAGED_WILDCARD_NOT_READY");
  const input=managedSubdomainRequest.parse(raw);
  const host=input.action==="REMOVE"?null:managedHost(input.label!,base);
  return getDb().transaction(async tx=>{
@@ -43,16 +49,16 @@ export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeIn
   const rows=await tx.select({id:tenantDomains.id,host:tenantDomains.host,isPrimary:tenantDomains.isPrimary,isVerified:tenantDomains.isVerified})
    .from(tenantDomains).where(eq(tenantDomains.collegeId,college.id)).for("update");
   const current=rows.find(row=>isManagedHost(row.host,base));
-  if((current?.host??null)!==input.expectedHost)throw new Error("SUBDOMAIN_STALE");
-  if(input.action==="ALLOT"&&current)throw new Error("SUBDOMAIN_ALREADY_ALLOTTED");
-  if(input.action==="CHANGE"&&!current)throw new Error("SUBDOMAIN_MISSING");
-  if(input.action==="REMOVE"&&!current)throw new Error("SUBDOMAIN_MISSING");
+  if((current?.host??null)!==input.expectedHost)throw new ManagedSubdomainError("SUBDOMAIN_STALE");
+  if(input.action==="ALLOT"&&current)throw new ManagedSubdomainError("SUBDOMAIN_ALREADY_ALLOTTED");
+  if(input.action==="CHANGE"&&!current)throw new ManagedSubdomainError("SUBDOMAIN_MISSING");
+  if(input.action==="REMOVE"&&!current)throw new ManagedSubdomainError("SUBDOMAIN_MISSING");
   if(host===current?.host)return {host,changed:false};
   if(host){
    const [taken]=await tx.select({id:tenantDomains.id,collegeId:tenantDomains.collegeId})
     .from(tenantDomains).where(sql<boolean>`lower(${tenantDomains.host})=${host}`).limit(1);
    if(taken&&taken.collegeId!==college.id)throw new TenantDomainServiceError("HOST_CONFLICT");
-   if(taken&&taken.id!==current?.id)throw new Error("SUBDOMAIN_CONFLICT");
+   if(taken&&taken.id!==current?.id)throw new ManagedSubdomainError("SUBDOMAIN_CONFLICT");
   }
   // Managed wildcard ownership and TLS are prerequisites; do not bypass
   // TXT ownership verification for arbitrary customer-controlled hosts.
