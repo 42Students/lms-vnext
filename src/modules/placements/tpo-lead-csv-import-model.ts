@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { tpoLeadSourceSchema } from "./tpo-crm-validation";
 
-export const TPO_LEAD_CSV_MAX_ROWS = 200;
-export const TPO_LEAD_CSV_MAX_CHARACTERS = 160_000;
+export const TPO_LEAD_CSV_MAX_ROWS = 5000;
+export const TPO_LEAD_CSV_MAX_CHARACTERS = 2_000_000;
 export const TPO_LEAD_CSV_HEADERS = [
   "name", "email", "phone", "companyName", "designation", "source",
 ] as const;
@@ -126,24 +126,33 @@ export function previewTpoLeadCsv(csv: string) {
   }
   const records = parseCells(csv);
   const header = records[0]?.map(value => value.trim().replace(/^\uFEFF/, ""));
-  if (!header || header.length !== TPO_LEAD_CSV_HEADERS.length ||
-    TPO_LEAD_CSV_HEADERS.some((expected, i) => header[i] !== expected)) {
+  const headerAliases:Record<string,string>={
+   name:"name",fullName:"name",contact:"name",email:"email",workEmail:"email",
+   phone:"phone",mobile:"phone",company:"companyName",companyName:"companyName",
+   designation:"designation",title:"designation",source:"source",foundThrough:"source",
+  };
+  const normalized=header?.map(value=>headerAliases[value]??"");
+  if(!normalized||normalized.length!==TPO_LEAD_CSV_HEADERS.length||
+   new Set(normalized).size!==TPO_LEAD_CSV_HEADERS.length||
+   TPO_LEAD_CSV_HEADERS.some(expected=>!normalized.includes(expected))){
     throw new Error("CSV_HEADER_MISMATCH");
   }
+  const column=(cells:string[],key:(typeof TPO_LEAD_CSV_HEADERS)[number])=>
+   cells[normalized.indexOf(key)]??"";
   if (records.length <= 1) throw new Error("CSV_EMPTY");
   const rows: TpoLeadCsvPreviewRow[] = records.slice(1).map((cells, index) => {
     const row = index + 2;
-    const name = cells[0]?.trim() ?? "";
+    const name = column(cells,"name").trim();
     if (cells.length !== TPO_LEAD_CSV_HEADERS.length) {
       return { row, name, lead: null, error: "Expected exactly six columns" };
     }
     const value = {
-      name: cells[0],
-      email: cells[1]?.trim(),
-      phone: cells[2]?.trim(),
-      companyName: cells[3],
-      designation: cells[4],
-      source: cells[5],
+      name: column(cells,"name"),
+      email: column(cells,"email").trim(),
+      phone: column(cells,"phone").trim(),
+      companyName: column(cells,"companyName"),
+      designation: column(cells,"designation"),
+      source: column(cells,"source")||"IMPORT",
     };
     const parsed = tpoLeadCsvRowSchema.safeParse(value);
     if (!parsed.success) {

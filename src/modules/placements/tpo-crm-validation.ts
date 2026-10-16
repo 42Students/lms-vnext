@@ -36,12 +36,13 @@ export const tpoLeadSourceSchema = z.string().trim()
       EVENT_OR_JOB_FAIR: "EVENT",
       COLD_OUTREACH: "COLD_OUTREACH",
       COMPANY_REACHED_OUT: "COMPANY_REACHED_OUT",
+      IMPORT: "IMPORT",
     };
     return synonyms[key] ?? key;
   })
   .pipe(z.enum([
     "ALUMNI", "REFERRAL", "LINKEDIN", "JOB_PORTAL",
-    "EVENT", "COLD_OUTREACH", "COMPANY_REACHED_OUT",
+    "EVENT", "COLD_OUTREACH", "COMPANY_REACHED_OUT", "IMPORT",
   ]));
 
 export const createTpoLeadSchema = z.object({
