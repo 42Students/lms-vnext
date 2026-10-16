@@ -7,6 +7,8 @@ import { getPlacementReportWorkspace } from "@/modules/placements/report-service
 import { collegeHiringAnalyticsQuery } from "@/modules/placements/college-hiring-analytics-model";
 import { ErrorState } from "@/components/ui/error-state";
 import Link from "next/link";
+import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
+import {CollegeHiringFunnel} from "@/components/placements/college-hiring-funnel";
 
 /** Dedicated legacy Analytics surface: tenant-owned observed placement metrics. */
 export default async function CollegeHiringDashboardPage({
@@ -32,6 +34,9 @@ export default async function CollegeHiringDashboardPage({
     collegeId: context.membership.collegeId,
     ...query.data,
   });
+  const funnel=await getCollegeHiringFunnel(context,{
+    ...query.data,seasonId:query.data.seasonId??workspace.selectedSeasonId??undefined,
+  });
   return <div className="space-y-6">
     <PageHeader eyebrow="Placements" title="Analytics"
       actions={<Link href="/college/placements/readiness-by-department"
@@ -40,6 +45,8 @@ export default async function CollegeHiringDashboardPage({
       </Link>} />
     <ReportFilters workspace={workspace} path="/college/hiring-dashboard" />
     <ReportMetrics metrics={workspace.report.metrics} />
+    <CollegeHiringFunnel data={funnel} selectedSeasonId={workspace.selectedSeasonId}
+      selectedJobId={workspace.selectedJobId}/>
     <ReportScopeNote note={workspace.registrationScopeNote} />
   </div>;
 }
