@@ -1,0 +1,77 @@
+import "server-only";
+import {randomUUID} from "node:crypto";
+import {and,desc,eq,sql} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import {projectInstances,projectReleases,projectSprints} from "@/db/schema";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import type {RequestContext} from "@/modules/identity/context";
+import {requireProjectLifecycleMutationAccess} from "./access";
+import {ProjectsServiceError} from "./errors";
+
+const uuid=z.string().uuid();
+const body=z.strictObject({
+ title:z.string().trim().min(1).max(200),
+ description:z.string().trim().max(4000).nullable().optional(),
+ expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
+});
+type Mode="CREATED"|"UPDATED"|"DELETED";
+export async function writeMentorProjectRelease(
+ context:RequestContext,projectIdInput:string,releaseIdInput:string|null,
+ operation:"POST"|"PATCH"|"DELETE",raw:unknown,
+){
+ const projectId=uuid.parse(projectIdInput);
+ const scope=await requireProjectLifecycleMutationAccess(context,projectId);
+ const releaseId=releaseIdInput?uuid.parse(releaseIdInput):null;
+ const input=operation==="DELETE"?null:body.parse(raw);
+ return getDb().transaction(async tx=>{
+  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+   .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
+   .for("update").limit(1);
+  if(!project||project.status!=="ACTIVE"&&project.status!=="PLANNED")
+   throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+  const [existing]=releaseId?await tx.select().from(projectReleases).where(and(
+   eq(projectReleases.id,releaseId),eq(projectReleases.projectId,projectId)
+  )).for("update").limit(1):[null];
+  if(releaseId&&!existing)throw new ProjectsServiceError("PROJECT_RELEASE_NOT_FOUND");
+  let change:Mode;
+  let result:typeof projectReleases.$inferSelect|null=null;
+  if(operation==="POST"){
+   const [last]=await tx.select({sequence:projectReleases.sequence}).from(projectReleases)
+    .where(eq(projectReleases.projectId,projectId)).orderBy(desc(projectReleases.sequence)).limit(1);
+   const [row]=await tx.insert(projectReleases).values({
+    projectId,templateKey:"custom-"+randomUUID(),sequence:(last?.sequence??-1)+1,
+    title:input!.title,description:input!.description??null,status:"PLANNED",
+   }).returning();
+   result=row??null;change="CREATED";
+  }else if(operation==="PATCH"){
+   if(!existing||existing.status==="SHIPPED"||
+      existing.updatedAt.toISOString()!==input?.expectedUpdatedAt)
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+   const [row]=await tx.update(projectReleases).set({
+    title:input!.title,description:input!.description??null,updatedAt:new Date(),
+   }).where(and(eq(projectReleases.id,existing.id),eq(projectReleases.projectId,projectId))).returning();
+   result=row??null;change="UPDATED";
+  }else{
+   if(!existing||existing.status==="SHIPPED")
+    throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+   const [sprint]=await tx.select({id:projectSprints.id}).from(projectSprints)
+    .where(and(eq(projectSprints.projectId,projectId),eq(projectSprints.releaseId,existing.id))).limit(1);
+   if(sprint)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+   await tx.delete(projectReleases).where(and(eq(projectReleases.id,existing.id),
+    eq(projectReleases.projectId,projectId)));
+   result=existing;change="DELETED";
+  }
+  if(!result)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+   collegeId:scope.collegeId,organizationId:scope.organizationId,
+   subjectType:"project_release",subjectId:result.id,subjectLabel:result.title,
+   summary:"Project release "+change.toLowerCase(),
+   metadata:{projectId,releaseId:result.id,change},
+   groupKey:"project:"+projectId,
+  });
+  return {release:result,change};
+ });
+}
