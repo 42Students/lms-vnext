@@ -11,8 +11,10 @@ import { hasMembershipRole } from "@/modules/identity/context";
 
 export default async function TpoPlacementDrivePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ jobId: string }>;
+  searchParams: Promise<{ publish?: string | string[] }>;
 }) {
   const context = await getCurrentRequestContext();
   if (
@@ -21,7 +23,8 @@ export default async function TpoPlacementDrivePage({
   ) {
     redirect("/dashboard");
   }
-  const { jobId } = await params;
+  const [{ jobId }, query] = await Promise.all([params, searchParams]);
+  const openPublish = (Array.isArray(query.publish) ? query.publish[0] : query.publish) === "1";
   // Unknown ids, other colleges' drives and malformed ids all render the same Not Found page.
   try {
     await getPlacementJob(context, jobId);
@@ -45,7 +48,7 @@ export default async function TpoPlacementDrivePage({
           </Link>
         ))}
       </nav>
-      <PlacementDriveWorkspace context={context} jobId={jobId} eyebrow="TPO"/>
+      <PlacementDriveWorkspace context={context} jobId={jobId} eyebrow="TPO" openPublish={openPublish}/>
     </div>
   );
 }
