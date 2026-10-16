@@ -102,8 +102,13 @@ export default async function SuperAdminLectureHallsPage({
       </form>
       <div className="flex flex-wrap gap-2">
         <a href={csvHref} download className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export CSV</a>
-        <Link href={superAdminLectureHallHref(query)} prefetch={false}
-          className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Refresh</Link>
+        <form action="/admin/lecture-halls" method="get">
+          {Object.entries(query).map(([name,value]) =>
+            value !== undefined && value !== ""
+              ? <input key={name} type="hidden" name={name} value={String(value)} />
+              : null)}
+          <button type="submit" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
+        </form>
       </div>
     </section>
     <section aria-label="Lecture hall results" className="space-y-3">
