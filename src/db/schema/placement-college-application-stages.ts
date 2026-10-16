@@ -1,0 +1,36 @@
+import {sql} from "drizzle-orm";
+import {check,index,pgTable,text,timestamp,uuid,varchar,integer,uniqueIndex} from "drizzle-orm/pg-core";
+import {placementApplications,placementJobs} from "./placements";
+import {users} from "./users";
+/** College Admin placement pipeline stage is separate from application status and actual offers. */
+export const placementCollegeApplicationStages=pgTable("placement_college_application_stages",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ jobId:uuid("job_id").notNull().references(()=>placementJobs.id),
+ applicationId:uuid("application_id").notNull().references(()=>placementApplications.id),
+ stage:varchar("stage",{length:24}).notNull().default("APPLIED"),
+ previousStage:varchar("previous_stage",{length:24}),
+ version:integer("version").notNull().default(1),
+ movedByUserId:uuid("moved_by_user_id").notNull().references(()=>users.id),
+ reason:text("reason").notNull(),
+ movedAt:timestamp("moved_at",{withTimezone:true}).notNull().defaultNow(),
+ updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+},t=>[
+ uniqueIndex("placement_college_stages_application_uq").on(t.applicationId),
+ index("placement_college_stages_job_stage_idx").on(t.jobId,t.stage),
+ check("placement_college_stages_stage_ck",sql`${t.stage} in ('APPLIED','SHORTLISTED','ASSESSMENT','INTERVIEW','WAITLISTED','OFFERED','HIRED','REJECTED')`),
+ check("placement_college_stages_previous_ck",sql`${t.previousStage} is null or ${t.previousStage} in ('APPLIED','SHORTLISTED','ASSESSMENT','INTERVIEW','WAITLISTED','OFFERED','HIRED','REJECTED')`),
+ check("placement_college_stages_version_ck",sql`${t.version} >= 1`),
+ check("placement_college_stages_reason_ck",sql`length(trim(${t.reason})) >= 3`),
+]);
+export const placementCollegeApplicationStageHistory=pgTable("placement_college_application_stage_history",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ stageId:uuid("stage_id").notNull().references(()=>placementCollegeApplicationStages.id),
+ fromStage:varchar("from_stage",{length:24}),
+ toStage:varchar("to_stage",{length:24}).notNull(),
+ reason:text("reason").notNull(),
+ actorUserId:uuid("actor_user_id").notNull().references(()=>users.id),
+ movedAt:timestamp("moved_at",{withTimezone:true}).notNull().defaultNow(),
+},t=>[
+ index("placement_college_stage_history_stage_time_idx").on(t.stageId,t.movedAt),
+ check("placement_college_stage_history_reason_ck",sql`length(trim(${t.reason})) >= 3`),
+]);
