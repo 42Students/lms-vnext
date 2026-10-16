@@ -98,7 +98,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    const [counts]=await tx.select({total:sql<number>`count(*)::int`,
     drafts:sql<number>`count(*) filter(where ${placementJobs.status} = 'DRAFT')::int`,
     live:sql<number>`count(*) filter(where ${placementJobs.status} = 'PUBLISHED')::int`,
-    closed:sql<number>`count(*) filter(where ${placementJobs.status} = 'CLOSED')::int`,
+    closed:sql<number>`count(*) filter(where ${placementJobs.status} in ('CLOSED','CANCELLED'))::int`,
     deadlinesNextSevenDays:sql<number>`count(*) filter(where ${placementJobs.status} = 'PUBLISHED'
      and ${placementJobs.applicationDeadline} >= ${now.toISOString()}::timestamptz
      and ${placementJobs.applicationDeadline} <= ${now.toISOString()}::timestamptz + interval '7 days')::int`,
@@ -122,7 +122,9 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       eq(placementCompanyRelationships.collegeId, collegeId)))
     .innerJoin(placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId))
-    .where(and(scope,target?eq(placementJobs.status,target):undefined))
+    .where(and(scope,filters.view==="CLOSED"?
+      inArray(placementJobs.status,["CLOSED","CANCELLED"]):
+      target?eq(placementJobs.status,target):undefined))
     .orderBy(filters.sort==="DEADLINE_ASC"?sql`${placementJobs.applicationDeadline} asc nulls last`:
       filters.sort==="DEADLINE_DESC"?sql`${placementJobs.applicationDeadline} desc nulls last`:placementCompanies.name,
       placementCompanies.name,placementJobs.title,placementJobs.id)
