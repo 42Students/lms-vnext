@@ -76,6 +76,9 @@ const cohortInput = z.object({
   collegeId: uuid,
   cohortId: uuid,
 }).strict();
+const inviteCohortInput = cohortInput.extend({
+  expectedVersion: z.string().min(1).max(80).optional(),
+}).strict();
 const batchSettingsInput = cohortInput.extend({
   registrationDeadline: z.coerce.date().nullable(),
   // null means inherit the college's placement rules, never an empty override.
@@ -606,7 +609,7 @@ export async function markPlacementBatchInvited(
   context: RequestContext,
   raw: unknown,
 ) {
-  const input = cohortInput.parse(raw);
+  const input = inviteCohortInput.parse(raw);
   await requirePlacementManageScope(context, input.collegeId);
   return getDb().transaction(async (tx) => {
     await lockCollege(tx, input.collegeId);
@@ -614,6 +617,8 @@ export async function markPlacementBatchInvited(
     const [current] = await tx.select().from(placementBatchLifecycles)
       .where(eq(placementBatchLifecycles.cohortId, input.cohortId)).limit(1);
     if (!current) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
+    if (input.expectedVersion !== undefined && current.updatedAt.toISOString() !== input.expectedVersion)
+      throw new PlacementBatchError("DB08_ACTION_STALE");
     if (current.finishedAt) throw new PlacementBatchError("DB08_ACTION_INVALID");
     if (current.invitedAt) return { ...current, notifiedCount: 0 };
     if (!current.registrationDeadline || current.registrationDeadline.getTime() <= Date.now())
