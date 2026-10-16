@@ -24,6 +24,7 @@ import {
 import { deriveTpoRecruiterLeadStage } from "./tpo-recruiter-lead-policy";
 import { requirePlacementManageScope } from "./scope";
 import { tpoCrmCollegeIdSchema } from "./tpo-crm-validation";
+import {listCompanyShareHistory} from "./company-share/company-history-service";
 
 export class TpoCompanyMemoryError extends Error {
   constructor(
@@ -298,6 +299,7 @@ export async function getTpoCompanyMemory(
 
   const jobIds = group.jobs.map((row) => row.job.id);
   const driveRows = await loadDriveFacts(jobIds);
+  const shareHistory=await listCompanyShareHistory(rows.collegeId,jobIds);
   const facts = deriveCompanyDriveFacts(driveRows);
   const linkedJobs = group.jobs.map((row) => ({
     jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
@@ -371,7 +373,7 @@ export async function getTpoCompanyMemory(
     hiredPerYear: [] as Array<{ year: string; hired: number }>,
     placedMetricStatus: "PENDING_W04_COUNTS_AS_PLACED_POLICY" as const,
     timeline,
-    documents: [] as never[],
-    documentsStatus: "PENDING_DB09_SHARE_LINK_PERSISTENCE" as const,
+    documents: shareHistory.items,
+    documentsStatus: shareHistory.ready ? "READY" as const : "STORAGE_PENDING" as const,
   };
 }
