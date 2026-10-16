@@ -18,7 +18,7 @@ export function AcademicSetupSteps({ step }: { step: 1 | 2 | 3 | 4 | 5 | 6 }) {
       className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
       <div>
         <p className="m-0 text-sm font-semibold text-foreground">Academic setup · Step {step} of 6</p>
-        <p className="mt-1 text-xs text-muted-foreground">{steps[step - 1].label}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{steps[step - 1]?.label ?? "Academic Setup"}</p>
       </div>
       <div className="flex flex-wrap gap-2 text-sm">
         {before ? <Link href={before.href}
