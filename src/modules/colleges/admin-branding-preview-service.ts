@@ -18,7 +18,7 @@ import { describeAdminCollegeBranding } from "./admin-branding-preview-model";
  * Only Super Admins within their selected resource scope may read this
  * college's public presentation settings. This matches the readiness
  * reader's isSuperAdmin + college.read scope fence, with an explicit
- * admin-scope.select check. Private colleges.logoObjectPath is never read.
+ * admin-scope.select check. A private logo key may be read to select the public\n * image proxy; that key is never returned to the browser.
  */
 export async function getSuperAdminCollegeBrandingPreview(
   context: RequestContext,
