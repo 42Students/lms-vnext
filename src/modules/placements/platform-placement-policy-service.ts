@@ -8,7 +8,7 @@ import { PLACEMENT_POLICY_FIELDS, platformPlacementPolicyInput, placementPolicyV
 
 function requirePlatformAdministrator(context:RequestContext) {
  if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE")
-  throw new AuthorizationError("platform.manage");
+  throw new AuthorizationError("placements.manage");
 }
 export class PlatformPlacementPolicyConflict extends Error {
  constructor(){super("POLICY_VERSION_CHANGED");}
