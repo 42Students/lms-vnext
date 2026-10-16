@@ -12,6 +12,8 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const [confirm,setConfirm]=useState(false);
  const [busy,setBusy]=useState(false);
  const [feedback,setFeedback]=useState("");
+ const [impact,setImpact]=useState<string|null>(null);
+ const [impactBusy,setImpactBusy]=useState(false);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/rules";
  const disabled=busy||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT");
  async function recheck(){
@@ -25,6 +27,18 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    setFeedback("Current stored college rule reloaded.");router.refresh();
   }catch{setFeedback("Could not recheck the college rule.");}
   finally{setBusy(false);}
+ }
+ async function reviewChange(){
+  if(busy)return;
+  setImpactBusy(true);setImpact(null);
+  try{
+   const response=await fetch("/api/admin/features/"+encodeURIComponent(collegeId)+
+     "/impact?module="+encodeURIComponent(module),{cache:"no-store"});
+   if(!response.ok)throw Error("impact not available");
+   const snapshot=await response.json() as {summary:string};
+   setImpact(snapshot.summary);
+  }catch{setImpact("Blast-radius counts are unavailable. This is not a safety check.");}
+  finally{setImpactBusy(false);setConfirm(true);}
  }
  async function save(){
   setBusy(true);setFeedback("");
@@ -51,12 +65,13 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    </select>
   </label>
   <label className="flex items-center gap-2 text-xs text-body"><input type="checkbox" checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
-  <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled} onClick={()=>setConfirm(true)}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
+  <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled||impactBusy} onClick={()=>{void reviewChange();}}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
   {feedback?<p role="status" className="text-xs text-body">{feedback}</p>:null}
   <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Confirm college feature policy"
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
    confirmLabel="Apply change" confirmVariant="danger" pending={busy} confirmDisabled={disabled} onConfirm={()=>{void save();}}>
    <p className="text-sm text-body">This affects the selected college. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
+   {impact?<p role="status" className="mt-2 text-sm text-body">{impact}</p>:null}
   </ConfirmDialog>
  </div>;
 }

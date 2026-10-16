@@ -1,4 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {getCollegeAttendancePolicy} from "@/modules/attendance/policy-service";
+import {SuperAdminAttendanceSettingsEditor} from "@/components/admin/super-admin-attendance-settings-editor";
 import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
 import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
@@ -25,13 +27,15 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   const { selectedCollegeName, sections: allSections } =
     await getSuperAdminPlatformSettings(context);
   const sections=filterPlatformInventory(allSections,parsed);
+  const attendancePolicy=context.adminScope?.collegeId
+    ?await getCollegeAttendancePolicy(context,context.adminScope.collegeId):null;
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Super Admin · Platform"
         title="Tenant Settings"
-        description="Read-only inventory of selected effective source limits and college policy values. No settings can be changed from this page."
+        description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
       />
 
       <section
@@ -51,6 +55,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         </p>
       </section>
 
+      {attendancePolicy?<SuperAdminAttendanceSettingsEditor
+        collegeId={attendancePolicy.college.id}
+        eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
+        correctionWindowHours={attendancePolicy.policy.correctionWindowHours}/>:null}
       <Link href="/admin/settings/auth"
         className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Authentication and privileged access checklist →
