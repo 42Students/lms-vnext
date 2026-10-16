@@ -25,7 +25,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 3. WP-chat-11-03-projects-tracker-s2 | TODO | 24 gaps: S2 24
 4. WP-chat-11-04-projects-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 2, S3 16 (FAST: LEARNER-projects-02/03/15/27/28/R03 source advanced, partial parity remains)
 5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (FAST: MEN-projects-meetings-43/49 task-comment attribution and notifications source advanced)
-6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 gaps: S3 24 (FAST: MEN-projects-meetings-54 resource visibility source implemented)
+6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 gaps: S3 24 (FAST: MEN-projects-meetings-54 resource visibility source implemented; MEN-projects-meetings-68 immediate MISSED badge source implemented; others remain)
 7. WP-chat-11-07-tracker-projects-s3 | TODO | 16 gaps: S3 9, S4 7
 8. WP-chat-11-08-projects-projects-meetings-part-s4 | IN-PROGRESS | 15 gaps: S4 15 (FAST: LEARNER-projects-11 tab aliases and delivery modal; LEARNER-projects-30 comment copy partial)
 
@@ -60,3 +60,6 @@ No WP marked DONE until every assigned ID in that WP is accounted for. Previousl
 - Follow-up: `LEARNER-projects-33` learner-owned creation of safe TEAM resources for active projects, wired Share a resource modal (`8273fe4`, `8afa123`, `b4d36d`, `b11d164`). Storage upload still pending; do not claim full link+file parity.
 - `MEN-projects-meetings-49` and `LEARNER-projects-R01`: role-correct team notifications for task comments (`99cf688`, `fdcb2bb`). Existing task assignment/reassignment notifications retained; remaining triggers still open.
 - `LEARNER-projects-30` inline validation guidance for comments (`51ebf91`). Comment category/type remains pending.
+
+- `MEN-projects-meetings-68`: status helper derives MISSED immediately after scheduled end, rendered in meeting history and workspace (`aa08158`, `e33a35a`, `b13c844`). Does not rewrite stored meeting status.
+- `LEARNER-projects-15`: approved submission label corrected to Accepted (`8bc559a`).
