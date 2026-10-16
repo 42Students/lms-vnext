@@ -25,6 +25,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  const [quizSearch,setQuizSearch]=useState("");
  const [questionSearch,setQuestionSearch]=useState("");
  const [invalidOnly,setInvalidOnly]=useState(false);
+ const [previewOpen,setPreviewOpen]=useState(false);
+ const [previewAnswers,setPreviewAnswers]=useState(false);
  const [localQuizzes,setLocalQuizzes]=useState<Quiz[]>([]);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [title,setTitle]=useState("");
@@ -210,6 +212,39 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       Shuffle answer options per learner
     </label>
   </fieldset>
+  <section aria-label="Quiz preview" className="rounded-lg border border-border bg-surface-subtle p-3">
+   <div className="flex flex-wrap items-center justify-between gap-3">
+    <div>
+     <h3 className="text-sm font-semibold text-foreground">Preview Quiz</h3>
+     <p className="text-xs text-muted-foreground">Read-only learner-style preview of the current questions. No answers are submitted.</p>
+    </div>
+    <button type="button" onClick={()=>setPreviewOpen(open=>!open)}
+     aria-expanded={previewOpen} aria-controls="faculty-quiz-preview"
+     className="min-h-10 rounded border border-border px-3 text-sm font-semibold">
+     {previewOpen?"Hide preview":"Preview Quiz"}
+    </button>
+   </div>
+   {previewOpen?<div id="faculty-quiz-preview" className="mt-3 space-y-4">
+    <label className="flex items-center gap-2 text-sm">
+     <input type="checkbox" checked={previewAnswers}
+      onChange={e=>setPreviewAnswers(e.target.checked)}/>
+     Show answer key to faculty
+    </label>
+    {!questions.length?<p role="status" className="text-sm">No questions yet.</p>:null}
+    {questions.map((question,index)=><fieldset key={index}
+     className="space-y-2 rounded-lg border border-border bg-surface p-3">
+     <legend className="text-sm font-semibold">Question {index+1} · {question.points} point(s)</legend>
+     <p className="whitespace-pre-wrap break-words text-sm text-body">{question.prompt||"Question prompt not entered"}</p>
+     {question.options.map((option,i)=><label key={i}
+      className="flex items-start gap-2 text-sm text-body">
+      <input type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
+       name={"preview-question-"+index} disabled/>
+      <span>{option.text||"Option not entered"}</span>
+      {previewAnswers&&option.correct?<span className="text-xs font-semibold text-success">(Correct)</span>:null}
+     </label>)}
+    </fieldset>)}
+   </div>:null}
+  </section>
   <label className="grid min-w-0 gap-1 text-sm">Find a question
    <input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
     placeholder="Question number, prompt, or option" className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/>
