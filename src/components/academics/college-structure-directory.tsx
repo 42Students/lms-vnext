@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
+import {CollegeElectiveOfferingManager} from "@/components/electives/college-elective-offering-manager";
 import { CollegeElectiveLifecycleAction } from "@/components/electives/college-elective-lifecycle-action";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -427,9 +428,10 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                     <td className="px-4 py-4 text-body">{item.status}</td>
                     <td className="px-4 py-4">
                       <div className="flex flex-wrap items-start gap-2">
-                        {electiveOptions && item.status === "ACTIVE"
-                          ? <CollegeSlotManager options={electiveOptions} row={item} />
-                          : null}
+                        {electiveOptions && item.status === "ACTIVE" ? <>
+                          <CollegeSlotManager options={electiveOptions} row={item} />
+                          <CollegeElectiveOfferingManager slotId={item.id}/>
+                        </> : null}
                         <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
                           version={item.version} status={item.status} />
                       </div>
