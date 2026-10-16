@@ -7,7 +7,7 @@ describe("learner assignment mobile quick state",()=>{
       submittedAt:null,dueAt:"2026-10-14T13:00:00Z"},now).label).toBe("Due within 24 hours");
     expect(learnerAssignmentMobileState({submissionId:null,gradePublished:false,
       submittedAt:null,dueAt:"2026-10-13T13:00:00Z"},now))
-      .toMatchObject({label:"Past due",urgent:true});
+      .toMatchObject({label:"Closed",urgent:true});
   });
   it("hides scores when grading has not been published",()=>{
     expect(learnerAssignmentMobileState({submissionId:"own",gradePublished:false,

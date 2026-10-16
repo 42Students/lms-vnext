@@ -11,11 +11,12 @@ export function learnerAssignmentMobileState(
   if(item.dueAt!==null){
     const due=Date.parse(item.dueAt);
     if(Number.isFinite(due)&&due<nowMs){
-      return {label:"Past due",detail:"Late submission may still be recorded",urgent:true};
+      return {label:"Closed",detail:"Submissions are closed",urgent:true};
     }
     if(Number.isFinite(due)&&due>=nowMs&&due-nowMs<=86_400_000){
       return {label:"Due within 24 hours",detail:"Open the assignment to submit",urgent:true};
     }
   }
+  if(item.dueAt===null)return {label:"Unavailable",detail:"Assignment deadline is not configured",urgent:true};
   return {label:"Not submitted",detail:"Open assignment instructions and submission",urgent:false};
 }

@@ -207,7 +207,7 @@ const recruiterItems: ShellNavItem[] = [
   { label: "Today", href: "/hr/home", shortLabel: "T", group: "learning" },
   { label: "Drives", href: "/hr/drives", shortLabel: "D", group: "learning" },
   { label: "Calendar", href: "/hr/calendar", shortLabel: "C", icon: "/assets/images/common/calender.svg", group: "learning" },
-  { label: "Messages", href: "/hr/messages", shortLabel: "M", group: "learning" },
+  { label: "Messages", href: "/hr/conversations", shortLabel: "M", group: "learning" },
   { label: "Company & Team", href: "/hr/company", shortLabel: "C", group: "account" },
 ];
 

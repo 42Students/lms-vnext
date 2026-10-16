@@ -19,7 +19,9 @@ const errorLabels: Record<string, string> = {
   ASSIGNMENT_ALREADY_SUBMITTED:
     "This assignment has already been submitted.",
   ASSIGNMENT_DEADLINE_PASSED:
-    "The assignment deadline has passed.",
+    "Submission deadline has passed",
+  ASSIGNMENT_DEADLINE_NOT_CONFIGURED:
+    "Assignment deadline is not configured",
   ASSIGNMENT_NOT_PUBLISHED:
     "This assignment is not currently available.",
   QUIZ_DEADLINE_PASSED:

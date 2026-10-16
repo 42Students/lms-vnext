@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { LearnerTaskStatusActions } from "./learner-task-status-actions";
 import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
 import { learnerBoardTaskStatusLabel, learnerBoardTaskPriorityLabel } from "@/modules/projects/learner-board-task-status-label-model";
 import { learnerBoardTaskStatusTone, learnerBoardTaskPriorityTone } from "@/modules/projects/learner-board-task-attention-tone-model";
@@ -11,14 +12,15 @@ import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-boar
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 
 export function LearnerBoardTaskDetailDialog({
-  projectId, filters, task, sprintTitle,
+  projectId, filters, task, sprintTitle, currentMembershipId,
 }: {
   projectId:string;
   filters:LearnerTaskBoardUrlFilters;
   task:{
     id:string;title:string;description:string|null;acceptanceCriteria:string|null;
-    status:string;priority:string;
+    status:string;priority:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
   };
+  currentMembershipId:string|null;
   sprintTitle:string|null;
 }) {
   const ref=useRef<HTMLDialogElement>(null);
@@ -58,6 +60,7 @@ export function LearnerBoardTaskDetailDialog({
         <h3 className="font-semibold">Acceptance criteria</h3>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.acceptanceCriteria??"No acceptance criteria recorded."}</p>
       </section>
+      <LearnerTaskStatusActions projectId={projectId} task={task} currentMembershipId={currentMembershipId} />
       <div className="mt-5 flex flex-wrap gap-3">
         <Link href={learnerBoardTaskWorkspaceHref(projectId,filters,task.id)}
           onClick={() => { navigatingRef.current.startNavigation(); }}

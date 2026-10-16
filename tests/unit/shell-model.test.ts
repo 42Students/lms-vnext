@@ -297,7 +297,7 @@ describe("authenticated shell model", () => {
       "Today", "Drives", "Calendar", "Messages", "Company & Team",
     ]);
     expect(getShellNavigation(shellContext).map(item => item.href)).toEqual([
-      "/hr/home", "/hr/drives", "/hr/calendar", "/hr/messages", "/hr/company",
+      "/hr/home", "/hr/drives", "/hr/calendar", "/hr/conversations", "/hr/company",
     ]);
     expect(getShellRoleLabel(shellContext)).toBe(
       "Recruiter",
