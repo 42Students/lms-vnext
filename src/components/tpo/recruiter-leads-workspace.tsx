@@ -130,6 +130,10 @@ export function RecruiterLeadsWorkspace({
   const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
   const [view, setView] = useState<"table" | "board" | "companies">(initialView);
   const [companies, setCompanies] = useState<CompanySummary[]>([]);
+  const [companySearch,setCompanySearch]=useState("");
+  const [companyContacts,setCompanyContacts]=useState("ALL");
+  const [companyHistory,setCompanyHistory]=useState("ALL");
+  const [companyAliases,setCompanyAliases]=useState(false);
   const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
   const [companiesError, setCompaniesError] = useState("");
   const [adding, setAdding] = useState(initialAdd);
@@ -220,6 +224,17 @@ export function RecruiterLeadsWorkspace({
     };
   }, [view, loadCompanies]);
 
+  const visibleCompanies=useMemo(()=>companies.filter(company=>{
+    const needle=companySearch.trim().toLowerCase();
+    if(needle&&!([company.name,...(company.people??[]).map(person=>person.name)]
+      .join(" ").toLowerCase().includes(needle)))return false;
+    if(companyContacts==="HAS"&&company.contacts===0)return false;
+    if(companyContacts==="NONE"&&company.contacts>0)return false;
+    if(companyHistory==="HAS"&&company.drivesRan===0)return false;
+    if(companyHistory==="NONE"&&company.drivesRan>0)return false;
+    if(companyAliases&&company.aliases.length===0)return false;
+    return true;
+  }),[companies,companySearch,companyContacts,companyHistory,companyAliases]);
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
