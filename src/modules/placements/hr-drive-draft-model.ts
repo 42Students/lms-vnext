@@ -17,9 +17,13 @@ export const hrDriveDraftSchema = z.strictObject({
   title: z.string().trim().min(3).max(200),
   description: z.string().trim().min(20).max(5000),
   location: z.string().trim().min(2).max(180),
-  employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]),
+  employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
   driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
+  ctcLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
+  fixedLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
+  variableLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
+  stipendMonthlyInr: z.string().regex(/^\d{0,9}$/).default(""),
   minimumAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
   maximumAnnualCtcInr: z.string().regex(/^\d{0,9}$/),
   minimumCgpa: z.string().regex(/^(?:|(?:10(?:\.0{1,2})?|[0-9](?:\.[0-9]{1,2})?))$/),
@@ -40,6 +44,16 @@ export const hrDriveDraftSchema = z.strictObject({
         message:"Give each hiring round a distinct name" });
     }
     uniqueRoundNames.add(label);
+  }
+  if (data.employmentType==="INTERNSHIP" && !data.stipendMonthlyInr) {
+    ctx.addIssue({code:"custom",path:["stipendMonthlyInr"],message:"Students need to know the stipend"});
+  }
+  if (data.employmentType!=="INTERNSHIP" && !data.ctcLpa &&
+      !data.minimumAnnualCtcInr && !data.maximumAnnualCtcInr) {
+    ctx.addIssue({code:"custom",path:["ctcLpa"],message:"CTC is required"});
+  }
+  if (data.ctcLpa && Number(data.fixedLpa||0)+Number(data.variableLpa||0)>Number(data.ctcLpa)){
+    ctx.addIssue({code:"custom",path:["fixedLpa"],message:"Fixed and variable add up to more than the CTC"});
   }
   const min = data.minimumAnnualCtcInr ? Number(data.minimumAnnualCtcInr) : null;
   const max = data.maximumAnnualCtcInr ? Number(data.maximumAnnualCtcInr) : null;
@@ -68,7 +82,7 @@ export type HrDriveDraft = z.input<typeof hrDriveDraftSchema>;
 export function emptyHrDriveDraft(): HrDriveDraft {
   return {
     title: "", description: "", location: "",
-    employmentType: "FULL_TIME", workMode: "ONSITE", driveMode:"ON_CAMPUS",
+    employmentType: "FULL_TIME", workMode: "ONSITE", ctcLpa:"",fixedLpa:"",variableLpa:"",stipendMonthlyInr:"", driveMode:"ON_CAMPUS",
     minimumAnnualCtcInr: "", maximumAnnualCtcInr: "", minimumCgpa: "",
     fixedAnnualCtcInr: "", variableAnnualCtcInr: "", bondMonths: "",
     bondAmountInr: "", maximumActiveBacklogs: "", branches: [], passingYear: "",
@@ -82,7 +96,7 @@ export function hrDraftFromAuthorizedJob(job: {
   minimumAnnualCtcInr: number | null; maximumAnnualCtcInr: number | null;
 }, rounds: readonly { kind: string; name: string }[]): HrDriveDraft {
   const base = emptyHrDriveDraft();
-  const type = z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]).safeParse(job.employmentType);
+  const type = z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]).safeParse(job.employmentType);
   const mode = z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]).safeParse(job.workMode);
   const allowedRoundKinds = z.enum(["TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW"]);
   const validRounds = rounds.flatMap((item) => {
