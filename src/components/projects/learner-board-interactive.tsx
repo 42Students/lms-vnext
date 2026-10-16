@@ -5,7 +5,7 @@ import Link from "next/link";
 import {LearnerDeleteOwnTask} from "./learner-own-task-controls";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "@/modules/projects/learner-board-task-detail-model";
-type Task={id:string;title:string;status:string;priority:string;sprintId:string;templateKey:string;
+type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;templateKey:string;
  updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
 type Sprint={id:string;status:string;title:string};
 const statuses=["TODO","IN_PROGRESS","BLOCKED"] as const;
@@ -22,6 +22,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  async function move(taskId:string,next:EditableStatus,restoreNote?:string|null){
   const task=tasks.find(row=>row.id===taskId);
   if(!task||busy||!membershipId||task.assigneeMembershipId!==membershipId||
+    !task.sprintId||sprintState.get(task.sprintId)!=="ACTIVE"||
     !statuses.includes(task.status as EditableStatus)||task.status===next)return;
   let note=restoreNote??null;
   if(next==="BLOCKED"&&!note){
@@ -67,7 +68,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
      </h2>
      <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;
-      const editable=own&&statuses.includes(task.status as EditableStatus);
+      const editable=own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
        onDragStart={event=>{if(editable)event.dataTransfer.setData("text/plain",task.id)}}
        className="rounded-lg border border-border bg-surface p-3 text-sm">
