@@ -2,9 +2,10 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import {LearnerDeleteOwnTask} from "./learner-own-task-controls";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "@/modules/projects/learner-board-task-detail-model";
-type Task={id:string;title:string;status:string;priority:string;sprintId:string;
+type Task={id:string;title:string;status:string;priority:string;sprintId:string;templateKey:string;
  updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
 type Sprint={id:string;status:string;title:string};
 const statuses=["TODO","IN_PROGRESS","BLOCKED"] as const;
@@ -73,6 +74,9 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text">{task.title}</Link>
         <p className="mt-2 text-xs text-muted-foreground">{task.priority}</p>
+        {editable && task.status==="TODO" &&
+          task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?
+          <LearnerDeleteOwnTask projectId={projectId} taskId={task.id}/>:null}
         {editable?<label className="mt-2 block text-xs font-semibold text-body">
           Move {task.title}
           <select aria-label={"Move "+task.title} value={task.status} disabled={busy}
