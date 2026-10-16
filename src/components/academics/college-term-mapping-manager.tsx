@@ -97,7 +97,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           const body: { error?: string } | null = await response.json().catch(() => null);
           throw new Error(collegeTermMappingErrorMessage(body?.error ?? ""));
         }
-        setNotice("Semester course mapping updated.");
+        const previous = data.mapped.find(row => row.id === id);
+        const oldPosition = previous ? orderedPeers(previous).findIndex(row => row.id === id) + 1 : position;
+        setNotice(oldPosition === position ? "Semester course mapping updated." : "Semester course order saved.");
         setEditing(null);
         router.refresh();
       } catch (cause) {
@@ -113,7 +115,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
 
   return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
-    <p className="text-sm text-body">These are actual numbered program terms, separate from offering-to-period deliveries below.</p>
+    <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
     <form onSubmit={prepare} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Program
         <select required value={programId} onChange={event => {
@@ -155,19 +157,17 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
       <div className="overflow-x-auto"><table className="w-full min-w-[40rem] text-left text-sm">
         <thead><tr>
-          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.semester}</th>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseName}</th>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseCode}</th>
-          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.type}</th>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.credits}</th>
+          <th scope="col" className="px-2 py-2">Order</th>
           <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.actions}</th>
         </tr></thead>
         <tbody>{currentMappings.map(row => <tr key={row.id} className="border-t border-border">
-          <td className="px-2 py-2">{row.programName} · {row.termName} ({row.termNumber})</td>
           <td className="px-2 py-2">{row.courseName}</td>
           <td className="px-2 py-2">{row.courseCode}</td>
-          <td className="px-2 py-2">{row.type === "ELECTIVE" ? TERM_MAPPING_COPY.elective : TERM_MAPPING_COPY.core}</td>
           <td className="px-2 py-2">{row.credits ?? "—"}</td>
+          <td className="px-2 py-2">{orderedPeers(row).findIndex(peer => peer.id === row.id) + 1}</td>
           <td className="px-2 py-2">
             {editing?.id === row.id ? (
               <form aria-label={"Edit mapping for " + row.courseName} className="grid gap-2"
