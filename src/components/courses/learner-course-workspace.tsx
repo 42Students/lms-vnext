@@ -489,6 +489,7 @@ function AssignmentCard({
         <AssignmentSubmissionControl
           fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
           multipartEnabled={multipartAssignmentRuntimeEnabled()}
+          methodsEnabled={process.env.DB06_MULTIPART_SUBMISSIONS_READY==="DB06_VERIFIED"}
           assignmentId={assignment.id}
           deliveryId={deliveryId}
         />
