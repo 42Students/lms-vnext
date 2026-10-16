@@ -18,6 +18,7 @@ import {ENGAGE_DEFAULT_COLUMNS,normalizeEngageColumns,sortEngageRows,
 import { RecruiterBulkStageControls } from "./recruiter-bulk-stage-controls";
 import { RecruiterBulkOwnerControls } from "./recruiter-bulk-owner-controls";
 import {RecruiterBulkInviteControls} from "./recruiter-bulk-invite-controls";
+import {RecruiterSavedViewControls} from "./recruiter-saved-view-controls";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Lead = {
@@ -642,6 +643,7 @@ export function RecruiterLeadsWorkspace({
                   onClick={()=>setSelectedIds([])}>Clear selection</button>:null}
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               </div>
+              <RecruiterSavedViewControls columns={visibleColumns}/>
               <RecruiterBulkInviteControls collegeId={collegeId}
                 rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
