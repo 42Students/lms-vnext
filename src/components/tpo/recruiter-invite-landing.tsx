@@ -170,7 +170,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if(state==="joined"){
     return shell(<div className="text-center space-y-3">
       <h1 className="text-xl font-semibold text-foreground">You now have access to {invite.collegeName}</h1>
-      <p className="text-sm text-muted-foreground">Sign in with your work email. We'll email you a code each time.</p>
+      <p className="text-sm text-muted-foreground">Sign in with your work email, {invite.contactEmail}. We'll email you a code each time.</p>
       <Link className={primary} href="/login">Sign in</Link>
     </div>);
   }
