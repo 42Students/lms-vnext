@@ -14,7 +14,7 @@ import type {VerificationQueueCard} from "./VerificationWorkspace";
 type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapshot|null;
  documents:{purpose:string;receiptId:string}[];version:number;status:string;note:string|null;decidedAt:string|null;}};
 export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId}:{
- row:VerificationQueueCard;onClose:()=>void;onSaved:()=>void;apiBase?:string;collegeId?:string;
+ row:VerificationQueueCard;onClose:()=>void;onSaved:(action?:"VERIFY"|"SEND_BACK")=>void;apiBase?:string;collegeId?:string;
 }){
  const closeButton=useRef<HTMLButtonElement>(null);
  const drawer=useRef<HTMLElement>(null);
@@ -82,7 +82,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     }
     throw Error(payload.error??"Decision failed");
    }
-   setPendingAction(null);onSaved();
+   setPendingAction(null);onSaved(action);
   }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
   finally{setSaving(false);}
  }
