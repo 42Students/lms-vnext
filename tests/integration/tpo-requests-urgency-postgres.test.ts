@@ -14,12 +14,16 @@ const tpo:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"tpo-request
  membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,
  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
 const ids:{company?:string;relationship?:string;job?:string;role?:string;application?:string;round?:string;requests:string[]}={requests:[]};
-let memberRoleId:string|undefined;
+const memberRoleIds:string[]=[];
 describe.skipIf(!enabled)("TPO-requests-verification-08 real urgency and next-round query",()=>{
  beforeAll(async()=>{
   if(!pool)throw Error("Disposable PG required");
-  const r=await pool.query<{id:string}>("INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",[SEED_IDS.facultyCollegeAMembership]);
-  memberRoleId=r.rows[0]?.id;
+  for(const membershipId of [SEED_IDS.facultyCollegeAMembership,SEED_IDS.facultyCollegeBMembership]){
+    const added=await pool.query<{id:string}>(
+      "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",
+      [membershipId]);
+    if(added.rows[0]?.id)memberRoleIds.push(added.rows[0].id);
+  }
   const token=randomUUID();
   ids.company=(await pool.query<{id:string}>("INSERT INTO placement_companies(name,created_by_user_id) VALUES($1,$2) RETURNING id",["Urgency "+token,SEED_IDS.facultyUser])).rows[0]!.id;
   ids.relationship=(await pool.query<{id:string}>("INSERT INTO placement_company_relationships(college_id,company_id,created_by_user_id) VALUES($1,$2,$3) RETURNING id",[SEED_IDS.collegeA,ids.company,SEED_IDS.facultyUser])).rows[0]!.id;
@@ -44,7 +48,7 @@ describe.skipIf(!enabled)("TPO-requests-verification-08 real urgency and next-ro
    if(ids.job)await pool.query("DELETE FROM placement_jobs WHERE id=$1",[ids.job]);
    if(ids.relationship)await pool.query("DELETE FROM placement_company_relationships WHERE id=$1",[ids.relationship]);
    if(ids.company)await pool.query("DELETE FROM placement_companies WHERE id=$1",[ids.company]);
-   if(memberRoleId)await pool.query("DELETE FROM membership_roles WHERE id=$1",[memberRoleId]);
+   for(const roleId of memberRoleIds)await pool.query("DELETE FROM membership_roles WHERE id=$1",[roleId]);
    await pool.end();
   }
   await closeDatabaseConnection();
