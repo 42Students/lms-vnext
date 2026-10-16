@@ -15,7 +15,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { initialAbsencesForSession, resolveFacultyAttendanceSession } from "@/modules/attendance/faculty-attendance-edit-state";
+import { initialAbsencesForSession, resolveFacultyAttendanceSession, facultyAttendanceMarksDirty } from "@/modules/attendance/faculty-attendance-edit-state";
 import { facultyScheduleInstants } from "@/modules/attendance/faculty-schedule-editor-model";
 import { facultyAttendanceConfirmation, facultyCorrectionReasonValid } from "@/modules/attendance/faculty-correction-audit-model";
 import { facultyAttendanceMarkingWindow } from "@/modules/attendance/faculty-marking-window";
@@ -225,6 +225,17 @@ export function FacultyAttendanceWorkspace({
     [...initialAbsencesForSession(workspace.roster, workspace.records, selectedSessionId)],
     [...absent], workspace.roster.length,
   );
+  const unsavedMarks=facultyAttendanceMarksDirty(workspace.roster,
+    initialAbsencesForSession(workspace.roster,workspace.records,selectedSessionId),absent);
+  useEffect(()=>{
+    if(!unsavedMarks)return;
+    const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[unsavedMarks]);
+  function confirmDiscardMarks(){
+    return !unsavedMarks||window.confirm("Discard your unsaved attendance changes?");
+  }
   const markingWindow = selectedSession
     ? facultyAttendanceMarkingWindow({
         startsAt: new Date(selectedSession.startsAt),
@@ -286,6 +297,7 @@ export function FacultyAttendanceWorkspace({
   );
 
   function chooseSession(id: string) {
+    if(id!==selectedSessionId&&!confirmDiscardMarks())return;
     setSelectedSessionId(id);
     setAbsent(initialAbsencesForSession(workspace.roster, workspace.records, id));
     setSearch("");
@@ -463,7 +475,7 @@ export function FacultyAttendanceWorkspace({
                 ? "primary"
                 : "ghost"
             }
-            onClick={() => setMode("REPORT")}
+            onClick={() => {if(confirmDiscardMarks())setMode("REPORT");}}
           >
             Attendance report
           </Button>
@@ -474,7 +486,7 @@ export function FacultyAttendanceWorkspace({
                 ? "primary"
                 : "ghost"
             }
-            onClick={() => setMode("MARK")}
+            onClick={() => {if(confirmDiscardMarks())setMode("MARK");}}
           >
             Mark attendance
           </Button>
