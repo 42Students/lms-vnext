@@ -28,6 +28,20 @@ export default async function LearnerPlacementSchedulePage() {
   const fmt = (date: Date | null) => date
     ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(date)
     : "Date to be told";
+  const details = (row: typeof workspace.rounds[number]) => {
+    const mode=row.exception?.mode??row.mode;
+    const venue=row.exception?.venue??row.venue;
+    const join=row.exception?.meetingUrl??row.meetingUrl;
+    return <div className="mt-2 space-y-2 text-sm text-body">
+      <p>{row.roundKind.replaceAll("_"," ")} · {mode==="VIRTUAL"?"Online":mode==="ON_CAMPUS"?"On campus":mode} · {row.durationMinutes!=null?row.durationMinutes+" minutes":"Duration to be told"}</p>
+      <p>{venue?"Venue: "+venue:"Venue to be told"}</p>
+      <div className="flex flex-wrap gap-3">
+        {join&&/^https:\/\//i.test(join)?<a href={join} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Join online round</a>:null}
+        {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<a href={row.testUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Open test</a>:null}
+      </div>
+      <p className="text-xs text-muted-foreground">Expected · Your scheduled round is not an attendance confirmation or final outcome.</p>
+    </div>;
+  };
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="My Placements" title="Schedule"
@@ -38,12 +52,14 @@ export default async function LearnerPlacementSchedulePage() {
         {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
+          {details(row)}
           <Link className="text-sm font-semibold text-primary-text underline" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
         </article>)}
         {ahead.length === 0 ? <Link className="text-sm font-semibold text-primary-text underline" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
         {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">Date to be told</p>
+          {details(row)}
         </article>)}
       </section>
       <section aria-label="Calendar" className="space-y-2">
@@ -58,6 +74,7 @@ export default async function LearnerPlacementSchedulePage() {
           <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
             <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
             <p className="text-sm text-body">{fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
+            {details(row)}
           </article>)}
       </section>
     </div>
