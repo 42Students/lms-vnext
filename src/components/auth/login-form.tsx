@@ -228,11 +228,30 @@ export function LoginForm({
                 key={value}
                 type="button"
                 role="tab"
+                id={`login-tab-${value.toLowerCase()}`}
+                data-channel={value}
+                aria-controls="login-method-panel"
                 aria-selected={channel === value}
+                tabIndex={channel === value ? 0 : -1}
                 onClick={() => {
                   setChannel(value);
                   setContact("");
                   setError(null);
+                  setErrorCode(null);
+                }}
+                onKeyDown={(event) => {
+                  const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+                  if (!keys.includes(event.key)) return;
+                  event.preventDefault();
+                  const next = event.key === "Home" ? "PHONE"
+                    : event.key === "End" ? "EMAIL"
+                    : value === "PHONE" ? "EMAIL" : "PHONE";
+                  setChannel(next);
+                  setContact("");
+                  setError(null);
+                  setErrorCode(null);
+                  event.currentTarget.parentElement
+                    ?.querySelector<HTMLButtonElement>(`[data-channel="${next}"]`)?.focus();
                 }}
                 className={
                   channel === value
@@ -245,6 +264,8 @@ export function LoginForm({
             ))}
           </div>
 
+          <div id="login-method-panel" role="tabpanel"
+            aria-labelledby={`login-tab-${channel.toLowerCase()}`}>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-foreground">
               {channel === "PHONE" ? "Mobile number" : "Email address"}
@@ -263,6 +284,7 @@ export function LoginForm({
               autoFocus
             />
           </label>
+          </div>
 
           <Button
             type="submit"
