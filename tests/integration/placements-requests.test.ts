@@ -384,6 +384,32 @@ describe("Placement learner requests and exceptions", () => {
     });
   });
 
+  it("TPO-requests-verification-04 notifies the learner of a rejection and its reason without mutating the application", async () => {
+    const {application}=await createApplication("RejectNotice");
+    const request=await createPlacementRequest(learner,{
+      requestType:"APPLICATION_WITHDRAWAL",
+      applicationId:application.id,
+      reason:"Need to withdraw due to a clash",
+    });
+    const decided=await actOnPlacementRequest(tpo,request.id,{
+      action:"REJECT",note:"Proof missing or unclear",
+    });
+    expect(decided.status).toBe("REJECTED");
+    const notification=await pool.query<{title:string;body:string;action_href:string}>(`
+      select n.title,n.body,n.action_href from in_app_notifications n
+      join activity_events e on e.id=n.event_id
+      where n.user_id=$1 and e.subject_id=$2 and e.event_type=$3
+    `,[SEED_IDS.learnerUser,request.id,"PLACEMENTS_REQUEST_DECIDED"]);
+    expect(notification.rows).toEqual([{
+      title:"Your request was answered",
+      body:"Your request was rejected. Proof missing or unclear",
+      action_href:"/learn/my-placements/support",
+    }]);
+    const stillApplied=await pool.query<{status:string}>(
+      "select status from placement_applications where id=$1",[application.id]);
+    expect(stillApplied.rows[0]?.status).toBe("SUBMITTED");
+  });
+
   it("allows reschedule only for an actual progressed participant and preserves the shared round schedule", async () => {
     const { job } =
       await createJob(
