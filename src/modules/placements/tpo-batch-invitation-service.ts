@@ -33,12 +33,16 @@ export async function inviteTpoBatch(
   if (preview.invitable === 0)
     throw new TpoBatchInvitationError("NO_ELIGIBLE_STUDENTS");
 
-  await upsertPlacementBatchSettings(ctx, {
+  const settings = await upsertPlacementBatchSettings(ctx, {
     collegeId, cohortId: batchId, registrationDeadline: deadline,
     rulesOverride: lifecycle?.rulesOverride ?? null,
     expectedVersion: input.expectedVersion,
   });
-  const invited = await markPlacementBatchInvited(ctx, { collegeId, cohortId: batchId });
+  // Detect any other writer changing the deadline between these separate transactions.
+  const invited = await markPlacementBatchInvited(ctx, {
+    collegeId, cohortId: batchId,
+    expectedVersion: settings.updatedAt.toISOString(),
+  });
   return { invitedAt: invited.invitedAt?.toISOString() ?? null,
     deadline: invited.registrationDeadline?.toISOString() ?? null,
     notifiedCount: invited.notifiedCount,

@@ -290,6 +290,28 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     expect(delivered.rows[0].action_href).toBe("/learn/placements");
   });
 
+  it("rejects an invitation if another writer moved its deadline after settings were saved", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const first = await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2026-12-20T18:29:59.999Z",
+      rulesOverride: null,
+    });
+    await upsertPlacementBatchSettings(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      registrationDeadline: "2026-12-22T18:29:59.999Z",
+      rulesOverride: null, expectedVersion: first.updatedAt.toISOString(),
+    });
+    await expect(markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
+      expectedVersion: first.updatedAt.toISOString(),
+    })).rejects.toMatchObject({ code: "DB08_ACTION_STALE" });
+    const row = await pool.query(
+      "SELECT invited_at FROM placement_batch_lifecycles WHERE cohort_id=$1", [a.cohortId],
+    );
+    expect(row.rows[0].invited_at).toBeNull();
+  });
+
   it("tells unregistered eligible students when reopening an expired invitation", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
     const learner = await makeLearner(SEED_IDS.collegeA, a);
