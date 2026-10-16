@@ -10,6 +10,9 @@ function requirePlatformAdministrator(context:RequestContext) {
  if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
 }
+export class PlatformPlacementPolicyValidationError extends Error {
+ constructor(){super("INTERVIEW_MIN_EXCEEDS_MAX");}
+}
 export class PlatformPlacementPolicyConflict extends Error {
  constructor(){super("POLICY_VERSION_CHANGED");}
 }
@@ -39,6 +42,17 @@ export async function setPlatformPlacementPolicy(context:RequestContext,raw:unkn
  return db.transaction(async tx=>{
   const [existing]=await tx.select().from(platformSettingOverrides).where(identity(input.key)).for("update").limit(1);
   if((existing?.version??0)!==input.expectedVersion)throw new PlatformPlacementPolicyConflict();
+  if(input.key==="interview.durationMinMinutes"||input.key==="interview.durationMaxMinutes") {
+   const otherKey=input.key==="interview.durationMinMinutes"?"interview.durationMaxMinutes":"interview.durationMinMinutes";
+   const [other]=await tx.select({value:platformSettingOverrides.value}).from(platformSettingOverrides).where(identity(otherKey)).limit(1);
+   const defaultOther=PLACEMENT_POLICY_FIELDS.find(field=>field.key===otherKey)!.defaultValue;
+   const currentOther=other?Number(other.value):defaultOther;
+   const ownDefault=PLACEMENT_POLICY_FIELDS.find(field=>field.key===input.key)!.defaultValue;
+   const ownValue=input.value??ownDefault;
+   const minimum=input.key==="interview.durationMinMinutes"?ownValue:currentOther;
+   const maximum=input.key==="interview.durationMaxMinutes"?ownValue:currentOther;
+   if(minimum>maximum)throw new PlatformPlacementPolicyValidationError();
+  }
   if(input.value===null){
    if(existing)await tx.delete(platformSettingOverrides).where(identity(input.key));
   } else if(existing){
