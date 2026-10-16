@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 import {RecruiterConversationReadControl} from "@/components/hr/recruiter-conversation-read-control";
+import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -39,6 +40,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
  return <main className="space-y-5">
+  <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
   {matchingDrive?<Link href={"/hr/placements/jobs/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
