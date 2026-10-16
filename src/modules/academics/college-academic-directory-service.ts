@@ -151,6 +151,8 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     programCode: aliasedColumn(programs.code, "batch_program_code"),
     startPeriodName: aliasedColumn(academicPeriods.name, "batch_start_period_name"),
     startDate: aliasedColumn(academicPeriods.startDate, "batch_start_date"),
+    endDate: sql<string | null>`(select ap.end_date from academic_periods ap where ap.id = ${cohorts.expectedEndPeriodId})`.as("batch_end_date"),
+
     startPeriodId: aliasedColumn(academicPeriods.id, "batch_start_period_id"),
     currentTermNumber: aliasedColumn(cohortProgressionState.currentTermNumber, "batch_current_term_number"),
     currentAcademicYearStart: aliasedColumn(cohortProgressionState.currentAcademicYearStart, "batch_current_academic_year_start"),
