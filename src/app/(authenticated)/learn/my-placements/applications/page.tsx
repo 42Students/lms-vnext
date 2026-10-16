@@ -38,6 +38,7 @@ export default async function LearnerPlacementApplicationsPage() {
     applicationId: row.applicationId,
     jobId: row.job.id,
     jobTitle: row.job.title,
+    driveStatus: row.job.driveStatus,
     companyName: row.company.name,
     applicationStatus: row.applicationStatus,
     offerStatus: row.offerStatus,
