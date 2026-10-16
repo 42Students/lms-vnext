@@ -19,7 +19,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
  const result=await listTpoMessagingHistory(context,query.data);
  const drafts=await listTpoCampaignDrafts(context);
  return <main className="space-y-6">
-  <PageHeader eyebrow="Engage" title="Campaign history"
+  <PageHeader eyebrow="Engage" title="Emails"
    description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."/>
   <nav aria-label="Engage views" className="flex flex-wrap gap-2">
    {([["table","Table"],["board","Board"],["companies","Companies"],["campaigns","Emails"]] as const)
@@ -43,12 +43,12 @@ export default async function CampaignHistory({searchParams}:PageProps){
    <Link href={"/api/placements/tpo/campaigns/history/export?page="+result.page}
      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Export this page as CSV</Link>
   </nav>
-  <section aria-label="Saved recruiter campaign drafts" className="space-y-3">
-   <h2 className="text-lg font-semibold text-foreground">Saved campaign drafts</h2>
+  <section aria-label="Email campaigns" className="space-y-3">
+   <h2 className="text-lg font-semibold text-foreground">Email campaigns</h2>
    {!drafts.ready?<p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-body">
      {CAMPAIGN_DRAFT_UNAVAILABLE}
     </p>:drafts.rows.length===0?
-    <p role="status" className="text-sm text-body">No saved recruiter campaigns yet.</p>:
+    <p role="status" className="text-sm text-body">No email campaigns yet.</p>:
     <ul className="grid gap-3 sm:grid-cols-2">
      {drafts.rows.map(item=><li key={item.campaign_id}
       className="rounded-md border border-border bg-surface p-4">
@@ -56,13 +56,19 @@ export default async function CampaignHistory({searchParams}:PageProps){
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
       </Link>
-      <p className="mt-2 text-sm text-body">{item.status} · {item.total_recipients} selected recipients</p>
+      <p className="mt-1 text-sm font-medium text-foreground">Subject: {item.subject}</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+       {item.sender_name} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(item.created_at))} IST
+      </p>
+      <p className="mt-2 text-sm text-body">
+       {item.status} · {item.total_recipients} selected · {item.sent} sent · {item.skipped} skipped · {item.failed} failed
+      </p>
       <p className="mt-1 text-xs text-muted-foreground">Segment: {item.segment.replaceAll("_"," ")}</p>
      </li>)}
     </ul>}
    <p className="text-xs text-muted-foreground">{CAMPAIGN_DELIVERY_UNAVAILABLE}</p>
   </section>
-  <h2 className="text-lg font-semibold text-foreground">Delivery receipts</h2>
+  <h2 className="text-lg font-semibold text-foreground">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
   {result.rows.length ? <ol className="grid gap-3 sm:grid-cols-2">
     {result.rows.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
