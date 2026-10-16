@@ -605,13 +605,14 @@ export default async function TpoStudentsPage({
           <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
         </Suspense>
 
-        <TpoBulkActionPanel key={"students:"+roster.page+":"+query.search+":"+query.journeyState}
+        <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
           target="STUDENTS"
           rows={roster.items.map(student=>({id:student.membershipId,
             label:student.displayName+" · "+student.branchName}))}/>
 
         {manageAllowed ? (
           <TpoStudentsBulkAdd
+            key={"bulk-add:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
             learners={roster.items.map((student) => ({
               membershipId: student.membershipId,
               displayName: student.displayName,

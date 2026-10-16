@@ -1,14 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect,useRef,useState } from "react";
 import type { PublicJoinPreview } from "@/modules/placements/public-join/preview-model";
-import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placements/public-join/client-error-model";
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
+import { joinErrorMessage } from "@/modules/placements/public-join/error-copy";
+import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placements/public-join/client-error-model";
 
 export function PublicRecruiterJoinForm({
-  token, scope, preview,
-}: { token: string; scope: "COLLEGE" | "COMPANY"; preview: PublicJoinPreview }) {
+  token, scope, preview, blockedReason,
+}: { token: string; scope: "COLLEGE" | "COMPANY"; preview: PublicJoinPreview; blockedReason?:string|null }) {
+  const hasRecordedOpen=useRef(false);
+  useEffect(()=>{
+    if(preview.kind!=="READY"||hasRecordedOpen.current)return;
+    hasRecordedOpen.current=true;
+    void fetch("/api/public/join-link/open",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({token,scope})}).catch(()=>undefined);
+  },[token,scope,preview.kind]);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
@@ -17,13 +25,15 @@ export function PublicRecruiterJoinForm({
   const [code, setCode] = useState("");
   const [sentTo, setSentTo] = useState("");
   const [joined, setJoined] = useState(false);
+  const [alreadyJoined,setAlreadyJoined]=useState(false);
+  const [signInEmail,setSignInEmail]=useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const college = preview.kind === "READY" ? preview.collegeName : "";
   const company = preview.kind === "READY" ? preview.companyDomain : "";
 
   async function sendCode() {
-    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
+    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company??"",scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
     if (validation || !parsed.success) {
       setError(validation??"Enter your work email and name before requesting a code.");
@@ -37,23 +47,19 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, email: parsed.data.email }) },
       );
-      if (!response.ok){
-        const body:unknown=await response.json().catch(()=>null);
-        const code=body&&typeof body==="object"&&"error" in body
-          ? String((body as {error:unknown}).error):"COULD_NOT_SEND_CODE";
-        setError(publicJoinErrorCopy("SEND",response.status,code,scope,company));return;
-      }
+      if(!response.ok){const payload=await response.json() as {error?:string};
+        throw new Error(publicJoinErrorCopy("SEND",response.status,payload.error??"COULD_NOT_SEND_CODE",scope,company??""));}
       setSentTo(parsed.data.email);
       setCode("");
-    } catch {
-      setError("We couldn't send the code. Please try again.");
+    } catch (cause) {
+      setError(cause instanceof Error?cause.message:joinErrorMessage(null,"SEND"));
     } finally {
       setPending(false);
     }
   }
 
   async function join() {
-    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
+    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company??"",scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
     if (validation||!parsed.success||!/^[0-9]{6}$/.test(code)) {
       setError(validation??"Enter the 6-digit code");
@@ -67,15 +73,14 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, ...parsed.data, code }) },
       );
-      if (!response.ok){
-        const body:unknown=await response.json().catch(()=>null);
-        const code=body&&typeof body==="object"&&"error" in body
-          ? String((body as {error:unknown}).error):"COULD_NOT_JOIN";
-        setError(publicJoinErrorCopy("JOIN",response.status,code,scope,company));return;
-      }
+      if(!response.ok){const payload=await response.json() as {error?:string};
+        throw new Error(publicJoinErrorCopy("JOIN",response.status,payload.error??"COULD_NOT_JOIN",scope,company??""));}
+      const result=await response.json() as {outcome:"JOINED"|"ALREADY_JOINED";signInEmail:string};
+      setAlreadyJoined(result.outcome==="ALREADY_JOINED");
+      setSignInEmail(result.signInEmail);
       setJoined(true);
-    } catch {
-      setError("Could not confirm joining. Check your connection and try again.");
+    } catch (cause) {
+      setError(cause instanceof Error?cause.message:joinErrorMessage(null));
     } finally {
       setPending(false);
     }
@@ -89,11 +94,16 @@ export function PublicRecruiterJoinForm({
             <h1 className="text-2xl font-semibold text-foreground">This link is no longer valid</h1>
             <p className="mt-3 text-sm text-body">Ask the placement cell for a new one.</p>
           </>
+        ) : blockedReason ? (
+          <div role="alert" className="space-y-3">
+           <h1 className="text-xl font-semibold">Recruiter verification unavailable</h1>
+           <p className="text-sm text-body">{blockedReason}</p>
+          </div>
         ) : joined ? (
           <>
-            <h1 className="text-2xl font-semibold text-foreground">You now have access to {college}</h1>
+            <h1 className="text-2xl font-semibold text-foreground">{alreadyJoined?"You already have access to ":"You now have access to "}{college}</h1>
             <p className="mt-3 text-sm text-body">
-              Sign in with your work email, {sentTo}, on the college&apos;s placement address. We&apos;ll email you a code each time.
+              Sign in with your work email, {signInEmail}, on the college&apos;s placement address. We&apos;ll email you a code each time.
             </p>
             <Link href="/login" className="mt-4 inline-flex min-h-11 items-center text-primary-text underline">Sign in</Link>
           </>
@@ -107,7 +117,9 @@ export function PublicRecruiterJoinForm({
                 ? "Join with your company email. You can then request placement drives and review the students who apply."
                 : "Join with your company email. You can then request placement drives and review the students who apply."}
             </p>
-            <div className="mt-5 space-y-4">
+            <form className="mt-5 space-y-4" onSubmit={event=>{
+             event.preventDefault(); if(sentTo)void join();else void sendCode();
+            }}>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Work email
                 <input type="email" required autoComplete="email" value={email} disabled={Boolean(sentTo)}
@@ -121,19 +133,19 @@ export function PublicRecruiterJoinForm({
               </label>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Your name
-                <input type="text" required value={name} maxLength={150} disabled={Boolean(sentTo)}
+                <input type="text" required autoComplete="name" value={name} maxLength={150}
                   onChange={event => setName(event.target.value)}
                   className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Designation (optional)
-                <input type="text" value={designation} maxLength={100} disabled={Boolean(sentTo)}
+                <input type="text" value={designation} maxLength={100}
                   onChange={event => setDesignation(event.target.value)}
                   className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                 Mobile (optional)
-                <input type="tel" value={phone} maxLength={20} disabled={Boolean(sentTo)}
+                <input type="tel" autoComplete="tel" value={phone} maxLength={14}
                   onChange={event => setPhone(event.target.value)}
                   className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
                 <span className="text-xs font-normal text-muted-foreground">
@@ -143,13 +155,13 @@ export function PublicRecruiterJoinForm({
               {scope === "COLLEGE" ? (
                 <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                   Company name
-                  <input type="text" value={companyName} maxLength={200} disabled={Boolean(sentTo)}
+                  <input type="text" value={companyName} maxLength={200}
                     onChange={event => setCompanyName(event.target.value)}
                     className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
                 </label>
               ) : null}
               {!sentTo ? (
-                <button type="button" disabled={pending} onClick={sendCode}
+                <button type="submit" disabled={pending}
                   className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
                   Send me a code
                 </button>
@@ -157,13 +169,13 @@ export function PublicRecruiterJoinForm({
                 <>
                   <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                     Code sent to {sentTo}
-                    <input value={code} required inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
+                    <input value={code} required autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
                       onChange={event => setCode(event.target.value)}
                       className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
                     <span className="text-xs font-normal text-muted-foreground">This proves the email is yours.</span>
                   </label>
                   <div className="flex flex-wrap gap-3">
-                    <button type="button" disabled={pending} onClick={join}
+                    <button type="submit" disabled={pending}
                       className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
                       Join {college} placements
                     </button>
@@ -177,7 +189,7 @@ export function PublicRecruiterJoinForm({
                 </>
               )}
               {error ? <p role="alert" className="text-sm text-danger">{error}</p> : null}
-            </div>
+            </form>
           </>
         )}
       </section>

@@ -44,7 +44,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
-      inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK"]),
+      inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK","DRAFT","REJECTED","CANCELLED"]),
       filters.search?or(
         ilike(placementCompanies.name,pattern),
         sql`${placementRecruiterDriveRequests.draft}->>'title' ilike ${pattern}`,
@@ -64,6 +64,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       draft:placementRecruiterDriveRequests.draft,
       company:placementCompanies.name,
       createdAt:placementRecruiterDriveRequests.createdAt,
+      approvedJobId:placementRecruiterDriveRequests.approvedJobId,
     }).from(placementRecruiterDriveRequests)
       .innerJoin(placementCompanyRelationships,and(
         eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
@@ -76,6 +77,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       id:row.id,status:row.status,
       title:typeof row.draft.title==="string"?row.draft.title:"Untitled drive request",
       company:row.company,createdAt:row.createdAt.toISOString(),
+      approvedJobId:row.approvedJobId,
     }));
     return {...pagination,counts,rows:[],requestRows,requestsAvailable:true as const,...common};
   }
@@ -96,7 +98,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    const [counts]=await tx.select({total:sql<number>`count(*)::int`,
     drafts:sql<number>`count(*) filter(where ${placementJobs.status} = 'DRAFT')::int`,
     live:sql<number>`count(*) filter(where ${placementJobs.status} = 'PUBLISHED')::int`,
-    closed:sql<number>`count(*) filter(where ${placementJobs.status} = 'CLOSED')::int`,
+    closed:sql<number>`count(*) filter(where ${placementJobs.status} in ('CLOSED','CANCELLED'))::int`,
     deadlinesNextSevenDays:sql<number>`count(*) filter(where ${placementJobs.status} = 'PUBLISHED'
      and ${placementJobs.applicationDeadline} >= ${now.toISOString()}::timestamptz
      and ${placementJobs.applicationDeadline} <= ${now.toISOString()}::timestamptz + interval '7 days')::int`,
@@ -120,7 +122,9 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       eq(placementCompanyRelationships.collegeId, collegeId)))
     .innerJoin(placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId))
-    .where(and(scope,target?eq(placementJobs.status,target):undefined))
+    .where(and(scope,filters.view==="CLOSED"?
+      inArray(placementJobs.status,["CLOSED","CANCELLED"]):
+      target?eq(placementJobs.status,target):undefined))
     .orderBy(filters.sort==="DEADLINE_ASC"?sql`${placementJobs.applicationDeadline} asc nulls last`:
       filters.sort==="DEADLINE_DESC"?sql`${placementJobs.applicationDeadline} desc nulls last`:placementCompanies.name,
       placementCompanies.name,placementJobs.title,placementJobs.id)
@@ -134,6 +138,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
     asOf: now.toISOString(),
     requestsAvailable: false as const,
-    requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string}[],
+    requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
   };
 }

@@ -30,7 +30,7 @@ export function projectTpoDriveLifecycle(
     total: facts.length,
     drafts: facts.filter((f) => f.status === "DRAFT").length,
     live: facts.filter((f) => f.status === "PUBLISHED").length,
-    closed: facts.filter((f) => f.status === "CLOSED").length,
+    closed: facts.filter((f) => f.status === "CLOSED" || f.status === "CANCELLED").length,
     deadlinesNextSevenDays: facts.filter((f) => {
       if (f.status !== "PUBLISHED" || !f.applicationDeadline) return false;
       const due = Date.parse(f.applicationDeadline);
@@ -40,7 +40,8 @@ export function projectTpoDriveLifecycle(
   const target = view === "DRAFT" ? "DRAFT" : view === "LIVE" ? "PUBLISHED" :
     view === "CLOSED" ? "CLOSED" : null;
   return { counts,
-    rows: facts.filter((f) => target === null || f.status === target)
+    rows: facts.filter((f) => view==="CLOSED"?
+      f.status==="CLOSED"||f.status==="CANCELLED":target === null || f.status === target)
       .sort((a,b) => a.company.localeCompare(b.company) || a.title.localeCompare(b.title) || a.id.localeCompare(b.id)),
   };
 }
@@ -52,6 +53,16 @@ export const TPO_REQUESTS_COPY = {
   sentBack: "Sent back",
 } as const;
 export function driveRequestStatusLabel(status:string) {
-  return status==="REQUEST"?TPO_REQUESTS_COPY.needsReview:
-    status==="SENT_BACK"?TPO_REQUESTS_COPY.sentBack:"Declined";
+  if(status==="REQUEST")return TPO_REQUESTS_COPY.needsReview;
+  if(status==="SENT_BACK")return TPO_REQUESTS_COPY.sentBack;
+  if(status==="DRAFT")return "Approved, not yet live";
+  if(status==="REJECTED")return "Declined";
+  return "Cancelled";
+}
+
+/** TPO-drives-R04: cancellation and ordinary closure must not share a tag. */
+export function tpoDriveStatusLabel(status:string){
+ return status==="CANCELLED"?"Cancelled":
+   status==="CLOSED"?"Closed":status==="PUBLISHED"?"Live":
+   status==="DRAFT"?"Draft":status;
 }

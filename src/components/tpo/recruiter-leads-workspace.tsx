@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
+import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
+import {recruiterLeadsCsv} from "@/modules/placements/tpo-recruiter-export-model";
 import { RECRUITER_STAGE_LEGACY_LABELS, type TpoRecruiterLeadStage } from "@/modules/placements/tpo-recruiter-lead-policy";
 import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
 import {
@@ -30,6 +32,11 @@ type Lead = {
   unsubscribedAt: string | null;
   chips: RecruiterAttentionChip[];
   quietDays: number;
+  createdAt:string;
+  ownerName:string|null;
+  lastActivityAt:string|null;
+  nextFollowupAt:string|null;
+  inviteStatus:string;
 };
 
 type CompanySummary = {
@@ -93,9 +100,17 @@ export function RecruiterLeadsWorkspace({
   initialCompany?: string;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
+  const [selectedIds,setSelectedIds]=useState<string[]>([]);
+  const [exportFeedback,setExportFeedback]=useState("");
+  const [actionToast,setActionToast]=useState("");
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [filterOpen,setFilterOpen]=useState(false);
+  const [ownerFilter,setOwnerFilter]=useState("ALL");
+  const [inviteFilter,setInviteFilter]=useState("ALL");
+  const [statusFilter,setStatusFilter]=useState("ALL");
+  const [sourceFilter,setSourceFilter]=useState("ALL");
   const [stage, setStage] = useState<(typeof STAGES)[number]>("ALL");
   const [need, setNeed] = useState<EngageNeed>("ALL");
   const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
@@ -192,14 +207,41 @@ export function RecruiterLeadsWorkspace({
   }, [view, loadCompanies]);
 
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
-  const visible = useMemo(() => rows.filter(lead => {
-    if (!matchesEngageNeed(lead,need)) return false;
-    if (attention !== "ALL" && !lead.chips?.includes(attention)) return false;
-    if (stage !== "ALL" && lead.stage !== stage) return false;
-    const terms = [lead.name, lead.emailNorm, lead.phoneNorm, lead.companyName]
-      .filter(Boolean).join(" ").toLowerCase();
-    return terms.includes(query.trim().toLowerCase());
-  }), [rows, stage, query, need, attention]);
+  const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
+    source:sourceFilter};
+  const visible=useMemo(()=>filterEngageRoster(rows,filters,lead=>
+    matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
+    [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter]);
+
+  function exportRows(selection:"shown"|"selected"){
+    const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
+    if(chosen.length===0){setExportFeedback("Select recruiters first.");return;}
+    const blob=new Blob([recruiterLeadsCsv(chosen)],{type:"text/csv;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;link.download="recruiter-leads.csv";link.click();
+    URL.revokeObjectURL(url);
+    setExportFeedback(chosen.length+" recruiter leads exported");
+  }
+  async function copyRows(){
+    const chosen=selectedIds.length?visible.filter(row=>selectedIds.includes(row.id)):visible;
+    if(!chosen.length){setExportFeedback("No recruiters to copy.");return;}
+    try{await navigator.clipboard.writeText(recruiterLeadsCsv(chosen));
+      setExportFeedback(chosen.length+" recruiter leads copied");
+    }catch{setExportFeedback("Couldn't copy rows. Use Export CSV.");}
+  }
+
+  function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query",value:string){
+   const params=new URLSearchParams(window.location.search);
+   if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
+   else params.delete(kind==="query"?"q":kind);
+   window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
+   if(kind==="owner")setOwnerFilter(value);
+   else if(kind==="invite")setInviteFilter(value);
+   else if(kind==="status")setStatusFilter(value);
+   else if(kind==="source")setSourceFilter(value);
+   else setQuery(value);
+  }
 
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
@@ -266,6 +308,7 @@ export function RecruiterLeadsWorkspace({
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(friendlyError(response.status, data));
       setAdding(false);
+      setActionToast("Recruiter lead added");
       setForm(EMPTY);
       setDuplicate(null);
       await load();
@@ -296,7 +339,8 @@ export function RecruiterLeadsWorkspace({
         </div>
       </div>
 
-      {phase !== "ready" ? (
+      {actionToast?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm">{actionToast}</p>:null}
+      {phase !== "ready" && view!=="companies" ? (
         <div role={phase === "loading" ? "status" : "alert"}
           className="rounded-lg border border-border bg-surface p-5">
           {phase === "loading" ? "Loading recruiter leads…" : error}
@@ -336,7 +380,7 @@ export function RecruiterLeadsWorkspace({
           <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
             <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
-              <input className={inputStyle + " mt-1"} value={query} onChange={e => setQuery(e.target.value)}
+              <input className={inputStyle + " mt-1"} value={query} onChange={e => updateFilter("query",e.target.value)}
                 placeholder="Search recruiter leads" />
             </label>
             <label className="min-w-40 text-sm">
@@ -354,16 +398,64 @@ export function RecruiterLeadsWorkspace({
               </select>
             </label>
           </div>
+          <div className="space-y-3">
+            <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
+              aria-expanded={filterOpen} aria-controls="engage-filter-panel">Filters</button>
+            {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
+              className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-4">
+              <label className="text-sm">Status
+                <select className={inputStyle+" mt-1"} value={statusFilter}
+                  onChange={e=>updateFilter("status",e.target.value)}>
+                  {["ALL","JOINED","UNSUBSCRIBED","NOT_JOINED"].map(item=>
+                   <option key={item} value={item}>{item==="ALL"?"All statuses":item.replaceAll("_"," ")}</option>)}
+                </select>
+              </label>
+              <label className="text-sm">Owner
+                <select className={inputStyle+" mt-1"} value={ownerFilter}
+                  onChange={e=>updateFilter("owner",e.target.value)}>
+                  <option value="ALL">All owners</option>
+                  <option value="UNASSIGNED">Unassigned</option>
+                  {[...new Set(rows.map(r=>r.ownerName).filter((name):name is string=>Boolean(name)))]
+                   .sort().map(name=><option key={name} value={name}>{name}</option>)}
+                </select>
+              </label>
+              <label className="text-sm">Invite
+                <select className={inputStyle+" mt-1"} value={inviteFilter}
+                  onChange={e=>updateFilter("invite",e.target.value)}>
+                  {["ALL","NOT_INVITED","SENT","OPENED","JOINED"].map(item=>
+                   <option key={item} value={item}>{item==="ALL"?"All invites":item.replaceAll("_"," ")}</option>)}
+                </select>
+              </label>
+              <label className="text-sm">Source
+                <select className={inputStyle+" mt-1"} value={sourceFilter}
+                  onChange={e=>updateFilter("source",e.target.value)}>
+                  <option value="ALL">All sources</option>
+                  {[...new Set(rows.map(r=>r.source).filter((name):name is string=>Boolean(name)))]
+                   .sort().map(name=><option key={name} value={name}>{name.replaceAll("_"," ")}</option>)}
+                </select>
+              </label>
+              <button type="button" className={buttonStyle} onClick={()=>{
+                for(const key of ["owner","invite","status","source","query"] as const)updateFilter(key,"ALL");
+              }}>Clear filters</button>
+            </div>:null}
+          </div>
           <p className="text-sm text-muted-foreground" aria-live="polite">
             Showing {visible.length} of {rows.length} recruiter leads
           </p>
           {view !== "companies" ? (
             <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown")}>Export CSV</button>
+                <button type="button" className={buttonStyle} disabled={selectedIds.length===0}
+                  onClick={()=>exportRows("selected")}>Export selected ({selectedIds.length})</button>
+                <button type="button" className={buttonStyle} onClick={()=>void copyRows()}>Copy rows</button>
+                {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
+              </div>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
               <RecruiterBulkOwnerControls rows={visible} onUpdated={() => void load()} />
             </div>
           ) : null}
-          {visible.length === 0 ? (
+          {view !== "companies" && visible.length === 0 ? (
             <div className="rounded-lg border border-border bg-surface p-8 text-center text-muted-foreground">
               {rows.length ? "No leads match your filters." : "No recruiter leads yet. Add your first contact."}
             </div>
@@ -431,7 +523,7 @@ export function RecruiterLeadsWorkspace({
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                  <tr>{["Contact", "Company", "Stage", "Flags", "Source", "Email", "Phone"].map(x =>
+                  <tr>{["Select", "Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone"].map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
@@ -442,7 +534,13 @@ export function RecruiterLeadsWorkspace({
                           href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name}</Link>
                       </td>
                       <td className="px-4 py-3">{lead.companyName || "—"}</td>
-                      <td className="px-4 py-3">{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</td>
+                      <td className="px-4 py-3">{lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"}</td>
+                       <td className="px-4 py-3">{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</td>
+                       <td className="px-4 py-3">{lead.ownerName??"Unassigned"}</td>
+                       <td className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
+                       <td className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
+                       <td className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
+                       <td className="px-4 py-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))}</td>
                       <td className="px-4 py-3">
                         {lead.chips?.map(chip => (
                           <span key={chip} className="mr-1 inline-block rounded border border-border px-1.5 py-0.5 text-xs">
@@ -459,12 +557,12 @@ export function RecruiterLeadsWorkspace({
               </table>
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
-                <section key={column} className="rounded-lg border border-border bg-surface p-4">
+                <section key={column} className="w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4">
                   <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
-                    {visible.filter(x => x.manualStage === column).map(lead => (
+                    {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
                       <Link key={lead.id} href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
                         className="block rounded-md border border-border p-3 hover:bg-surface-secondary">
                         <span className="block font-medium">{lead.name}</span>

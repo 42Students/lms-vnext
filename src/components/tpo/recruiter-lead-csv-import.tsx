@@ -39,7 +39,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setFileName(file?.name ?? "");
     if (!file) return;
     if (file.size > TPO_LEAD_CSV_MAX_CHARACTERS * 4) {
-      setError("CSV file is too large (limit: 160,000 characters).");
+      setError("CSV file is too large (limit: 2,000,000 characters).");
       return;
     }
     try {
@@ -118,7 +118,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 <p className="mt-2 text-sm text-body">
                   Upload a six-column CSV, with headers in this exact order:
                   name, email, phone, companyName, designation, source.
-                  Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Name and one contact method are required.
+                  Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
               </div>
               <button className={buttonClass} type="button" onClick={close} disabled={busy}>

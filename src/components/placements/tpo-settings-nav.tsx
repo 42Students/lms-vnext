@@ -9,18 +9,13 @@ export const TPO_SETTINGS_NAV_GROUPS=[
   {id:"blocked-dates",label:"Blocked dates",href:"/tpo/settings/blocked-dates"},
  ]},
  {title:"People",items:[
-  {id:"team",label:"Placement team",href:"/tpo/settings/team"},
-  {id:"recruiters",label:"Recruiter access",href:"/tpo/settings/recruiters"},
+  {id:"recruiters",label:"Recruiters",href:"/tpo/settings/recruiters"},
  ]},
  {title:"Students and companies",items:[
-  {id:"notifications",label:"My notifications",href:"/tpo/settings/notifications"},
-  {id:"templates",label:"Communication templates",href:"/tpo/settings/templates"},
   {id:"notices",label:"Student notices",href:"/tpo/settings/notices"},
   {id:"see",label:"What companies see",href:"/tpo/settings/see"},
-  {id:"public-page",label:"Public placements",href:"/tpo/settings/public-page"},
-  {id:"public-link",label:"Public link for recruiters",href:"/tpo/settings/public-link"},
+  {id:"public-page",label:"Placements page",href:"/tpo/settings/public-page"},
   {id:"branding",label:"Branding",href:"/tpo/settings/branding"},
-  {id:"more",label:"More",href:"/tpo/more"},
  ]},
 ] as const;
 export function TpoSettingsNav({active}:{active:SettingsKey}){

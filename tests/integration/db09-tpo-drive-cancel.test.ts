@@ -63,11 +63,21 @@ async function fixture(acceptOffer: boolean) {
 async function cleanup() {
   if (!pool) return;
   if (ids.round) await pool.query("DELETE FROM placement_job_round_events WHERE round_id=$1", [ids.round]);
+  if (ids.offer) await pool.query("DELETE FROM placement_offer_status_history WHERE offer_id=$1", [ids.offer]);
   if (ids.offer) await pool.query("DELETE FROM placement_offers WHERE id=$1", [ids.offer]);
   if (ids.round) await pool.query("DELETE FROM placement_job_rounds WHERE id=$1", [ids.round]);
-  if (ids.application) await pool.query("DELETE FROM placement_applications WHERE id=$1", [ids.application]);
+  if (ids.application) {
+    await pool.query("DELETE FROM placement_application_screening_history WHERE application_id=$1",[ids.application]);
+    await pool.query("DELETE FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
+    await pool.query("DELETE FROM placement_application_status_history WHERE application_id=$1",[ids.application]);
+    await pool.query("DELETE FROM placement_applications WHERE id=$1", [ids.application]);
+  }
   if (ids.role) await pool.query("DELETE FROM placement_job_role_options WHERE id=$1", [ids.role]);
-  if (ids.job) await pool.query("DELETE FROM placement_jobs WHERE id=$1", [ids.job]);
+  if (ids.job) {
+    await pool.query("DELETE FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1)",[ids.job]);
+    await pool.query("DELETE FROM activity_events WHERE subject_id=$1",[ids.job]);
+    await pool.query("DELETE FROM placement_jobs WHERE id=$1", [ids.job]);
+  }
   if (ids.relationship) await pool.query("DELETE FROM placement_company_relationships WHERE id=$1", [ids.relationship]);
   if (ids.company) await pool.query("DELETE FROM placement_companies WHERE id=$1", [ids.company]);
   for (const key of Object.keys(ids) as (keyof Ids)[]) delete ids[key];
@@ -111,32 +121,37 @@ describe.skipIf(!enabled)("TPO drive cancellation isolated PostgreSQL", () => {
     await expect(cancelTpoDriveWithPreview(tpo, jobId, { ...write, expectedImpact: { ...snapshot.impact, openRounds: 0 } })).rejects.toMatchObject({ code: "PLACEMENT_JOB_PREVIEW_STALE" });
     await expect(cancelTpoDriveWithPreview(tpo, jobId, { ...write, expectedUpdatedAt: "2020-01-01T00:00:00.000Z" })).rejects.toMatchObject({ code: "PLACEMENT_JOB_STALE" });
     const saved = await cancelTpoDriveWithPreview(tpo, jobId, write);
-    expect(saved.status).toBe("CLOSED");
+    expect(saved.status).toBe("CANCELLED");
     expect(saved.roundsCancelled).toBe(1);
     const round = await pool.query<{ status: string }>("SELECT status FROM placement_job_rounds WHERE id=$1", [ids.round]);
     expect(round.rows[0]?.status).toBe("CANCELLED");
+    const screening=await pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
+    expect(screening.rows[0]?.status).toBe("REJECTED");
     const offer = await pool.query<{ status: string }>("SELECT status FROM placement_offers WHERE id=$1", [ids.offer]);
-    expect(offer.rows[0]?.status).toBe("ISSUED");
+    expect(offer.rows[0]?.status).toBe("WITHDRAWN");
     await expect(cancelTpoDriveWithPreview(tpo, jobId, write)).rejects.toMatchObject({ code: "PLACEMENT_JOB_STALE" });
     const audit = await pool.query<{ count: number }>("SELECT count(*)::int AS count FROM activity_events WHERE subject_id=$1 AND event_type='PLACEMENTS_TPO_DRIVE_CANCELLED'", [jobId]);
     expect(audit.rows[0]?.count).toBe(1);
     await cleanup();
   });
 
-  it("blocks cancellation while an accepted offer exists and changes nothing", async () => {
+  it("keeps accepted offers intact when cancelling", async () => {
     if (!pool) throw Error("PG required");
     const jobId = await fixture(true);
     const snapshot = await getTpoDriveCancelPreview(tpo, jobId);
-    expect(snapshot.blockedByAcceptedOffers).toBe(true);
-    await expect(cancelTpoDriveWithPreview(tpo, jobId, {
+    expect(snapshot.blockedByAcceptedOffers).toBe(false);
+    const result=await cancelTpoDriveWithPreview(tpo, jobId, {
       action: "CANCEL",
       confirmed: true,
       expectedUpdatedAt: snapshot.expectedUpdatedAt,
       expectedImpact: snapshot.impact,
-      reason: "Attempt with accepted offer",
-    })).rejects.toMatchObject({ code: "PLACEMENT_JOB_CANCEL_BLOCKED" });
+      reason: "Cancelled while keeping accepted offer",
+    });
+    expect(result.status).toBe("CANCELLED");
+    const offer=await pool.query("SELECT status FROM placement_offers WHERE id=$1",[ids.offer]);
+    expect(offer.rows[0].status).toBe("ACCEPTED");
     const job = await pool.query<{ status: string }>("SELECT status FROM placement_jobs WHERE id=$1", [jobId]);
-    expect(job.rows[0]?.status).toBe("PUBLISHED");
+    expect(job.rows[0]?.status).toBe("CANCELLED");
     await cleanup();
   });
 });

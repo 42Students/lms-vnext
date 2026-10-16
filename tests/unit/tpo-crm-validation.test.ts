@@ -67,10 +67,10 @@ describe("DB09 recruiter CRM input contracts", () => {
       collegeId, name: "Source C", email: "c@example.org",
       source: "ARBITRARY_SOURCE",
     })).toThrow();
-    expect(() => createTpoLeadSchema.parse({
+    expect(createTpoLeadSchema.parse({
       collegeId, name: "Source D", email: "d@example.org",
       source: "IMPORT",
-    })).toThrow();
+    }).source).toBe("IMPORT");
   });
 
   it("prevents callers from manufacturing SYSTEM audit activity", () => {
@@ -130,7 +130,6 @@ describe("W05 recruiter lead edit and duplicate-check boundaries", () => {
       { collegeId, ownerMembershipId: collegeId, name: "Forged" },
       { collegeId, name: "   " },
       { collegeId, companyName: "" },
-      { collegeId, source: "IMPORT" },
     ]) {
       expect(() => updateTpoLeadSchema.parse(input)).toThrow();
     }
