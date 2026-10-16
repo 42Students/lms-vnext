@@ -8,6 +8,7 @@ import { AssignmentFileOpenControl } from "@/components/courses/assignment-file-
 import { AssignmentSubmissionControl } from "@/components/courses/assignment-submission-control";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
+import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";
 import { findOwnLearnerAssignment } from "@/modules/courses/learner-assignment-detail-model";
 
 type Props = {
@@ -22,8 +23,22 @@ function formatDate(date: Date | null) {
 export default async function LearnerAssignmentDetail({ params, searchParams }: Props) {
   const [path, query] = await Promise.all([params, searchParams]);
   const overview = await getLearnerAssessmentOverview(await getCurrentRequestContext());
+  const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
+  if (resolution.kind === "none") notFound();
+  if (resolution.kind === "choose") return <div className="space-y-6">
+    <Link href="/learn/allAssignments" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← All Assignments</Link>
+    <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
+    <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+      {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
+        <Link className="font-semibold text-primary-text underline"
+          href={"/learn/allAssignments/" + encodeURIComponent(path.assignmentId) + "?deliveryId=" + encodeURIComponent(option.deliveryId)}>
+          {option.courseName}
+        </Link>
+      </li>)}
+    </ul>
+  </div>;
   const item = findOwnLearnerAssignment(overview.assignments, {
-    assignmentId: path.assignmentId, deliveryId: query.deliveryId,
+    assignmentId: path.assignmentId, deliveryId: resolution.deliveryId,
   });
   if (!item) notFound();
   return <div className="space-y-6">
