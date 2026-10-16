@@ -134,7 +134,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}
        </select></label>:null}
-      {!readOnly?<ProjectTaskAssigneeControl projectId={projectId} taskId={task.id}
+      {!readOnly?<ProjectTaskAssigneeControl projectId={projectId} taskId={task.id} taskTitle={task.title}
        assigneeMembershipId={task.assigneeMembershipId}
        updatedAt={new Date(task.updatedAt).toISOString()} learners={learnerChoices}/>:null}
       <details className="rounded-lg border border-border p-2">
