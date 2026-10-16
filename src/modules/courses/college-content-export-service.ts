@@ -10,11 +10,11 @@ export async function exportCollegeContentMetadata(
  const query=collegeContentCsvSchema.parse(raw);
  const result=await collectCollegeExportRows(page=>listCollegeContentAggregate(context,kind,
   kind==="LIVE_CLASS" ? {
-    q:query.q,courseCode:query.courseCode,status:query.status,scope:query.scope,
+    q:query.q,courseCode:query.courseCode,status:query.status,scope:query.scope,deliveryId:query.deliveryId,
     view:query.view,from:query.from,to:query.to,page,
   } : {
     q:query.q,courseCode:query.courseCode,programCode:query.programCode,cohortCode:query.cohortCode,periodCode:query.periodCode,pathStatus:query.pathStatus,departmentName:query.departmentName,offeringType:query.offeringType,lessonStatus:query.lessonStatus,status:query.status,
-    format:query.format,scope:query.scope,visibility:query.visibility,offeringStatus:query.offeringStatus,page,
+    format:query.format,scope:query.scope,deliveryId:query.deliveryId,visibility:query.visibility,offeringStatus:query.offeringStatus,page,
   }),
   COLLEGE_CONTENT_PAGE_SIZE,CONTENT_METADATA_EXPORT_CAP);
  return {...result,csv:kind==="LIVE_CLASS" ? renderCollegeLiveClassCsv(result.rows,result.truncated)
