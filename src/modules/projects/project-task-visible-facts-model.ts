@@ -25,3 +25,12 @@ export function projectTaskVisibleFacts(
     blockerReason: task.blockerReason?.trim() || null,
   };
 }
+
+/** MEN-projects-meetings-41: due state uses the project viewer's IST day. */
+export function projectTaskDueState(dueDate: string | null,status:string,now:Date):string|null {
+  if(!dueDate||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(dueDate)||status==="DONE")return null;
+  const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
+  const difference=Math.round((new Date(dueDate+"T00:00:00Z").getTime()-
+    new Date(today+"T00:00:00Z").getTime())/86400000);
+  return difference<0?"Overdue":difference<=3?"Due soon":null;
+}
