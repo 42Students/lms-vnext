@@ -2,6 +2,7 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listCollegeAdminSessions} from "@/modules/colleges/admin-session-service";
 import {PageHeader} from "@/components/ui/page-header";
+import {AdminRevokeSessions} from "@/components/admin/admin-revoke-sessions";
 
 export const dynamic="force-dynamic";
 export default async function AdminDeviceSessionsPage({params}:{
@@ -30,6 +31,6 @@ export default async function AdminDeviceSessionsPage({params}:{
      <td className="p-3">{format(device.expires_at)}</td>
     </tr>)}</tbody></table></div>:
    <p role="status" className="rounded-xl border border-border p-5">No active sessions for this account.</p>}
-  <p className="text-xs text-muted-foreground">Session revocation is not offered here until its guarded admin action is deployed.</p>
+  <AdminRevokeSessions collegeId={collegeId} userId={userId} count={data.devices.length}/>
  </main>;
 }
