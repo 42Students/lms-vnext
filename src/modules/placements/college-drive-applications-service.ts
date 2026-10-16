@@ -38,7 +38,7 @@ export async function listCollegeDriveApplications(
     )).limit(1);
   if (!drive) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
 
-  const source = db.select({
+  const base = db.select({
     id: placementApplications.id,
     name: users.displayName,
     email: users.email,
@@ -67,10 +67,6 @@ export async function listCollegeDriveApplications(
     .where(and(
       eq(placementApplications.jobId, jobId),
       query.status === "ALL" ? undefined : eq(placementApplications.status, query.status),
-      query.stage === "ALL" ? undefined : query.stage === "WITHDRAWN" ?
-        eq(placementApplications.status,"WITHDRAWN") : and(
-        eq(placementApplications.status,"SUBMITTED"),
-        sql`coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end) = ${query.stage}`),
       query.source === "ALL" ? undefined : eq(placementApplications.channel,query.source),
       query.departmentId||query.programId||query.cohortId ? exists(
         db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
@@ -93,16 +89,20 @@ export async function listCollegeDriveApplications(
         ilike(learnerProfiles.rollNumber, pattern(query.q)),
         ilike(placementJobRoleOptions.title, pattern(query.q)),
       ) : undefined,
-    )).as("college_scoped_applicants");
+    )).as("college_scoped_applicants_base");
+  const source = db.select().from(base).where(query.stage==="ALL"?
+    undefined:eq(base.stage,query.stage)).as("college_scoped_applicants");
 
-  const [totalRows, items] = await Promise.all([
+  const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
     db.select().from(source).orderBy(asc(source.name), asc(source.id))
       .limit(options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : DRIVE_APPLICATIONS_PAGE_SIZE)
       .offset(options.exportAll ? 0 : (query.page - 1) * DRIVE_APPLICATIONS_PAGE_SIZE),
+    db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   ]);
   const total = totalRows[0]?.total ?? 0;
   return { drive, query, items, total,
+    stageCounts:Object.fromEntries(stageCountRows.map(row=>[row.stage,row.total])),
     truncated: options.exportAll && total > DRIVE_APPLICATION_EXPORT_CAP,
     totalPages: Math.max(1, Math.ceil(total / DRIVE_APPLICATIONS_PAGE_SIZE)),
   };
