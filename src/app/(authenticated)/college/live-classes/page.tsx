@@ -2,6 +2,8 @@ import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {CollegeLiveClassesDirectory} from "@/components/courses/college-live-classes-directory";
+import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
+import {getCollegeContentAuthoringOptions} from "@/modules/courses/college-content-authoring-service";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
 import {collegeLiveClassQuerySchema,liveClassSearchParams} from "@/modules/courses/college-live-classes-model";
@@ -18,8 +20,9 @@ export default async function CollegeLiveClassesPage({searchParams}:{
   <ErrorState title="Invalid session filters" description="Invalid page, publication or search filter."
     action={<Link href="/college/live-classes" className="font-semibold text-primary-text">Clear filters</Link>}/>
  </div>;
- const data=await listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data);
+ const [data,authoring]=await Promise.all([listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data),getCollegeContentAuthoringOptions(context,"LIVE_CLASS")]);
  return <div className="space-y-4">
+  <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} existing={authoring.existing}/>
   <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
     Export live-class schedule CSV (UTC)

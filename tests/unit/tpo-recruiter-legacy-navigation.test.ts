@@ -18,7 +18,7 @@ const recruiter: RequestContext = {
 
 describe("Phase 2 legacy exact sidebar contract (legacy-copy-B.md)", () => {
   it("TPO labels and visible groups match all 15 old LMS rows in order", () => {
-    const items = getShellNavigation(tpo);
+    const items = getShellNavigation(tpo, null, true);
     expect(items.map(item => item.label)).toEqual([
       "Home", "Placement eligibility", "Engage", "Drives", "Team",
       "Students", "Requests", "Verification", "Calendar", "Announcements",

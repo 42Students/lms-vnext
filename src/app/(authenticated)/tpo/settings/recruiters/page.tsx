@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { TpoRecruiterGrantForm, TpoRecruiterRevoke } from "@/components/placements/tpo-recruiter-grant-controls";
+import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
+import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
 import { getTpoTrustedCompanies } from "@/modules/placements/tpo-settings-people-service";
 import {
   getCurrentRequestContext,
@@ -102,9 +104,10 @@ export default async function TpoRecruiterAccessPage({
     );
   }
 
-  const [data, linkedCompanies] = await Promise.all([
+  const [data, linkedCompanies, publicLink] = await Promise.all([
     listTpoRecruiterAccess(context, parsed.data),
     getTpoTrustedCompanies(context, context.membership.collegeId),
+    getTpoPublicJoinLinkStatus(context, "COLLEGE"),
   ]);
 
   const {
@@ -139,6 +142,8 @@ export default async function TpoRecruiterAccessPage({
         title="Recruiter access"
         description="Review active and revoked recruiter college-access grants for your current college. This is historical grant data, not a live recruiter-session or login-status check."
       />
+
+      <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
 
       <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({
         relationshipId: company.relationshipId,
