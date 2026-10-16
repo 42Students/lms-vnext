@@ -1,3 +1,4 @@
+import { recruiterAccessMonthsOrDefault } from "@/modules/placements/recruiter-access-defaults";
 import "server-only";
 import { and, desc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -84,8 +85,9 @@ export async function acceptTpoRecruiterInviteOtp(
    }).from(placementTpoCollegeSettings)
      .where(eq(placementTpoCollegeSettings.collegeId,lead.collegeId))
      .for("share").limit(1);
-   if(!duration || duration.months<1 || duration.months>60)return "DENIED";
-   const validUntil=recruiterGrantValidUntil(now,duration.months);
+   const months=recruiterAccessMonthsOrDefault(duration?.months);
+   if(months<1 || months>60)return "DENIED";
+   const validUntil=recruiterGrantValidUntil(now,months);
    await tx.insert(placementRecruiterProfiles).values({
      userId:identity.id,companyId:relationship.companyId,
      createdByUserId:identity.id,
