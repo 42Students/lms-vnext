@@ -77,6 +77,28 @@ function formatWhen(value: Date | null) {
   }).format(value);
 }
 
+/** A status summary derived from persisted application/screening/round facts only. */
+function applicationStanding(item:LearnerPlacementJourneyItem){
+  if(item.applicationStatus==="WITHDRAWN")return "Withdrawn";
+  if(item.screening.status==="REJECTED")return "Not selected";
+  const latest=[...item.results].filter(row=>row.appliedAt!==null)
+    .sort((a,b)=>b.roundSequence-a.roundSequence)[0];
+  if(latest?.outcome==="FAIL")return "Not cleared";
+  if(latest?.outcome==="ABSENT")return "Marked absent";
+  if(latest?.outcome==="HOLD")return "Waitlisted";
+  if(latest?.outcome==="PASS")return "Cleared last recorded round";
+  if(item.screening.status==="SHORTLISTED")return "Shortlisted";
+  if(item.screening.status==="HOLD")return "Waiting for a decision";
+  return "Application received";
+}
+function roundOutcomeLabel(outcome:string){
+  if(outcome==="PASS")return "Cleared";
+  if(outcome==="FAIL")return "Not cleared";
+  if(outcome==="ABSENT")return "Marked absent";
+  if(outcome==="HOLD")return "Waitlisted";
+  return humanize(outcome);
+}
+
 export function LearnerPlacementJourney({
   items,
 }: {
@@ -111,11 +133,38 @@ export function LearnerPlacementJourney({
           One view of your applications, screening state and confirmed round outcomes.
         </p>
       </div>
+      <section aria-label="Where your applications stand" className="space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h3 className="text-base font-semibold text-foreground">Where your applications stand</h3>
+        <p className="text-sm text-body">Your recorded application and selection progress. Future rounds only appear after your placement team records them.</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {items.map(item=>(
+            <a key={item.applicationId} href={"#placement-application-"+encodeURIComponent(item.applicationId)}
+              className="min-w-0 rounded-lg border border-border p-3 hover:bg-surface-subtle">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="min-w-0 break-words text-sm font-semibold text-foreground">{item.companyName} · {item.jobTitle}</span>
+                <StatusBadge tone={item.applicationStatus==="WITHDRAWN"||item.screening.status==="REJECTED"?"error":"info"}>
+                  {applicationStanding(item)}
+                </StatusBadge>
+              </div>
+              <ol className="mt-3 flex flex-wrap gap-2 text-xs text-body">
+                <li className="rounded border border-border px-2 py-1">Applied</li>
+                <li className="rounded border border-border px-2 py-1">Screening: {humanize(item.screening.status)}</li>
+                {[...item.results].sort((a,b)=>a.roundSequence-b.roundSequence).map(result=>(
+                  <li key={result.resultId} className="rounded border border-border px-2 py-1">
+                    {result.roundName}: {result.appliedAt?roundOutcomeLabel(result.outcome):"Awaiting confirmation"}
+                  </li>
+                ))}
+              </ol>
+            </a>
+          ))}
+        </div>
+      </section>
       <div className="grid gap-4">
         {items.map((item) => (
           <article
             key={item.applicationId}
-            className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5"
+            id={"placement-application-"+encodeURIComponent(item.applicationId)}
+            className="scroll-mt-24 min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-5"
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -215,9 +264,7 @@ export function LearnerPlacementJourney({
                             result.outcome,
                           )}
                         >
-                          {humanize(
-                            result.outcome,
-                          )}
+                          {roundOutcomeLabel(result.outcome)}
                         </StatusBadge>
                       </div>
                     </div>
