@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {tpoRegistrationRecordedAtLabel,tpoRegistrationDaysSince} from "@/modules/placements/tpo-batch-registration-date-label-model";
 import {tpoPlacementConsentDescription} from "@/modules/placements/tpo-batch-registration-consent-model";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -24,7 +25,7 @@ export default async function BatchRegistrations({params,searchParams}:{
   params.set("page",String(page));return "/tpo/batches/"+batchId+"/registrations?"+params.toString();};
  return <main className="min-w-0 space-y-4">
   <h1 className="text-xl font-semibold">{data.batch.name} — Registration choices</h1>
-  <Link className="text-sm text-primary-text underline" href={"/tpo/batches/"+batchId}>Batch overview</Link>
+  <TpoBatchWorkspaceTabs batchId={batchId} active="registrations" />
   {!data.ready?<p role="status" className="rounded border border-border p-4">Registration storage is unavailable. No learner choices were loaded.</p>:<>
    <form action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="flex min-w-0 flex-wrap items-end gap-2">
     <label className="min-w-0 flex-1 text-sm">Find learner
