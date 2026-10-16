@@ -13,6 +13,7 @@ type Props = {
   deadline: string | null;
   expectedVersion: string;
   invitable: number;
+  eligible: number;
   deadlinePassed: boolean;
 };
 const errors: Record<string, string> = {
@@ -30,7 +31,7 @@ export function TpoBatchInvitationControl(props: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const ready = props.invitable > 0 &&
+  const ready = props.eligible > 0 &&
     !props.invitedAt && !props.finishedAt;
   async function invite() {
     setError(""); setMessage("");
@@ -46,7 +47,9 @@ export function TpoBatchInvitationControl(props: Props) {
       if (!response.ok)
         throw new Error(response.status === 409 ? "Batch changed. Refresh before inviting." :
           errors[body.error ?? ""] ?? "Could not invite this batch.");
-      setMessage(formatTpoBatchInviteSuccess(body.notifiedCount ?? props.invitable, date) +
+      setMessage((body.notifiedCount === 0 ? "Deadline set to " +
+        formatTpoBatchInviteSuccess(0, date).split("register by ")[1] :
+        formatTpoBatchInviteSuccess(body.notifiedCount ?? props.invitable, date)) +
         ". In-app only; email delivery is not enabled.");
       router.refresh();
     } catch (cause) {
@@ -105,7 +108,7 @@ export function TpoBatchInvitationControl(props: Props) {
     </section>;
   }
   return <section className="space-y-3 rounded border border-border bg-surface p-4" aria-label="Invite batch">
-    <h2 className="font-semibold">Invite {props.invitable} eligible {props.invitable === 1 ? "student" : "students"} to register</h2>
+    <h2 className="font-semibold">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
     <label className="block text-sm" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
     <input id="batch-register-by" aria-label="Registration deadline" type="date" value={date}
       onChange={event => setDate(event.target.value)}
@@ -114,7 +117,7 @@ export function TpoBatchInvitationControl(props: Props) {
       disabled={busy || !ready} className="min-h-11 rounded border border-border px-4 disabled:opacity-50">
       {busy ? "Inviting…" : TPO_INVITATION_COPY.invitation + " " + props.invitable}
     </button>
-    {props.invitable === 0 ? <p className="text-sm">No eligible students remain to invite.</p> : null}
+    {props.eligible === 0 ? <p className="text-sm">Nobody in this batch is eligible yet. Decide who is in placements first.</p> : null}
     {message ? <p role="status" className="text-sm">{message}</p> : null}
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
   </section>;

@@ -312,6 +312,42 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     expect(row.rows[0].invited_at).toBeNull();
   });
 
+  it("TPO-batches-R01 opens registration when all eligible students have chosen", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const learner = await makeLearner(SEED_IDS.collegeA, a);
+    await decidePlacementParticipation(admin, {
+      collegeId: SEED_IDS.collegeA,
+      changes: [{scopeType:"MEMBERSHIP",scopeId:learner,status:"ELIGIBLE"}],
+    });
+    await pool.query(
+      "INSERT INTO placement_batch_registrations (college_id,cohort_id,membership_id,choice,source,recorded_by_user_id) VALUES ($1,$2,$3,'HIGHER_STUDIES','TPO',$4)",
+      [SEED_IDS.collegeA,a.cohortId,learner,admin.user.id],
+    );
+    const deadline = new Date(Date.now()+86400000*3);
+    const result = await markPlacementBatchInvited(admin, {
+      collegeId: SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:deadline,expectedVersion:"none",
+    });
+    expect(result.invitedAt).toBeTruthy();
+    expect(result.registrationDeadline?.toISOString()).toBe(deadline.toISOString());
+    expect(result.notifiedCount).toBe(0);
+    await pool.query(
+      "DELETE FROM placement_batch_registrations WHERE cohort_id=$1",[a.cohortId],
+    );
+  });
+
+  it("TPO-batches-R02 rolls back deadline and invitation together when none is eligible", async () => {
+    const a=await makeAcademicFixture(SEED_IDS.collegeA);
+    await expect(markPlacementBatchInvited(admin, {
+      collegeId:SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:new Date(Date.now()+86400000*3),expectedVersion:"none",
+    })).rejects.toMatchObject({code:"DB08_NO_ELIGIBLE_STUDENTS"});
+    const record=await pool.query(
+      "SELECT cohort_id FROM placement_batch_lifecycles WHERE cohort_id=$1",[a.cohortId],
+    );
+    expect(record.rows).toHaveLength(0);
+  });
+
   it("tells unregistered eligible students when reopening an expired invitation", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
     const learner = await makeLearner(SEED_IDS.collegeA, a);

@@ -24,7 +24,7 @@ export default async function BatchPage({params}:{params:Promise<{batchId:string
   finishedAt={lifecycle?.finishedAt?.toISOString() ?? null}
   deadline={lifecycle?.registrationDeadline?.toISOString() ?? null}
   expectedVersion={lifecycle?.updatedAt.toISOString() ?? "none"}
-  invitable={invitePreview.invitable}
+  invitable={invitePreview.invitable} eligible={invitePreview.eligible}
   deadlinePassed={registrations.invitation.stage === "DEADLINE_PASSED"} /> : null}
  {ready?<TpoBatchLifecycleControl batchId={batchId} state={lifecycle?{
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
