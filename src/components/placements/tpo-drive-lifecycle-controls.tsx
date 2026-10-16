@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
+import { tpoDriveReadinessMessage } from "@/modules/placements/tpo-drive-lifecycle-model";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
@@ -49,10 +50,16 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
         },
       );
       if (!response.ok) {
-        const body=await response.json() as {error?:string};
-        throw new Error(body.error==="EMAIL_DELIVERY_UNAVAILABLE"?
-          "Email delivery is not configured. Choose app notifications only.":
-          "Readiness or job state changed. Refresh before retrying.");
+        const body = await response.json().catch(() => null) as { error?: string } | null;
+        const errors: Record<string, string> = {
+          EMAIL_DELIVERY_UNAVAILABLE: "Email delivery is not configured. Choose app notifications only.",
+          PLACEMENT_JOB_STALE: "This drive changed. Refresh the page before retrying.",
+          PLACEMENT_JOB_READ_ONLY: "This drive is not ready for that action. Review the setup and try again.",
+          PLACEMENT_JOB_NOT_FOUND: "This drive is no longer available.",
+          INVALID_REQUEST: "Please check your reason and try again.",
+        };
+        throw new Error(errors[body?.error ?? ""] ??
+          "This action could not be completed. Refresh and review the drive.");
       }
       const result=await response.json() as {notifiedCount?:number;debarmentCounted?:number;emailSent?:boolean};
       setSuccess(selected.action==="PUBLISH"?
@@ -84,7 +91,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
           </Link>
         ) : (
           <p className="text-xs text-muted-foreground">
-            CLOSE blockers: {readiness.close.blockers.join(", ")}
+            Cannot close: {readiness.close.blockers.map(tpoDriveReadinessMessage).join(" ")}
           </p>
         )}
       </div>
@@ -103,7 +110,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
       </div>
       {available.filter((item) => item.decision.blockers.length > 0).map((item) => (
         <p key={item.action} className="mt-2 text-xs text-muted-foreground">
-          {item.action} blockers: {item.decision.blockers.join(", ")}
+          {item.action === "PUBLISH" ? "Before publishing" : "Before reopening"}: {item.decision.blockers.map(tpoDriveReadinessMessage).join(" ")}
         </p>
       ))}
       {selected?.decision.allowed ? (
