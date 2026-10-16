@@ -24,7 +24,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 2. WP-chat-2-02-public-links-marketing-campaigns-public-s2 | IN-PROGRESS | 20 gaps: S2 20 (PUB-auth-public-45 joined email, PUB-auth-public-44 validation, TPO-campaigns-public-14 bell/timeline; unsubscribe and secure share paths retain remaining policy gates)
 3. WP-chat-2-03-companies-campaigns-public-s2 | IN-PROGRESS | 20 gaps: S2 20 (TPO-companies-10 fixed URL, -12 invite context, -13 company drive prefill, -16/-17 filters and People, -08 filtered drives CSV, -11 documents)
 4. WP-chat-2-04-inbox-team-home-s2 | IN-PROGRESS | 24 gaps: S2 24 (TPO-inbox-team-48 authors can retrieve scheduled/ended notice records; scheduled tag/model still pending)
-5. WP-chat-2-05-recruiters-settings-audit-s2 | TODO | 20 gaps: S2 17, S3 3
+5. WP-chat-2-05-recruiters-settings-audit-s2 | IN-PROGRESS | 20 gaps: S2 17, S3 3 (recruiter detail S2 validations, actions and follow-ups improved; saved views, inline ownership, bulk parity outstanding)
 6. WP-chat-2-06-campaigns-public-calendar-messages-prof-s3 | TODO | 15 gaps: S3 15
 7. WP-chat-2-07-inbox-team-companies-s3 | TODO | 15 gaps: S3 15
 8. WP-chat-2-08-inbox-team-recruiters-s3 | TODO | 15 gaps: S3 7, S4 8
@@ -51,3 +51,19 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - Continue to skip PUB-auth-public-50/53 (OD-09), dependent disclosure/ZIP features, real provider dispatch, and storage keys until approved and available. All changes are source only in FAST mode; do not mark a release verified from this queue.
 
 - `TPO-companies-08` follow-up: scoped applied/offer aggregates added to company drive service, table and downloadable CSV. Distinct offers by application; not a substitute for legacy placement-policy outcome verification.
+
+## FAST mode checkpoint, follow-up round
+
+- `PUB-auth-public-43`: invitation code label identifies invited email and clarifies ownership check (source-only follow-up commit).
+- `TPO-inbox-team-48`: scheduledAt field projected; Yours now shows scheduled/ended notices; editing audience/when and lifecycle parity still pending.
+- `TPO-recruiters-10`: Added date and Company Memory link in lead detail; full inline company-drive and student-count card still pending.
+- `TPO-recruiters-11`: header Invite/Resend anchor, Create drive and Team talk links; removed incorrect Mark contacted on NOT_NOW; More menu still pending.
+- `TPO-recruiters-21`: Company required, known-company datalist and help in Add recruiter modal; duplicate/draft/edit parity remains.
+- `TPO-recruiters-26`: fixed call outcome choices, quick type buttons, removed WhatsApp and required note for Note; automatic no-answer follow-up and Not interested hand-off remain.
+- `TPO-recruiters-27`: past-date guard, quick follow-up dates, overdue labels and stable date comparison; remaining draft/modal parity pending.
+- `TPO-recruiters-28`: timeline labels and empty state improved; event grouping/system styling remain.
+- `TPO-recruiters-29`: missing lead recovery copy and Engage link in client error; server 404 and draft guards remain distinct.
+- `TPO-recruiters-31`: reason enforced in client and revisit shown as readable date; server-side rule remains unchanged.
+- `TPO-recruiters-33`: opt-out alert, invite guard and disabled outgoing mailto, not an authorization boundary.
+- `TPO-recruiters-23`: import model update was rejected twice during concurrency/safety checks and not applied. Current model already supports 5000 rows, aliases and IMPORT source; xlsx and row-skipping/parity remain.
+- S1 campaign sending and bulk invite engine, non-OTP delivery, targeted notifications and security decision OD-09 remain open. No WP marked DONE.
