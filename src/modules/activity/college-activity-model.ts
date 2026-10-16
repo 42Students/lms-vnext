@@ -8,6 +8,8 @@ const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 }, "Use a valid YYYY-MM-DD date");
 
 export const collegeActivityQuerySchema = z.strictObject({
+  view: z.enum(["IMPORTANT", "EVERYTHING"]).optional(),
+  category: z.enum(["ACADEMIC_SETUP", "PEOPLE_ACCESS", "TEACHING", "PROJECTS"]).optional(),
   module: z.enum(ACTIVITY_MODULES).optional(),
   importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
   eventType: z.string().trim().min(1).max(120).optional(),
@@ -42,6 +44,8 @@ export function collegeActivityHref(
   cursor: { beforeOccurredAt: Date; beforeId: string } | null = null,
 ) {
   const params = new URLSearchParams();
+  if (filter.view) params.set("view", filter.view);
+  if (filter.category) params.set("category", filter.category);
   if (filter.module) params.set("module", filter.module);
   if (filter.importance) params.set("importance", filter.importance);
   if (filter.eventType) params.set("eventType", filter.eventType);
