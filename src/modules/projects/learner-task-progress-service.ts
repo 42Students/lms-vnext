@@ -82,11 +82,11 @@ export async function updateLearnerProjectTaskProgress(
         groupKey: "project:" + scope.project.id,
         dedupeKey: "project-task:" + updated.id + ":learner-status:" + randomUUID(),
       });
-      if (input.status === "BLOCKED") {
+      if (input.status === "BLOCKED" || task.status === "BLOCKED") {
         await notifyActiveProjectMembers(tx, taskEvent.id, {
           projectId: scope.project.id, collegeId: scope.collegeId,
-          roles: ["MENTOR"], title: "Project task blocked",
-          body: "A learner reported a blocker on " + updated.title + ".",
+          roles: ["MENTOR"], title: input.status === "BLOCKED" ? "Project task blocked" : "Task blocker resolved",
+          body: (input.status === "BLOCKED" ? "A learner reported a blocker on " : "A learner resolved a blocker on ") + updated.title + ".",
           actionHref: "/mentor/projects/" + scope.project.id + "?tab=board",
           exceptUserId: context.user.id,
         });
