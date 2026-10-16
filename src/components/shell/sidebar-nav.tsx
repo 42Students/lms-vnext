@@ -27,7 +27,7 @@ export function SidebarNav({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  const [tpoCounts,setTpoCounts]=useState<{requests:number;messages:number;notifications:number}|null>(null);
+  const [tpoCounts,setTpoCounts]=useState<{requests:number;messages:number;notifications:number;team:number|null}|null>(null);
   useEffect(()=>{
    if(!pathname.startsWith("/tpo/"))return;
    let active=true;
@@ -36,7 +36,7 @@ export function SidebarNav({
     try{
      const response=await fetch("/api/tpo/shell-counts",{credentials:"same-origin",cache:"no-store"});
      if(!response.ok)return;
-     const value=await response.json() as {requests:number;messages:number;notifications:number};
+     const value=await response.json() as {requests:number;messages:number;notifications:number;team:number|null};
      if(active)setTpoCounts(value);
     }catch{/* Preserve previous count on transport failure. */}
    };
@@ -120,9 +120,10 @@ export function SidebarNav({
             </span>
             <span>{item.label}</span>
             {tpoCounts&&item.href.startsWith("/tpo/")&&
-             (item.href==="/tpo/requests"||item.href==="/tpo/messages"||item.href==="/tpo/notifications")?(()=>{
+             (item.href==="/tpo/requests"||item.href==="/tpo/messages"||item.href==="/tpo/team"||item.href==="/tpo/notifications")?(()=>{
               const count=item.href==="/tpo/requests"?tpoCounts.requests:
-               item.href==="/tpo/messages"?tpoCounts.messages:tpoCounts.notifications;
+               item.href==="/tpo/messages"?tpoCounts.messages:
+               item.href==="/tpo/team"?tpoCounts.team??0:tpoCounts.notifications;
               return count>0?<span aria-label={count+" pending"} className="ml-auto min-w-6 rounded-full bg-primary-subtle px-2 py-1 text-center text-xs font-semibold text-primary-text">
                {count>99?"99+":count}
               </span>:null;
