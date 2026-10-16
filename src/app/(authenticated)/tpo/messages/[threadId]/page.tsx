@@ -1,0 +1,33 @@
+import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-thread-detail-service";
+
+export default async function TpoRecruiterConversationPage({params}:{
+ params:Promise<{threadId:string}>,
+}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const {threadId}=await params;
+ const data=await getTpoRecruiterThreadDetail(context,threadId);
+ if(!data)notFound();
+ return <main className="space-y-5">
+  <Link href="/tpo/messages" className="text-sm font-semibold text-primary-text">
+   ← Messages
+  </Link>
+  <h1 className="text-xl font-semibold text-foreground">Recruiter conversation</h1>
+  <p className="text-sm text-body">{data.total} messages · Showing the latest 100</p>
+  <section aria-label="Conversation messages" className="space-y-3">
+   {data.messages.length===0?<p role="status">No messages yet.</p>:data.messages.map(item=>
+    <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
+     <p className="text-xs font-semibold text-muted-foreground">
+      {item.senderType==="RECRUITER"?"Recruiter":"Placement cell"} ·
+      {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
+     </p>
+     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground">{item.body}</p>
+    </article>)}
+  </section>
+  <p className="text-xs text-muted-foreground">Opening this page does not mark messages as read.</p>
+ </main>;
+}

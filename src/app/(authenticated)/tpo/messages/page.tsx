@@ -144,7 +144,7 @@ export default async function TpoMessagesPage({
       <PageHeader
         eyebrow="TPO · Communication"
         title="Messages"
-        description="A read-only view of persisted, college-scoped placement communication evidence. Times are displayed in IST."
+        description="Recruiter conversations and placement notifications for your college. Times are displayed in IST."
         actions={
           <div className="flex flex-wrap gap-2">
             <Link
@@ -187,12 +187,8 @@ export default async function TpoMessagesPage({
         {isRecruiterInbox ? (
           <p className="mt-2 text-sm leading-6 text-body">
             Recruiter conversation threads are persisted in
-            the current database. This read-only overview
-            shows participant display names, related jobs,
-            message counts and recruiter unread status.
-            Message bodies are intentionally withheld because
-            they may contain personal contact details and
-            unstructured sensitive information.
+            the current database. This overview shows authorized college recruiter threads.
+            Open a conversation to read its messages and reply.
           </p>
         ) : (
           <p className="mt-2 text-sm leading-6 text-body">
@@ -210,9 +206,7 @@ export default async function TpoMessagesPage({
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
           The outbound email/SMS messaging schema is draft-only.
           No delivery, bounce, sent-message or inbox counts
-          are inferred from it. Notification/message bodies,
-          email addresses, phone numbers and delivery
-          secrets are not displayed.
+          are inferred from it. Notification bodies and private contact details are not exposed in this overview.
         </p>
       </section>
 
@@ -383,7 +377,7 @@ export default async function TpoMessagesPage({
             title="No matching communication records"
             description={
               isRecruiterInbox
-                ? "No persisted recruiter threads match these filters. Message composition and the recruiter drawer are not implemented here."
+                ? "No recruiter threads match these filters. Start a new conversation from Messages."
                 : "No persisted TPO placement notifications match these filters. Recruiter conversations are currently unavailable, not confirmed empty."
             }
           />
@@ -427,7 +421,8 @@ export default async function TpoMessagesPage({
                     </td>
 
                     <td className="px-4 py-4 text-body">
-                      {item.subject}
+                      {isRecruiterInbox ? <Link className="font-semibold text-primary-text hover:underline"
+                        href={"/tpo/messages/" + encodeURIComponent(item.id)}>{item.subject} →</Link> : item.subject}
                     </td>
 
                     <td className="px-4 py-4">
