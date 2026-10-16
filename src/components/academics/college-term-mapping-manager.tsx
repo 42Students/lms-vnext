@@ -81,7 +81,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
 
   function updateMapping(id: string, creditsValue: string, position: number) {
     const parsed = collegeTermCourseUpdateSchema.safeParse({
-      credits: creditsValue.trim() === "" ? null : Number(creditsValue), position,
+      credits: creditsValue.trim() === "" ? 3 : Number(creditsValue), position,
     });
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Check mapping details.");
@@ -183,7 +183,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   updateMapping(row.id, editing.credits, Number(editing.position));
                 }}>
                 <label className="text-xs">Credits
-                  <input type="number" min={0} max={30} step={1} value={editing.credits}
+                  <input type="number" min={1} max={10} step={1} required value={editing.credits}
                     onChange={event => setEditing({ ...editing, credits: event.target.value })}
                     className="block min-h-9 w-24 rounded border border-border bg-surface px-2" />
                 </label>
@@ -203,13 +203,13 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
               <div className="flex flex-wrap gap-2">
                 <button type="button" disabled={pending} className="min-h-9 rounded border border-border px-2 text-xs"
                   onClick={() => setEditing({
-                    id: row.id, credits: row.credits === null ? "" : String(row.credits),
+                    id: row.id, credits: row.credits === null ? "3" : String(row.credits),
                     position: String(orderedPeers(row).findIndex(item => item.id === row.id) + 1),
                   })}>Edit</button>
                 <button type="button" disabled={pending || orderedPeers(row)[0]?.id === row.id}
                   className="min-h-9 rounded border border-border px-2 text-xs"
                   aria-label={"Move " + row.courseName + " up"}
-                  onClick={() => updateMapping(row.id, row.credits === null ? "" : String(row.credits),
+                  onClick={() => updateMapping(row.id, row.credits === null ? "3" : String(row.credits),
                     orderedPeers(row).findIndex(item => item.id === row.id))}>↑</button>
                 <button type="button" disabled={pending || orderedPeers(row).at(-1)?.id === row.id}
                   className="min-h-9 rounded border border-border px-2 text-xs"
