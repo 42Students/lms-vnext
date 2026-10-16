@@ -20,7 +20,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 1. WP-chat-7-01-profile-misc-home-drives-s1 | IN-PROGRESS | 16 gaps: S1 6, S2 10; live recruiter requests and learner profile fixes pending test runs; private-evidence uploads, selection-list migration and applicant data-sharing still unresolved
 2. WP-chat-7-02-home-drives-home-courses-s2 | TODO | 20 gaps: S2 15, S3 5
-3. WP-chat-7-03-calendar-messages-prof-profile-misc-s3 | TODO | 16 gaps: S3 16
+3. WP-chat-7-03-calendar-messages-prof-profile-misc-s3 | IN-PROGRESS | 16 gaps: S3 16
 4. WP-chat-7-04-home-drives-s3 | TODO | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | TODO | 15 gaps: S3 2, S4 13
 
@@ -30,3 +30,9 @@ The first WP remains IN-PROGRESS; none of its remaining dependent S1 gaps should
 before real PostgreSQL and UI tests pass. The builder-only branch contains the changes
 listed in the WP checkpoint. Other four WPs remain TODO and were not started in this
 round. Shared shell paths remain owned by chat-9 and were not edited during this round.
+
+## Chat-7 current round note (2026-10-17)
+
+- REC-home-drives-R06: legacy recruiter tab URL implementation committed with focused unit tests; browser/typecheck not run.
+- REC-calendar-messages-profile-15: recruiter composer exact validation/failure copy authored with focused unit tests; API/browser checks not run.
+- WP01 remains IN-PROGRESS pending owner security/schema policy work and real PostgreSQL verification. WP03 and WP05 contain source work but remain not acceptance-closed.

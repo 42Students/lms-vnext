@@ -217,3 +217,8 @@ Browser script needed (`scripts/verify/pages/recruiter-calendar-messages-profile
 - vNext not-hiring/unsubscribe side effects (NOT_NOW for 6 months, hash cleared, TPO bell) and the remaining accept side effects (gap 43): read `tpo-recruiter-invite-service.ts` `answerInvite`-style functions and the second half of `recruiter-invite-otp-accept-service.ts` (not read to the end in this pass), then run the invite on local data.
 - Sign-in auto-accepting a pending invite on the college address (gap 46): read the vNext recruiter sign-in resolver and test with an existing account.
 - Legacy rendering details not read in the stack (spacing, antd breakpoints) were not confirmed visually; the stack was not run.
+
+
+## REC-calendar-messages-profile-15 implementation note (2026-10-17)
+
+The recruiter thread composer now validates empty/over-limit messages with the legacy strings "Write a message first" and "Keep a message under 4000 characters" before sending. The failure notice uses "Could not send"; the refresh-failure branch uses "Message sent, but the conversation could not refresh. Retry to load the latest messages." HTTP permission errors continue to explain access denial. Exact-string unit tests were authored. Final closure requires real POST/refresh/browser verification.

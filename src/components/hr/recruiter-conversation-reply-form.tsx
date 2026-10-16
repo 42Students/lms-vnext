@@ -1,7 +1,7 @@
 "use client";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
-import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
+import {hrReplySuccess,hrReplyErrorMessage,hrReplyValidationError,HR_REPLY_REFRESH_FAILED,HR_REPLY_SEND_FAILED} from "@/modules/placements/hr-conversation-send-feedback-model";
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const router=useRouter();
  const [body,setBody]=useState("");
@@ -11,14 +11,15 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   event.preventDefault();
   if(sending)return;
   const message=body.trim();
-  if(message.length<1||message.length>4000){
-   setNotice("Enter a message between 1 and 4,000 characters.");
+  const invalid=hrReplyValidationError(message);
+  if(invalid){
+   setNotice(invalid);
    return;
   }
   setSending(true);
   setNotice("");
   let confirmed=false;
-  let feedback="The message was not confirmed as sent. Check the thread before retrying.";
+  let feedback=HR_REPLY_SEND_FAILED;
   try{
    const form=new FormData();
    form.set("body",message);
@@ -30,12 +31,13 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
     redirectPath,threadId});
    if(!confirmed)feedback=hrReplyErrorMessage(response.status);
   }catch{
-   feedback="Could not reach the server. Check this conversation before retrying.";
+   feedback=HR_REPLY_SEND_FAILED;
   }
   if(confirmed){
    setBody("");
-   setNotice("Message accepted. Refreshing the conversation.");
-   router.refresh();
+   setNotice("Message sent");
+   try { router.refresh(); }
+   catch { setNotice(HR_REPLY_REFRESH_FAILED); }
   }else setNotice(feedback);
   setSending(false);
  }
@@ -43,7 +45,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   <h2 className="font-semibold text-foreground">Reply to placement cell</h2>
   <label className="grid gap-2 text-sm text-body">Message
    <textarea value={body} onChange={event=>setBody(event.target.value)}
-    required maxLength={4000} rows={4} disabled={sending}
+    maxLength={4000} rows={4} disabled={sending}
     className="rounded-md border border-border bg-surface p-3"
     placeholder="Write a message to the placement cell"/>
   </label>
