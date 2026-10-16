@@ -886,6 +886,12 @@ export function ProjectWorkspace({
       </section> : null}
 
       {show("delivery") ? <section className="space-y-3">
+        {mode === "LEARNER" && workspace.members.filter(member => member.role === "LEARNER").length > 1 ? (
+          <div role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+            Team submission: this final delivery is shared with everyone on your project team.
+            Edits and submission status are visible to all team members.
+          </div>
+        ) : null}
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Final submission
