@@ -251,7 +251,7 @@ export function TpoCompanyMemoryWorkspace({
                       <tr className="border-b border-border last:border-0" key={drive.id}>
                         <td className="py-3">
                           <Link className="text-primary-text hover:underline"
-                            href={"/tpo/placements/" + encodeURIComponent(drive.id)}>
+                            href={"/tpo/placements/jobs/" + encodeURIComponent(drive.id)}>
                             {drive.jobTitle}
                           </Link>
                         </td>
