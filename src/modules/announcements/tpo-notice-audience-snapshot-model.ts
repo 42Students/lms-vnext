@@ -8,8 +8,8 @@ export const tpoNoticeAudienceSelectionSchema=z.discriminatedUnion("kind",[
   applicants:z.enum(["ALL_APPLICANTS","STILL_IN_DRIVE"])}),
 ]);
 /** Never silently turn a targeted preview into a college-wide publication. */
-export function canPublishTpoNoticeWithCurrentStorage(kind:string):boolean{
- return kind==="COLLEGE";
+export function canPublishTpoNoticeWithCurrentStorage(kind:string,registered=false):boolean{
+ return kind==="COLLEGE"||(registered&&["PLACEMENTS","BATCHES","BRANCHES","DRIVE"].includes(kind));
 }
 /** Frozen UUID-only recipient snapshot, prepared after college authorization. */
 export function freezeTpoNoticeRecipients(membershipIds:readonly string[]){
