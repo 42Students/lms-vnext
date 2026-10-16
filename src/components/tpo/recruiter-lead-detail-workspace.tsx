@@ -457,6 +457,11 @@ export function RecruiterLeadDetailWorkspace({
             <section className="space-y-4 rounded-lg border border-border bg-surface p-5">
               <h2 className="text-lg font-semibold">Log an interaction</h2>
               <form className="space-y-3" onSubmit={e => void addActivity(e)}>
+                <div className="flex flex-wrap gap-2" role="group" aria-label="Interaction type">
+                  {ACTIVITY_TYPES.map(type=><button type="button" key={type}
+                    className={logType===type?primary:button} aria-pressed={logType===type}
+                    onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</button>)}
+                </div>
                 <label className="block text-sm">Type
                   <select className={input + " mt-1"} value={logType}
                     onChange={e => setLogType(e.target.value as typeof logType)}>
