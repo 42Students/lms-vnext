@@ -23,6 +23,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
  const router=useRouter();
  const [pending,setPending]=useState<FacultyAssessmentLifecycleAction|null>(null);
  const [saved,setSaved]=useState(false);
+ const [lastAction,setLastAction]=useState<FacultyAssessmentLifecycleAction|null>(null);
  const [error,setError]=useState<string|null>(null);
  const actions=facultyAssessmentLifecycleActions({kind,status,owned});
  if(!actions.length)return null;
@@ -48,7 +49,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
        setError(await courseApiError(response));
        return;
      }
-     setSaved(true);
+     setSaved(true);setLastAction(action);
      router.refresh();
    }catch(err){
      setError(err instanceof Error?err.message:"The assessment could not be changed. Refresh and try again.");
@@ -60,10 +61,10 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
      disabled={pending!==null||saved}
      onClick={()=>void run(action)}>
      {pending===action?"Saving…":action==="CLOSE"?"Close quiz":
-       action==="PUBLISH"?"Publish":"Archive"}
+       action==="PUBLISH"?"Publish":"Delete"}
    </Button>)}
    {saved?<span role="status" className="text-xs text-success">
-     Change saved. Refreshing Section state…
+     {lastAction==="ARCHIVE"?(kind==="QUIZ"?"Quiz deleted successfully.":"Assignment deleted."):"Change saved. Refreshing Section state…"}
    </span>:null}
    {error?<span role="alert" className="text-xs font-semibold text-error">{error}</span>:null}
  </div>;
