@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { TPO_OWNER_PAGE_COPY } from "@/modules/placements/tpo-page-copy";
 import {filterEngageRoster,type EngageRosterFilters} from "@/modules/placements/tpo-engage-filter-model";
-import {recruiterLeadsCsv} from "@/modules/placements/tpo-recruiter-export-model";
+import {recruiterTableExportCsv,recruiterTableExportGrid,recruiterTableExportTsv} from "@/modules/placements/tpo-recruiter-export-model";
+import {recruiterLeadsXlsx} from "@/modules/placements/tpo-recruiter-xlsx-export";
 import { RECRUITER_STAGE_LEGACY_LABELS, type TpoRecruiterLeadStage } from "@/modules/placements/tpo-recruiter-lead-policy";
 import { engageNeedsCounts, matchesEngageNeed, type EngageNeed } from "@/modules/placements/tpo-engage-needs-model";
 import {
@@ -216,20 +217,23 @@ export function RecruiterLeadsWorkspace({
     matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
     [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter]);
 
-  function exportRows(selection:"shown"|"selected"){
+  function exportRows(selection:"shown"|"selected",format:"csv"|"xlsx"){
     const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
     if(chosen.length===0){setExportFeedback("Select recruiters first.");return;}
-    const blob=new Blob([recruiterLeadsCsv(chosen)],{type:"text/csv;charset=utf-8"});
+    const grid=recruiterTableExportGrid(chosen);
+    const blob=format==="xlsx"?recruiterLeadsXlsx(grid.headers,grid.values):
+      new Blob([recruiterTableExportCsv(chosen)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
-    link.href=url;link.download="recruiter-leads.csv";link.click();
+    link.href=url;link.download="recruiter-leads"+(query.trim()?"-filtered":"")+"."+format;
+    document.body.appendChild(link);link.click();link.remove();
     URL.revokeObjectURL(url);
-    setExportFeedback(chosen.length+" recruiter leads exported");
+    setExportFeedback(chosen.length+" recruiter leads exported to "+format.toUpperCase());
   }
   async function copyRows(){
     const chosen=selectedIds.length?visible.filter(row=>selectedIds.includes(row.id)):visible;
     if(!chosen.length){setExportFeedback("No recruiters to copy.");return;}
-    try{await navigator.clipboard.writeText(recruiterLeadsCsv(chosen));
+    try{await navigator.clipboard.writeText(recruiterTableExportTsv(chosen));
       setExportFeedback(chosen.length+" recruiter leads copied");
     }catch{setExportFeedback("Couldn't copy rows. Use Export CSV.");}
   }
@@ -492,10 +496,15 @@ export function RecruiterLeadsWorkspace({
           {view !== "companies" ? (
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
-                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown")}>Export CSV</button>
+                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
                 <button type="button" className={buttonStyle} disabled={selectedIds.length===0}
-                  onClick={()=>exportRows("selected")}>Export selected ({selectedIds.length})</button>
+                  onClick={()=>exportRows("selected","csv")}>Export selected ({selectedIds.length})</button>
+                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","xlsx")}>Export Excel</button>
+                <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
+                  onClick={()=>exportRows("selected","xlsx")}>Export selected Excel</button>
                 <button type="button" className={buttonStyle} onClick={()=>void copyRows()}>Copy rows</button>
+                {selectedIds.length>0?<button type="button" className={buttonStyle}
+                  onClick={()=>setSelectedIds([])}>Clear selection</button>:null}
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               </div>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
