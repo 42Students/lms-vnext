@@ -133,7 +133,7 @@ export function previewTpoLeadCsv(csv: string) {
    designation:"designation",title:"designation",source:"source",foundThrough:"source",
   };
   const normalized=header?.map(value=>headerAliases[value]??"");
-  if(!normalized||TPO_LEAD_CSV_HEADERS.some(expected=>
+  if(!header||!normalized||TPO_LEAD_CSV_HEADERS.some(expected=>
    normalized.filter(actual=>actual===expected).length!==1)){
     throw new Error("CSV_HEADER_MISMATCH");
   }
