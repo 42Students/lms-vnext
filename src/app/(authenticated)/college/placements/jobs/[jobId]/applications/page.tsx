@@ -4,7 +4,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPORT_CAP } from "@/modules/placements/college-drive-applications-model";
-import { listCollegeDriveApplications } from "@/modules/placements/college-drive-applications-service";
+import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
+import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
 import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
@@ -22,7 +23,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   ]);
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={"Applications · " + data.drive.title}
-      description="Read-only scoped applicant register. Private fields are limited to the TPO-approved roster."
+      description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-primary-text underline">Drive overview</Link>} />
     <form method="get" className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-2 xl:grid-cols-4">
       <label className="grid gap-1 text-sm">Name, email, roll or role
@@ -74,23 +75,9 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
         className="font-semibold text-primary-text underline">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
-    <section className="overflow-x-auto rounded-xl border border-border">
-      {data.items.length?<table className="w-full min-w-[45rem] text-left text-sm">
-        <thead><tr className="border-b border-border bg-muted">
-          <th className="p-3">Student</th><th className="p-3">Email</th><th className="p-3">Roll</th><th className="p-3">Role</th><th className="p-3">Source</th>
-          <th className="p-3">Application</th><th className="p-3">Screening</th>
-        </tr></thead>
-        <tbody>{data.items.map(item=><tr key={item.id} className="border-b border-border">
-          <td className="p-3">{item.name ?? "Unnamed learner"}</td>
-          <td className="p-3">{item.email ?? "—"}</td>
-          <td className="p-3">{item.rollNumber ?? "Not recorded"}</td>
-          <td className="p-3">{item.roleTitle}</td><td className="p-3">{item.source}</td><td className="p-3">{item.status}</td>
-          <td className="p-3">{item.screening ?? "Not recorded"}</td>
-        </tr>)}</tbody>
-      </table>:<p className="p-6 text-sm text-body">
-        {data.total===0?"No persisted applications match these filters.":"No rows on this page; choose an earlier page."}
-      </p>}
-    </section>
+    {!data.storageReady?<p role="status" className="rounded border border-border bg-surface p-5 text-sm">
+      Application stage actions are awaiting migration registration. The existing scoped applicant register remains available.</p>:
+      <CollegeApplicationPipelineControls jobId={jobId} rows={data.items}/>}
     <nav aria-label="Application pagination" className="flex justify-between gap-3 text-sm">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex gap-3">
         {query.page>1?<Link href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
