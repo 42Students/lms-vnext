@@ -1130,6 +1130,9 @@ export function ProjectWorkspace({
                           </p>
                         ) : null}
                       </div>
+                      {resource.visibility === "MENTOR_ONLY" && mode !== "LEARNER" ? (
+                        <StatusBadge tone="neutral">Mentors only</StatusBadge>
+                      ) : null}
                       {resource.required ? (
                         <StatusBadge tone="warning">
                           Required
