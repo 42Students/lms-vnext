@@ -238,6 +238,7 @@ export async function submitCourseAssignment(
           .from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
         if(!policy||!allowedAssignmentSubmissionPart(policy.methods,{
           kind:input.submissionType,
+          linkKind:input.submissionType==="LINK"?input.linkKind:undefined,
           fileMimeTypes:input.submissionType==="FILE"?
             [preparedFile?.attestation.contentType??""]:[],
         }))throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
