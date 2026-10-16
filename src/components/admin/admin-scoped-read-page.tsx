@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
 import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -6,13 +7,13 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename}:{
+import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions}:{
  title:string;path:string;description:string;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
- exportPath?:string;exportFilename?:string;
+ exportPath?:string;exportFilename?:string;renderRowActions?:(row:SuperAdminReadRow)=>ReactNode;
 }) {
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
@@ -58,6 +59,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     </div>
     <p className="break-words text-sm text-body">{row.subtitle}</p>
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
+    {renderRowActions?<div className="border-t border-border pt-3">{renderRowActions(row)}</div>:null}
     {row.href?<Link href={row.href} className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open details →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
