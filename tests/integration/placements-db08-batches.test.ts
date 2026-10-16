@@ -282,11 +282,12 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     expect(results.rows).toHaveLength(1);
     expect(results.rows[0].metadata.appRecipients).toBe(1);
     const delivered = await pool.query(
-      "SELECT user_id,title FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1 AND event_type='BATCH_INVITED')",
+      "SELECT user_id,title,action_href FROM in_app_notifications WHERE event_id IN (SELECT id FROM activity_events WHERE subject_id=$1 AND event_type='BATCH_INVITED')",
       [a.cohortId],
     );
     expect(delivered.rows).toHaveLength(1);
     expect(delivered.rows[0].title).toBe("Placement registration is open");
+    expect(delivered.rows[0].action_href).toBe("/learn/placements");
   });
 
   it("tells unregistered eligible students when reopening an expired invitation", async () => {
