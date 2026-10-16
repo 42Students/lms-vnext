@@ -8,7 +8,7 @@ export function TpoBatchInlineDecision({membershipId,expected}:{membershipId:str
  const [decision,setDecision]=useState<Decision>(expected.status??"NOT_DECIDED");
  const [reason,setReason]=useState(expected.reason??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
- const valid=decision!=="INELIGIBLE"||(reason.trim().length>0&&reason.trim().length<=200);
+ const valid=decision!=="INELIGIBLE"||(reason.trim().length>=3&&reason.trim().length<=200);
  async function save(){
   if(!valid||busy)return;setBusy(true);setError("");
   try{
@@ -35,6 +35,13 @@ export function TpoBatchInlineDecision({membershipId,expected}:{membershipId:str
    <input aria-label="Reason for ineligibility" className="mt-1 min-h-10 w-full rounded border border-border bg-surface px-2" maxLength={200}
     value={reason} disabled={busy} onChange={event=>setReason(event.target.value)}/>
   </label>:null}
+  {decision==="INELIGIBLE"?<div className="flex w-full flex-wrap gap-1" role="group" aria-label="Common ineligibility reasons">
+    {["Academic criteria not met","Not participating","Missing required documents","Disciplinary restriction","Other"].map(preset=>
+      <button key={preset} type="button" disabled={busy}
+        onClick={()=>setReason(preset==="Other"?"":preset)}
+        className="min-h-9 rounded-md border border-border px-2 text-xs text-body">{preset}</button>)}
+    {!valid?<p role="status" className="w-full text-xs text-error">Enter a reason of at least 3 characters.</p>:null}
+  </div>:null}
   <button type="button" onClick={()=>void save()} disabled={!valid||busy}
    className="min-h-10 rounded border border-primary px-3 text-sm disabled:opacity-50">
    {busy?"Saving…":"Save decision"}</button>
