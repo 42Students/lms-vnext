@@ -10,6 +10,7 @@ export type LearnerPlacementJourneyItem = {
   jobTitle: string;
   companyName: string;
   applicationStatus: string;
+  driveStatus?: string;
   offerStatus?: string | null;
   channel: string;
   submittedAt: Date;
@@ -204,6 +205,15 @@ export function LearnerPlacementJourney({
               </div>
             </div>
 
+            {item.driveStatus === "CANCELLED" ? (
+              <aside role="alert" className="mt-4 rounded-lg border border-warning bg-surface p-4">
+                <p className="font-semibold text-foreground">This drive was cancelled</p>
+                <p className="mt-1 text-sm text-body">The placement cell has cancelled this drive. Any published reason will appear in its college notice. Your application history remains available.</p>
+                <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Check placement cell notices</Link>
+              </aside>
+            ) : item.driveStatus === "CLOSED" ? (
+              <p role="status" className="mt-4 rounded-lg border border-border p-3 text-sm text-body">This drive has closed. Your recorded application and round results remain available.</p>
+            ) : null}
             {item.screening
               .candidateMessage ? (
               <div className="mt-4 rounded-lg border border-border bg-muted px-4 py-3">
