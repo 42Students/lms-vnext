@@ -480,6 +480,16 @@ export const learnerProfileDocumentSchema = z
         });
       })
       .default([]),
+    // LEARNER-profile-misc-R02: explicit learner-owned placement preferences.
+    jobPreferences: z.object({
+      rolePreferences:z.array(z.string().trim().min(1).max(100)).max(20).default([]),
+      specificRolePreference:z.string().trim().max(200).default(""),
+      workShiftPreference:z.enum(["","DAY","NIGHT","ROTATIONAL","FLEXIBLE"]).default(""),
+      preferredEmploymentCity:z.string().trim().max(120).default(""),
+    }).strict().default({
+      rolePreferences:[],specificRolePreference:"",workShiftPreference:"",
+      preferredEmploymentCity:"",
+    }),
     metadata: z
       .array(metadataEntrySchema)
       .max(50)
