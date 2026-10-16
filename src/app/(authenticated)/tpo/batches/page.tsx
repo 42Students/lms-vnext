@@ -2,6 +2,8 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
+import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-directory-counts-service";
+import { batchEligibilityShare } from "@/modules/placements/tpo-batch-eligibility-summary-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { summarizeTpoBatchStates } from "@/modules/placements/tpo-batch-kpi-model";
 import { tpoBatchNextAction } from "@/modules/placements/tpo-batch-next-action-model";
@@ -27,10 +29,12 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  if(!programParsed.success)return <div role="alert">Invalid program filter. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!sortParsed.success)return <div role="alert">Invalid batch sorting. <Link href="/tpo/batches">Clear filters</Link></div>;
  if(!parsed.success)return <div role="alert">Invalid search. <Link href="/tpo/batches">Clear search</Link></div>;
- const data=await listTpoBatches(await getCurrentRequestContext());
+ const context=await getCurrentRequestContext();
+ const data=await listTpoBatches(context);
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(filterTpoBatchDirectory(data.batches,data.ready?parsed.data:{...parsed.data,state:"ALL"}),programParsed.data),departmentParsed.data);
  const batches=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(selected,deadlineParsed.data,new Date()):selected,sortParsed.data);
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
+ const eligibility=await listTpoBatchCardEligibility(context,batchPage.items.map(batch=>batch.id));
  const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data};
  const programs=listTpoBatchPrograms(data.batches);
  const departments=listTpoBatchDepartments(data.batches);
@@ -70,7 +74,31 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     <h2 className="break-words font-semibold">{b.name}</h2><p className="text-sm">{b.program} · {b.department}</p>
     <p className="text-xs text-muted-foreground">{data.ready?batchDirectoryState(b):"Lifecycle pending"}</p>
     <p className="text-xs text-muted-foreground">{tpoBatchDeadlineLabel(b.deadline,data.ready)}</p>
-    <p className="text-sm text-muted-foreground">Eligibility split and journey counts: open Students to review verified records.</p>
+    {(() => {
+      const summary = eligibility.get(b.id);
+      if (!summary) return <p role="status" className="text-sm">Eligibility counts unavailable.</p>;
+      const split = [
+        { key: "eligible", label: "Eligible", count: summary.eligible, color: "bg-success" },
+        { key: "ineligible", label: "Ineligible", count: summary.ineligible, color: "bg-error" },
+        { key: "undecided", label: "Not decided", count: summary.undecided, color: "bg-muted-foreground" },
+        { key: "review", label: "Needs review", count: summary.needsReview, color: "bg-warning" },
+      ] as const;
+      return <div className="space-y-2">
+        <p className="text-xs text-muted-foreground">{summary.assessed} active learners in batch</p>
+        <dl className="grid grid-cols-2 gap-1 text-xs">
+          {split.map(part=><div key={part.key}>
+            <dt className="text-muted-foreground">{part.label}</dt>
+            <dd className="font-semibold tabular-nums">{part.count}</dd>
+          </div>)}
+        </dl>
+        <div role="img" aria-label={split.map(part=>part.label+": "+part.count).join(", ")}
+          className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
+          {split.map(part=><div key={part.key} className={part.color}
+            style={{width: batchEligibilityShare(part.count,summary.assessed)+"%"}} />)}
+        </div>
+        {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
+      </div>;
+    })()}
     <Link href={"/tpo/batches/"+b.id} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready)}</Link>
    </li>)}</ul>}
  </main>;
