@@ -8,6 +8,7 @@ import {
   isNotNull,
   lte,
   or,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 
@@ -42,7 +43,7 @@ import { placementBatchRegistrations } from "@/db/schema/placement-registration"
 import {placementBatchLifecycles} from "@/db/schema/placement-batches";
 import { placementExternalOffers } from "@/db/schema/placement-external";
 
-import { sortTpoRequestRows } from "@/modules/placements/tpo-global-requests-model";
+import { sortTpoRequestRows,tpoRequestUrgent } from "@/modules/placements/tpo-global-requests-model";
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
 
@@ -97,7 +98,7 @@ export const tpoStudentRequestsQuerySchema = z
       ])
       .optional(),
     requestType: z.enum(["APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"]).optional(),
-    sort: z.enum(["NEWEST_FIRST","OLDEST_FIRST"]).optional(),
+    sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).optional(),
     requestedBefore:z.date().optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
@@ -874,6 +875,9 @@ export type TpoStudentRequestView = {
   companyName: string;
   roundId: string | null;
   offerId: string | null;
+  nextRoundAt: Date | null;
+  nextRoundName: string | null;
+  urgent: boolean;
 };
 
 export type TpoStudentRequestSummary = {
@@ -907,9 +911,19 @@ export async function listTpoStudentRequests(
       input.collegeId,
     );
 
+  const asOf=new Date();
   const rows = await getDb()
     .select({
       id: placementLearnerRequests.id,
+      nextRoundAt:sql<Date|null>`(select min(next_round.scheduled_at) from placement_job_rounds next_round
+        where next_round.job_id = ${placementJobs.id}
+        and next_round.status = 'SCHEDULED'
+        and next_round.scheduled_at >= ${asOf.toISOString()}::timestamptz)`,
+      nextRoundName:sql<string|null>`(select next_round.name from placement_job_rounds next_round
+        where next_round.job_id = ${placementJobs.id}
+        and next_round.status = 'SCHEDULED'
+        and next_round.scheduled_at >= ${asOf.toISOString()}::timestamptz
+        order by next_round.scheduled_at, next_round.id limit 1)`,
       requestType:
         placementLearnerRequests.requestType,
       status: placementLearnerRequests.status,
@@ -1041,7 +1055,7 @@ export async function listTpoStudentRequests(
   });
 
   const start = (input.page - 1) * input.pageSize;
-  const ordered = sortTpoRequestRows(filtered,input.sort ?? "NEWEST_FIRST");
+  const ordered = sortTpoRequestRows(filtered,input.sort ?? "URGENCY_FIRST",asOf);
 
   const requests: TpoStudentRequestView[] =
     ordered
@@ -1064,6 +1078,9 @@ export async function listTpoStudentRequests(
         companyName: row.companyName,
         roundId: row.roundId,
         offerId: row.offerId,
+        nextRoundAt: row.nextRoundAt,
+        nextRoundName: row.nextRoundName,
+        urgent:tpoRequestUrgent(row,asOf),
       }));
 
   return {
