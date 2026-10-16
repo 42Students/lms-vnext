@@ -1,10 +1,11 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, exists, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, learnerProfiles, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementJobs, users,
+  cohorts, departments, learnerProgramEnrollments, programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
@@ -39,6 +40,8 @@ export async function listCollegeDriveApplications(
   const source = db.select({
     id: placementApplications.id,
     name: users.displayName,
+    email: users.email,
+    source: placementApplications.channel,
     rollNumber: learnerProfiles.rollNumber,
     roleTitle: placementJobRoleOptions.title,
     status: placementApplications.status,
@@ -59,11 +62,25 @@ export async function listCollegeDriveApplications(
     .where(and(
       eq(placementApplications.jobId, jobId),
       query.status === "ALL" ? undefined : eq(placementApplications.status, query.status),
+      query.source === "ALL" ? undefined : eq(placementApplications.channel,query.source),
+      query.departmentId||query.programId||query.cohortId ? exists(
+        db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+          .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+          .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+          .innerJoin(departments,eq(departments.id,programs.departmentId))
+          .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+            eq(learnerProgramEnrollments.status,"ACTIVE"),
+            eq(departments.collegeId,collegeId),
+            query.departmentId?eq(departments.id,query.departmentId):undefined,
+            query.programId?eq(programs.id,query.programId):undefined,
+            query.cohortId?eq(cohorts.id,query.cohortId):undefined,
+          ))) : undefined,
       query.screening === "ALL" ? undefined
         : query.screening === "UNRECORDED" ? isNull(placementApplicationScreenings.applicationId)
         : eq(placementApplicationScreenings.status, query.screening),
       query.q ? or(
         ilike(users.displayName, pattern(query.q)),
+        ilike(users.email, pattern(query.q)),
         ilike(learnerProfiles.rollNumber, pattern(query.q)),
         ilike(placementJobRoleOptions.title, pattern(query.q)),
       ) : undefined,
