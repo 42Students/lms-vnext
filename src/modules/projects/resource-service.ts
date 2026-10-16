@@ -84,7 +84,7 @@ export async function createProjectResource(
   rawInput: CreateProjectResourceInput,
 ) {
   const scope =
-    await requireProjectLifecycleAccess(
+    await requireProjectReadAccess(
       context,
       projectIdInput,
     );
@@ -92,6 +92,10 @@ export async function createProjectResource(
     createProjectResourceInputSchema.parse(
       rawInput,
     );
+  if (!["ADMIN","MENTOR","LEARNER"].includes(scope.access))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  if(scope.access === "LEARNER" && (input.required || input.visibility === "MENTOR_ONLY"))
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const db = getDb();
 
   try {
@@ -107,6 +111,8 @@ export async function createProjectResource(
         throw new ProjectsServiceError("PROJECT_NOT_FOUND");
       }
       ensureMutableProject(project.status);
+      if(scope.access==="LEARNER" && project.status!=="ACTIVE")
+        throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
 
       const [latest] = await tx
         .select({ sequence: projectResources.sequence })
