@@ -1,0 +1,21 @@
+import Link from "next/link";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { getPlacementJob } from "@/modules/placements/job-service";
+import { PageHeader } from "@/components/ui/page-header";
+export default async function DriveSettingsPage({params}:{params:Promise<{jobId:string}>}){
+ const {jobId}=await params;
+ const context=await getCurrentRequestContext();
+ const job=await getPlacementJob(context,jobId);
+ const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
+ return <div className="space-y-4">
+  <PageHeader eyebrow="Super Admin · Drive workspace" title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
+  <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+   <h2 className="font-semibold">{job.title}</h2>
+   <p className="text-sm text-body">Status: {job.status}</p>
+   <p className="text-sm text-body">Application deadline: {job.applicationDeadline?.toISOString().slice(0,10)??"Not configured"}</p>
+   <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
+   <Link href={base} className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open drive controls →</Link>
+  </section>
+  <Link href="/admin/placements" className="inline-flex min-h-10 items-center font-semibold text-primary-text">Platform placement policy →</Link>
+ </div>;
+}
