@@ -156,6 +156,9 @@ export function HrDriveDraftForm({
         setNotice("Could not verify the saved request. Check Drives before retrying.");
         return;
       }
+      // REC-home-drives-29: a submitted request is no longer an unsent local draft.
+      try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
+      catch{/* Successful server submit must not depend on browser storage. */ }
       window.location.assign("/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING");
     }catch{
       setNotice("Request status could not be confirmed. Your draft is preserved; check Drives before resending.");
