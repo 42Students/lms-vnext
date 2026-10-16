@@ -78,7 +78,13 @@ export default async function LearnerPlacementApplicationsPage() {
         <Link href="/learn/my-placements/applications" className="ml-2 font-semibold text-primary-text underline">Retry round shortcuts</Link>
       </p> : null}
       <Suspense fallback={<p className="text-sm text-body">Loading application filters…</p>}>
-        <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks} />
+        <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}
+          scheduledRounds={rounds.map(row=>({
+            applicationId:row.applicationId,roundId:row.roundId,roundName:row.roundName,
+            scheduledAt:(row.exception?.scheduledAt??row.scheduledAt)?.toISOString()??null,
+            mode:row.exception?.mode??row.mode,venue:row.exception?.venue??row.venue,
+            isRescheduled:Boolean(row.exception),
+          }))}/>
       </Suspense>
     </div>
   );
