@@ -4,9 +4,10 @@ import {useRouter} from "next/navigation";
 type Slot={id:string;startsAt:string;endsAt:string;room:string;panel:string|null;status:string;
  applicationId:string|null;version:number};
 type Learner={applicationId:string;name:string|null;roll:string|null};
+type Reschedule={id:string;applicationId:string;name:string|null;reason:string;requestedAt:string};
 type Proposal={id:string;startsAt:string;endsAt:string;mode:string;meetingLocation:string|null;panelLabel:string|null;version:number};
-export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterProposals}:{
- jobId:string;roundId:string;slots:Slot[];roster:Learner[];recruiterProposals:Proposal[];
+export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterProposals,reschedules}:{
+ jobId:string;roundId:string;slots:Slot[];roster:Learner[];recruiterProposals:Proposal[];reschedules:Reschedule[];
 }){
  const router=useRouter();const [date,setDate]=useState("");const [rooms,setRooms]=useState("Room 1");
  const [minutes,setMinutes]=useState(30);const [gap,setGap]=useState(5);const [count,setCount]=useState(8);
@@ -16,6 +17,8 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
  const [fromRoll,setFromRoll]=useState("");const [toRoll,setToRoll]=useState("");
  const [bulkRoom,setBulkRoom]=useState("");
  const [venue,setVenue]=useState<Record<string,string>>({});
+ const [requestTarget,setRequestTarget]=useState<Record<string,string>>({});
+ const [requestReason,setRequestReason]=useState<Record<string,string>>({});
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/interview-slots";
  async function action(body:Record<string,unknown>){
   if(busy)return;
@@ -82,6 +85,33 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     Previewed · Assign room
    </button>
   </div>
+  {reschedules.length?<section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+   <h2 className="font-semibold">Pending reschedule requests · {reschedules.length}</h2>
+   <p className="text-sm text-body">Move a learner to an available slot, or Keep the current booking and answer the request. Decisions and student notifications are recorded.</p>
+   {reschedules.map(req=><div key={req.id} className="space-y-3 rounded border border-border p-3">
+    <p className="text-sm"><strong>{req.name??"Learner"}</strong> · {req.reason}</p>
+    <div className="flex flex-wrap gap-3">
+     <select value={requestTarget[req.id]??""} aria-label={"New slot for "+(req.name??"learner")}
+      onChange={e=>setRequestTarget(p=>({...p,[req.id]:e.target.value}))}
+      className="min-h-11 rounded border border-border bg-surface px-3 text-sm">
+      <option value="">Choose new slot</option>
+      {free.map(slot=><option key={slot.id} value={slot.id}>{format(slot.startsAt)} · {slot.room}</option>)}
+     </select>
+     <input placeholder="Decision reason" aria-label={"Reason for "+(req.name??"learner")}
+      value={requestReason[req.id]??""} onChange={e=>setRequestReason(p=>({...p,[req.id]:e.target.value}))}
+      className="min-h-11 rounded border border-border bg-surface px-3 text-sm"/>
+    </div>
+    <div className="flex flex-wrap gap-3">
+     <button type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
+      onClick={()=>void action({action:"MOVE_REQUEST",requestId:req.id,targetSlotId:requestTarget[req.id],
+       reason:(requestReason[req.id]??"").trim()})}
+      className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Move</button>
+     <button type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
+      onClick={()=>void action({action:"KEEP_REQUEST",requestId:req.id,reason:(requestReason[req.id]??"").trim()})}
+      className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</button>
+    </div>
+   </div>)}
+  </section>:null}
   {recruiterProposals.length?<div className="space-y-3 rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Recruiter-proposed interview slots</h2>
    {recruiterProposals.map(p=><div key={p.id} className="grid gap-3 rounded border border-border p-3 sm:grid-cols-2">
