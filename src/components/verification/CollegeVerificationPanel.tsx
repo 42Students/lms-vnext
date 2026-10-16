@@ -25,12 +25,41 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
  const [selection,setSelection]=useState<Set<string>>(()=>new Set());
+ const [sequential,setSequential]=useState<{keys:string[];index:number}|null>(null);
+ const [reviewFeedback,setReviewFeedback]=useState("");
+ const [acknowledged,setAcknowledged]=useState(false);
  const [bulkAction,setBulkAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkError,setBulkError]=useState("");
  const [bulkReason,setBulkReason]=useState("");
  const [bulkResult,setBulkResult]=useState<{summary:{attempted:number;succeeded:number;failed:number};outcomes:BulkReviewOutcome[];labels:ReturnType<typeof describeBulkReviewOutcomeRows>}|null>(null);
  const selectable=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
+ const queueKeys=selectable.map(verificationSelectionKey);
+ const sequenceLabel=sequential ? `${sequential.index+1} of ${sequential.keys.length}` : "";
+ function nextInSequence(afterDecision=false) {
+  if(!sequential)return;
+  const nextIndex=sequential.index+1;
+  if(nextIndex>=sequential.keys.length){
+   setSelected(null);setSequential(null);
+   if(!afterDecision)setReviewFeedback("Review session finished.");
+   return;
+  }
+  const next=rows.find(item=>verificationSelectionKey(item)===sequential.keys[nextIndex]);
+  if(!next){
+   setSelected(null);setSequential(null);
+   setReviewFeedback(`Stopped at ${nextIndex} of ${sequential.keys.length}. The next request is no longer on this page.`);
+   return;
+  }
+  setSequential({...sequential,index:nextIndex});setSelected(next);
+ }
+ function savedReview(action?:"VERIFY"|"SEND_BACK"){
+  setReviewFeedback(action==="VERIFY"
+   ? `${selected?.section==="EDUCATION"?"Education":"Identity"} verified. The student has been told.`
+   : "Sent back. The student sees your reason.");
+  if(sequential)nextInSequence(true);
+  else setSelected(null);
+  router.refresh();
+ }
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
  const preview=bulkAction?verificationBulkPreviewRows(selectedRows,bulkAction):null;
@@ -64,7 +93,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  }
  function navigate(patch:Record<string,string>){
   if(!canNavigateCollegeVerificationQueue(bulkBusy))return;
-  setSelected(null);
+  setSelected(null);setSequential(null);
   setSelection(new Set());resetBulkFeedback();
   const params=new URLSearchParams(query);
   Object.entries(patch).forEach(([key,value])=>{if(value)params.set(key,value);else params.delete(key);});
@@ -78,6 +107,18 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <button type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Refresh</button>
   </div>
+  {reviewFeedback&&<p role="status" className="rounded-md border p-3 text-sm">
+    {reviewFeedback}
+  </p>}
+  {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="space-y-2 rounded-md border p-3">
+    <h2 className="font-semibold">Review one by one</h2>
+    <p className="text-sm">Each student's values next to their documents, with Verify and Send back. The next one opens by itself.</p>
+    <button type="button" disabled={bulkBusy} onClick={()=>{
+      setSequential({keys:queueKeys,index:0});setSelected(selectable[0]??null);setReviewFeedback("");
+    }} className="rounded-md border px-3 py-2 text-sm font-semibold">
+      Start with the first of {selectable.length}
+    </button>
+  </section>}
   <nav aria-label="Verification attention shortcuts" className="flex flex-wrap gap-2">
    {verificationAttentionShortcuts.map(item=><button type="button" key={item.attention} aria-pressed={query.attention===item.attention}
     onClick={()=>navigate(verificationAttentionShortcutPatch(item.attention))} className="rounded-md border px-3 py-2 text-sm">{item.label}</button>)}
@@ -138,7 +179,20 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    {page>1&&<button type="button" onClick={()=>navigate({page:String(page-1)})} className="underline">Previous page</button>}
    {hasMore&&<button type="button" onClick={()=>navigate({page:String(page+1)})} className="underline">Next page</button>}
   </nav>
-  {selected&&<VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
-   row={selected} onClose={()=>setSelected(null)} onSaved={()=>{setSelected(null);router.refresh();}}/>}
+  {selected&&<div className="space-y-2">
+    {sequential&&<nav aria-label="Sequential verification progress"
+      className="flex flex-wrap items-center gap-3 rounded-md border p-3 text-sm">
+      <span role="status">{sequenceLabel}</span>
+      <button type="button" onClick={()=>nextInSequence()} className="rounded border px-3 py-2">Next</button>
+      <button type="button" onClick={()=>{setSelected(null);setSequential(null);
+        setReviewFeedback(`Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);}}
+        className="rounded border px-3 py-2">Finish</button>
+    </nav>}
+    <VerificationReviewDrawer key={selected.learnerMembershipId+selected.section}
+      row={selected} onClose={()=>{if(sequential)setReviewFeedback(
+        `Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);
+        setSelected(null);setSequential(null);}}
+      onSaved={savedReview}/>
+  </div>}
  </div>;
 }
