@@ -9,7 +9,7 @@ import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-act
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
-type Action="ELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE";
+type Action="ELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE";
 type PreviewPlan={
  target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;ids:string[];
 };
@@ -99,7 +99,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  }
  const options=target==="STUDENTS"
   ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
-  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"}] as const);
+  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"}] as const);
  const suggested=suggestTpoBulkAction(actionCounts);
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
@@ -149,7 +149,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      {options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
     </select>
    </label>
-   {target==="APPLICATIONS"?<label className="text-sm font-semibold text-body">Review context / private note
+   {target==="APPLICATIONS"?<label className="text-sm font-semibold text-body">Review context / private note / message
     <textarea value={note} disabled={busy} maxLength={1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       className="mt-1 w-full rounded border border-border bg-background p-3"/>
