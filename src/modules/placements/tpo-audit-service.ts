@@ -77,6 +77,7 @@ export type TpoAuditRow = {
   detail: string;
   occurredAt: string;
   jobId: string | null;
+  actorName: string;
 };
 
 type AuditSource = {
@@ -97,6 +98,7 @@ type AuditDbRow = {
   detail: string;
   occurredAt: Date | string;
   jobId: string | null;
+  actorName: string | null;
 };
 
 /**
@@ -108,8 +110,8 @@ type AuditDbRow = {
  * category, status/action, placement job title, time
  * and an optional job ID.
  *
+ * Only the actor's display name is exposed (not actor IDs, email or phone).
  * Deliberately excluded:
- * - actors' names, emails, phones and identifiers;
  * - recipient emails and share secrets;
  * - IP addresses and activity metadata;
  * - free-text rejection reasons, comments and notes;
@@ -135,7 +137,8 @@ function auditSources(
           'Placement activity'::text as title,
           'Recorded placement event'::text as detail,
           ae.occurred_at as occurred_at,
-          null::uuid as job_id
+          null::uuid as job_id,
+          ae.actor_user_id as actor_user_id
         from activity_events ae
         where ae.college_id = ${collegeId}
           and ae.module = 'PLACEMENTS'
@@ -155,7 +158,8 @@ function auditSources(
             history.to_status
           )::text as detail,
           history.created_at as occurred_at,
-          job.id as job_id
+          job.id as job_id,
+          history.actor_user_id as actor_user_id
         from placement_application_status_history history
         inner join placement_applications application
           on application.id = history.application_id
@@ -178,7 +182,8 @@ function auditSources(
             history.to_status
           )::text as detail,
           history.created_at as occurred_at,
-          job.id as job_id
+          job.id as job_id,
+          history.actor_user_id as actor_user_id
         from placement_application_screening_history history
         inner join placement_applications application
           on application.id = history.application_id
@@ -197,7 +202,8 @@ function auditSources(
           job.title::text as title,
           'Placement round change'::text as detail,
           event.created_at as occurred_at,
-          job.id as job_id
+          job.id as job_id,
+          event.actor_user_id as actor_user_id
         from placement_job_round_events event
         inner join placement_job_rounds round_record
           on round_record.id = event.round_id
@@ -221,7 +227,8 @@ function auditSources(
             result.version
           )::text as detail,
           result.submitted_at as occurred_at,
-          job.id as job_id
+          job.id as job_id,
+          coalesce(result.applied_by_user_id,result.submitted_by_user_id) as actor_user_id
         from placement_round_results result
         inner join placement_job_rounds round_record
           on round_record.id = result.round_id
@@ -244,7 +251,8 @@ function auditSources(
             history.to_status
           )::text as detail,
           history.created_at as occurred_at,
-          job.id as job_id
+          job.id as job_id,
+          history.actor_user_id as actor_user_id
         from placement_offer_status_history history
         inner join placement_offers offer_record
           on offer_record.id = history.offer_id
@@ -269,7 +277,8 @@ function auditSources(
             history.to_status
           )::text as detail,
           history.created_at as occurred_at,
-          job.id as job_id
+          job.id as job_id,
+          history.actor_user_id as actor_user_id
         from placement_joining_history history
         inner join placement_offers offer_record
           on offer_record.id = history.offer_id
@@ -293,7 +302,8 @@ function auditSources(
           job.title::text as title,
           'Recruiter share access event'::text as detail,
           event.created_at as occurred_at,
-          job.id as job_id
+          job.id as job_id,
+          null::uuid as actor_user_id
         from placement_tpo_share_events event
         inner join placement_tpo_share_links share_record
           on share_record.id = event.share_id
@@ -469,8 +479,10 @@ export async function getTpoAuditLog(
           record.title as title,
           record.detail as detail,
           record.occurred_at as "occurredAt",
-          record.job_id::text as "jobId"
+          record.job_id::text as "jobId",
+          actor.display_name::text as "actorName"
         from audit record
+        left join users actor on actor.id = record.actor_user_id
         ${where}
         order by
           record.occurred_at desc,
@@ -503,6 +515,7 @@ export async function getTpoAuditLog(
               row.occurredAt,
             ).toISOString(),
       jobId: row.jobId,
+      actorName: tpoAuditActorLabel(row.actorName),
     }));
 
   return {
@@ -519,4 +532,9 @@ export async function getTpoAuditLog(
     ),
     unavailableSources,
   };
+}
+
+/** Actor name only; IDs, emails and phone numbers stay private. */
+export function tpoAuditActorLabel(displayName:string|null|undefined):string{
+ return displayName?.trim()||"System / unknown";
 }
