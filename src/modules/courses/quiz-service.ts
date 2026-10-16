@@ -478,6 +478,12 @@ export async function updateCourseQuiz(
   const attemptCount = attemptStats?.count ?? 0;
   const maxAttempt =
     attemptStats?.maxAttempt ?? 0;
+  // FAC-assessments-R02: deadlines cannot move after attempts or closure.
+  const changesDeadline = input.dueAt !== undefined &&
+    (input.dueAt ? new Date(input.dueAt).getTime() : null) !==
+      (current.dueAt?.getTime() ?? null);
+  if(changesDeadline && (attemptCount>0 || current.status==="CLOSED"))
+    throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
 
   if (
     input.questions &&
@@ -511,6 +517,20 @@ export async function updateCourseQuiz(
   try {
     return await getDb().transaction(
       async (tx) => {
+        // Serialize deadline checks with quiz attempt inserts and lifecycle writes.
+        const [lockedQuiz]=await tx.select({
+          status:courseQuizzes.status,dueAt:courseQuizzes.dueAt,
+        }).from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
+          .for("update").limit(1);
+        if(!lockedQuiz)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+        if(input.dueAt!==undefined && (
+          (lockedQuiz.dueAt?.getTime()??null)!==
+           (input.dueAt?new Date(input.dueAt).getTime():null))) {
+          const [attempt]=await tx.select({id:quizAttempts.id})
+           .from(quizAttempts).where(eq(quizAttempts.quizId,quizId)).limit(1);
+          if(attempt || lockedQuiz.status==="CLOSED")
+            throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+        }
         if (input.questions) {
           const questionRows = await tx
             .select({ id: quizQuestions.id })
