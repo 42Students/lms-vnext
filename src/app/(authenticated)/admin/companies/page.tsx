@@ -26,11 +26,27 @@ export default async function SuperAdminCompaniesPage({
   const [data, availableColleges] = await Promise.all([
     listSuperAdminCompanyDirectory(context, parsed.data), listColleges(context),
   ]);
+  const view=params.view==="GLOBAL"?"GLOBAL":context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
   const candidates = findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies"
       description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
+    <nav aria-label="Company directory tabs" className="flex flex-wrap gap-3">
+      <Link href="/admin/companies?view=GLOBAL"
+       aria-current={view==="GLOBAL"?"page":undefined}
+       className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+       42's company list
+      </Link>
+      {context.adminScope?.collegeId?<Link href="/admin/companies?view=COLLEGE"
+       aria-current={view==="COLLEGE"?"page":undefined}
+       className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+       This college's companies
+      </Link>:null}
+    </nav>
+    {view==="GLOBAL"&&context.adminScope?.collegeId?<p role="status" className="rounded-md border border-warning bg-surface p-3 text-sm text-warning">
+      A college is currently selected. The results below remain restricted to that college. Clear the college scope in the header to view 42's global company catalogue.
+    </p>:null}
     {data.query.companyId ? <section role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
       <Link href="/admin/companies" className="font-semibold text-primary-text underline">Show all employers</Link>
