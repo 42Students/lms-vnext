@@ -70,6 +70,7 @@ export async function acceptPublicRecruiterJoin(
       .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
       .where(and(eq(placementPublicJoinLinks.tokenHash, tokenHash),
         eq(placementPublicJoinLinks.scope, scope),
+        eq(placementPublicJoinLinks.enabled,true),
         isNull(placementPublicJoinLinks.revokedAt),
         gt(placementPublicJoinLinks.expiresAt, now),
         eq(colleges.status, "ACTIVE"), eq(organizations.status, "ACTIVE")))

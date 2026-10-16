@@ -67,6 +67,21 @@ export function TpoPublicJoinLinkCard({
     }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't add domain");}
     finally{setBusy(false);}
   }
+  async function toggleLink() {
+    if(!status.link||busy)return;
+    setBusy(true);setFeedback("");
+    try{
+      const response=await fetch("/api/placements/tpo/public-join-links/enabled",{
+       method:"POST",headers:{"Content-Type":"application/json"},
+       body:JSON.stringify({scope,...(isCompany?{companyId}:{}),enabled:!status.link.enabled}),
+      });
+      const data=await response.json() as {enabled?:boolean;error?:string};
+      if(!response.ok)throw new Error(data.error==="NOT_REGISTERED"?"Join link storage is unavailable.":"Couldn't save");
+      setStatus(prev=>({...prev,link:prev.link?{...prev.link,enabled:data.enabled===true}:null}));
+      setFeedback("Link setting saved");
+    }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't save");}
+    finally{setBusy(false);}
+  }
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(freshUrl);
@@ -114,6 +129,11 @@ export function TpoPublicJoinLinkCard({
               Made {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(status.link.createdAt))}. Opened {status.link.opensCount} times, {status.link.joinsCount} joined.
             </p>
           ) : null}
+          {status.link?<label className="mt-3 flex items-center gap-3 text-sm text-body">
+            <input type="checkbox" checked={status.link.enabled} disabled={busy}
+              onChange={()=>void toggleLink()}/>
+            Link is on
+          </label>:null}
           <button
             type="button" disabled={busy || (isCompany && !status.domain)}
             onClick={makeLink}
