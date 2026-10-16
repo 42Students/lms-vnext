@@ -18,6 +18,8 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
     noticeId, expectedVersion: token.data,
     title: form?.get("title"), message: form?.get("message"),
     pinned: form?.get("pinned") === "on",
+    sendAt:form?.has("sendAt")?String(form.get("sendAt")??""):undefined,
+    showUntil:form?.has("showUntil")?String(form.get("showUntil")??""):undefined,
   });
   if (!parsed.success)
     return NextResponse.json({error: "INVALID_BODY"}, {status: 400});
@@ -31,6 +33,8 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
       return NextResponse.json({error: "INVALID_BODY"}, {status: 400});
     if (error instanceof Error && error.message === "ANNOUNCEMENTS_NOT_REGISTERED")
       return NextResponse.json({error: "ANNOUNCEMENTS_NOT_REGISTERED"}, {status: 503});
+    if(error instanceof Error && error.message==="TPO_NOTICE_INVALID_TIME")
+      return NextResponse.json({error:"Pick valid future dates (IST)"},{status:400});
     if (error instanceof Error && error.message === "ANNOUNCEMENT_NOT_FOUND")
       return NextResponse.json({error: "NOT_FOUND"}, {status: 404});
     if (error instanceof Error && error.message === "ANNOUNCEMENT_STALE")
