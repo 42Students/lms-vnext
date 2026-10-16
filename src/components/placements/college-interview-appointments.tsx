@@ -14,12 +14,12 @@ const toLocal=(iso:string)=>new Intl.DateTimeFormat("sv-SE",{
  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",
  hourCycle:"h23",timeZone:"Asia/Kolkata",
 }).format(new Date(iso)).replace(" ","T");
-export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments}:{
- jobId:string;rounds:Round[];candidates:Candidate[];appointments:Appointment[];
+export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments,preferredApplicationId}:{
+ jobId:string;rounds:Round[];candidates:Candidate[];appointments:Appointment[];preferredApplicationId?:string;
 }){
  const router=useRouter();const [editing,setEditing]=useState<Appointment|null>(null);
  const [show,setShow]=useState(false);const [roundId,setRoundId]=useState(rounds[0]?.id??"");
- const [applicationId,setApplicationId]=useState(candidates[0]?.applicationId??"");
+ const [applicationId,setApplicationId]=useState(candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
  const [start,setStart]=useState("");const [duration,setDuration]=useState(30);
  const [mode,setMode]=useState<"ON_CAMPUS"|"VIRTUAL">("ON_CAMPUS");
  const [venue,setVenue]=useState("");const [meetingUrl,setMeetingUrl]=useState("");
@@ -28,7 +28,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [success,setSuccess]=useState("");
  function open(row?:Appointment){
   setEditing(row??null);setRoundId(row?.roundId??rounds[0]?.id??"");
-  setApplicationId(row?.applicationId??candidates[0]?.applicationId??"");
+  setApplicationId(row?.applicationId??candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
   setStart(row?toLocal(row.scheduledAt):"");setDuration(row?.durationMinutes??30);
   setMode(row?.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS");
   setVenue(row?.venue??"");setMeetingUrl(row?.meetingUrl??"");
