@@ -1,6 +1,6 @@
 import {
   and,
-  asc,
+  desc,
   eq,
   inArray,
 } from "drizzle-orm";
@@ -141,7 +141,7 @@ async function loadCompanySources(
               ),
             ),
           )
-          .orderBy(asc(placementJobs.createdAt))
+          .orderBy(desc(placementJobs.createdAt))
       : Promise.resolve([]),
   ]);
 
