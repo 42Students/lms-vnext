@@ -21,7 +21,7 @@ export class PublicJoinCodeError extends Error {
   }
 }
 
-function opaqueNetworkTag(ip: string, secret: string) {
+export function opaqueNetworkTag(ip: string, secret: string) {
   if (!ip || ip.length > 120 || Buffer.byteLength(secret, "utf8") < 32) {
     throw new PublicJoinCodeError("NETWORK_GUARD_NOT_READY");
   }
