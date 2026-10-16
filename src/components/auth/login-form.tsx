@@ -18,6 +18,31 @@ type StartResult = {
 };
 
 const RESEND_SECONDS = 30;
+const ATTEMPT_KEY = "42lms-login-attempt-v1";
+type SavedAttempt = { attempt: StartResult; expiresAt: number; nextResendAt: number };
+function saveLoginAttempt(value: SavedAttempt | null) {
+  try {
+    if (value) window.sessionStorage.setItem(ATTEMPT_KEY, JSON.stringify(value));
+    else window.sessionStorage.removeItem(ATTEMPT_KEY);
+  } catch { /* Private browsing can disable session storage. */ }
+}
+function loadLoginAttempt(): SavedAttempt | null {
+  try {
+    const raw = window.sessionStorage.getItem(ATTEMPT_KEY);
+    if (!raw) return null;
+    const data: unknown = JSON.parse(raw);
+    if (!data || typeof data !== "object" || !("attempt" in data) || !("expiresAt" in data) || !("nextResendAt" in data))
+      return null;
+    const record = data as SavedAttempt;
+    if (typeof record.expiresAt !== "number" || record.expiresAt <= Date.now() ||
+        typeof record.nextResendAt !== "number" || !record.attempt ||
+        !/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(record.attempt.attemptId) ||
+        !["PHONE","EMAIL"].includes(record.attempt.channel)) {
+      saveLoginAttempt(null); return null;
+    }
+    return record;
+  } catch { return null; }
+}
 
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_CONTACT: "Enter a valid phone number or email address.",
@@ -90,6 +115,15 @@ export function LoginForm({
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
+    const stored = loadLoginAttempt();
+    if (!stored) return;
+    setAttempt(stored.attempt);
+    setChannel(stored.attempt.channel);
+    setCooldown(Math.max(0, Math.ceil((stored.nextResendAt - Date.now()) / 1000)));
+    setNotice("Your verification is still in progress. Use the code already sent or request another when available.");
+  }, []);
+
+  useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setTimeout(() => setCooldown((value) => value - 1), 1000);
     return () => clearTimeout(timer);
@@ -101,6 +135,7 @@ export function LoginForm({
     setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
       setAttempt(null);
+      saveLoginAttempt(null);
       setCode("");
       setSecondCode("");
     }
@@ -135,6 +170,11 @@ export function LoginForm({
       });
       if (!result.ok) return fail(result.data.error);
       setAttempt(result.data);
+      saveLoginAttempt({
+        attempt: result.data,
+        expiresAt: Date.now() + Math.min(300, Math.max(1,result.data.expiresInSeconds)) * 1000,
+        nextResendAt: Date.now() + RESEND_SECONDS * 1000,
+      });
       setCode("");
       setSecondCode("");
       setCooldown(RESEND_SECONDS);
@@ -162,6 +202,7 @@ export function LoginForm({
         },
       );
       if (!result.ok) return fail((result.data as { error?: string }).error);
+      saveLoginAttempt(null);
       window.location.assign(result.data.next ?? "/dashboard");
     } catch {
       setError("Network problem. Check your connection and try again.");
@@ -183,6 +224,11 @@ export function LoginForm({
       if (!result.ok) return fail((result.data as { error?: string }).error);
       setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}.`);
       setCooldown(RESEND_SECONDS);
+      if (attempt) saveLoginAttempt({
+        attempt,
+        expiresAt: Date.now() + Math.min(300, Math.max(1,attempt.expiresInSeconds)) * 1000,
+        nextResendAt: Date.now() + RESEND_SECONDS * 1000,
+      });
     } catch {
       setError("Network problem. Check your connection and try again.");
     } finally {
@@ -191,6 +237,7 @@ export function LoginForm({
   }
 
   function reset() {
+    saveLoginAttempt(null);
     setAttempt(null);
     setCode("");
     setSecondCode("");
