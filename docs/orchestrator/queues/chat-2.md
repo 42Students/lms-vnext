@@ -44,8 +44,10 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 ## FAST mode checkpoint, current round
 
-- Implemented on main: TPO-companies-10; TPO-companies-13 company preselection; TPO-companies-16/17 contact names and filters; TPO-companies-08 search, year, CSV (applied/offers counters not yet completed); TPO-companies-11 persisted share history; TPO-companies-12 invite activity (last login not yet projected).
+- Implemented on main: TPO-companies-10; TPO-companies-13 company preselection; TPO-companies-16/17 contact names and filters; TPO-companies-08 search, year, scoped applied/offers counts and CSV; TPO-companies-11 persisted share history; TPO-companies-12 invite activity (last login not yet projected).
 - Implemented on main: PUB-auth-public-44 client mobile/code preflight and PUB-auth-public-45 sign-in email copy. PUB-auth-public-43 copy-only follow-up failed after retry due to concurrent main writes.
 - Implemented on main: TPO-campaigns-public-14 scoped first-time unsubscribe now creates recruiter activity and TPO bell. Email dispatch/sender wiring remains unavailable.
 - Partial: TPO-inbox-team-48 read service includes future/ended authored notices but projection/tag update conflicted twice. No full closure claimed.
 - Continue to skip PUB-auth-public-50/53 (OD-09), dependent disclosure/ZIP features, real provider dispatch, and storage keys until approved and available. All changes are source only in FAST mode; do not mark a release verified from this queue.
+
+- `TPO-companies-08` follow-up: scoped applied/offer aggregates added to company drive service, table and downloadable CSV. Distinct offers by application; not a substitute for legacy placement-policy outcome verification.
