@@ -34,6 +34,6 @@ describe("TPO drive lifecycle listing", () => {
   });
   it("does not invent deadline counts or accept unknown views", () => {
     expect(projectTpoDriveLifecycle([], "ALL", "2026-10-14T00:00:00Z").counts.deadlinesNextSevenDays).toBe(0);
-    expect(tpoDriveLifecycleQuerySchema.safeParse({ view: "REQUESTS" }).success).toBe(false);
+    expect(tpoDriveLifecycleQuerySchema.safeParse({ view: "BOGUS" }).success).toBe(false);
   });
 });

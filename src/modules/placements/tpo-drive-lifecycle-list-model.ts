@@ -1,7 +1,7 @@
 import { z } from "zod";
 export const tpoDriveLifecycleQuerySchema = z.object({
   seasonId: z.string().uuid().optional(),
-  view: z.enum(["ALL", "DRAFT", "LIVE", "CLOSED"]).default("ALL"),
+  view: z.enum(["ALL", "REQUESTS", "DRAFT", "LIVE", "CLOSED"]).default("ALL"),
   search:z.string().trim().max(100).default(""),
   deadline:z.enum(["ALL","DUE_SOON","OVERDUE","UNSET"]).default("ALL"),
   workMode:z.enum(["ALL","ONSITE","REMOTE","HYBRID"]).default("ALL"),
@@ -21,7 +21,7 @@ export type TpoLifecycleFact = {
   workMode: string; employmentType: string; applicationDeadline: string | null;
 };
 export function projectTpoDriveLifecycle(
-  facts: readonly TpoLifecycleFact[], view: "ALL" | "DRAFT" | "LIVE" | "CLOSED",
+  facts: readonly TpoLifecycleFact[], view: "ALL" | "REQUESTS" | "DRAFT" | "LIVE" | "CLOSED",
   nowIso: string,
 ) {
   const now = Date.parse(nowIso);
@@ -43,4 +43,15 @@ export function projectTpoDriveLifecycle(
     rows: facts.filter((f) => target === null || f.status === target)
       .sort((a,b) => a.company.localeCompare(b.company) || a.title.localeCompare(b.title) || a.id.localeCompare(b.id)),
   };
+}
+
+export const TPO_REQUESTS_COPY = {
+  tab: "Requests",
+  unavailable: "Drive requests are not available until the recruiter request workflow is enabled.",
+  needsReview: "Needs your review",
+  sentBack: "Sent back",
+} as const;
+export function driveRequestStatusLabel(status:string) {
+  return status==="REQUEST"?TPO_REQUESTS_COPY.needsReview:
+    status==="SENT_BACK"?TPO_REQUESTS_COPY.sentBack:"Declined";
 }
