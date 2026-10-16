@@ -1,0 +1,21 @@
+import {createHash} from "node:crypto";
+import {z} from "zod";
+export const roundApplyInputSchema=z.object({
+ confirmed:z.literal(true),
+ expectedPreviewToken:z.string().length(64),
+}).strict();
+export type RoundApplyRow={
+ resultId:string;applicationId:string;student:string;outcome:string;
+ status:string;version:number;
+};
+export function summarizeRoundApply(rows:readonly RoundApplyRow[]){
+ const outcomes={PASS:0,FAIL:0,HOLD:0,ABSENT:0};
+ for(const row of rows){if(row.status==="STAGED"&&row.outcome in outcomes)
+   outcomes[row.outcome as keyof typeof outcomes]++;}
+ return {staged:rows.filter(r=>r.status==="STAGED").length,
+  applied:rows.filter(r=>r.status==="APPLIED").length,outcomes};
+}
+export function roundApplyPreviewToken(roundId:string,rows:readonly RoundApplyRow[]){
+ const identity=rows.map(x=>[x.resultId,x.applicationId,x.status,x.outcome,x.version]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
+ return createHash("sha256").update(JSON.stringify([roundId,identity])).digest("hex");
+}
