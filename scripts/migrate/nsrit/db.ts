@@ -157,7 +157,7 @@ export async function findExternalConflicts(
 
 // ------------------------------------------------------------- map handling
 
-async function loadMapRows(ctx: LoadContext, newType: string): Promise<Map<string, MapRow>> {
+export async function loadMapRows(ctx: LoadContext, newType: string): Promise<Map<string, MapRow>> {
   const res = await ctx.tx.query<MapRow>(
     `SELECT legacy_entity_type, legacy_id, new_entity_type, new_id, source_hash
        FROM legacy_id_map
@@ -167,30 +167,40 @@ async function loadMapRows(ctx: LoadContext, newType: string): Promise<Map<strin
   return new Map(res.rows.map((r) => [`${r.legacy_entity_type}|${r.legacy_id}`, r]));
 }
 
-async function writeMap(
+export async function writeMap(
   ctx: LoadContext,
   legacyType: string,
   legacyId: string,
   newType: string,
   newId: string,
   hash: string,
+  metadata?: Record<string, unknown>,
 ) {
   if (ctx.batchId === null) {
     ctx.queueMap([legacyType, legacyId, newType, newId, hash]);
     return;
   }
   await ctx.tx.query(
-    `INSERT INTO legacy_id_map (legacy_entity_type, legacy_id, new_entity_type, new_id, college_id, batch_id, source_system, source_hash)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `INSERT INTO legacy_id_map (legacy_entity_type, legacy_id, new_entity_type, new_id, college_id, batch_id, source_system, source_hash, metadata)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb)
      ON CONFLICT (college_id, source_system, legacy_entity_type, legacy_id, new_entity_type) WHERE college_id IS NOT NULL
-     DO UPDATE SET new_id = excluded.new_id, batch_id = excluded.batch_id, source_hash = excluded.source_hash, migrated_at = now()`,
-    [legacyType, legacyId, newType, newId, ctx.collegeId, ctx.batchId, SOURCE_SYSTEM, hash],
+     DO UPDATE SET new_id = excluded.new_id, batch_id = excluded.batch_id, source_hash = excluded.source_hash,
+       metadata = excluded.metadata, migrated_at = now()`,
+    [legacyType, legacyId, newType, newId, ctx.collegeId, ctx.batchId, SOURCE_SYSTEM, hash, metadata ? JSON.stringify(metadata) : null],
   );
 }
 
-async function existingIds(ctx: LoadContext, table: string, ids: string[]): Promise<Set<string>> {
+/** Primary key column per table (default `id`). */
+const KEY_COLUMN: Record<string, string> = {
+  learner_profiles: "membership_id",
+  faculty_profiles: "membership_id",
+  attendance_sessions: "schedule_event_id",
+  section_schedule_event_courses: "schedule_event_id",
+};
+
+export async function existingIds(ctx: LoadContext, table: string, ids: string[]): Promise<Set<string>> {
   if (ids.length === 0) return new Set();
-  const key = table === "learner_profiles" || table === "faculty_profiles" ? "membership_id" : "id";
+  const key = KEY_COLUMN[table] ?? "id";
   const res = await ctx.tx.query<{ id: string }>(
     `SELECT ${key} AS id FROM ${table} WHERE ${key} = ANY($1::uuid[])`,
     [ids],
@@ -198,13 +208,13 @@ async function existingIds(ctx: LoadContext, table: string, ids: string[]): Prom
   return new Set(res.rows.map((r) => r.id));
 }
 
-type SyncSpec<T> = {
+export type SyncSpec<T> = {
   table: string;
   items: Planned<T>[];
   upsert: (ctx: LoadContext, item: Planned<T>) => Promise<void>;
 };
 
-async function syncTable<T>(ctx: LoadContext, spec: SyncSpec<T>) {
+export async function syncTable<T>(ctx: LoadContext, spec: SyncSpec<T>) {
   const maps = await loadMapRows(ctx, spec.table);
   const existing = await existingIds(
     ctx,
@@ -222,12 +232,12 @@ async function syncTable<T>(ctx: LoadContext, spec: SyncSpec<T>) {
       continue;
     }
     await spec.upsert(ctx, item);
-    await writeMap(ctx, item.legacyType, item.legacyId, spec.table, item.newId, item.hash);
+    await writeMap(ctx, item.legacyType, item.legacyId, spec.table, item.newId, item.hash, item.metadata);
     ctx.bump(spec.table, exists ? "updated" : "inserted");
   }
 }
 
-const ts = (value: string | null) => value ?? null;
+export const ts = (value: string | null) => value ?? null;
 
 // ------------------------------------------------------------- foundation
 
@@ -545,7 +555,30 @@ export async function validate(ctx: LoadContext, plan: Plan): Promise<Validation
 // ------------------------------------------------------------------- rollback
 
 /** Child-first deletion order; organizations and colleges are kept (batches reference the college). */
-const ROLLBACK_ORDER: { table: string; key: string }[] = [
+export const ROLLBACK_ORDER: { table: string; key: string }[] = [
+  // Stage 2b-i tables first (they reference stage 2a rows).
+  { table: "quiz_attempt_answers", key: "id" },
+  { table: "quiz_attempts", key: "id" },
+  { table: "quiz_options", key: "id" },
+  { table: "quiz_questions", key: "id" },
+  { table: "assignment_submissions", key: "id" },
+  { table: "learner_content_progress", key: "id" },
+  { table: "attendance_records", key: "id" },
+  { table: "attendance_sessions", key: "schedule_event_id" },
+  { table: "section_schedule_event_courses", key: "schedule_event_id" },
+  { table: "section_schedule_events", key: "id" },
+  { table: "course_discussion_messages", key: "id" },
+  { table: "announcements", key: "id" },
+  { table: "course_quizzes", key: "id" },
+  { table: "course_assignments", key: "id" },
+  { table: "lesson_contents", key: "id" },
+  { table: "course_lessons", key: "id" },
+  { table: "course_learning_paths", key: "id" },
+  { table: "faculty_course_associations", key: "id" },
+  { table: "course_teaching_assignments", key: "id" },
+  { table: "course_section_deliveries", key: "id" },
+  { table: "course_offerings", key: "id" },
+  { table: "courses", key: "id" },
   { table: "section_enrollments", key: "id" },
   { table: "learner_program_enrollments", key: "id" },
   { table: "learner_profiles", key: "membership_id" },
