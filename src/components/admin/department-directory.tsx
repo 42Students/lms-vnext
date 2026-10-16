@@ -1,5 +1,6 @@
 "use client";
 
+import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { DepartmentActions } from "@/components/admin/department-actions";
@@ -60,7 +61,8 @@ export function DepartmentDirectory({
     encodeURIComponent("\ufeff" + departmentRowsCsv(filtered));
 
   return (
-    <section className="space-y-4" aria-label="Existing departments">
+    <section className="space-y-4" aria-label={DEPARTMENT_COPY.existingTitle}>
+      <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-48 flex-1">
           <label htmlFor="department-directory-search" className="mb-1.5 block text-xs font-semibold text-body">

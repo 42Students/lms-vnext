@@ -78,6 +78,9 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
               )}
             </select>
           </label>
+          <details className="col-span-full rounded-md border border-border p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-body">More filters</summary>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {data.kind === "BATCHES" ? (
             <label className="grid gap-1 text-sm font-semibold text-body">
               Recorded current term
@@ -213,6 +216,8 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
               </select>
             </label>
           ) : null}
+            </div>
+          </details>
           <div className="flex items-end gap-2">
             <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
               Filter

@@ -23,3 +23,16 @@ export function collegeTermMappingErrorMessage(code: string) {
     default: return "Mapping update was not saved. Refresh and review the values.";
   }
 }
+
+/** Exact legacy wording of SemesterCourseMapping.js (COL-academic-setup-11). */
+export const TERM_MAPPING_COPY = {
+  addButton: "Add Courses to Semester",
+  removeButton: "Remove",
+  courseTypeLabel: "Course Type",
+  core: "Core (Mandatory)",
+  elective: "Elective",
+  columns: { semester: "Semester", courseName: "Course Name", courseCode: "Course Code", type: "Type", credits: "Credits", actions: "Actions" },
+  removeTitle: (course: string) => `Remove “${course}” from this semester?`,
+  addedMessage: (count: number) => `Added ${count} course(s) to this semester.`,
+  removedMessage: (course: string) => `Removed “${course}” from this semester.`,
+} as const;

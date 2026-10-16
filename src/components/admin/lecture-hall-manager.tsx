@@ -12,15 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-
-export const ROOM_TYPE_LABELS: Record<string, string> = {
-  CLASSROOM: "Classroom",
-  LECTURE_HALL: "Lecture hall",
-  LAB: "Lab",
-  SEMINAR_HALL: "Seminar hall",
-  AUDITORIUM: "Auditorium",
-  CONFERENCE_ROOM: "Conference room",
-};
+import { LECTURE_HALL_COPY, ROOM_TYPE_LABELS } from "@/modules/academics/lecture-hall-copy";
 
 export type HallRow = {
   id: string;
@@ -139,7 +131,7 @@ export function LectureHallManager({
       setEditing(null);
       showToast({
         tone: "success",
-        title: isNew ? "Hall added" : "Hall updated",
+        title: isNew ? LECTURE_HALL_COPY.createdMessage : LECTURE_HALL_COPY.updatedMessage,
       });
       router.refresh();
     });
@@ -177,7 +169,7 @@ export function LectureHallManager({
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={() => open("new")}>Add lecture hall</Button>
+        <Button onClick={() => open("new")}>{LECTURE_HALL_COPY.createTitle}</Button>
       </div>
 
       {halls.length === 0 ? (
@@ -188,10 +180,11 @@ export function LectureHallManager({
       ) : (
         <DataTable
           columns={[
-            { key: "name", header: "Name", cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
-            { key: "type", header: "Type", cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
+            { key: "name", header: LECTURE_HALL_COPY.columns.name, cell: (hall: HallRow) => <span className="font-semibold text-foreground">{hall.name}</span> },
+            { key: "type", header: LECTURE_HALL_COPY.columns.type, cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
             { key: "capacity", header: "Capacity", cell: (hall) => hall.capacity },
-            { key: "dept", header: "Department", cell: (hall) => hall.departmentName ?? "—" },
+            { key: "dept", header: LECTURE_HALL_COPY.columns.department, cell: (hall) => hall.departmentName ?? "—" },
+            { key: "description", header: LECTURE_HALL_COPY.columns.description, cell: (hall) => hall.description || "—" },
             {
               key: "upcoming",
               header: "Upcoming classes",
@@ -245,7 +238,7 @@ export function LectureHallManager({
       <Dialog
         open={editing !== null}
         onOpenChange={(value) => !value && setEditing(null)}
-        title={editing === "new" ? "Add lecture hall" : "Edit lecture hall"}
+        title={editing === "new" ? LECTURE_HALL_COPY.createTitle : "Edit lecture hall"}
         description="Hall names stay unique among the college's active halls."
         footer={
           <>
@@ -253,7 +246,7 @@ export function LectureHallManager({
               Cancel
             </Button>
             <Button disabled={pending} onClick={save}>
-              {pending ? "Saving…" : "Save hall"}
+              {pending ? "Saving…" : editing === "new" ? LECTURE_HALL_COPY.createButton : "Save hall"}
             </Button>
           </>
         }
@@ -265,18 +258,18 @@ export function LectureHallManager({
             </p>
           ) : null}
           <div>
-            <label className={field} htmlFor="hall-name">Name</label>
-            <Input id="hall-name" value={draft.name} maxLength={255}
+            <label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
+            <Input id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={field} htmlFor="hall-capacity">Capacity</label>
+              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
               <Input id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
                 onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
             </div>
             <div>
-              <label className={field} htmlFor="hall-type">Type</label>
+              <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
               <Select id="hall-type" value={draft.roomType}
                 onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
                 {Object.entries(ROOM_TYPE_LABELS).map(([value, label]) => (
@@ -286,7 +279,7 @@ export function LectureHallManager({
             </div>
           </div>
           <div>
-            <label className={field} htmlFor="hall-dept">Department (optional)</label>
+            <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
             <Select id="hall-dept" value={draft.departmentId}
               onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
               <option value="">Shared by all departments</option>
@@ -296,8 +289,8 @@ export function LectureHallManager({
             </Select>
           </div>
           <div>
-            <label className={field} htmlFor="hall-desc">Description (optional)</label>
-            <Input id="hall-desc" value={draft.description} maxLength={255}
+            <label className={field} htmlFor="hall-desc">{LECTURE_HALL_COPY.descriptionLabel}</label>
+            <Input id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
           </div>
         </div>

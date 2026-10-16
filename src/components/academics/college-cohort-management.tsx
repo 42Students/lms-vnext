@@ -7,6 +7,7 @@ import {
   hasUnsavedCollegeCohortEdit,
   updateCollegeCohortSchema,
 } from "@/modules/academics/college-cohort-mutation-model";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 type Option = { id: string; name: string; code: string };
 type Batch = {
@@ -67,7 +68,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         setNotice("Batch created.");
         router.refresh();
       } catch (error) {
-        setNotice(error instanceof Error ? error.message : "Batch creation failed.");
+        setNotice(academicSetupErrorMessage(error, "Batch creation failed."));
       }
     });
   }
@@ -153,7 +154,7 @@ export function CollegeCohortRowActions({ row, periods }: {
         }
         setNotice("Batch archived; historical identity preserved.");
         router.refresh();
-      }catch(error){setNotice(error instanceof Error?error.message:"Batch removal failed.");}
+      }catch(error){setNotice(academicSetupErrorMessage(error, "Batch removal failed."));}
     });
   }
   function close() {
@@ -179,7 +180,7 @@ export function CollegeCohortRowActions({ row, periods }: {
         setNotice("Batch updated.");
         router.refresh();
       } catch (error) {
-        setNotice(error instanceof Error ? error.message : "Batch update failed.");
+        setNotice(academicSetupErrorMessage(error, "Batch update failed."));
       }
     });
   }

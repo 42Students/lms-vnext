@@ -4,7 +4,7 @@ import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { collegeTermCourseAddSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
+import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
   terms: readonly { id: string; name: string; termNumber: number; programName: string; isActive: boolean }[];
@@ -24,6 +24,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const [credits, setCredits] = useState("");
   const [confirm, setConfirm] = useState<{ type: "ADD"; body: unknown } | { type: "REMOVE"; id: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function send() {
     if (!confirm) return;
@@ -41,6 +42,10 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           const body: { error?: string } | null = await response.json().catch(() => null);
           throw new Error(collegeTermMappingErrorMessage(body?.error ?? ""));
         }
+        const removedCourse = confirm.type === "REMOVE"
+          ? data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course" : null;
+        setNotice(removedCourse === null
+          ? TERM_MAPPING_COPY.addedMessage(1) : TERM_MAPPING_COPY.removedMessage(removedCourse));
         setConfirm(null);
         setError(null);
         setCredits("");
@@ -62,6 +67,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       return;
     }
     setError(null);
+    setNotice(null);
     setConfirm({ type: "ADD", body: input.data });
   }
 
@@ -85,10 +91,10 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           {data.courses.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </select>
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Type
+      <label className="grid gap-1 text-sm font-semibold text-body">{TERM_MAPPING_COPY.courseTypeLabel}
         <select value={kind} onChange={event => setKind(event.target.value as "CORE" | "ELECTIVE")}
           className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
-          <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
+          <option value="CORE">{TERM_MAPPING_COPY.core}</option><option value="ELECTIVE">{TERM_MAPPING_COPY.elective}</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Credits (optional)
@@ -96,32 +102,39 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           onChange={event => setCredits(event.target.value)}
           className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground" />
       </label>
-      <div className="flex items-end"><Button type="submit" disabled={pending || !termId || !courseId}>Review mapping</Button></div>
+      <div className="flex items-end"><Button type="submit" disabled={pending || !termId || !courseId}>{TERM_MAPPING_COPY.addButton}</Button></div>
     </form>
     {data.mapped.length === 0 ? <p className="text-sm text-body">No curriculum mappings have been saved.</p> :
       <div className="overflow-x-auto"><table className="w-full min-w-[40rem] text-left text-sm">
         <thead><tr>
-          <th scope="col" className="px-2 py-2">Semester</th>
-          <th scope="col" className="px-2 py-2">Course</th>
-          <th scope="col" className="px-2 py-2">Type / credits</th>
-          <th scope="col" className="px-2 py-2">Action</th>
+          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.semester}</th>
+          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseName}</th>
+          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.courseCode}</th>
+          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.type}</th>
+          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.credits}</th>
+          <th scope="col" className="px-2 py-2">{TERM_MAPPING_COPY.columns.actions}</th>
         </tr></thead>
         <tbody>{data.mapped.map(row => <tr key={row.id} className="border-t border-border">
           <td className="px-2 py-2">{row.programName} · {row.termName} ({row.termNumber})</td>
-          <td className="px-2 py-2">{row.courseName} ({row.courseCode})</td>
-          <td className="px-2 py-2">{row.type} · {row.credits ?? "not configured"}</td>
+          <td className="px-2 py-2">{row.courseName}</td>
+          <td className="px-2 py-2">{row.courseCode}</td>
+          <td className="px-2 py-2">{row.type === "ELECTIVE" ? TERM_MAPPING_COPY.elective : TERM_MAPPING_COPY.core}</td>
+          <td className="px-2 py-2">{row.credits ?? "—"}</td>
           <td className="px-2 py-2"><Button size="sm" variant="danger"
-            disabled={pending} onClick={() => { setError(null); setConfirm({ type: "REMOVE", id: row.id }); }}>Unmap</Button></td>
+            disabled={pending} onClick={() => { setError(null); setNotice(null); setConfirm({ type: "REMOVE", id: row.id }); }}>{TERM_MAPPING_COPY.removeButton}</Button></td>
         </tr>)}</tbody>
       </table></div>}
+    {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
     {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
     <ConfirmDialog open={confirm !== null} onOpenChange={value => { if (!value && !pending) setConfirm(null); }}
-      title={confirm?.type === "REMOVE" ? "Unmap semester course?" : "Add course to semester?"}
+      title={confirm?.type === "REMOVE"
+        ? TERM_MAPPING_COPY.removeTitle(data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course")
+        : "Add course to semester?"}
       description={confirm?.type === "REMOVE"
         ? "This removes a curriculum mapping. It will be blocked if an active current-term cohort offering uses it."
         : "Confirm the new curriculum association. Duplicate mappings are rejected."}
       confirmVariant={confirm?.type === "REMOVE" ? "danger" : "primary"}
-      confirmLabel={confirm?.type === "REMOVE" ? "Unmap course" : "Add mapping"}
+      confirmLabel={confirm?.type === "REMOVE" ? TERM_MAPPING_COPY.removeButton : TERM_MAPPING_COPY.addButton}
       pending={pending} onConfirm={send} />
   </section>;
 }
