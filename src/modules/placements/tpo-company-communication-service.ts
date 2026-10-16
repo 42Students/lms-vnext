@@ -7,6 +7,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listTpoCompanies} from "./tpo-company-memory-service";
+import {listTpoCompanies} from "./tpo-company-memory-service";
 const companySchema=z.strictObject({
  key:z.string().trim().min(1).max(180),
  status:z.enum(["NOT_CONTACTED","EMAILED","REPLIED","MEETING_SET","NOT_INTERESTED"]),
@@ -27,6 +28,8 @@ export async function listCompanyCommunication(ctx:RequestContext){
 }
 export async function updateCompanyCommunication(ctx:RequestContext,raw:unknown){
  const input=companySchema.parse(raw),college=await scope(ctx);
+ const scoped=await listTpoCompanies(ctx,college.id);
+ if(!scoped.some(company=>company.key===input.key))throw new Error("COMPANY_NOT_IN_COLLEGE");
 
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
