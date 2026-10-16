@@ -219,7 +219,7 @@ export function RecruiterBulkOwnerControls({
           <ul className="mt-2 max-h-36 overflow-auto text-xs text-body">
             {results.map((item) => (
               <li key={item.leadId}>
-                {item.leadId}: {item.status}
+                {rows.find(row=>row.id===item.leadId)?.name??"Recruiter"}: {item.status}
                 {item.reason ? " — " + item.reason : ""}
               </li>
             ))}
