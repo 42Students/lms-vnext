@@ -31,10 +31,10 @@ export async function listAdminSemesters(context:RequestContext,raw:unknown):Pro
  const [totals,rows]=await Promise.all([
   db.select({total:count()}).from(source),
   db.select().from(source).orderBy(asc(source.programName),asc(source.termNumber),asc(source.id))
-   .limit(SUPER_ADMIN_READ_PAGE_SIZE).offset((query.page-1)*SUPER_ADMIN_READ_PAGE_SIZE),
+   .limit(query.pageSize).offset((query.page-1)*query.pageSize),
  ]);
  const total=totals[0]?.total??0;
- return {query,total,totalPages:superAdminReadPages(total),
+ return {query,total,totalPages:superAdminReadPages(total,query.pageSize),
   items:rows.map(r=>({id:r.id,title:r.name,subtitle:r.programName+" ("+r.programCode+")",
    status:r.isActive?"ACTIVE":"INACTIVE",details:["Term "+r.termNumber,r.totalCredits===null?"Credits not recorded":r.totalCredits+" credits"]}))};
 }
