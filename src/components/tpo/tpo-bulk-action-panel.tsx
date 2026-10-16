@@ -213,8 +213,9 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
        {[1,2,3,4,5,6,7].map(day=><option key={day} value={day}>{day} day{day===1?"":"s"}</option>)}
       </select>
      </label>
+     {safeSelected.length>200?<p role="status" className="text-xs text-warning-text">Select at most 200 currently shortlisted applications for one company link. Other rows are not shared.</p>:null}
      <div className="flex flex-wrap gap-2">
-       <button type="button" disabled={busy||safeSelected.length===0} onClick={()=>void shareSelected()}
+       <button type="button" disabled={busy||safeSelected.length===0||safeSelected.length>200} onClick={()=>void shareSelected()}
         className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
          Share {safeSelected.length} selected with the company
        </button>
@@ -242,6 +243,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </details>:null}
    </div>:null}
    {actionCounts.length>0?<div className="grid gap-2 sm:grid-cols-2">
+     {safeSelected.length>200?<p className="col-span-full text-xs text-muted-foreground">Action counts apply to the next 200 selected records. Recheck each subsequent batch.</p>:null}
      {actionCounts.map(count=><div key={count.action} className="rounded-md border border-border bg-surface p-3 text-sm">
        <p className="font-semibold">{count.label}</p>
        <p>{count.ready} ready · {count.skipped} left out</p>
