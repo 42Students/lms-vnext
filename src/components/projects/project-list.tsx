@@ -17,6 +17,7 @@ export type ProjectListItem = {
   attention?: readonly string[];
   actionLine?: string;
   dueState?: string;
+  phaseLabel?:string;
   courseLabel?: string | null;
   phase?: string | null;
   dueLabel?: string | null;
@@ -154,7 +155,10 @@ export function ProjectList({
             </div>
           ) : null}
 
-          {item.dueState ? <div className="mt-3 text-xs font-semibold text-body">Due: {item.dueState}{item.dueDate ? " · " + item.dueDate : ""}</div> : null}
+          {basePath==="/learn/projects"?<div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-body">
+            <span>Phase: {item.phaseLabel??statusLabel(item.status)}</span>
+            <span aria-label="Project due status">· {item.dueState??"No due date"}{item.dueDate?" · "+item.dueDate:""}</span>
+          </div> : item.dueState ? <div className="mt-3 text-xs font-semibold text-body">Due: {item.dueState}{item.dueDate ? " · " + item.dueDate : ""}</div> : null}
           {item.blockedHref ? (
             <span className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-warning-text">
               Blocked · Open blocked work →
