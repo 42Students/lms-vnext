@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,ne,asc,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,learnerProfiles,placementApplications,
- placementApplicationScreenings,placementJobRounds,placementJobs,users} from "@/db/schema";
+ placementApplicationScreenings,placementApplicationRoundExceptions,placementLearnerRequests,placementJobRounds,placementJobs,users} from "@/db/schema";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import type {RequestContext} from "@/modules/identity/context";
@@ -11,6 +11,7 @@ import {placementTableExists} from "./staged-tables";
 import {requireTpoJobCollege,requireTpoJobActor,type TpoJobTx} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
 import {planInterviewDay,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
+import {actOnPlacementRequest} from "./request-service";
 
 async function scope(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
  const collegeId=await requireTpoJobCollege(context);
@@ -54,9 +55,23 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
   }).from(hrInterviewSlots).where(and(
    eq(hrInterviewSlots.collegeId,info.collegeId),
    eq(hrInterviewSlots.roundId,info.round.id),eq(hrInterviewSlots.status,"PROPOSED"))):[];
+ const reschedules=await getDb().select({
+  id:placementLearnerRequests.id,applicationId:placementLearnerRequests.applicationId,
+  reason:placementLearnerRequests.reason,requestedAt:placementLearnerRequests.requestedAt,
+  name:users.displayName,
+ }).from(placementLearnerRequests)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementLearnerRequests.applicationId))
+  .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+   eq(collegeMemberships.collegeId,info.collegeId)))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(eq(placementLearnerRequests.roundId,info.round.id),
+   eq(placementApplications.jobId,info.round.jobId),
+   eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
+   eq(placementLearnerRequests.status,"PENDING")));
  const booked=new Set(slots.map(s=>s.applicationId).filter(Boolean));
  return {...info,storageReady,roster,unassigned:roster.filter(r=>!booked.has(r.applicationId)),
   recruiterProposals:recruiterProposals.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString()})),
+  reschedules:reschedules.map(row=>({...row,requestedAt:row.requestedAt.toISOString()})),
   slots:slots.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
    createdAt:row.createdAt.toISOString(),updatedAt:row.updatedAt.toISOString(),
    confirmedAt:row.confirmedAt?.toISOString()??null}))};
