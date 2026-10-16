@@ -583,7 +583,6 @@ export async function listProjectAdminRiskQueue(
         Math.ceil(total / query.pageSize),
       ),
       blockerSignalSupported: false,
-    buckets,
       buckets,
     };
   }
