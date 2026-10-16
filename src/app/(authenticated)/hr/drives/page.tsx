@@ -165,6 +165,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             {req.status==="SENT_BACK"?"Fix and Resend":"Edit your request"}
           </Link>:null}
+          {["REJECTED","CANCELLED"].includes(req.status)?<Link
+            href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&copy="+encodeURIComponent(req.id)}
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Hire again with changes
+          </Link>:null}
+          {req.status==="REJECTED"&&req.decisionNote?<p className="mt-2 text-sm text-body">Declined: “{req.decisionNote}”</p>:null}
           {req.approvedJobId?<Link href={"/hr/placements/jobs/"+encodeURIComponent(req.approvedJobId)}
             className="mt-2 block text-sm text-primary-text underline">Open approved drive</Link>:null}
         </li>;
