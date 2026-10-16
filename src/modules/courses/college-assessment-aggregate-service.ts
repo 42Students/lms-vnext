@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, ilike, inArray, isNull, isNotNull, sql } from "drizzle-orm";
+import { and, asc, count, countDistinct, desc, eq, ilike, inArray, isNull, isNotNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { alias } from "drizzle-orm/pg-core";
 import {
@@ -8,6 +8,12 @@ import {
   cohorts,
   programs,
   assignmentSubmissions,
+  collegeMemberships,
+  courseSectionDeliveries,
+  sectionEnrollments,
+  learnerProgramEnrollments,
+  membershipRoles,
+  sections,
   courseAssignments,
   courseLearningPaths,
   courseLessons,
@@ -188,6 +194,115 @@ export async function listCollegeAssessmentAggregate(
         .where(inArray(quizAttempts.quizId, ids))
         .groupBy(quizAttempts.quizId);
   const countById = new Map(counts.map((row) => [row.id, row.total]));
+
+  // Count actual active learners in each offering delivery, not persisted
+  // activity rows. Shared items count the eligible audiences across deliveries.
+  // All source IDs are restricted to the authorized, paginated assessment rows.
+  const offeringIds = [...new Set(rows.map(row => row.offeringId))];
+  const eligibleRows = offeringIds.length ? await db.select({
+    offeringId: courseSectionDeliveries.offeringId,
+    deliveryId: courseSectionDeliveries.id,
+    eligible: countDistinct(collegeMemberships.id),
+  }).from(courseSectionDeliveries)
+    .innerJoin(courseOfferings, eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+    .innerJoin(sections, and(
+      eq(sections.id,courseSectionDeliveries.sectionId),
+      eq(sections.cohortId,courseOfferings.cohortId),
+      eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+    ))
+    .innerJoin(sectionEnrollments,and(
+      eq(sectionEnrollments.sectionId,sections.id),
+      eq(sectionEnrollments.academicPeriodId,sections.academicPeriodId),
+      eq(sectionEnrollments.status,"ACTIVE"),
+    ))
+    .innerJoin(learnerProgramEnrollments,and(
+      eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
+      eq(learnerProgramEnrollments.cohortId,courseOfferings.cohortId),
+      eq(learnerProgramEnrollments.status,"ACTIVE"),
+    ))
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
+      eq(collegeMemberships.collegeId,collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+    ))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"LEARNER"),
+    ))
+    .where(and(inArray(courseSectionDeliveries.offeringId,offeringIds),
+      isNull(courseSectionDeliveries.endedAt)))
+    .groupBy(courseSectionDeliveries.offeringId,courseSectionDeliveries.id):[];
+  const eligibleByOffering=new Map<string,number>();
+  const eligibleByDelivery=new Map<string,number>();
+  for(const entry of eligibleRows){
+    eligibleByOffering.set(entry.offeringId,
+      (eligibleByOffering.get(entry.offeringId)??0)+entry.eligible);
+    eligibleByDelivery.set(entry.deliveryId,entry.eligible);
+  }
+
+  // Count only submissions from currently active learners in the actual
+  // section delivery; resubmissions and repeat quiz attempts count once.
+  const submissionStats = ids.length === 0 ? [] :
+    kind === "ASSIGNMENT" ?
+      await db.select({
+        id:assignmentSubmissions.assignmentId,
+        submitted:countDistinct(assignmentSubmissions.membershipId),
+        graded:sql<number>`count(distinct ${assignmentSubmissions.membershipId}) filter (where ${assignmentSubmissions.gradingStatus} = 'GRADED')::int`,
+      }).from(assignmentSubmissions)
+        .innerJoin(courseSectionDeliveries,and(
+          eq(courseSectionDeliveries.id,assignmentSubmissions.deliveryId),
+          isNull(courseSectionDeliveries.endedAt),
+        ))
+        .innerJoin(sectionEnrollments,and(
+          eq(sectionEnrollments.sectionId,courseSectionDeliveries.sectionId),
+          eq(sectionEnrollments.status,"ACTIVE"),
+        ))
+        .innerJoin(learnerProgramEnrollments,and(
+          eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
+          eq(learnerProgramEnrollments.membershipId,assignmentSubmissions.membershipId),
+          eq(learnerProgramEnrollments.status,"ACTIVE"),
+        ))
+        .innerJoin(collegeMemberships,and(
+          eq(collegeMemberships.id,assignmentSubmissions.membershipId),
+          eq(collegeMemberships.collegeId,collegeId),
+          eq(collegeMemberships.status,"ACTIVE"),
+        ))
+        .innerJoin(membershipRoles,and(
+          eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"LEARNER"),
+        ))
+        .where(inArray(assignmentSubmissions.assignmentId,ids))
+        .groupBy(assignmentSubmissions.assignmentId) :
+      await db.select({
+        id:quizAttempts.quizId,
+        submitted:countDistinct(quizAttempts.membershipId),
+        graded:sql<number>`0::int`,
+      }).from(quizAttempts)
+        .innerJoin(courseSectionDeliveries,and(
+          eq(courseSectionDeliveries.id,quizAttempts.deliveryId),
+          isNull(courseSectionDeliveries.endedAt),
+        ))
+        .innerJoin(sectionEnrollments,and(
+          eq(sectionEnrollments.sectionId,courseSectionDeliveries.sectionId),
+          eq(sectionEnrollments.status,"ACTIVE"),
+        ))
+        .innerJoin(learnerProgramEnrollments,and(
+          eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
+          eq(learnerProgramEnrollments.membershipId,quizAttempts.membershipId),
+          eq(learnerProgramEnrollments.status,"ACTIVE"),
+        ))
+        .innerJoin(collegeMemberships,and(
+          eq(collegeMemberships.id,quizAttempts.membershipId),
+          eq(collegeMemberships.collegeId,collegeId),
+          eq(collegeMemberships.status,"ACTIVE"),
+        ))
+        .innerJoin(membershipRoles,and(
+          eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"LEARNER"),
+        ))
+        .where(inArray(quizAttempts.quizId,ids))
+        .groupBy(quizAttempts.quizId);
+  const statsById=new Map(submissionStats.map(item=>[item.id,item]));
   const items: CollegeAssessmentAggregateItem[] = rows.map((row) => ({
     id: row.id,
     title: row.title,
@@ -200,6 +315,11 @@ export async function listCollegeAssessmentAggregate(
     deliverySpecific: row.deliveryId !== null,
     points: row.points,
     activityCount: countById.get(row.id) ?? 0,
+    eligibleLearners:row.deliveryId?
+      eligibleByDelivery.get(row.deliveryId)??0:
+      eligibleByOffering.get(row.offeringId)??0,
+    submittedLearners:statsById.get(row.id)?.submitted??0,
+    gradedLearners:statsById.get(row.id)?.graded??0,
     resultsPublished: kind==="QUIZ" ? row.resultsPublished ?? false : null,
   }));
   return {
