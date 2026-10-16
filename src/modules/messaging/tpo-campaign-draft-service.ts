@@ -13,7 +13,7 @@ import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
 import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
 
 export class TpoCampaignDraftError extends Error{
- constructor(readonly code:"NOT_READY"|"NO_RECIPIENTS"){super(code);}
+ constructor(readonly code:"NOT_READY"|"NO_RECIPIENTS"|"INVALID_SELECTION"){super(code);}
 }
 async function scope(context:RequestContext){
  const member=context.membership;
@@ -52,6 +52,8 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
     (!selectedIds||selectedIds.has(row.id)) && (
     input.segment==="NEW"?row.manualStage==="NEW":
     input.segment==="UNASSIGNED"?row.ownerMembershipId===null:true));
+  if(selectedIds&&subset.length!==selectedIds.size)
+   throw new TpoCampaignDraftError("INVALID_SELECTION");
   if(input.body.length>4000){
    const migrated=await tx.execute<{ready:boolean}>(sql`
     select exists(select 1 from pg_constraint
