@@ -22,7 +22,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 1. WP-chat-5-01-drive-workspace-placements-s1 | IN-PROGRESS | 21 gaps: S1 21 — earlier registration/publish/close/cancel work; next-step and full export advanced; other S1 flows unverified
 2. WP-chat-5-02-requests-verification-students-s1 | TODO | 17 gaps: S1 13, S2 4
-3. WP-chat-5-03-placements-s2 | IN-PROGRESS | 21 gaps: S2 21 — LEARNER-placements-21 completed on main; resume attachment and remaining S2 work still open
+3. WP-chat-5-03-placements-s2 | IN-PROGRESS | 21 gaps: S2 21 — LEARNER-placements-07/21 completed on main; resume attachment and remaining S2 work still open
 4. WP-chat-5-04-batches-placements-s2 | TODO | 20 gaps: S2 20
 5. WP-chat-5-05-batches-calendar-reports-s2 | TODO | 15 gaps: S2 15
 6. WP-chat-5-06-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — implemented TPO-drive-workspace-03/16/35/37 with unit + PostgreSQL integration tests authored; execution/browser acceptance not yet verified; other gaps TODO
