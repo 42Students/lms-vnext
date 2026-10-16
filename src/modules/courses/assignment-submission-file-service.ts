@@ -410,8 +410,7 @@ export async function submitAssignmentWithFiles(
   const assignmentId = idSchema.parse(assignmentIdInput);
   const input = submitSubmissionFilesInputSchema.parse(rawInput);
   const multipart=Boolean(input.textContent?.trim()||input.links.length);
-  if(multipart&&!multipartAssignmentRuntimeEnabled())
-    throw new StorageFileError("STORAGE_PARENT_NOT_AVAILABLE");
+
   const { assignment, membership } = await authorizeOrNotFound(() =>
     requireLearnerScope(context, assignmentId, input.deliveryId),
   );
@@ -477,9 +476,9 @@ export async function submitAssignmentWithFiles(
       if (files.some((file) => file.status !== "READY" || file.submissionId !== null)) {
         throw new StorageFileError("STORAGE_FILE_NOT_READY");
       }
-      if(process.env.DB06_MULTIPART_SUBMISSIONS_READY==="DB06_VERIFIED"){
+      {
         const [policy]=await tx.select({
-          methods:sql<unknown>`allowed_submission_methods`,
+          methods:courseAssignments.allowedSubmissionMethods,
         }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
         if(!policy||!allowedAssignmentMixedParts(policy.methods,{
           hasWrittenResponse:Boolean(input.textContent?.trim()),
@@ -688,7 +687,7 @@ export async function listSubmissionFiles(context: RequestContext, submissionIdI
 export async function listAssignmentSubmissionLinks(context:RequestContext,submissionIdInput:string){
  const submissionId=idSchema.parse(submissionIdInput);
  await listSubmissionFiles(context,submissionId);
- if(!multipartAssignmentRuntimeEnabled())return [];
+
  return getDb().select({
   id:assignmentSubmissionLinks.id,kind:assignmentSubmissionLinks.kind,
   url:assignmentSubmissionLinks.url,caption:assignmentSubmissionLinks.caption,
