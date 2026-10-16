@@ -360,6 +360,7 @@ export function LearnerProfileWorkspace(props: {
     if(collection==="education"){
       const issue=learnerEducationValidationProblem({
         educationType:String(itemDraft.educationType??""),
+        institution:String(itemDraft.institution??""),
         gradingType:String(itemDraft.gradingType??""),
         gradeObtained:String(itemDraft.gradeObtained??""),
         maxGrade:String(itemDraft.maxGrade??""),
@@ -737,14 +738,21 @@ export function LearnerProfileWorkspace(props: {
             {fields[collection].map((field) => {
               const raw = itemDraft[field.key];
               const value = field.key === "skills" && Array.isArray(raw) ? raw.join(", ") : String(raw || "");
-              if(collection==="education"&&(field.key==="educationType"||field.key==="qualifyingExam"))
+              if(collection==="education"&&field.key==="educationType")
+                return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
+                  <Select className="mt-1.5" value={value}
+                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}>
+                    <option value="">Choose education type</option>
+                    {LEARNER_EDUCATION_TYPES.map(option=><option key={option} value={option}>{option}</option>)}
+                  </Select>
+                </label>;
+              if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
                   <input className="mt-1.5 min-h-11 w-full rounded-md border border-border bg-surface px-3"
-                    list={"learner-education-"+field.key} value={value} maxLength={120}
-                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}/>
-                  <datalist id={"learner-education-"+field.key}>
-                    {(field.key==="educationType"?LEARNER_EDUCATION_TYPES:LEARNER_QUALIFYING_EXAMS)
-                      .map(option=><option key={option} value={option}/>)}
+                    list="learner-qualifying-exams" value={value} maxLength={120}
+                    onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
+                  <datalist id="learner-qualifying-exams">
+                    {LEARNER_QUALIFYING_EXAMS.map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
               if (field.type === "textarea") return <label key={field.key} className="text-xs font-semibold text-body sm:col-span-2">{field.label}<Textarea className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;

@@ -23,6 +23,8 @@ describe("LEARNER-profile-misc-06 education examination validation",()=>{
    ["gradeObtained","Grade obtained is required"],
    ["maxGrade","Max grade is required for job screening"],
   ] as const;
+  expect(learnerEducationValidationProblem({...entry,educationType:"B.Tech"})?.message)
+   .toBe("Choose a valid education type");
   for(const [key,message] of cases){
     expect(learnerEducationValidationProblem({...entry,[key]:""})?.message).toBe(message);
   }

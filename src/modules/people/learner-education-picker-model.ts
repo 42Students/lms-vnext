@@ -11,6 +11,8 @@ export function learnerEducationValidationProblem(input:{
 }):{field:string;message:string}|null{
  const educationType=input.educationType?.trim()??"";
  if(!educationType)return {field:"educationType",message:"Education type is required"};
+ if(!LEARNER_EDUCATION_TYPES.some(level=>level===educationType))
+  return {field:"educationType",message:"Choose a valid education type"};
  if(!input.institution?.trim())return {field:"institution",message:"Institution name is required"};
  if(!input.gradingType?.trim())return {field:"gradingType",message:"Grading type is required"};
  if(!input.gradeObtained?.trim())return {field:"gradeObtained",message:"Grade obtained is required"};
