@@ -67,11 +67,17 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         {data.items.length === 0 ? <p>No matching batches on this page.</p> :
           <div className="overflow-x-auto"><table className="w-full min-w-[38rem] text-left text-sm">
             <thead><tr><th className="p-2">Batch</th><th className="p-2">Program</th>
-              <th className="p-2">Status</th><th className="p-2">Actions</th></tr></thead>
+              <th className="p-2">Start Date</th><th className="p-2">End Date</th><th className="p-2">Academic Year</th>
+              <th className="p-2">Semester</th><th className="p-2">Students</th><th className="p-2">Status</th><th className="p-2">Actions</th></tr></thead>
             <tbody>{data.items.map(row => <tr key={row.id} className="border-t border-border">
               <td className="p-2">{row.name} ({row.code})
                 <Link href={`/admin/classes?cohortCode=${encodeURIComponent(row.code)}`} className="mt-1 block text-xs font-semibold text-primary-text">Manage students →</Link></td>
               <td className="p-2">{row.programName}</td>
+              <td className="p-2">{row.startDate ?? "—"}</td>
+              <td className="p-2">{row.expectedEndDate ?? "—"}</td>
+              <td className="p-2">{row.currentAcademicYearStart ? `${row.currentAcademicYearStart}–${row.currentAcademicYearStart+1}` : "Not recorded"}</td>
+              <td className="p-2">{row.currentTermNumber ?? "—"}</td>
+              <td className="p-2">{row.activeEnrolledLearners}</td>
               <td className="p-2">{row.status}</td>
               <td className="p-2"><CollegeCohortRowActions row={row} periods={periods} /></td>
             </tr>)}</tbody>
