@@ -108,3 +108,9 @@ Page slug `projects`, account College Admin, gap IDs `COL-projects-NN`. Sibling 
 - **COL-projects-01:** Existing College Admin submission accept/change request/lock route, controls and exact toast unit test confirmed in current main; no duplicate implementation.
 - **COL-projects-14:** Added the existing College Admin review/lock controls to workspace Delivery, with submitter, submission timestamp, revisions, notes, and safe additional-evidence links; mentor review remains on its prior path. Unit contract test added but **not executed**; UI/browser verification outstanding.
 - **COL-projects-02:** Existing title/summary/status editor only; other legacy fields remain pending.
+
+
+### chat-11 Round 2 implementation checkpoint (2026-10-16; runtime verification pending)
+
+- **COL-projects-R01:** Project creation with a primary mentor, reassignment, member add/remove now send same-college in-app notifications through the common notification service, inside the domain write transaction. Other project updates/restore remain pending; disposable PostgreSQL test written, **not run**.
+- **COL-projects-10 / COL-projects-11:** At Risk query now includes projects with persisted `project_tasks.status = BLOCKED` and non-empty `blocker_reason`, and the page displays the latest active task blocker note. The distinct legacy workspace blocker field is still not persisted. Stats, CSV, actions and browser checks remain outstanding; **partial**.
