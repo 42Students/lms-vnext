@@ -26,6 +26,24 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-7-04-home-drives-s3 | IN-PROGRESS | 19 gaps: S3 19
 5. WP-chat-7-05-home-drives-profile-misc-s3 | IN-PROGRESS | 15 gaps: S3 2, S4 13
 
+## FAST-MODE checkpoint — learner expansion (2026-10-17)
+
+Owner extended chat-7 into Learner placements, projects, courses and learning-misc beyond the original work-package scope. Relevant audit sources: `docs/audit/pages/learner/*.md` and review files.
+
+**S1/S2 work started or integrated (not a blanket closure claim):**
+- LEARNER-placements-50: existing guarded batch-registration choice/consent UI and POST service are now rendered on My Placements, with unavailable-state retry. Registration DB gate still applies.
+- LEARNER-placements-06: active own-member debarment state now yields a dashboard warning, duration/count and placement-cell support link; sensitive staff reason is intentionally not disclosed.
+- LEARNER-placements-04 / -R01: typed urgent to-do actions and actionable eligibility failures/link to registration and academic evidence.
+- LEARNER-placements-37 / -47: schedule cards show persisted mode, venue, duration, safe test/meeting links and expected-state text; notice list shows audience context and recent New badge. Attendance confirmation and producer-specific action links need persistent backend support.
+- LEARNER-projects-01 / -38: learner project list includes phase and explicit due-state fallback; final delivery dialog shows team-sharing reminder, persisted mentor feedback, readiness and accepted notices. Course association/file uploads are not complete.
+- LEARNER-placements-31: own journey DB read now projects drive status, but the learner UI cancellation banner was not wired because concurrent main updates rejected the write twice.
+- LEARNER-placements-14 / -15 / -17 / -22 / -26 / -32 / -34 / -48: search, sorting, availability, empty-state, apply, company-preview and notification labels aligned incrementally.
+- LEARNER-learning-misc-09 / -10 / -17 / -18 / -33 / -36 / -38: assignment submit unload warning and retry error, quiz action and empty copy, class-schedule and attendance presentation.
+- LEARNER-home-courses-05 / -09 / -21: remove invented list fallback, distinguish course-list error, and guard unsent discussion on browser unload.
+- LEARNER-projects-10 / -12 / -14 / -16: archived notice, definition of done, personas, authoritative task lane counts, and overview heading.
+
+**Still unresolved:** privacy/consent and private file storage, saved jobs table registration/UI, learner round attendance confirmation, project task creation/reordering, final submission uploads, full instructor-material multipart parity, quiz shuffle/missed-review policy, additional learner placement workflows and notifications. Every existing chat-7 WP stays **IN-PROGRESS**, not DONE; no acceptance or test results asserted under FAST MODE. This work spans audit pages that are not currently assigned as separate WP entries; future orchestrator split may be needed.
+
 ## FAST-MODE checkpoint — continued round (2026-10-17)
 
 - WP-01 remains **IN-PROGRESS**: S1 learner resume/identity evidence needs private scanner-attested storage; REC-home-drives-38 disclosure requires privacy authorization; REC-home-drives-51 has a staged schema/proposal but no registered write/review path; REC-home-drives-21 trusted auto-approval remains pending.
