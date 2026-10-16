@@ -21,7 +21,7 @@ export async function POST(request:Request,{params}:RouteContext){
  if(!input.success)return NextResponse.json({error:"INVITE_INVALID"},{status:404});
  try{
   const {token}=await params;
-  const accepted=await acceptPublicTpoRecruiterInviteOtp(token,input.data.code);
+  const accepted=await acceptPublicTpoRecruiterInviteOtp(token,input.data.code,input.data);
   return NextResponse.json(accepted,{headers:{"Cache-Control":"no-store"}});
  }catch(error){
   return tpoRecruiterInviteApiErrorResponse(error);

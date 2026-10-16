@@ -17,11 +17,12 @@ import {recruiterOtpAttemptDecision,recruiterOtpMatches,recruiterInviteOtpSchema
  from "./recruiter-invite-otp-policy";
 import {TpoRecruiterInviteServiceError} from "./tpo-recruiter-invite-service";
 import {publicRecruiterJoinedNotification} from "./public-join/join-notification-model";
+import {recruiterInviteAcceptanceBodySchema} from "./recruiter-invite-otp-accept-model";
 
 /** Public signup is authorized solely by an invite bound to a known work email
  * plus its latest DELIVERED OTP. Never accept claimed user, email, company or college IDs.
  */
-export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode:unknown):
+export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode:unknown,rawDetails:unknown={}):
  Promise<{accepted:true;outcome:"JOINED";signInEmail:string}> {
  const invalid=()=>new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
  const secret=process.env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
@@ -29,6 +30,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   Buffer.byteLength(secret,"utf8")<32||
   typeof rawToken!=="string"||!isRecruiterInviteTokenShape(rawToken)||
   !recruiterInviteOtpSchema.safeParse(rawCode).success)throw invalid();
+ const details=recruiterInviteAcceptanceBodySchema.parse({code:rawCode,...(typeof rawDetails==="object"&&rawDetails!==null?rawDetails:{})});
  const token=rawToken,code=rawCode as string,hash=recruiterInviteTokenHash(token);
  const decision=await getDb().transaction(async tx=>{
   const now=new Date();
@@ -70,18 +72,22 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
    .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,lead.collegeId))
    .for("share").limit(1);
   const months=recruiterAccessMonthsOrDefault(duration?.months);
+  const updatedName=details.name??lead.name;
+  const updatedDesignation=details.designation??lead.designation;
+  const updatedPhone=details.mobile===undefined?lead.phoneNorm:
+    (details.mobile.replace(/\D/g,"").slice(-10)||null);
   const email=lead.emailNorm.trim().toLowerCase();
   // Must not create or relabel a second identity for a verified email.
   await tx.insert(users).values({
    identityUid:"public-recruiter-email:"+createHash("sha256").update(email).digest("hex"),
-   email,displayName:lead.name,
+   email,displayName:updatedName,
   }).onConflictDoNothing();
   const [user]=await tx.select({id:users.id,status:users.platformStatus})
    .from(users).where(sql`lower(${users.email})=${email}`).for("update").limit(1);
   if(!user||user.status!=="ACTIVE")throw invalid();
   await tx.insert(placementRecruiterProfiles).values({
    userId:user.id,companyId:relationship.companyId,createdByUserId:user.id,
-   title:lead.designation,
+   title:updatedDesignation,
   }).onConflictDoNothing();
   const [profile]=await tx.select().from(placementRecruiterProfiles)
     .where(eq(placementRecruiterProfiles.userId,user.id)).for("update").limit(1);
@@ -106,6 +112,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   if(!consumed)throw invalid();
   const [accepted]=await tx.update(placementTpoLeads).set({
    recruiterUserId:user.id,inviteTokenHash:null,updatedAt:now,
+   name:updatedName,designation:updatedDesignation,phoneNorm:updatedPhone,
   }).where(and(eq(placementTpoLeads.id,lead.id),
    eq(placementTpoLeads.collegeId,lead.collegeId),
    eq(placementTpoLeads.inviteTokenHash,hash),
@@ -119,7 +126,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
    organizationId:relationship.organizationId,collegeId:lead.collegeId,
    module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_JOINED",
    subjectType:"placement_tpo_lead",subjectId:lead.id,
-   summary:"Recruiter joined by invitation",subjectLabel:lead.name,
+   summary:"Recruiter joined by invitation",subjectLabel:updatedName,
    metadata:{recruiterUserId:user.id,companyRelationshipId:lead.companyRelationshipId},
   }).returning({id:activityEvents.id});
   if(!event)throw invalid();
@@ -131,7 +138,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
     eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO"),
     eq(users.platformStatus,"ACTIVE")));
   const notification=publicRecruiterJoinedNotification({
-   name:lead.name,companyName:relationship.companyName,scope:"COLLEGE",
+   name:updatedName,companyName:relationship.companyName,scope:"COLLEGE",
   });
   if(officers.length)await tx.insert(inAppNotifications).values(officers.map(officer=>({
     eventId:event.id,userId:officer.userId,...notification,

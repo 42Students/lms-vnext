@@ -260,6 +260,7 @@ export async function previewRecruiterInvite(
     collegeName: row.collegeName,
     companyName: row.lead.companyName,
     contactName: row.lead.name,
+    contactEmail: row.lead.emailNorm,
     designation: row.lead.designation,
     expiresAt: new Date(
       row.lead.inviteSentAt!.getTime() + 7 * 24 * 60 * 60 * 1000,
