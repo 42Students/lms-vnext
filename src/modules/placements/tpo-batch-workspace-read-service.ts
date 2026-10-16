@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { cohorts, collegeMemberships, departments, learnerProgramEnrollments, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
+import { cohorts, collegeMemberships, departments, learnerProgramEnrollments, learnerProfiles, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchLifecycles, placementEligibilityEvents } from "@/db/schema/placement-batches";
 import type { RequestContext } from "@/modules/identity/context";
@@ -59,9 +59,10 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  const {batch,collegeId}=await getTpoBatch(ctx,rawId);const page=pageSchema.parse(rawPage);
  const filter=and(eq(learnerProgramEnrollments.cohortId,batch.id),eq(learnerProgramEnrollments.status,"ACTIVE"),
   eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"));
- const roster=()=>getDb().select({membershipId:collegeMemberships.id,name:users.displayName,enrollmentId:learnerProgramEnrollments.id})
+ const roster=()=>getDb().select({membershipId:collegeMemberships.id,name:users.displayName,rollNumber:learnerProfiles.rollNumber,enrollmentId:learnerProgramEnrollments.id})
  .from(learnerProgramEnrollments).innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER"))).where(filter);
  const records=await roster().orderBy(asc(users.displayName),asc(collegeMemberships.id)).limit(26).offset((page-1)*25);
  const visible=records.slice(0,25),enrollmentIds=visible.map(r=>r.enrollmentId);
@@ -76,7 +77,7 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  const sectionsFor=activeSections.filter(s=>s.enrollmentId===r.enrollmentId);
  const section=sectionsFor.length===1?find("SECTION",sectionsFor[0].sectionId):undefined;
  const cohort=find("COHORT",batch.id);const winner=sectionsFor.length>1?undefined:(direct??section??cohort);
- return {membershipId:r.membershipId,name:r.name??"Unnamed learner",decision:winner?.status??"NOT_DECIDED",
+ return {membershipId:r.membershipId,name:r.name??"Unnamed learner",rollNumber:r.rollNumber,decision:winner?.status??"NOT_DECIDED",
   source:!winner?"NONE":winner===direct?"LEARNER":winner===section?"CLASS":"BATCH",
   reason:winner?.reason??null,ambiguous:sectionsFor.length>1,
   direct:direct&&["ELIGIBLE","INELIGIBLE"].includes(direct.status)
