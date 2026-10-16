@@ -338,7 +338,7 @@ export async function submitCourseAssignment(
         .returning();
 
       // Audit only identifiers and type, never the learner's answer.
-      await recordActivityEventInTransaction(tx, context, {
+      const submissionEvent = await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_SUBMITTED,
         collegeId: assignment.collegeId,
         organizationId: assignment.organizationId,
@@ -348,6 +348,15 @@ export async function submitCourseAssignment(
         metadata: { submissionId: created!.id, deliveryId: input.deliveryId, submissionType: input.submissionType },
         dedupeKey: "assignment-submission:" + created!.id + ":submitted",
       });
+      // A receipt bell reflects a committed submission; the grade is private
+      // until Faculty publishes it. The learner is the persisted recipient.
+      await tx.insert(inAppNotifications).values({
+        userId:context.user.id,eventId:submissionEvent.id,
+        title:"Assignment submitted",
+        body:"Your assignment submission was recorded. You can review it while waiting for a grade.",
+        actionHref:"/learn/allAssignments/"+encodeURIComponent(assignmentId)+
+          "?deliveryId="+encodeURIComponent(input.deliveryId),
+      }).onConflictDoNothing();
 
       if (
         input.submissionType === "FILE"
