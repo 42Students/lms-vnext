@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { recruiterInvitePreviewDisposition } from "@/modules/placements/recruiter-invite-preview-disposition-model";
+import { recruiterInvitePreviewDisposition,RECRUITER_INVITE_LOAD_ERROR_HEADING } from "@/modules/placements/recruiter-invite-preview-disposition-model";
 
 type Invite = {
   collegeName: string;
@@ -102,7 +102,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   if(state === "load_error") {
     return shell(<div className="space-y-4 text-center">
-      <h1 className="text-xl font-semibold text-foreground">We couldn\u0027t load this invitation</h1>
+      <h1 className="text-xl font-semibold text-foreground">{RECRUITER_INVITE_LOAD_ERROR_HEADING}</h1>
       <p className="text-sm text-muted-foreground">Check your connection and try again. Your invitation has not been consumed.</p>
       <button type="button" className={primary} onClick={()=>{
         setState("loading");setRetrySequence(i=>i+1);
