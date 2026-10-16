@@ -205,8 +205,13 @@ export async function completeProjectFileUpload(
   projectIdInput: string,
   fileIdInput: string,
 ) {
-  const scope = await authorizeOrNotFound(() => requireProjectLifecycleAccess(context, projectIdInput));
+  const scope = await authorizeOrNotFound(() => requireProjectReadAccess(context, projectIdInput));
+  if(!["LEARNER","MENTOR","ADMIN"].includes(scope.access))
+    throw new StorageFileError("STORAGE_NOT_FOUND");
   const row = await loadFile(scope.project.id, fileIdInput);
+  if(scope.access==="LEARNER" && (row.uploaderMembershipId!==context.membership?.id ||
+    scope.project.status!=="ACTIVE"))
+    throw new StorageFileError("STORAGE_NOT_FOUND");
   if (row.status === "READY") return toProjectFileDto(row);
   if (row.status !== "UPLOADING" && row.status !== "VERIFYING") {
     throw new StorageFileError("STORAGE_INVALID_STATE");
