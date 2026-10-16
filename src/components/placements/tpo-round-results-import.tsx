@@ -1,0 +1,97 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+type Match={line:number;identity:string;applicationId:string;name:string;outcome:string;status:string|null};
+type Missing={line:number;identity:string;reason:string;suggestions:Array<{applicationId:string;name:string;roll:string|null}>};
+type Preview={previewToken:string;sourceRows:number;candidateCount:number;matched:Match[];
+ unmatched:Missing[];notInFile:Array<{applicationId:string;name:string}>};
+type Report={staged:number;skipped:number;unmatched:number;results:Array<{line:number;applicationId:string;status:string;reason?:string}>};
+export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:string}){
+ const router=useRouter();const [file,setFile]=useState<File|null>(null);
+ const [preview,setPreview]=useState<Preview|null>(null);const [report,setReport]=useState<Report|null>(null);
+ const [overrides,setOverrides]=useState<Record<number,string>>({});
+ const [skips,setSkips]=useState<number[]>([]);
+ const [missingPolicy,setMissingPolicy]=useState<"LEAVE_PENDING"|"MARK_NOT_CLEARED">("LEAVE_PENDING");
+ const [busy,setBusy]=useState(false);const [error,setError]=useState("");
+ const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/import-results";
+ async function send(action:"PREVIEW"|"STAGE_IMPORT"){
+  if(!file||busy)return;
+  setBusy(true);setError("");
+  try{
+   const payload=new FormData();
+   payload.set("file",file);payload.set("action",action);
+   if(action==="STAGE_IMPORT"){
+    if(!preview)throw Error("Preview the file before confirming.");
+    payload.set("previewToken",preview.previewToken);
+    payload.set("missingPolicy",missingPolicy);
+    payload.set("overrides",JSON.stringify(Object.entries(overrides).filter(([,id])=>Boolean(id))
+     .map(([line,applicationId])=>({line:Number(line),applicationId}))));
+    payload.set("skippedLines",JSON.stringify(skips));
+   }
+   const response=await fetch(url,{method:"POST",credentials:"same-origin",body:payload});
+   const result=await response.json() as (Preview&Report&{error?:string;issues?:Array<{message:string}>});
+   if(!response.ok)throw Error(result.issues?.[0]?.message??result.error??"Import failed");
+   if(action==="PREVIEW"){setPreview(result);setReport(null);setOverrides({});setSkips([]);}
+   else {setReport(result);setPreview(null);router.refresh();}
+  }catch(e){setError(e instanceof Error?e.message:"Import failed");}
+  finally{setBusy(false);}
+ }
+ return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+  <h2 className="text-lg font-semibold text-foreground">Import company round results</h2>
+  <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. We match Application ID first, then email and roll number.
+   Company portal IDs with no matching application are left unmatched. Nothing is applied to the round until the separate Apply results step.</p>
+  <a href={url} download className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Download CSV template</a>
+  <label className="block text-sm font-semibold text-body">Company results file
+   <input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    disabled={busy} onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setReport(null);}}
+    className="mt-2 block w-full rounded-md border border-border p-3 text-foreground"/>
+  </label>
+  <button type="button" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
+   className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   {busy?"Checking…":"Preview matching results"}</button>
+  {preview?<div className="space-y-4 rounded-lg border border-border bg-surface-subtle p-4">
+   <h3 className="font-semibold">Import preview</h3>
+   <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
+   <div className="max-h-44 overflow-auto rounded border border-border p-2">
+    {preview.matched.map(row=><p key={row.line} className="border-b border-border px-2 py-1 text-sm">
+     Row {row.line}: {row.name} · {row.outcome} {row.status?"· existing "+row.status:""}</p>)}
+   </div>
+   {preview.unmatched.length?<div className="space-y-2">
+    <h4 className="font-semibold">Unmatched rows — review or skip</h4>
+    {preview.unmatched.map(row=><div key={row.line} className="grid gap-2 rounded border border-border bg-surface p-3 sm:grid-cols-2">
+     <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
+     <div className="flex flex-wrap gap-2">
+      <select aria-label={"Match row "+row.line} className="min-h-10 flex-1 rounded border border-border bg-surface p-2 text-sm"
+       value={overrides[row.line]??""} disabled={busy} onChange={e=>setOverrides(p=>({...p,[row.line]:e.target.value}))}>
+       <option value="">Do not match this row</option>
+       {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
+      </select>
+      <label className="flex items-center gap-2 text-sm">
+       <input type="checkbox" checked={skips.includes(row.line)} disabled={busy}
+        onChange={e=>setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line))}/> Skip row
+      </label>
+     </div>
+    </div>)}
+   </div>:null}
+   <fieldset className="space-y-2 rounded border border-border bg-surface p-3 text-sm">
+    <legend className="font-semibold">Students not in the file</legend>
+    <label className="flex gap-2"><input type="radio" checked={missingPolicy==="LEAVE_PENDING"}
+     onChange={()=>setMissingPolicy("LEAVE_PENDING")}/> Leave pending (do not change their result)</label>
+    <label className="flex gap-2"><input type="radio" checked={missingPolicy==="MARK_NOT_CLEARED"}
+     onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
+    {missingPolicy==="MARK_NOT_CLEARED"?<p className="text-error">This also stages Not cleared for all currently eligible applicants missing from the file. Review carefully.</p>:null}
+   </fieldset>
+   <button type="button" disabled={busy||!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&
+    !Object.values(overrides).some(Boolean)} onClick={()=>void send("STAGE_IMPORT")}
+    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+    {busy?"Staging…":"Confirm and stage results"}</button>
+  </div>:null}
+  {report?<div role="status" className="space-y-2 rounded border border-border p-4 text-sm">
+   <p className="font-semibold">{report.staged} results staged · {report.skipped} skipped · {report.unmatched} unmatched.</p>
+   <div className="max-h-40 overflow-y-auto">{report.results.map((r,i)=><p key={r.line+":"+r.applicationId+":"+i}>
+    {r.applicationId}: {r.status} {r.reason??""}</p>)}</div>
+   <p>Stage completed. Use the Apply results preview above to publish progression when the round is completed.</p>
+  </div>:null}
+  {error?<p role="alert" className="text-sm text-error">{error} Re-preview if the round has changed.</p>:null}
+ </section>;
+}
