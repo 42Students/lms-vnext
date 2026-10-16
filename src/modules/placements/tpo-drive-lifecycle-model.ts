@@ -43,3 +43,19 @@ export function evaluateTpoDriveLifecycle(
   }
   return { allowed: blockers.length === 0, blockers };
 }
+
+/** Human-readable preflight explanations shown in the drive workspace. */
+export function tpoDriveReadinessMessage(code: string): string {
+  const messages: Record<string, string> = {
+    STALE_JOB_STATUS: "The drive status has changed. Refresh the page.",
+    SEASON_NOT_ACTIVE: "The placement season is not active.",
+    COMPANY_NOT_ACTIVE: "The company is not active.",
+    NO_ACTIVE_ROLE: "Add an active role before publishing.",
+    NO_EVALUATIVE_ROUND: "Add at least one interview or test round.",
+    ELIGIBILITY_POLICY_NOT_PERSISTED: "Save the eligibility rules before publishing.",
+    APPLICATION_DEADLINE_PASSED: "Set an application deadline in the future.",
+    APPLIED_RESULTS_EXIST: "This drive already has applied round results and cannot be reopened.",
+    ACCEPTED_OFFERS_EXIST: "Accepted offers prevent reopening this drive.",
+  };
+  return messages[code] ?? "The drive is not ready for this action. Refresh and review the setup.";
+}
