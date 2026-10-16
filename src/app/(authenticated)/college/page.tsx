@@ -10,6 +10,7 @@ import { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashbo
 import { getCollegeDashboardLowAttendance } from "@/modules/admin-ui/college-dashboard-risk-service";
 import { getCollegeDashboardUnstaffedCourses } from "@/modules/admin-ui/college-dashboard-staffing-service";
 import { getCollegeDashboardPendingGrades } from "@/modules/admin-ui/college-dashboard-grading-service";
+import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listColleges } from "@/modules/colleges/service";
@@ -39,12 +40,13 @@ export default async function CollegeOverviewPage() {
     );
   }
 
-  const [dashboard, attendance, lowAttendance, unstaffed, pendingGrades] = await Promise.all([
+  const [dashboard, attendance, lowAttendance, unstaffed, pendingGrades, setupGaps] = await Promise.all([
     getCollegeDashboardCards(context, {}),
     getCollegeDashboardAttendance(context),
     getCollegeDashboardLowAttendance(context),
     getCollegeDashboardUnstaffedCourses(context),
     getCollegeDashboardPendingGrades(context),
+    getCollegeDashboardSetupGaps(context),
   ]);
 
   return (
@@ -235,6 +237,21 @@ export default async function CollegeOverviewPage() {
               <Link href="/college/assignments" className="font-semibold text-primary-text hover:underline">Review</Link>
             </li>)}
           </ul>}
+      </section>
+      <section aria-label="Setup gaps" className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-lg font-semibold text-foreground">Setup gaps</h2>
+        <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {setupGaps.map(item => <Link key={item.label} href={item.href}
+            className="rounded-lg border border-border p-4 hover:border-primary">
+            <p className="text-sm text-muted-foreground">{item.label}</p>
+            <p className="mt-2 text-xl font-semibold tabular-nums">{item.count}</p>
+            <span className="text-xs font-semibold text-primary-text">Review →</span>
+          </Link>)}
+        </div>
+        {setupGaps.every(item => item.count === 0) && <p role="status" className="text-sm text-muted-foreground">
+          No setup gaps found.
+        </p>}
       </section>
       <CollegeAdminQuickActions />
       <CollegeSetupChecklist phases={dashboard.setup.phases} />
