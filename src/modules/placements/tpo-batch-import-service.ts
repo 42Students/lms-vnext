@@ -21,7 +21,7 @@ export async function getBatchEligibilityImportPreview(ctx:RequestContext,rawBat
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
   eq(membershipRoles.role,"LEARNER")))
  .where(and(eq(learnerProgramEnrollments.cohortId,batch.id),
-  eq(learnerProgramEnrollments.status,"ACTIVE"));
+  eq(learnerProgramEnrollments.status,"ACTIVE")));
  const eligibleIds=candidates.map(r=>r.membershipId);
  const stored=eligibleIds.length?await getDb().select({id:placementEligibilityDecisions.scopeId,
   updatedAt:placementEligibilityDecisions.updatedAt})
