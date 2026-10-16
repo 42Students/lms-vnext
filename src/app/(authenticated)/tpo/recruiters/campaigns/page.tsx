@@ -66,7 +66,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
       <p className="mt-1 text-xs text-muted-foreground">Segment: {item.segment.replaceAll("_"," ")}</p>
      </li>)}
     </ul>}
-   <p className="text-xs text-muted-foreground">{CAMPAIGN_DELIVERY_UNAVAILABLE}</p>
+   <p role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>
   </section>
   <h2 className="text-lg font-semibold text-foreground">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
