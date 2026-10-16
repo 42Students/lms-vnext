@@ -1,0 +1,31 @@
+import { z } from "zod";
+import { hrDriveDraftSchema } from "./hr-drive-draft-model";
+
+/** Recruiter submission contract, not the existing discussion-message endpoint. */
+export const recruiterDriveRequestInputSchema = z.strictObject({
+ collegeId:z.string().uuid(),
+ submissionId:z.string().uuid(),
+ sourceJobId:z.string().uuid().optional(),
+ draft:hrDriveDraftSchema,
+});
+export type RecruiterDriveRequestInput=z.infer<typeof recruiterDriveRequestInputSchema>;
+export const RECRUITER_REQUEST_STATUSES=[
+ "REQUEST","SENT_BACK","DRAFT","REJECTED","CANCELLED",
+] as const;
+export type RecruiterRequestStatus=(typeof RECRUITER_REQUEST_STATUSES)[number];
+/** Approval is separate from publishing: auto-approved requests become draft jobs. */
+export function initialRecruiterRequestStatus(policy:{
+ trusted:boolean; approvalRequired:boolean; verificationPending:boolean;
+}):"REQUEST"|"DRAFT"{
+ return policy.trusted || (!policy.approvalRequired && !policy.verificationPending)
+   ? "DRAFT":"REQUEST";
+}
+export function canRecruiterResubmit(status:RecruiterRequestStatus){
+ return status==="REQUEST" || status==="SENT_BACK";
+}
+export function recruiterRequestStage(status:RecruiterRequestStatus):"WAITING"|"CLOSED"{
+ return status==="REJECTED"||status==="CANCELLED"?"CLOSED":"WAITING";
+}
+export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus){
+ return status==="REJECTED"||status==="CANCELLED"?"Cancelled":"Sent for review";
+}
