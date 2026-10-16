@@ -66,3 +66,23 @@ export function tpoDriveStatusLabel(status:string){
    status==="CLOSED"?"Closed":status==="PUBLISHED"?"Live":
    status==="DRAFT"?"Draft":status;
 }
+
+/** TPO-drives-05: concise lifecycle cue from real persisted job and round facts. */
+export function tpoDriveWhereItIs(job:{
+ status:string;applicationDeadline:string|null;roundCount:number;roundsCompleted:number;
+ nextRoundAt:string|null;offersMade:number;
+},nowIso:string){
+ if(job.status==="DRAFT")return "Draft · needs publishing";
+ if(job.status==="CANCELLED")return "Cancelled";
+ if(job.status==="CLOSED")return "Closed";
+ if(job.status!=="PUBLISHED")return job.status;
+ if(job.applicationDeadline&&job.applicationDeadline>nowIso)
+  return "Taking applications";
+ if(job.roundCount>0){
+  const next=job.nextRoundAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
+   timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.nextRoundAt))+" IST":"No upcoming date";
+  return "Rounds "+job.roundsCompleted+" of "+job.roundCount+" done · "+next;
+ }
+ if(job.offersMade>0)return "Offers · "+job.offersMade+" issued/accepted";
+ return "Applications closed";
+}
