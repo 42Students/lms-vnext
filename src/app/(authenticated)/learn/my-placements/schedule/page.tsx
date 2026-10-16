@@ -10,7 +10,12 @@ import {LearnerScheduleReschedule} from "@/components/placements/learner-schedul
 import {listOwnAppliedPlacementResults} from "@/modules/placements/result-service";
 
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
-export default async function LearnerPlacementSchedulePage() {
+export default async function LearnerPlacementSchedulePage({searchParams}:{
+  searchParams:Promise<{view?:string|string[]}>;
+}) {
+  const query=await searchParams;
+  const requested=typeof query.view==="string"?query.view:"coming";
+  const view=requested==="past"||requested==="calendar"?requested:"coming";
   const context = await getCurrentRequestContext();
   const [workspace,ownResults]=await Promise.all([
     getLearnerPlacementRequestWorkspace(context),listOwnAppliedPlacementResults(context),
@@ -57,7 +62,17 @@ export default async function LearnerPlacementSchedulePage() {
     <div className="space-y-6">
       <PageHeader eyebrow="My Placements" title="Schedule"
         description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice; please confirm each one so they know you'll be there" />
-      <section className="space-y-3" aria-label="Coming up">
+      <nav aria-label="Schedule view" className="flex flex-wrap gap-2">
+        {([
+          ["coming","Coming up"],["past","Past"],["calendar","Calendar"],
+        ] as const).map(([key,label])=><Link key={key}
+          href={"/learn/my-placements/schedule?view="+key} aria-current={view===key?"page":undefined}
+          className={"inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-semibold "+
+            (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-foreground")}>
+          {label}
+        </Link>)}
+      </nav>
+      {view==="coming"?<section className="space-y-3" aria-label="Coming up">
         <h2 className="text-lg font-semibold text-foreground">Coming up ({ahead.length})</h2>
         {ahead.length === 0 ? <p className="text-body">Nothing coming up. When a company&apos;s round is planned and the placement cell books you, it shows here.</p> : null}
         {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
@@ -75,14 +90,14 @@ export default async function LearnerPlacementSchedulePage() {
           <p className="text-sm text-body">Date to be told</p>
           {details(row)}
         </article>)}
-      </section>
-      <section aria-label="Calendar" className="space-y-2">
+      </section>:null}
+      {view==="calendar"?<section aria-label="Calendar" className="space-y-2">
         <h2 className="text-lg font-semibold text-foreground">Calendar</h2>
         <Suspense fallback={<p role="status">Calendar</p>}>
           <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
         </Suspense>
-      </section>
-      <section className="space-y-3">
+      </section>:null}
+      {view==="past"?<section className="space-y-3">
         <h2 className="text-lg font-semibold text-foreground">Past</h2>
         {past.length === 0 ? <p className="text-body">No past rounds yet.</p> : past.map(row =>
           <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
@@ -90,7 +105,7 @@ export default async function LearnerPlacementSchedulePage() {
             <p className="text-sm text-body">{fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
             {details(row)}
           </article>)}
-      </section>
+      </section>:null}
     </div>
   );
 }
