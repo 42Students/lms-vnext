@@ -146,6 +146,7 @@ export function LearnerYouTubePlayer({
     useState(initialPositionSeconds);
   const [isCompleted, setIsCompleted] =
     useState(completed);
+  const [observedDuration,setObservedDuration]=useState(0);
 
   const videoId =
     getYouTubeVideoId(externalUrl);
@@ -203,6 +204,7 @@ export function LearnerYouTubePlayer({
                 onReady: (event) => {
                   const duration =
                     event.target.getDuration();
+                  if(Number.isFinite(duration)&&duration>0)setObservedDuration(duration);
                   const resumeAt = Math.min(
                     Math.max(
                       0,
@@ -476,7 +478,7 @@ export function LearnerYouTubePlayer({
           Saved at{" "}
           {formatClock(savedSeconds)} /{" "}
           {formatClock(
-            authoredDurationSeconds,
+            authoredDurationSeconds>0?authoredDurationSeconds:observedDuration,
           )}
         </span>
       </div>
