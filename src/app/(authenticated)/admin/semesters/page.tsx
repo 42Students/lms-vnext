@@ -10,12 +10,13 @@ import { listCollegeSemesters } from "@/modules/academics/college-academic-direc
 
 type Search = Record<string, string | string[] | undefined>;
 
-function pageHref(query: { q: string; programId?: string; status: string; page: number }) {
+function pageHref(query: { q: string; programId?: string; status: string; page: number; pageSize: number }) {
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.programId) params.set("programId", query.programId);
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.page > 1) params.set("page", String(query.page));
+  if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
   const encoded = params.toString();
   return "/admin/semesters" + (encoded ? "?" + encoded : "");
 }
@@ -70,6 +71,11 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
             <option value="INACTIVE">Inactive</option>
           </select>
         </label>
+        <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
+          <select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+            {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
+          </select>
+        </label>
         <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
         <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear</Link>
       </form>
@@ -79,6 +85,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       {data.query.programId ? <input type="hidden" name="programId" value={data.query.programId} /> : null}
       <input type="hidden" name="status" value={data.query.status} />
       <input type="hidden" name="page" value={String(data.query.page)} />
+      <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
       <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
     </form>
     <section aria-label="Semesters" className="overflow-x-auto rounded-xl border border-border bg-surface">
