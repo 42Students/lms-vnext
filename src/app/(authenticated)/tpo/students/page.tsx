@@ -36,6 +36,7 @@ type SearchParams = {
   page?: string | string[];
   pageSize?: string | string[];
   columns?: string | string[];
+  student?: string | string[];
 };
 
 const JOURNEY_LABELS: Record<TpoStudentJourneyState, string> = {
