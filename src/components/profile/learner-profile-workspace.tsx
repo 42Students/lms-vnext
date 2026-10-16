@@ -1,6 +1,7 @@
 "use client";
 
 import {LEARNER_EDUCATION_TYPES,LEARNER_QUALIFYING_EXAMS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
+import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
 import { learnerProfileCollectionMayEdit } from "@/modules/people/learner-profile-collection-busy-model";
@@ -780,6 +781,9 @@ export function LearnerProfileWorkspace(props: {
             {fields[collection].map((field) => {
               const raw = itemDraft[field.key];
               const value = field.key === "skills" && Array.isArray(raw) ? raw.join(", ") : String(raw || "");
+              if(collection==="skills"&&field.key==="name")
+                return <LearnerSkillCatalogInput key={field.key} value={value}
+                  onChange={name=>setItemDraft(current=>({...current,name}))}/>;
               if(collection==="education"&&field.key==="educationType")
                 return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
                   <Select className="mt-1.5" value={value}
