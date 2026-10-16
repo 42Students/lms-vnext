@@ -75,3 +75,10 @@ Method notes
 4. Learner with a task assigned in a non-ACTIVE sprint: confirm the submission control is correctly hidden (`sprint.status === "ACTIVE"` gate) and whether the learner sees any explanation.
 5. Notifications page for a learner after a mentor assigns a task, schedules a meeting, or reviews a submission: expect nothing (R01). Confirm on dev with a mentor and a learner account.
 6. Learner view of the legacy "Stalled" flag is mentor-only in legacy; no learner gap, listed only to close the question.
+
+
+### chat-11 Round 2 implementation checkpoint (2026-10-16; runtime verification pending)
+
+- **LEARNER-projects-25:** Existing authenticated learner-only task progress route retained; unblocking now clears persisted `blockerReason`, and the UI exposes `Resolve blocker`. Unit and disposable-PostgreSQL tests added/extended; **not run**.
+- **LEARNER-projects-R01:** Project creation with mentor, member add/remove, mentor reassignment, task assignment/removal, task comments, delivery submitted/reviewed, meeting request/schedule/cancel/reschedule and archive now produce tenant-checked in-app notices on the relevant transaction. Other event families (e.g. restore/update and calendar sync/email) still pending; **partial**.
+- **LEARNER-projects-R02:** Learner board dialog and workspace display assignee, due date, estimate, type, blocker note; workspace also surfaces a safe submission link. Comment counts and remaining board parity still pending; **partial**.

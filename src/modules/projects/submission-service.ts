@@ -14,6 +14,7 @@ import {deriveProjectExecutionReadiness} from "./execution-readiness";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { projectDeliveryActivity } from "./delivery-activity-model";
 import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 import { projectSubmissionAllowsNewDraft } from "./submission-draft-policy";
 import {
   collegeMemberships,
@@ -417,11 +418,17 @@ export async function submitProjectSubmission(
       );
     }
 
-    await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
+    const event = await recordActivityEventInTransaction(tx, context, projectDeliveryActivity({
       action: "SUBMITTED", collegeId: scope.collegeId,
       organizationId: scope.organizationId, projectId: scope.project.id,
       submissionId: submitted.id, version: submitted.version,
     }));
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["MENTOR"],exceptUserId:context.user.id,
+      title:"Delivery submitted",body:"A final delivery is ready for review.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=delivery",
+    });
     return submitted;
   });
 }
