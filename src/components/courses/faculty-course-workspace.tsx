@@ -413,18 +413,13 @@ export function FacultyCourseWorkspace({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-              Exact teaching assignment
+              Your teaching class
             </p>
             <h2 className="mt-2 text-xl font-semibold text-foreground">
               {course.sectionName}
             </h2>
             <p className="mt-2 text-sm leading-6 text-body">
-              Your active{" "}
-              {course.teachingRole
-                .replaceAll("_", " ")
-                .toLowerCase()}{" "}
-              assignment grants teaching access only
-              to this Section delivery.
+              You teach this class as {course.teachingRole.replaceAll("_"," ").toLowerCase()}.
             </p>
           </div>
           <StatusBadge tone="info">
@@ -435,11 +430,8 @@ export function FacultyCourseWorkspace({
           </StatusBadge>
         </div>
         <div className="mt-4 rounded-lg bg-[var(--lms-neutral-50)] px-3 py-2 text-xs leading-5 text-muted-foreground">
-          Shared Offering items are visible here but
-          remain structurally admin-owned. Items
-          labeled “This Section” are the delivery
-          scope used for faculty-authored content and
-          assessments.
+          Your class includes course-wide learning materials and content
+          added specifically for these students.
         </div>
       </section>
 
