@@ -102,7 +102,7 @@ export function FacultyAssessmentOverview({
             }}
             className="mt-1.5"
           >
-            <option value="">All teaching sections</option>
+            <option value="">All courses</option>
             {overview.courses.map((course) => (
               <option key={course.deliveryId} value={course.deliveryId}>
                 {course.courseCode} · {course.courseName} · {course.sectionName}
