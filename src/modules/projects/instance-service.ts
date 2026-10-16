@@ -7,7 +7,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
-import { notifyProjectMemberships } from "./project-notification-service";
+import { notifyProjectMemberships, notifyActiveProjectMembers } from "./project-notification-service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
@@ -500,7 +500,7 @@ export async function archiveProjectInstance(
       );
     }
 
-    await recordActivityEventInTransaction(
+    const archiveEvent = await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -533,6 +533,18 @@ export async function archiveProjectInstance(
       },
     );
 
+    await notifyActiveProjectMembers(tx, archiveEvent.id,{
+      projectId:archived.id,collegeId:scope.collegeId,exceptUserId:context.user.id,
+      roles:["LEARNER"],title:"Project archived",
+      body:archived.title+" has been archived.",
+      actionHref:"/learn/projects/"+archived.id,
+    });
+    await notifyActiveProjectMembers(tx, archiveEvent.id,{
+      projectId:archived.id,collegeId:scope.collegeId,exceptUserId:context.user.id,
+      roles:["MENTOR"],title:"Project archived",
+      body:archived.title+" has been archived.",
+      actionHref:"/mentor/projects/"+archived.id,
+    });
     return archived;
   });
 }
