@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -64,12 +65,10 @@ export async function ProjectAdminReadinessPage({
       one(searchParams.pageSize) ?? 25,
     ),
   };
-  const result =
-    await listProjectAdminSnapshots(
-      context,
-      collegeId,
-      query,
-    );
+  const [result, activeOverrides] = await Promise.all([
+    listProjectAdminSnapshots(context, collegeId, query),
+    listCollegeActiveReadinessOverrides(context, collegeId),
+  ]);
   const readinessPath =
     basePath + "/readiness";
 
@@ -85,6 +84,40 @@ export async function ProjectAdminReadinessPage({
         description="Execution completion and final-delivery readiness across project workspaces."
       />
       <p className="text-sm text-body">See whether each team is ready to submit, and override the gate when you need to.</p>
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-base font-semibold">Active overrides ({activeOverrides.length})</h2>
+          <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
+            className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+            Export overrides CSV
+          </a>
+        </div>
+        {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
+          No active readiness overrides.
+        </p> : <div className="mt-3 overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead><tr className="border-b border-border text-xs text-muted-foreground">
+              <th className="p-2">Workspace</th><th className="p-2">Override</th>
+              <th className="p-2">Note</th><th className="p-2">By</th>
+              <th className="p-2">At</th><th className="p-2">Action</th>
+            </tr></thead>
+            <tbody>{activeOverrides
+              .filter(row => !query.q || row.workspace.toLowerCase().includes(query.q.toLowerCase()))
+              .map(row => <tr key={row.projectId} className="border-b border-border">
+                <td className="p-2">{row.workspace}</td>
+                <td className="p-2">{row.direction}</td>
+                <td className="max-w-xs break-words p-2">{row.note}</td>
+                <td className="p-2">{row.by}</td>
+                <td className="p-2">{new Intl.DateTimeFormat("en-IN", {
+                  dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+                }).format(row.at)}</td>
+                <td className="p-2"><Link className="font-semibold text-primary-text underline"
+                  href={basePath + "/" + row.projectId + "/readiness"}>Manage</Link></td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>}
+      </section>
       <ProjectAdminFilters query={query} />
 
       {!result.items.length ? (
