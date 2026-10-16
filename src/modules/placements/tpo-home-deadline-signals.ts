@@ -23,14 +23,14 @@ export function deadlineTpoHomeNeeds(jobs:readonly TpoHomeDeadlineJob[],now:Date
   const link="/tpo/placements/jobs/"+encodeURIComponent(job.id);
   const title=job.company.name+" · "+job.title;
   if(job.applicationDeadline===null){
-   output.push({type:"NO_DEADLINE",priority:30,title,count:1,link});
+   output.push({type:"NO_DEADLINE",priority:1,title,count:1,link});
    continue;
   }
   const remaining=istDayOrdinal(job.applicationDeadline)-today;
   if(remaining===0&&job.applicationDeadline.getTime()>=now.getTime()){
-   output.push({type:"DEADLINE_TODAY",priority:1,title,count:1,link});
+   output.push({type:"DEADLINE_TODAY",priority:0,title,count:1,link});
   }else if(remaining>=1&&remaining<=3){
-   output.push({type:"CLOSING_SOON",priority:35,title,count:1,link});
+   output.push({type:"CLOSING_SOON",priority:1,title,count:1,link});
   }
  }
  return output.sort((a,b)=>a.priority-b.priority);
