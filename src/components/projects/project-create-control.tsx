@@ -41,6 +41,11 @@ export function CreateProjectControl({
   const [mentorMembershipId, setMentorMembershipId] = useState("");
   const [mentorsLoading, setMentorsLoading] = useState(false);
   const [mentorsError, setMentorsError] = useState<string | null>(null);
+  const [classes,setClasses]=useState<{id:string;name:string;code:string}[]>([]);
+  const [sectionId,setSectionId]=useState("");
+  const [roster,setRoster]=useState<{membershipId:string;displayName:string;rollNumber:string}[]>([]);
+  const [learnerMembershipIds,setLearnerMembershipIds]=useState<string[]>([]);
+  const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,6 +55,7 @@ export function CreateProjectControl({
     setSlug("");
     setSummary("");
     setMentorMembershipId("");
+    setSectionId("");setRoster([]);setLearnerMembershipIds([]);setInitialStatus("PLANNED");
     setMentorsError(null);
     setMentorsLoading(true);
     setMentors([]);
@@ -105,6 +111,26 @@ export function CreateProjectControl({
     return () => controller.abort();
   }, [open, collegeId]);
 
+  useEffect(()=>{
+    if(!open)return;
+    const ctl=new AbortController();
+    void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId),{signal:ctl.signal})
+     .then(r=>r.ok?r.json():Promise.reject(Error("Classes unavailable")))
+     .then((v:{classes:typeof classes})=>{if(!ctl.signal.aborted)setClasses(v.classes)})
+     .catch(()=>{if(!ctl.signal.aborted)setClasses([])});
+    return ()=>ctl.abort();
+  },[open,collegeId]);
+  useEffect(()=>{
+    if(!open||!sectionId){setRoster([]);setLearnerMembershipIds([]);return;}
+    const ctl=new AbortController();
+    void fetch("/api/projects/class-team-roster?collegeId="+encodeURIComponent(collegeId)+
+      "&classId="+encodeURIComponent(sectionId),{signal:ctl.signal})
+      .then(r=>r.ok?r.json():Promise.reject(Error("Roster unavailable")))
+      .then((v:{roster:{members:typeof roster}})=>{if(!ctl.signal.aborted)setRoster(v.roster.members)})
+      .catch(()=>{if(!ctl.signal.aborted)setRoster([])});
+    return ()=>ctl.abort();
+  },[open,collegeId,sectionId]);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
@@ -120,8 +146,10 @@ export function CreateProjectControl({
           title: title.trim(),
           slug: slug.trim(),
           summary: summary.trim() || undefined,
-          primaryMentorMembershipId:
-            mentorMembershipId || undefined,
+          primaryMentorMembershipId:mentorMembershipId||undefined,
+          sectionId:sectionId||undefined,
+          learnerMembershipIds,
+          initialStatus,
         },
       )) as { project: { id: string } };
 
