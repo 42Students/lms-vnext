@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {learnerNotificationLoadStatus} from "@/modules/activity/learner-notifications-partial-model";
+import {learnerAnnouncementAudienceContext} from "@/modules/activity/learner-notification-context-model";
 import {learnerNotificationPreviewNotice} from "@/modules/activity/learner-notification-preview-notice-model";
 import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner-notification-mobile-model";
 import {learnerInboxEmptyLabel} from "@/modules/activity/learner-inbox-empty-label-model";
@@ -63,6 +64,7 @@ export function LearnerNotificationsInbox({
           readAt: null,
           source: "ANNOUNCEMENT",
           pinned: item.isPinned,
+          contextLine:learnerAnnouncementAudienceContext(item.receiverType),
         }))
       : [];
 
