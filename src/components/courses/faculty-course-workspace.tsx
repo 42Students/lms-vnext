@@ -534,10 +534,17 @@ export function FacultyCourseWorkspace({
             <div className="space-y-5">
               {workspace.lessons.map(
                 (lesson, lessonIndex) => {
+                  const visibleContents=lesson.contents.filter(item=>
+                    contentFilter==="ALL"||
+                    contentFilter==="LECTURES"&&["VIDEO","YOUTUBE"].includes(item.contentType)||
+                    contentFilter==="RESOURCES"&&item.contentType==="RESOURCE"||
+                    contentFilter==="LIVE"&&item.contentType==="LIVE_CLASS");
+                  const visibleAssignments=contentFilter==="ALL"||contentFilter==="ASSESSMENTS"?
+                    lesson.assignments:[];
+                  const visibleQuizzes=contentFilter==="ALL"||contentFilter==="ASSESSMENTS"?
+                    lesson.quizzes:[];
                   const itemCount =
-                    lesson.contents.length +
-                    lesson.assignments.length +
-                    lesson.quizzes.length;
+                    visibleContents.length+visibleAssignments.length+visibleQuizzes.length;
                   const nextSequence =
                     nextLessonItemSequence([
                       ...lesson.contents.map(
@@ -613,12 +620,11 @@ export function FacultyCourseWorkspace({
 
                       {itemCount === 0 ? (
                         <div className="mt-3 rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
-                          No active content or
-                          assessments in this lesson.
+                          {contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
                         </div>
                       ) : (
                         <div className="mt-3 space-y-3">
-                          {lesson.contents.map(
+                          {visibleContents.map(
                             (item) => (
                               <ContentItem
                                 key={item.id}
@@ -627,7 +633,7 @@ export function FacultyCourseWorkspace({
                               />
                             ),
                           )}
-                          {lesson.assignments.map(
+                          {visibleAssignments.map(
                             (item) => (
                               <AssignmentItem
                                 key={item.id}
@@ -636,7 +642,7 @@ export function FacultyCourseWorkspace({
                               />
                             ),
                           )}
-                          {lesson.quizzes.map(
+                          {visibleQuizzes.map(
                             (item) => (
                               <QuizItem
                                 key={item.id}
