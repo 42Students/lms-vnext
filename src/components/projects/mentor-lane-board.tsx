@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
@@ -19,6 +19,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const router=useRouter(),[tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),
  [sprint,setSprint]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
  [undo,setUndo]=useState<{id:string;status:string}|null>(null);
+ useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
  const visible=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
    (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release));
