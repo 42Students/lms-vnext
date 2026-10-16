@@ -1,3 +1,4 @@
+import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
@@ -13,6 +14,7 @@ export default async function SuperAdminProgramsPage() {
   if (!collegeId) {
     return (
       <div className="space-y-6">
+      <AcademicSetupSteps step={2} />
         <PageHeader eyebrow="Super Admin" title="Programs"
           description="Choose a college scope before managing programs." />
         <EmptyState title="Select a college to continue"
@@ -28,6 +30,7 @@ export default async function SuperAdminProgramsPage() {
 
   return (
     <div className="space-y-6">
+      <AcademicSetupSteps step={2} />
       <PageHeader
         eyebrow="Super Admin"
         title="Programs"
