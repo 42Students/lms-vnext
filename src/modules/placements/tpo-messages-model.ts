@@ -1,6 +1,7 @@
 export const TPO_MESSAGE_STATUSES = [
   "ALL",
   "UNREAD",
+  "REPLY",
   "READ",
   "EMPTY",
 ] as const;
@@ -22,6 +23,8 @@ export type TpoInboxRecord = {
   jobId: string | null;
   messageCount: number | null;
   unreadCount: number | null;
+  lastPreview?:string|null;
+  waitingForYou?:boolean;
 };
 
 export type TpoInboxFilters = {
@@ -58,8 +61,9 @@ export function getTpoMessagesPage(
 
   const filtered = records
     .filter((record) => {
+      if(filters.status==="REPLY"&&!record.waitingForYou)return false;
       if (
-        filters.status !== "ALL" &&
+        filters.status !== "ALL" && filters.status!=="REPLY" &&
         record.status !== filters.status
       ) {
         return false;
@@ -83,7 +87,7 @@ export function getTpoMessagesPage(
 
       if (q) {
         const searchable =
-          `${record.participantName} ${record.subject}`
+          `${record.participantName} ${record.subject} ${record.lastPreview??""}`
             .toLocaleLowerCase("en-IN");
 
         if (!searchable.includes(q)) return false;
@@ -127,6 +131,7 @@ export function summarizeTpoMessages(
 ) {
   return {
     total: records.length,
+    reply:records.filter(record=>record.waitingForYou).length,
     unread: records.filter(
       (record) => record.status === "UNREAD",
     ).length,
