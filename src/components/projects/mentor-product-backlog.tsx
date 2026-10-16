@@ -9,6 +9,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,ready,readOnly=fal
  projectId:string;tasks:Task[];sprints:Sprint[];ready:boolean;readOnly?:boolean;
 }){
  const router=useRouter();
+ const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const backlog=tasks.filter(task=>task.sprintId===null),completed=tasks.filter(task=>task.status==="DONE");
  const velocity=completed.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
@@ -34,6 +35,46 @@ export function MentorProductBacklog({projectId,tasks,sprints,ready,readOnly=fal
     <p className="text-xl font-bold">{velocity} points completed</p>
    </div>
   </div>
+  {ready&&!readOnly?<section className="space-y-2">
+    <button type="button" onClick={()=>setAdding(v=>!v)}
+      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+      Add backlog task
+    </button>
+    {adding?<form onSubmit={async e=>{
+      e.preventDefault();setBusy(true);setError("");
+      try{
+        await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
+          title:title.trim(),description:description.trim()||null,
+          acceptanceCriteria:criteria.trim()||null,priority,
+          estimatePoints:points?Number(points):null,
+        });
+        setAdding(false);setTitle("");setDescription("");setCriteria("");router.refresh();
+      }catch(err){setError(err instanceof Error?err.message:"Could not add backlog task");}
+      finally{setBusy(false);}
+    }} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
+      <label className="text-sm font-semibold">Title<input required maxLength={200} value={title}
+        onChange={e=>setTitle(e.target.value)}
+        className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+      <label className="text-sm font-semibold">Priority<select value={priority}
+        onChange={e=>setPriority(e.target.value)}
+        className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+        {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
+      </select></label>
+      <label className="text-sm font-semibold">Description<textarea maxLength={4000}
+        value={description} onChange={e=>setDescription(e.target.value)}
+        className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
+      <label className="text-sm font-semibold">Done when<textarea maxLength={4000}
+        value={criteria} onChange={e=>setCriteria(e.target.value)}
+        className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
+      <label className="text-sm font-semibold">Estimate points<input type="number" min={0} max={1000}
+        value={points} onChange={e=>setPoints(e.target.value)}
+        className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+      <div className="flex items-end gap-2"><button type="submit" disabled={busy||!title.trim()}
+        className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
+      <button type="button" onClick={()=>setAdding(false)}
+        className="min-h-10 rounded-md border border-border px-3 text-sm">Cancel</button></div>
+    </form>:null}
+  </section>:null}
   {!ready?<p role="status" className="text-sm text-muted-foreground">
    Product backlog moves are available after the nullable-sprint migration is registered.
   </p>:null}
