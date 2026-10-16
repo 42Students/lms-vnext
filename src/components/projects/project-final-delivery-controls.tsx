@@ -43,8 +43,10 @@ export function LearnerFinalDeliveryControl({
   canCreateDraft,
   canSubmitDraft,
   review,
+  readinessDetail,
 }: {
   projectId: string;
+  readinessDetail?:{tasksRemaining:number;sprintsRemaining:number;releasesRemaining:number};
   review?:{status:string;feedback:string|null}|null;
   latest: Submission | null;
   canCreateDraft: boolean;
@@ -215,7 +217,14 @@ export function LearnerFinalDeliveryControl({
         }
         description="Drafts can be prepared early. Final submission unlocks after Project execution is complete."
       >
-        <p className="mb-3 text-sm text-body">What’s left before you can submit: {canSubmitDraft?"Ready to submit after saving this draft.":"Complete the remaining release, sprint and task work."}</p>
+        <section aria-label="What is left before you can submit" className="mb-3 rounded-lg border border-border p-3 text-sm text-body">
+          <h3 className="font-semibold text-foreground">What’s left before you can submit</h3>
+          {canSubmitDraft?<p className="mt-1">Ready to submit after saving this draft.</p>:<ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>{readinessDetail?.tasksRemaining??"Some"} task(s) still need completion</li>
+            <li>{readinessDetail?.sprintsRemaining??"Some"} sprint(s) need sign-off</li>
+            <li>{readinessDetail?.releasesRemaining??"Some"} release(s) need completion</li>
+          </ul>}
+        </section>
         {review?.feedback?<p className="mb-3 text-sm text-body">Mentor review: {review.status}. {review.feedback}</p>:null}
         <form
           onSubmit={save}
