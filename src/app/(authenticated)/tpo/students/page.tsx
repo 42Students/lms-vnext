@@ -2,6 +2,7 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
@@ -190,6 +191,7 @@ export default async function TpoStudentsPage({
   }));
   const summary = data.summary;
   const roster = data.roster;
+  const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
 
   const counts: Record<TpoStudentJourneyState, number> = {
     NOT_REGISTERED: summary.notRegistered,
@@ -602,7 +604,8 @@ export default async function TpoStudentsPage({
           </div>
         ) : null}
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}/>
+          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}
+            afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
         <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
