@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
+import { CollegePersonEditAction } from "@/components/college/college-person-edit-action";
 import { CollegeStudentLifecycleAction } from "@/components/college/college-student-lifecycle-action";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
@@ -355,6 +356,8 @@ export async function CollegeRoleDirectoryWorkspace({
                 </div>
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
+                <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
+                  departments={kind==="FACULTY"?result.departmentOptions:[]}/>
                 {kind==="FACULTY"?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
                   name={item.name} status={item.membershipStatus}/>:null}
                 {kind==="LEARNER"?<CollegeStudentLifecycleAction membershipId={item.membershipId}
@@ -398,6 +401,10 @@ export async function CollegeRoleDirectoryWorkspace({
                       <div className="mt-2">
                         <StudentClassMoveAction membershipId={item.membershipId} name={item.name} />
                       </div> : null}
+                    <div className="mt-2">
+                      <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
+                        departments={kind==="FACULTY"?result.departmentOptions:[]}/>
+                    </div>
                     {kind === "FACULTY" ?
                       <CollegeFacultyLifecycleAction
                         membershipId={item.membershipId}
