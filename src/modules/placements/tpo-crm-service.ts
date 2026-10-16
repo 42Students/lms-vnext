@@ -15,7 +15,7 @@ import {
   placementTpoFollowups,
   placementTpoLeadActivities,
   placementTpoLeads,
-  collegeMemberships,users,
+  collegeMemberships,users,identityDeviceSessions,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
