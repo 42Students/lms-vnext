@@ -44,7 +44,8 @@ function riskExpression() {
   )`;
   const cutoff = new Date(Date.now() - 7 * 86400000);
   return sql<boolean>`(
-    ${lastActivity} <= ${cutoff}
+    nullif(trim(${projectInstances.blocker}), '') is not null
+    or ${lastActivity} <= ${cutoff}
     or exists (select 1 from project_tasks t where t.project_id = ${projectInstances.id} and t.status = 'BLOCKED'
       and nullif(trim(t.blocker_reason), '') is not null)
     or coalesce((select s.status = 'SUBMITTED' from project_submissions s
