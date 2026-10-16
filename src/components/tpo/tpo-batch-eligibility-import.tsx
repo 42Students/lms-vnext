@@ -13,6 +13,17 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [preview,setPreview]=useState<Preview|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [lastActionId,setLastActionId]=useState<string|null>(null);
+ const [chosenName,setChosenName]=useState("");
+ async function chooseFile(file:File|null){
+  if(!file)return;
+  setError("");setPreview(null);setNotice("");
+  if(!file.name.toLowerCase().endsWith(".csv")) {
+    setError("Choose a CSV export of the spreadsheet (.csv).");return;
+  }
+  if(file.size>1_500_000){setError("CSV file is larger than 1.5 MB.");return;}
+  try{setCsv(await file.text());setChosenName(file.name);}
+  catch{setError("Unable to read the selected CSV file.");}
+ }
  async function previewChanges(){
   if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);
   try{
@@ -54,6 +65,15 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
   <h2 className="font-semibold">Import eligibility decisions</h2>
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
+  <div className="rounded-md border border-dashed border-border p-3"
+   onDragOver={event=>event.preventDefault()} onDrop={event=>{event.preventDefault();void chooseFile(event.dataTransfer.files.item(0));}}>
+   <label className="block text-sm font-semibold text-body">Choose or drop eligibility CSV
+    <input type="file" accept=".csv,text/csv" disabled={busy}
+     className="mt-2 block min-h-11 max-w-full text-sm" onChange={event=>void chooseFile(event.target.files?.[0]??null)}/>
+   </label>
+   {chosenName?<p className="text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
+   <p className="text-xs text-muted-foreground">For Excel files, use Save As → CSV (UTF-8) before import.</p>
+  </div>
   <label className="block text-sm">CSV contents
    <textarea className="mt-1 min-h-32 w-full min-w-0 rounded border border-border bg-surface p-2 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={1500000}/>
