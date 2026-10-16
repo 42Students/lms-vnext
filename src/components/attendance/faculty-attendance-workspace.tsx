@@ -442,11 +442,12 @@ export function FacultyAttendanceWorkspace({
         setScheduleError(
           await errorMessage(
             response,
-            "Could not schedule this class.",
+            "Failed to schedule class.",
           ),
         );
         return;
       }
+      setSavedNotice("Class scheduled successfully.");
       setScheduleOpen(false);
       setScheduleTitle("");
       setStartsAt("");
@@ -455,7 +456,7 @@ export function FacultyAttendanceWorkspace({
       router.refresh();
     } catch (caught) {
       setScheduleError(caught instanceof Error ? caught.message :
-        "Could not schedule this class. Check your connection and try again.");
+        "Failed to schedule class. Check your connection and try again.");
     } finally {
       setScheduling(false);
     }
@@ -497,7 +498,7 @@ export function FacultyAttendanceWorkspace({
             }
             onClick={() => {if(confirmDiscardMarks())setMode("REPORT");}}
           >
-            Attendance report
+            Monthly Attendance
           </Button>
           <Button
             size="sm"
@@ -546,7 +547,7 @@ export function FacultyAttendanceWorkspace({
                   ←
                 </Button>
                 <label className="text-xs font-semibold text-body">
-                  Month
+                  Jump to month
                   <Input
                     className="mt-1.5"
                     type="month"
@@ -785,7 +786,7 @@ export function FacultyAttendanceWorkspace({
                 </tbody>
               </table>
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
-                P = Present · A = Absent · — = attendance not marked · S = future class · x/y = present sessions / all sessions that day.
+                P = Present · A = Absent · — = Not marked yet · ✖ = No class · S = future class · x/y = present sessions / all sessions that day.
               </p>
             </section>
           )}
@@ -850,8 +851,8 @@ export function FacultyAttendanceWorkspace({
                     {markingWindow !== "OPEN" ? (
                       <p role="status" className="mt-2 text-xs font-semibold text-warning">
                         {markingWindow === "NOT_STARTED"
-                          ? "Attendance opens when this class begins."
-                          : "Faculty correction window expired. Ask your College Admin to correct this session."}
+                          ? "Cannot mark attendance for a class that has not started yet"
+                          : `Attendance window has closed. Attendance can only be marked within ${workspace.policy.correctionWindowHours} hours after the class ends.`}
                       </p>
                     ) : null}
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -867,8 +868,8 @@ export function FacultyAttendanceWorkspace({
               <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                 <Input
                   className="max-w-sm"
-                  aria-label="Search learner roster"
-                  placeholder="Search learner"
+                  aria-label="Find a student by name"
+                  placeholder="Find a student by name"
                   value={search}
                   onChange={(event) =>
                     setSearch(event.target.value)
