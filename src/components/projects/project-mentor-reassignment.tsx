@@ -12,6 +12,7 @@ type Workspace = {
   title: string;
   status: string;
   mentorName: string | null;
+  mentorMembershipId?: string | null;
 };
 
 type Mentor = {
@@ -51,6 +52,11 @@ export function ProjectMentorReassignment({
     taskAssignmentClearingSupported: boolean;
   } | null>(null);
 
+  const skippedSelection = selected.filter(projectId =>
+    workspaces.some(row => row.id === projectId && row.mentorMembershipId === mentorMembershipId)
+  );
+  const actionableSelection = selected.filter(projectId => !skippedSelection.includes(projectId));
+
   const visibleMentors = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return mentors;
@@ -82,6 +88,16 @@ export function ProjectMentorReassignment({
     ) {
       return;
     }
+    if (!actionableSelection.length) {
+      showToast({ tone: "info", title: "No changes were needed",
+        description: "Already this mentor — will skip" });
+      return;
+    }
+    if (!window.confirm(
+      "Reassign " + actionableSelection.length + " of " + selected.length +
+      " selected workspace(s) to " +
+      (mentors.find(row => row.membershipId === mentorMembershipId)?.displayName ?? "this mentor") + "?"
+    )) return;
     setPending(true);
     setResult(null);
     try {
@@ -90,7 +106,7 @@ export function ProjectMentorReassignment({
         "POST",
         {
           collegeId,
-          projectIds: selected,
+          projectIds: actionableSelection,
           mentorMembershipId,
           roleLabel,
         },
@@ -177,6 +193,8 @@ export function ProjectMentorReassignment({
                       "Unassigned"}
                   </span>
                 </span>
+                {mentorMembershipId && workspace.mentorMembershipId === mentorMembershipId ?
+                  <StatusBadge tone="warning">Already this mentor — will skip</StatusBadge> : null}
                 <StatusBadge tone="neutral">
                   {workspace.status}
                 </StatusBadge>
@@ -253,6 +271,10 @@ export function ProjectMentorReassignment({
           effect remains a DB07 parity blocker.
         </div>
 
+        {selected.length > 0 && mentorMembershipId ?
+          <p className="mt-3 text-sm text-body">
+            {skippedSelection.length} of {selected.length} selected workspaces will be skipped.
+          </p> : null}
         <div className="mt-4">
           <Button
             disabled={
@@ -265,7 +287,7 @@ export function ProjectMentorReassignment({
             {pending
               ? "Reassigning…"
               : "Reassign " +
-                selected.length +
+                actionableSelection.length +
                 " workspace(s)"}
           </Button>
         </div>
