@@ -33,31 +33,53 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
   setError("");setMessage("");
  }
  async function save(){
-  if(busy||!title.trim()||!url.trim()||!lessonId)return;
+  if(busy||!title.trim()||!lessonId||(!editing&&!url.trim()))return;
   setBusy(true);setError("");setMessage("");
   try{
-   let target:URL;
-   try{target=new URL(url);}catch{throw Error("Enter a valid HTTPS link.");}
-   if(target.protocol!=="https:")throw Error("Enter a valid HTTPS link.");
-   if(kind==="YOUTUBE"&&!["youtube.com","youtu.be"].includes(target.hostname.toLowerCase())&&
-     !target.hostname.toLowerCase().endsWith(".youtube.com"))throw Error("Enter a YouTube URL.");
+   if(url.trim()){
+    let target:URL;
+    try{target=new URL(url);}catch{throw Error("Enter a valid HTTPS link.");}
+    if(target.protocol!=="https:")throw Error("Enter a valid HTTPS link.");
+    if(kind==="YOUTUBE"&&!["youtube.com","youtu.be"].includes(target.hostname.toLowerCase())&&
+      !target.hostname.toLowerCase().endsWith(".youtube.com"))throw Error("Enter a YouTube URL.");
+   }
    const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:
     {startsAt:isoIst(start),endsAt:isoIst(end)};
    if(kind==="YOUTUBE"&&(!Number.isInteger(Number(duration))||Number(duration)<1||
     Number(duration)>86400))throw Error("Video length must be 1–86400 seconds.");
    if(kind==="LIVE_CLASS"&&new Date(isoIst(end)).getTime()<=new Date(isoIst(start)).getTime())
-    throw Error("End must be after start.");
+    throw Error("End time must be after start time");
    if(!window.confirm(editing?"Save changes?":"Create this content?"))return;
    const res=await fetch(editing?"/api/courses/lesson-contents/"+encodeURIComponent(editing):
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
-      {title:title.trim(),externalUrl:url.trim(),...extra}:
+      {title:title.trim(),...(url.trim()?{externalUrl:url.trim()}:{}),...extra}:
       {lessonId,title:title.trim(),contentType:kind,externalUrl:url.trim(),
        sequence:0,...extra})});
    if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
     throw Error(problem.error??"Unable to save content");}
    setMessage(editing?"Content updated.":"Content created.");setOpen(false);router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save content");}
+  finally{setBusy(false);}
+ }
+ async function transition(item:Existing,action:"PUBLISH"|"ARCHIVE"){
+  if(busy)return;
+  if(!window.confirm(action==="PUBLISH"?
+    "Publish this content to enrolled students?":
+    "Delete this content from student access? The record will be archived."))return;
+  setBusy(true);setError("");setMessage("");
+  try{
+   const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
+   });
+   if(!response.ok){
+    const body=await response.json().catch(()=>({error:"Unable to update content"}));
+    throw Error(body.error??"Unable to update content");
+   }
+   if(editing===item.id){setOpen(false);setEditing(null);}
+   setMessage(action==="PUBLISH"?"Content published.":"Content removed from student access.");
+   router.refresh();
+  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content");}
   finally{setBusy(false);}
  }
  return <section className="space-y-3 rounded border border-border bg-surface p-4">
@@ -79,7 +101,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="text-sm">{kind==="YOUTUBE"?"YouTube URL":"Meeting Link"}
     <input type="url" required className="mt-1 w-full rounded border bg-background p-2"
-     value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://"/></label>
+     value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
    {kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
     <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="mt-1 w-full rounded border bg-background p-2"/></label>:<>
@@ -99,11 +121,15 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
   {existing.length>0&&<div className="space-y-2">
    <h3 className="text-sm font-semibold">Existing Content</h3>
    <ul className="space-y-1">{existing.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
-    <span className="break-words">{item.title}</span>
+    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status})</span></span>
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
       {kind==="YOUTUBE"?"View":"Join"}</a>}
-     <button type="button" className="underline" onClick={()=>select(item)}>Edit</button>
+     <button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</button>
+     {item.status==="DRAFT"&&<button type="button" className="underline" disabled={busy}
+       onClick={()=>void transition(item,"PUBLISH")}>Publish</button>}
+     <button type="button" className="underline text-error" disabled={busy}
+       onClick={()=>void transition(item,"ARCHIVE")}>Delete</button>
     </div>
    </li>)}</ul>
   </div>}
