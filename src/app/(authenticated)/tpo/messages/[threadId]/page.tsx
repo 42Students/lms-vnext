@@ -31,9 +31,10 @@ export default async function TpoRecruiterConversationPage({params}:{
   </Link>
   <h1 className="text-xl font-semibold text-foreground">Recruiter conversation</h1>
   <p className="text-sm text-body">{data.total} messages · Showing the latest 100</p>
-  <section aria-label="Conversation messages" className="space-y-3">
+  <section role="log" aria-live="polite" aria-label="Conversation messages" className="space-y-3">
    {data.messages.length===0?<p role="status">No messages yet.</p>:data.messages.map(item=>
-    <article key={item.id} className="rounded-xl border border-border bg-surface p-4">
+    <article key={item.id} className={"max-w-3xl rounded-xl border border-border bg-surface p-4 "+(item.senderType==="TPO"?"ml-auto":"mr-auto")}>
+     <p className="text-xs text-muted-foreground">{item.senderType==="TPO"?"You":"Recruiter"}</p>
      <p className="text-xs font-semibold text-muted-foreground">
       {item.senderType==="RECRUITER"?"Recruiter":"Placement cell"} ·
       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
