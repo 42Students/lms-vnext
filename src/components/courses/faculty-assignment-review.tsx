@@ -378,31 +378,19 @@ function SubmissionGradeCard({
         </label>
 
         <div className="lg:col-span-2 flex flex-wrap items-center gap-2">
-          {actions.canGrade ? (
-            <Button
-              size="sm"
-              type="submit"
-              disabled={
-                saving || publishing || unchanged
-              }
-            >
-              {saving
-                ? "Saving…"
-                : submission.gradingStatus ===
-                    "GRADED"
-                  ? "Save privately"
-                  : "Save privately"}
-            </Button>
-          ) : null}
-
           {actions.canGrade&&draftState.hasChanges?(
-            <Button size="sm" type="button" variant="secondary"
+            <Button size="sm" type="button"
               disabled={saving||publishing||draftState.points===null}
               onClick={()=>void saveAndPublish()}>
-              Save &amp; publish
+              {saving?"Submitting…":"Submit grade"}
             </Button>
           ):null}
-
+          {actions.canGrade ? (
+            <Button size="sm" type="submit" variant="secondary"
+              disabled={saving||publishing||unchanged}>
+              {saving?"Saving privately…":"Save privately"}
+            </Button>
+          ):null}
           {actions.canPublish ? (
             <Button
               size="sm"
