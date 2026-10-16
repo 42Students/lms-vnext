@@ -81,6 +81,25 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed cohort action is offered. If any later change occurred, the server will reject the undo.</p>
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
  </section>:null}
+ <section aria-label="Next step" className="space-y-3 rounded-lg border border-border bg-surface p-4">
+  <h2 className="font-semibold">Next step</h2>
+  {lifecycle?.finishedAt ? <p className="text-sm text-body">This batch is finished. Review its history; eligibility editing is closed.</p> :
+   summary.assessed===0 ? <p className="text-sm text-body">No active learners are recorded in this batch. Add students to an academic class first.</p> :
+   summary.undecided>0 ? <p className="text-sm text-body">Decide who is in placements. {summary.undecided} learners are not yet decided.</p> :
+   !lifecycle?.invitedAt ? <p className="text-sm text-body">Eligibility is ready to review. Invite eligible learners to register.</p> :
+   registrations.unrecorded>0 ? <p className="text-sm text-body">{registrations.unrecorded} learners still need to record their registration choice.</p> :
+   <p className="text-sm text-body">All recorded learners have a registration choice. Review the next steps on Students.</p>}
+  <div className="flex flex-wrap gap-3">
+    <Link href={"/tpo/batches/"+batchId+(lifecycle?.finishedAt?"/history":summary.undecided>0?"/students?decision=NOT_DECIDED":!lifecycle?.invitedAt?"/invitation-prep":"/registrations")}
+      className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
+      {lifecycle?.finishedAt?"Review history":summary.undecided>0?"Decide learners":!lifecycle?.invitedAt?"Invite to register":"Review registrations"} →
+    </Link>
+    {registrations.available?<Link href={"/tpo/batches/"+batchId+"/students"}
+      className="inline-flex min-h-10 items-center px-3 font-semibold text-primary-text">
+      {registrations.registered} students registered: continue on Students →
+    </Link>:null}
+  </div>
+ </section>
  <section aria-label="Registration decisions" className="min-w-0 space-y-3 rounded-lg border border-border p-4">
   <h2 className="font-semibold">Registration choices</h2>
   <p className="text-sm">Registration window: {registrations.invitation.stage.replaceAll("_"," ").toLowerCase()}</p>
