@@ -8,6 +8,9 @@ import {
   lt,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
+import { notifyActiveProjectMembers } from "./project-notification-service";
 import {
   projectMeetings,
   projectInstances,
@@ -200,6 +203,27 @@ export async function requestProjectMeeting(
       requestedByMembershipId: context.membership!.id,
       createdByUserId: context.user.id,
     }).returning();
+    if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    const event=await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_meeting",subjectId:meeting.id,subjectLabel:meeting.title,
+      summary:"Project meeting requested",
+      metadata:{projectId:scope.project.id,meetingId:meeting.id,status:"REQUESTED"},
+      groupKey:"project:"+scope.project.id+":meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["MENTOR"],exceptUserId:context.user.id,
+      title:"Meeting requested",body:"A meeting has been requested for your project.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["LEARNER"],exceptUserId:context.user.id,
+      title:"Meeting requested",body:"A meeting has been requested for your project.",
+      actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+    });
     return meeting;
   });
 }
@@ -254,6 +278,21 @@ export async function scheduleProjectMeeting(
       const [created] = await tx.insert(projectMeetings).values({
         projectId:scope.project.id,...values,createdByUserId:context.user.id,
       }).returning();
+      if(!created)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+      const event=await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"project_meeting",subjectId:created.id,subjectLabel:created.title,
+        summary:"Project meeting scheduled",
+        metadata:{projectId:scope.project.id,meetingId:created.id,status:"SCHEDULED"},
+        groupKey:"project:"+scope.project.id+":meetings",
+      });
+      await notifyActiveProjectMembers(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
+        exceptUserId:context.user.id,
+        title:"Project meeting",body:"A project meeting has been scheduled.",
+        actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+      });
       return created;
     }
     const [updated] = await tx.update(projectMeetings).set(values)
@@ -262,6 +301,20 @@ export async function scheduleProjectMeeting(
         inArray(projectMeetings.status,["REQUESTED","SCHEDULED"])))
       .returning();
     if (!updated) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    const event=await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_meeting",subjectId:updated.id,subjectLabel:updated.title,
+      summary:"Project meeting scheduled",
+      metadata:{projectId:scope.project.id,meetingId:updated.id,status:"SCHEDULED"},
+      groupKey:"project:"+scope.project.id+":meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
+      exceptUserId:context.user.id,
+      title:"Project meeting",body:"A project meeting has been scheduled.",
+      actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+    });
     return updated;
   });
 }
@@ -361,7 +414,8 @@ export async function transitionProjectMeeting(
     );
   }
 
-  const [cancelled] = await getDb()
+  return getDb().transaction(async tx => {
+  const [cancelled] = await tx
     .update(projectMeetings)
     .set({
       status: "CANCELLED",
@@ -387,5 +441,23 @@ export async function transitionProjectMeeting(
   if (!cancelled) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
+  const event=await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
+    collegeId:scope.collegeId,organizationId:scope.organizationId,
+    subjectType:"project_meeting",subjectId:cancelled.id,subjectLabel:cancelled.title,
+    summary:"Project meeting cancelled",
+    metadata:{projectId:scope.project.id,meetingId:cancelled.id,status:"CANCELLED"},
+    groupKey:"project:"+scope.project.id+":meetings",
+  });
+  for (const role of ["LEARNER","MENTOR"] as const) {
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,roles:[role],
+      exceptUserId:context.user.id,
+      title:"Project meeting",body:"A project meeting has been cancelled.",
+      actionHref:(role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+
+        scope.project.id+"?tab=meetings",
+    });
+  }
   return cancelled;
+  });
 }

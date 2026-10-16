@@ -14,6 +14,7 @@ import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
 import { LearnerTaskProgressControl } from "./learner-task-progress-control";
 import { learnerTaskCriteriaPreview } from "@/modules/projects/learner-task-criteria-model";
+import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
 import { MentorTaskCreate } from "./mentor-task-create";
 import { MentorTaskStatusTransition } from "./mentor-task-status-transition";
 import {
@@ -611,6 +612,9 @@ export function ProjectWorkspace({
                           ) ?? [];
                         const latestAttempt =
                           attempts.at(-1) ?? null;
+                        const taskFacts = projectTaskVisibleFacts(task,
+                          workspace.members.find(member =>
+                            member.membershipId === task.assigneeMembershipId)?.displayName ?? null);
                         return (
                           <div
                             key={task.id}
@@ -669,6 +673,22 @@ export function ProjectWorkspace({
                                 </StatusBadge>
                               </div>
                             </div>
+                            <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
+                              <div><dt className="font-semibold">Assignee</dt><dd>{taskFacts.assignee}</dd></div>
+                              <div><dt className="font-semibold">Due date</dt><dd>{taskFacts.dueDate}</dd></div>
+                              <div><dt className="font-semibold">Estimate</dt><dd>{taskFacts.estimate}</dd></div>
+                              <div><dt className="font-semibold">Task type</dt><dd>{taskFacts.taskType}</dd></div>
+                              {taskFacts.blockerReason ? <div className="sm:col-span-2">
+                                <dt className="font-semibold">Blocker note</dt>
+                                <dd className="whitespace-pre-wrap break-words">{taskFacts.blockerReason}</dd>
+                              </div> : null}
+                              {latestAttempt?.submissionUrl && safeHttpHref(latestAttempt.submissionUrl) ?
+                                <div className="sm:col-span-2"><dt className="font-semibold">Submission</dt>
+                                  <dd><a target="_blank" rel="noreferrer"
+                                    href={safeHttpHref(latestAttempt.submissionUrl)!}
+                                    className="text-primary-text underline">Open submission</a></dd>
+                                </div> : null}
+                            </dl>
                             {mode === "LEARNER" &&
                             !readOnly &&
                             sprint.status === "ACTIVE" &&

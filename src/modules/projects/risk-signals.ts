@@ -2,6 +2,7 @@ export type ProjectRiskSignalInput = {
   projectStatus: string;
   inactiveDays: number;
   latestSubmissionStatus: string | null;
+  hasBlockedTask?: boolean;
 };
 
 /**
@@ -42,6 +43,7 @@ export function deriveProjectRiskReasons({
   projectStatus,
   inactiveDays,
   latestSubmissionStatus,
+  hasBlockedTask = false,
 }: ProjectRiskSignalInput): string[] {
   if (
     projectStatus === "ARCHIVED" ||
@@ -58,6 +60,10 @@ export function deriveProjectRiskReasons({
         inactiveDays === 1 ? "" : "s"
       }`,
     );
+  }
+
+  if (hasBlockedTask) {
+    reasons.push("Active blocker");
   }
 
   if (latestSubmissionStatus === "SUBMITTED") {

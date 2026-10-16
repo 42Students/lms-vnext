@@ -10,6 +10,7 @@ import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 import {mentorMeetingRescheduleParamsSchema,mentorMeetingRescheduleSchema,
   mentorMeetingCanReschedule} from "./mentor-meeting-reschedule-model";
 
@@ -61,7 +62,7 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
       sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${expected.toISOString()}::timestamptz`,
     )).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
-    await recordActivityEventInTransaction(tx,context,{
+    const event = await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_RESCHEDULED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_meeting",subjectId:updated.id,subjectLabel:updated.title,
@@ -70,6 +71,12 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
         previousStartsAt:meeting.startsAt.toISOString(),
         startsAt:updated.startsAt.toISOString(),timeZone:meeting.timeZone},
       groupKey:"project:"+scope.project.id+":meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
+      title:"Project meeting",body:"The time of "+updated.title+" has changed.",
+      actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+      exceptUserId:context.user.id,
     });
     return updated;
   });

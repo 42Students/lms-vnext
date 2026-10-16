@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { LearnerTaskStatusActions } from "./learner-task-status-actions";
+import { projectTaskVisibleFacts } from "@/modules/projects/project-task-visible-facts-model";
 import { learnerBoardTaskWorkspaceHref } from "@/modules/projects/learner-board-task-workflow-model";
 import { learnerBoardTaskStatusLabel, learnerBoardTaskPriorityLabel } from "@/modules/projects/learner-board-task-status-label-model";
 import { learnerBoardTaskStatusTone, learnerBoardTaskPriorityTone } from "@/modules/projects/learner-board-task-attention-tone-model";
@@ -12,21 +13,24 @@ import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-boar
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 
 export function LearnerBoardTaskDetailDialog({
-  projectId, filters, task, sprintTitle, currentMembershipId,
+  projectId, filters, task, sprintTitle, currentMembershipId, assigneeName,
 }: {
   projectId:string;
   filters:LearnerTaskBoardUrlFilters;
   task:{
     id:string;title:string;description:string|null;acceptanceCriteria:string|null;
     status:string;priority:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
+    dueDate:string|null;estimatePoints:number|null;taskType:string|null;
   };
   currentMembershipId:string|null;
   sprintTitle:string|null;
+  assigneeName:string|null;
 }) {
   const ref=useRef<HTMLDialogElement>(null);
   const navigatingRef=useRef(createLearnerBoardTaskDialogNavigationGuard());
   const router=useRouter();
   const returnHref=learnerBoardTaskHref(projectId,filters);
+  const facts=projectTaskVisibleFacts(task,assigneeName);
   useEffect(()=>{
     const dialog=ref.current;
     if(!dialog)return;
@@ -51,6 +55,14 @@ export function LearnerBoardTaskDetailDialog({
         <div><dt className="text-muted-foreground">Status</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskStatusTone(task.status)}>{learnerBoardTaskStatusLabel(task.status)}</StatusBadge></dd></div>
         <div><dt className="text-muted-foreground">Priority</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskPriorityTone(task.priority)}>{learnerBoardTaskPriorityLabel(task.priority)}</StatusBadge></dd></div>
         <div className="col-span-2"><dt className="text-muted-foreground">Sprint</dt><dd className="mt-1 font-semibold">{sprintTitle??"Not assigned"}</dd></div>
+        <div><dt className="text-muted-foreground">Assignee</dt><dd>{facts.assignee}</dd></div>
+        <div><dt className="text-muted-foreground">Due date</dt><dd>{facts.dueDate}</dd></div>
+        <div><dt className="text-muted-foreground">Estimate</dt><dd>{facts.estimate}</dd></div>
+        <div><dt className="text-muted-foreground">Task type</dt><dd>{facts.taskType}</dd></div>
+        {facts.blockerReason ? <div className="col-span-2">
+          <dt className="text-muted-foreground">Blocker note</dt>
+          <dd className="whitespace-pre-wrap break-words">{facts.blockerReason}</dd>
+        </div> : null}
       </dl>
       <section className="mt-5">
         <h3 className="font-semibold">Details</h3>
