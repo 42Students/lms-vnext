@@ -21,7 +21,7 @@ describe("HR calendar kind filters",()=>{
   expect(filterHrCalendarDays(typed,"ALL")[0]?.events).toHaveLength(4);
  });
  it("does not accept fake calendar event types",()=>{
-  expect(HR_CALENDAR_CATEGORIES).toHaveLength(4);
+  expect(HR_CALENDAR_CATEGORIES).toHaveLength(5);
   expect(hrCalendarCategorySchema.safeParse("SLOT").success).toBe(false);
  });
 });

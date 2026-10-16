@@ -387,6 +387,7 @@ const PORTAL_QUALIFIERS: readonly (readonly [string, string])[] = [
   ["/admin", "Admin"],
   ["/tpo", "Placements"],
   ["/hr", "Recruiting"],
+  ["/recruiter", "Recruiting"],
 ];
 
 function portalQualifier(href: string) {

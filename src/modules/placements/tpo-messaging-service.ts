@@ -29,6 +29,7 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import {hrConversationDetailPageWindow} from "./hr-conversation-detail-pagination-model";
+import {notifyTpoOfRecruiterMessage} from "./recruiter-message-tpo-notification-service";
 import {formatHrDriveProposal,hrDriveProposalSchema} from "./hr-drive-proposal-model";
 
 const collegeIdSchema = z.string().uuid();
@@ -548,6 +549,10 @@ export async function sendThreadMessage(
       .set({ lastMessageAt: now })
       .where(eq(placementTpoMessageThreads.id, thread.id));
 
+    if(actor.type==="RECRUITER")await notifyTpoOfRecruiterMessage(tx,{
+      collegeId:thread.collegeId,threadId:thread.id,messageId:message.id,
+      senderUserId:actor.userId,at:now,
+    });
     return message;
   });
 }
@@ -583,6 +588,10 @@ export async function sendRecruiterThreadMessage(
    if(!message)throw new Error("RECRUITER_MESSAGE_PERSISTENCE_FAILED");
    await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
     .where(eq(placementTpoMessageThreads.id,thread.id));
+   await notifyTpoOfRecruiterMessage(tx,{
+      collegeId:thread.collegeId,threadId:thread.id,messageId:message.id,
+      senderUserId:context.user.id,at:now,
+   });
    return {id:message.id,threadId:thread.id};
  });
 }
@@ -752,6 +761,10 @@ export async function sendRecruiterDriveProposal(context:RequestContext,raw:unkn
   if(!message)throw new Error("DRIVE_PROPOSAL_PERSISTENCE_FAILED");
   await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
    .where(eq(placementTpoMessageThreads.id,thread.id));
+  await notifyTpoOfRecruiterMessage(tx,{
+    collegeId:input.collegeId,threadId:thread.id,messageId:message.id,
+    senderUserId:context.user.id,at:now,
+  });
   return {threadId:thread.id,messageId:message.id,replayed:false};
  });
 }
