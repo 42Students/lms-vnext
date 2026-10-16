@@ -41,12 +41,15 @@ function QuizListActions({item}:{item:CollegeAssessmentAggregateItem}){
  return <div className="space-y-2">
   <FacultyItemActions transitionUrl={"/api/courses/quizzes/"+encodeURIComponent(item.id)+"/transition"}
    actions={actions}/>
-  {item.status==="CLOSED"?
-   <AdminQuizResultsActions quizId={item.id} status="CLOSED"
+  {(item.status==="CLOSED" || (item.status==="PUBLISHED" &&
+    item.dueAt!==null && item.dueAt.getTime()<=Date.now()))?
+   <AdminQuizResultsActions quizId={item.id}
+    status={item.status==="CLOSED"?"CLOSED":"PUBLISHED"}
+    deadlineReached={item.status==="PUBLISHED"}
     resultsPublished={Boolean(item.resultsPublished)}/>:
    item.status==="PUBLISHED"?
    <p className="text-xs text-muted-foreground" title="Results can be released after the quiz deadline">
-    Close the quiz after the deadline before releasing or withholding results.
+    Results can be released after the quiz deadline.
    </p>:null}
  </div>;
 }
