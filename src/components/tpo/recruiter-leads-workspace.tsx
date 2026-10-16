@@ -579,12 +579,26 @@ export function RecruiterLeadsWorkspace({
             <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
-                  <tr>{["Select", "Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].map(x =>
+                  <tr>
+                    <th scope="col" className="px-4 py-3">
+                      <input type="checkbox" aria-label="Select all visible recruiters"
+                        checked={visible.length>0&&visible.every(row=>selectedIds.includes(row.id))}
+                        onChange={event=>setSelectedIds(current=>event.target.checked?
+                          [...new Set([...current,...visible.map(row=>row.id)])]:
+                          current.filter(id=>!visible.some(row=>row.id===id)))}/>
+                    </th>
+                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
                   {visible.map(lead => (
                     <tr key={lead.id} className="border-b border-border last:border-0">
+                      <td className="px-4 py-3">
+                        <input type="checkbox" aria-label={"Select "+lead.name}
+                          checked={selectedIds.includes(lead.id)}
+                          onChange={event=>setSelectedIds(current=>event.target.checked?
+                            [...new Set([...current,lead.id])]:current.filter(id=>id!==lead.id))}/>
+                      </td>
                       <td className="px-4 py-3 font-medium">
                         <Link className="text-primary-text underline-offset-2 hover:underline"
                           href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name}</Link>
@@ -607,6 +621,15 @@ export function RecruiterLeadsWorkspace({
                       <td className="px-4 py-3">{lead.source || "Manual"}</td>
                       <td className="px-4 py-3">{lead.emailNorm || "—"}</td>
                       <td className="px-4 py-3">{lead.phoneNorm || "—"}</td>
+                      <td className="px-4 py-3">
+                        {!lead.recruiterUserId?(
+                          <button type="button" className={buttonStyle}
+                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
+                            onClick={()=>void createInviteLink(lead)}>
+                            {lead.inviteSentAt?"Resend invite":"Invite"}
+                          </button>
+                        ):<span className="text-xs text-muted-foreground">Joined</span>}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
