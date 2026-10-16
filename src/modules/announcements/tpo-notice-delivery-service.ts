@@ -68,7 +68,7 @@ export async function deliverDueTpoNotices(now=new Date()){
      tx,event.id,members.slice(offset,offset+250).map(row=>row.userId),{
       title:notice.title.slice(0,240),
       body:notice.message.slice(0,2000),
-      actionHref:"/learn/my-placements/announcements?notice="+encodeURIComponent(notice.id),
+      actionHref:"/learn/my-placements/announcements?focus="+encodeURIComponent(notice.id),
      });
     done+=result.delivered;
    }
