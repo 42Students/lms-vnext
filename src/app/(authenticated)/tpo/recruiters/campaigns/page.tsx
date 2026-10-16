@@ -15,12 +15,25 @@ export default async function CampaignHistory({searchParams}:PageProps){
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const params=await searchParams;
  const query=messagingHistoryQuerySchema.safeParse({page:first(params.page),purpose:first(params.purpose)});
- if(!query.success)return <main className="space-y-4"><PageHeader eyebrow="Engage" title="Campaign history"/><p role="alert">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></p></main>;
+ if(!query.success)return <main className="space-y-4"><PageHeader eyebrow="Engage" title="Emails"/><p role="alert">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></p></main>;
  const result=await listTpoMessagingHistory(context,query.data);
  const drafts=await listTpoCampaignDrafts(context);
  return <main className="space-y-6">
   <PageHeader eyebrow="Engage" title="Campaign history"
    description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."/>
+  <nav aria-label="Engage views" className="flex flex-wrap gap-2">
+   {([["table","Table"],["board","Board"],["companies","Companies"],["campaigns","Emails"]] as const)
+     .map(([value,label])=><Link key={value} href={"/tpo/recruiters?view="+value}
+       aria-current={value==="campaigns"?"page":undefined}
+       className={value==="campaigns"
+         ?"inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"
+         :"inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body"}>
+       {label}
+     </Link>)}
+  </nav>
+  <p className="text-sm text-body">
+   To send one, select recruiters in the table and choose Act, then Send an email.
+  </p>
   <nav aria-label="Campaign history actions" className="flex flex-wrap gap-3">
    <Link href="/tpo/recruiters/campaigns/new"
     className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
