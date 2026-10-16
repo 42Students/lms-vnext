@@ -186,6 +186,8 @@ export function LearnerProfileWorkspace(props: {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
   const [educationError,setEducationError] = useState<string|null>(null);
+  const [jobPrefsEditing,setJobPrefsEditing]=useState(false);
+  const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
   const [pending, startTransition] = useTransition();
 
   const checklist = useMemo(
@@ -540,6 +542,18 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Contact email" value={document.contacts.contactEmail} />
           </div>
         </Card>
+        <Card id="job-preferences" title="Job Preferences"
+          action={<Button variant="secondary" disabled={pending}
+            onClick={()=>{setJobPrefsDraft(document.jobPreferences);setJobPrefsEditing(true);}}>
+            Edit preferences
+          </Button>}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Value label="Role Preference" value={document.jobPreferences.rolePreferences.join(", ")}/>
+            <Value label="Specific Role Preference" value={document.jobPreferences.specificRolePreference}/>
+            <Value label="Work Shift Preference" value={document.jobPreferences.workShiftPreference}/>
+            <Value label="Preferred Employment City" value={document.jobPreferences.preferredEmploymentCity}/>
+          </div>
+        </Card>
         <Card id="social-profiles" title="Social profiles"
           action={<Button variant="secondary" onClick={openDetails}>Connect or edit accounts</Button>}>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -767,6 +781,46 @@ export function LearnerProfileWorkspace(props: {
           </fieldset>
 
           <label className="block text-xs font-semibold text-body">Hobbies · comma-separated<Textarea className="mt-1.5" value={detailsDraft.hobbies.join(", ")} onChange={(event) => setDetailsDraft({ ...detailsDraft, hobbies: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
+        </div>
+      </Dialog>
+
+      <Dialog open={jobPrefsEditing}
+        onOpenChange={open=>{if(!open&&!pending)setJobPrefsEditing(false);}}
+        title="Edit Job Preferences"
+        footer={<>
+          <Button variant="secondary" disabled={pending} onClick={()=>setJobPrefsEditing(false)}>Cancel</Button>
+          <Button disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
+            {pending?"Saving…":"Save"}
+          </Button>
+        </>}>
+        <div className="grid gap-4">
+          <label className="text-sm font-semibold text-body">Role Preference (multiple)
+            <input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
+              placeholder="e.g. Software Engineer, Data Analyst"
+              onChange={event=>setJobPrefsDraft(current=>({...current,
+                rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
+              className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm"/>
+          </label>
+          <label className="text-sm font-semibold text-body">Specific Role Preference
+            <Input className="mt-1" value={jobPrefsDraft.specificRolePreference} maxLength={200}
+              onChange={event=>setJobPrefsDraft(current=>({...current,specificRolePreference:event.target.value}))}/>
+          </label>
+          <label className="text-sm font-semibold text-body">Work Shift Preference
+            <Select className="mt-1" value={jobPrefsDraft.workShiftPreference}
+              onChange={event=>setJobPrefsDraft(current=>({...current,
+                workShiftPreference:event.target.value as LearnerProfileDocument["jobPreferences"]["workShiftPreference"]}))}>
+              <option value="">No preference</option>
+              <option value="DAY">Day</option>
+              <option value="NIGHT">Night</option>
+              <option value="ROTATIONAL">Rotational</option>
+              <option value="FLEXIBLE">Flexible</option>
+            </Select>
+          </label>
+          <label className="text-sm font-semibold text-body">Preferred Employment City
+            <Input className="mt-1" value={jobPrefsDraft.preferredEmploymentCity} maxLength={120}
+              onChange={event=>setJobPrefsDraft(current=>({...current,preferredEmploymentCity:event.target.value}))}/>
+          </label>
+          <p className="text-xs text-muted-foreground">These preferences are learner-authored and do not change placement eligibility.</p>
         </div>
       </Dialog>
 
