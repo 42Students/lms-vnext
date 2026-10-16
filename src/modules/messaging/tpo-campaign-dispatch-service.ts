@@ -134,11 +134,15 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
     });
     const key=tpoCompanyKey(row.company);
     if(key){
-     await tx.update(placementTpoCompanyCommunication).set({
-      status:"EMAILED",updatedByUserId:context.user.id,updatedAt:new Date(),
-     }).where(and(eq(placementTpoCompanyCommunication.collegeId,college.id),
-      eq(placementTpoCompanyCommunication.companyKey,key),
-      eq(placementTpoCompanyCommunication.status,"NOT_CONTACTED")));
+     await tx.insert(placementTpoCompanyCommunication).values({
+      collegeId:college.id,companyKey:key,status:"EMAILED",
+      updatedByUserId:context.user.id,
+     }).onConflictDoUpdate({
+      target:[placementTpoCompanyCommunication.collegeId,
+       placementTpoCompanyCommunication.companyKey],
+      set:{status:"EMAILED",updatedByUserId:context.user.id,updatedAt:new Date()},
+      setWhere:eq(placementTpoCompanyCommunication.status,"NOT_CONTACTED"),
+     });
     }
    });
    totals.sent++;
