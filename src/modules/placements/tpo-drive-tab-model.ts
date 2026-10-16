@@ -6,7 +6,7 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
   {label:"Applicants",href:root+"/applicants"},
   {label:"Pipeline",href:root+"/applicants-pipeline"},
   {label:"Candidate schedule",href:root+"/candidate-schedule"},
-  {label:"Drive day",href:"/tpo/drive-day"},
+  {label:"Drive day",href:root+"/drive-day"},
   {label:"Rounds",href:root+"/rounds"},
   {label:"Offers",href:root+"/offers"},
   {label:"Joining",href:root+"/joining"},
