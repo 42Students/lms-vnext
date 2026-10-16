@@ -192,7 +192,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDirtyDraft(true);setDescription(e.target.value);}}
     className="min-w-0 max-w-full rounded border border-border p-2"/></label>
-  <label className="grid min-w-0 gap-1 text-sm">Due date (IST, optional)
+  <label className="grid min-w-0 gap-1 text-sm">Due date (IST, required before publishing)
    <input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDirtyDraft(true);setDueAt(e.target.value);}}
     className="min-h-10 min-w-0 max-w-full rounded border border-border p-2"/></label>
   <label className="grid min-w-0 gap-1 text-sm">Maximum attempts
