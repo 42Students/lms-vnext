@@ -83,7 +83,7 @@ export async function leaveOwnRecruiterCollegeAccess(
         eq(placementRecruiterCollegeGrants.id, grantId),
         eq(placementRecruiterCollegeGrants.recruiterUserId, context.user.id),
         eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
-        eq(placementRecruiterCollegeGrants.collegeId, grant.collegeId),
+        eq(placementRecruiterCollegeGrants.companyRelationshipId, grant.companyRelationshipId),
       ))
       .returning({ id: placementRecruiterCollegeGrants.id });
     if (!revoked) throw new AuthorizationError("placements.recruiter.read");
