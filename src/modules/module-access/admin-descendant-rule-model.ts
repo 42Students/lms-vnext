@@ -15,3 +15,7 @@ export const academicModuleRuleInput=z.strictObject({
 export function descendantRuleMatches(expected:{enabled:boolean;locked:boolean}|null,current:{enabled:boolean;locked:boolean}|null){
  return expected===null?current===null:!!current&&expected.enabled===current.enabled&&expected.locked===current.locked;
 }
+
+export function academicScopeStudents(rows:readonly {scopeType:string;scopeId:string;studentsInScope:number}[]){
+ return new Map(rows.map(row=>[row.scopeType+":"+row.scopeId,row.studentsInScope]));
+}
