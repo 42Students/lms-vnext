@@ -1,4 +1,5 @@
 import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-assignment-grade-label-model";
+import {learnerAssessmentSubmittedLinkHref} from "@/modules/courses/learner-assessment-submitted-link-model";
 import {learnerRoadmapHeadline} from "@/modules/courses/learner-roadmap-headline-model";
 import {learnerRoadmapFilterRecoveryNotice} from "@/modules/courses/learner-roadmap-filter-recovery-model";
 import { learnerRoadmapEmptyState } from "@/modules/courses/learner-roadmap-empty-state-model";
@@ -364,6 +365,8 @@ function AssignmentCard({
     assignment.submissionId,
     assignment.dueAt,
   );
+  // Legacy: missing or expired due dates never enable the submission control.
+  const submissionClosed=!assignment.dueAt||assignment.dueAt.getTime()<=Date.now();
 
   return (
     <article
@@ -425,6 +428,20 @@ function AssignmentCard({
         ) : null}
       </div>
 
+      {assignment.submissionId && assignment.submissionType==="TEXT"?
+        <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
+          <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
+          <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{assignment.submissionText??"No text was saved."}</p>
+        </section>:null}
+      {assignment.submissionId && assignment.submissionType==="LINK"?
+        <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
+          <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
+          {learnerAssessmentSubmittedLinkHref(assignment.submissionUrl)?
+            <a href={learnerAssessmentSubmittedLinkHref(assignment.submissionUrl)!} target="_blank"
+              rel="noopener noreferrer" className="mt-2 block break-all text-sm text-primary-text underline">
+              {assignment.submissionUrl}</a>:
+            <p className="text-sm text-body">Saved link unavailable.</p>}
+        </section>:null}
       {assignment.submissionId && assignment.submissionType === "FILE" ?
         <AssignmentFileOpenControl key={assignment.submissionId} submissionId={assignment.submissionId}
           enabled={assignmentFilesRuntimeEnabled()} /> : null}
@@ -445,11 +462,19 @@ function AssignmentCard({
         </p>
       ) : overdue ? (
         <p className="mt-4 text-xs font-semibold text-warning">
-          Due date passed · late submission is still allowed.
+          Submissions are closed · Submission deadline has passed
         </p>
       ) : null}
 
-      {!readOnly && interaction.canSubmit ? (
+      {!readOnly && !assignment.submissionId && submissionClosed ?
+        <div role="status" className="mt-3 space-y-2 text-sm text-warning">
+          <p>{assignment.dueAt?"Submissions are closed":"Submission unavailable · deadline missing"}</p>
+          <button type="button" disabled aria-disabled="true"
+            className="min-h-11 rounded-md border border-border px-4 text-sm text-muted-foreground">
+            {assignment.dueAt?"Submission closed":"Unavailable"}
+          </button>
+        </div>:null}
+      {!readOnly && !submissionClosed && interaction.canSubmit ? (
         <AssignmentSubmissionControl
           fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
           assignmentId={assignment.id}
