@@ -13,6 +13,7 @@ import { learnerBoardStatusCounts } from "@/modules/projects/learner-board-summa
 import { learnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
 import { learnerBoardSortSchema,sortLearnerBoardTasks } from "@/modules/projects/learner-board-sort-model";
 import { LearnerBoardInteractive } from "@/components/projects/learner-board-interactive";
+import {LearnerAddOwnTask} from "@/components/projects/learner-own-task-controls";
 import { LearnerProjectGoals } from "@/components/projects/learner-project-goals";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { LearnerBoardTaskDetailDialog } from "@/components/projects/learner-board-task-detail-dialog";
@@ -117,6 +118,9 @@ export default async function LearnerProjectPage({
       {activeSection === "tasks" ? (
         <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} status={status} taskSort={taskSort} mine={mine} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
           shown={boardTasks.length} total={workspace.tasks.length} statusCounts={learnerBoardStatusCounts(workspace.tasks)} priorityCounts={learnerBoardPriorityCounts(workspace.tasks)} />
+      ) : null}
+      {activeSection === "tasks" && workspace.project.status==="ACTIVE" ? (
+        <LearnerAddOwnTask projectId={projectId} sprints={workspace.sprints}/>
       ) : null}
       {activeSection === "tasks" ? (
         <LearnerBoardInteractive projectId={projectId} initialTasks={boardTasks}
