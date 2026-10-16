@@ -34,7 +34,7 @@ export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus){
 export const recruiterRequestUpdateSchema=z.strictObject({
  requestId:z.string().uuid(),
  collegeId:z.string().uuid(),
- action:z.enum(["RESUBMIT","CANCEL"]),
+ action:z.enum(["EDIT","RESUBMIT","CANCEL"]),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
  draft:hrDriveDraftSchema.optional(),
 });
