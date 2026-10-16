@@ -127,6 +127,18 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0"><h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
                 <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
+                <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
+                  <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
+                  <div className="flex gap-1"><dt>Pay:</dt><dd className="font-semibold">
+                    {job.minimumAnnualCtcInr == null && job.maximumAnnualCtcInr == null
+                      ? "Not recorded"
+                      : "₹" + (job.minimumAnnualCtcInr != null
+                        ? (job.minimumAnnualCtcInr / 100000).toLocaleString("en-IN") : "—") +
+                        (job.maximumAnnualCtcInr != null
+                          ? "–" + (job.maximumAnnualCtcInr / 100000).toLocaleString("en-IN") : "") + " LPA"}
+                    {job.isDream ? " · Dream" : ""}
+                  </dd></div>
+                </dl>
                 <p className="text-xs text-body">Deadline: {job.applicationDeadline
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>
