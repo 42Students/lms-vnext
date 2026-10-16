@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   collegeTermCourseAddSchema, collegeTermCourseUnmapSchema,
-  nextTermCourseOrder, collegeTermMappingErrorMessage,
+  nextTermCourseOrder, reorderTermCourseIds, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage,
 } from "@/modules/academics/college-term-mapping-model";
 
 const termId = "90000000-0000-4000-8000-000000000001";
@@ -20,6 +20,18 @@ describe("Semester-course mapping boundaries", () => {
       { programTermId: termId, courseId, type: "CORE", credits: 3, collegeId: courseId },
       { programTermId: "invalid", courseId, type: "CORE", credits: null },
     ]) expect(collegeTermCourseAddSchema.safeParse(invalid).success).toBe(false);
+  });
+  it("updates mapping credits/order and rejects invalid positions or values", () => {
+    expect(collegeTermCourseUpdateSchema.safeParse({ credits: 3, position: 2 }).success).toBe(true);
+    expect(collegeTermCourseUpdateSchema.safeParse({ credits: null, position: 1 }).success).toBe(true);
+    for (const body of [
+      { credits: 31, position: 1 }, { credits: 3, position: 0 },
+      { credits: 3, position: 2, collegeId: courseId },
+    ]) expect(collegeTermCourseUpdateSchema.safeParse(body).success).toBe(false);
+    expect(reorderTermCourseIds(["a", "b", "c"], "c", 1)).toEqual(["c", "a", "b"]);
+    expect(reorderTermCourseIds(["a", "b", "c"], "a", 3)).toEqual(["b", "c", "a"]);
+    expect(() => reorderTermCourseIds(["a", "b"], "foreign", 1)).toThrow();
+    expect(() => reorderTermCourseIds(["a", "b"], "a", 3)).toThrow();
   });
   it("requires explicit unmap confirmation and computes sequential order", () => {
     expect(collegeTermCourseUnmapSchema.safeParse({ confirm: true }).success).toBe(true);

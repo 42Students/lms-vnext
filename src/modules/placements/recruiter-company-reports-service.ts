@@ -261,6 +261,51 @@ export async function getRecruiterCompanyReports(
     ),
   });
 
+
+  // Entire authorized employer-college portfolio, independent of pagination.
+  // Return counts only; never materialize private candidate information.
+  const funnelRows=await db.execute<{
+    applied:number;shortlisted:number;assessment:number;interview:number;
+    offered:number;hired:number;
+  }>(sql`
+    with jobs as (
+      select id from placement_jobs
+      where college_id=${collegeId}::uuid
+        and company_relationship_id=${relationshipId}::uuid
+        and status in ('PUBLISHED','CLOSED') and archived_at is null
+    ),
+    applicants as (
+      select a.id,a.status from placement_applications a
+      join jobs j on j.id=a.job_id
+      join college_memberships m on m.id=a.membership_id
+        and m.college_id=${collegeId}::uuid
+    )
+    select
+      (select count(*)::int from applicants) as applied,
+      (select count(distinct a.id)::int from applicants a
+        join placement_application_screenings s on s.application_id=a.id
+        where s.status='SHORTLISTED') as shortlisted,
+      (select count(distinct a.id)::int from applicants a
+        join placement_round_results r on r.application_id=a.id
+        join placement_job_rounds p on p.id=r.round_id
+        join jobs j on j.id=p.job_id
+        where p.kind in ('TEST','VENDOR_TEST','GD') and r.status='APPLIED') as assessment,
+      (select count(distinct a.id)::int from applicants a
+        join placement_round_results r on r.application_id=a.id
+        join placement_job_rounds p on p.id=r.round_id
+        join jobs j on j.id=p.job_id
+        where p.kind='INTERVIEW' and r.status='APPLIED') as interview,
+      (select count(distinct a.id)::int from applicants a
+        join placement_offers o on o.application_id=a.id
+        where o.status in ('ISSUED','ACCEPTED','DECLINED','EXPIRED')) as offered,
+      (select count(distinct a.id)::int from applicants a
+        join placement_offers o on o.application_id=a.id
+        join placement_joining_outcomes j on j.offer_id=o.id
+        where j.status='JOINED') as hired
+  `);
+  const totalFunnel=funnelRows.rows[0]??{applied:0,shortlisted:0,assessment:0,
+    interview:0,offered:0,hired:0};
+
   const matchedTotal = Number(
     selectedCounts[0]?.total ?? 0,
   );
@@ -275,6 +320,7 @@ export async function getRecruiterCompanyReports(
       name: companyScope.company.name,
     },
     summary,
+    funnel:totalFunnel,
     matchedTotal,
     page: query.page,
     pageSize: query.pageSize,

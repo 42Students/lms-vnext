@@ -6,7 +6,7 @@ function cell(value:string){
 }
 export function serializeTpoEligibilityPreviewCsv(rows:readonly TpoPreviewCsvSource[],results:readonly TpoPreviewCsvResult[]):string{
  if(rows.length!==results.length)throw new Error("Preview rows do not match the parsed import.");
- const all=[["CSV row","Student UUID","Proposed decision","Preview outcome","Skip reason"]];
+ const all=[["CSV row","Student roll or UUID","Proposed decision","Preview outcome","Skip reason"]];
  for(let i=0;i<rows.length;i++){
   const src=rows[i],preview=results[i];
   all.push([String(i+2),src.studentCode,src.decision,preview.status,preview.reason??""]);

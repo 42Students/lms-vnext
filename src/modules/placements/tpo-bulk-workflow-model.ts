@@ -2,8 +2,8 @@ import { z } from "zod";
 import { bulkActionCommandSchema, previewBulkAction } from "./tpo-bulk-action-model";
 
 export const tpoBulkTargetSchema = z.enum(["STUDENTS", "APPLICATIONS"]);
-export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED"]);
-const ids = z.array(z.string().uuid()).min(1).max(25)
+export const tpoBulkActionSchema = z.enum(["ELIGIBLE", "INELIGIBLE", "CLEAR_OVERRIDE", "SHORTLISTED", "REJECTED", "ADD_NOTE", "SEND_MESSAGE"]);
+const ids = z.array(z.string().uuid()).min(1).max(200)
   .refine(items => new Set(items).size === items.length, "Duplicate selected rows");
 
 export const tpoBulkPreviewRequestSchema = z.object({
@@ -14,11 +14,11 @@ export const tpoBulkPreviewRequestSchema = z.object({
   ids,
 }).strict().superRefine((value,ctx)=>{
   if(value.target==="STUDENTS"){
-    if(value.jobId||value.note.length>0||
-       !["ELIGIBLE","CLEAR_OVERRIDE"].includes(value.action))
+    if(value.jobId || !["ELIGIBLE","INELIGIBLE","CLEAR_OVERRIDE"].includes(value.action) ||
+       (value.action==="INELIGIBLE" ? value.note.length < 3 || value.note.length > 200 : value.note.length > 0))
       ctx.addIssue({code:"custom",message:"Invalid student action"});
   } else {
-    if(!value.jobId||!["SHORTLISTED","REJECTED"].includes(value.action))
+    if(!value.jobId||!["SHORTLISTED","REJECTED","ADD_NOTE","SEND_MESSAGE"].includes(value.action))
       ctx.addIssue({code:"custom",message:"Invalid application action"});
     if(value.note.length<10)
       ctx.addIssue({code:"custom",message:"Screening decisions require at least ten characters of review context"});
@@ -28,9 +28,12 @@ export const tpoBulkPreviewRequestSchema = z.object({
 export function tpoBulkActionLabel(action:z.infer<typeof tpoBulkActionSchema>):string {
   switch(action){
     case "ELIGIBLE":return "Mark learners eligible";
+    case "INELIGIBLE":return "Mark learners ineligible";
     case "CLEAR_OVERRIDE":return "Clear learner overrides";
     case "SHORTLISTED":return "Shortlist applicants";
     case "REJECTED":return "Reject applicants";
+    case "ADD_NOTE":return "Add a note";
+    case "SEND_MESSAGE":return "Send a message";
   }
 }
 export type TpoBulkPreviewRequest=z.output<typeof tpoBulkPreviewRequestSchema>;
@@ -39,7 +42,7 @@ export const tpoBulkConfirmRequestSchema = tpoBulkPreviewRequestSchema.safeExten
   previewToken:z.string().min(10).max(256),
   confirmed:z.literal(true),
 }).superRefine((value,ctx)=>{
-  if(value.selections.length>25)
+  if(value.selections.length>200)
     ctx.addIssue({code:"custom",message:"Too many selected records"});
 });
 export type TpoBulkConfirmRequest=z.output<typeof tpoBulkConfirmRequestSchema>;

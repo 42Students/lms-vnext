@@ -17,6 +17,7 @@ import {
 import {
   getRecruiterCompanyReports,
 } from "@/modules/placements/recruiter-company-reports-service";
+import {buildRecruiterReportFunnel} from "@/modules/placements/recruiter-company-funnel-model";
 import {hrCompanyReportPageSignals} from "@/modules/placements/hr-report-page-signals-model";
 
 type SearchParams = {
@@ -266,6 +267,22 @@ export default async function RecruiterCompanyReportsPage({
             </p>
           </article>
         ))}
+      </section>
+
+      <section aria-label="All your drives at this college" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h2 className="font-semibold text-foreground">All your drives at this college</h2>
+        <p className="mt-1 text-sm text-body">Hiring progress across all authorized drives, not just this page.</p>
+        <div className="mt-4 space-y-3">
+          {buildRecruiterReportFunnel(report.funnel).map(stage=><div key={stage.label}>
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <span className="font-semibold text-foreground">{stage.label}</span>
+              <span className="tabular-nums text-body">{stage.total} · {stage.previousPercentLabel} of previous</span>
+            </div>
+            <div className="mt-1 h-2 overflow-hidden rounded-full bg-border">
+              <div className="h-full bg-primary" style={{width:stage.appliedPercent+"%"}}/>
+            </div>
+          </div>)}
+        </div>
       </section>
 
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">

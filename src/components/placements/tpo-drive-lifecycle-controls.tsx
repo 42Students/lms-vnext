@@ -69,7 +69,7 @@ export function TpoDriveLifecycleControls({ readiness }: { readiness: Readiness 
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-5">
+    <section id="drive-lifecycle-publish" className="rounded-xl border border-border bg-surface p-5">
       <h2 className="text-base font-semibold text-foreground">Drive publish / close / reopen</h2>
       <p className="mt-1 text-sm text-body">
         Current state: {readiness.status}. Publish and reopen require a persisted

@@ -1,9 +1,13 @@
 "use client";
 import Link from "next/link";
+import {usePathname,useRouter,useSearchParams} from "next/navigation";
+import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
+import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
+import type {AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
@@ -29,7 +33,12 @@ const journeys=[
  {value:"APPLYING",label:"Applying"},
  {value:"PLACED",label:"Placed"},
 ];
-export function TpoStudentsSpreadsheet({rows,branches}:{rows:readonly TpoStudentRow[];branches:readonly {branchId:string;branchName:string}[]}){
+export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeAvailable}:{rows:readonly TpoStudentRow[];branches:readonly {branchId:string;branchName:string}[];
+ afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
+ const router=useRouter(),pathname=usePathname(),params=useSearchParams();
+ const selected=params.get("student");
+ const active=rows.find(row=>row.membershipId===selected)??null;
+ const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const filters:TpoFilterField[]=[
   {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
   {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
@@ -37,10 +46,23 @@ export function TpoStudentsSpreadsheet({rows,branches}:{rows:readonly TpoStudent
  return <div className="space-y-3"><TpoGridFilterPanel fields={filters}/>
   <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.membershipId}
    rowActions={row=><div className="flex flex-col items-start gap-1">
+    <button type="button" className="min-h-10 text-primary-text underline"
+      onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
+      Open student panel
+    </button>
+    <TpoAfterCollegeEditor membershipId={row.membershipId} learnerName={row.displayName}
+      initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
+      available={afterCollegeAvailable} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
       aria-label={"Placement history for "+row.displayName} className="min-h-10 text-primary-text underline">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
       aria-label={"Change participation for "+row.displayName} className="min-h-10 text-primary-text underline">Change participation</Link>
    </div>}/>
+  {active?<TpoStudentQuickPanel student={active} rows={rows}
+    onNavigate={open} onClose={()=>open(null)} />:null}
+  {selected&&!active?<p role="status" className="text-sm">
+    Selected student is not on this roster page. Clear the student panel selection or change filters.
+    <button type="button" className="ml-2 text-primary-text underline" onClick={()=>open(null)}>Clear selection</button>
+  </p>:null}
  </div>;
 }

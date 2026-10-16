@@ -67,13 +67,11 @@ export function buildLearnerProgressView(
 ): LearnerProgressView {
   const durationSeconds =
     content.durationSeconds ?? 0;
-  const lastPositionSeconds =
-    durationSeconds > 0
-      ? Math.min(
-          progress?.lastPositionSeconds ?? 0,
-          durationSeconds,
-        )
-      : 0;
+  // Without authored duration preserve genuine saved position for resume.
+  // Unknown duration must never imply a percentage or completion.
+  const lastPositionSeconds = durationSeconds > 0
+    ? Math.min(progress?.lastPositionSeconds ?? 0,durationSeconds)
+    : Math.max(0,progress?.lastPositionSeconds ?? 0);
   const completedAt =
     progress?.completedAt ?? null;
   const percentComplete = completedAt
@@ -364,29 +362,19 @@ export async function saveLearnerContentProgress(
       );
     }
 
-    if (
-      !content.durationSeconds ||
-      content.durationSeconds <= 0
-    ) {
-      throw new CoursesServiceError(
-        "CONTENT_DURATION_REQUIRED",
-      );
-    }
-
     if (input.positionSeconds === undefined) {
       throw new CoursesServiceError(
         "CONTENT_TYPE_SHAPE_INVALID",
       );
     }
 
-    positionSeconds = Math.min(
-      input.positionSeconds,
-      content.durationSeconds,
-    );
-    shouldComplete =
-      positionSeconds * 100 >=
-      content.durationSeconds *
-        TIMED_CONTENT_COMPLETION_THRESHOLD_PERCENT;
+    const duration=content.durationSeconds??0;
+    // Media metadata can be unavailable for historical videos. Record the
+    // learner's position, but do not trust client claims to award completion.
+    positionSeconds = duration>0
+      ? Math.min(input.positionSeconds,duration):input.positionSeconds;
+    shouldComplete = duration>0 && positionSeconds*100 >=
+      duration*TIMED_CONTENT_COMPLETION_THRESHOLD_PERCENT;
   } else {
     if (
       input.positionSeconds !== undefined &&

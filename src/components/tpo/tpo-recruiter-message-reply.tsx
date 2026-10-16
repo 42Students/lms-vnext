@@ -1,12 +1,26 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-export function TpoRecruiterMessageReply({threadId,unread}:{
- threadId:string;unread:boolean;
+import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
+export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
+ threadId:string;unread:boolean;actorUserId:string;
 }){
  const router=useRouter();
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
+ const draftKey=recruiterMessageDraftKey(actorUserId,threadId);
+ function persistDraft(value:string){
+  setBody(value);
+  try{if(value)sessionStorage.setItem(draftKey,value);else sessionStorage.removeItem(draftKey);}catch{/* Storage is optional. */}
+ }
+ function restoreDraft(){
+  if(body)return;
+  try{const saved=sessionStorage.getItem(draftKey);
+   if(saved&&saved.length<=4000)setBody(saved);}catch{/* Storage is optional. */}
+ }
+ function discardDraft(){
+  if(!body.trim()||window.confirm("Discard draft?"))persistDraft("");
+ }
  async function post(mode:"messages"|"read"){
   setBusy(true);setError("");setSuccess("");
   try{
@@ -21,7 +35,7 @@ export function TpoRecruiterMessageReply({threadId,unread}:{
      payload.error==="THREAD_NOT_FOUND"?"This conversation is no longer available.":
      "Couldn't save. Please try again.");
    }
-   if(mode==="messages"){setBody("");setSuccess("Message sent");}
+   if(mode==="messages"){persistDraft("");setSuccess("Message sent");}
    else setSuccess("Messages marked read");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Couldn't save. Please try again.");}
@@ -29,13 +43,22 @@ export function TpoRecruiterMessageReply({threadId,unread}:{
  }
  return <section className="rounded-xl border border-border bg-surface p-5 space-y-3" aria-label="Reply to recruiter">
   <h2 className="font-semibold text-foreground">Reply</h2>
+  <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
+    {TPO_QUICK_REPLIES.map(reply=><button key={reply} type="button" disabled={busy}
+      className="min-h-10 rounded-md border border-border px-3 text-sm text-body"
+      onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</button>)}
+   </div>
   <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-sm text-body">Message
     <textarea className="mt-1 min-h-28 w-full rounded-md border border-border bg-surface p-3 text-foreground"
-      maxLength={4000} required value={body} onChange={e=>setBody(e.target.value)}
+      maxLength={4000} required aria-label="Message" placeholder="Write a message" value={body}
+      onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
       onKeyDown={e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();if(body.trim()&&!busy)void post("messages");}}}/>
    </label>
+   <p className="text-xs text-muted-foreground">Ctrl/Cmd + Enter to send</p>
    <div className="flex flex-wrap gap-2">
+    <button type="button" disabled={busy||!body.trim()} onClick={discardDraft}
+     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard draft</button>
     <button type="submit" disabled={busy||!body.trim()}
      className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
       Send message

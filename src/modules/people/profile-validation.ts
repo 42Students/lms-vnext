@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { learnerEducationValidationProblem } from "./learner-education-picker-model";
 
 const optionalProfileText = (max: number) =>
   z
@@ -308,6 +309,12 @@ const educationSchema = z
       .default({}),
   })
   .strict();
+export const learnerProfileEducationWriteSchema=z.array(educationSchema).max(30).superRefine((items,ctx)=>{
+ for(const [index,entry] of items.entries()){
+  const problem=learnerEducationValidationProblem(entry);
+  if(problem)ctx.addIssue({code:"custom",path:[index,problem.field],message:problem.message});
+ }
+});
 
 const skillSchema = z
   .object({

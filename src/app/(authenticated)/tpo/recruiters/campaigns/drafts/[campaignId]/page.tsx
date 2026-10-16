@@ -19,7 +19,13 @@ export default async function TpoCampaignDraftDetail({params}:{params:Promise<{c
   {!ready?<p role="alert" className="rounded-md border border-border bg-surface p-5">{CAMPAIGN_DRAFT_UNAVAILABLE}</p>:
    draft?<article className="space-y-4 rounded-xl border border-border bg-surface p-5">
     <h1 className="text-xl font-semibold text-foreground">{draft.title}</h1>
-    <p className="text-sm text-body">{draft.status} · {draft.total_recipients} potential recipients · {draft.segment.replaceAll("_"," ")}</p>
+    <p className="text-sm text-body">{draft.sender_name} · {draft.status} · {draft.total_recipients} potential recipients · {draft.segment.replaceAll("_"," ")}</p>
+    <dl className="grid grid-cols-3 gap-3 text-sm">
+      <div><dt>Provider accepted</dt><dd className="font-semibold">{draft.sent}</dd></div>
+      <div><dt>Failed</dt><dd className="font-semibold">{draft.failed}</dd></div>
+      <div><dt>Skipped</dt><dd className="font-semibold">{draft.skipped+Object.values(draft.suppressed_counts).reduce((a,b)=>a+b,0)}</dd></div>
+    </dl>
+    <p className="text-xs text-muted-foreground">Provider acceptance is not proof of delivery.</p>
     <section><h2 className="text-sm font-semibold text-muted-foreground">Subject</h2>
      <p className="mt-1 break-words text-foreground">{draft.subject}</p></section>
     <section><h2 className="text-sm font-semibold text-muted-foreground">Message</h2>

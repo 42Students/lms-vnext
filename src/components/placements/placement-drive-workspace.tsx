@@ -14,6 +14,8 @@ import { listPlacementScreeningQueue } from "@/modules/placements/screening-serv
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
 import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
+import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
+import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
@@ -21,6 +23,10 @@ import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
 import { TpoDriveLifecycleControls } from "./tpo-drive-lifecycle-controls";
 import { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
+import {getTpoRoundReorderReadiness} from "@/modules/placements/round-service";
+import {getTpoDriveDeadlineState} from "@/modules/placements/tpo-drive-deadline-service";
+import {TpoDriveDeadlineForm} from "./tpo-drive-deadline-form";
+import {TpoRoundReorder} from "./tpo-round-reorder";
 import { PlacementOfferControls } from "./placement-offer-controls";
 import { PlacementRoleOptions } from "./placement-role-options";
 import { PlacementRequestQueue } from "./placement-request-queue";
@@ -77,6 +83,10 @@ export async function PlacementDriveWorkspace({
         getTpoDriveShortlist(context, { jobId }).catch(() => null),
       ])
     : [null, null];
+
+  const roundOrder = isTpo ? await getTpoRoundReorderReadiness(context,jobId) : null;
+  const deadlineState = isTpo && job.status==="PUBLISHED" ?
+    await getTpoDriveDeadlineState(context,jobId) : null;
 
   const scheduleWarnings = isTpo
     ? projectTpoDriveScheduleWarnings(
@@ -163,6 +173,10 @@ export async function PlacementDriveWorkspace({
       meetingUrl: round.meetingUrl,
       resultsDueAt:
         round.resultsDueAt?.toISOString() ?? null,
+      platform: round.platform,
+      testUrl: round.testUrl,
+      durationMinutes: round.durationMinutes,
+      whatToBring: round.whatToBring,
       participants: round.participants.map(
         (participant) => ({
           applicationId:
@@ -202,6 +216,31 @@ export async function PlacementDriveWorkspace({
     })),
   };
 
+  const headerFacts = projectTpoDriveHeader({
+    status:job.status,applicationMode:job.applicationMode,workMode:job.workMode,
+    employmentType:job.employmentType,
+    minimumAnnualCtcInr:job.minimumAnnualCtcInr,
+    maximumAnnualCtcInr:job.maximumAnnualCtcInr,
+    applicationDeadline:job.applicationDeadline,
+  });
+
+  const nextStep = isTpo && lifecycleReadiness
+    ? projectTpoDriveNextStep({
+        jobId,
+        status: job.status,
+        publishAllowed: lifecycleReadiness.publish.allowed,
+        closeAllowed: lifecycleReadiness.close.allowed,
+        shortlistCount: shortlist?.total ?? null,
+        pendingRequests: placementRequests.filter(row => row.request.status === "PENDING").length,
+        deadlineMissing: job.applicationDeadline===null,
+        stagedRounds: driveDay.rounds.map(round => ({
+          id: round.id,
+          name: round.name,
+          pendingCount: round.participants.filter(p => p.result?.status === "STAGED").length,
+        })),
+      })
+    : null;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -209,10 +248,16 @@ export async function PlacementDriveWorkspace({
         title={driveDay.job.title}
         description={
           driveDay.job.company.name +
-          " · live placement workspace"
+          " · " + headerFacts.status
         }
         actions={
           <div className="flex flex-wrap gap-2">
+            {nextStep ? (
+              <Link href={nextStep.primary.href}
+                className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+                {nextStep.primary.label}
+              </Link>
+            ) : null}
             {hasMembershipRole(context, "TPO") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
@@ -294,6 +339,51 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      <section aria-label="Drive status and details" className="rounded-xl border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <strong className="rounded-md border border-border bg-surface-secondary px-2 py-1">{headerFacts.status}</strong>
+          <span>{headerFacts.applicationMode}</span>
+          <span>· {headerFacts.workMode}</span>
+          <span>· {headerFacts.employmentType}</span>
+          {headerFacts.recordedOutside?<strong>Recorded: happened outside</strong>:null}
+        </div>
+        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-body">
+          <span>Pay: {headerFacts.ctc}</span>
+          <span>Applications close: {headerFacts.deadline}</span>
+        </div>
+      </section>
+      {deadlineState?.extendable?(
+        <section id="drive-deadline-actions" aria-label="Set or extend deadline"
+          className="rounded-xl border border-border bg-surface p-4">
+          <details>
+            <summary className="cursor-pointer font-semibold text-primary-text">
+              {deadlineState.applicationDeadline?"Extend deadline":"Set deadline"}
+            </summary>
+            <div className="mt-4"><TpoDriveDeadlineForm job={deadlineState}/></div>
+          </details>
+        </section>
+      ):null}
+      {nextStep ? (
+        <section aria-label="Next step" className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="text-base font-semibold text-foreground">Next step</h2>
+          <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
+          <Link href={nextStep.primary.href}
+            className="mt-3 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            {nextStep.primary.label}
+          </Link>
+          {nextStep.more.length > 0 ? (
+            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+              {nextStep.more.map(step => (
+                <Link key={step.href} href={step.href}
+                  className="rounded-md border border-border bg-surface p-3 text-sm text-primary-text hover:underline">
+                  <span className="block font-semibold">{step.label}</span>
+                  <span className="mt-1 block text-xs text-body">{step.description}</span>
+                </Link>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
       {isTpo && driveDay.rounds.length>0 ? (
         <section aria-label="Round result entry" className="rounded-xl border border-border bg-surface p-5">
           <h2 className="font-semibold text-foreground">Enter round results</h2>
@@ -460,6 +550,7 @@ export async function PlacementDriveWorkspace({
           }))}
         />
       ) : null}
+      <section id="drive-request-actions">
       <PlacementRequestQueue
         requests={placementRequests.map(
           (row) => ({
@@ -505,6 +596,7 @@ export async function PlacementDriveWorkspace({
           }),
         )}
       />
+      </section>
       {lifecycleReadiness ? (
         <TpoDriveLifecycleControls readiness={lifecycleReadiness} />
       ) : (
@@ -517,10 +609,13 @@ export async function PlacementDriveWorkspace({
       <PlacementDriveDayOverview
         driveDay={driveDay}
       />
+      {roundOrder?<TpoRoundReorder jobId={jobId} readiness={roundOrder}/>:null}
+      <section id="drive-round-actions">
       <PlacementDriveControls
         data={controlData}
         scheduleWarnings={scheduleWarnings}
       />
+      </section>
       <PlacementOfferControls
         jobId={jobId}
         isTpo={hasMembershipRole(context, "TPO")}

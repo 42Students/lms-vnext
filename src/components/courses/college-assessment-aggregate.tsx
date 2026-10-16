@@ -1,10 +1,10 @@
 import Link from "next/link";
+import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, collegeStatusLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   collegeAssessmentHref,
   collegeAssessmentSummary,
-  collegeAssessmentScopeLabel,
   type CollegeAssessmentAggregateItem,
   type CollegeAssessmentKind,
   type CollegeAssessmentListQuery,
@@ -177,7 +177,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                 </Link>
                 <p className="break-words text-sm text-body">{item.lessonName}</p>
                 <dl className="grid grid-cols-2 gap-3 text-xs">
-                  <div><dt className="font-semibold text-muted-foreground">Audience</dt><dd>{collegeAssessmentScopeLabel(item.deliverySpecific)}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">Audience</dt><dd>{collegeAudienceLabel(item.deliverySpecific)}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">Maximum points</dt><dd>{item.points}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">Due</dt><dd>{formatDue(item.dueAt)}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">{isAssignment?"Submissions":"Attempts"}</dt><dd>{item.activityCount}</dd></div>
@@ -190,9 +190,10 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
             <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th scope="col" className="px-4 py-3">{isAssignment ? "Assignment" : "Quiz"}</th>
-                <th scope="col" className="px-4 py-3">Course / lesson</th>
-                <th scope="col" className="px-4 py-3">Scope</th>
+                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.course}</th>
+                <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.audience}</th>
                 <th scope="col" className="px-4 py-3">Status</th>
+                {!isAssignment ? <th scope="col" className="px-4 py-3">{COLLEGE_COURSE_TAB_COPY.assessmentColumns.results}</th> : null}
                 <th scope="col" className="px-4 py-3">Due (IST)</th>
                 <th scope="col" className="px-4 py-3">{isAssignment ? "Submissions" : "Attempts"}</th>
               </tr>
@@ -212,14 +213,14 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     <p className="mt-1 text-xs text-body">{item.lessonName}</p>
                   </td>
                   <td className="px-4 py-4 text-body">
-                    {collegeAssessmentScopeLabel(item.deliverySpecific)}
+                    {collegeAudienceLabel(item.deliverySpecific)}
                   </td>
                   <td className="px-4 py-4">
                     <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>
-                      {item.status}
+                      {collegeStatusLabel(item.status)}
                     </StatusBadge>
-                    {!isAssignment?<p className="mt-1 text-xs text-muted-foreground">{item.resultsPublished?"Results published":"Results hidden"}</p>:null}
                   </td>
+                  {!isAssignment ? <td className="px-4 py-4 text-body">{collegeResultsLabel(Boolean(item.resultsPublished))}</td> : null}
                   <td className="px-4 py-4 text-body">{formatDue(item.dueAt)}</td>
                   <td className="px-4 py-4 tabular-nums text-body">{item.activityCount}</td>
                 </tr>

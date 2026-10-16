@@ -152,22 +152,27 @@ if (!exported) {
     }
   }
 } else {
-  if (registered.length !== 1) {
-    errors.push("Expected exactly one registered DB04 migration after schema export");
-  } else {
-    const entry = registered[0];
+  // DB04 was registered as two numbered migrations (not tagged "db04"):
+  // 0063_profile_verification (the six tables) and
+  // 0067_faculty_profile_document (Faculty profile document columns).
+  const verificationEntry = entries.find((entry) => entry?.tag === "0063_profile_verification");
+  const facultyEntry = entries.find((entry) => entry?.tag === "0067_faculty_profile_document");
+  if (!verificationEntry) errors.push("Registered profile verification migration 0063 is missing from the journal");
+  if (!facultyEntry) errors.push("Registered Faculty profile document migration 0067 is missing from the journal");
+  for (const [entry, needles, label] of [
+    [verificationEntry, pairs.map(([, table]) => table), "tables"],
+    [facultyEntry, ["profile_document_version"], "Faculty profile document columns"],
+  ]) {
+    if (!entry) continue;
     const prefix = String(entry.idx).padStart(4, "0");
     const sqlFile = path.join(ROOT, "drizzle", entry.tag + ".sql");
     const snapshotFile = path.join(ROOT, "drizzle/meta", prefix + "_snapshot.json");
-    if (!existsSync(sqlFile)) errors.push("Registered DB04 SQL file is missing");
-    if (!existsSync(snapshotFile)) errors.push("Registered DB04 snapshot is missing");
+    if (!existsSync(sqlFile)) errors.push("Registered DB04 SQL file is missing: " + entry.tag);
+    if (!existsSync(snapshotFile)) errors.push("Registered DB04 snapshot is missing: " + entry.tag);
     if (existsSync(sqlFile)) {
       const sql = readFileSync(sqlFile, "utf8");
-      for (const [, table] of pairs) {
-        if (!sql.includes(table)) errors.push("Registered DB04 SQL missing table: " + table);
-      }
-      if (!sql.includes("profile_document_version")) {
-        errors.push("Registered DB04 SQL missing Faculty profile document columns");
+      for (const needle of needles) {
+        if (!sql.includes(needle)) errors.push("Registered DB04 SQL missing " + label + ": " + needle);
       }
     }
   }

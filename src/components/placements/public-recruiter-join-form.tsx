@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useEffect,useRef,useState } from "react";
 import type { PublicJoinPreview } from "@/modules/placements/public-join/preview-model";
+import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placements/public-join/client-error-model";
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
-import { joinErrorMessage } from "@/modules/placements/public-join/error-copy";
+import { JOIN_ERROR_COPY,joinErrorMessage } from "@/modules/placements/public-join/error-copy";
+
+function knownJoinError(code:unknown):boolean{
+  return typeof code==="string"&&Object.prototype.hasOwnProperty.call(JOIN_ERROR_COPY,code);
+}
 
 export function PublicRecruiterJoinForm({
   token, scope, preview, blockedReason,
@@ -29,12 +34,13 @@ export function PublicRecruiterJoinForm({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const college = preview.kind === "READY" ? preview.collegeName : "";
-  const company = preview.kind === "READY" ? preview.companyDomain : "";
+  const company = preview.kind === "READY" ? preview.companyDomain ?? "" : "";
 
   async function sendCode() {
+    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
-    if (!parsed.success) {
-      setError("Enter your work email and name before requesting a code.");
+    if (validation || !parsed.success) {
+      setError(validation??"Enter your work email and name before requesting a code.");
       return;
     }
     setPending(true);
@@ -45,21 +51,25 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, email: parsed.data.email }) },
       );
-      if(!response.ok){const payload=await response.json() as {error?:string};
-        throw new Error(joinErrorMessage(payload.error,response.status===429?"SEND":"SEND"));}
+      if(!response.ok){
+        const body:unknown=await response.json().catch(()=>null);
+        const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
+        setError(knownJoinError(code)?joinErrorMessage(code,"SEND"):publicJoinErrorCopy("SEND",response.status,String(code??"COULD_NOT_SEND_CODE"),scope,company));return;
+      }
       setSentTo(parsed.data.email);
       setCode("");
-    } catch (cause) {
-      setError(cause instanceof Error?cause.message:joinErrorMessage(null,"SEND"));
+    } catch {
+      setError(joinErrorMessage(null,"SEND"));
     } finally {
       setPending(false);
     }
   }
 
   async function join() {
+    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
-    if (!parsed.success || !/^[0-9]{6}$/.test(code)) {
-      setError("Enter the 6-digit code");
+    if (validation||!parsed.success||!/^[0-9]{6}$/.test(code)) {
+      setError(validation??"Enter the 6-digit code");
       return;
     }
     setPending(true);
@@ -70,14 +80,17 @@ export function PublicRecruiterJoinForm({
         { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, ...parsed.data, code }) },
       );
-      if(!response.ok){const payload=await response.json() as {error?:string};
-        throw new Error(joinErrorMessage(payload.error));}
+      if(!response.ok){
+        const body:unknown=await response.json().catch(()=>null);
+        const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
+        setError(knownJoinError(code)?joinErrorMessage(code):publicJoinErrorCopy("JOIN",response.status,String(code??"COULD_NOT_JOIN"),scope,company));return;
+      }
       const result=await response.json() as {outcome:"JOINED"|"ALREADY_JOINED";signInEmail:string};
       setAlreadyJoined(result.outcome==="ALREADY_JOINED");
       setSignInEmail(result.signInEmail);
       setJoined(true);
-    } catch (cause) {
-      setError(cause instanceof Error?cause.message:joinErrorMessage(null));
+    } catch {
+      setError(joinErrorMessage(null));
     } finally {
       setPending(false);
     }
@@ -124,7 +137,7 @@ export function PublicRecruiterJoinForm({
                   className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
                 <span className="text-xs font-normal text-muted-foreground">
                   {scope === "COMPANY"
-                    ? "Your " + (company ?? "company") + " email. You'll sign in with it."
+                    ? "Your " + (company || "company") + " email. You'll sign in with it."
                     : "Your company email. Personal emails such as Gmail can't be used. You'll sign in with it."}
                 </span>
               </label>

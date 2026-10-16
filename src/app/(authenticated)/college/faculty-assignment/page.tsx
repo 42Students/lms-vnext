@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -48,8 +49,8 @@ export default async function CollegeFacultyAssignmentPage({
     <div className="space-y-6">
       <PageHeader
         eyebrow="College Admin · People"
-        title="Faculty Assignment"
-        description="Manage persisted teaching assignments for live course/class deliveries in your college. Ending an assignment retains its history."
+        title={FACULTY_ASSIGNMENT_COPY.title}
+        description={FACULTY_ASSIGNMENT_COPY.description}
         actions={<Link href="/college/faculty"
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Faculty directory</Link>}
       />
@@ -85,13 +86,13 @@ export default async function CollegeFacultyAssignmentPage({
             </select>
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
-            Teaching role
+            {FACULTY_ASSIGNMENT_COPY.roleLabel}
             <select name="role" defaultValue={query.role}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               <option value="ALL">All roles</option>
-              <option value="PRIMARY">Primary</option>
-              <option value="CO_TEACHER">Co-teacher</option>
-              <option value="TA">Teaching assistant</option>
+              <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
+              <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
+              <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
@@ -112,17 +113,17 @@ export default async function CollegeFacultyAssignmentPage({
         ) : (
           <table className="w-full min-w-[48rem] text-left text-sm">
             <thead className="bg-muted text-muted-foreground"><tr>
-              <th scope="col" className="px-4 py-3">Faculty / role</th>
-              <th scope="col" className="px-4 py-3">Course</th>
-              <th scope="col" className="px-4 py-3">Batch / class</th>
+              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.faculty}</th>
+              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.course}</th>
+              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.class}</th>
               <th scope="col" className="px-4 py-3">Period</th>
-              <th scope="col" className="px-4 py-3">Lifecycle</th>
-              <th scope="col" className="px-4 py-3">Actions</th>
+              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.role}</th>
+              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.active}</th>
+              <th scope="col" className="px-4 py-3">{FACULTY_ASSIGNMENT_COPY.columns.actions}</th>
             </tr></thead>
             <tbody>{items.map(item => <tr key={item.id} className="border-t border-border align-top">
               <td className="px-4 py-3">
                 <p className="font-semibold text-foreground">{item.facultyName}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{item.role}</p>
               </td>
               <td className="px-4 py-3">
                 <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
@@ -133,7 +134,8 @@ export default async function CollegeFacultyAssignmentPage({
               </td>
               <td className="px-4 py-3 text-body">{item.cohortName} · {item.sectionName}</td>
               <td className="px-4 py-3 text-body">{item.periodName}</td>
-              <td className="px-4 py-3 text-body">{item.state}</td>
+              <td className="px-4 py-3 text-body">{facultyAssignmentRoleLabel(item.role)}</td>
+              <td className="px-4 py-3 text-body">{item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no}</td>
               <td className="px-4 py-3">
                 {item.state === "ACTIVE" ? (
                   <div className="flex flex-wrap gap-2">

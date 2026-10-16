@@ -5,6 +5,7 @@ export const AFTER_COLLEGE_OUTCOMES=[
  "HIGHER_STUDIES","ENTREPRENEURSHIP","COMPETITIVE_EXAMS","LOOKING_FOR_JOB","NOT_DECIDED",
 ] as const;
 export const afterCollegeOutcomeSchema=z.enum(AFTER_COLLEGE_OUTCOMES);
+export type AfterCollegeOutcome = z.infer<typeof afterCollegeOutcomeSchema>;
 export const AFTER_COLLEGE_LABELS:Record<(typeof AFTER_COLLEGE_OUTCOMES)[number],string>={
  HIGHER_STUDIES:"Higher studies",ENTREPRENEURSHIP:"Entrepreneurship",
  COMPETITIVE_EXAMS:"Competitive exams",LOOKING_FOR_JOB:"Looking for a job",

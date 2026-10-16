@@ -1,5 +1,7 @@
 "use client";
 
+import { COLLEGE_COURSES_COPY } from "@/modules/courses/college-courses-copy";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import {
   type FormEvent,
   useMemo,
@@ -149,7 +151,7 @@ export function AdminCourseCreatePanel({
     );
   }, [sections, selectedDeliveryOffering]);
 
-  function run(task: () => Promise<unknown>, successTitle: string, reset: () => void) {
+  function run(task: () => Promise<unknown>, successTitle: string, reset: () => void, failureTitle = "Course update failed") {
     startTransition(async () => {
       try {
         await task();
@@ -159,8 +161,8 @@ export function AdminCourseCreatePanel({
       } catch (error) {
         showToast({
           tone: "error",
-          title: "Course update failed",
-          description: error instanceof Error ? error.message : "The request could not be completed.",
+          title: failureTitle,
+          description: academicSetupErrorMessage(error, "The request could not be completed."),
         });
       }
     });
@@ -175,8 +177,9 @@ export function AdminCourseCreatePanel({
         code: courseCode,
         description: courseDescription.trim() || null,
       }),
-      "Course created",
+      COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
       () => { setCourseName(""); setCourseCode(""); setCourseDescription(""); },
+      COLLEGE_COURSES_COPY.createFailed,
     );
   }
 
@@ -236,19 +239,18 @@ export function AdminCourseCreatePanel({
   return (
     <section className="grid gap-4 xl:grid-cols-2">
       <form onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="m-0 text-base font-semibold text-foreground">New Course</h2>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">Create the reusable Department-owned Course catalog entry first.</p>
+        <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <FieldLabel htmlFor="course-department">Department</FieldLabel>
+            <FieldLabel htmlFor="course-department">{COLLEGE_COURSES_COPY.departmentLabel}</FieldLabel>
             <Select id="course-department" value={courseDepartmentId} onChange={(event) => setCourseDepartmentId(event.target.value)} required>
               <option value="">Select Department</option>
               {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
           </div>
           <div>
-            <FieldLabel htmlFor="course-name">Name</FieldLabel>
-            <Input id="course-name" value={courseName} onChange={(event) => setCourseName(event.target.value)} placeholder="Data Structures" maxLength={255} required />
+            <FieldLabel htmlFor="course-name">{COLLEGE_COURSES_COPY.nameLabel}</FieldLabel>
+            <Input id="course-name" value={courseName} onChange={(event) => setCourseName(event.target.value)} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
           </div>
           <div>
             <FieldLabel htmlFor="course-code">Code</FieldLabel>

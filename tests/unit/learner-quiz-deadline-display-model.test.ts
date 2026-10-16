@@ -10,7 +10,7 @@ describe("standalone quiz absolute deadlines", () => {
     expect(expected).toContain("16 Oct 2026");
   });
   it("distinguishes no deadline from a malformed persisted instant", () => {
-    expect(learnerQuizDeadlineDisplay(null)).toBe("No deadline");
+    expect(learnerQuizDeadlineDisplay(null)).toBe("Deadline unavailable");
     expect(learnerQuizDeadlineDisplay("broken")).toBe("Deadline unavailable");
   });
 });

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { learnerProfileDocumentSchema } from "./profile-validation";
+import { learnerProfileDocumentSchema,learnerProfileEducationWriteSchema } from "./profile-validation";
 
 export const learnerProfileSectionEditSchema = z.object({
   confirmed: z.literal(true),
@@ -7,7 +7,7 @@ export const learnerProfileSectionEditSchema = z.object({
   items: z.array(z.unknown()).max(100),
   expectedItems: z.array(z.unknown()).max(100).optional(),
 }).strict().superRefine((data,ctx) => {
-  const sectionSchema = learnerProfileDocumentSchema.shape[data.section];
+  const sectionSchema = data.section==="education" ? learnerProfileEducationWriteSchema : learnerProfileDocumentSchema.shape[data.section];
   const validated=sectionSchema.safeParse(data.items);
   if (!validated.success) {
     for(const issue of validated.error.issues) ctx.addIssue({
@@ -15,7 +15,7 @@ export const learnerProfileSectionEditSchema = z.object({
     });
   }
   if(data.expectedItems!==undefined){
-    const before=sectionSchema.safeParse(data.expectedItems);
+    const before=learnerProfileDocumentSchema.shape[data.section].safeParse(data.expectedItems);
     if(!before.success)for(const issue of before.error.issues)
       ctx.addIssue({code:"custom",path:["expectedItems",...issue.path],message:issue.message});
   }
@@ -23,7 +23,7 @@ export const learnerProfileSectionEditSchema = z.object({
 
 export function validateLearnerProfileSectionEdit(raw:unknown) {
   const input=learnerProfileSectionEditSchema.parse(raw);
-  const items=learnerProfileDocumentSchema.shape[input.section].parse(input.items);
+  const items=(input.section==="education"?learnerProfileEducationWriteSchema:learnerProfileDocumentSchema.shape[input.section]).parse(input.items);
   const expectedItems=input.expectedItems===undefined?undefined:
     learnerProfileDocumentSchema.shape[input.section].parse(input.expectedItems);
   const bytes=Buffer.byteLength(JSON.stringify(items),"utf8");

@@ -1,3 +1,4 @@
+import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") {
+  if (!await tpoCrmTablesReady()) {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
 

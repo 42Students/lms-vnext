@@ -1,0 +1,52 @@
+"use client";
+import Link from "next/link";
+import {useCallback,useEffect,useState} from "react";
+import {COLLEGE_GLANCE_LOAD_ERROR,COLLEGE_GLANCE_REFRESH_ERROR,displayedGlanceNumber,
+ isCollegeAtGlanceCounts,type CollegeAtGlanceCounts} from "@/modules/colleges/admin-college-at-glance-model";
+const ITEMS=[
+ {key:"students" as const,label:"Students",href:"/admin/people"},
+ {key:"faculty" as const,label:"Faculty",href:"/admin/people"},
+ {key:"courses" as const,label:"Courses",href:"/admin/courses"},
+ {key:"activeDrives" as const,label:"Active drives",href:"/admin/placements"},
+];
+export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initial:CollegeAtGlanceCounts|null}){
+ const [counts,setCounts]=useState<CollegeAtGlanceCounts|null>(initial);
+ const [refreshing,setRefreshing]=useState(false);
+ const [error,setError]=useState(initial? "":COLLEGE_GLANCE_LOAD_ERROR);
+ const refresh=useCallback(async()=>{
+  setRefreshing(true);
+  try{
+   const response=await fetch("/api/admin/colleges/"+encodeURIComponent(collegeId)+"/at-glance",{cache:"no-store"});
+   if(!response.ok)throw Error("Failed");
+   const raw=await response.json() as unknown;
+   if(!isCollegeAtGlanceCounts(raw))throw Error("Invalid");
+   setCounts(raw);setError("");
+  }catch{
+   setError(previous=>counts?COLLEGE_GLANCE_REFRESH_ERROR:previous||COLLEGE_GLANCE_LOAD_ERROR);
+  }finally{setRefreshing(false);}
+ },[collegeId,counts]);
+ useEffect(()=>{
+  const id=setInterval(()=>{void refresh();},30000);
+  return ()=>clearInterval(id);
+ },[refresh]);
+ return <section aria-label="At a glance" className="space-y-3">
+  <div className="flex flex-wrap items-center justify-between gap-2">
+   <h2 className="font-semibold">At a glance</h2>
+   <button type="button" disabled={refreshing} onClick={()=>void refresh()}
+     className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+     {refreshing?"Refreshing…":"Retry"}</button>
+  </div>
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {!counts&&refreshing?<div role="status" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+   {ITEMS.map(item=><div key={item.key} className="h-28 animate-pulse rounded-xl border border-border bg-surface-subtle"/>)}
+  </div>:null}
+  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+   {ITEMS.map(item=><Link key={item.key} href={item.href} className="rounded-xl border border-border bg-surface p-5">
+     <p className="text-xs font-semibold uppercase text-muted-foreground">{item.label}</p>
+     <p className="mt-2 text-3xl font-semibold tabular-nums">{displayedGlanceNumber(counts?.[item.key]??null)}</p>
+     <p className="mt-2 text-xs text-body">Recorded in the selected college</p>
+   </Link>)}
+  </div>
+  {error&&counts?<p role="status" className="text-xs text-muted-foreground">Showing the last available college summary.</p>:null}
+ </section>;
+}

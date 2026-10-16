@@ -26,6 +26,8 @@ const errorLabels: Record<string, string> = {
     "This assignment is not currently available.",
   QUIZ_DEADLINE_PASSED:
     "The quiz deadline has passed.",
+  QUIZ_DEADLINE_NOT_CONFIGURED:
+    "Quiz deadline is not configured",
   QUIZ_MAX_ATTEMPTS_REACHED:
     "No quiz attempts remain.",
   QUIZ_ATTEMPT_CONFLICT:

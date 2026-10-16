@@ -1,3 +1,4 @@
+import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -14,7 +15,7 @@ function pending() {
 }
 
 export async function GET(request: Request, { params }: RouteContext) {
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") return pending();
+  if (!await tpoCrmTablesReady()) return pending();
   try {
     const context = await getCurrentRequestContext();
     const { leadId } = await params;
@@ -27,7 +28,7 @@ export async function GET(request: Request, { params }: RouteContext) {
 }
 
 export async function PATCH(request: Request, { params }: RouteContext) {
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") return pending();
+  if (!await tpoCrmTablesReady()) return pending();
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }

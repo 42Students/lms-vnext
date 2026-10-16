@@ -87,7 +87,13 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : null}
         {item.dueAt && item.dueAt.getTime() > overview.snapshotNowMs ? (
           <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
-        ) : <p className="mt-2 text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>}
+        ) : <div className="mt-2 space-y-2">
+          <p className="text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>
+          <button type="button" disabled aria-disabled="true"
+            className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-muted-foreground">
+            {item.dueAt?"Submission closed":"Unavailable"}
+          </button>
+        </div>}
       </div>}
     </section>
   </div>;
