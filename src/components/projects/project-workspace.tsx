@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditor} from "./college-project-summary-editor";
+import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -176,6 +177,10 @@ export function ProjectWorkspace({
   sectionBaseHref?: string;
 }) {
   const { readiness } = workspace;
+  const brief = mentorAuthoredBrief(workspace.templateOverview);
+  const mentorReviewHref = mode === "MENTOR"
+    ? mentorReviewSubmissionHref(workspace.project.id, workspace.finalDelivery.submissions)
+    : null;
   const show = (section: ProjectWorkspaceSection) =>
     !activeSection ||
     activeSection === section ||
@@ -390,28 +395,26 @@ export function ProjectWorkspace({
         <section className="rounded-xl border border-border bg-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="m-0 text-lg font-semibold text-foreground">Overview</h2>
-            {mode === "MENTOR" && workspace.finalDelivery.submissions.some(
-              submission => submission.status === "SUBMITTED",
-            ) ? <Link href={"/mentor/projects/" + encodeURIComponent(workspace.project.id) + "?tab=delivery"}
+            {mentorReviewHref ? <Link href={mentorReviewHref}
               className="inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
               Review submission
             </Link> : null}
           </div>
           {workspace.templateOverview ? (
             <div className="mt-3 space-y-4 text-sm leading-6 text-body">
-              {workspace.templateOverview.goal ? <div>
+              {brief.goal ? <div>
                 <h3 className="font-semibold text-foreground">Project goal</h3>
-                <p className="whitespace-pre-wrap">{workspace.templateOverview.goal}</p>
+                <p className="whitespace-pre-wrap">{brief.goal}</p>
               </div> : null}
-              {workspace.templateOverview.description ? <div>
+              {brief.description ? <div>
                 <h3 className="font-semibold text-foreground">Description</h3>
-                <p className="whitespace-pre-wrap">{workspace.templateOverview.description}</p>
+                <p className="whitespace-pre-wrap">{brief.description}</p>
               </div> : null}
               <div>
                 <h3 className="font-semibold text-foreground">Deliverables</h3>
-                {workspace.templateOverview.deliverables.length ? (
+                {brief.deliverables.length ? (
                   <ul className="list-disc space-y-1 pl-6">
-                    {workspace.templateOverview.deliverables.map((deliverable, index) => (
+                    {brief.deliverables.map((deliverable, index) => (
                       <li key={index}>{deliverable}</li>
                     ))}
                   </ul>
@@ -510,9 +513,7 @@ export function ProjectWorkspace({
           <h2 className="m-0 text-lg font-semibold text-foreground">
             Execution
           </h2>
-          {mode === "MENTOR" && workspace.finalDelivery.submissions.some(
-            submission => submission.status === "SUBMITTED",
-          ) ? <Link href={"/mentor/projects/" + encodeURIComponent(workspace.project.id) + "?tab=delivery"}
+          {mentorReviewHref ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
             Review submission
           </Link> : null}
