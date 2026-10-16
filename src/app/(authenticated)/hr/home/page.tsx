@@ -21,6 +21,7 @@ import { hrConversationsHref } from "@/modules/placements/hr-conversation-urls-m
 import { hrTodayUnreadAction } from "@/modules/placements/hr-today-unread-model";
 import { buildRecruiterActionQueue } from "@/modules/placements/hr-today-action-queue-model";
 import {getRecruiterSelfGrantOverview} from "@/modules/placements/recruiter-self-grants-service";
+import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -81,6 +82,10 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     unread:unreadAction?.value??0,resultsDue:dueResults,
     unreadConversations:conversationSignals?.unread??[],
   });
+  // Pending formal requests count as drives, even before publication.
+  const requestCount = actionQueue.length === 0
+    ? (await listOwnRecruiterDriveRequests(context, selectedId)).length
+    : 0;
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
@@ -117,7 +122,25 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <span className="mt-1 block text-xs text-body">{task.description}</span>
           </Link>
         </li>)}
-      </ul> : <p role="status" className="text-sm text-body">Nothing needs a quick link right now.</p>}
+      </ul> : collegeJobs.length===0 && requestCount===0 ? (
+        <div className="rounded-lg border border-border bg-surface-secondary p-4">
+          <h3 className="font-semibold text-foreground">Start with your first drive</h3>
+          <ol className="mt-3 list-inside list-decimal space-y-2 text-sm text-body">
+            <li>Describe the role, pay and how you select. It takes a few minutes, and your draft is kept as you type.</li>
+            <li>The placement cell reviews it, sets the dates and publishes it to students.</li>
+            <li>Applicants show up here; you review them one by one and send results to the placement cell.</li>
+          </ol>
+          <Link href={recruiterDriveDraftHref({collegeId:selectedId})}
+            className="mt-4 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            Request your first drive
+          </Link>
+        </div>
+      ) : (
+        <div role="status" className="rounded-lg border border-border bg-surface-secondary p-4">
+          <h3 className="font-semibold text-foreground">You are all caught up</h3>
+          <p className="mt-2 text-sm text-body">New applicants, replies and decisions from the placement cell will show up here.</p>
+        </div>
+      )}
     </section>
     <section aria-label="Live recruiter hiring drives" className="rounded-xl border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
