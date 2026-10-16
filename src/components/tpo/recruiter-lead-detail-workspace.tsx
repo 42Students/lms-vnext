@@ -56,7 +56,7 @@ const SOURCES = [
   ["JOB_PORTAL", "Job portal"], ["EVENT", "Event or job fair"],
   ["COLD_OUTREACH", "Cold outreach"], ["COMPANY_REACHED_OUT", "Company reached out"],
 ] as const;
-const ACTIVITY_TYPES = ["CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE"] as const;
+const ACTIVITY_TYPES = ["CALL", "EMAIL", "MEETING", "NOTE"] as const;
 
 function messageFor(status: number, error?: string) {
   if (status === 503 && error === "DB09_MIGRATIONS_PENDING") {
