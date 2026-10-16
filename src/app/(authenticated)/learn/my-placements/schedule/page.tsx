@@ -6,11 +6,15 @@ import { LearnerCareerCalendar } from "@/components/placements/learner-career-ca
 import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule } from "@/modules/placements/learner-placement-schedule-model";
+import {listOwnAppliedPlacementResults} from "@/modules/placements/result-service";
 
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
 export default async function LearnerPlacementSchedulePage() {
   const context = await getCurrentRequestContext();
-  const workspace = await getLearnerPlacementRequestWorkspace(context);
+  const [workspace,ownResults]=await Promise.all([
+    getLearnerPlacementRequestWorkspace(context),listOwnAppliedPlacementResults(context),
+  ]);
+  const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
   const now = new Date();
   const { ahead, past, undated } = partitionLearnerPlacementSchedule(workspace.rounds, now);
   const today = initialCareerCalendarDay();
@@ -29,6 +33,11 @@ export default async function LearnerPlacementSchedulePage() {
     ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(date)
     : "Date to be told";
   const details = (row: typeof workspace.rounds[number]) => {
+    const outcome=outcomeByRound.get(row.applicationId+":"+row.roundId);
+    const outcomeText=outcome?.outcome==="PASS"?"Cleared":
+      outcome?.outcome==="FAIL"?"Not cleared":
+      outcome?.outcome==="ABSENT"?"Marked absent":
+      outcome?.outcome==="HOLD"?"Waitlisted":null;
     const mode=row.exception?.mode??row.mode;
     const venue=row.exception?.venue??row.venue;
     const join=row.exception?.meetingUrl??row.meetingUrl;
@@ -39,7 +48,8 @@ export default async function LearnerPlacementSchedulePage() {
         {join&&/^https:\/\//i.test(join)?<a href={join} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Join online round</a>:null}
         {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<a href={row.testUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Open test</a>:null}
       </div>
-      <p className="text-xs text-muted-foreground">Expected · Your scheduled round is not an attendance confirmation or final outcome.</p>
+      {outcomeText?<p role="status" className="font-semibold text-foreground">{outcomeText} · Confirmed round result</p>:
+        <p className="text-xs text-muted-foreground">Expected · Your scheduled round is not an attendance confirmation or final outcome.</p>}
     </div>;
   };
   return (
