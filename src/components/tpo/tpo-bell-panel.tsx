@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {tpoBellOpenHref} from "@/modules/activity/tpo-bell-open-model";
-export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null};
+export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:number;items:readonly BellItem[];revision?:number}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
  const [allReadRevision,setAllReadRevision]=useState<number|null>(null);
@@ -52,9 +52,12 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
    <header className="flex flex-wrap justify-between gap-2"><h2 className="font-semibold">Notifications</h2><button type="button" className="text-sm underline" onClick={()=>setOpen(false)}>Close</button></header>
    <p className="text-xs text-muted-foreground">Most recent notifications from your own college.</p>
    {items.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="max-h-80 space-y-2 overflow-y-auto">
-    {items.slice(0,10).map(item=><li key={item.id} className="rounded border border-border p-2 text-sm">
-     <p className="font-medium">{item.title}{!item.readAt&&!readIds.includes(item.id)?" · Unread":""}</p>
+    {items.slice(0,20).map(item=><li key={item.id} className="rounded border border-border p-2 text-sm">
+     <p className="font-medium">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-primary"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</p>
      {item.body?<p className="break-words text-muted-foreground">{item.body}</p>:null}
+     <time dateTime={item.createdAt} className="mt-1 block text-xs text-muted-foreground">
+      {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
+     </time>
      <button type="button" disabled={pending}
       onClick={()=>void openItem(item)}
       className="mt-1 inline-flex min-h-10 items-center text-primary-text underline disabled:opacity-50">
