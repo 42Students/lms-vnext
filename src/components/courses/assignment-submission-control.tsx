@@ -257,7 +257,7 @@ export function AssignmentSubmissionControl({
             </select>
           </label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
-          assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled}
+          assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <label className="mt-4 block">
             <span className="mb-1.5 block text-xs font-semibold text-body">
