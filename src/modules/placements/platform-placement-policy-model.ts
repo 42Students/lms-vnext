@@ -20,6 +20,6 @@ export const platformPlacementPolicyInput=z.strictObject({
 export function placementPolicyValidate(key:PlacementPolicyKey,value:number) {
  const rule=PLACEMENT_POLICY_FIELDS.find(item=>item.key===key)!;
  if(value<rule.min||value>rule.max|| (rule.step===1&&!Number.isInteger(value)) ||
-   (rule.step!==1&&!Number.isInteger(value*100)))return false;
+   (rule.step!==1&&Math.abs(value*100-Math.round(value*100))>1e-7))return false;
  return true;
 }
