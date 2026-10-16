@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { placementTableExists } from "@/modules/placements/staged-tables";
 import {
   getTpoCandidateScheduleReadiness,
 } from "@/modules/placements/tpo-candidate-schedule-service";
@@ -25,6 +26,7 @@ export default async function TpoCandidateSchedulePage({
     throw error;
   }
   const { drive, readiness, warning } = result;
+  const slotsReady=await placementTableExists("placement_round_candidate_slots");
   const query = await searchParams;
   const roundId = typeof query.roundId === "string" ? query.roundId : null;
   const selectedRound = roundId ? drive.rounds.find(round => round.id === roundId) : null;
@@ -35,13 +37,12 @@ export default async function TpoCandidateSchedulePage({
     <header>
       <h1 className="text-2xl font-bold text-foreground">{drive.job.title} · Candidate round schedule</h1>
       <p className="mt-2 text-sm text-body">
-        These are shared round schedules for candidates who currently reached each
-        round. They are NOT booked interview slots or panel assignments.
+        Review shared round schedules and open the interview slots workspace for candidate-specific bookings, room assignment and changes.
       </p>
     </header>
     <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-      Candidate-specific start/end slots and interviewer panels have no registered
-      persistence. This view cannot assign them or certify interviewer conflicts.
+      {slotsReady ? "Candidate-specific slot booking is available from each interview round. Room-time conflicts are checked at assignment." :
+      "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
       <Link href="/tpo/calendar/rounds" className="ml-2 font-semibold text-primary-text">
         Edit existing shared round schedules →
       </Link>
@@ -62,6 +63,13 @@ export default async function TpoCandidateSchedulePage({
             <li key={entry.roundId + "-" + i}>{message}</li>))}
         </ul> : null}
     </section>
+    <div className="flex flex-wrap gap-2">
+      {drive.rounds.filter(round=>round.kind==="INTERVIEW").map(round=>
+        <Link key={round.id} href={"/tpo/placements/jobs/"+encodeURIComponent(drive.job.id)+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
+          className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+          Slots and rooms · {round.name}
+        </Link>)}
+    </div>
     {roundId ? (
       <div className="flex flex-wrap items-center gap-3 text-sm">
         {selectedRound ? <p className="font-semibold text-foreground">Round: {selectedRound.name}</p>
@@ -105,7 +113,7 @@ export default async function TpoCandidateSchedulePage({
         </div>
       </>}
     <p className="text-xs leading-5 text-muted-foreground">
-      No panel IDs, candidate time slots or calendar invitations are invented.
+      Candidate slot assignments, if registered, are maintained in the dedicated slots workspace. This page shows shared-round planning only.
       Date/time evidence comes from migrated round timestamps and is presented
       explicitly in the Asia/Kolkata timezone.
     </p>
