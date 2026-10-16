@@ -26,3 +26,18 @@ export function renderLectureHallsCsv(rows:readonly {
   rows.map(r=>[r.name,String(r.capacity),r.roomType,r.departmentName??"",r.status,String(r.upcomingClasses)]),
   truncated,LECTURE_HALLS_EXPORT_CAP);
 }
+
+/** Legacy Super Admin export columns, with spreadsheet-formula escaping. */
+export function renderSuperAdminLectureHallsCsv(rows: readonly {
+  id:string; name:string; capacity:number; roomType:string;
+  departmentId:string|null; description:string|null;
+}[],truncated:boolean){
+  return buildCollegeDirectoryCsv(
+    ["id","name","capacity","roomType","departmentId","description"],
+    rows.map(row=>[
+      row.id,row.name,String(row.capacity),row.roomType,
+      row.departmentId??"",row.description??"",
+    ]),
+    truncated,LECTURE_HALLS_EXPORT_CAP,
+  );
+}
