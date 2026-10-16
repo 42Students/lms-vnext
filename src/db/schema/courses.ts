@@ -479,6 +479,11 @@ export const learnerContentProgress = pgTable(
     completedAt: timestamp("completed_at", {
       withTimezone: true,
     }),
+    // Legacy fidelity (migration 0098).
+    firstCompletedAt: timestamp("first_completed_at", {
+      withTimezone: true,
+    }),
+    attempt: integer("attempt").notNull().default(1),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -506,6 +511,10 @@ export const learnerContentProgress = pgTable(
     check(
       "learner_content_progress_position_ck",
       sql`${table.lastPositionSeconds} >= 0`,
+    ),
+    check(
+      "learner_content_progress_attempt_ck",
+      sql`${table.attempt} >= 1`,
     ),
   ],
 );

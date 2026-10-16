@@ -190,6 +190,9 @@ export const sections = pgTable(
     name: text("name").notNull(),
     code: varchar("code", { length: 64 }).notNull(),
     capacity: integer("capacity"),
+    // Legacy class fidelity (migration 0098): capacity floor and description.
+    minSize: integer("min_size"),
+    description: text("description"),
     status: sectionStatusEnum("status")
       .notNull()
       .default("ACTIVE"),
@@ -234,6 +237,10 @@ export const sections = pgTable(
     check(
       "sections_capacity_ck",
       sql`${table.capacity} is null or ${table.capacity} > 0`,
+    ),
+    check(
+      "sections_min_size_ck",
+      sql`${table.minSize} is null or (${table.minSize} >= 0 and (${table.capacity} is null or ${table.minSize} <= ${table.capacity}))`,
     ),
   ],
 );

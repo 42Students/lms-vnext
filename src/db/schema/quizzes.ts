@@ -54,6 +54,13 @@ export const courseQuizzes = pgTable(
     )
       .notNull()
       .default(false),
+    // Legacy fidelity (migration 0098).
+    shuffleQuestions: boolean("shuffle_questions")
+      .notNull()
+      .default(false),
+    shuffleOptions: boolean("shuffle_options")
+      .notNull()
+      .default(false),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
