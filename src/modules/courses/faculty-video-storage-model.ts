@@ -14,7 +14,7 @@ export const managedVideoSchema=z.object({
   createdAt:z.string(),updatedAt:z.string(),completedAt:z.string().nullable(),
 });
 export type ManagedVideo=z.infer<typeof managedVideoSchema>;
-export function parseManagedVideos(input:unknown,lessonId:string,deliveryId:string):ManagedVideo[]{
+export function parseManagedVideos(input:unknown,lessonId:string,deliveryId:string|null):ManagedVideo[]{
  const rows=z.object({videos:z.array(managedVideoSchema)}).parse(input).videos;
  if(rows.some(video=>video.lessonId!==lessonId || (video.deliveryId!==null && video.deliveryId!==deliveryId)))
   throw new Error("Video list belongs to a different lesson or Section.");
@@ -60,7 +60,7 @@ export const videoUploadGrantSchema=z.object({
  }),
 });
 export function parseFacultyVideoUploadGrant(input:unknown,nowMs:number,expected:{
- lessonId:string; deliveryId:string; fileName:string; contentType:string; sizeBytes:number;
+ lessonId:string; deliveryId:string|null; fileName:string; contentType:string; sizeBytes:number;
 },thumbnailVideoId?:string){
  const {video,grant}=videoUploadGrantSchema.parse(input);
  const lifetime=Date.parse(grant.expiresAt)-nowMs;
