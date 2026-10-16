@@ -2,6 +2,7 @@ import Link from "next/link";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
+import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditor} from "./college-project-summary-editor";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
@@ -11,6 +12,7 @@ import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-writ
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
+import { LearnerTaskProgressControl } from "./learner-task-progress-control";
 import { learnerTaskCriteriaPreview } from "@/modules/projects/learner-task-criteria-model";
 import { MentorTaskCreate } from "./mentor-task-create";
 import { MentorTaskStatusTransition } from "./mentor-task-status-transition";
@@ -679,6 +681,20 @@ export function ProjectWorkspace({
                                 />
                               </div>
                             ) : null}
+                            {mode === "LEARNER" && !readOnly &&
+                              sprint.status === "ACTIVE" &&
+                              ["TODO", "IN_PROGRESS", "BLOCKED"].includes(task.status) &&
+                              task.assigneeMembershipId === currentMembershipId ? (
+                                <LearnerTaskProgressControl
+                                  projectId={workspace.project.id} taskId={task.id}
+                                  status={task.status} blockerReason={task.blockerReason}
+                                  updatedAt={task.updatedAt.toISOString()}
+                                  canMoveUp={(tasksBySprint.get(sprint.id) ?? [])
+                                    .some(other => other.sequence < task.sequence)}
+                                  canMoveDown={(tasksBySprint.get(sprint.id) ?? [])
+                                    .some(other => other.sequence > task.sequence)}
+                                />
+                              ) : null}
                             <ProjectTaskComments projectId={workspace.project.id}
                               taskId={task.id} updatedAt={task.updatedAt.toISOString()}
                               canPost={!readOnly}/>
@@ -819,6 +835,44 @@ export function ProjectWorkspace({
                       </StatusBadge>
                     </div>
 
+                    {mode === "ADMIN" ? (
+                      <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
+                        <div><dt className="font-semibold">Submission type</dt>
+                          <dd>{submission.sourceUrl && submission.demoUrl ? "File + link" :
+                            submission.sourceUrl || submission.demoUrl ? "Link" : "Text"}</dd></div>
+                        <div><dt className="font-semibold">Submitted by</dt>
+                          <dd>{workspace.members.find(member =>
+                            member.membershipId === submission.submittedByMembershipId
+                          )?.displayName ?? "Not submitted"}</dd></div>
+                        <div><dt className="font-semibold">Submitted at</dt>
+                          <dd>{formatDateTime(submission.submittedAt)}</dd></div>
+                        <div><dt className="font-semibold">Revisions</dt>
+                          <dd>{Math.max(0, submission.version - 1)}</dd></div>
+                      </dl>
+                    ) : null}
+                    {mode === "ADMIN" && submission.notes ? (
+                      <p className="mt-2 whitespace-pre-wrap text-sm text-body">
+                        {submission.notes}
+                      </p>
+                    ) : null}
+                    {mode === "ADMIN" && submission.attachments.length ? (
+                      <section aria-label="Additional evidence" className="mt-3 space-y-2">
+                        <h3 className="text-sm font-semibold text-foreground">Additional evidence</h3>
+                        {submission.attachments.map((item, index) => {
+                          if (!item || typeof item !== "object") return null;
+                          const row = item as Record<string, unknown>;
+                          const name = typeof row.name === "string" ? row.name : "Evidence";
+                          const href = typeof row.url === "string" ? safeHttpHref(row.url) : null;
+                          return <p key={index} className="text-xs text-body">
+                            {href && row.kind === "LINK" ?
+                              <a href={href} rel="noopener noreferrer" target="_blank"
+                                className="text-primary-text hover:underline">Open link · {name}</a> :
+                              <span>File · {name}</span>}
+                          </p>;
+                        })}
+                      </section>
+                    ) : null}
+
                     {source || demo ? (
                       <div className="mt-3 flex flex-wrap gap-3 text-sm font-semibold">
                         {source ? (
@@ -857,17 +911,19 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
-                    {mode !== "LEARNER" &&
-                    !readOnly &&
-                    submission.status ===
-                      "SUBMITTED" ? (
+                    {mode === "ADMIN" && !readOnly &&
+                      (submission.status === "SUBMITTED" || submission.status === "APPROVED") ? (
+                      <ProjectAdminSubmissionReview projectId={workspace.project.id}
+                        submissionId={submission.id} status={submission.status}
+                        locked={Boolean(submission.lockedAt)}
+                        projectStatus={workspace.project.status}/>
+                    ) : null}
+                    {mode === "MENTOR" && !readOnly &&
+                      submission.status === "SUBMITTED" ? (
                       <div className="mt-3">
-                        <FinalReviewControl
-                          projectId={workspace.project.id}
-                          submissionId={submission.id}
-                          mode={mode}
-                          expectedUpdatedAt={submission.updatedAt.toISOString()}
-                        />
+                        <FinalReviewControl projectId={workspace.project.id}
+                          submissionId={submission.id} mode={mode}
+                          expectedUpdatedAt={submission.updatedAt.toISOString()}/>
                       </div>
                     ) : null}
 

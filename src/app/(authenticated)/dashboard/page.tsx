@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {getSuperAdminCollegeAtGlance} from "@/modules/colleges/admin-college-at-glance-service";
 import {
   CollegeAdminDashboardActions,
   SuperAdminGlobalDashboardActions,
@@ -97,6 +98,8 @@ async function SuperAdminDashboard({
       ])
     : [null, null];
 
+  const glance=collegeId
+    ?await getSuperAdminCollegeAtGlance(context,collegeId).catch(()=>null):null;
   const scopeLabel = collegeId
     ? `College scope · ${colleges.find((item) => item.id === collegeId)?.name ?? "Selected college"}`
     : context.adminScope?.organizationId
@@ -144,6 +147,22 @@ async function SuperAdminDashboard({
           href="/admin/people"
         />
       </div>
+      {collegeId?<section aria-label="At a glance" className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-semibold">At a glance</h2>
+          <Link href="/dashboard" className="text-sm text-primary-text underline">Retry</Link>
+        </div>
+        {!glance?<p role="alert" className="text-sm text-error">Couldn't load college summary</p>:
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {([{label:"Students",value:glance.students,href:"/admin/people"},
+            {label:"Faculty",value:glance.faculty,href:"/admin/people"},
+            {label:"Courses",value:glance.courses,href:"/admin/courses"},
+            {label:"Active drives",value:glance.activeDrives,href:"/admin/placements"}]).map(metric=>
+            <MetricCard key={metric.label} label={metric.label}
+              value={metric.value} href={metric.href}
+              description={"Recorded active "+metric.label.toLowerCase()+" in this college."}/>)}
+        </div>}
+      </section>:null}
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Safety scope

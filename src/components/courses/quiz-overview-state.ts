@@ -33,6 +33,12 @@ export function quizOverviewActionState(
       review: true,
     };
   }
+  if (!item.dueAt && item.attemptsUsed === 0) return {
+    label: "Unavailable · deadline missing",
+    tone: "warning" as const,
+    action: "Unavailable",
+    review: true,
+  };
   if ((closed || expired || exhausted) && item.resultsPublished && item.attemptsUsed > 0) {
     return {
       label: "Results published",

@@ -11,6 +11,8 @@ import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-se
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
+import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
+import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
@@ -38,12 +40,19 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
   const jobs = (await listOwnRecruiterPlacementJobs(context)).filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
-  const totals = summarizeRecruiterDrives(jobs);
+  const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
+  const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
+  const totals = {...summarizeRecruiterDrives(jobs),
+    all:summarizeRecruiterDrives(jobs).all+requests.length,
+    waiting:requests.filter(req=>["REQUEST","SENT_BACK","DRAFT"].includes(req.status)).length,
+    closed:summarizeRecruiterDrives(jobs).closed+
+      requests.filter(req=>["REJECTED","CANCELLED"].includes(req.status)).length,
+  };
   const viewOptions = [
     {view: "ALL", label: "All", count: totals.all},
     {view: "LIVE", label: "Live", count: totals.live},
-    {view: "CLOSED", label: "Closed", count: totals.closed},
-    {view: "WAITING", label: "Waiting", count: totals.waiting},
+    {view: "WAITING", label: "Sent for review", count: totals.waiting},
+    {view: "CLOSED", label: "Completed and cancelled", count: totals.closed},
   ] as const;
   // eslint-disable-next-line react-hooks/purity -- recruiter deadline urgency needs request-time current instant.
   const now = new Date();
@@ -52,7 +61,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   const pageResult = paginateRecruiterDrives(sortRecruiterDrives(filtered,query.data.sort),query.data.page);
   return <div className="space-y-6">
     <PageHeader eyebrow="Recruiter" title="Drives"
-      description="Hiring drives for the selected college and your exact employer relationship. Published and closed drives only."
+      description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
         className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Request a drive
@@ -126,9 +135,34 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="py-3 text-sm text-primary-text">Reset</Link>
     </form>
-    {query.data.view === "WAITING" ? <EmptyState title="Requests not available here" description="Waiting requests and sent-back approvals are not yet backed by a recruiter-visible request-state read. Published jobs are never mislabeled as pending requests." /> :
-     pageResult.rows.length ? <RecruiterPlacementPortfolio jobs={pageResult.rows} /> :
-     <EmptyState title="No matching drives" description="No authorized, non-archived drives match this college, lifecycle and search." />}
+    {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
+      <h2 className="text-lg font-semibold text-foreground">Your drive requests</h2>
+      <ul className="grid gap-3 sm:grid-cols-2">{requestView.map(req=>{
+        const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
+        const title=typeof draft.title==="string"?draft.title:"Drive request";
+        const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
+        return <li key={req.id} className="rounded-lg border border-border bg-surface p-4">
+          <p className="font-semibold text-foreground">{title}</p>
+          <p className="mt-1 text-sm text-body">{requestStageLabel(req.status)}</p>
+          {req.status==="SENT_BACK"?<p className="mt-2 rounded-md border border-warning p-3 text-sm text-body">
+            Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
+          </p>:null}
+          <p className="mt-2 text-xs text-muted-foreground">Requested {req.createdAt.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+          {editable?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&fix="+encodeURIComponent(req.id)}
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            {req.status==="SENT_BACK"?"Fix and Resend":"Edit your request"}
+          </Link>:null}
+          {req.approvedJobId?<Link href={"/hr/placements/jobs/"+encodeURIComponent(req.approvedJobId)}
+            className="mt-2 block text-sm text-primary-text underline">Open approved drive</Link>:null}
+        </li>;
+      })}</ul>
+    </section>:null}
+    {query.data.view==="WAITING" && requestView.length===0
+      ? <EmptyState title="No drives sent for review" description="Requests you send to the placement cell appear here with their review status." />
+      : query.data.view!=="WAITING" && pageResult.rows.length===0 && requestView.length===0
+        ? <EmptyState title="No drives match this search" description="Try another role name or clear the current search." />
+        : null}
+    {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio jobs={pageResult.rows} />:null}
     {query.data.view !== "WAITING" ? <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(query.data.page-1)*pageResult.pageSize+1))+"–"+
@@ -140,6 +174,6 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div></nav>:null}
     <Link href="/hr/round-results" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>
-    <p className="text-xs text-muted-foreground">Draft previews are local-only. Approval submission, Fix and Resend and external sending remain unavailable until the registered employer-request workflow is ready.</p>
+    <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
   </div>;
 }

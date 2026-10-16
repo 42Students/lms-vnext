@@ -7,6 +7,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {
   academicPeriods,
   collegeMemberships,
@@ -475,12 +477,18 @@ export async function createCollege(
   const db = getDb();
 
   try {
-    const [created] = await db
-      .insert(colleges)
-      .values(input)
-      .returning();
-
-    return created;
+    return await db.transaction(async tx=>{
+      const [created]=await tx.insert(colleges).values(input).returning();
+      if(!created)throw new CollegeServiceError("COLLEGE_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_CREATED,
+        collegeId:created.id,organizationId:created.organizationId,
+        subjectType:"college",subjectId:created.id,subjectLabel:created.name,
+        summary:"College created",
+        metadata:{collegeCode:created.code},
+      });
+      return created;
+    });
   } catch (error) {
     if (isUniqueViolation(error)) {
       throw new CollegeServiceError("COLLEGE_CODE_CONFLICT");
@@ -503,26 +511,20 @@ export async function updateCollege(
     collegeId: college.id,
   });
 
-  const db = getDb();
-  const [updated] = await db
-    .update(colleges)
-    .set({
-      ...input,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(colleges.id, collegeId),
-        eq(colleges.status, "ACTIVE"),
-      ),
-    )
-    .returning();
-
-  if (!updated) {
-    throw new CollegeServiceError("COLLEGE_NOT_FOUND");
-  }
-
-  return updated;
+  return getDb().transaction(async tx=>{
+    const [updated]=await tx.update(colleges).set({
+      ...input,updatedAt:new Date(),
+    }).where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).returning();
+    if(!updated)throw new CollegeServiceError("COLLEGE_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_UPDATED,
+      collegeId:updated.id,organizationId:updated.organizationId,
+      subjectType:"college",subjectId:updated.id,subjectLabel:updated.name,
+      summary:"College details updated",
+      metadata:{code:updated.code},
+    });
+    return updated;
+  });
 }
 
 
@@ -555,32 +557,19 @@ export async function archiveCollege(
   assertCollegeCanArchive(usage);
 
   const archivedAt = new Date();
-  const [archived] = await getDb()
-    .update(colleges)
-    .set({
-      status: "ARCHIVED",
-      updatedAt: archivedAt,
-    })
-    .where(
-      and(
-        eq(colleges.id, collegeId),
-        eq(colleges.status, "ACTIVE"),
-      ),
-    )
-    .returning({
-      id: colleges.id,
-      organizationId:
-        colleges.organizationId,
-      name: colleges.name,
-      code: colleges.code,
-      status: colleges.status,
+  return getDb().transaction(async tx=>{
+    const [archived]=await tx.update(colleges)
+      .set({status:"ARCHIVED",updatedAt:archivedAt})
+      .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE")))
+      .returning({id:colleges.id,organizationId:colleges.organizationId,
+        name:colleges.name,code:colleges.code,status:colleges.status});
+    if(!archived)throw new CollegeServiceError("COLLEGE_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_ARCHIVED,
+      collegeId:archived.id,organizationId:archived.organizationId,
+      subjectType:"college",subjectId:archived.id,subjectLabel:archived.name,
+      summary:"College archived",metadata:{code:archived.code},
     });
-
-  if (!archived) {
-    throw new CollegeServiceError(
-      "COLLEGE_NOT_FOUND",
-    );
-  }
-
-  return archived;
+    return archived;
+  });
 }

@@ -9,6 +9,7 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {projectTaskCommentInputSchema} from "./pr-s2-04-task-fields-model";
 import {projectTaskIdSchema} from "./validation";
+import {notifyProjectMemberships} from "./project-notification-service";
 
 export async function listProjectTaskComments(context:RequestContext,projectId:string,taskIdInput:string){
  const scope=await requireProjectReadAccess(context,projectId);
@@ -49,13 +50,23 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
    projectId:scope.project.id,taskId,authorMembershipId,body:input.body,
   }).returning();
   if(!comment)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-  await recordActivityEventInTransaction(tx,context,{
+  const event = await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
     collegeId:scope.collegeId,organizationId:scope.organizationId,
     subjectType:"project_task",subjectId:taskId,subjectLabel:task.title,
     summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id},
     groupKey:"project:"+scope.project.id,
   });
+  if(task.assigneeMembershipId){
+    await notifyProjectMemberships(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      membershipIds:[task.assigneeMembershipId],
+      exceptUserId:context.user.id,
+      title:"New comment on "+task.title,
+      body:"There is a new comment on your task.",
+      actionHref:"/learn/projects/"+scope.project.id,
+    });
+  }
   return comment;
  });
 }

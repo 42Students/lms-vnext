@@ -335,8 +335,8 @@ export async function submitCourseQuiz(
             lockedQuiz.deliveryId !== input.deliveryId) {
           throw new CoursesServiceError("QUIZ_DELIVERY_MISMATCH");
         }
-        if (lockedQuiz.dueAt &&
-            lockedQuiz.dueAt.getTime() < Date.now()) {
+        if (!lockedQuiz.dueAt) throw new CoursesServiceError("QUIZ_DEADLINE_NOT_CONFIGURED");
+        if (lockedQuiz.dueAt.getTime() <= Date.now()) {
           throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
         }
 

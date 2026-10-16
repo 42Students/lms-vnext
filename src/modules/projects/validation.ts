@@ -39,6 +39,8 @@ const sprintSchema = z
     releaseKey: projectKeySchema,
     title: titleSchema,
     description: descriptionSchema,
+    dueLabel: z.string().trim().min(1).max(120).optional(),
+    goal: z.string().trim().min(1).max(1000).optional(),
     sequence: sequenceSchema,
   })
   .strict();
@@ -58,6 +60,7 @@ const taskSchema = z
     priority: z
       .enum(PROJECT_TASK_PRIORITIES)
       .default("MEDIUM"),
+    estimatePoints: z.number().int().min(1).max(13).optional(),
     sequence: sequenceSchema,
   })
   .strict();

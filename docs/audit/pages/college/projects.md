@@ -101,3 +101,10 @@ Page slug `projects`, account College Admin, gap IDs `COL-projects-NN`. Sibling 
 - Existing: project module tests under `tests/unit` and `tests/integration` for admin insights, class-team services and restore (see `docs/parity/college-admin.md` Projects notes); source link tests for the sidebar href and redirects. UNCONFIRMED names: `rg -l "admin-insights|project-admin|class-team" tests`.
 - Missing: tests for admin review of final submissions, admin edit of workspace metadata, mentor guard on `Active` status, cohort mode preflight and partial failure, readiness override audit event, at-risk blocker signal once persisted, and cross-college negative cases on every `[projectId]` route.
 - Browser script needed (`scripts/verify/pages/college-projects.mjs`): as College Admin create a project from a template, assign a mentor, add learners, edit the summary, archive and restore it, open At Risk and click `Reassign mentor`, override readiness and see it listed, review a submitted delivery, filter the audit, export CSVs; repeat at 375px.
+
+
+### chat-11 WP-01 implementation checkpoint (2026-10-16; verification pending)
+
+- **COL-projects-01:** Existing College Admin submission accept/change request/lock route, controls and exact toast unit test confirmed in current main; no duplicate implementation.
+- **COL-projects-14:** Added the existing College Admin review/lock controls to workspace Delivery, with submitter, submission timestamp, revisions, notes, and safe additional-evidence links; mentor review remains on its prior path. Unit contract test added but **not executed**; UI/browser verification outstanding.
+- **COL-projects-02:** Existing title/summary/status editor only; other legacy fields remain pending.
