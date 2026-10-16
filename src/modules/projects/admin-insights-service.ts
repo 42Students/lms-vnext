@@ -524,6 +524,21 @@ export async function listProjectAdminRiskQueue(
   );
   const db = getDb();
 
+  const [bucketTotals] = await db.select({
+    stalled: sql<number>`count(*) filter (where ${lastActivityAt} <= ${staleCutoff})`.mapWith(Number),
+    blocker: sql<number>`count(*) filter (where ${blockedTask})`.mapWith(Number),
+    review: sql<number>`count(*) filter (where ${pendingReview})`.mapWith(Number),
+  }).from(projectInstances).where(and(
+    eq(projectInstances.collegeId, college.id),
+    ne(projectInstances.status, "ARCHIVED"),
+    ne(projectInstances.status, "COMPLETED"),
+  ));
+  const buckets = {
+    stalled: bucketTotals?.stalled ?? 0,
+    blocker: bucketTotals?.blocker ?? 0,
+    review: bucketTotals?.review ?? 0,
+  };
+
   const [totalRow, projects] =
     await Promise.all([
       db
@@ -568,6 +583,8 @@ export async function listProjectAdminRiskQueue(
         Math.ceil(total / query.pageSize),
       ),
       blockerSignalSupported: false,
+    buckets,
+      buckets,
     };
   }
 
@@ -653,6 +670,7 @@ export async function listProjectAdminRiskQueue(
     // DB07 vNext has no persisted blocker column yet; never
     // claim that dimension is covered until W01 promotes it.
     blockerSignalSupported: false,
+    buckets,
   };
 }
 
