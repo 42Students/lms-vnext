@@ -3,7 +3,7 @@ import {useMemo,useState} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
-type Task={id:string;title:string;sprintId:string;assigneeMembershipId:string|null;
+type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string};
 type Member={membershipId:string;displayName:string|null;role:string};
 type Sprint={id:string;title:string;releaseId:string};
@@ -81,6 +81,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        className="rounded-lg border border-border bg-surface p-3 text-sm">
        <p className="font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
+       {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:null}
        {group.membershipId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
        {!readOnly?<label className="mt-2 block text-xs font-semibold">Assign to
         <select aria-label={"Assign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
