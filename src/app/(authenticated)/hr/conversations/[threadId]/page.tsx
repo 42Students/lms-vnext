@@ -36,7 +36,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   ? ownDrives.find(item=>item.job.id===result.thread.jobId&&item.collegeId===result.thread.collegeId)
   : null;
  const conversationSubject=result.thread.jobId ? matchingDrive?.job.title??"Drive unavailable" : "General";
- const messages=result.messages.map(message=>({
+ const messages=[...result.messages].reverse().map(message=>({
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
  return <main className="space-y-5">
@@ -50,6 +50,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
    className="inline-flex min-h-11 items-center text-primary-text">Back to conversations</Link>
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
+  <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
   <ol aria-label="Employer and placement cell messages" className="space-y-3">
    {messages.map(message=><li key={message.id}
