@@ -9,6 +9,7 @@ import {
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
+  activityEvents,
   cohorts,
   collegeMemberships,
   colleges,
@@ -495,6 +496,22 @@ export async function markPlacementBatchInvited(
       updatedByUserId: context.user.id,
       updatedAt: new Date(),
     }).where(eq(placementBatchLifecycles.cohortId, input.cohortId)).returning();
+    if (!updated) throw new PlacementBatchError("DB08_BATCH_NOT_FOUND");
+    const [college] = await tx.select({ organizationId: colleges.organizationId })
+      .from(colleges).where(eq(colleges.id, input.collegeId)).limit(1);
+    if (!college) throw new PlacementBatchError("DB08_SCOPE_COLLEGE_MISMATCH");
+    await tx.insert(activityEvents).values({
+      organizationId: college.organizationId,
+      collegeId: input.collegeId,
+      actorUserId: context.user.id,
+      actorMembershipId: context.membership?.id ?? null,
+      module: "PLACEMENTS",
+      eventType: "BATCH_INVITED",
+      subjectType: "COHORT",
+      subjectId: input.cohortId,
+      summary: "TPO opened placement registration for a batch",
+      metadata: { registrationDeadline: updated.registrationDeadline?.toISOString() ?? null },
+    });
     return updated;
   });
 }
