@@ -14,6 +14,7 @@ import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentFileOpenControl } from "./assignment-file-open-control";
+import {AssignmentSubmissionLinks} from "./assignment-submission-links";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { QuizAttemptControl } from "./quiz-attempt-control";
 import { ResourceProgressControl } from "./resource-progress-control";
@@ -444,8 +445,17 @@ function AssignmentCard({
             <p className="text-sm text-body">Saved link unavailable.</p>}
         </section>:null}
       {assignment.submissionId && assignment.submissionType === "FILE" ?
-        <AssignmentFileOpenControl key={assignment.submissionId} submissionId={assignment.submissionId}
-          enabled={assignmentFilesRuntimeEnabled()} /> : null}
+        <section aria-label="Your submission" className="mt-4 space-y-3 rounded-lg bg-surface-subtle p-3">
+          <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
+          {assignment.submissionText?<div>
+            <h5 className="text-xs font-semibold text-body">Written response</h5>
+            <p className="whitespace-pre-wrap break-words text-sm text-body">{assignment.submissionText}</p>
+          </div>:null}
+          <AssignmentFileOpenControl key={assignment.submissionId} submissionId={assignment.submissionId}
+            enabled={assignmentFilesRuntimeEnabled()} />
+          {multipartAssignmentRuntimeEnabled()?
+            <AssignmentSubmissionLinks submissionId={assignment.submissionId}/>:null}
+        </section> : null}
       {assignment.gradePublished ? (
         <div className="mt-4 rounded-lg bg-primary-subtle px-3 py-2 text-sm text-body">
           <strong className="text-foreground">
