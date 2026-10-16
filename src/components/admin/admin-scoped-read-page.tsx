@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
+import {AdminScopedLiveSearch} from "@/components/admin/admin-scoped-live-search";
 import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -32,8 +33,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
    {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
-    <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     className="min-h-11 min-w-0 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+    <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
    <label className="grid gap-1 text-sm font-semibold text-body">Status
     <select name="status" defaultValue={data.query.status}
