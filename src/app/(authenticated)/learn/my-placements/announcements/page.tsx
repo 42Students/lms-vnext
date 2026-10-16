@@ -53,6 +53,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const searchedNotices=searchLearnerNotices(filterLearnerNoticesBySource(learnerPlacementNoticeView(allNotices,pinnedOnly),source),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
   const sortedNotices=sortLearnerNotices(notices,sortKey);
+  const noticeNow=new Date().getTime();
   const focused=learnerNoticeFocusPage(sortedNotices,filters.page,filters.focus);
   const pages = paginateOwnOffers(sortedNotices,focused.page,15);
   const pageClamped=learnerNoticePageWasClamped(filters.page,pages.page,sortedNotices.length,focused.found);
@@ -164,11 +165,15 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <ul className="min-w-0 space-y-3">
           {pages.items.map((notice) => (
             <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-5">
-              {notice.isPinned ? <p className="text-xs font-semibold text-primary-text">Pinned</p> : null}
+              <div className="flex flex-wrap items-center gap-2">
+                {notice.isPinned ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">Pinned</span> : null}
+                {noticeNow-Date.parse(notice.createdAt)<7*24*60*60*1000 && noticeNow>=Date.parse(notice.createdAt)
+                  ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">New</span>:null}
+              </div>
               <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
               <p className="mt-1 text-xs text-muted-foreground">
                 {notice.senderLabel ? "Issued by "+notice.senderLabel : "College announcement"}
-                {notice.audienceLabel ? " · Audience: "+notice.audienceLabel : ""}
+                {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}
               </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
               {learnerNoticeHref(notice.id) ? (
