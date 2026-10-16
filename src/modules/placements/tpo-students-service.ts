@@ -5,7 +5,9 @@ import {
   eq,
   gte,
   inArray,
+  isNotNull,
   lte,
+  or,
 } from "drizzle-orm";
 import { z } from "zod";
 
@@ -37,6 +39,7 @@ import {
 } from "@/db/schema";
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
+import {placementBatchLifecycles} from "@/db/schema/placement-batches";
 import { placementExternalOffers } from "@/db/schema/placement-external";
 
 import { sortTpoRequestRows } from "@/modules/placements/tpo-global-requests-model";
@@ -75,6 +78,7 @@ export const tpoStudentsQuerySchema = z
       .enum(TPO_STUDENT_JOURNEY_STATES)
       .optional(),
     branchId: uuid.optional(),
+    batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
@@ -204,6 +208,7 @@ export async function getTpoStudentsIntelligence(
       registrationNumber:
         learnerProfiles.registrationNumber,
       enrollmentId: learnerProgramEnrollments.id,
+      enrollmentStatus: learnerProgramEnrollments.status,
       cohortId: cohorts.id,
       cohortName: cohorts.name,
       programName: programs.name,
@@ -240,10 +245,6 @@ export async function getTpoStudentsIntelligence(
           learnerProgramEnrollments.membershipId,
           collegeMemberships.id,
         ),
-        eq(
-          learnerProgramEnrollments.status,
-          "ACTIVE",
-        ),
       ),
     )
     .innerJoin(
@@ -257,6 +258,13 @@ export async function getTpoStudentsIntelligence(
           cohorts.programId,
           learnerProgramEnrollments.programId,
         ),
+      ),
+    )
+    .leftJoin(
+      placementBatchLifecycles,
+      and(
+        eq(placementBatchLifecycles.cohortId,cohorts.id),
+        eq(placementBatchLifecycles.collegeId,college.id),
       ),
     )
     .innerJoin(
@@ -299,6 +307,12 @@ export async function getTpoStudentsIntelligence(
         eq(collegeMemberships.collegeId, college.id),
         eq(collegeMemberships.status, "ACTIVE"),
         eq(users.platformStatus, "ACTIVE"),
+        input.batchId?eq(learnerProgramEnrollments.cohortId,input.batchId):undefined,
+        or(
+          eq(learnerProgramEnrollments.status,"ACTIVE"),
+          input.batchId?and(eq(learnerProgramEnrollments.status,"COMPLETED"),
+            isNotNull(placementBatchLifecycles.finishedAt)):undefined,
+        ),
       ),
     )
     .orderBy(
@@ -777,6 +791,7 @@ export async function getTpoStudentsIntelligence(
       programName: learner.programName,
       cohortId: learner.cohortId,
       cohortName: learner.cohortName,
+      fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationChoice:
         registrationChoiceByLearner.get(
           `${learner.membershipId}:${learner.cohortId}`,

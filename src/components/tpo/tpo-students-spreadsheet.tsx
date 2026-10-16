@@ -6,7 +6,8 @@ import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
- {key:"student",label:"Student",read:row=>row.displayName},
+ {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
+   row.displayName+" · From "+row.cohortName:row.displayName},
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.cohortName},
