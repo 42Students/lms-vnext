@@ -1,5 +1,8 @@
 import "server-only";
 import {z} from "zod";
+import {placementTpoNoticeAudiences,placementTpoNoticeRecipients} from "@/db/schema/placement-tpo-notice-audiences";
+import {freezeTpoNoticeRecipients} from "./tpo-notice-audience-snapshot-model";
+import {tpoTargetedRecipientQuery} from "./tpo-targeted-recipient-query";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
@@ -14,8 +17,14 @@ export const tpoNoticeCreateSchema=z.object({
  title:z.string().trim().min(1).max(255),
  message:z.string().trim().min(1).max(10000),
  pinned:z.boolean().default(false),
+ audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
+ targetId:z.string().uuid().optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
-}).strict();
+}).strict().superRefine((data,ctx)=>{
+ const target=["BATCHES","BRANCHES","DRIVE"].includes(data.audience);
+ if(target&&!data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Choose an audience target"});
+ if(!target&&data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Unexpected audience target"});
+});
 
 export async function createTpoNotice(context:RequestContext,raw:unknown){
  const data=tpoNoticeCreateSchema.parse(raw);
@@ -24,6 +33,9 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("announcements"))throw new Error("ANNOUNCEMENTS_NOT_REGISTERED");
+ if(data.audience!=="COLLEGE"&&(!await placementTableExists("placement_tpo_notice_audiences")||
+  !await placementTableExists("placement_tpo_notice_recipients")))
+  throw new Error("TARGETED_NOTICES_NOT_REGISTERED");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -35,13 +47,30 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
    scheduledAt:schedule.scheduledAt,expiresAt:schedule.expiresAt,
   }).returning({id:db10Announcements.id,version:db10Announcements.version});
   if(!notice)throw new Error("NOTICE_CREATE_FAILED");
+  if(data.audience!=="COLLEGE"){
+   const matched=await tx.execute<{id:string}>(tpoTargetedRecipientQuery(college.id,{
+    kind:data.audience,targetId:data.targetId,
+   }));
+   const recipients=freezeTpoNoticeRecipients(matched.rows.map(row=>row.id));
+   if(recipients.length===0)throw new Error("TPO_NOTICE_NO_RECIPIENTS");
+   await tx.insert(placementTpoNoticeAudiences).values({
+    announcementId:notice.id,kind:data.audience,
+   });
+   for(let index=0;index<recipients.length;index+=500){
+    await tx.insert(placementTpoNoticeRecipients).values(
+     recipients.slice(index,index+500).map(membershipId=>({
+      announcementId:notice.id,membershipId,
+     })),
+    );
+   }
+  }
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
    actorUserId:context.user.id,actorMembershipId:membership.id,
    module:"PLACEMENTS",eventType:"placements.tpo_notice.created",
    subjectType:"announcement",subjectId:notice.id,
-   summary:"TPO college-wide notice created",
-   metadata:{noticeId:notice.id,pinned:data.pinned},
+   summary:data.audience==="COLLEGE"?"TPO college-wide notice created":"TPO targeted notice created",
+   metadata:{noticeId:notice.id,pinned:data.pinned,audience:data.audience},
   });
   return notice;
  });
