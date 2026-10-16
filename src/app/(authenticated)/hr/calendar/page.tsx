@@ -131,20 +131,16 @@ function eventDateTime(value: Date) {
 function eventHref(event: PlacementCalendarEvent) {
   if (!event.jobId) return null;
 
-  return event.roundKind==="INTERVIEW"
-    ? "/recruiter/drives/"+encodeURIComponent(event.jobId)+"/interview-slots"
-    : "/hr/placements/jobs/"+encodeURIComponent(event.jobId);
+  if(event.kind==="INTERVIEW_SLOT")
+    return "/recruiter/drives/"+encodeURIComponent(event.jobId)+"/interview-slots";
+  return "/hr/placements/jobs/"+encodeURIComponent(event.jobId)+
+    (event.kind==="ROUND"?"?tab=rounds":"?tab=overview");
 }
 
 function eventKindLabel(event: PlacementCalendarEvent) {
   if (event.kind === "INTERVIEW_SLOT") return "Interview slot";
-  if (event.kind === "APPLICATION_DEADLINE") {
-    return "Deadline";
-  }
-
-  return event.roundKind
-    ? event.roundKind.replaceAll("_", " ")
-    : "Round";
+  if(event.kind==="APPLICATION_DEADLINE")return "Deadline";
+  return "Round";
 }
 
 function RecruiterCalendarEventCard({
@@ -297,7 +293,7 @@ export default async function HrCalendarPage({
       <PageHeader
         eyebrow="Recruiter"
         title="Calendar"
-        description="Scheduled hiring rounds and application deadlines for the jobs your employer is authorized to access. All dates and times are shown in Indian Standard Time."
+        description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={
           <Link
             href="/hr/placements"

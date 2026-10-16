@@ -618,7 +618,10 @@ export function LearnerAssessmentOverview({
                     assignmentId={selectedAssignment.id}
                     deliveryId={selectedAssignment.deliveryId}
                   />
-                ) : null}
+                ) : <button type="button" disabled aria-disabled="true"
+                  className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-muted-foreground">
+                  {selectedAssignment.dueAt?"Submission closed":"Unavailable"}
+                </button>}
               </>
             )}
           </div>
