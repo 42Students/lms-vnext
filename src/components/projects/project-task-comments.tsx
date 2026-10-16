@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {projectMutation} from "./project-api";
-type Comment={id:string;body:string;createdAt:string;authorMembershipId:string};
+type Comment={id:string;body:string;createdAt:string;authorMembershipId:string;authorName:string|null};
 export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  projectId:string;taskId:string;updatedAt:string;canPost:boolean;
 }){
@@ -38,8 +38,15 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    {open?<div className="space-y-2 rounded border border-border p-3" aria-label="Task comments">
      <p className="text-xs text-muted-foreground">Notes and progress updates people on this task have written.</p>
      {rows.length===0?<p role="status" className="text-sm text-muted-foreground">No comments yet.</p>:null}
-     {rows.map(row=><p key={row.id} className="whitespace-pre-wrap text-sm text-body">{row.body}</p>)}
-     {canPost?<label className="grid gap-1 text-sm text-body">Message
+     {rows.map(row=><article key={row.id} className="rounded-lg border border-border p-3 text-sm text-body">
+      <p className="mb-1 text-xs font-semibold text-muted-foreground">
+        {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
+          dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
+        }).format(new Date(row.createdAt))}
+      </p>
+      <p className="whitespace-pre-wrap">{row.body}</p>
+   </article>)}
+     {canPost?<label className="grid gap-1 text-sm text-body">Add a note before posting
        <Textarea maxLength={4000} value={body} disabled={busy}
          placeholder="Share a progress update or note..."
          onChange={e=>setBody(e.target.value)}/>
