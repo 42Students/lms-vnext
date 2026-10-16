@@ -100,8 +100,8 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     db.select({ total: count() }).from(source),
     db.select().from(source)
       .orderBy(asc(source.programName), asc(source.termNumber), asc(source.id))
-      .limit(COLLEGE_ACADEMIC_PAGE_SIZE)
-      .offset((query.page - 1) * COLLEGE_ACADEMIC_PAGE_SIZE),
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize),
     availablePrograms(collegeId),
   ]);
   const ids = rawItems.map((item) => item.id);
@@ -130,7 +130,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     items,
     programs: programChoices,
     total,
-    totalPages: academicDirectoryPageCount(total),
+    totalPages: academicDirectoryPageCount(total, query.pageSize),
   };
 }
 
@@ -192,8 +192,8 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     db.select({ total: count() }).from(source),
     db.select().from(source)
       .orderBy(asc(source.programName), asc(source.name), asc(source.id))
-      .limit(COLLEGE_ACADEMIC_PAGE_SIZE)
-      .offset((query.page - 1) * COLLEGE_ACADEMIC_PAGE_SIZE),
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize),
     availablePrograms(collegeId),
   ]);
   const ids = rawItems.map((item) => item.id);
@@ -233,6 +233,6 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     items,
     programs: programChoices,
     total,
-    totalPages: academicDirectoryPageCount(total),
+    totalPages: academicDirectoryPageCount(total, query.pageSize),
   };
 }
