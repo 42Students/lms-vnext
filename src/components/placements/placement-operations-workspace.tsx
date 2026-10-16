@@ -54,6 +54,7 @@ export async function PlacementOperationsWorkspace({
       <PlacementOperationsOverview
         operations={operations}
         basePath={basePath}
+        showDriveSearch={basePath.startsWith("/admin/")}
       />
       <PlacementSeasonManager
         collegeId={collegeId}
