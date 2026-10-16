@@ -8,7 +8,7 @@ import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-act
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
-type Action="ELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED";
+type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED";
 type PreviewPlan={
  target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;ids:string[];
 };
@@ -46,9 +46,12 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
   if(target==="APPLICATIONS"&&note.trim().length<10){
    setError("Provide at least 10 characters of screening context.");return;
   }
+  if(target==="STUDENTS"&&action==="INELIGIBLE"&&note.trim().length<3){
+   setError("Give a reason of at least 3 characters for ineligibility.");return;
+  }
   const next:PreviewPlan={
     target,...(target==="APPLICATIONS"?{jobId}:{}),
-    action,note:target==="APPLICATIONS"?note.trim():"",ids:safeSelected,
+    action,note:target==="APPLICATIONS"||action==="INELIGIBLE"?note.trim():"",ids:safeSelected,
   };
   setBusy(true);invalidate();
   try{
@@ -75,14 +78,15 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
   finally{setBusy(false);}
  }
  const options=target==="STUDENTS"
-  ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
+  ?([{value:"ELIGIBLE",label:"Make eligible"},{value:"INELIGIBLE",label:"Make ineligible"},
+     {value:"CLEAR_OVERRIDE",label:"Follow class / batch (clear override)"}] as const)
   :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"}] as const);
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
    className="space-y-4 rounded-xl border border-border bg-surface p-4">
   <div><h2 className="font-semibold text-foreground">Bulk actions · {target==="STUDENTS"?"Students":"Applications"}</h2>
    <p className="mt-1 text-sm text-body">
-    Select up to 25 rows on this page. Preview shows only numbered rows and eligibility.
+    Select up to 25 rows on this page. Preview shows numbered rows, reasons for skips and eligibility.
     Confirmation rechecks permission and versions; existing decisions are audited.
    </p></div>
   <p role="status" aria-live="polite" className="text-sm text-body">Selected {safeSelected.length} of {TPO_BULK_UI_LIMIT} allowed rows on this page.</p>
@@ -117,8 +121,8 @@ export function TpoBulkActionPanel({target,jobId,rows}:{target:"STUDENTS"|"APPLI
      {options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
     </select>
    </label>
-   {target==="APPLICATIONS"?<label className="text-sm font-semibold text-body">Review context
-    <textarea value={note} disabled={busy} maxLength={1000} rows={2}
+   {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="text-sm font-semibold text-body">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context"}
+    <textarea value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       className="mt-1 w-full rounded border border-border bg-background p-3"/>
    </label>:null}

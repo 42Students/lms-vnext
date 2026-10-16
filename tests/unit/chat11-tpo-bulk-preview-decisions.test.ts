@@ -6,6 +6,8 @@ describe("TPO bulk preview decisions",()=>{
  it("does not overwrite an existing identical eligibility override",()=>{
   expect(tpoBulkStudentReady("ELIGIBLE","ELIGIBLE")).toBe(false);
   expect(tpoBulkStudentReady("ELIGIBLE","INELIGIBLE")).toBe(true);
+  expect(tpoBulkStudentReady("INELIGIBLE","ELIGIBLE")).toBe(true);
+  expect(tpoBulkStudentReady("INELIGIBLE","INELIGIBLE")).toBe(false);
   expect(tpoBulkStudentReady("CLEAR_OVERRIDE",null)).toBe(false);
   expect(tpoBulkStudentReady("CLEAR_OVERRIDE","ELIGIBLE")).toBe(true);
  });
