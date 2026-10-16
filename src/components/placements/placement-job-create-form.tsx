@@ -70,21 +70,29 @@ async function requestJson(
     | Record<string, unknown>
     | null;
   if (!response.ok) {
-    const code =
-      typeof payload?.error === "string"
-        ? payload.error
-        : "REQUEST_FAILED";
-    throw new Error(
-      code
-        .toLowerCase()
-        .split("_")
-        .map(
-          (part) =>
-            part.charAt(0).toUpperCase() +
-            part.slice(1),
-        )
-        .join(" "),
-    );
+    const issues = Array.isArray(payload?.issues) ? payload.issues : [];
+    const issue = issues.find((item): item is { path: unknown[]; message: string } =>
+      typeof item === "object" && item !== null &&
+      "message" in item && typeof item.message === "string" &&
+      "path" in item && Array.isArray(item.path));
+    if (issue) {
+      const fields: Record<string, string> = {
+        title: "Job title",
+        description: "Description",
+        openings: "Openings",
+        maximumAnnualCtcInr: "Maximum CTC",
+        minimumAnnualCtcInr: "Minimum CTC",
+        externalApplicationUrl: "Employer application URL",
+        allowedPassingYears: "Passing years",
+        minCgpa: "Minimum CGPA",
+      };
+      const key = String(issue.path[0] ?? "");
+      throw new Error((fields[key] ?? "Please check the form") + ": " + issue.message);
+    }
+    const code = typeof payload?.error === "string" ? payload.error : "REQUEST_FAILED";
+    throw new Error(code === "INVALID_REQUEST"
+      ? "Please check the highlighted requirements and try again."
+      : code.toLowerCase().replaceAll("_", " "));
   }
   return payload ?? {};
 }
@@ -183,6 +191,36 @@ export function PlacementJobCreateForm({
       const data = new FormData(
         event.currentTarget,
       );
+      const title = String(data.get("title") ?? "").trim();
+      if (title.length < 3) throw new Error("Job title: At least 3 characters.");
+      if (title.length > 100) throw new Error("Job title must be no longer than 100 characters.");
+      const minimumLpa = nullableDecimal(String(data.get("minimumLpa") ?? ""));
+      const maximumLpa = nullableDecimal(String(data.get("maximumLpa") ?? ""));
+      if (minimumLpa !== null && maximumLpa !== null && maximumLpa < minimumLpa) {
+        throw new Error("Maximum CTC must be greater than or equal to minimum CTC.");
+      }
+      const openingsValue = String(data.get("openings") ?? "").trim();
+      if (openingsValue && (!Number.isInteger(Number(openingsValue)) ||
+        Number(openingsValue) < 1 || Number(openingsValue) > 100_000)) {
+        throw new Error("Openings must be a whole number between 1 and 100,000.");
+      }
+      const years = splitList(String(data.get("passingYears") ?? ""));
+      if (years.some((year) => !/^\\d{4}$/.test(year))) {
+        throw new Error("Passing years must contain four-digit years separated by commas.");
+      }
+      const checks: Array<[string, string, number]> = [
+        ["minCgpa", "Minimum CGPA", 10],
+        ["minTenthPercentage", "Minimum 10th %", 100],
+        ["minTwelfthPercentage", "Minimum 12th %", 100],
+        ["minDiplomaPercentage", "Minimum diploma %", 100],
+        ["minUndergraduatePercentage", "Minimum UG %", 100],
+      ];
+      for (const [key, label, max] of checks) {
+        const value = String(data.get(key) ?? "").trim();
+        if (value && (!Number.isFinite(Number(value)) || Number(value) < 0 || Number(value) > max)) {
+          throw new Error(label + " must be between 0 and " + max + ".");
+        }
+      }
       let relationshipId =
         companyRelationshipId;
 
@@ -599,7 +637,8 @@ export function PlacementJobCreateForm({
               className={inputClass}
               name="title"
               required
-              maxLength={200}
+              minLength={3}
+              maxLength={100}
               placeholder="Software Development Engineer"
             />
           </label>
@@ -610,8 +649,7 @@ export function PlacementJobCreateForm({
             <textarea
               className={textareaClass}
               name="description"
-              required
-              maxLength={20000}
+              maxLength={15000}
               placeholder="Role, responsibilities, requirements and hiring context."
             />
           </label>
@@ -674,6 +712,8 @@ export function PlacementJobCreateForm({
               name="openings"
               type="number"
               min={1}
+              max={100000}
+              step={1}
             />
           </label>
           <label>
@@ -902,6 +942,7 @@ export function PlacementJobCreateForm({
                   name={name}
                   type="number"
                   min={0}
+                  max={name === "minCgpa" ? 10 : name.startsWith("min") && name.includes("Percentage") ? 100 : name.startsWith("max") ? 100 : undefined}
                   step={step}
                 />
               </label>
