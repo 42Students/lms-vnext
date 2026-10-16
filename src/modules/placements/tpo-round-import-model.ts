@@ -8,7 +8,7 @@ export const roundImportActionSchema=z.object({
  overrides:z.array(z.object({line:z.number().int().positive(),applicationId:z.string().uuid()}).strict()).max(1000),
  skippedLines:z.array(z.number().int().positive()).max(1000),
 }).strict();
-export type ImportRow={line:number;identity:string;applicationId:string;email:string;roll:string;companyId:string;
+export type ImportRow={line:number;identity:string;applicationId:string;email:string;roll:string;companyId:string;name:string;
  outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT"|null;rank:number|null;message:string|null};
 function outcome(value:string):ImportRow["outcome"]{
  const token=value.toUpperCase().replace(/[^A-Z]/g,"");
@@ -29,7 +29,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  const app=locate("applicationid","applicantid"),email=locate("email","studentemail"),
   roll=locate("roll","rollnumber","studentroll"),company=locate("companyid","portalid","candidateid"),
   status=locate("result","outcome","status","decision"),rank=locate("waitlistrank","rank"),
-  message=locate("reason","message","studentmessage","comment");
+  message=locate("reason","message","studentmessage","comment"),name=locate("student","studentname","name");
  if(status<0||Math.max(app,email,roll,company)<0)throw Error("Include Result and an Application ID, Email, Roll number or Company ID column.");
  if(grid.length>1000)throw Error("Import up to 1,000 student rows per file.");
  const rows:ImportRow[]=grid.map((parts,i)=>{
@@ -37,7 +37,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   const rankText=value(rank),rankValue=rankText?Number(rankText):null;
   const result=outcome(value(status));
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
-   applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),
+   applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
    outcome:result,rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
    message:value(message)||null};
  });
