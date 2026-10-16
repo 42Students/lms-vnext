@@ -1,8 +1,8 @@
 import "server-only";
-import { and, asc, desc, eq, gte, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, exists, gte, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
-  placementJobs, users } from "@/db/schema";
+  placementJobs, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -30,13 +30,26 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   if(!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const projection=await db.transaction(async tx=>{
    const since=tpoApplicantSubmittedSince(input.submittedWithin,new Date());
+   const queryPattern=tpoApplicantExportSearchPattern(input.search);
+   const rosterMatch=input.search?exists(
+    tx.select({id:learnerProgramEnrollments.id})
+      .from(learnerProgramEnrollments)
+      .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+      .innerJoin(programs,eq(programs.id,cohorts.programId))
+      .innerJoin(departments,eq(departments.id,programs.departmentId))
+      .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+        eq(learnerProgramEnrollments.status,"ACTIVE"),eq(departments.collegeId,collegeId),
+        or(ilike(cohorts.name,queryPattern),ilike(cohorts.code,queryPattern),
+          ilike(programs.name,queryPattern),ilike(departments.name,queryPattern))))
+   ):undefined;
    const scope=and(eq(placementApplications.jobId,job.id),
     since?gte(placementApplications.submittedAt,since):undefined,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
     input.search?or(
-    ilike(users.displayName,tpoApplicantExportSearchPattern(input.search)),
-    ilike(placementJobRoleOptions.title,tpoApplicantExportSearchPattern(input.search))):undefined);
+      ilike(users.displayName,queryPattern),ilike(placementJobRoleOptions.title,queryPattern),
+      ilike(learnerProfiles.rollNumber,queryPattern),ilike(users.email,queryPattern),
+      ilike(users.phoneE164,queryPattern),rosterMatch):undefined);
    const stage=sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
     when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
     then ${placementApplicationScreenings.status}::text else 'PENDING' end`;
@@ -51,6 +64,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
      eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
      eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
@@ -75,6 +89,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
       eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
       eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,
@@ -91,6 +106,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
       eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
       eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
