@@ -84,6 +84,9 @@ export default async function HomePage({
   const desktopBackground = branding?.loginBackgroundUrl ?? null;
   const mobileBackground =
     branding?.loginBackgroundUrlMobile ?? desktopBackground;
+  const collegeMonogram = branding?.collegeName
+    ?.trim().split(/\s+/).slice(0, 2).map((word) => word.charAt(0))
+    .join("").toUpperCase() ?? null;
 
   return (
     <main
@@ -114,6 +117,14 @@ export default async function HomePage({
             referrerPolicy="no-referrer"
             className="h-14 w-auto max-w-[240px] object-contain"
           />
+        ) : collegeMonogram ? (
+          <div className="flex items-center gap-3">
+            <span aria-hidden="true"
+              className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-primary bg-primary-subtle text-xl font-bold text-primary-text">
+              {collegeMonogram}
+            </span>
+            <span className="text-sm font-semibold text-foreground">{branding?.collegeName}</span>
+          </div>
         ) : (
           <p className="text-sm font-medium text-muted-foreground">
             42Students
