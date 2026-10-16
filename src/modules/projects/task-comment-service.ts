@@ -65,15 +65,17 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
     summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id},
     groupKey:"project:"+scope.project.id,
   });
-  await notifyActiveProjectMembers(tx,event.id,{
-    projectId:scope.project.id,collegeId:scope.collegeId,
-    roles:["LEARNER","MENTOR"],
-    exceptUserId:context.user.id,
-    title:"New comment on "+task.title,
-    body:"A team member commented on a project task.",
-    actionHref:scope.access==="MENTOR" ? "/mentor/projects/"+scope.project.id+"?tab=board"
-      : "/learn/projects/"+scope.project.id+"?tab=board",
-  });
+  for (const recipient of ["LEARNER","MENTOR"] as const) {
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:[recipient],
+      exceptUserId:context.user.id,
+      title:"New comment on "+task.title,
+      body:"A team member commented on a project task.",
+      actionHref:recipient==="MENTOR" ? "/mentor/projects/"+scope.project.id+"?tab=board"
+        : "/learn/projects/"+scope.project.id+"?tab=board",
+    });
+  }
   return comment;
  });
 }
