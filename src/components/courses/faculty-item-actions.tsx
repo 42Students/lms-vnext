@@ -21,9 +21,11 @@ function actionLabel(action: Action) {
 export function FacultyItemActions({
   transitionUrl,
   actions,
+  contentType,
 }: {
   transitionUrl: string;
   actions: readonly Action[];
+  contentType?:"VIDEO"|"YOUTUBE"|"RESOURCE"|"LIVE_CLASS";
 }) {
   const router = useRouter();
   const [active, setActive] =
@@ -35,7 +37,12 @@ export function FacultyItemActions({
     if (
       action === "ARCHIVE" &&
       !window.confirm(
-        "Remove this Resource? The lesson entry will be hidden; stored files are retained.",
+        contentType==="RESOURCE"?
+          "Remove this Resource? The lesson entry will be hidden; stored files are retained.":
+          contentType==="VIDEO"?"Delete the video":
+          contentType==="YOUTUBE"?"Delete the YouTube video":
+          contentType==="LIVE_CLASS"?"Delete the live class":
+          "Archive this item? Historical records will be retained.",
       )
     ) {
       return;
