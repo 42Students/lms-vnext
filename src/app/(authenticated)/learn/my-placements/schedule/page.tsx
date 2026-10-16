@@ -35,6 +35,17 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       meetingUrl: row.exception.meetingUrl,
     } : null,
   }));
+  const dateKey=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).format(date);
+  const todayKey=dateKey(now),tomorrowKey=dateKey(new Date(now.getTime()+86400000));
+  const dayLabel=(date:Date|null)=>{
+    if(!date)return "Date to be told";
+    const key=dateKey(date);
+    return (key===todayKey?"Today":key===tomorrowKey?"Tomorrow":
+      new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(date))+
+      " · "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
+  };
   const fmt = (date: Date | null) => date
     ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(date)
     : "Date to be told";
@@ -76,6 +87,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         <h2 className="text-lg font-semibold text-foreground">Coming up ({ahead.length})</h2>
         {ahead.length === 0 ? <p className="text-body">Nothing coming up. When a company&apos;s round is planned and the placement cell books you, it shows here.</p> : null}
         {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
+          <p className="mb-1 text-xs font-semibold uppercase text-primary-text">{dayLabel(row.exception?.scheduledAt??row.scheduledAt)}</p>
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
           {details(row)}
