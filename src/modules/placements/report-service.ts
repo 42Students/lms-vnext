@@ -449,7 +449,9 @@ export async function getPlacementReportWorkspace(
       : "Registrations are current batch-level choices, not season snapshots. " +
       "The placement-rate denominator can therefore differ from historical " +
       "legacy season reports. A drive filter narrows outcomes, not the " +
-      "registered cohort denominator.",
+      "registered cohort denominator. " +
+      (countsAsPlacedAt==="SELECTED"?"Placed means a selected learner.":countsAsPlacedAt==="OFFER_RELEASED"?
+       "Placed means an offer has been released.":"Placed means an offer has been accepted.") ,
   };
 }
 
