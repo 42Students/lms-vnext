@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
@@ -88,6 +89,12 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <td className="p-3">{row.mode==="VIRTUAL"?"Virtual":"On campus"} · {row.venue??row.meetingUrl??"—"}</td>
     <td className="p-3">{row.interviewer??"Not recorded"}</td><td className="p-3">{row.status}</td>
     <td className="p-3"><div className="flex flex-wrap gap-2">
+     {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
+      href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
+       id:row.id,title:"College interview",date:row.scheduledAt,
+       durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
+      }))} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-primary-text">
+      Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
       <button type="button" disabled={busy} onClick={()=>open(row)}
        className="min-h-10 rounded border border-border px-3 text-primary-text">Edit</button>
