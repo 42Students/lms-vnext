@@ -624,6 +624,17 @@ export async function readRecruiterThreadMessages(
   if(thread.jobId)await assertJobForThread(
    tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
   );
+  // Recruiter can see only the title of a job in this exact grant relationship.
+  let jobTitle: string | null = null;
+  if (thread.jobId) {
+   const [job] = await tx.select({title:placementJobs.title})
+    .from(placementJobs).where(and(
+     eq(placementJobs.id,thread.jobId),
+     eq(placementJobs.collegeId,thread.collegeId),
+     eq(placementJobs.companyRelationshipId,grant.companyRelationshipId),
+    )).limit(1);
+   jobTitle=job?.title??null;
+  }
   const [count]=await tx.select({total:sql<number>`count(*)::integer`})
    .from(placementTpoMessages).where(eq(placementTpoMessages.threadId,thread.id));
   const total=Number(count?.total??0);
@@ -643,7 +654,7 @@ export async function readRecruiterThreadMessages(
    .where(eq(placementTpoMessages.threadId,thread.id))
    .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
    .limit(40).offset(window.offset);
-  return {thread,messages:descending.reverse(),page:window.page,pages:window.pages,total,unread:Number(pending?.unread??0)};
+  return {thread,jobTitle,messages:descending.reverse(),page:window.page,pages:window.pages,total,unread:Number(pending?.unread??0)};
  });
 }
 

@@ -91,3 +91,8 @@ My independent method: read legacy `pages/recruiter/{calendar,messages,profile,c
 6. Calendar scope (gap 02): create a draft or PENDING round with a date on a published drive and see whether it appears in legacy and in vNext.
 7. R01: send a placement-cell message to a test recruiter and wait 20 minutes on dev; check for an email and that replying by email posts into the thread.
 8. Time zone: legacy shows times in the viewer's local zone (moment local), vNext always IST; confirm the owner accepts IST-only (all Indian colleges, so likely an intentional difference).
+
+
+## REC-calendar-messages-profile-R02 source checkpoint — 2026-10-17
+
+Recruiter conversation detail now presents the authorized drive title or **General**, and drive threads link back to `/recruiter/drives/{jobId}?tab=messages`. The title is selected inside the existing recruiter-college company grant-scoped read. Focused unit tests were authored; live PostgreSQL, typecheck and browser verification remain open.

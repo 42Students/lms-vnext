@@ -6,6 +6,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hrConversationDetailHref} from "@/modules/placements/hr-conversation-detail-links-model";
+import {hrRecruiterConversationTopic,hrRecruiterConversationDriveHref} from "@/modules/placements/hr-conversation-topic-model";
 import {recruiterProposalMessageMarker} from "@/modules/placements/hr-proposal-message-marker-model";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {hasActiveRecruiter} from "@/modules/identity/context";
@@ -29,12 +30,20 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   if(error instanceof TpoMessagingError)notFound();
   throw error;
  }
+ const topic=hrRecruiterConversationTopic(result.thread.jobId,result.jobTitle);
+ const driveHref=hrRecruiterConversationDriveHref(result.thread.jobId);
  const messages=result.messages.map(message=>({
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
  return <main className="space-y-5">
-  <PageHeader eyebrow="Recruiter · Conversations" title="Placement cell discussion"
+  <PageHeader eyebrow="Recruiter · Conversations" title={"Placement cell · "+topic}
    description="Only messages shared with your currently authorized recruiter account and college are visible."/>
+  <section aria-label="Conversation subject" className="rounded-xl border border-border bg-surface p-4">
+   <p className="font-semibold text-foreground">{driveHref?"Drive: "+topic:"General"}</p>
+   {driveHref?<Link href={driveHref} className="mt-2 inline-flex min-h-11 items-center text-primary-text underline">
+    Open this drive
+   </Link>:<p className="mt-1 text-sm text-body">This conversation is not linked to a particular drive.</p>}
+  </section>
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
    className="inline-flex min-h-11 items-center text-primary-text">Back to conversations</Link>
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
