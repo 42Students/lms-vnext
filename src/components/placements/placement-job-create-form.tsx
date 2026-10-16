@@ -169,6 +169,8 @@ export function PlacementJobCreateForm({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    const submitter = (event.nativeEvent as SubmitEvent).submitter;
+    const reviewPublish = submitter?.getAttribute("value") === "review-publish";
     setPending(true);
 
     try {
@@ -402,7 +404,7 @@ export function PlacementJobCreateForm({
           "Continue in the drive workspace to configure rounds and run the hiring process.",
       });
       router.push(
-        `${basePath}/jobs/${jobId}`,
+        `${basePath}/jobs/${jobId}${reviewPublish ? "?publish=1#drive-lifecycle-publish" : ""}`,
       );
       router.refresh();
     } catch (error) {
@@ -938,14 +940,19 @@ export function PlacementJobCreateForm({
 
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
-        <Button
-          type="submit"
-          disabled={
-            pending || !activeSeason
-          }
-        >
-          {pending ? "Creating…" : "Create draft"}
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button type="submit" disabled={pending || !activeSeason}>
+            {pending ? "Creating…" : "Create draft"}
+          </Button>
+          <button
+            type="submit"
+            value="review-publish"
+            disabled={pending || !activeSeason}
+            className="min-h-10 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
+          >
+            Create &amp; review publish
+          </button>
+        </div>
       </section>
     </form>
   );
