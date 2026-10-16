@@ -35,7 +35,7 @@ const PAGE_SIZE = 20;
 const viewOptions=[
   {key:"all",label:"All"},
   {key:"progress",label:"In progress"},
-  {key:"completed",label:"Final recorded status"},
+  {key:"completed",label:"Finished"},
 ] as const;
 
 function humanize(value: string) {
@@ -246,7 +246,7 @@ export function LearnerApplicationsBrowse({
           ))}
         </div>
         <p className="text-xs leading-5 text-muted-foreground">
-          Final recorded status means rejected or withdrawn here. Shortlisting and applied round results
+          Finished means rejected or withdrawn here. Shortlisting and applied round results
           do not by themselves prove an offer, hiring, or employer completion.
         </p>
         <div role="group" aria-label="Screening stage filter chips" className="flex flex-wrap gap-2">
@@ -386,7 +386,7 @@ export function LearnerApplicationsBrowse({
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/company`}
                 className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border px-3 text-center text-sm font-semibold text-primary-text sm:w-auto"
               >
-                Company preview
+                What the company sees
               </Link>
             </>
           ) : null}
