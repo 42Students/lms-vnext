@@ -282,7 +282,7 @@ export function LearnerCourseDiscussion({
   async function remove(messageId: string) {
     const current=messages.find(row=>row.id===messageId);
     if(!current){setModerationError("Message snapshot missing. Refresh and retry.");return;}
-    if (!window.confirm("Delete this message? This cannot be undone.")) return;
+    if (!window.confirm("Delete this message?")) return;
     setDeletingId(messageId);setModerationError(null);
     try {
       const response = await fetch(
