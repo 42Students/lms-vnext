@@ -538,6 +538,26 @@ export function ProjectWorkspace({
               ) : null}
             </div>
           ) : null}
+          {mode==="MENTOR"?<section className="mt-4 space-y-3 rounded-lg border border-border p-3 text-sm">
+            <p>Mentor: {workspace.members.find(m=>m.role==="MENTOR"&&m.isPrimary)?.displayName??
+              workspace.members.find(m=>m.role==="MENTOR")?.displayName??"Not assigned"}</p>
+            <p>Due date: <strong>{workspace.project.dueLabel??workspace.project.endDate??"No due date"}</strong></p>
+            {workspace.project.phase?<p>Phase: {workspace.project.phase}</p>:null}
+            <div className="flex flex-wrap gap-3">
+              <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board"}
+                className="min-h-10 font-semibold text-primary-text underline">
+                {workspace.project.nextAction??"Next step · Open the Board"} →
+              </Link>
+            </div>
+            {workspace.project.blocker||workspace.tasks.some(t=>t.status==="BLOCKED")?
+              <div role="status" className="rounded-lg border border-warning-border bg-warning-subtle p-3">
+                <p className="font-semibold">Requires attention</p>
+                <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker||
+                  workspace.tasks.filter(t=>t.status==="BLOCKED").length+" blocked tasks"}</p>
+                <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board&lane=BLOCKED"}
+                  className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open blocked work</Link>
+              </div>:null}
+          </section>:null}
           {workspace.project.summary ? (
             <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">{workspace.project.summary}</p>
           ) : null}
