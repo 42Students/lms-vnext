@@ -46,6 +46,7 @@ type CompanySummary = {
   name: string;
   aliases: string[];
   contacts: number;
+  people: {id:string;name:string}[];
   activeContacts: number;
   drivesRan: number;
   acceptedOfferDrives: number;
@@ -640,7 +641,7 @@ export function RecruiterLeadsWorkspace({
                 <table className="w-full text-left text-sm">
                   <thead className="border-b border-border bg-surface-secondary text-muted-foreground">
                     <tr>
-                      {["Company", "Contacts", "Drives run", "Accepted-offer drives", "Students placed"].map(label => (
+                      {["Company", "People", "Drives that ran", "Accepted-offer drives", "Students placed"].map(label => (
                         <th key={label} scope="col" className="px-4 py-3 font-semibold">{label}</th>
                       ))}
                     </tr>
@@ -661,7 +662,18 @@ export function RecruiterLeadsWorkspace({
                             </span>
                           ) : null}
                         </td>
-                        <td className="px-4 py-3">{company.contacts} · {company.activeContacts} active</td>
+                        <td className="px-4 py-3">
+                            {company.people?.length?(
+                              <div className="flex flex-wrap gap-1">
+                                {company.people.map(person=><Link key={person.id}
+                                  href={"/tpo/recruiters/"+encodeURIComponent(person.id)}
+                                  className="text-primary-text underline">{person.name}</Link>)}
+                              </div>
+                            ):<button type="button" className="text-primary-text underline"
+                              onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>
+                              Add a contact
+                            </button>}
+                          </td>
                         <td className="px-4 py-3">{company.drivesRan}</td>
                         <td className="px-4 py-3">{company.acceptedOfferDrives}</td>
                         <td className="px-4 py-3">
