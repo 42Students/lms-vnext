@@ -202,6 +202,9 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               Export authorized team CSV
             </Link>
           </div>
+          <p className="mt-2 text-sm text-body">
+            Colleagues from your company who work with this college. To add one, ask the placement cell to invite them with their work email; the placement cell decides who gets access.
+          </p>
           <form action="/hr/company" method="get" className="mt-3 flex flex-wrap gap-2">
             <input type="hidden" name="collegeId" value={result.grant.collegeId}/>
             <input type="hidden" name="tab" value="team"/>
@@ -222,12 +225,17 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <div className="mt-4 divide-y divide-border">
               {teamPageResult.rows.map((member) => (
                 <div key={member.userId} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
-                  <div>
-                    <div className="font-medium text-foreground">
+                  <div className="flex items-start gap-3">
+                    <span aria-hidden="true" className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface-secondary text-sm font-semibold text-foreground">
+                      {(member.displayName||member.email||"R").trim().charAt(0).toUpperCase()}
+                    </span>
+                    <div>
+                      <div className="font-medium text-foreground">
                       {member.displayName || member.email || "Recruiter"}
                       {member.isYou ? <span className="ml-2 text-xs text-primary">You</span> : null}
                     </div>
-                    <div className="mt-1 text-sm text-muted-foreground">{member.email ?? "Email not available"}</div>
+                      <div className="mt-1 text-sm text-muted-foreground">{member.email ?? "Email not available"}</div>
+                    </div>
                   </div>
                   <div className="text-sm text-muted-foreground">{member.title ?? "Recruiter"}</div>
                 </div>
