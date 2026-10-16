@@ -11,7 +11,7 @@ import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-act
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,
   type TpoBulkUiRow} from "@/modules/placements/tpo-bulk-ui-model";
 
-type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE";
+type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE"|"MOVE_TEST"|"MOVE_INTERVIEW";
 type PreviewPlan={
  target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;ids:string[];
 };
@@ -44,7 +44,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   });
   if(!response.ok)throw new Error(
     response.status===409?"The preview expired or rows changed. Preview again.":
-    response.status===503?"Bulk applications are unavailable until database registration is verified.":
+    response.status===503?"Bulk applications or round-stage storage are unavailable until database registration is verified.":
     response.status===400?"Selection or screening details are invalid. Review and preview again.":
     response.status===403?"You no longer have permission to perform this action.":
     "The action could not be verified. Refresh and try again."
@@ -110,7 +110,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  }
  const options=target==="STUDENTS"
   ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"INELIGIBLE",label:"Make ineligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
-  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"}] as const);
+  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"},{value:"MOVE_TEST",label:"Move to test"},{value:"MOVE_INTERVIEW",label:"Move to interview"}] as const);
  const suggested=suggestTpoBulkAction(actionCounts);
  if(rows.length===0)return null;
  return <section aria-label={target==="STUDENTS"?"Bulk student actions":"Bulk application actions"}
@@ -219,11 +219,11 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   </button>
   {preview&&plan&&!isTpoBulkPreviewCurrent(plan.ids,[...permitted])?
     <p role="status" className="text-sm text-warning">The roster changed. Select and preview these rows again.</p>:null}
-  {preview&&plan&&["INELIGIBLE","REJECTED","SEND_MESSAGE"].includes(plan.action)?(
+  {preview&&plan&&["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)?(
     <label className="flex items-start gap-3 rounded-md border border-warning bg-surface-subtle p-4 text-sm">
      <input type="checkbox" checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}
       disabled={busy||outcomes.length>0} className="mt-1"/>
-     I understand this bulk action may change eligibility, reject applications or notify students. I have reviewed the preview and left-out rows.
+     I understand this bulk action may change eligibility, reject applications, advance applicants to a scheduled round or notify students. I have reviewed the preview and left-out rows.
     </label>
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
