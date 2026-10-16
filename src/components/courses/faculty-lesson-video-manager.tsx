@@ -21,7 +21,7 @@ type Action = (signal: AbortSignal) => Promise<void>;
 type LessonContent = { id:string; contentType:string; storageKey:string|null; status:string; lessonId:string; deliveryId:string|null };
 export function FacultyLessonVideoManager({
   lessonId,deliveryId,nextContentSequence,
-}: { lessonId:string;deliveryId:string;nextContentSequence:number }) {
+}: { lessonId:string;deliveryId:string|null;nextContentSequence:number }) {
   const router=useRouter();
   const [videos,setVideos]=useState<ManagedVideo[]>([]);
   const [loading,setLoading]=useState(true);
@@ -41,7 +41,7 @@ export function FacultyLessonVideoManager({
 
   async function list(signal:AbortSignal){
     const response=await fetch(
-      `/api/courses/lessons/${encodeURIComponent(lessonId)}/videos?deliveryId=${encodeURIComponent(deliveryId)}`,
+      `/api/courses/lessons/${encodeURIComponent(lessonId)}/videos${deliveryId?`?deliveryId=${encodeURIComponent(deliveryId)}`:""}`,
       {credentials:"same-origin",cache:"no-store",signal},
     );
     if(!response.ok)throw new Error(await storageApiError(response));
@@ -121,7 +121,7 @@ export function FacultyLessonVideoManager({
   }
   async function lessonContents(signal:AbortSignal):Promise<LessonContent[]>{
     const response=await fetch(
-      `/api/courses/lesson-contents?lessonId=${encodeURIComponent(lessonId)}&deliveryId=${encodeURIComponent(deliveryId)}`,
+      `/api/courses/lesson-contents?lessonId=${encodeURIComponent(lessonId)}${deliveryId?`&deliveryId=${encodeURIComponent(deliveryId)}`:""}`,
       {credentials:"same-origin",cache:"no-store",signal},
     );
     if(!response.ok)throw new Error(await storageApiError(response));
@@ -288,7 +288,7 @@ export function FacultyLessonVideoManager({
             </label>
           </div>
           {!canEdit?<p role="status" className="text-xs text-muted-foreground">Shared video · read only in this Section.</p>:null}
-          {previewId===video.id?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
+          {previewId===video.id&&deliveryId?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
           {video.lessonContentId?<p className="text-xs text-muted-foreground">Linked to lesson content</p>:null}
           {video.processingStatus==="PROCESSING"?<p role="status" className="text-xs text-muted-foreground">Checking file. Playback and publishing are not available yet.</p>:null}
         </li>;
