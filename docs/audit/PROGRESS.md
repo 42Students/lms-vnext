@@ -8,17 +8,17 @@ Rounds: Round 0 done; Round A done for all accounts; Round R (independent advers
 
 | Account | Pages audited | Pages reviewed | Rows | Round A | MISSED | S1 | S2 | S3 | S4 | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | CLOSED-SINCE | WRONG | Open work | Closed % |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 590 | 7 | 7 | 33 | 50 | 6 | 1 | 647 | 6.6% |
-| recruiter | 2 | 2 | 116 | 104 | 12 | 6 | 28 | 64 | 18 | 95 | 3 | 0 | 6 | 10 | 2 | 0 | 108 | 6.9% |
+| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 589 | 8 | 2 | 38 | 50 | 6 | 1 | 647 | 6.6% |
+| recruiter | 2 | 2 | 116 | 104 | 12 | 6 | 28 | 64 | 18 | 92 | 6 | 0 | 6 | 10 | 2 | 0 | 108 | 6.9% |
 | learner | 6 | 3 | 231 | 208 | 23 | 5 | 57 | 109 | 60 | 190 | 0 | 0 | 6 | 33 | 1 | 1 | 223 | 3.0% |
 | faculty | 3 | 2 | 105 | 87 | 18 | 2 | 14 | 46 | 43 | 92 | 0 | 0 | 0 | 7 | 0 | 6 | 99 | 0.0% |
-| college | 9 | 0 | 232 | 215 | 17 | 13 | 92 | 90 | 37 | 193 | 0 | 7 | 0 | 29 | 2 | 1 | 222 | 3.9% |
-| superadmin | 9 | 1 | 304 | 301 | 3 | 12 | 103 | 151 | 38 | 268 | 0 | 0 | 0 | 36 | 0 | 0 | 304 | 0.0% |
+| college | 9 | 0 | 232 | 215 | 17 | 13 | 92 | 90 | 37 | 193 | 0 | 0 | 7 | 29 | 2 | 1 | 222 | 3.9% |
+| superadmin | 9 | 4 | 309 | 301 | 8 | 13 | 104 | 151 | 41 | 271 | 0 | 0 | 0 | 38 | 0 | 0 | 309 | 0.0% |
 | mentor | 2 | 1 | 88 | 77 | 11 | 0 | 17 | 52 | 19 | 86 | 0 | 0 | 0 | 2 | 0 | 0 | 88 | 0.0% |
 | public | 2 | 0 | 68 | 68 | 0 | 3 | 24 | 23 | 18 | 61 | 0 | 0 | 0 | 7 | 0 | 0 | 68 | 0.0% |
-| **all** | 45 | 21 | 1838 | 1677 | 161 | 112 | 623 | 807 | 296 | 1575 | 10 | 14 | 45 | 174 | 11 | 9 | 1759 | 3.8% |
+| **all** | 45 | 24 | 1843 | 1677 | 166 | 113 | 624 | 807 | 299 | 1574 | 14 | 2 | 57 | 176 | 11 | 9 | 1764 | 3.8% |
 
-Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 84, S2 592, S3 798, S4 285.
+Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 85, S2 593, S3 798, S4 288.
 
 ## Closure status (git citations since 2026-10-15)
 
@@ -28,24 +28,24 @@ Open work = OPEN + UNCONFIRMED + IN-BRANCH. Closed % = (FIXED-ON-MAIN + VERIFIED
 
 | Account | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| tpo | 694 | 590 | 7 | 7 | 33 | 50 | 1 | 6 | 6.6% |
-| recruiter | 116 | 95 | 3 | 0 | 6 | 10 | 0 | 2 | 6.9% |
+| tpo | 694 | 589 | 8 | 2 | 38 | 50 | 1 | 6 | 6.6% |
+| recruiter | 116 | 92 | 6 | 0 | 6 | 10 | 0 | 2 | 6.9% |
 | learner | 231 | 190 | 0 | 0 | 6 | 33 | 1 | 1 | 3.0% |
 | faculty | 105 | 92 | 0 | 0 | 0 | 7 | 6 | 0 | 0.0% |
-| college | 232 | 193 | 0 | 7 | 0 | 29 | 1 | 2 | 3.9% |
-| superadmin | 304 | 268 | 0 | 0 | 0 | 36 | 0 | 0 | 0.0% |
+| college | 232 | 193 | 0 | 0 | 7 | 29 | 1 | 2 | 3.9% |
+| superadmin | 309 | 271 | 0 | 0 | 0 | 38 | 0 | 0 | 0.0% |
 | mentor | 88 | 86 | 0 | 0 | 0 | 2 | 0 | 0 | 0.0% |
 | public | 68 | 61 | 0 | 0 | 0 | 7 | 0 | 0 | 0.0% |
-| **all** | 1838 | 1575 | 10 | 14 | 45 | 174 | 9 | 11 | 3.8% |
+| **all** | 1843 | 1574 | 14 | 2 | 57 | 176 | 9 | 11 | 3.8% |
 
 ### By severity
 
 | Severity | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| S1 | 112 | 65 | 5 | 6 | 21 | 14 | 0 | 1 | 25.0% |
-| S2 | 623 | 530 | 4 | 8 | 18 | 58 | 2 | 3 | 4.7% |
-| S3 | 807 | 733 | 1 | 0 | 5 | 64 | 0 | 4 | 1.1% |
-| S4 | 296 | 247 | 0 | 0 | 1 | 38 | 7 | 3 | 1.4% |
+| S1 | 113 | 66 | 5 | 1 | 26 | 14 | 0 | 1 | 24.8% |
+| S2 | 624 | 527 | 7 | 1 | 25 | 59 | 2 | 3 | 4.7% |
+| S3 | 807 | 731 | 2 | 0 | 5 | 65 | 0 | 4 | 1.1% |
+| S4 | 299 | 250 | 0 | 0 | 1 | 38 | 7 | 3 | 1.4% |
 
 ### By lane
 
@@ -53,22 +53,22 @@ Lane = the lane branch that carried the latest citing commit when known, else th
 
 | Lane | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| chat-2 | 241 | 173 | 5 | 2 | 45 | 14 | 0 | 2 | 20.3% |
+| chat-2 | 241 | 172 | 6 | 2 | 45 | 14 | 0 | 2 | 20.3% |
 | chat-5 | 299 | 273 | 2 | 0 | 0 | 22 | 1 | 1 | 0.3% |
-| chat-7 | 596 | 524 | 3 | 0 | 0 | 59 | 7 | 3 | 0.5% |
-| chat-9 | 702 | 605 | 0 | 12 | 0 | 79 | 1 | 5 | 2.4% |
+| chat-7 | 596 | 521 | 6 | 0 | 0 | 59 | 7 | 3 | 0.5% |
+| chat-9 | 707 | 608 | 0 | 0 | 12 | 81 | 1 | 5 | 2.4% |
 
 ### Throughput per lane
 
-Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-16T14:28:14.589Z).
+Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-16T14:29:42.301Z).
 
 | Lane | Last 24 h | 2026-10-16 | Total |
 |---|---|---|---|
-| chat-2 | 52 | 52 | 52 |
+| chat-2 | 53 | 53 | 53 |
 | chat-5 | 2 | 2 | 2 |
-| chat-7 | 3 | 3 | 3 |
+| chat-7 | 6 | 6 | 6 |
 | chat-9 | 12 | 12 | 12 |
-| **all** | 69 | 69 | 69 |
+| **all** | 73 | 73 | 73 |
 
 ### 20 most recent fixes on main
 
@@ -83,17 +83,17 @@ Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the w
 | LEARNER-projects-25 | S1 | VERIFIED | 7b5c5e1bd | 2026-10-16 19:17 |
 | TPO-students-R01 | S2 | VERIFIED | e40d53128 | 2026-10-16 19:16 |
 | LEARNER-profile-misc-15 | S2 | VERIFIED | 66a65e3b8 | 2026-10-16 19:15 |
-| COL-course-tabs-02 | S1 | FIXED-ON-MAIN | 8347a61cd | 2026-10-16 19:14 |
-| COL-course-tabs-01 | S1 | FIXED-ON-MAIN | 8347a61cd | 2026-10-16 19:14 |
+| COL-course-tabs-02 | S1 | VERIFIED | 8347a61cd | 2026-10-16 19:14 |
+| COL-course-tabs-01 | S1 | VERIFIED | 8347a61cd | 2026-10-16 19:14 |
 | TPO-inbox-team-02 | S1 | VERIFIED | 506049783 | 2026-10-16 19:14 |
 | TPO-inbox-team-01 | S1 | VERIFIED | 506049783 | 2026-10-16 19:14 |
 | TPO-campaigns-public-32 | S1 | VERIFIED | 506049783 | 2026-10-16 19:14 |
 | LEARNER-projects-24 | S2 | VERIFIED | 2417f6d74 | 2026-10-16 19:13 |
-| COL-academic-setup-01 | S1 | FIXED-ON-MAIN | dd7fa86a2 | 2026-10-16 19:12 |
+| COL-academic-setup-01 | S1 | VERIFIED | dd7fa86a2 | 2026-10-16 19:12 |
 | TPO-inbox-team-03 | S2 | VERIFIED | 3407fa46e | 2026-10-16 19:12 |
-| COL-projects-02 | S2 | FIXED-ON-MAIN | aa7b5cac6 | 2026-10-16 19:11 |
+| COL-projects-02 | S2 | VERIFIED | aa7b5cac6 | 2026-10-16 19:11 |
 | LEARNER-placements-50 | S1 | VERIFIED | 182905d0d | 2026-10-16 19:10 |
-| COL-projects-01 | S1 | FIXED-ON-MAIN | 9af4e8aa9 | 2026-10-16 19:09 |
+| COL-projects-01 | S1 | VERIFIED | 9af4e8aa9 | 2026-10-16 19:09 |
 
 ### Citation parse problems
 
@@ -135,9 +135,9 @@ None.
 | college | placements | yes | no | 26 | 2 | 13 | 10 | 1 | 26 |  |  |
 | college | projects | yes | no | 23 | 1 | 9 | 8 | 5 | 21 |  |  |
 | college | verification-misc | yes | no | 20 | 0 | 8 | 9 | 3 | 20 |  |  |
-| superadmin | academics-people-1-academic-setup | yes | no | 47 | 5 | 9 | 22 | 11 | 47 |  |  |
-| superadmin | academics-people-2-courses-content | yes | no | 30 | 2 | 10 | 13 | 5 | 30 |  |  |
-| superadmin | academics-people-3-people-recruiters | yes | no | 39 | 0 | 16 | 22 | 1 | 39 |  |  |
+| superadmin | academics-people-1-academic-setup | yes | yes | 52 | 6 | 10 | 24 | 12 | 52 | 5.8% |  |
+| superadmin | academics-people-2-courses-content | yes | yes | 30 | 2 | 10 | 13 | 5 | 30 | 5.8% |  |
+| superadmin | academics-people-3-people-recruiters | yes | yes | 39 | 0 | 16 | 20 | 3 | 39 | 5.8% |  |
 | superadmin | placements-projects-a-placements | yes | no | 50 | 1 | 25 | 23 | 1 | 50 |  |  |
 | superadmin | placements-projects-b-projects | yes | no | 43 | 2 | 16 | 23 | 2 | 43 |  |  |
 | superadmin | placements-projects-c-tracker | yes | no | 24 | 1 | 6 | 12 | 5 | 24 |  |  |
@@ -163,7 +163,7 @@ None.
 - faculty/assessments: 25.8% (- Discrepancy rate = (MISSED 10 + WRONG 4 + SEVERITY-CHANGE 2) / (52 + 10) = 16 / 62 = 25.8%. Above the 15% threshold in the plan (section 5): re-audit of this account is indicated, although 6 of the )
 - faculty/courses: 27.9% (Summary: Round A gaps 35 -> CONFIRMED 31, WRONG 2, SEVERITY-CHANGE 2. MISSED 8 (`FAC-courses-R01` to `R08`). Discrepancy rate = (8 + 2 + 2) / (35 + 8) = 12 / 43 = 27.9%.)
 
-Reviews received: 24 of 45 pages. Mean discrepancy rate across received reviews: 17.6%.
+Reviews received: 25 of 45 pages. Mean discrepancy rate across received reviews: 17.1%.
 
 ## Reviews still pending
 
@@ -180,9 +180,6 @@ Reviews received: 24 of 45 pages. Mean discrepancy rate across received reviews:
 - college/placements
 - college/projects
 - college/verification-misc
-- superadmin/academics-people-1-academic-setup
-- superadmin/academics-people-2-courses-content
-- superadmin/academics-people-3-people-recruiters
 - superadmin/placements-projects-a-placements
 - superadmin/placements-projects-b-projects
 - superadmin/placements-projects-c-tracker
