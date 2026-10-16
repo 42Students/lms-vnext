@@ -322,6 +322,7 @@ export async function listCollegeAssessmentAggregate(
         .where(inArray(quizAttempts.quizId,ids))
         .groupBy(quizAttempts.quizId);
   const statsById=new Map(submissionStats.map(item=>[item.id,item]));
+  const reportInstant=new Date();
   const items: CollegeAssessmentAggregateItem[] = rows.map((row) => ({
     id: row.id,
     title: row.title,
@@ -341,6 +342,8 @@ export async function listCollegeAssessmentAggregate(
     submittedLearners:statsById.get(row.id)?.submitted??0,
     gradedLearners:statsById.get(row.id)?.graded??0,
     resultsPublished: kind==="QUIZ" ? row.resultsPublished ?? false : null,
+    resultsReleaseReady:kind==="QUIZ"&&(row.status==="CLOSED"||
+      (row.status==="PUBLISHED"&&row.dueAt!==null&&row.dueAt<=reportInstant)),
   }));
   return {
     kind,
