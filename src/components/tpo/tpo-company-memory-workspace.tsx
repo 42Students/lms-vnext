@@ -46,7 +46,7 @@ type CompanyMemory = {
   hiredPerYear: Array<{ year: string; hired: number }>;
   placedMetricStatus: string;
   timeline: TimelineItem[];
-  documents: never[];
+  documents: {id:string;jobId:string;jobTitle:string;createdAt:string;revokedAt:string|null}[];
   documentsStatus: string;
 };
 type Phase = "loading" | "ready" | "error" | "migration-pending" | "not-found";
@@ -242,9 +242,19 @@ export function TpoCompanyMemoryWorkspace({
 
           <section className="rounded-lg border border-border bg-surface p-4">
             <h2 className="font-semibold text-foreground">Documents</h2>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Shared applicant-list history is waiting for the DB09 share-link persistence batch. It is intentionally not reconstructed from unrelated activity.
-            </p>
+            {company.documentsStatus!=="READY"?
+              <p role="status" className="mt-3 text-sm text-muted-foreground">
+                Share-link history is unavailable until applicant-share storage is registered.
+              </p>:company.documents.length===0?
+              <p className="mt-3 text-sm text-muted-foreground">Nothing shared yet.</p>:
+              <ul className="mt-3 divide-y divide-border">
+                {company.documents.map(doc=><li key={doc.id} className="py-3">
+                  <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
+                  <p className="text-xs text-muted-foreground">{doc.jobTitle}{doc.revokedAt?" · Link withdrawn":""}</p>
+                  <Link className="text-sm text-primary-text underline"
+                    href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
+                </li>)}
+              </ul>}
           </section>
         </div>
 
