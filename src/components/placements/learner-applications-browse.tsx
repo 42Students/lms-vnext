@@ -45,9 +45,11 @@ function humanize(value: string) {
 const formatDate=learnerApplicationDateLabel;
 
 export function LearnerApplicationsBrowse({
-  items,interviewLinks=[],assessmentLinks=[],
+  items,interviewLinks=[],assessmentLinks=[],scheduledRounds=[],
 }: {
   items: readonly LearnerPlacementJourneyItem[];
+  scheduledRounds?:readonly {applicationId:string;roundId:string;roundName:string;
+    scheduledAt:string|null;mode:string;venue:string|null;isRescheduled:boolean}[];
   interviewLinks?:readonly OwnApplicationInterviewLink[];
   assessmentLinks?:readonly OwnApplicationAssessmentLink[];
 }) {
@@ -430,6 +432,27 @@ export function LearnerApplicationsBrowse({
               <div><dt className="text-xs font-semibold text-muted-foreground">Screening</dt>
                 <dd className="mt-1 text-sm text-foreground">{humanize(learnerApplicationStage(selected))}</dd></div>
             </dl>
+            <section aria-label="Selection process" className="rounded-xl border border-border p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-semibold text-foreground">Selection process</h3>
+                <Link href="/learn/my-placements/schedule" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">See in schedule</Link>
+              </div>
+              <ol className="mt-3 space-y-2 text-sm text-body">
+                {scheduledRounds.filter(round=>round.applicationId===selected.applicationId)
+                  .sort((a,b)=>Date.parse(a.scheduledAt??"9999-12-31")-Date.parse(b.scheduledAt??"9999-12-31"))
+                  .map(round=><li key={round.roundId} className="rounded-md border border-border p-3">
+                    <p className="font-semibold text-foreground">{round.roundName} · Booked</p>
+                    <p>{round.scheduledAt?formatDate(new Date(round.scheduledAt)):"Date to be told"}
+                      {" · "}{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":round.mode}
+                    </p>
+                    <p>{round.venue??"Venue to be told"}</p>
+                    {round.isRescheduled?<p className="text-xs font-semibold text-primary-text">You asked to reschedule · Updated time shown</p>:null}
+                  </li>)}
+                {!scheduledRounds.some(round=>round.applicationId===selected.applicationId)?<li>
+                  No upcoming rounds are booked for this application.
+                </li>:null}
+              </ol>
+            </section>
             <section aria-label="Application milestones" className="rounded-xl border border-border bg-surface-subtle p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold text-foreground">Recent recorded milestones</h3>
