@@ -31,3 +31,6 @@ Still required: shared `apiFetch` and `useGuardedAction` adoption after chat-14 
 | GR-04 | DONE (chat-12 bulk action panel) | `apiFetch` for preview/confirm/share; `tests/unit/chat12-round4-bulk-safety.test.ts` named `GR-04` |
 | GR-30 | DONE (bulk action, saved view delete, nudges) | Guarded Action hook; named `GR-30` in `tests/unit/chat12-round4-bulk-safety.test.ts` |
 | GR-35 | DONE (nudge and saved-view delete) | In-app Dialog confirmation instead of native window.confirm; named `GR-35` in `tests/unit/chat12-round4-bulk-safety.test.ts` |
+
+| GR-30 | DONE (TPO Requests and Verification) | `useGuardedAction` on decision and review confirm; `tests/unit/chat12-round4-request-guards.test.ts` named `GR-30` |
+| GR-31 | OPEN (partial) | Immediate-approval and modal decision both guarded; other TPO actions need audits; `tests/unit/chat12-round4-request-guards.test.ts` named `GR-31` |
