@@ -23,6 +23,7 @@ export type SharedApplicant = {
   rollNumber?: string | null;
   branch?: string | null; phone?: string | null;
   githubUrl?:string|null;portfolioUrl?:string|null;
+  resumeShared?:boolean;
   sharedSkills?:string[];sharedProjects?:Array<{name:string;url:string}>;
   ugPercentage?: string | null; tenthPercentage?: string | null;
   twelfthOrDiplomaPercentage?: string | null;
