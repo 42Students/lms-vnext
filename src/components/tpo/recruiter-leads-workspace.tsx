@@ -342,7 +342,7 @@ export function RecruiterLeadsWorkspace({
       new Blob([recruiterTableExportCsv(chosen)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
-    link.href=url;link.download="recruiter-leads"+(query.trim()?"-filtered":"")+"."+format;
+    link.href=url;link.download="recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":"")+"."+format;
     document.body.appendChild(link);link.click();link.remove();
     URL.revokeObjectURL(url);
     setExportFeedback(chosen.length+" recruiter leads exported to "+format.toUpperCase());
