@@ -240,7 +240,7 @@ export function PersonOnboardDialog({
                 Select at least one membership role.
               </p>
             ) : null}
-          </fieldset>}
+          </fieldset> : null}
         </div>
       </Dialog>
     </>
