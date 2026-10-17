@@ -31,6 +31,9 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
  return <main className="space-y-6">
   <PageHeader eyebrow="Recruiter · Interview coordination" title="Interview slots"
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>
+  <p role="status" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm text-body">
+    Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
+  </p>
   <nav className="flex flex-wrap gap-3">
    <Link href={"/recruiter/drives/"+jobId+"?tab=rounds"} className="inline-flex min-h-11 items-center text-primary-text">Drive rounds</Link>
    <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-primary-text">Recruiter calendar</Link>
