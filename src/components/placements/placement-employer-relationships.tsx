@@ -23,6 +23,8 @@ export type PlacementEmployerRelationshipItem = {
   companyStatus?:string;
   relationshipStatus?:string;
   industry?:string|null;
+  drives?:number;
+  lastActive?:Date|null;
   isTrusted: boolean;
   ownerMembershipId: string | null;
 };
@@ -205,6 +207,11 @@ export function PlacementEmployerRelationships({
                     Domains: {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
                     {item.industry?" · "+item.industry:""}
                   </p>
+                  {typeof item.drives==="number" ? <p className="mt-1 text-sm text-body">
+                    Drives: {item.drives} · Last active: {item.lastActive
+                      ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.lastActive)
+                      : "Not recorded"}
+                  </p> : null}
                   {item.websiteUrl ? (
                     <a
                       className="mt-1 inline-block text-xs font-semibold text-primary-text hover:text-primary-hover"
