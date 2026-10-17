@@ -1,6 +1,8 @@
 "use client";
 
 import {Fragment,useEffect,useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {safeTpoShellCounters,shellUnreadBadge,type TpoShellCounters} from "./shell-counts-model";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,17 +29,16 @@ export function SidebarNav({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  const [tpoCounts,setTpoCounts]=useState<{requests:number;messages:number;notifications:number;team:number|null}|null>(null);
+  const [tpoCounts,setTpoCounts]=useState<TpoShellCounters|null>(null);
   useEffect(()=>{
    if(!pathname.startsWith("/tpo/"))return;
    let active=true;
    const refresh=async()=>{
     if(document.hidden)return;
     try{
-     const response=await fetch("/api/tpo/shell-counts",{credentials:"same-origin",cache:"no-store"});
-     if(!response.ok)return;
-     const value=await response.json() as {requests:number;messages:number;notifications:number;team:number|null};
-     if(active)setTpoCounts(value);
+     const response=await apiFetch<unknown>("/api/tpo/shell-counts",{credentials:"same-origin",cache:"no-store"});
+     const value=safeTpoShellCounters(response);
+     if(active&&value)setTpoCounts(value);
     }catch{/* Preserve previous count on transport failure. */}
    };
    void refresh();
@@ -124,8 +125,9 @@ export function SidebarNav({
               const count=item.href==="/tpo/requests"?tpoCounts.requests:
                item.href==="/tpo/messages"?tpoCounts.messages:
                item.href==="/tpo/team"?tpoCounts.team??0:tpoCounts.notifications;
-              return count>0?<span aria-label={count+" pending"} className="ml-auto min-w-6 rounded-full bg-primary-subtle px-2 py-1 text-center text-xs font-semibold text-primary-text">
-               {count>99?"99+":count}
+              const badge=shellUnreadBadge(count);
+              return badge?<span aria-label={count+" pending"} className="ml-auto min-w-6 rounded-full bg-primary-subtle px-2 py-1 text-center text-xs font-semibold text-primary-text">
+               {badge}
               </span>:null;
              })():null}
           </Link>
