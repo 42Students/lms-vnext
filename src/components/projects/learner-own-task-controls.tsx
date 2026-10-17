@@ -8,6 +8,7 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
  const available=sprints.filter(row=>row.status==="ACTIVE");
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [sprintId,setSprintId]=useState(available[0]?.id??"");
+ const [status,setStatus]=useState<"TODO"|"IN_PROGRESS"|"BLOCKED">("TODO");
  const [title,setTitle]=useState(""),[description,setDescription]=useState(""),[acceptance,setAcceptance]=useState("");
  const [priority,setPriority]=useState("MEDIUM"),[estimate,setEstimate]=useState(""),[due,setDue]=useState("");
  const [type,setType]=useState("");
