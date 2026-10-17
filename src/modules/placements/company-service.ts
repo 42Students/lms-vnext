@@ -17,7 +17,6 @@ import {
   membershipRoles,
   placementCompanies,
   placementCompanyRelationships,
-  placementCompanyAliases,
   placementJobs,
   users,
 } from "@/db/schema";

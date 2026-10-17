@@ -18,6 +18,8 @@ export function normalizeCompanyDomain(raw:string){
  const normalized=emailDomain.trim().toLowerCase().replace(/^www\./,"");
  if(!companyDomainSchema.safeParse(normalized).success)throw new Error("Enter a valid company domain.");
  if(PERSONAL_EMAIL_HOSTS.has(normalized))throw new Error("Personal email domains cannot be claimed.");
+ if(normalized.endsWith(".edu")||normalized.endsWith(".ac.in"))
+  throw new Error("A college domain cannot be claimed by a company.");
  return normalized;
 }
 export function normalizeCompanyAlias(raw:string){

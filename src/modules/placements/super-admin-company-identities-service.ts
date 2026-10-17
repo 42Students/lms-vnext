@@ -68,11 +68,11 @@ export async function changeSuperAdminCompanyAlias(context:RequestContext,raw:un
   const [company]=await tx.select().from(placementCompanies)
     .where(eq(placementCompanies.id,cmd.companyId)).for("update").limit(1);
   if(!company||company.status!=="ACTIVE")throw new Error("Company is unavailable.");
-  if(canonicalCompanyAlias(company.name)===canonicalCompanyAlias(alias))
+  if(cmd.action==="ADD"&&canonicalCompanyAlias(company.name)===canonicalCompanyAlias(alias))
    throw new Error("This is already the company's canonical name.");
   const [otherName]=await tx.select({id:placementCompanies.id}).from(placementCompanies)
    .where(and(ilike(placementCompanies.name,alias),ne(placementCompanies.id,company.id))).limit(1);
-  if(otherName)throw new Error("Other name conflicts with another company.");
+  if(cmd.action==="ADD"&&otherName)throw new Error("Other name conflicts with another company.");
   const [existing]=await tx.select().from(placementCompanyAliases)
    .where(ilike(placementCompanyAliases.alias,alias)).limit(1);
   if(cmd.action==="ADD"){

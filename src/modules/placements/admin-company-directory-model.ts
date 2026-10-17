@@ -21,6 +21,7 @@ export type AdminCompanyRow = {
   companyStatus: string; trusted: boolean; verifiedAt?: Date | null; website: string | null;
   industry?: string | null; about?: string | null; logoPublicUrl?: string | null;
   updatedAt?: Date;
+  addedByType?: string;
   domains?: readonly string[]; aliases?: readonly string[];
   primaryDomain?:string|null; companyCollegeCount?:number; driveCount?:number;
   lastActiveAt?:Date|null; createdAt?:Date;
