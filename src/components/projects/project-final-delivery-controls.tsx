@@ -176,6 +176,7 @@ export function LearnerFinalDeliveryControl({
           "PATCH",payload,
         );
         lastSavedSnapshot.current=snapshot;
+        failedSnapshot.current=null;
         setAutosaveStatus("saved");
       }catch{
         setAutosaveStatus("failed");
