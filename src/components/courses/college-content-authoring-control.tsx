@@ -3,7 +3,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
-type Existing={id:string;lessonId:string;deliveryId:string|null;title:string;externalUrl:string|null;notes:string|null;
+type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
 type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
 type Delivery={deliveryId:string;offeringId:string;sectionName:string;sectionCode:string};
