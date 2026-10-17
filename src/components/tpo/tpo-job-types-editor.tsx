@@ -1,4 +1,5 @@
 "use client";
+import {TpoCustomJobTypeRename} from "./tpo-custom-job-type-rename";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {filterTpoJobTypes,tpoJobTypesEmptyMessage,type TpoJobTypeStatusFilter} from "@/modules/placements/tpo-job-type-filter-model";
@@ -20,6 +21,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     data.error==="TPO_JOB_TYPE_LAST_ACTIVE"?"Keep at least one job type visible.":
     data.error==="TPO_JOB_TYPE_LIMIT"?"You can add up to 30 custom job types.":
     data.error==="TPO_JOB_TYPE_EXISTS"?"This job type already exists.":
+    data.error==="TPO_JOB_TYPE_BUILTIN"?"This is a fixed job type.":
     data.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
     data.error??"Job types were not saved."
    );
@@ -40,6 +42,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    </label>
    <button type="submit" disabled={label.trim().length<2||atLimit||busy} className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Add job type</button>
   </form>
+  <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
   <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Find job type
@@ -58,7 +61,9 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
   <p role="status" className="text-xs text-muted-foreground">{visible.length} of {types.length} custom job types</p>
   {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{tpoJobTypesEmptyMessage(types.length,search,status)}</p>:
    <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded border border-border p-3">
-    <span className="min-w-0 break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
+    <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
+     <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
+    </div>
     <button type="button" disabled={busy||(item.active&&activeCount<=1)} title={item.active&&activeCount<=1?"Keep at least one job type visible.":undefined} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,
     })} className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">

@@ -69,3 +69,36 @@ export async function deleteBlockedDate(ctx:RequestContext,raw:unknown){
   return {removed:true,id:current.id};
  });
 }
+
+const removeRangeSchema=z.object({
+ startDay:z.iso.date(),endDay:z.iso.date(),
+ versions:z.array(z.object({id:z.string().uuid(),expectedVersion:z.iso.datetime({offset:true})}).strict()).min(1).max(90),
+}).strict();
+export async function removeBlockedRange(ctx:RequestContext,raw:unknown){
+ const input=removeRangeSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ const days=rangeDays(input.startDay,input.endDay);
+ if(days.length!==input.versions.length)throw new BlockedDateError("DATE_RANGE_INVALID");
+ if(!await placementTableExists("placement_tpo_blocked_dates"))throw new BlockedDateError("DATE_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
+    .where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college)throw new BlockedDateError("DATE_NOT_FOUND");
+  const records=await tx.select().from(placementTpoBlockedDates)
+    .where(and(eq(placementTpoBlockedDates.collegeId,collegeId),
+     inArray(placementTpoBlockedDates.id,input.versions.map(v=>v.id)))).for("update");
+  if(records.length!==days.length||
+     records.some(item=>!days.includes(item.day)||
+      input.versions.find(v=>v.id===item.id)?.expectedVersion!==item.updatedAt.toISOString()))
+   throw new BlockedDateError("DATE_STALE");
+  await tx.delete(placementTpoBlockedDates).where(and(
+   eq(placementTpoBlockedDates.collegeId,collegeId),
+   inArray(placementTpoBlockedDates.id,input.versions.map(v=>v.id))));
+  await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
+   eventType:"placements.tpo_blocked_range.removed",
+   subjectType:"BLOCKED_DATE",subjectId:records[0]!.id,
+   summary:"TPO removed a blocked scheduling range",
+   metadata:{startDay:input.startDay,endDay:input.endDay,count:days.length}});
+  return {removed:days.length};
+ });
+}
