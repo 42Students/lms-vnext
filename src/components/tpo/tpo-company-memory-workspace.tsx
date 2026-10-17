@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
 import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -88,9 +89,11 @@ function legacyActivityDay(value:string){
 export function TpoCompanyMemoryWorkspace({
   collegeId,
   companyName,
+  actorMembershipId,
 }: {
   collegeId: string;
   companyName: string;
+  actorMembershipId: string;
 }) {
   const [company, setCompany] = useState<CompanyMemory | null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
@@ -263,6 +266,11 @@ export function TpoCompanyMemoryWorkspace({
           </ul>
         </section>
       ):null}
+      {company.canonicalCompanyId?<TpoCompanyTeamConversation
+        companyId={company.canonicalCompanyId} companyName={company.name}
+        actorMembershipId={actorMembershipId}/>:<p role="status" className="text-sm text-body">
+        Link this company to an authorized college employer before starting a private Team conversation.
+      </p>}
       <div className="grid gap-5 xl:grid-cols-2">
         <div className="space-y-5">
           <section className="rounded-lg border border-border bg-surface p-4">
