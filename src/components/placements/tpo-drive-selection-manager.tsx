@@ -16,7 +16,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  const releasable=selections.filter(s=>s.status!=="RELEASED");
  const visibleRecordable=recordable.filter(c=>(c.name+" "+c.email+" "+c.roleTitle).toLocaleLowerCase("en-IN").includes(search.toLocaleLowerCase("en-IN")));
  const visibleReleasable=releasable.filter(s=>(s.name+" "+s.roleTitle).toLocaleLowerCase("en-IN").includes(search.toLocaleLowerCase("en-IN")));
- function open(next:"RECORD"|"VERIFY_AND_RELEASE"){setMode(next);setChosen([]);setError("");setReport([]);}
+ function open(next:"RECORD"|"VERIFY_AND_RELEASE"){setMode(next);setChosen([]);setSearch("");setError("");setReport([]);}
  function toggle(id:string){setChosen(previous=>previous.includes(id)?previous.filter(x=>x!==id):
   previous.length<100?[...previous,id]:previous);}
  async function submit(){
