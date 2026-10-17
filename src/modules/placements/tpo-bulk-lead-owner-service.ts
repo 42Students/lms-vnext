@@ -92,6 +92,7 @@ export async function bulkAssignTpoLeadOwner(
     if (!target) throw new AuthorizationError("placements.manage");
 
     const byId = new Map<string, TpoBulkOwnerResult>();
+    const changed: Array<{leadId:string;beforeOwnerId:string|null;afterOwnerId:string}> = [];
     const ordered = [...input.selections].sort((a, b) => a.id.localeCompare(b.id));
     for (const selected of ordered) {
       const [current] = await tx.select({
