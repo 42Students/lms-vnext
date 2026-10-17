@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { PUBLIC_RECRUIT_COPY,publicRecruitThanks } from "@/modules/placements/public-enquiry/public-copy";
+import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 
 const control="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
 export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;enabled:boolean}){
@@ -9,6 +10,12 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
  const [code,setCode]=useState(""),[sent,setSent]=useState(""),[done,setDone]=useState(false);
  const [error,setError]=useState(""),[busy,setBusy]=useState(false),[unavailable,setUnavailable]=useState(false);
  async function submit(kind:"send-code"|"recruit"){
+  if(!publicRecruiterWorkEmailSchema.max(150).safeParse(email).success){
+   setError("Enter your company work email address. Personal email addresses cannot be used.");return;
+  }
+  if(kind==="recruit"&&!/^[0-9]{6}$/.test(code)){
+   setError("Enter the 6-digit code sent to your email.");return;
+  }
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/public/recruit-from-us/"+kind,{
