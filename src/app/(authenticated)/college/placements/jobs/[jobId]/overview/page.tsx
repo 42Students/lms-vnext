@@ -38,6 +38,13 @@ export default async function CollegeDriveOverviewPage({ params }: {
           <p className="mt-3 text-2xl font-semibold text-foreground">{displayDriveMetric(counts[name])}</p>
           <p className="mt-2 text-xs text-muted-foreground">{describeDriveMetric(name)}</p>
         </article>)}
+      <article className="rounded-xl border border-border p-4">
+        <h2 className="text-sm font-semibold text-body">Hired</h2>
+        <p className="mt-3 text-2xl font-semibold text-foreground">{funnel.totals.HIRED ?? 0}</p>
+        <p className="mt-2 text-xs text-muted-foreground">Applications currently at the Hired stage, not inferred joining outcomes.</p>
+        <Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications?stage=HIRED`}
+          className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View hired candidates</Link>
+      </article>
     </section>
     <CollegeDrivePipelineOverview jobId={jobId} data={funnel} attention={attention}/>
     <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-sm font-semibold text-primary-text underline">Shortlisted</Link>
