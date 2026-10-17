@@ -36,7 +36,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    (!assignmentScope||(assignmentScope==="UNASSIGNED"?task.assigneeMembershipId===null:
      assignmentScope==="ASSIGNED"?task.assigneeMembershipId!==null:
      task.assigneeMembershipId===assignmentScope));
- }),[tasks,release,sprint,sprints]);
+ }),[tasks,release,sprint,sprints,priority,status,assignmentScope]);
  const groups=[{membershipId:null,displayName:"Unassigned"},...learners];
  const unassigned=filtered.filter(t=>t.assigneeMembershipId===null).length;
  async function assign(id:string,membershipId:string|null){
