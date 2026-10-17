@@ -115,6 +115,7 @@ export type TpoStudentRow = {
   journeyState: TpoStudentJourneyState;
   bestSoFar: string;
   bestCompany?:string|null;
+  bestDriveResults?:readonly string[];
   interviewedCompanies?:readonly string[];
   maximumAppliedRoundSequence: number | null;
   ambiguousSection: boolean;
@@ -347,6 +348,14 @@ export function deriveTpoStudent(
     journeyState,
     bestSoFar,
     profileFacts:tpoStudentProfileFacts(source.profileDocument),
+    bestDriveResults:[...source.appliedResults]
+      .sort((a,b)=>b.sequence-a.sequence||a.applicationId.localeCompare(b.applicationId))
+      .slice(0,20).map(result=>{
+        const company=source.applications.find(a=>a.id===result.applicationId)?.companyName??"Company not recorded";
+        const kind=result.kind.toLowerCase().replaceAll("_"," ");
+        const outcome=result.outcome.toLowerCase().replaceAll("_"," ");
+        return company+": "+outcome+" at "+kind+" (round "+result.sequence+")";
+      }),
     bestCompany:latestDepth&&!placed&&offerCount===0
       ?source.applications.find(application=>application.id===latestDepth.applicationId)?.companyName??null:null,
     interviewedCompanies:[...new Set(source.appliedResults.flatMap(result=>{
