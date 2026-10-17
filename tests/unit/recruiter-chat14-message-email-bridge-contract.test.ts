@@ -38,7 +38,7 @@ describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()
 
  it("REC-calendar-messages-profile-R01 proposed SQL mirrors the Drizzle reply token uniqueness boundary",()=>{
   const db=source("src/db/schema/recruiter-message-email.ts");
-  const proposal=source("docs/proposed-migrations/recruiter-message-email-bridge.sql");
+  const proposal=source("docs/proposed-migrations/registered-0135/recruiter-message-email-bridge.sql");
   expect(db).toContain('uniqueIndex("recruiter_message_mail_token_uq")');
   expect(db).toContain('sql`'+ "${t.replyTokenHash}" +' is not null`');
   expect(proposal).toContain('CREATE UNIQUE INDEX IF NOT EXISTS recruiter_message_mail_token_uq');
@@ -46,7 +46,7 @@ describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()
  });
  it("REC-calendar-messages-profile-R01 safeguards inbound email persistence on proposed schema",()=>{
   const db=source("src/db/schema/recruiter-message-email.ts");
-  const proposal=source("docs/proposed-migrations/recruiter-message-email-bridge.sql");
+  const proposal=source("docs/proposed-migrations/registered-0135/recruiter-message-email-bridge.sql");
   expect(db).toContain('placement_recruiter_inbound_email_events');
   expect(db).toContain('message_id_hash');
   expect(proposal).toContain('message_id_hash varchar(64) NOT NULL UNIQUE');
