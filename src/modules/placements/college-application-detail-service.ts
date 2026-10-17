@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq} from "drizzle-orm";
+import {and,asc,desc,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
@@ -59,7 +59,7 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
     .from(placementApplicationNotes)
     .where(and(eq(placementApplicationNotes.applicationId,application.id),
       eq(placementApplicationNotes.side,"TPO")))
-    .orderBy(asc(placementApplicationNotes.createdAt)).limit(100),
+    .orderBy(desc(placementApplicationNotes.createdAt)).limit(100),
   db.select({id:placementJobRounds.id,name:placementJobRounds.name,
     testUrl:placementJobRounds.testUrl,scheduledAt:placementJobRounds.scheduledAt})
     .from(placementJobRounds).where(and(eq(placementJobRounds.jobId,jobId),
