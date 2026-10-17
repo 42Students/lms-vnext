@@ -1,7 +1,7 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
+import {readTpoVerificationExport} from "@/modules/verification/tpo-queue-export-read-service";
 import {tpoVerificationQuerySchema} from "@/modules/verification/tpo-queue-server-model";
 import {verificationCsv} from "@/modules/verification/queue-export";
 
@@ -34,7 +34,7 @@ export async function GET(request:Request){
   if(!parsed.success)return new Response("Invalid queue export filters",{
     status:400,headers:{"Cache-Control":"private, no-store"},
   });
-  const queue=await getTpoVerificationQueue(context,parsed.data);
+  const queue=await readTpoVerificationExport(context,parsed.data);
   if(!queue.available||!queue.enabled||!queue.permitted)
    throw new AuthorizationError("profile-verification.review");
   const selected=queue.rows;
@@ -50,7 +50,7 @@ export async function GET(request:Request){
    "Content-Disposition":'attachment; filename="tpo-verification.csv"',
    "Cache-Control":"private, no-store","Vary":"Cookie",
    "X-Content-Type-Options":"nosniff",
-   "X-Export-Range":"first-100-matching-authorized",
+   "X-Export-Range":"first-1000-matching-authorized",
    "X-Export-Truncated":queue.hasMore?"true":"false",
   }});
  }catch(error){return apiErrorResponse(error);}
