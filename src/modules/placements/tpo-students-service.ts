@@ -81,6 +81,7 @@ export const tpoStudentsQuerySchema = z
       .optional(),
     branchId: uuid.optional(),
     programId:uuid.optional(),
+    afterCollege:afterCollegeOutcomeSchema.optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
@@ -837,23 +838,28 @@ export async function getTpoStudentsIntelligence(
   // Legacy working set: placement-eligible learners only; a completed
   // academic enrollment reappears only when its finished cohort is selected.
   const workingRows=selectTpoStudentWorkingSet(studentRows,Boolean(input.batchId));
+  const outcomeMatches=input.afterCollege?await readTpoAfterCollegeMatches(college.id,input.afterCollege):null;
+  const filteredRows=!outcomeMatches?workingRows:!outcomeMatches.available?[]:
+    workingRows.filter(row=>outcomeMatches.matched.has(row.membershipId)||
+      input.afterCollege==="NOT_DECIDED"&&!outcomeMatches.assigned.has(row.membershipId));
   return {
     collegeId: college.id,
     season: activeSeason ?? null,
     summary: summarizeTpoStudents(workingRows),
     branches: summarizeTpoStudentBranches(workingRows),
-    roster: filterTpoStudentRoster(workingRows,input),
+    roster: filterTpoStudentRoster(filteredRows,input),
     // Filtering here uses the same pure derivation as the visible roster.
     // Page size is deliberately unrestricted only inside this trusted,
     // authorized service operation; public input remains Zod-bounded.
     exportRows: options.includeExportRows
-      ? filterTpoStudentRoster(workingRows, {
+      ? filterTpoStudentRoster(filteredRows, {
           ...input,
           page: 1,
           pageSize: Math.max(1, workingRows.length),
         }).items
       : null,
     definitions: {
+      afterCollegeAvailable:outcomeMatches?.available??true,
       registrationsAvailable,
       externalOffersAvailable,
       registrationScope: "ACTIVE_COHORT",
