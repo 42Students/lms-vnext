@@ -33,7 +33,8 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
   .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),eq(sections.cohortId,courseOfferings.cohortId),eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
-  .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
+  .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
+   eq(courses.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
   .orderBy(asc(sections.name)).limit(2000);
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
