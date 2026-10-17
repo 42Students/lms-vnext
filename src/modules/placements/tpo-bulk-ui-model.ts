@@ -1,6 +1,6 @@
 export const TPO_BULK_UI_LIMIT=200;
 export const TPO_BULK_VIEW_LIMIT=5000;
-export type TpoBulkUiRow={id:string;label:string};
+export type TpoBulkUiRow={id:string;label:string;rollNumber?:string|null};
 export function toggleTpoBulkRow(ids:readonly string[],id:string,checked:boolean){
  if(!checked)return ids.filter(existing=>existing!==id);
  if(ids.includes(id)||ids.length>=TPO_BULK_VIEW_LIMIT)return [...ids];
@@ -32,4 +32,12 @@ export function canActOnEntireTpoView(viewCount:number,allRows:readonly TpoBulkU
  return Number.isSafeInteger(viewCount)&&viewCount>0&&viewCount<=TPO_BULK_VIEW_LIMIT
    &&allRows!==undefined&&allRows.length===viewCount
    &&new Set(allRows.map(row=>row.id)).size===allRows.length;
+}
+
+/** Only IDs already returned by the authorized roster may be selected. */
+export function matchTpoBulkRollNumbers(rows:readonly TpoBulkUiRow[],raw:string){
+ const tokens=[...new Set(raw.split(/[\s,;]+/).map(value=>value.trim().toUpperCase()).filter(Boolean))].slice(0,5000);
+ const index=new Map(rows.filter(row=>row.rollNumber).map(row=>[row.rollNumber!.trim().toUpperCase(),row.id]));
+ const ids=tokens.map(token=>index.get(token)).filter((id):id is string=>Boolean(id));
+ return {ids:selectTpoBulkPage(ids),requested:tokens.length,unmatched:tokens.filter(token=>!index.has(token))};
 }
