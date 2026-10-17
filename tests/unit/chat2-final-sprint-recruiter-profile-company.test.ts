@@ -54,6 +54,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(page).toContain("job.declinedOffers");
   expect(page).toContain("job.joinedOffers");
   expect(page).toContain("job.withdrawnApplications");
+  expect(page).toContain("Reports appear once you have a drive with applicants.");
  });
  it("REC-calendar-messages-profile-36 matches legacy recruiter company header label without CSS changes",()=>{
   const page=company();
