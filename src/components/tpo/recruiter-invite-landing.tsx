@@ -175,9 +175,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         {invite.companyName ? "You are joining as " + invite.companyName + ". " : ""}
         You can request placement drives and review the students who apply.
-        Contact details are shared only through the placement workflow and
-        only when the college authorizes candidate sharing.
-        You will see student numbers by branch before requesting a drive.
+        Contact details are shared only as the placement cell allows.
       </p>
 
       <div className="mt-5 rounded-lg border border-border bg-surface-secondary p-4 text-sm">
