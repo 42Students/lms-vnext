@@ -128,6 +128,27 @@ export function RecruiterBulkStageControls({
     }
   }
 
+  async function restore(){
+    if(!undoRunId||undoBusy)return;
+    if(!undoReview){setUndoReview(true);return;}
+    setUndoBusy(true);setError("");
+    try{
+     const response=await fetch("/api/placements/tpo/leads/bulk-undo",{
+      method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({confirmed:true,runAuditId:undoRunId}),
+     });
+     const data=await response.json() as {error?:string;restored?:number};
+     if(!response.ok)throw new Error(data.error==="STALE"?"A recruiter changed since the batch; nothing was undone.":
+      data.error==="EXPIRED"?"The five-minute undo window has ended.":
+      data.error==="ALREADY_RESTORED"?"This batch was already undone.":
+      "Undo unavailable. Refresh your recruiter leads before another change.");
+     setUndoRunId("");setUndoReview(false);setResults([]);
+     setCopyNotice(data.restored+" lead change(s) restored. Refreshing the roster.");
+     onUpdated();
+    }catch(cause){setError(cause instanceof Error?cause.message:"Could not undo the batch.");}
+    finally{setUndoBusy(false);}
+  }
+
   return (
     <section
       className="space-y-3 rounded-lg border border-border bg-surface p-4"
