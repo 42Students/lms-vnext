@@ -3,16 +3,19 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 type State={invitedAt:string|null;finishedAt:string|null;expectedVersion:string};
 export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:State|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [reviewed,setReviewed]=useState(false);
+ const {run}=useGuardedAction({timeoutMs:35000});
  const current=state??{invitedAt:null,finishedAt:null,expectedVersion:"none"};
  const expectedVersion=current.expectedVersion;
  const action=current.finishedAt?"REOPEN" as const:"FINISH" as const;
  const disabled=busy||!reviewed;
  async function submit(){
   if(disabled)return;
+  await run(async()=>{
   setBusy(true);setError("");
   try{
    await apiFetch("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/lifecycle",{
@@ -22,6 +25,7 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
    setReviewed(false);
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
+  });
  }
  return <div className="min-w-0 space-y-2">
   <p className="text-sm text-body">{action==="FINISH"?
