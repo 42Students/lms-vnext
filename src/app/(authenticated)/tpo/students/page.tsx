@@ -917,17 +917,19 @@ export default async function TpoStudentsPage({
           <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
             {roster.total > 0
               ? "This page is outside the matching result range. Return to the first page."
-              : "Nobody is in placements yet."}
-            {roster.total===0?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
+              : Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")
+                ? "No students match these filters."
+                : "Nobody is in placements yet."}
+            {roster.total===0&&!(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!==""))?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
             <div className="mt-3">
               <Link
                 href={roster.total>0?scopedHref({
                   ...currentFilters,
                   page: 1,
-                }):"/tpo/batches"}
+                }):(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"/tpo/students":"/tpo/batches")}
                 className="font-semibold text-primary-text hover:underline"
               >
-                {roster.total>0?"First matching page":"Open Placement eligibility"}
+                {roster.total>0?"First matching page":(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"Clear search and filters":"Open Placement eligibility")}
               </Link>
             </div>
           </div>
