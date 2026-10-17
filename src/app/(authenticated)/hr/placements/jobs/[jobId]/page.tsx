@@ -103,7 +103,7 @@ export default async function HrPlacementJobPage({
     }
     throw error;
   }
-  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
+  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal, selectionRows, selectionPage, selectionTotal } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
@@ -607,7 +607,7 @@ export default async function HrPlacementJobPage({
                   className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Next</Link>
               ) : null}
             </div>
-          </nav>
+          </nav>:null}
         </section>
       ) : null}
       {filters.tab === "offers" ? (
@@ -619,7 +619,7 @@ export default async function HrPlacementJobPage({
               Export offers CSV
             </Link>
           </div>
-          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
+          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include only issued offer records, and the table loads 15 at a time. Pre-issue selections appear separately below. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
@@ -649,10 +649,41 @@ export default async function HrPlacementJobPage({
                 className={status===filters.offerState ?
                   "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
                   "rounded-full border border-border px-3 py-2 text-xs text-body"}>
-                {status==="ALL" ? "All statuses" : recruiterOfferStatusLabel(status)}
+                {status==="ALL" ? "All statuses" : status==="PENDING_VERIFICATION"?"Verified, awaiting release":status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status)}
               </Link>
             ))}
           </nav>
+          {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
+            <section aria-label="Placement-cell selection history" className="space-y-3 rounded-lg border border-border bg-surface-secondary p-4">
+              <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
+              <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
+              {selectionRows.length?<div className="overflow-x-auto">
+               <table className="w-full min-w-[34rem] text-left text-sm">
+                <thead><tr><th scope="col" className="px-3 py-2">Candidate</th>
+                 <th scope="col" className="px-3 py-2">Role</th>
+                 <th scope="col" className="px-3 py-2">CTC (LPA)</th>
+                 <th scope="col" className="px-3 py-2">Status</th></tr></thead>
+                <tbody>{selectionRows.map(item=><tr key={item.id} className="border-t border-border">
+                  <td className="px-3 py-2">{item.name??"Unnamed applicant"}</td>
+                  <td className="px-3 py-2">{item.role}</td>
+                  <td className="px-3 py-2">{item.annualCtcInr==null?"—":
+                    (item.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2})}</td>
+                  <td className="px-3 py-2"><StatusBadge>{item.status==="SELECTED"?"With the placement cell":
+                    item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled"}</StatusBadge></td>
+                </tr>)}</tbody>
+               </table>
+              </div>:<p role="status" className="text-sm text-muted-foreground">No selections have been recorded in this status.</p>}
+              <p className="text-xs text-muted-foreground">
+               {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
+              </p>
+              {filters.offerState!=="ALL"?<nav aria-label="Selection history pages" className="flex gap-3 text-sm">
+               {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
+                className="text-primary-text underline">Previous selections</Link>:null}
+               {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
+                className="text-primary-text underline">Next selections</Link>:null}
+              </nav>:selectionTotal>selectionRows.length?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState=SELECTED"+returnQuery}
+               className="text-primary-text underline text-sm">Review recorded selections</Link>:null}
+            </section>:null}
           {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full min-w-[56rem] text-left text-sm">
               <caption className="sr-only">Offers for shared applicants at this college</caption>
@@ -686,8 +717,8 @@ export default async function HrPlacementJobPage({
                 </tr>)}
               </tbody>
             </table>
-          </div> : <p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>}
-          <nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          </div> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
+          {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
               {" of " + offersPage.total}
