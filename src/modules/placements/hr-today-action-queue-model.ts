@@ -8,11 +8,17 @@ export function buildRecruiterActionQueue(input:{
  jobs:readonly Job[];collegeId:string;companyId:string;unread:number;now?:Date;
  resultsDue?:readonly Due[];unreadConversations?:readonly UnreadThread[];
  returnedRequests?:readonly {id:string;status:string;draft:unknown}[];
+ changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date}[];
 }) {
  const authorized=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&
   row.companyId===input.companyId&&row.job.archivedAt===null&&
   (row.job.status==="PUBLISHED"||row.job.status==="CLOSED"))
   .map(row=>row.job.id));
+ const changeRequests=(input.changeRequests??[]).filter(row=>authorized.has(row.jobId))
+  .slice(0,8).map(row=>({key:"answer:"+row.id,tone:"URGENT" as const,at:row.createdAt,
+   label:"Answer change request · "+row.jobTitle,
+   description:"The placement cell asked about "+row.field.toLowerCase().replaceAll("_"," ")+".",
+   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=requests"}));
  const conversations=(input.unreadConversations??[]).filter(item=>item.unread>0)
   .slice(0,5).map(item=>({key:"thread:"+item.id, tone:"SOON" as const, at:null as Date|null,
     label:"Open messages · "+item.label,
@@ -56,7 +62,7 @@ export function buildRecruiterActionQueue(input:{
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
- const actions=[...returned,...conversations,...due,...deadlines,...reviews,...notices];
+ const actions=[...changeRequests,...returned,...conversations,...due,...deadlines,...reviews,...notices];
  const priority={URGENT:0,SOON:1,FINE:2};
  return actions.sort((a,b)=>{
   const rank=priority[a.tone]-priority[b.tone];
