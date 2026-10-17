@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
@@ -83,11 +84,9 @@ export function SuperAdminContentActions({item}:{item:Content}){
   if(!window.confirm("Save changes?"))return;
   setBusy(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
+   await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
     method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(changes),
    });
-   const data=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(data?.error??"Unable to update content.");
    setEditing(false);setReplacementUrl("");setNotice("Content updated.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content.");}
   finally{setBusy(false);}
@@ -98,11 +97,9 @@ export function SuperAdminContentActions({item}:{item:Content}){
     "Delete this content from student access? The record will be archived."))return;
   setBusy(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
+   await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
    });
-   const data=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(data?.error??"Unable to update content.");
    setEditing(false);setNotice(action==="PUBLISH"?"Content published.":"Content archived.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content.");}
   finally{setBusy(false);}
