@@ -8,6 +8,7 @@ import {requireProjectManageAccess} from "./access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {collegeProjectSummaryPatch,collegeProjectStatusChangeAllowed} from "./college-project-summary-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 export async function updateCollegeProjectSummary(context:RequestContext,projectId:string,raw:unknown){
  const scope=await requireProjectManageAccess(context,projectId);
  if(scope.access!=="ADMIN")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
