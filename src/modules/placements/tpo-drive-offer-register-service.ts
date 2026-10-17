@@ -22,7 +22,7 @@ export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknow
  await requirePlacementManageScope(context,collegeId);
  const facts=await listPlacementJobOffers(context,job.id);
  const enriched=await enrichTpoOfferFacts(facts,collegeId);
- return {job,status:input.status,...projectOfferRegister(enriched,input.status,input.page,input.q,input.joining,new Date(),input.kind,input.expiry)};
+ return {job,status:input.status,...projectOfferRegister(enriched,input.status,input.page,input.q,input.joining,new Date(),input.kind,input.expiry,input.minCtcLpa,input.maxCtcLpa)};
 }
 
 /** Read-only, scoped export. Does not mark a letter delivered or contact a learner. */
