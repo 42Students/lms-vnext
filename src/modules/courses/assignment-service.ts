@@ -354,7 +354,7 @@ export async function updateCourseAssignment(
         ...(input.sequence !== undefined
           ? { sequence: input.sequence }
           : {}),
-        updatedAt: new Date(),
+        updatedAt: new Date(Math.max(Date.now(),locked.updatedAt.getTime()+1)),
       })
       .where(
         and(
