@@ -1,3 +1,4 @@
+import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -167,6 +168,8 @@ export default async function TpoLeadsReportPage({
         </p>
       </section>
 
+      <ReportBarChart title="Recruiter leads by manual stage" units="leads"
+       rows={leads.byStage.map(row=>({label:row.label,value:row.leads}))}/>
       <ReportTable
         title="Leads by manual stage"
         headings={[
