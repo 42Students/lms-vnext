@@ -53,6 +53,8 @@ export function MentorTaskCreate({
       });
       showToast({tone:"success",title:"Project task created"});
       setOpen(false);setTitle("");setDescription("");setCriteria("");setPriority("MEDIUM");
+      setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
+      setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
       router.refresh();
     }catch(error){
       showToast({tone:"error",title:"Task was not created",
